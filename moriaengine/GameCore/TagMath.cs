@@ -31,9 +31,9 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	public class TagMath : ConvertTools {
-		static TagMath() {
-			new TagMath();
-		}
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+		private TagMath instance = new TagMath();
+
 		protected TagMath()
 			: base() {
 		}
@@ -47,7 +47,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
 		public static string SGetTag(TagHolder from, TagKey which) {
 			object tagValue = from.GetTag(which);
 			if (tagValue == null) {
@@ -75,12 +75,11 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		[Summary("Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast " +
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast " +
 				"so we are able to accept a non 'int' numbers such as uints, shorts etc.")]
 		public static int IGetTag(TagHolder from, TagKey which) {
 			return ConvertTools.ToInt32(from.GetTag(which));
 		}
-
 
 		public static bool Is1(object o) {
 			int i;

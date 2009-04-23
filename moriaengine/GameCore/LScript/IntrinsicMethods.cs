@@ -26,7 +26,7 @@ using System.Globalization;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	public class IntrinsicMethods { //abstract - i.e. static
+	public static class IntrinsicMethods { //abstract - i.e. static
 		public static ISrc Src {
 			get {
 				return Globals.Src;

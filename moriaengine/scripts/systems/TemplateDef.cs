@@ -71,8 +71,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			string typeName = input.headerType.ToLower();
-			string defname = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower();
+			string defname = input.HeaderName.ToLower();
 			//Console.WriteLine("loading section "+input.HeadToString());
 			//[typeName defname]
 
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 				if (def != null) {//it isnt TemplateDef
 					throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 				} else {
-					td = new TemplateDef(defname, input.filename, input.headerLine);
+					td = new TemplateDef(defname, input.Filename, input.HeaderLine);
 				}
 			} else if (td.IsUnloaded) {
 				td.IsUnloaded = false;
@@ -103,8 +103,8 @@ namespace SteamEngine.CompiledScripts {
 			bool altdefnamedefined = false;
 			bool containerdefined = false;
 			StringBuilder newCode = new StringBuilder();
-			StringReader reader = new StringReader(trigger.code.ToString());
-			int linenumber = input.headerLine;
+			StringReader reader = new StringReader(trigger.Code.ToString());
+			int linenumber = input.HeaderLine;
 			while (true) {
 				string line = reader.ReadLine();
 				linenumber++;
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts {
 						string name = gc["name"].Value;
 						if (StringComparer.OrdinalIgnoreCase.Equals(name, "defname")) {//set altdefname
 							if (altdefnamedefined) {
-								Logger.WriteWarning(input.filename, linenumber, "Alternative defname already defined, ignoring.");
+								Logger.WriteWarning(input.Filename, linenumber, "Alternative defname already defined, ignoring.");
 							} else {
 								string altdefname = gc["value"].Value;
 								Match ma = TagMath.stringRE.Match(altdefname);
@@ -140,7 +140,7 @@ namespace SteamEngine.CompiledScripts {
 										td.Altdefname = altdefname;
 									}
 								} else if (t == td) {
-									Logger.WriteWarning(input.filename, linenumber,
+									Logger.WriteWarning(input.Filename, linenumber,
 										"Defname redundantly specified for TemplateDef " + LogStr.Ident(altdefname) + ".");
 								} else {
 									throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(altdefname) + " defined multiple times.");
@@ -149,9 +149,9 @@ namespace SteamEngine.CompiledScripts {
 							}
 						} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "container")) {//set container itemdef
 							if (containerdefined) {
-								Logger.WriteWarning(input.filename, linenumber, "Container id already defined, ignoring.");
+								Logger.WriteWarning(input.Filename, linenumber, "Container id already defined, ignoring.");
 							} else {
-								td.container.SetFromScripts(input.filename, linenumber, gc["value"].Value);
+								td.container.SetFromScripts(input.Filename, linenumber, gc["value"].Value);
 								containerdefined = true;
 							}
 						} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "CATEGORY")) {//ignoring axis thingies
@@ -171,10 +171,10 @@ namespace SteamEngine.CompiledScripts {
 
 			//so we have read the important fields, now read the rest as lscript function
 
-			trigger.code = newCode;
+			trigger.Code = newCode;
 			td.holder = new LScriptHolder(trigger);
 			if (input.TriggerCount > 1) {
-				Logger.WriteWarning(input.filename, input.headerLine, "Triggers in a template are nonsensual (and ignored).");
+				Logger.WriteWarning(input.Filename, input.HeaderLine, "Triggers in a template are nonsensual (and ignored).");
 			}
 
 			//that's all, we're done ;)

@@ -38,6 +38,7 @@ namespace SteamEngine {
 		
 			Spaces, tabs, and commas inside ""s are {}s are disregarded.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string[] SplitSphereString(string input) {
 			ArrayList results = new ArrayList();
 			char lastChar = 'a';	//nothing meaningful
@@ -87,9 +88,9 @@ namespace SteamEngine {
 		public static string Capitalize(string s) {
 			if (s == null) throw new SanityCheckException("Capitalize was called on a null string.");
 			if (s.Length > 1) {
-				s = Char.ToUpper(s[0]) + s.Substring(1);
+				s = Char.ToUpper(s[0], System.Globalization.CultureInfo.InvariantCulture) + s.Substring(1);
 			} else if (s.Length == 1) {
-				s = s.ToUpper();
+				s = s.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
 			}
 			return s;
 		}
@@ -101,9 +102,9 @@ namespace SteamEngine {
 		public static string Uncapitalize(string s) {
 			if (s == null) throw new SanityCheckException("Uncapitalize was called on a null string.");
 			if (s.Length > 1) {
-				s = Char.ToLower(s[0]) + s.Substring(1);
+				s = Char.ToLower(s[0], System.Globalization.CultureInfo.InvariantCulture) + s.Substring(1);
 			} else if (s.Length == 1) {
-				s = s.ToLower();
+				s = s.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			}
 			return s;
 		}
@@ -112,6 +113,7 @@ namespace SteamEngine {
 			Get null terminated ascii string from binary reader stream and return encoded string.
 			The value count means number of bytes to get from binary reader which will be converted to string.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string GetCAsciiString(BinaryReader br, int count) {
 			byte[] buffer = br.ReadBytes(count);
 			int len;
@@ -123,7 +125,8 @@ namespace SteamEngine {
 		private static Regex uncommentRE = new Regex(@"^\s*(?<value>.*?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		public static string UnComment(string input) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		public static string Uncomment(string input) {
 			Match m = uncommentRE.Match(input);
 			if (m.Success) {
 				return m.Groups["value"].Value;

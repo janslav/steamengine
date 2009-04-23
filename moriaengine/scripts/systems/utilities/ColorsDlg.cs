@@ -117,8 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				newArgs.SetTag(ImprovedDialog.pagingIndexTK, 0); //prvni na strance bude ta 0.
 				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
 			} else {
-				DialogArgs newArgs = new DialogArgs(Convert.ToInt32(text.argv[0])); //zaciname od zvolene barvy
-				newArgs.SetTag(ImprovedDialog.pagingIndexTK, Convert.ToInt32(text.argv[0])); //prvni na strance bude ta zvolena
+				DialogArgs newArgs = new DialogArgs(Convert.ToInt32(text.Argv[0])); //zaciname od zvolene barvy
+				newArgs.SetTag(ImprovedDialog.pagingIndexTK, Convert.ToInt32(text.Argv[0])); //prvni na strance bude ta zvolena
 				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
 			}
 		}

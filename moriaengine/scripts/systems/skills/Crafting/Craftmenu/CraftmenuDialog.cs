@@ -240,7 +240,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"a parameter to display directly the particular skill Craftmenu")]
 		[SteamFunction]
 		public static void Craftmenu(Character self, ScriptArgs args) {
-			if (args == null || args.argv == null || args.argv.Length == 0) {
+			if (args == null || args.Argv == null || args.Argv.Length == 0) {
 				//check the possibly stored last displayed category
 				string prevCat = TagMath.SGetTag(self, D_Craftmenu.tkCraftmenuLastpos);
 				if (prevCat != null) {
@@ -254,7 +254,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
 				}
 			} else {
-				DialogArgs newArgs = new DialogArgs((CraftmenuCategory) args.argv[0]);
+				DialogArgs newArgs = new DialogArgs((CraftmenuCategory) args.Argv[0]);
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, newArgs);
 			}
 		}

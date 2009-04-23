@@ -32,6 +32,7 @@ using SteamEngine.Networking;
 namespace SteamEngine {
 
 	public partial class Thing {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Dupe(Thing model) {
 
 		}
@@ -52,7 +53,7 @@ namespace SteamEngine {
 					AbstractItem contItem = cont as AbstractItem;
 					if (contItem == null) {
 						MarkAsLimbo(copyAsItem);
-						copyAsItem.Trigger_EnterChar((AbstractCharacter) cont, (byte) this.point4d.z);
+						copyAsItem.Trigger_EnterChar((AbstractCharacter) cont, this.point4d.z);
 					} else {
 						MarkAsLimbo(copyAsItem);
 						copyAsItem.Trigger_EnterItem(contItem, this.point4d.x, this.point4d.y);
@@ -72,7 +73,7 @@ namespace SteamEngine {
 			AbstractItem contItem = cont as AbstractItem;
 			if (contItem == null) {
 				MarkAsLimbo(copy);
-				copy.Trigger_EnterChar((AbstractCharacter) cont, (byte) this.point4d.z);
+				copy.Trigger_EnterChar((AbstractCharacter) cont, this.point4d.z);
 			} else {
 				MarkAsLimbo(copy);
 				copy.Trigger_EnterItem(contItem, this.point4d.x, this.point4d.y);
@@ -83,6 +84,7 @@ namespace SteamEngine {
 			return copy;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_Dupe(Thing model) {
 			this.TryTrigger(TriggerKey.dupe, new ScriptArgs(model));
 			try {
@@ -120,11 +122,11 @@ namespace SteamEngine {
 		public override Thing Cont {
 			get {
 				ThrowIfDeleted();
-				ThingLinkedList list = contOrTLL as ThingLinkedList;
+				ThingLinkedList list = this.contOrTLL as ThingLinkedList;
 				if ((list != null) && (list.ContAsThing != null)) {
 					return list.ContAsThing;
 				}
-				return contOrTLL as Thing;
+				return this.contOrTLL as Thing;
 			}
 			set {
 				ThrowIfDeleted();
@@ -135,7 +137,7 @@ namespace SteamEngine {
 				AbstractItem contItem = value as AbstractItem;
 				if (contItem == null) {
 					if (this.IsEquippable) {
-						byte layer = this.Layer;
+						int layer = this.Layer;
 						if (layer > 0) {
 							this.MakeLimbo();
 							Trigger_EnterChar((AbstractCharacter) value, layer);
@@ -214,7 +216,7 @@ namespace SteamEngine {
 		private void Trigger_LeaveChar(AbstractCharacter cont) {
 			Sanity.IfTrueThrow(cont != this.Cont, "this not in cont.");
 
-			byte layer = (byte) this.point4d.z;
+			int layer = this.point4d.z;
 			ItemInCharArgs args = new ItemInCharArgs(this, cont, layer);
 
 			if (this.IsEquippable && this.Layer == layer) {
@@ -252,7 +254,7 @@ namespace SteamEngine {
 		public virtual void On_Unequip(ItemInCharArgs args) {
 		}
 
-		private void ReturnIntoCharIfNeeded(AbstractCharacter originalCont, byte layer) {
+		private void ReturnIntoCharIfNeeded(AbstractCharacter originalCont, int layer) {
 			if ((this.Cont != originalCont) || this.point4d.z != layer) {
 				Logger.WriteWarning(this + " has been moved in the implementation of one of the @LeaveChar triggers. Don't do this. Putting back.");
 				this.MakeLimbo();
@@ -458,9 +460,9 @@ namespace SteamEngine {
 
 		//we expect this to be in limbo and equippable
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal void Trigger_EnterChar(AbstractCharacter cont, byte layer) {
+		internal void Trigger_EnterChar(AbstractCharacter cont, int layer) {
 			Sanity.IfTrueThrow(!this.IsLimbo, "this not in limbo");
-			Sanity.IfTrueThrow(((layer != (byte) LayerNames.Dragging) && (!this.IsEquippable)), "this not equippable");
+			Sanity.IfTrueThrow(((layer != (int) LayerNames.Dragging) && (!this.IsEquippable)), "this not equippable");
 			Sanity.IfTrueThrow(layer == 0, "layer == 0");
 
 			cont.InternalItemEnter(this, layer);
@@ -634,8 +636,8 @@ namespace SteamEngine {
 				if ((this.point4d.x != x) || (this.point4d.y != y)) {
 					OpenedContainers.SetContainerClosed(this);//if I am a container too, I get closed also
 					ItemSyncQueue.AboutToChange(this);
-					point4d.x = (ushort) x;
-					point4d.y = (ushort) y;
+					this.point4d.x = (ushort) x;
+					this.point4d.y = (ushort) y;
 				}
 			}//else throw? Probably not so important...
 		}
@@ -662,7 +664,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public void LoadCont_Delayed(object resolvedObj, string filename, int line) {
-			if (Uid == -1) {
+			if (this.Uid == -1) {
 				//I was probably cleared because of failed load. Let me get deleted by garbage collector.
 				return;
 			}
@@ -737,8 +739,8 @@ namespace SteamEngine {
 		internal override sealed void ItemMakeLimbo(AbstractItem i) {
 			Sanity.IfTrueThrow(this != i.Cont, "i not in this.");
 
-			if (draggingLayer == i) {
-				draggingLayer = null;
+			if (this.draggingLayer == i) {
+				this.draggingLayer = null;
 			} else {
 				ThingLinkedList tll = (ThingLinkedList) i.contOrTLL;
 				tll.Remove(i);
@@ -748,23 +750,23 @@ namespace SteamEngine {
 			this.AdjustWeight(-i.Weight);
 		}
 
-		internal void InternalItemEnter(AbstractItem i, byte layer) {
+		internal void InternalItemEnter(AbstractItem i, int layer) {
 			Sanity.IfTrueThrow(!i.IsLimbo, "i not in limbo");
 			Sanity.IfTrueThrow(layer == 0, "layer == 0");
 
-			if (layer != (byte) LayerNames.Special) {
-				if ((layer == (byte) LayerNames.Hand1) || (layer == (byte) LayerNames.Hand2)) {
+			if (layer != (int) LayerNames.Special) {
+				if ((layer == (int) LayerNames.Hand1) || (layer == (int) LayerNames.Hand2)) {
 					bool twoHanded = i.IsTwoHanded;
 					AbstractItem h1 = this.FindLayer(LayerNames.Hand1);
 					if (h1 != null) {
-						if (twoHanded || (layer == (byte) LayerNames.Hand1) || h1.IsTwoHanded) {
+						if (twoHanded || (layer == (int) LayerNames.Hand1) || h1.IsTwoHanded) {
 							MutablePoint4D p = this.point4d;
 							h1.P(p.x, p.y, p.z, p.m);
 						}
 					}
 					AbstractItem h2 = this.FindLayer(LayerNames.Hand2);
 					if (h2 != null) {
-						if (twoHanded || (layer == (byte) LayerNames.Hand2) || h2.IsTwoHanded) {
+						if (twoHanded || (layer == (int) LayerNames.Hand2) || h2.IsTwoHanded) {
 							MutablePoint4D p = this.point4d;
 							h2.P(p.x, p.y, p.z, p.m);
 						}
@@ -780,27 +782,27 @@ namespace SteamEngine {
 				}
 			}
 
-			if (layer == (byte) LayerNames.Dragging) {
-				draggingLayer = i;
+			if (layer == (int) LayerNames.Dragging) {
+				this.draggingLayer = i;
 				i.contOrTLL = this;
-			} else if (layer == (byte) LayerNames.Special) {
-				if (specialLayer == null) {
-					specialLayer = new ThingLinkedList(this);
+			} else if (layer == (int) LayerNames.Special) {
+				if (this.specialLayer == null) {
+					this.specialLayer = new ThingLinkedList(this);
 				}
-				specialLayer.Add(i);
-				i.contOrTLL = specialLayer;
+				this.specialLayer.Add(i);
+				i.contOrTLL = this.specialLayer;
 			} else if (layer < sentLayers) {
-				if (visibleLayers == null) {
-					visibleLayers = new ThingLinkedList(this);
+				if (this.visibleLayers == null) {
+					this.visibleLayers = new ThingLinkedList(this);
 				}
-				visibleLayers.Add(i);
-				i.contOrTLL = visibleLayers;
+				this.visibleLayers.Add(i);
+				i.contOrTLL = this.visibleLayers;
 			} else {
-				if (invisibleLayers == null) {
-					invisibleLayers = new ThingLinkedList(this);
+				if (this.invisibleLayers == null) {
+					this.invisibleLayers = new ThingLinkedList(this);
 				}
-				invisibleLayers.Add(i);
-				i.contOrTLL = invisibleLayers;
+				this.invisibleLayers.Add(i);
+				i.contOrTLL = this.invisibleLayers;
 			}
 
 			i.point4d.x = 7000;
@@ -810,7 +812,7 @@ namespace SteamEngine {
 		}
 
 		internal void AddLoadedItem(AbstractItem item) {
-			byte layer = (byte) item.Z;
+			int layer = item.Z;
 			Thing.MarkAsLimbo(item);
 			InternalItemEnter(item, layer);
 		}
@@ -825,27 +827,27 @@ namespace SteamEngine {
 		}
 
 		public bool HasPickedUp(int uid) {
-			return ((draggingLayer != null) && (draggingLayer.Uid == uid));
+			return ((this.draggingLayer != null) && (this.draggingLayer.Uid == uid));
 		}
 
 		public AbstractItem FindLayer(LayerNames layer) {
-			return FindLayer((byte) layer);
+			return this.FindLayer((int) layer);
 		}
 
-		public AbstractItem FindLayer(byte num) {
+		public AbstractItem FindLayer(int num) {
 			if (num == (int) LayerNames.Dragging) {
-				return draggingLayer;
+				return this.draggingLayer;
 			} else if (num == (int) LayerNames.Special) {
-				if (specialLayer != null) {
-					return (AbstractItem) specialLayer.firstThing;
+				if (this.specialLayer != null) {
+					return (AbstractItem) this.specialLayer.firstThing;
 				}
 				return null;
 			} else if (num < sentLayers) {
-				if (visibleLayers != null) {
-					return (AbstractItem) visibleLayers.FindByZ(num);
+				if (this.visibleLayers != null) {
+					return (AbstractItem) this.visibleLayers.FindByZ(num);
 				}
-			} else if (invisibleLayers != null) {
-				return (AbstractItem) invisibleLayers.FindByZ(num);
+			} else if (this.invisibleLayers != null) {
+				return (AbstractItem) this.invisibleLayers.FindByZ(num);
 			}
 			return null;
 		}
@@ -853,31 +855,31 @@ namespace SteamEngine {
 		public override AbstractItem FindCont(int index) {
 			int counter = 0;
 			int prevCounter;
-			if (visibleLayers != null) {
-				counter = visibleLayers.count;
+			if (this.visibleLayers != null) {
+				counter = this.visibleLayers.count;
 			}
 			if (index < counter) {
-				return (AbstractItem) visibleLayers[index];
+				return (AbstractItem) this.visibleLayers[index];
 			}
 			prevCounter = counter;
-			if (invisibleLayers != null) {
-				counter += invisibleLayers.count;
+			if (this.invisibleLayers != null) {
+				counter += this.invisibleLayers.count;
 			}
 			if (index < counter) {
-				return (AbstractItem) invisibleLayers[index - prevCounter];
+				return (AbstractItem) this.invisibleLayers[index - prevCounter];
 			}
-			if (draggingLayer != null) {
+			if (this.draggingLayer != null) {
 				if (index == counter) {
-					return draggingLayer;
+					return this.draggingLayer;
 				}
 				counter++;
 			}
 			prevCounter = counter;
-			if (specialLayer != null) {
-				counter += specialLayer.count;
+			if (this.specialLayer != null) {
+				counter += this.specialLayer.count;
 			}
 			if (index < counter) {
-				return (AbstractItem) specialLayer[index - prevCounter];
+				return (AbstractItem) this.specialLayer[index - prevCounter];
 			}
 			return null;
 		}
@@ -891,7 +893,7 @@ namespace SteamEngine {
 		[Summary("Tries to have the char drop the item it is dragging. First it tries to put it in backpack, then on ground.")]
 		[Return("True if it is dragging no item after the method passes.")]
 		public bool TryGetRidOfDraggedItem() {
-			AbstractItem i = draggingLayer;
+			AbstractItem i = this.draggingLayer;
 			if (i != null) {
 				DenyResult result = this.TryPutItemOnItem(this.GetBackpack());
 				if (result != DenyResult.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
@@ -1009,7 +1011,7 @@ namespace SteamEngine {
 				}
 
 				item.MakeLimbo();
-				item.Trigger_EnterChar(this, (byte) LayerNames.Dragging);
+				item.Trigger_EnterChar(this, (int) LayerNames.Dragging);
 				if (oldPoint != null) {
 					this.SendMovingItemAnimation(oldPoint, this, item);
 				}
@@ -1023,7 +1025,7 @@ namespace SteamEngine {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
 
-			AbstractItem item = draggingLayer;
+			AbstractItem item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + targetCont + "'");
 			}
@@ -1099,7 +1101,7 @@ namespace SteamEngine {
 		public DenyResult TryPutItemOnItem(AbstractItem target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem item = draggingLayer;
+			AbstractItem item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
@@ -1165,7 +1167,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnGround(int x, int y, int z) {
 			ThrowIfDeleted();
-			AbstractItem item = draggingLayer;
+			AbstractItem item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on ground");
 			}
@@ -1218,7 +1220,7 @@ namespace SteamEngine {
 		public DenyResult TryPutItemOnChar(AbstractCharacter target) {
 			ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem item = draggingLayer;
+			AbstractItem item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
@@ -1273,21 +1275,21 @@ namespace SteamEngine {
 			item.ThrowIfDeleted();
 
 			if (item.IsEquippable) {
-				byte layer = item.Layer;
+				int layer = item.Layer;
 				if ((layer < sentLayers) && (layer > 0)) {
 					bool succeededUnequipping = true;
-					if (layer != (byte) LayerNames.Special) {
-						if ((layer == (byte) LayerNames.Hand1) || (layer == (byte) LayerNames.Hand2)) {
+					if (layer != (int) LayerNames.Special) {
+						if ((layer == (int) LayerNames.Hand1) || (layer == (int) LayerNames.Hand2)) {
 							bool twoHanded = item.IsTwoHanded;
 							AbstractItem h1 = this.FindLayer(LayerNames.Hand1);
 							if (h1 != null) {
-								if (twoHanded || (layer == (byte) LayerNames.Hand1) || h1.IsTwoHanded) {
+								if (twoHanded || (layer == (int) LayerNames.Hand1) || h1.IsTwoHanded) {
 									succeededUnequipping = this.TryUnequip(h1);
 								}
 							}
 							AbstractItem h2 = this.FindLayer(LayerNames.Hand2);
 							if (h2 != null) {
-								if (twoHanded || (layer == (byte) LayerNames.Hand2) || h2.IsTwoHanded) {
+								if (twoHanded || (layer == (int) LayerNames.Hand2) || h2.IsTwoHanded) {
 									succeededUnequipping = succeededUnequipping && this.TryUnequip(h2);
 								}
 							}
@@ -1418,20 +1420,32 @@ namespace SteamEngine {
 	}
 
 	public class ItemStackArgs : ScriptArgs {
-		public readonly Thing manipulatedItem;
-		public readonly Thing waitingStack;
+		private readonly Thing manipulatedItem;
+		private readonly Thing waitingStack;
 
 		public ItemStackArgs(Thing manipulatedItem, Thing waitingStack)
 			: base(manipulatedItem, waitingStack) {
 			this.manipulatedItem = manipulatedItem;
 			this.waitingStack = waitingStack;
 		}
+
+		public Thing ManipulatedItem {
+			get { 
+				return manipulatedItem;
+			}
+		}
+
+		public Thing WaitingStack {
+			get { 
+				return waitingStack; 
+			}
+		} 
 	}
 
 	public class ItemOnGroundArgs : ScriptArgs {
-		public readonly AbstractItem manipulatedItem;
-		public readonly Region region;
-		public readonly Point4D point;
+		private readonly AbstractItem manipulatedItem;
+		private readonly Region region;
+		private readonly Point4D point;
 
 		public ItemOnGroundArgs(AbstractItem manipulatedItem, Region region, Point4D point)
 			: base(manipulatedItem, region, point) {
@@ -1439,30 +1453,78 @@ namespace SteamEngine {
 			this.region = region;
 			this.point = point;
 		}
+
+		public AbstractItem ManipulatedItem {
+			get {
+				return this.manipulatedItem; 
+			}
+		}
+
+		public Region Region {
+			get {
+				return this.region; 
+			}
+		}
+
+		public Point4D Point {
+			get {
+				return this.point; 
+			}
+		} 
 	}
 
 	public class ItemInItemArgs : ScriptArgs {
-		public readonly AbstractItem manipulatedItem;
-		public readonly AbstractItem container;
+		private readonly AbstractItem manipulatedItem;
+		private readonly AbstractItem container;
 
 		public ItemInItemArgs(AbstractItem manipulatedItem, AbstractItem container)
 			: base(manipulatedItem, container) {
 			this.manipulatedItem = manipulatedItem;
 			this.container = container;
 		}
+
+		public AbstractItem ManipulatedItem {
+			get {
+				return this.manipulatedItem; 
+			}
+		}
+
+		public AbstractItem Container {
+			get {
+				return this.container; 
+			}
+		} 
 	}
 
 	public class ItemInCharArgs : ScriptArgs {
-		public readonly AbstractItem manipulatedItem;
-		public readonly AbstractCharacter cont;
-		public readonly byte layer;
+		private readonly AbstractItem manipulatedItem;
+		private readonly AbstractCharacter cont;
+		private readonly int layer;
 
-		public ItemInCharArgs(AbstractItem manipulatedItem, AbstractCharacter cont, byte layer)
+		public ItemInCharArgs(AbstractItem manipulatedItem, AbstractCharacter cont, int layer)
 			: base(manipulatedItem, cont, layer) {
 			this.manipulatedItem = manipulatedItem;
 			this.cont = cont;
 			this.layer = layer;
 		}
+
+		public AbstractItem ManipulatedItem {
+			get {
+				return this.manipulatedItem; 
+			}
+		}
+
+		public AbstractCharacter Cont {
+			get {
+				return this.cont; 
+			}
+		}
+
+		public int Layer {
+			get {
+				return this.layer; 
+			}
+		} 
 	}
 
 	public class DenyTriggerArgs : ScriptArgs {
@@ -1473,10 +1535,10 @@ namespace SteamEngine {
 
 		public DenyResult Result {
 			get {
-				return (DenyResult) ConvertTools.ToInt32(argv[0]);
+				return (DenyResult) ConvertTools.ToInt32(this.Argv[0]);
 			}
 			set {
-				argv[0] = value;
+				this.Argv[0] = value;
 			}
 		}
 	}
@@ -1493,10 +1555,10 @@ namespace SteamEngine {
 
 		public int Amount {
 			get {
-				return ConvertTools.ToInt32(this.argv[3]);
+				return ConvertTools.ToInt32(this.Argv[3]);
 			}
 			set {
-				argv[3] = value;
+				this.Argv[3] = value;
 			}
 		}
 
@@ -1557,10 +1619,10 @@ namespace SteamEngine {
 
 		public IPoint4D Point {
 			get {
-				return (IPoint4D) argv[3];
+				return (IPoint4D) this.Argv[3];
 			}
 			set {
-				argv[3] = value;
+				this.Argv[3] = value;
 			}
 		}
 

@@ -155,8 +155,8 @@ namespace SteamEngine {
 		internal static Constant[] Load(PropsSection input) {
 			List<Constant> list = new List<Constant>();
 			string line;
-			int linenum = input.headerLine;
-			StringReader reader = new StringReader(input.GetTrigger(0).code.ToString());
+			int linenum = input.HeaderLine;
+			StringReader reader = new StringReader(input.GetTrigger(0).Code.ToString());
 			while ((line = reader.ReadLine()) != null) {
 				linenum++;
 				line = line.Trim();
@@ -169,14 +169,14 @@ namespace SteamEngine {
 				int equalityAt = line.IndexOf("=");
 				int delimiterAt = MinPositive(spaceAt, tabAt, equalityAt);
 				if ((delimiterAt == -1) || (delimiterAt >= line.Length)) {
-					name = Utility.UnComment(line);
+					name = Utility.Uncomment(line);
 					value = "";
 #if DEBUG
-					Logger.WriteWarning(input.filename, linenum, "No value of this Constant...?");
+					Logger.WriteWarning(input.Filename, linenum, "No value of this Constant...?");
 #endif
 				} else {
 					name = line.Substring(0, delimiterAt).Trim();
-					value = Utility.UnComment(line.Substring(delimiterAt + 1, line.Length - (delimiterAt + 1)));
+					value = Utility.Uncomment(line.Substring(delimiterAt + 1, line.Length - (delimiterAt + 1)));
 				}
 				Constant d;
 				if (!allConstantsByName.TryGetValue(name, out d)) {
@@ -186,18 +186,18 @@ namespace SteamEngine {
 					if (d.unloaded) {
 						d.unloaded = false;
 					} else {
-						Logger.WriteError(input.filename, linenum, "Constant " + LogStr.Ident(name) + " defined multiple times. Ignoring");
+						Logger.WriteError(input.Filename, linenum, "Constant " + LogStr.Ident(name) + " defined multiple times. Ignoring");
 						continue;
 					}
 				}
 				d.implementation = new TemporaryValue(d, value);
-				d.filename = input.filename;
+				d.filename = input.Filename;
 				d.line = linenum;
 				list.Add(d);
 			}
 
 			if (input.TriggerCount > 1) {
-				Logger.WriteWarning(input.filename, input.headerLine, "Triggers in a definition of constants are nonsensual (and ignored).");
+				Logger.WriteWarning(input.Filename, input.HeaderLine, "Triggers in a definition of constants are nonsensual (and ignored).");
 			}
 			return list.ToArray();
 		}

@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 									break;
 								case LayerNames.Pants:
 								case LayerNames.Skirt:
-								case LayerNames.Half_apron:
+								case LayerNames.HalfApron:
 									armorVsPLegs = Math.Max(armorVsPLegs, armorVsP);
 									mindDefVsPLegs = Math.Max(mindDefVsPLegs, mindDefVsM);
 									armorVsMLegs = Math.Max(armorVsMLegs, armorVsM);
@@ -320,9 +320,9 @@ namespace SteamEngine.CompiledScripts {
 		internal static CombatWeaponValues CalculateCombatWeaponValues(Character self) {
 			CombatWeaponValues retVal = Pool<CombatWeaponValues>.Acquire();
 
-			Weapon weapon = self.FindLayer(1) as Weapon;
+			Weapon weapon = self.FindLayer(LayerNames.Hand1) as Weapon;
 			if (weapon == null) {
-				weapon = self.FindLayer(2) as Weapon;
+				weapon = self.FindLayer(LayerNames.Hand2) as Weapon;
 			}
 			retVal.weapon = weapon;
 

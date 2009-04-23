@@ -9,7 +9,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
 
-	internal class IdentifyGameServerPacket : OutgoingPacket {
+	public class IdentifyGameServerPacket : OutgoingPacket {
 		string steamengineIniPath;
 
 		public void Prepare() {
@@ -28,9 +28,10 @@ namespace SteamEngine.AuxServerPipe {
 	}
 
 
-	internal class LogStringPacket : OutgoingPacket {
+	public class LogStringPacket : OutgoingPacket {
 		string str;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str")]
 		public void Prepare(string str) {
 			this.str = str;
 		}
@@ -46,11 +47,12 @@ namespace SteamEngine.AuxServerPipe {
 		}
 	}
 
-	internal class ReplyAccountLoginPacket : OutgoingPacket {
+	public class ReplyAccountLoginPacket : OutgoingPacket {
 		int consoleId;
 		string accName;
 		bool loginSuccessful;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "loginSuccessful"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId")]
 		public void Prepare(int consoleId, string accName, bool loginSuccessful) {
 			this.consoleId = consoleId;
 			this.accName = accName;
@@ -88,10 +90,11 @@ namespace SteamEngine.AuxServerPipe {
 		}
 	}
 
-	internal class ConsoleWriteLinePacket : OutgoingPacket {
+	public class ConsoleWriteLinePacket : OutgoingPacket {
 		int consoleId;
 		string line;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "line")]
 		public void Prepare(int consoleId, string line) {
 			this.consoleId = consoleId;
 			this.line = line;

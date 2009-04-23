@@ -9,9 +9,12 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
 	public class AuxServerPipeProtocol : IProtocol<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly AuxServerPipeProtocol instance = new AuxServerPipeProtocol();
 
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> GetPacketImplementation(byte id, NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 			switch (id) {

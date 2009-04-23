@@ -483,7 +483,7 @@ namespace SteamEngine.Networking {
 				foreach (int uid in this.uids) {
 					Thing t = Thing.UidGetThing(uid);
 					if ((t != null) && (!t.IsDeleted)) {
-						AosToolTips toolTips = t.GetAOSToolTips();
+						AosToolTips toolTips = t.GetAosToolTips();
 						if (toolTips != null) {
 							if (curChar.CanSeeForUpdate(t)) {
 								toolTips.SendDataPacket(conn);
@@ -1312,14 +1312,14 @@ namespace SteamEngine.Networking {
 				ResponseNumber[] responseNumbers = new ResponseNumber[n];
 				for (int i = 0; i < n; i++) {
 					foreach (ResponseText rt in responseTexts) {
-						if (gi.numEntryIDs[i] == rt.id) {
+						if (gi.numEntryIDs[i] == rt.Id) {
 							double number;
-							if (ConvertTools.TryParseDouble(rt.text, out number)) {
-								responseNumbers[i] = new ResponseNumber(rt.id, number);
+							if (ConvertTools.TryParseDouble(rt.Text, out number)) {
+								responseNumbers[i] = new ResponseNumber(rt.Id, number);
 							} else {
 								state.WriteLine(String.Format(
 									ServLoc<IncomingPacketsLoc>.Get(state.Language).NotANumber,
-									rt.text));
+									rt.Text));
 								SendGumpBack(conn, state, gi, responseTexts);
 								return;
 							}
@@ -1339,9 +1339,9 @@ namespace SteamEngine.Networking {
 			//first we copy the responsetext into the default texts for the textentries so that they don't change.
 			foreach (ResponseText rt in responseTexts) {
 				int defaultTextId;
-				if (gi.entryTextIds.TryGetValue((int) rt.id, out defaultTextId)) {
+				if (gi.entryTextIds.TryGetValue((int) rt.Id, out defaultTextId)) {
 					if (defaultTextId < gi.textsList.Count) {//one can never be too sure
-						gi.textsList[defaultTextId] = rt.text;
+						gi.textsList[defaultTextId] = rt.Text;
 					}
 				}
 			}

@@ -34,7 +34,7 @@ namespace SteamEngine.Converter {
 		public override void FirstStage() {
 			base.FirstStage();
 			string line;
-			StringReader reader = new StringReader(origData.GetTrigger(0).code.ToString());
+			StringReader reader = new StringReader(origData.GetTrigger(0).Code.ToString());
 			while ((line = reader.ReadLine()) != null) {
 				writtenData.Add(ConvertedTemplateDef.FixRandomExpression(line));
 			}

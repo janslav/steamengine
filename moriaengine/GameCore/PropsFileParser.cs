@@ -25,7 +25,7 @@ using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {
-	public class PropsFileParser {
+	public static class PropsFileParser {
 		//possible targets:
 		//GameAccount.Load
 		//Thing.Load
@@ -34,7 +34,7 @@ namespace SteamEngine {
 
 		//regular expressions for stream loading
 		//[type name]//comment
-		public static readonly Regex headerRE = new Regex(@"^\[\s*(?<type>.*?)(\s+(?<name>.*?))?\s*\]\s*(//(?<comment>.*))?$",
+		internal static readonly Regex headerRE = new Regex(@"^\[\s*(?<type>.*?)(\s+(?<name>.*?))?\s*\]\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		//"triggerkey=@triggername//comment"
@@ -67,7 +67,7 @@ namespace SteamEngine {
 						//it is a comment or a blank line
 						if (curTrigger != null) {
 							//in script compiler do also blank lines count, so we can`t ignore them.
-							curTrigger.AddLine(curLine);
+							curTrigger.Code.AppendLine(curLine);
 						}//else the comment gets lost... :\
 						continue;
 					}
@@ -78,9 +78,9 @@ namespace SteamEngine {
 						}
 						GroupCollection gc = m.Groups;
 						curSection = new PropsSection(filename, gc["type"].Value, gc["name"].Value, line, gc["comment"].Value);
-						if (isScript(curSection.headerType)) {
+						if (isScript(curSection.HeaderType)) {
 							//if it is something like [function xxx]
-							curTrigger = new TriggerSection(filename, line, curSection.headerType, curSection.headerName, gc["comment"].Value);
+							curTrigger = new TriggerSection(filename, line, curSection.HeaderType, curSection.HeaderName, gc["comment"].Value);
 							curSection.AddTrigger(curTrigger);
 						} else {
 							curTrigger = null;
@@ -103,7 +103,7 @@ namespace SteamEngine {
 					}
 					if (curTrigger != null) {
 						if (curSection != null) {
-							curTrigger.AddLine(curLine);
+							curTrigger.Code.AppendLine(curLine);
 						} else {
 							//this shouldnt be, a trigger without section...?
 							Logger.WriteWarning(filename, line, "Skipping line '" + curLine + "'.");
@@ -134,12 +134,12 @@ namespace SteamEngine {
 	}
 
 	public class PropsSection {
-		public readonly string headerComment;
-		public readonly string headerType;
-		public string headerName;//[headerType headerName]
-		public readonly int headerLine;
-		public readonly string filename;
-		internal Dictionary<string, PropsLine> props;//table of PropsLines
+		private readonly string headerComment;
+		private readonly string headerType;
+		private string headerName;//[headerType headerName]
+		private readonly int headerLine;
+		private readonly string filename;
+		private Dictionary<string, PropsLine> props;//table of PropsLines
 		private List<TriggerSection> triggerSections;//list of TriggerSections
 
 		internal PropsSection(string filename, string type, string name, int line, string comment) {
@@ -152,13 +152,35 @@ namespace SteamEngine {
 			this.triggerSections = new List<TriggerSection>();
 		}
 
+		public string HeaderComment {
+			get { return headerComment; }
+		}
+
+		public string HeaderType {
+			get { return headerType; }
+		}
+
+		public string HeaderName {
+			get { return headerName; }
+			set { headerName = value; }
+		}
+
+		public int HeaderLine {
+			get { return headerLine; }
+		}
+
+		public string Filename {
+			get { return filename; }
+		} 
+
+
 		public TriggerSection GetTrigger(int index) {
 			return triggerSections[index];
 		}
 
 		public TriggerSection GetTrigger(string name) {
 			foreach (TriggerSection s in triggerSections) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.triggerName)) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.TriggerName)) {
 					return s;
 				}
 			}
@@ -170,7 +192,7 @@ namespace SteamEngine {
 			TriggerSection s = null;
 			for (; i < n; i++) {
 				s = triggerSections[i];
-				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.triggerName)) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.TriggerName)) {
 					n = -1;
 					break;
 				}
@@ -197,7 +219,7 @@ namespace SteamEngine {
 			string origKey = name;
 			string key = origKey;
 			for (int a = 0; props.ContainsKey(key); a++) {
-				key = origKey + a.ToString();
+				key = origKey + a.ToString(System.Globalization.CultureInfo.InvariantCulture);
 				//duplicite properties get a counted name
 				//like if there is more "events=..." lines, they are in the hashtable with keys
 				//events, events0, events1, etc. 
@@ -223,39 +245,74 @@ namespace SteamEngine {
 			return line;
 		}
 
-		public ICollection<PropsLine> GetPropsLines() {
-			return props.Values;
+		public ICollection<PropsLine> PropsLines {
+			get {
+				return props.Values;
+			}
 		}
 
 		public override string ToString() {
-			return string.Format("[{0} {1}]", headerType, headerName);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				"[{0} {1}]", 
+				headerType, headerName);
 		}
 	}
 
 	public class TriggerSection {
-		public readonly string triggerComment;
-		public readonly string triggerKey;	//"on", "ontrigger", "onbutton", or just ""
-		public readonly string triggerName;	//"create", etc
-		public readonly int startline;
-		public readonly string filename;
-		public StringBuilder code;	//code
+		private readonly string triggerComment;
+		private readonly string triggerKey;	//"on", "ontrigger", "onbutton", or just ""
+		private readonly int startLine;
+		private readonly string triggerName;	//"create", etc
+		private readonly string filename;
+		private StringBuilder code;	//code
 
 		internal TriggerSection(string filename, int startline, string key, string name, string comment) {
 			this.filename = filename;
 			this.triggerKey = key;
 			this.triggerName = name;
-			this.startline = startline;
+			this.startLine = startline;
 			this.code = new StringBuilder();
 			this.triggerComment = comment;
 		}
 
-		internal void AddLine(string data) {
-			code.Append(data).Append(Environment.NewLine);
+		public string TriggerComment {
+			get {
+				return this.triggerComment;
+			}
 		}
 
-		//		internal void AddLine() {
-		//			code.Append(Environment.NewLine);
-		//		}
+		public string TriggerKey {
+			get {
+				return this.triggerKey;
+			}
+		}
+
+		public string TriggerName {
+			get {
+				return this.triggerName;
+			}
+		}
+		
+		public int StartLine {
+			get {
+				return this.startLine;
+			}
+		}
+
+		public string Filename {
+			get {
+				return this.filename;
+			}
+		}
+
+		public StringBuilder Code {
+			get {
+				return this.code;
+			}
+			set {
+				this.code = value;
+			}
+		}
 
 		public override string ToString() {
 			return string.Concat(triggerKey, "=@", triggerName);
@@ -263,10 +320,10 @@ namespace SteamEngine {
 	}
 
 	public class PropsLine {
-		public readonly string comment;
-		public readonly string name;
-		public readonly string value;//name=value
-		public readonly int line;
+		private readonly string comment;
+		private readonly string name;
+		private readonly string value;//name=value
+		private readonly int line;
 
 		public PropsLine(string name, string value, int line, string comment) {
 			this.name = name;
@@ -274,6 +331,22 @@ namespace SteamEngine {
 			this.line = line;
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
+
+		public string Name {
+			get { return name; }
+		}
+
+		public string Value {
+			get { return this.value; }
+		}
+
+		public int Line {
+			get { return line; }
+		} 
 
 		public override string ToString() {
 			return name + " = " + value;

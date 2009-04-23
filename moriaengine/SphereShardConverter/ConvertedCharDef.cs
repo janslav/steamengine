@@ -82,35 +82,35 @@ namespace SteamEngine.Converter {
 
 		private static string HandleMountId(ConvertedDef def, PropsLine line) {
 			int num = -1;
-			if (!ConvertTools.TryParseInt32(line.value, out num)) {
+			if (!ConvertTools.TryParseInt32(line.Value, out num)) {
 				ConvertedThingDef i;
-				if (ConvertedItemDef.itemsByDefname.TryGetValue(line.value, out i)) {
+				if (ConvertedItemDef.itemsByDefname.TryGetValue(line.Value, out i)) {
 					num = i.Model;
 				}
 			}
 			if (num != -1) {
 				string retVal = "0x" + num.ToString("x");
-				def.Set("MountItem", retVal, line.comment);
+				def.Set("MountItem", retVal, line.Comment);
 				return retVal;
 			} else {
-				def.Warning(line.line, "Unresolvable MountItem model");
+				def.Warning(line.Line, "Unresolvable MountItem model");
 			}
 			return "";
 		}
 
 
 		private static string HandleSound(ConvertedDef def, PropsLine line) {
-			string retVal = line.value;
+			string retVal = line.Value;
 			int num;
-			if (ConvertTools.TryParseInt32(line.value, out num)) {
+			if (ConvertTools.TryParseInt32(line.Value, out num)) {
 				retVal = "0x" + num.ToString("x");
-				def.Set("AngerSound", retVal, line.comment);
+				def.Set("AngerSound", retVal, line.Comment);
 				def.Set("IdleSound", "0x" + (num + 1).ToString("x"), "");
 				def.Set("AttackSound", "0x" + (num + 2).ToString("x"), "");
 				def.Set("HurtSound", "0x" + (num + 3).ToString("x"), "");
 				def.Set("DeathSound", "0x" + (num + 4).ToString("x"), "");
 			} else {
-				def.Set("AngerSound", retVal, line.comment);
+				def.Set("AngerSound", retVal, line.Comment);
 				def.Set("IdleSound", retVal + " + 1", "");
 				def.Set("AttackSound", retVal + " + 2", "");
 				def.Set("HurtSound", retVal + " + 3", "");

@@ -39,7 +39,7 @@ namespace SteamEngine.LScript {
 
 		//used by TriggerGroup/GumpDef/templatedef/... loading, and LoadAsFunction here
 		public LScriptHolder(TriggerSection input)
-			: base(input.triggerName) {
+			: base(input.TriggerName) {
 			Compile(input);
 		}
 
@@ -80,26 +80,26 @@ namespace SteamEngine.LScript {
 		}
 
 		internal void Compile(TriggerSection input) {
-			filename = input.filename;
-			line = input.startline;
+			filename = input.Filename;
+			line = input.StartLine;
 			//if (registerNames == null) {//else it got already created by the constructor
 			//	registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
 			//}
 			//Console.WriteLine("compiling text "+input.code);
-			code = LScript.TryCompile(this, new StringReader(input.code.ToString()), input.startline);
-			unloaded = (code == null);
+			code = LScript.TryCompile(this, new StringReader(input.Code.ToString()), input.StartLine);
+			this.unloaded = (code == null);
 			//Logger.WriteDebug("the code is: "+code);
 		}
 
 		public sealed override object Run(object self, ScriptArgs sa) {
-			if (unloaded) {
-				throw new UnloadedException("Function/trigger " + LogStr.Ident(name) + " is unloaded, can not be run.");
+			if (this.unloaded) {
+				throw new UnloadedException("Function/trigger " + LogStr.Ident(Name) + " is unloaded, can not be run.");
 			}
-			lastRunSuccesful = false;
+			this.lastRunSuccesful = false;
 			try {
 				ScriptVars sv = new ScriptVars(sa, self, registerNames.Count);
 				object retVal = code.Run(sv);
-				lastRunSuccesful = true;
+				this.lastRunSuccesful = true;
 				if (sv.returned) {
 					return retVal;
 				} else {
@@ -118,12 +118,12 @@ namespace SteamEngine.LScript {
 		public void Unload() {
 			code = null;
 			registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
-			unloaded = true;
+			this.unloaded = true;
 		}
 
 		public bool IsUnloaded {
 			get {
-				return unloaded;
+				return this.unloaded;
 			}
 		}
 

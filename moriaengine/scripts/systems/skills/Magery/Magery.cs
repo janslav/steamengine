@@ -162,13 +162,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static bool CanSeeTargetWithMessage(SkillSequenceArgs skillSeqArgs, Character self) {
-			IPoint4D target = skillSeqArgs.Target1;
-			IPoint4D targetTop = target.TopPoint;
-			Thing targetAsThing = target as Thing;
+			IPoint3D target = skillSeqArgs.Target1;
+			IPoint3D targetTop = target.TopPoint;
 
-			int m = self.M;
-			if (m == targetTop.M) {
-				Regions.Map map = Regions.Map.GetMap(m);
+			int selfM = self.M;
+			IPoint4D targetAs4D = targetTop as IPoint4D;
+			if ((targetAs4D != null) && (targetAs4D.M != selfM)) {
+			} else {				
+				Regions.Map map = Regions.Map.GetMap(selfM);
+				Thing targetAsThing = target as Thing;
 				if (targetAsThing != null) {
 					if ((!targetAsThing.IsDeleted) && (!targetAsThing.Flag_Disconnected)) {
 						if (self.CanSeeForUpdate(targetAsThing) && (map.CanSeeLOSFromTo(self, targetTop))) {

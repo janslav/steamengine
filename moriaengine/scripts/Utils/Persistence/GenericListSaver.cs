@@ -51,14 +51,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.headerLine;
+			int currentLineNumber = input.HeaderLine;
 			try {
 				PropsLine countLine = input.PopPropsLine("count");
-				currentLineNumber = countLine.line;
-				int count = int.Parse(countLine.value);
+				currentLineNumber = countLine.Line;
+				int count = int.Parse(countLine.Value);
 
 				PropsLine pl = input.PopPropsLine("type");
-				currentLineNumber = pl.line;
+				currentLineNumber = pl.Line;
 				Type elemType = ParseType(pl);
 
 				Type typeOfList = typeof(List<>).MakeGenericType(elemType);
@@ -67,25 +67,25 @@ namespace SteamEngine.CompiledScripts {
 				for (int i = 0; i < count; i++) {
 					list.Add(null);
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
-					currentLineNumber = valueLine.line;
+					currentLineNumber = valueLine.Line;
 					GenericListLoadHelper alip = new GenericListLoadHelper(list, i, elemType);
-					ObjectSaver.Load(valueLine.value, new LoadObjectParam(DelayedLoad_Index), input.filename, valueLine.line, alip);
+					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(DelayedLoad_Index), input.Filename, valueLine.Line, alip);
 				}
 				return list;
 			} catch (FatalException) {
 				throw;
 			} catch (SEException sex) {
-				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 				throw;
 			} catch (Exception e) {
-				throw new SEException(input.filename, currentLineNumber, e);
+				throw new SEException(input.Filename, currentLineNumber, e);
 			}
 		}
 
 		public static Type ParseType(PropsLine pl) {
-			Type elemType = ClassManager.GetType(pl.value);
+			Type elemType = ClassManager.GetType(pl.Value);
 			if (elemType == null) {
-				elemType = Type.GetType(pl.value, false, true);
+				elemType = Type.GetType(pl.Value, false, true);
 			}
 			if (elemType == null) {
 				throw new SEException("Element type not recognised.");

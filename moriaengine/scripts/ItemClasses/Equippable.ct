@@ -15,6 +15,6 @@
 
 [ThingTemplate Equippable : Item]
 Def:	//vars on the def
-	byte Layer = 30
+	int Layer = 30
 	///TODO: [Alias("twohands")] or something like it
 	bool twoHanded = false

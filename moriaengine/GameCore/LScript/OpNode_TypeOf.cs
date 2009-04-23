@@ -28,6 +28,7 @@ using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.LScript {
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Is : OpNode, IOpNodeHolder {
 		private Type type;
 		internal OpNode opNode;
@@ -87,6 +88,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public static class OpNode_Typeof {
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
 			int line = code.GetStartLine() + LScript.startLine;

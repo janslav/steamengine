@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Lazy_RandomExpression : OpNode, IOpNodeHolder {
 		bool isSimple;//if true, this is just a random number from a range, i.e. {a b}
 		//otherwise, it is a set of odds-value pairs {ao av bo bv ... }
@@ -91,8 +92,8 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			try {
 				if (isSimple) {
-					int lVal = Convert.ToInt32(values[0].Run(vars));
-					int rVal = Convert.ToInt32(values[1].Run(vars));
+					int lVal = Convert.ToInt32(values[0].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+					int rVal = Convert.ToInt32(values[1].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 					int min = lVal;
 					int max = rVal;
 					if (rVal < lVal) {
@@ -120,7 +121,7 @@ namespace SteamEngine.LScript {
 					bool areConstant = true;
 					int totalOdds = 0;
 					for (int i = 0; i < pairCount; i++) {
-						int o = Convert.ToInt32(odds[i].Run(vars));
+						int o = Convert.ToInt32(odds[i].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 						totalOdds += o;
 						pairs[i] = new ValueOddsPair(values[i], totalOdds);
 						if (!(odds[i] is OpNode_Object)) {

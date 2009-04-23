@@ -26,6 +26,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Return : OpNode, IOpNodeHolder {
 		private OpNode arg;
 
@@ -63,6 +64,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Return_String : OpNode, IOpNodeHolder {
 		private readonly OpNode[] args;
 		private readonly string formatString;
@@ -89,7 +91,8 @@ namespace SteamEngine.LScript {
 			for (int i = 0; i < argsCount; i++) {
 				results[i] = args[i].Run(vars);
 			}
-			string resultString = String.Format(formatString, results);
+			string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				formatString, results);
 			vars.returned = true;
 			return resultString;
 		}

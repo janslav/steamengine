@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 #endif
 			nant.SetTarget("buildScripts");
 
-			nant.SetProperty("scriptsNumber", compilenumber.ToString());
+			nant.SetProperty("scriptsNumber", compilenumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			nant.SetProperty("scriptsReferencesListPath",
 				Path.Combine(Globals.ScriptsPath, "referencedAssemblies.txt"));
 			nant.SetSourceFileNames(fileCollection.GetAllFileNames(),

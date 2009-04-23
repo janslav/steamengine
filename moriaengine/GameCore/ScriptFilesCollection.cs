@@ -46,65 +46,66 @@ namespace SteamEngine {
 
 		internal long LengthSum {
 			get {
-				return lengthSum;
+				return this.lengthSum;
 			}
 		}
 
 		internal ScriptFileCollection(string dirPath, string extension) {
-			mainDir = new DirectoryInfo(dirPath);
-			extensions.Add(extension);
+			this.mainDir = new DirectoryInfo(dirPath);
+			this.extensions.Add(extension);
 		}
 
 		internal void AddExtension(string extension) {
-			extensions.Add(extension);
+			this.extensions.Add(extension);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal void AddAvoided(string folder) {
-			avoided.Add(folder);
+			this.avoided.Add(folder);
 		}
 
 		internal ScriptFile AddFile(FileInfo file) {
 			ScriptFile sf = new ScriptFile(file);
-			if (scriptFiles == null) {
-				scriptFiles = new Dictionary<string, ScriptFile>();
+			if (this.scriptFiles == null) {
+				this.scriptFiles = new Dictionary<string, ScriptFile>();
 			}
-			scriptFiles[file.FullName] = sf;
+			this.scriptFiles[file.FullName] = sf;
 			CheckTime(file);
-			lengthSum += file.Length;
+			this.lengthSum += file.Length;
 			return sf;
 		}
 
 		internal bool HasFile(FileInfo file) {
-			if (scriptFiles != null) {
-				return scriptFiles.ContainsKey(file.FullName);
+			if (this.scriptFiles != null) {
+				return this.scriptFiles.ContainsKey(file.FullName);
 			} else {
 				return false;
 			}
 		}
 
-		internal DateTime NewestDateTime {
-			get {
-				return newestDateTime;
-			}
-		}
+		//internal DateTime NewestDateTime {
+		//    get {
+		//        return newestDateTime;
+		//    }
+		//}
 
 		internal ICollection<ScriptFile> GetAllFiles() {
-			if (scriptFiles == null) {
-				scriptFiles = new Dictionary<string, ScriptFile>();
-				InitializeList(mainDir);
+			if (this.scriptFiles == null) {
+				this.scriptFiles = new Dictionary<string, ScriptFile>();
+				InitializeList(this.mainDir);
 			} else {
-				FindNewFiles(mainDir, new List<ScriptFile>());
+				FindNewFiles(this.mainDir, new List<ScriptFile>());
 			}
-			return scriptFiles.Values;
+			return this.scriptFiles.Values;
 		}
 
 		internal ICollection<ScriptFile> GetChangedFiles() {
-			if (scriptFiles == null) {
+			if (this.scriptFiles == null) {
 				return GetAllFiles();
 			} else {
 				List<ScriptFile> list = new List<ScriptFile>();
 				//if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
-				FindNewFiles(mainDir, list);
+				FindNewFiles(this.mainDir, list);
 				//}
 				FindChangedFiles(list);
 				return list;
@@ -124,8 +125,8 @@ namespace SteamEngine {
 
 		private void FindNewFiles(DirectoryInfo dir, List<ScriptFile> list) {
 			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
-				if (entry is DirectoryInfo) {
-					DirectoryInfo di = (DirectoryInfo) entry;
+				DirectoryInfo di = entry as DirectoryInfo;
+				if (di != null) {					
 					if (!IsAvoidedDirectory(di)) {
 						FindNewFiles(di, list);
 					}
@@ -141,19 +142,19 @@ namespace SteamEngine {
 		}
 
 		private void FindChangedFiles(List<ScriptFile> list) {
-			foreach (ScriptFile fs in scriptFiles.Values) {
+			foreach (ScriptFile fs in this.scriptFiles.Values) {
 				long prevLength = fs.Length;
 				if (fs.HasChanged) {
 					list.Add(fs);
-					lengthSum -= prevLength;
-					lengthSum += fs.Length;//the new length already
+					this.lengthSum -= prevLength;
+					this.lengthSum += fs.Length;//the new length already
 				}
 			}
 		}
 
 		private void CheckTime(FileInfo file) {
-			if (newestDateTime < file.LastWriteTime) {
-				newestDateTime = file.LastWriteTime;
+			if (this.newestDateTime < file.LastWriteTime) {
+				this.newestDateTime = file.LastWriteTime;
 			}
 		}
 
@@ -173,7 +174,7 @@ namespace SteamEngine {
 		}
 
 		private bool IsAvoidedDirectory(DirectoryInfo di) {
-			foreach (string avoid in avoided) {
+			foreach (string avoid in this.avoided) {
 				if (String.Compare(di.Name, avoid, true, CultureInfo.InvariantCulture) == 0) { //ignore case
 					return true;	//skip this folder
 				}
@@ -182,7 +183,7 @@ namespace SteamEngine {
 		}
 
 		private bool IsRightExtension(string tryThis) {
-			foreach (string extension in extensions) {
+			foreach (string extension in this.extensions) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(tryThis, extension)) {
 					return true;
 				}

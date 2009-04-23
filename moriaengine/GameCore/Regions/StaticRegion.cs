@@ -82,7 +82,7 @@ namespace SteamEngine.Regions {
 		#region Saving/Loading/Manipulating
 		[LoadSection]
 		public StaticRegion(PropsSection input) {
-			string defName = input.headerName;
+			string defName = input.HeaderName;
 
 			if (!byDefname.ContainsKey(defName)) {
 				//byDefname[defName] = this;

@@ -124,13 +124,13 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static ScriptedAccount CreateGameAccount(object ignored, ScriptArgs sa) {
-			string name = String.Concat(sa.argv[0]);
+			string name = String.Concat(sa.Argv[0]);
 			ScriptedAccount acc = new ScriptedAccount(name);
 
-			if (sa.argv.Length > 1) {
-				acc.Password(String.Concat(sa.argv[1]));
-				if (sa.argv.Length > 2) {
-					acc.email = String.Concat(sa.argv[2]);
+			if (sa.Argv.Length > 1) {
+				acc.Password(String.Concat(sa.Argv[1]));
+				if (sa.Argv.Length > 2) {
+					acc.email = String.Concat(sa.Argv[2]);
 				}
 			}
 			return acc;

@@ -29,16 +29,17 @@ using SteamEngine.Regions;
 using SteamEngine.Networking;
 
 namespace SteamEngine {
-	public class ScriptLoader {
-		private static ScriptFileCollection allFiles;
+	public static class ScriptLoader {
+		private static ScriptFileCollection allFiles = InitScpCollection();
 
 		private static Dictionary<string, RegisteredScript> scriptTypesByName =
 			new Dictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
 
-		static ScriptLoader() {
-			allFiles = new ScriptFileCollection(Globals.ScriptsPath, ".scp");
-			allFiles.AddExtension(".def");
+		static ScriptFileCollection InitScpCollection() {
+			ScriptFileCollection retVal = new ScriptFileCollection(Globals.ScriptsPath, ".scp");
+			retVal.AddExtension(".def");
 			//allFiles.AddAvoided("import");
+			return retVal;
 		}
 
 		//the method that is called on server initialisation by MainClass.
@@ -134,6 +135,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadFile(ScriptFile file) {
 			//string filepath = file.Name;
 			//WorldSaver.currentfile = filepath;
@@ -144,9 +146,9 @@ namespace SteamEngine {
 							file.FullName, stream, new CanStartAsScript(StartsAsScript))) {
 
 						try {
-							string type = section.headerType.ToLower();
-							string name = section.headerName;
-							if ((name == "") && (type == "eof")) {
+							string type = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+							string name = section.HeaderName;
+							if ((string.IsNullOrEmpty(name)) && (type == "eof")) {
 								continue;
 							}
 
@@ -154,7 +156,7 @@ namespace SteamEngine {
 								case "function":
 									file.Add(SteamEngine.LScript.LScript.LoadAsFunction(section.GetTrigger(0)));
 									if (section.TriggerCount > 1) {
-										Logger.WriteWarning(section.filename, section.headerLine, "Triggers in a function are nonsensual (and ignored).");
+										Logger.WriteWarning(section.Filename, section.HeaderLine, "Triggers in a function are nonsensual (and ignored).");
 									}
 									continue;
 								case "typedef":
@@ -212,17 +214,17 @@ namespace SteamEngine {
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
-							Logger.WriteError(section.filename, section.headerLine, e);
+							Logger.WriteError(section.Filename, section.HeaderLine, e);
 							continue;
 						}
-						Logger.WriteError(section.filename, section.headerLine, "Unknown section " + LogStr.Ident(section));
+						Logger.WriteError(section.Filename, section.HeaderLine, "Unknown section " + LogStr.Ident(section));
 					}
 				}
 			}
 		}
 
 		internal static bool StartsAsScript(string headerType) {
-			switch (headerType.ToLower()) {
+			switch (headerType.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
 				case "function":
 				case "dialog":
 				case "gump":
@@ -239,6 +241,7 @@ namespace SteamEngine {
 		}
 
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadNewFile(string filename) {
 			FileInfo fi = new FileInfo(filename);
 			if (!fi.Exists) {

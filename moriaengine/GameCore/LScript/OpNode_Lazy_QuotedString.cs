@@ -26,6 +26,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Lazy_QuotedString : OpNode, IOpNodeHolder, IKnownRetType {
 		private OpNode[] evals;
 		//or OpNode_Lazy_EvalExpression (<...>) - these get later replaced, of course.
@@ -73,7 +74,7 @@ namespace SteamEngine.LScript {
 				if (nodesList[i] is OpNode_Lazy_EvalExpression) {
 					isConstant = false;
 					int curEval = evalsList.Add(nodesList[i]);
-					formatBuf.Append("{").Append(curEval.ToString()).Append("}"); //creates {x} in the formatstring
+					formatBuf.Append("{").Append(curEval.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append("}"); //creates {x} in the formatstring
 					i++;
 				} else {
 					while ((i < n) && (!(nodesList[i] is OpNode_Lazy_EvalExpression))) {
@@ -119,7 +120,8 @@ namespace SteamEngine.LScript {
 			} finally {
 				vars.self = oSelf;
 			}
-			return string.Format(formatString, results);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				formatString, results);
 		}
 
 		public override string ToString() {
@@ -127,7 +129,8 @@ namespace SteamEngine.LScript {
 			for (int i = 0, n = evals.Length; i < n; i++) {
 				strings[i] = evals[i].ToString();
 			}
-			return string.Format("\"" + formatString + "\"", strings);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				"\"" + formatString + "\"", strings);
 		}
 
 		public Type ReturnType {

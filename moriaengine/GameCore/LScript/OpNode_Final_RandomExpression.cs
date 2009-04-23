@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_Final_RandomExpression_Simple_Constant : OpNode {
 		int min, max;
 
@@ -46,6 +47,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_Final_RandomExpression_Simple_Variable : OpNode, IOpNodeHolder {
 		OpNode leftNode, rightNode;
 
@@ -72,8 +74,8 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				int lVal = Convert.ToInt32(leftNode.Run(vars));
-				int rVal = Convert.ToInt32(rightNode.Run(vars));
+				int lVal = Convert.ToInt32(leftNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+				int rVal = Convert.ToInt32(rightNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 				if (lVal < rVal) {
 					return Globals.dice.Next(lVal, rVal + 1);
 				} else if (lVal > rVal) {
@@ -96,6 +98,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_Final_RandomExpression_Constant : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		int totalOdds;
@@ -131,12 +134,13 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("{");
 			foreach (ValueOddsPair pair in pairs) {
-				str.Append(pair.Value.ToString()).Append(" ").Append(pair.Odds.ToString()).Append(" ");
+				str.Append(pair.Value.ToString()).Append(" ").Append(pair.Odds.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(" ");
 			}
 			return str.Append("}").ToString();
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_Final_RandomExpression_Variable : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		OpNode[] odds;
@@ -160,7 +164,7 @@ namespace SteamEngine.LScript {
 				vars.self = vars.defaultObject;
 				int totalOdds = 0;
 				for (int i = 0, n = pairs.Length; i < n; i++) {
-					int o = Convert.ToInt32(odds[i].Run(vars));
+					int o = Convert.ToInt32(odds[i].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 					totalOdds += o;
 					pairs[i].Odds = totalOdds;
 				}

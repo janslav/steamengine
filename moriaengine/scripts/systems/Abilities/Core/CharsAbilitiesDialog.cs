@@ -225,7 +225,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void AbilitiesList(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.NameAsc);//trideni
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_CharsAbilitiesList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_CharsAbilitiesList.criteriumTK, text.Args);//vyhl. kriterium

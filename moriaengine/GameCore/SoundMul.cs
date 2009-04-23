@@ -20,7 +20,7 @@ using System.Text;
 using SteamEngine.Common;
 
 namespace SteamEngine {
-	class SoundMul {
+	static class SoundMul {
 		public static void Init() {
 			if (Globals.WriteMulDocsFiles) {
 				StreamWriter scr = File.CreateText(Globals.GetMulDocPathFor("Sounds.txt"));

@@ -250,8 +250,8 @@ namespace SteamEngine.CompiledScripts {
 				Player src = Globals.Src as Player;
 				if (src != null) {
 					double seconds = 0.5;
-					if ((sa != null) && (sa.argv.Length > 0)) {
-						seconds = Convert.ToDouble(sa.argv[0]);
+					if ((sa != null) && (sa.Argv.Length > 0)) {
+						seconds = Convert.ToDouble(sa.Argv[0]);
 					}
 
 					src.Target(Targ_AStar_Walk.Instance, new object[] { self, seconds });
@@ -263,8 +263,8 @@ namespace SteamEngine.CompiledScripts {
 				Player src = Globals.Src as Player;
 				if (src != null) {
 					IMovementSettings settings = null;
-					if ((sa != null) && (sa.argv.Length > 0)) {
-						settings = sa.argv[0] as IMovementSettings;
+					if ((sa != null) && (sa.Argv.Length > 0)) {
+						settings = sa.Argv[0] as IMovementSettings;
 					}
 					if (settings == null) {
 						settings = self.MovementSettings;
@@ -286,7 +286,7 @@ namespace SteamEngine.CompiledScripts {
 				instance = this;
 			}
 
-			protected override bool On_TargonPoint(Player ignored, IPoint4D targetted, object parameter) {
+			protected override bool On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
 				IMovementSettings settings = (IMovementSettings) arr[1];
@@ -343,7 +343,7 @@ namespace SteamEngine.CompiledScripts {
 				instance = this;
 			}
 
-			protected override bool On_TargonPoint(Player ignored, IPoint4D targetted, object parameter) {
+			protected override bool On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
 				double seconds = Convert.ToDouble(arr[1]);

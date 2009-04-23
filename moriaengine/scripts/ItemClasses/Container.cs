@@ -151,7 +151,7 @@ namespace SteamEngine.CompiledScripts {
 			base.AdjustWeight(adjust);
 		}
 
-		public override void BuildAOSToolTips(AosToolTips toolTips) {
+		public override void BuildAosToolTips(AosToolTips toolTips) {
 			toolTips.AddLine(1050044, this.Count.ToString(), this.Weight.ToString());
 			//~1_COUNT~ items, ~2_WEIGHT~ stones
 		}

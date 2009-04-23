@@ -13,6 +13,7 @@ namespace SteamEngine.LScript {
 	using PerCederberg.Grammatica.Parser;
 	using SteamEngine.Common;
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Script : OpNode, IOpNodeHolder {
 		private OpNode[] blocks;
 
@@ -75,6 +76,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Object : OpNode, IKnownRetType {
 		internal object obj;
 
@@ -126,6 +128,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_ToString : OpNode, IOpNodeHolder, IKnownRetType {
 		private OpNode node;
 
@@ -172,6 +175,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_This : OpNode {
 		internal OpNode_This(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
@@ -187,6 +191,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Constant : OpNode {
 		private Constant con;
 		internal OpNode_Constant(IOpNodeHolder parent, string filename, int line, int column, Node origNode, Constant con)

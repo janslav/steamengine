@@ -339,11 +339,11 @@ namespace SteamEngine.Networking {
 			internal readonly ushort color, model;
 			internal readonly byte layer;
 
-			internal ItemInfo(uint flaggedUid, ushort color, ushort model, byte layer) {
+			internal ItemInfo(uint flaggedUid, int color, int model, int layer) {
 				this.flaggedUid = flaggedUid;
-				this.color = color;
-				this.model = model;
-				this.layer = layer;
+				this.color = (ushort) color;
+				this.model = (ushort) model;
+				this.layer = (byte) layer;
 			}
 		}
 
@@ -366,7 +366,7 @@ namespace SteamEngine.Networking {
 
 			AbstractCharacter mount = ch.Mount;
 			if (mount != null) {
-				items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.ShortColor, (ushort) mount.MountItem, (byte) LayerNames.Mount));
+				items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.ShortColor, mount.MountItem, (int) LayerNames.Mount));
 			}
 		}
 
@@ -526,9 +526,9 @@ namespace SteamEngine.Networking {
 			internal readonly uint flaggedUid;
 			internal readonly byte layer;
 
-			internal ItemInfo(uint flaggedUid, byte layer) {
+			internal ItemInfo(uint flaggedUid, int layer) {
 				this.flaggedUid = flaggedUid;
-				this.layer = layer;
+				this.layer = (byte) layer;
 			}
 		}
 
@@ -1579,7 +1579,7 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(Gump gump) {
 			this.focusFlaggedUid = gump.Focus.FlaggedUid;
-			this.gumpUid = gump.uid;
+			this.gumpUid = gump.Uid;
 			this.x = gump.X;
 			this.y = gump.Y;
 			this.layoutText = gump.layout.ToString();

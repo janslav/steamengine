@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			GumpPicTiled(10, 40, width - 20, height - 80, 2624);
 			CheckerTrans(10, 40, width - 20, height - 80);
 
-			HTMLGumpA(10, 40, width - 20, height - 80, content, false, true);
+			HtmlGumpA(10, 40, width - 20, height - 80, content, false, true);
 
 			GumpPicTiled(10, height - 30, width - 20, 20, 2624);
 			CheckerTrans(10, height - 30, width - 20, 20);
@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			NumberEntryA(10, height + 70, 500, 100, 1, 763, 5.5);
 
-			XMFHTMLGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
+			XmfhtmlGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {

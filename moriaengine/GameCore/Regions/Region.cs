@@ -190,9 +190,9 @@ namespace SteamEngine.Regions {
 		}
 
 		internal static void Trigger_ItemEnter(ItemOnGroundArgs args) {
-			Region region = args.region;
-			Point4D point = args.point;
-			AbstractItem item = args.manipulatedItem;
+			Region region = args.Region;
+			Point4D point = args.Point;
+			AbstractItem item = args.ManipulatedItem;
 
 			do {
 				region.TryTrigger(TriggerKey.itemEnter, args);
@@ -207,9 +207,9 @@ namespace SteamEngine.Regions {
 		}
 
 		internal static void Trigger_ItemLeave(ItemOnGroundArgs args) {
-			Region region = args.region;
-			Point4D point = args.point;
-			AbstractItem item = args.manipulatedItem;
+			Region region = args.Region;
+			Point4D point = args.Point;
+			AbstractItem item = args.ManipulatedItem;
 
 			do {
 				region.TryTrigger(TriggerKey.itemLeave, args);

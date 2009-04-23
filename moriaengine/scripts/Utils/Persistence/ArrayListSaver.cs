@@ -44,27 +44,27 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.headerLine;
+			int currentLineNumber = input.HeaderLine;
 			try {
 				PropsLine countLine = input.PopPropsLine("count");
-				currentLineNumber = countLine.line;
-				int count = int.Parse(countLine.value);
+				currentLineNumber = countLine.Line;
+				int count = int.Parse(countLine.Value);
 				ArrayList list = new ArrayList(count);
 				for (int i = 0; i < count; i++) {
 					list.Add(null);
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
-					currentLineNumber = valueLine.line;
+					currentLineNumber = valueLine.Line;
 					ArrayListIndexPair alip = new ArrayListIndexPair(list, i);
-					ObjectSaver.Load(valueLine.value, new LoadObjectParam(DelayedLoad_Index), input.filename, valueLine.line, alip);
+					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(DelayedLoad_Index), input.Filename, valueLine.Line, alip);
 				}
 				return list;
 			} catch (FatalException) {
 				throw;
 			} catch (SEException sex) {
-				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 				throw;
 			} catch (Exception e) {
-				throw new SEException(input.filename, currentLineNumber, e);
+				throw new SEException(input.Filename, currentLineNumber, e);
 			}
 		}
 

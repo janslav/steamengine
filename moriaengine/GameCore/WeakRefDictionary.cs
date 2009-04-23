@@ -17,7 +17,7 @@ namespace SteamEngine {
 	}
 
 	[Summary("We purge the caches when saving world")]
-	public class WeakRefDictionaryUtils {
+	public static class WeakRefDictionaryUtils {
 		internal static List<WeakReference> allCaches = new List<WeakReference>();
 
 		public static void PurgeAll() {
@@ -47,7 +47,7 @@ namespace SteamEngine {
 		}
 
 		public WeakRefDictionary(IEqualityComparer<TKey> comparer) {
-			dict = new Dictionary<WeakRefDictionaryKeyEntry, WeakReference>(new CacheComparer(this));
+			this.dict = new Dictionary<WeakRefDictionaryKeyEntry, WeakReference>(new CacheComparer(this));
 			WeakRefDictionaryUtils.allCaches.Add(new WeakReference(this));
 			if (comparer == null) {
 				this.comparer = EqualityComparer<TKey>.Default;
@@ -96,14 +96,14 @@ namespace SteamEngine {
 		#region IPurgable Members
 		[Summary("Clears out the entries where either the key or the value have become deleted (if they're IDeletable) or have been memory-collected")]
 		public void Purge() {
-			List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>> aliveEntries = new List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>>(dict.Count);
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in dict) {
+			List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>> aliveEntries = new List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>>(this.dict.Count);
+			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
 				if (IsAlive(pair.Key.weakKey) && IsAlive(pair.Value)) {
 					aliveEntries.Add(pair);
 				}
 			}
-			if (aliveEntries.Count < dict.Count) { //something was deleted, we must rebuild
-				dict.Clear();
+			if (aliveEntries.Count < this.dict.Count) { //something was deleted, we must rebuild
+				this.dict.Clear();
 				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in aliveEntries) {
 					this.dict.Add(pair.Key, pair.Value);
 				}
@@ -133,22 +133,22 @@ namespace SteamEngine {
 			if (value == null) {
 				throw new SEException("value is null");
 			}
-			dict.Add(new WeakRefDictionaryKeyEntry(key),
+			this.dict.Add(new WeakRefDictionaryKeyEntry(key),
 				new WeakReference(value));
 		}
 
 		public bool ContainsKey(TKey key) {
-			return dict.ContainsKey(new WeakRefDictionaryKeyEntry(key));
+			return this.dict.ContainsKey(new WeakRefDictionaryKeyEntry(key));
 		}
 
 		public bool Remove(TKey key) {
-			return dict.Remove(new WeakRefDictionaryKeyEntry(key));
+			return this.dict.Remove(new WeakRefDictionaryKeyEntry(key));
 		}
 
 		public bool TryGetValue(TKey key, out TValue value) {
 			WeakReference weakWal;
 			value = default(TValue);
-			if (dict.TryGetValue(new WeakRefDictionaryKeyEntry(key), out weakWal)) {
+			if (this.dict.TryGetValue(new WeakRefDictionaryKeyEntry(key), out weakWal)) {
 				value = (TValue) weakWal.Target;
 				if (value != null) {
 					IDeletable deletable = value as IDeletable;
@@ -165,7 +165,7 @@ namespace SteamEngine {
 
 		public TValue this[TKey key] {
 			get {
-				WeakReference weakWal = dict[new WeakRefDictionaryKeyEntry(key)];
+				WeakReference weakWal = this.dict[new WeakRefDictionaryKeyEntry(key)];
 				TValue value = (TValue) weakWal.Target;
 				if (value != null) {
 					IDeletable deletable = value as IDeletable;
@@ -185,7 +185,7 @@ namespace SteamEngine {
 				if (value == null) {
 					throw new SEException("value is null");
 				}
-				dict[new WeakRefDictionaryKeyEntry(key)] = new WeakReference(value);
+				this.dict[new WeakRefDictionaryKeyEntry(key)] = new WeakReference(value);
 			}
 		}
 
@@ -329,12 +329,12 @@ namespace SteamEngine {
 
 		#region ICollection<KeyValuePair<TKey,TValue>> Members
 
-		public void Add(KeyValuePair<TKey, TValue> keyValuePair) {
-			this.Add(keyValuePair.Key, keyValuePair.Value);
+		public void Add(KeyValuePair<TKey, TValue> item) {
+			this.Add(item.Key, item.Value);
 		}
 
 		public void Clear() {
-			dict.Clear();
+			this.dict.Clear();
 		}
 
 		public bool Contains(KeyValuePair<TKey, TValue> item) {
@@ -346,14 +346,16 @@ namespace SteamEngine {
 			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in dict) {
 				array[arrayIndex] = new KeyValuePair<TKey, TValue>(
 					(TKey) pair.Key.weakKey.Target, (TValue) pair.Value.Target);
-				arrayIndex++;
+				checked {
+					arrayIndex++;
+				}
 			}
 		}
 
 		public int Count {
 			get {
 				Purge();
-				return dict.Count;
+				return this.dict.Count;
 			}
 		}
 

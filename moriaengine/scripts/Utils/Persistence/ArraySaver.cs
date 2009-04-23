@@ -52,32 +52,32 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.headerLine;
+			int currentLineNumber = input.HeaderLine;
 			try {
 				PropsLine pl = input.PopPropsLine("type");
-				currentLineNumber = pl.line;
+				currentLineNumber = pl.Line;
 				Type elemType = GenericListSaver.ParseType(pl);
 
 				PropsLine lengthLine = input.PopPropsLine("length");
-				currentLineNumber = lengthLine.line;
-				int length = ConvertTools.ParseInt32(lengthLine.value);
+				currentLineNumber = lengthLine.Line;
+				int length = ConvertTools.ParseInt32(lengthLine.Value);
 
 				Array arr = Array.CreateInstance(elemType, length);
 
 				for (int i = 0; i < length; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
-					currentLineNumber = valueLine.line;
+					currentLineNumber = valueLine.Line;
 					ArrayLoadHelper alip = new ArrayLoadHelper(arr, i, elemType);
-					ObjectSaver.Load(valueLine.value, new LoadObjectParam(DelayedLoad_Index), input.filename, valueLine.line, alip);
+					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(DelayedLoad_Index), input.Filename, valueLine.Line, alip);
 				}
 				return arr;
 			} catch (FatalException) {
 				throw;
 			} catch (SEException sex) {
-				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 				throw;
 			} catch (Exception e) {
-				throw new SEException(input.filename, currentLineNumber, e);
+				throw new SEException(input.Filename, currentLineNumber, e);
 			}
 		}
 

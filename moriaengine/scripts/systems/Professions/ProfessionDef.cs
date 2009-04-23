@@ -132,8 +132,8 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [ProfessionDef class_necro] etc.
-			string typeName = input.headerType.ToLower();
-			string profDefName = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower();
+			string profDefName = input.HeaderName.ToLower();
 
 			AbstractScript def;
 			AllScriptsByDefname.TryGetValue(profDefName, out def);
@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 				if (def != null) {//it isnt profDef
 					throw new ScriptException("ProfessionDef " + LogStr.Ident(profDefName) + " has the same name as " + LogStr.Ident(def));
 				} else {
-					object[] cargs = new object[] { profDefName, input.filename, input.headerLine };
+					object[] cargs = new object[] { profDefName, input.Filename, input.HeaderLine };
 					profDef = (ProfessionDef) constructor.Invoke(cargs);
 				}
 			} else if (profDef.IsUnloaded) {
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");
-				profDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(), p.value);
+				profDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
 
 				UnRegisterProfessionDef(profDef);//will be re-registered again
 			} else {
@@ -165,7 +165,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//now do load the trigger code.
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + input.headerName + "__"; //naming of the trigger group for @login, logout etc. triggers
+				input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @login, logout etc. triggers
 				profDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			} else {
 				profDef.scriptedTriggers = null;
@@ -514,7 +514,7 @@ namespace SteamEngine.CompiledScripts {
 				Globals.SrcCharacter.Message("Povolání mùže být pøiøazeno pouze hráèi", (int) Hues.Red);
 				return;
 			}
-			if ((args == null) || (args.Args == null) || args.argv.Length == 0) {
+			if ((args == null) || (args.Args == null) || args.Argv.Length == 0) {
 				Globals.SrcCharacter.Message("Nebylo zvoleno povolání pro pøiøazení", (int) Hues.Red);
 				return;
 			}

@@ -169,8 +169,7 @@ namespace SteamEngine {
 		private static int defaultUnicodeMessageColor;
 		public static int DefaultUnicodeMessageColor {
 			get { return Globals.defaultUnicodeMessageColor; }
-		} 
-
+		}
 
 		internal static bool useMap;
 		public static bool UseMap {
@@ -824,7 +823,7 @@ namespace SteamEngine {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
 			PropsLine timeLine = input.TryPopPropsLine("time");
 			long value;
-			if ((timeLine != null) && (ConvertTools.TryParseInt64(timeLine.value, out value))) {
+			if ((timeLine != null) && (ConvertTools.TryParseInt64(timeLine.Value, out value))) {
 				lastMarkServerTime = TimeSpan.FromTicks(value);
 			} else {
 				Logger.WriteWarning("The Globals section of save is missing the " + LogStr.Ident("Time") + " value or the value is invalid, setting server time to 0");

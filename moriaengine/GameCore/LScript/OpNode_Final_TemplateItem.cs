@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_TemplateItem : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		private OpNode defNode;
 		private OpNode amountNode;

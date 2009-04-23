@@ -128,7 +128,7 @@ namespace SteamEngine {
 		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			string typeName = input.headerType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 
 			PropsLine prop = input.PopPropsLine("defname");
 			if (prop == null) {
@@ -136,11 +136,11 @@ namespace SteamEngine {
 			}
 
 			string defName;
-			Match ma = TagMath.stringRE.Match(prop.value);
+			Match ma = TagMath.stringRE.Match(prop.Value);
 			if (ma.Success) {
 				defName = String.Intern(ma.Groups["value"].Value);
 			} else {
-				defName = String.Intern(prop.value);
+				defName = String.Intern(prop.Value);
 			}
 
 			AbstractScript def;
@@ -153,7 +153,7 @@ namespace SteamEngine {
 				if (def != null) {//it isnt skilldef
 					throw new ScriptException("SkillDef " + LogStr.Ident(defName) + " has the same name as " + LogStr.Ident(def));
 				} else {
-					object[] cargs = new object[] { defName, input.filename, input.headerLine };
+					object[] cargs = new object[] { defName, input.Filename, input.HeaderLine };
 					skillDef = (AbstractSkillDef) constructor.Invoke(cargs);
 				}
 			} else if (skillDef.IsUnloaded) {
@@ -164,7 +164,7 @@ namespace SteamEngine {
 				//we have to load the key first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("key");
-				skillDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.value);
+				skillDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
 
 				UnregisterSkillDef(skillDef);//will be re-registered again
 			} else {
@@ -172,7 +172,7 @@ namespace SteamEngine {
 			}
 
 			ushort skillId;
-			if (!TagMath.TryParseUInt16(input.headerName, out skillId)) {
+			if (!TagMath.TryParseUInt16(input.HeaderName, out skillId)) {
 				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
 			}
 
@@ -180,7 +180,7 @@ namespace SteamEngine {
 
 			//now do load the trigger code. 
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + input.headerName + "__";
+				input.HeaderName = "t__" + input.HeaderName + "__";
 				skillDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			} else {
 				skillDef.scriptedTriggers = null;

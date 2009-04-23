@@ -23,6 +23,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public abstract class OpNode_Switch : OpNode, IOpNodeHolder {
 		protected OpNode switchNode;
 		protected Hashtable cases;
@@ -35,6 +36,7 @@ namespace SteamEngine.LScript {
 		}
 		private static TempParent tempParent = new TempParent();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 		protected class NullOpNode : OpNode {
 			internal NullOpNode()
 				: base(null, null, -1, -1, null) {
@@ -44,6 +46,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", MessageId = "Member")]
 		protected static readonly NullOpNode nullOpNodeInstance = new NullOpNode();
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
@@ -192,6 +195,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Switch_String : OpNode_Switch {
 		internal OpNode_Switch_String(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
@@ -212,6 +216,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Switch_Integer : OpNode_Switch {
 		internal OpNode_Switch_Integer(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {

@@ -43,6 +43,7 @@ namespace SteamEngine {
 		Locked = 2
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
 	public enum SkillLockType : byte {
 		Up = 0, Increase = 0, Unlocked = 0,
 		Down = 1, Decrease = 1, LockedDown = 1,

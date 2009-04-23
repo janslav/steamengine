@@ -20,6 +20,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_GetArgv : OpNode_Argument {
 		internal OpNode_GetArgv(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, OpNode nodeIndex)
@@ -38,7 +39,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				return vars.scriptArgs.argv[Convert.ToInt32(indexVal)];
+				return vars.scriptArgs.Argv[Convert.ToInt32(indexVal, System.Globalization.CultureInfo.InvariantCulture)];
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while getting ARG",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -50,6 +51,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_GetArgv_Constant : OpNode_Argument {
 		internal OpNode_GetArgv_Constant(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, int intIndex)
@@ -60,7 +62,7 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				return vars.scriptArgs.argv[intIndex];
+				return vars.scriptArgs.Argv[intIndex];
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while getting ARG",
 					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
@@ -72,6 +74,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_SetArgv : OpNode_Argument {
 		internal OpNode_SetArgv(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, OpNode nodeIndex, OpNode arg)
@@ -95,7 +98,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				vars.scriptArgs.argv[Convert.ToInt32(indexVal)] = argVal;
+				vars.scriptArgs.Argv[Convert.ToInt32(indexVal, System.Globalization.CultureInfo.InvariantCulture)] = argVal;
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while setting ARG",
@@ -108,6 +111,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_SetArgv_Constant : OpNode_Argument {
 		internal OpNode_SetArgv_Constant(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode, int intIndex, OpNode arg)
@@ -128,7 +132,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				vars.scriptArgs.argv[intIndex] = argVal;
+				vars.scriptArgs.Argv[intIndex] = argVal;
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while setting ARG",
@@ -141,6 +145,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_GetArgs : OpNode {
 		internal OpNode_GetArgs(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode)
@@ -156,6 +161,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_ArgvCount : OpNode {
 		internal OpNode_ArgvCount(IOpNodeHolder parent, string filename,
 				int line, int column, Node origNode)
@@ -163,7 +169,7 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return vars.scriptArgs.argv.Length;
+			return vars.scriptArgs.Argv.Length;
 		}
 
 		public override string ToString() {

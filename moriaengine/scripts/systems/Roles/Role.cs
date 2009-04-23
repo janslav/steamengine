@@ -242,15 +242,15 @@ namespace SteamEngine.CompiledScripts {
 
 		[LoadSection]
 		public static Role LoadSection(PropsSection input) {
-			int currentLineNumber = input.headerLine;
+			int currentLineNumber = input.HeaderLine;
 			try {
 				PropsLine pl = input.PopPropsLine("def");
-				currentLineNumber = pl.line;
-				RoleDef def = (RoleDef) ObjectSaver.OptimizedLoad_Script(pl.value);
+				currentLineNumber = pl.Line;
+				RoleDef def = (RoleDef) ObjectSaver.OptimizedLoad_Script(pl.Value);
 
 				pl = input.PopPropsLine("key");
-				currentLineNumber = pl.line;
-				RoleKey key = (RoleKey) ObjectSaver.OptimizedLoad_SimpleType(pl.value, typeof(RoleKey));
+				currentLineNumber = pl.Line;
+				RoleKey key = (RoleKey) ObjectSaver.OptimizedLoad_SimpleType(pl.Value, typeof(RoleKey));
 
 				//pl = input.PopPropsLine("count");
 				//currentLineNumber = pl.line;
@@ -265,13 +265,13 @@ namespace SteamEngine.CompiledScripts {
 				//    }
 				//}
 
-				foreach (PropsLine p in input.GetPropsLines()) {
+				foreach (PropsLine p in input.PropsLines) {
 					try {
-						role.LoadLine(input.filename, p.line, p.name.ToLower(), p.value);
+						role.LoadLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
 					} catch (FatalException) {
 						throw;
 					} catch (Exception ex) {
-						Logger.WriteWarning(input.filename, p.line, ex);
+						Logger.WriteWarning(input.Filename, p.Line, ex);
 					}
 				}
 
@@ -279,10 +279,10 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) {
 				throw;
 			} catch (SEException sex) {
-				sex.TryAddFileLineInfo(input.filename, currentLineNumber);
+				sex.TryAddFileLineInfo(input.Filename, currentLineNumber);
 				throw;
 			} catch (Exception e) {
-				throw new SEException(input.filename, currentLineNumber, e);
+				throw new SEException(input.Filename, currentLineNumber, e);
 			}
 		}
 

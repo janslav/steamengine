@@ -60,6 +60,10 @@ namespace SteamEngine.Common {
 			}
 		}
 
+		public static void Init() {
+
+		}
+
 		public static long TickCount {
 			get {
 				//if (fallback) {

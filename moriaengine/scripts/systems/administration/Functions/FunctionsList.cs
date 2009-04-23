@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			for (int i = firstiVal; i < imax; i++) {
 				ScriptHolder sh = fList[i];
 
-				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(sh.name).Build();
+				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(sh.Name).Build();
 				//cudl na zobrazeni popisu }aktivni pouze je-li popis
 				dlg.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Active(sh.Description != null).Id(10 + i).Build();
 				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text((sh is CompiledScriptHolder) ? "compiled" : "scripted").Build();
@@ -140,7 +140,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			foreach (ScriptHolder entry in fctions) {
 				if (criteria == null || criteria.Equals("")) {
 					fList.Add(entry);//bereme vse
-				} else if (entry.name.ToUpper().Contains(criteria.ToUpper())) {
+				} else if (entry.Name.ToUpper().Contains(criteria.ToUpper())) {
 					fList.Add(entry);//jinak jen v pripade ze kriterium se vyskytuje v nazvu ability
 				}
 			}
@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void AllFunctions(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_Functions.sortTK, SortingCriteria.NameAsc);//default sorting
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_Functions>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_Functions.criteriaTK, text.Args);//vyhl. kriterium
@@ -184,7 +184,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(ScriptHolder x, ScriptHolder y) {
-			return StringComparer.OrdinalIgnoreCase.Compare(x.name, y.name);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 		}
 	}
 }

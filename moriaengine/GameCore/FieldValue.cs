@@ -30,21 +30,22 @@ namespace SteamEngine {
 
 	public interface IFieldValueParser {
 		Type HandledType { get; }
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate")]
 		bool TryParse(string input, out object retVal);
 	}
 
 	public sealed class FieldValue : IUnloadable {
 		private static Dictionary<Type, IFieldValueParser> parsers = new Dictionary<Type, IFieldValueParser>();
 
-		string name;
-		FieldValueType fvType;
-		Type type;
-		bool isChangedManually;
-		bool isSetFromScripts;
-		bool unloaded;
+		private string name;
+		private FieldValueType fvType;
+		private Type type;
+		private bool isChangedManually;
+		private bool isSetFromScripts;
+		private bool unloaded;
 
-		FieldValueImpl currentValue;
-		FieldValueImpl defaultValue;
+		private FieldValueImpl currentValue;
+		private FieldValueImpl defaultValue;
 
 		internal FieldValue(string name, FieldValueType fvType, Type type, string filename, int line, string value) {
 			this.name = name;
@@ -90,34 +91,34 @@ namespace SteamEngine {
 
 		public void Unload() {
 			if (this.isChangedManually) {
-				unloaded = true;
+				this.unloaded = true;
 			}
 		}
 
 		public bool IsUnloaded {
-			get { return unloaded; }
+			get { return this.unloaded; }
 		}
 
 		private void ThrowIfUnloaded() {
-			if (unloaded) {
-				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(name) + "' is unloaded.");
+			if (this.unloaded) {
+				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(this.name) + "' is unloaded.");
 			}
 		}
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
 		internal void ResolveTemporaryState() {
-			if (defaultValue is TemporaryValueImpl) {
-				FieldValueImpl wasCurrent = currentValue;
-				FieldValueImpl wasDefault = defaultValue;
+			if (this.defaultValue is TemporaryValueImpl) {
+				FieldValueImpl wasCurrent = this.currentValue;
+				FieldValueImpl wasDefault = this.defaultValue;
 				bool success = false;
 				try {
 					//first, resolve the default value using lscript
-					TemporaryValueImpl tempVI = (TemporaryValueImpl) defaultValue;
+					TemporaryValueImpl tempVI = (TemporaryValueImpl) this.defaultValue;
 
 					try {
 						string value = tempVI.valueString;
@@ -135,8 +136,8 @@ namespace SteamEngine {
 							}
 						}
 
-						defaultValue = GetFittingValueImpl();
-						defaultValue.Value = retVal;
+						this.defaultValue = this.GetFittingValueImpl();
+						this.defaultValue.Value = retVal;
 					} catch (SEException sex) {
 						sex.TryAddFileLineInfo(tempVI.filename, tempVI.line);
 						throw;
@@ -145,16 +146,16 @@ namespace SteamEngine {
 					}
 
 
-					if (!isChangedManually) {//we were already resynced...the loaded value should not change
-						currentValue = defaultValue.Clone();
+					if (!this.isChangedManually) {//we were already resynced...the loaded value should not change
+						this.currentValue = this.defaultValue.Clone();
 					}
 
 					success = true;
 					return;
 				} finally {
 					if (!success) {
-						currentValue = wasCurrent;
-						defaultValue = wasDefault;
+						this.currentValue = wasCurrent;
+						this.defaultValue = wasDefault;
 					}
 				}
 			}
@@ -294,9 +295,9 @@ namespace SteamEngine {
 				case FieldValueType.Typeless:
 					return new TypelessValueImpl();
 				case FieldValueType.Typed:
-					return new TypedValueImpl(type);
+					return new TypedValueImpl(this.type);
 				case FieldValueType.ThingDefType:
-					return new ThingDefValueImpl(type);
+					return new ThingDefValueImpl(this.type);
 				case FieldValueType.Model:
 					return new ModelValueImpl();
 			}
@@ -308,16 +309,16 @@ namespace SteamEngine {
 
 			this.defaultValue = GetFittingValueImpl();
 			this.defaultValue.Value = value;
-			this.currentValue = defaultValue.Clone();
+			this.currentValue = this.defaultValue.Clone();
 			this.unloaded = false;
 		}
 
 		public void SetFromScripts(string filename, int line, string value) {
-			if (isChangedManually) {
-				defaultValue = new TemporaryValueImpl(filename, line, this, value);
+			if (this.isChangedManually) {
+				this.defaultValue = new TemporaryValueImpl(filename, line, this, value);
 			} else {
-				currentValue = new TemporaryValueImpl(filename, line, this, value);
-				defaultValue = new TemporaryValueImpl(filename, line, this, value);
+				this.currentValue = new TemporaryValueImpl(filename, line, this, value);
+				this.defaultValue = new TemporaryValueImpl(filename, line, this, value);
 			}
 
 			this.isSetFromScripts = true;
@@ -352,8 +353,8 @@ namespace SteamEngine {
 
 		public object CurrentValue {
 			get {
-				ThrowIfUnloaded();
-				return currentValue.Value;
+				this.ThrowIfUnloaded();
+				return this.currentValue.Value;
 			}
 			set {
 				this.currentValue.Value = value;
@@ -364,8 +365,8 @@ namespace SteamEngine {
 
 		public object DefaultValue {
 			get {
-				ThrowIfUnloaded();
-				return defaultValue.Value;
+				this.ThrowIfUnloaded();
+				return this.defaultValue.Value;
 			}
 			//set {
 			//	defaultValue.Value = value;

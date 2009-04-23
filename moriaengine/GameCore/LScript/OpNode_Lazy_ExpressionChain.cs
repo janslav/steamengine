@@ -27,6 +27,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Lazy_ExpressionChain : OpNode, IOpNodeHolder {
 		//accepts DottedExpressionChain
 		private OpNode[] chain; //expression1.expression2.exp....

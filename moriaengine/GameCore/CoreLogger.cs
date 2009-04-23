@@ -26,6 +26,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
 		private static CoreLogger initInstance = PrivateInit();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static CoreLogger PrivateInit() {
 			CoreLogger retval;
 			try {

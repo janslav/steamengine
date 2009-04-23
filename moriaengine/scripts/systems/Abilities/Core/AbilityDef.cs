@@ -260,8 +260,8 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
-			string typeName = input.headerType.ToLower();
-			string abilityDefName = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower();
+			string abilityDefName = input.HeaderName.ToLower();
 
 			AbstractScript def;
 			AllScriptsByDefname.TryGetValue(abilityDefName, out def);
@@ -273,7 +273,7 @@ namespace SteamEngine.CompiledScripts {
 				if (def != null) {//it isnt abilityDef
 					throw new ScriptException("AbilityDef " + LogStr.Ident(abilityDefName) + " has the same name as " + LogStr.Ident(def));
 				} else {
-					object[] cargs = new object[] { abilityDefName, input.filename, input.headerLine };
+					object[] cargs = new object[] { abilityDefName, input.Filename, input.HeaderLine };
 					abilityDef = (AbilityDef) constructor.Invoke(cargs);
 				}
 			} else if (abilityDef.IsUnloaded) {
@@ -284,7 +284,7 @@ namespace SteamEngine.CompiledScripts {
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");
-				abilityDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(), p.value);
+				abilityDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
 
 				UnRegisterAbilityDef(abilityDef);//will be re-registered again
 			} else {
@@ -293,7 +293,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//now do load the trigger code. 
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + input.headerName + "__"; //naming of the trigger group for @assign, unassign etd. triggers
+				input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @assign, unassign etd. triggers
 				abilityDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			} else {
 				abilityDef.scriptedTriggers = null;
@@ -440,10 +440,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public DenyResultAbilities Result {
 			get {
-				return (DenyResultAbilities) Convert.ToInt32(argv[0]);
+				return (DenyResultAbilities) Convert.ToInt32(Argv[0]);
 			}
 			set {
-				argv[0] = value;
+				Argv[0] = value;
 			}
 		}
 	}

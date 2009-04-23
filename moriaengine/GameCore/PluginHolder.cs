@@ -36,26 +36,29 @@ namespace SteamEngine {
 		bool HasTriggerGroup(TriggerGroup tg);
 		void RemoveTriggerGroup(TriggerGroup tg);
 
-		void Trigger(TriggerKey td, ScriptArgs sa);
-		void TryTrigger(TriggerKey td, ScriptArgs sa);
-		bool CancellableTrigger(TriggerKey td, ScriptArgs sa);
-		bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa);
+		void Trigger(TriggerKey tk, ScriptArgs sa);
+		void TryTrigger(TriggerKey tk, ScriptArgs sa);
+		bool CancellableTrigger(TriggerKey tk, ScriptArgs sa);
+		bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		IEnumerable<TriggerGroup> GetAllTriggerGroups();
 	}
 
 	public interface IPluginHolder : ITriggerGroupHolder {
-		Plugin AddPlugin(PluginKey pg, Plugin plugin);
-		Plugin AddPluginAsSimple(PluginKey pg, Plugin plugin);
+		Plugin AddPlugin(PluginKey pk, Plugin plugin);
+		Plugin AddPluginAsSimple(PluginKey pk, Plugin plugin);
 		void DeletePlugins();
-		Plugin GetPlugin(PluginKey pg);
-		bool HasPlugin(PluginKey pg);
+		Plugin GetPlugin(PluginKey pk);
+		bool HasPlugin(PluginKey pk);
 		bool HasPlugin(Plugin plugin);
 		Plugin RemovePlugin(Plugin plugin);
-		Plugin RemovePlugin(PluginKey pg);
-		void DeletePlugin(PluginKey pg);
+		Plugin RemovePlugin(PluginKey pk);
+		void DeletePlugin(PluginKey pk);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		IEnumerable<Plugin> GetAllPlugins();
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		IEnumerable<Plugin> GetNonSimplePlugins();
 	}
 
@@ -64,8 +67,8 @@ namespace SteamEngine {
 		All Things (Items and Characters) and GameAccounts are TagHolders, as is Server.globals.
 	*/
 	public class PluginHolder : TagHolder, IPluginHolder {
-		private TGListNode firstTGListNode = null;	//double-linked list of triggergroup references. We only have it for fast "foreach" operation in Trigger methods. Lookup goes thru tags Hashtable
-		private Plugin firstPlugin = null;			//double-linked list of Plugins. We only have it for fast "foreach" operation in Trigger methods. Lookup goes thru tags Hashtable
+		private TGListNode firstTGListNode;	//double-linked list of triggergroup references. We only have it for fast "foreach" operation in Trigger methods. Lookup goes thru tags Hashtable
+		private Plugin firstPlugin;			//double-linked list of Plugins. We only have it for fast "foreach" operation in Trigger methods. Lookup goes thru tags Hashtable
 
 		public PluginHolder() {
 		}
@@ -165,10 +168,10 @@ namespace SteamEngine {
 			firstTGListNode = null;
 		}
 
-		public class TGListNode {
+		internal class TGListNode {
 			public readonly TriggerGroup storedTG;
-			internal TGListNode prevNode = null;
-			internal TGListNode nextNode = null;
+			internal TGListNode prevNode;
+			internal TGListNode nextNode;
 
 			internal TGListNode(TriggerGroup storedTG) {
 				this.storedTG = storedTG;
@@ -271,6 +274,7 @@ namespace SteamEngine {
 		#endregion Trigger() methods
 
 		#region save/load
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
@@ -295,7 +299,7 @@ namespace SteamEngine {
 			base.Save(output);
 		}
 
-		public static Regex pluginKeyRE = new Regex(@"^\@@(?<name>.+?)(?<asterisk>\*)?\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		internal static Regex pluginKeyRE = new Regex(@"^\@@(?<name>.+?)(?<asterisk>\*)?\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			Match m = pluginKeyRE.Match(valueName);
@@ -349,10 +353,12 @@ namespace SteamEngine {
 
 		#endregion save/load
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Plugin AddNewPlugin(PluginKey key, PluginDef def) {
 			return AddPlugin(key, def.Create());
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Plugin AddNewPluginAsSimple(PluginKey key, PluginDef def) {
 			return AddPluginAsSimple(key, def.Create());
 		}
@@ -411,16 +417,16 @@ namespace SteamEngine {
 			}
 		}
 
-		public bool HasPlugin(PluginKey pg) {
+		public bool HasPlugin(PluginKey pk) {
 			if (tags != null) {
-				return tags.ContainsKey(pg);
+				return tags.ContainsKey(pk);
 			}
 			return false;
 		}
 
-		public Plugin GetPlugin(PluginKey pg) {
+		public Plugin GetPlugin(PluginKey pk) {
 			if (tags != null) {
-				return tags[pg] as Plugin;
+				return tags[pk] as Plugin;
 			}
 			return null;
 		}
@@ -439,19 +445,19 @@ namespace SteamEngine {
 			return null;
 		}
 
-		public Plugin RemovePlugin(PluginKey pg) {
+		public Plugin RemovePlugin(PluginKey pk) {
 			if (tags != null) {
-				Plugin plugin = tags[pg] as Plugin;
+				Plugin plugin = tags[pk] as Plugin;
 				if (plugin != null) {
-					return RemovePluginImpl(pg, plugin);
+					return RemovePluginImpl(pk, plugin);
 				}
 			}
 			return null;
 		}
 
-		public void DeletePlugin(PluginKey pg) {
+		public void DeletePlugin(PluginKey pk) {
 			if (tags != null) {
-				Plugin plugin = tags[pg] as Plugin;
+				Plugin plugin = tags[pk] as Plugin;
 				if (plugin != null) {
 					plugin.Delete();
 				}
@@ -496,7 +502,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Return enumerable containing all plugins")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), Summary("Return enumerable containing all plugins")]
 		public IEnumerable<KeyValuePair<PluginKey, Plugin>> GetAllPluginsWithKeys() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {

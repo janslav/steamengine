@@ -541,7 +541,7 @@ namespace SteamEngine.Persistence {
 		//in other words: do scripters need enabling saving/loading other than normal core worldsaving&loading?
 		//I am not sure what all would be needed to do that...
 		internal static void LoadSection(PropsSection input) {
-			string name = input.headerType;
+			string name = input.HeaderType;
 
 			ISaveImplementor isi;
 			if (implementorsByName.TryGetValue(name, out isi)) {
@@ -550,7 +550,7 @@ namespace SteamEngine.Persistence {
 					if (coordinatorsByImplementor.TryGetValue(isi, out coordinator)) {
 						isi.LoadSection(input);
 					} else {
-						uint uid = uint.Parse(input.headerName);
+						uint uid = uint.Parse(input.HeaderName);
 						//[name uid]
 						object loaded = isi.LoadSection(input);
 						while (loadedObjectsByUid.Count <= uid) {
@@ -561,7 +561,7 @@ namespace SteamEngine.Persistence {
 				} catch (FatalException) {
 					throw;
 				} catch (Exception e) {
-					Logger.WriteError(input.filename, input.headerLine, e);
+					Logger.WriteError(input.Filename, input.HeaderLine, e);
 				}
 			} else {
 				throw new UnrecognizedValueException("We really do not know what could the loaded header name '" + LogStr.Ident(name) + "' refer to.");

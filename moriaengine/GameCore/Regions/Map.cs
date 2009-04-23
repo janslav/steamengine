@@ -48,9 +48,10 @@ namespace SteamEngine.Regions {
 		private readonly int sizeY;
 
 		private Sector[,] sectors;
-		internal StaticRegion[] regions;
-		public readonly byte m;
-		private SimpleQueue<Region> dynamicRegions = new SimpleQueue<Region>();
+		private StaticRegion[] regions;
+		private readonly byte m;
+
+		//private SimpleQueue<Region> dynamicRegions = new SimpleQueue<Region>();
 
 		private static GroundTileType t_rock;
 		private static GroundTileType t_grass;
@@ -80,17 +81,35 @@ namespace SteamEngine.Regions {
 			Sanity.IfTrueThrow(t_dirt == null, "Could not find script for t_dirt!");
 		}
 
+		public byte M {
+			get { 
+				return this.m; 
+			}
+		} 
+
 		/**
 			this returns the sector at given coordinates in the sector matrix (i.e. not real map coordinates!)
 			if there was no sector, it initializes it.
 		*/
 		private Sector GetSector(int sx, int sy) {
-			Sector retVal = sectors[sx, sy];
+			Sector retVal = this.sectors[sx, sy];
 			if (retVal == null) {
 				retVal = new Sector((ushort) sx, (ushort) sy, this.m);
-				sectors[sx, sy] = retVal;
+				this.sectors[sx, sy] = retVal;
 			}
 			return retVal;
+		}
+
+		/**
+			This determines if the specified x/y coordinates are within the specified mapplane.
+			It does not check if the tile is walkable, or anything else (including z).
+		*/
+		public static bool IsValidPos(Point4D point) {
+			return point.GetMap().IsValidPos(point.X, point.Y);
+		}
+
+		public static bool IsValidPos(IPoint4D point) {
+			return point.GetMap().IsValidPos(point.X, point.Y);
 		}
 
 		/**
@@ -98,7 +117,7 @@ namespace SteamEngine.Regions {
 			It does not check if the tile is walkable, or anything else.
 		*/
 		public static bool IsValidPos(int x, int y, int m) {
-			return (x >= 0 && y >= 0 && x < GetMapSizeX(m) && y < GetMapSizeY(m));
+			return GetMap(m).IsValidPos(x, y);
 		}
 
 		/**
@@ -117,18 +136,6 @@ namespace SteamEngine.Regions {
 			int x = point.X;
 			int y = point.Y;
 			return (x >= 0 && y >= 0 && x < this.sizeX && y < this.sizeY);
-		}
-
-		/**
-			This determines if the specified x/y coordinates are within the specified mapplane.
-			It does not check if the tile is walkable, or anything else (including z).
-		*/
-		public static bool IsValidPos(Point4D point) {
-			return (point.X >= 0 && point.Y >= 0 && point.X < GetMapSizeX(point.M) && point.Y < GetMapSizeY(point.M));
-		}
-
-		public static bool IsValidPos(IPoint4D point) {
-			return (point.X >= 0 && point.Y >= 0 && point.X < GetMapSizeX(point.M) && point.Y < GetMapSizeY(point.M));
 		}
 
 		/**
@@ -171,7 +178,7 @@ namespace SteamEngine.Regions {
 		/**
 			Returns the number of X tiles in the specified mapplane.
 		*/
-		public static int GetMapSizeX(int mapplane) {
+		public static int GetMapSizeX(int facet) {
 			//if (mapplane >= 0 && mapplane < mapSizeX.Length) {
 			//    return mapSizeX[mapplane];
 			//} else {
@@ -183,7 +190,7 @@ namespace SteamEngine.Regions {
 		/**
 			Returns the number of Y tiles in the specified mapplane.
 		*/
-		public static int GetMapSizeY(int mapplane) {
+		public static int GetMapSizeY(int facet) {
 			//if (mapplane >= 0 && mapplane < mapSizeY.Length) {
 			//    return mapSizeY[mapplane];
 			//} else {
@@ -212,7 +219,6 @@ namespace SteamEngine.Regions {
 		public static int GetFacetPatchesStaticsCount(int facet) {
 			return 0; //we have no support for map patches (yet?) so we ignore them
 		}
-		#endregion
 
 		/**
 			This returns the number of X sectors in the MUL files. This is based on MUL sectors being 8x8.
@@ -224,8 +230,8 @@ namespace SteamEngine.Regions {
 				the MUL files use 8x8 sectors. So it's very important to use the proper methods for the proper
 				things.
 		*/
-		public static int GetMulNumXSectors(int mapplane) {
-			return (GetMapSizeX(mapplane) >> 3);
+		public static int GetMulNumXSectors(int facet) {
+			return (GetMapSizeX(facet) >> 3);
 		}
 
 		/**
@@ -238,8 +244,8 @@ namespace SteamEngine.Regions {
 				the MUL files use 8x8 sectors. So it's very important to use the proper methods for the proper
 				things.
 		*/
-		public static int GetMulNumYSectors(int mapplane) {
-			return (GetMapSizeY(mapplane) >> 3);
+		public static int GetMulNumYSectors(int facet) {
+			return (GetMapSizeY(facet) >> 3);
 		}
 
 		/**
@@ -252,8 +258,8 @@ namespace SteamEngine.Regions {
 				the MUL files use 8x8 sectors. So it's very important to use the proper methods for the proper
 				things.
 		*/
-		public static int GetMapNumXSectors(int mapplane) {
-			return (GetMapSizeX(mapplane) >> sectorFactor);
+		public static int GetMapNumXSectors(int facet) {
+			return (GetMapSizeX(facet) >> sectorFactor);
 		}
 
 		/**
@@ -266,18 +272,21 @@ namespace SteamEngine.Regions {
 				the MUL files use 8x8 sectors. So it's very important to use the proper methods for the proper
 				things.
 		*/
-		public static int GetMapNumYSectors(int mapplane) {
-			return (GetMapSizeY(mapplane) >> sectorFactor);
+		public static int GetMapNumYSectors(int facet) {
+			return (GetMapSizeY(facet) >> sectorFactor);
 		}
+		#endregion
 
 		private Map(byte m) {
-			this.m = m;
-			this.sizeX = GetMapSizeX(m);
-			this.sizeY = GetMapSizeY(m);
 			Logger.WriteDebug("Initializing map " + m);
-			numXSectors = sizeX >> sectorFactor;
-			numYSectors = sizeY >> sectorFactor;
-			sectors = new Sector[numXSectors, numYSectors];
+			int facet = this.Facet; //TODO?
+
+			this.m = m;
+			this.sizeX = GetMapSizeX(facet);
+			this.sizeY = GetMapSizeY(facet);
+			this.numXSectors = this.sizeX >> sectorFactor;
+			this.numYSectors = this.sizeY >> sectorFactor;
+			this.sectors = new Sector[this.numXSectors, this.numYSectors];
 
 			//we dont do this, because individual sectors are now initialised on-demand
 			//for (ushort sx=0; sx<numXSectors; sx++) {
@@ -289,19 +298,27 @@ namespace SteamEngine.Regions {
 
 
 		public int NumXSectors {
-			get { return numXSectors; }
+			get { 
+				return this.numXSectors; 
+			}
 		}
 
 		public int NumYSectors {
-			get { return numYSectors; }
+			get { 
+				return this.numYSectors; 
+			}
 		}
 
 		public int SizeX {
-			get { return sizeX; }
+			get { 
+				return this.sizeX; 
+			}
 		}
 
 		public int SizeY {
-			get { return sizeY; }
+			get {
+				return this.sizeY; 
+			}
 		} 
 
 		/**
@@ -314,9 +331,9 @@ namespace SteamEngine.Regions {
 			if (t.IsOnGround) {
 				int sx = t.X >> sectorFactor;
 				int sy = t.Y >> sectorFactor;
-				GetSector(sx, sy).Disconnected(t);
+				this.GetSector(sx, sy).Disconnected(t);
 				if (t.IsMulti) {
-					RemoveMulti((AbstractItem) t);
+					this.RemoveMulti((AbstractItem) t);
 				}
 			}
 		}
@@ -331,9 +348,9 @@ namespace SteamEngine.Regions {
 			if (t.IsOnGround) {
 				int sx = t.X >> sectorFactor;
 				int sy = t.Y >> sectorFactor;
-				GetSector(sx, sy).Reconnected(t);
+				this.GetSector(sx, sy).Reconnected(t);
 				if (t.IsMulti) {
-					AddMulti((AbstractItem) t);
+					this.AddMulti((AbstractItem) t);
 				}
 			}
 		}
@@ -346,9 +363,9 @@ namespace SteamEngine.Regions {
 			Logger.WriteInfo(MapTracingOn, this + ".Add " + t);
 			int sx = t.X >> sectorFactor;
 			int sy = t.Y >> sectorFactor;
-			GetSector(sx, sy).Add(t);
+			this.GetSector(sx, sy).Add(t);
 			if (t.IsMulti) {
-				AddMulti((AbstractItem) t);
+				this.AddMulti((AbstractItem) t);
 			}
 		}
 
@@ -358,12 +375,13 @@ namespace SteamEngine.Regions {
 			MultiData data = multiItem.Def.multiData;
 			Sanity.IfTrueThrow(data == null, "MultiItem wihtout MultiData on it's Def?!");
 			MutablePoint4D p = multiItem.point4d;
-			components = data.Create(p.x, p.y, p.z, p.m);
+			Sanity.IfTrueThrow(p.m != this.m, "p.m != this.m");
+			components = data.Create(p.x, p.y, p.z, this);
 			multiItem.contentsOrComponents = components;
 			foreach (MultiItemComponent mic in components) {
 				int sx = mic.X >> sectorFactor;
 				int sy = mic.Y >> sectorFactor;
-				GetSector(sx, sy).AddMultiComponent(mic);
+				this.GetSector(sx, sy).AddMultiComponent(mic);
 			}
 		}
 
@@ -380,9 +398,9 @@ namespace SteamEngine.Regions {
 			Logger.WriteInfo(MapTracingOn, this + ".Remove " + t);
 			int sx = x >> sectorFactor;
 			int sy = y >> sectorFactor;
-			GetSector(sx, sy).Remove(t);
+			this.GetSector(sx, sy).Remove(t);
 			if (t.IsMulti) {
-				RemoveMulti((AbstractItem) t);
+				this.RemoveMulti((AbstractItem) t);
 			}
 		}
 
@@ -393,7 +411,7 @@ namespace SteamEngine.Regions {
 			foreach (MultiItemComponent mic in components) {
 				int sx = mic.X >> sectorFactor;
 				int sy = mic.Y >> sectorFactor;
-				GetSector(sx, sy).RemoveMultiComponent(mic);
+				this.GetSector(sx, sy).RemoveMultiComponent(mic);
 			}
 		}
 
@@ -405,7 +423,7 @@ namespace SteamEngine.Regions {
 			Logger.WriteInfo(MapTracingOn, this + ".MadeIntoNonPlayer " + t);
 			int sx = t.X >> sectorFactor;
 			int sy = t.Y >> sectorFactor;
-			GetSector(sx, sy).MadeIntoNonPlayer(t);
+			this.GetSector(sx, sy).MadeIntoNonPlayer(t);
 		}
 
 		/**
@@ -416,7 +434,7 @@ namespace SteamEngine.Regions {
 			Logger.WriteInfo(MapTracingOn, this + ".MadeIntoPlayer " + t);
 			int sx = t.X >> sectorFactor;
 			int sy = t.Y >> sectorFactor;
-			GetSector(sx, sy).MadeIntoPlayer(t);
+			this.GetSector(sx, sy).MadeIntoPlayer(t);
 		}
 
 		/**
@@ -458,9 +476,9 @@ namespace SteamEngine.Regions {
 			Logger.WriteInfo(MapTracingOn, this + ".RemoveFromPImpl(" + thing + "," + oldP + ")");
 			int oldSx = oldP.X >> sectorFactor;
 			int oldSy = oldP.Y >> sectorFactor;
-			GetSector(oldSx, oldSy).Remove(thing);
+			this.GetSector(oldSx, oldSy).Remove(thing);
 			if (thing.IsMulti) {
-				RemoveMulti((AbstractItem) thing);
+				this.RemoveMulti((AbstractItem) thing);
 			}
 		}
 
@@ -540,8 +558,8 @@ namespace SteamEngine.Regions {
 				int newSx = newP.x >> sectorFactor;
 				int oldSy = oldP.Y >> sectorFactor;
 				int newSy = newP.y >> sectorFactor;
-				Sector oldSector = GetSector(oldSx, oldSy);
-				Sector newSector = GetSector(newSx, newSy);
+				Sector oldSector = this.GetSector(oldSx, oldSy);
+				Sector newSector = this.GetSector(newSx, newSy);
 				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");	//P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
 				Logger.WriteInfo(MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
 				oldSector.Remove(thing);
@@ -554,7 +572,7 @@ namespace SteamEngine.Regions {
 					foreach (MultiItemComponent mic in components) {
 						int oldX = mic.X, oldY = mic.Y;
 						mic.SetRelativePos(newP.x, newP.y, newP.z);
-						ChangedMultiCOmponentPImpl(mic, oldX, oldY);
+						this.ChangedMultiCOmponentPImpl(mic, oldX, oldY);
 					}
 				}
 			}
@@ -571,8 +589,8 @@ namespace SteamEngine.Regions {
 				int newSx = mic.X >> sectorFactor;
 				int oldSy = oldY >> sectorFactor;
 				int newSy = mic.Y >> sectorFactor;
-				Sector oldSector = GetSector(oldSx, oldSy);
-				Sector newSector = GetSector(newSx, newSy);
+				Sector oldSector = this.GetSector(oldSx, oldSy);
+				Sector newSector = this.GetSector(newSx, newSy);
 				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");	//P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
 				Logger.WriteInfo(MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
 				oldSector.RemoveMultiComponent(mic);
@@ -581,7 +599,7 @@ namespace SteamEngine.Regions {
 		}
 
 		internal void ClearThings() {
-			foreach (Sector sector in sectors) {
+			foreach (Sector sector in this.sectors) {
 				if (sector != null) {
 					sector.ClearThings();
 				}
@@ -615,42 +633,42 @@ namespace SteamEngine.Regions {
 		//}
 		
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRange(int x, int y, int range) {
-			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, range));
+			return this.GetConnectionsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		//public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y, int range) {
 		//    return GetGameConnsInRectangle(new ImmutableRectangle(x, y, range));
 		//}
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(int x, int y, int range) {
-			return GetPlayersInRectangle(new ImmutableRectangle(x, y, range));
+			return this.GetPlayersInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		public IEnumerable<Thing> GetThingsInRange(int x, int y, int range) {
-			return GetThingsInRectangle(new ImmutableRectangle(x, y, range));
+			return this.GetThingsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		public IEnumerable<AbstractItem> GetItemsInRange(int x, int y, int range) {
-			return GetItemsInRectangle(new ImmutableRectangle(x, y, range));
+			return this.GetItemsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		public IEnumerable<AbstractCharacter> GetCharsInRange(int x, int y, int range) {
-			return GetCharsInRectangle(new ImmutableRectangle(x, y, range));
+			return this.GetCharsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
-		public IEnumerable<Static> GetStaticsInRange(int x, int y, int range) {
-			return GetStaticsInRectangle(new ImmutableRectangle(x, y, range));
+		public IEnumerable<AbstractInternalItem> GetStaticsAndMultiComponentsInRange(int x, int y, int range) {
+			return this.GetStaticsAndMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		public IEnumerable<Thing> GetDisconnectsInRange(int x, int y, int range) {
-			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, range));
+			return this.GetDisconnectsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(int x, int y, int range) {
-			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
+			return this.GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, range));
 		}
 
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRange(int x, int y) {
-			return GetConnectionsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+			return this.GetConnectionsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		//public IEnumerable<GameConn> GetGameConnsInRange(ushort x, ushort y) {
@@ -658,31 +676,31 @@ namespace SteamEngine.Regions {
 		//}
 
 		public IEnumerable<AbstractCharacter> GetPlayersInRange(int x, int y) {
-			return GetPlayersInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+			return this.GetPlayersInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		public IEnumerable<Thing> GetThingsInRange(int x, int y) {
-			return GetThingsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+			return this.GetThingsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		public IEnumerable<AbstractItem> GetItemsInRange(int x, int y) {
-			return GetItemsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+			return this.GetItemsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		public IEnumerable<AbstractCharacter> GetCharsInRange(int x, int y) {
-			return GetCharsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+			return this.GetCharsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
-		public IEnumerable<Static> GetStaticsInRange(int x, int y) {
-			return GetStaticsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+		public IEnumerable<AbstractInternalItem> GetStaticsAndMultiComponentsInRange(int x, int y) {
+			return this.GetStaticsAndMultiComponentsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		public IEnumerable<Thing> GetDisconnectsInRange(int x, int y) {
-			return GetDisconnectsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+			return this.GetDisconnectsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRange(int x, int y) {
-			return GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
+			return this.GetMultiComponentsInRectangle(new ImmutableRectangle(x, y, Globals.MaxUpdateRange));
 		}
 
 		//public IEnumerable<GameConn> GetGameConnsInRectangle(ImmutableRectangle rectangle) {
@@ -698,7 +716,7 @@ namespace SteamEngine.Regions {
 
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (AbstractCharacter player in sector.players) {
+				foreach (AbstractCharacter player in sector.Players) {
 					GameState state = player.GameState;
 					if ((state != null) && (rectangle.Contains(player))) {
 						yield return state.Conn;
@@ -709,7 +727,7 @@ namespace SteamEngine.Regions {
 
 		public IEnumerable<AbstractCharacter> GetPlayersInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (AbstractCharacter player in sector.players) {
+				foreach (AbstractCharacter player in sector.Players) {
 					if (rectangle.Contains(player)) {
 						yield return player;
 					}
@@ -722,7 +740,7 @@ namespace SteamEngine.Regions {
 		*/
 		public IEnumerable<Thing> GetThingsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.things) {
+				foreach (Thing thing in sector.Things) {
 					if (rectangle.Contains(thing)) {
 						yield return thing;
 					}
@@ -735,7 +753,7 @@ namespace SteamEngine.Regions {
 		*/
 		public IEnumerable<AbstractItem> GetItemsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.things) {
+				foreach (Thing thing in sector.Things) {
 					AbstractItem i = thing as AbstractItem;
 					if ((i != null) && (rectangle.Contains(i))) {
 						yield return i;
@@ -749,7 +767,7 @@ namespace SteamEngine.Regions {
 		*/
 		public IEnumerable<AbstractCharacter> GetCharsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.things) {
+				foreach (Thing thing in sector.Things) {
 					AbstractCharacter ch = thing as AbstractCharacter;
 					if ((ch != null) && (rectangle.Contains(ch))) {
 						yield return ch;
@@ -763,7 +781,7 @@ namespace SteamEngine.Regions {
 		*/
 		public IEnumerable<AbstractCharacter> GetNPCsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.things) {
+				foreach (Thing thing in sector.Things) {
 					AbstractCharacter ch = thing as AbstractCharacter;
 					//Account == null is from "IsPlayer" property (but the property also Logs the query - who knows why...?)
 					if ((ch != null) && (ch.Account == null) && (rectangle.Contains(ch))) {
@@ -776,15 +794,15 @@ namespace SteamEngine.Regions {
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
-		public IEnumerable<Static> GetStaticsInRectangle(ImmutableRectangle rectangle) {
+		public IEnumerable<AbstractInternalItem> GetStaticsAndMultiComponentsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Static s in sector.Statics) {
+				foreach (StaticItem s in sector.Statics) {
 					if (rectangle.Contains(s)) {
 						yield return s;
 					}
 				}
-				if (sector.multiComponents != null) {
-					foreach (Static s in sector.multiComponents) {
+				if (sector.MultiComponents != null) {
+					foreach (MultiItemComponent s in sector.MultiComponents) {
 						if (rectangle.Contains(s)) {
 							yield return s;
 						}
@@ -793,18 +811,18 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public IEnumerable<Static> GetStaticsOnCoords(int x, int y) {
+		public IEnumerable<AbstractInternalItem> GetStaticsAndMultiComponentsOnCoords(int x, int y) {
 			int sx = x >> sectorFactor;
 			int sy = y >> sectorFactor;
-			Sector sector = GetSector(sx, sy);
+			Sector sector = this.GetSector(sx, sy);
 
-			foreach (Static s in sector.Statics) {
+			foreach (StaticItem s in sector.Statics) {
 				if ((s.X == x) && (s.Y == y)) {
 					yield return s;
 				}
 			}
-			if (sector.multiComponents != null) {
-				foreach (Static s in sector.multiComponents) {
+			if (sector.MultiComponents != null) {
+				foreach (MultiItemComponent s in sector.MultiComponents) {
 					if ((s.X == x) && (s.Y == y)) {
 						yield return s;
 					}
@@ -817,7 +835,7 @@ namespace SteamEngine.Regions {
 		*/
 		public IEnumerable<Thing> GetDisconnectsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.disconnects) {
+				foreach (Thing thing in sector.Disconnects) {
 					if (rectangle.Contains(thing)) {
 						yield return thing;
 					}
@@ -831,7 +849,7 @@ namespace SteamEngine.Regions {
 		*/
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (MultiItemComponent mic in sector.multiComponents) {
+				foreach (MultiItemComponent mic in sector.MultiComponents) {
 					if (rectangle.Contains(mic)) {
 						yield return mic;
 					}
@@ -865,7 +883,7 @@ namespace SteamEngine.Regions {
 			Thing top = thing.TopObj();
 			ImmutableRectangle rectangle = new ImmutableRectangle(top.X, top.Y, Globals.MaxUpdateRange);
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (AbstractCharacter player in sector.players) {
+				foreach (AbstractCharacter player in sector.Players) {
 					GameState state = player.GameState;
 					if ((state != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing))) {
 						yield return state.Conn;
@@ -887,7 +905,7 @@ namespace SteamEngine.Regions {
 
 			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
 				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
-					yield return GetSector(sx, sy);
+					yield return this.GetSector(sx, sy);
 				}
 			}
 		}
@@ -905,7 +923,7 @@ namespace SteamEngine.Regions {
 
 		public MapTileType GetMapTileType(int id) {
 			MapTileType type = MapTileType.Other;
-			if ((TileData.landFlags[id] & TileFlag.Wet) == TileFlag.Wet) {
+			if ((TileData.GetTileFlags(id) & TileFlag.Wet) == TileFlag.Wet) {
 				type = MapTileType.Water;
 			} else if (t_dirt.IsTypeOfMapTile(id)) {
 				type = MapTileType.Dirt;
@@ -924,7 +942,7 @@ namespace SteamEngine.Regions {
 		*/
 		public bool IsMapTileWater(int x, int y) {
 			int id = GetTileId(x, y);
-			return (TileData.landFlags[id] & TileFlag.Wet) == TileFlag.Wet;
+			return (TileData.GetTileFlags(id) & TileFlag.Wet) == TileFlag.Wet;
 		}
 		/**
 			Returns true if the map tile at the specified specified coordinates is dirt.
@@ -963,41 +981,41 @@ namespace SteamEngine.Regions {
 			Returns the TileID for the map tile at the specified coordinates.
 		*/
 		public int GetTileId(int x, int y) {
-			if (Map.IsValidPos(x, y, m)) {
+			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).GetTileId(x, y);
 			}
-			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
+			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + this.m + ".");
 		}
 
 		/**
 			Returns the z level of the map tile at the specified coordinates.
 		*/
 		public int GetTileZ(int x, int y) {
-			if (Map.IsValidPos(x, y, m)) {
+			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).GetTileZ(x, y);
 			}
-			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
+			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + this.m + ".");
 		}
 
 		public void GetTile(int x, int y, out int z, out int id) {
-			if (Map.IsValidPos(x, y, m)) {
+			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
 				this.GetSector(sx, sy).GetTile(x, y, out z, out id);
 			} else {
-				throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + m + ".");
+				throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + this.m + ".");
 			}
 		}
 
-		public Static GetStatic(int x, int y, int z, int staticId) {
-			if (Map.IsValidPos(x, y, m)) {
+		public StaticItem GetStatic(int x, int y, int z, int staticId) {
+			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
-				return GetSector(sx, sy).GetStatic(x, y, z, staticId);
+				return this.GetSector(sx, sy).GetStatic(x, y, z, staticId);
 			} else {
 				Logger.WriteInfo(MapTracingOn, "GetStatic(" + x + "," + y + "): Invalid pos.");
 				return null;
@@ -1005,10 +1023,10 @@ namespace SteamEngine.Regions {
 		}
 
 		public MultiItemComponent GetMultiComponent(int x, int y, int z, int staticId) {
-			if (Map.IsValidPos(x, y, m)) {
+			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
-				return GetSector(sx, sy).GetMultiComponent(x, y, z, staticId);
+				return this.GetSector(sx, sy).GetMultiComponent(x, y, z, staticId);
 			} else {
 				Logger.WriteInfo(MapTracingOn, "GetMultiComponent(" + x + "," + y + "): Invalid pos.");
 				return null;
@@ -1019,10 +1037,10 @@ namespace SteamEngine.Regions {
 			Returns true if there is a static whose dispid matches 'staticId' at the specified coordinates.
 		*/
 		public bool HasStaticId(int staticId, int x, int y) {
-			if (Map.IsValidPos(x, y, m)) {
+			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
-				return GetSector(sx, sy).HasStaticId(x, y, staticId);
+				return this.GetSector(sx, sy).HasStaticId(x, y, staticId);
 			} else {
 				Logger.WriteInfo(MapTracingOn, "HasStaticId(" + x + "," + y + "): Invalid pos.");
 				return false;
@@ -1031,30 +1049,30 @@ namespace SteamEngine.Regions {
 
 		#region Regions
 		internal Region GetRegionFor(MutablePoint4D point) {
-			return GetSector(point.x >> sectorFactor, point.y >> sectorFactor).GetRegionFor(point.x, point.y);
+			return this.GetSector(point.x >> sectorFactor, point.y >> sectorFactor).GetRegionFor(point.x, point.y);
 		}
 
 		public Region GetRegionFor(Point2D point) {
-			return GetSector(point.X >> sectorFactor, point.Y >> sectorFactor).GetRegionFor(point);
+			return this.GetSector(point.X >> sectorFactor, point.Y >> sectorFactor).GetRegionFor(point);
 		}
 
 		public Region GetRegionFor(int x, int y) {
-			return GetSector(x >> sectorFactor, y >> sectorFactor).GetRegionFor(x, y);
+			return this.GetSector(x >> sectorFactor, y >> sectorFactor).GetRegionFor(x, y);
 		}
 
 		internal void ActivateRegions(List<StaticRegion> list) {
 			//we dont add the rectangles directly to sectors, we first create a "matrix" of arraylists which are then "Staticed" to arrays and assigned to sectors
-			regions = list.ToArray();
+			this.regions = list.ToArray();
 
-			List<RegionRectangle>[,] matrix = new List<RegionRectangle>[numXSectors, numYSectors];
-			foreach (StaticRegion region in regions) {
+			List<RegionRectangle>[,] matrix = new List<RegionRectangle>[this.numXSectors, this.numYSectors];
+			foreach (StaticRegion region in this.regions) {
 				foreach (RegionRectangle rect in region.Rectangles) {
 					int minXs = rect.MinX >> sectorFactor;
 					int maxXs = rect.MaxX >> sectorFactor;
-					maxXs = (int) Math.Min(maxXs, numXSectors - 1);
+					maxXs = (int) Math.Min(maxXs, this.numXSectors - 1);
 					int minYs = rect.MinY >> sectorFactor;
 					int maxYs = rect.MaxY >> sectorFactor;
-					maxYs = (int) Math.Min(maxYs, numYSectors - 1);
+					maxYs = (int) Math.Min(maxYs, this.numYSectors - 1);
 					for (int sx = minXs, topx = maxXs + 1; sx < topx; sx++) {
 						for (int sy = minYs, topy = maxYs + 1; sy < topy; sy++) {
 							List<RegionRectangle> al = matrix[sx, sy];
@@ -1067,11 +1085,11 @@ namespace SteamEngine.Regions {
 					}
 				}
 			}
-			for (int sx = 0; sx < numXSectors; sx++) {
-				for (int sy = 0; sy < numYSectors; sy++) {
+			for (int sx = 0; sx < this.numXSectors; sx++) {
+				for (int sy = 0; sy < this.numYSectors; sy++) {
 					List<RegionRectangle> thislist = matrix[sx, sy];
 					if (thislist != null) {
-						GetSector(sx, sy).SetRegionRectangles(thislist);
+						this.GetSector(sx, sy).SetRegionRectangles(thislist);
 					}
 				}
 			}
@@ -1108,9 +1126,9 @@ namespace SteamEngine.Regions {
 
 		[Summary("Inactivate regions - unload their rectangles, boolean parameter allows us to omit dynamic regions...")]
 		internal void InactivateRegions(bool dynamicsToo) {
-			for (int sx = 0; sx < numXSectors; sx++) {
-				for (int sy = 0; sy < numYSectors; sy++) {
-					Sector se = sectors[sx, sy];
+			for (int sx = 0; sx < this.numXSectors; sx++) {
+				for (int sy = 0; sy < this.numYSectors; sy++) {
+					Sector se = this.sectors[sx, sy];
 					if (se != null) {
 						se.ClearRegionRectangles(dynamicsToo);
 					}
@@ -1122,14 +1140,14 @@ namespace SteamEngine.Regions {
 		internal void GetSectorXY(int x, int y, out int sx, out int sy) {
 			if (x < 0) {
 				x = 0;
-			} else if (x >= sizeX) {
-				x = (ushort) (sizeX - 1);
+			} else if (x >= this.sizeX) {
+				x = (this.sizeX - 1);
 			}
 			sx = x >> sectorFactor;
 			if (y < 0) {
 				y = 0;
-			} else if (y >= sizeY) {
-				y = (ushort) (sizeY - 1);
+			} else if (y >= this.sizeY) {
+				y = (this.sizeY - 1);
 			}
 			sy = y >> sectorFactor;
 
@@ -1140,7 +1158,7 @@ namespace SteamEngine.Regions {
 			if (performControls) {
 				bool addingOK = true;
 				foreach (RegionRectangle rect in region.Rectangles) {
-					foreach (Sector sector in GetSectorsInRectangle(rect)) {
+					foreach (Sector sector in this.GetSectorsInRectangle(rect)) {
 						addingOK = sector.AddDynamicRegionRect(rect, performControls);
 						if (!addingOK) { //there was an error during inserting 
 							RemoveDynamicRegion(region); //immediatelly remove - removes all so far inserted rects...
@@ -1150,7 +1168,7 @@ namespace SteamEngine.Regions {
 				}
 			} else { //no controls
 				foreach (RegionRectangle rect in region.Rectangles) {
-					foreach (Sector sector in GetSectorsInRectangle(rect)) {
+					foreach (Sector sector in this.GetSectorsInRectangle(rect)) {
 						sector.AddDynamicRegionRect(rect, false);
 					}
 				}
@@ -1160,10 +1178,23 @@ namespace SteamEngine.Regions {
 
 		public void RemoveDynamicRegion(DynamicRegion region) {
 			foreach (RegionRectangle rect in region.Rectangles) {
-				foreach (Sector sector in GetSectorsInRectangle(rect)) {
+				foreach (Sector sector in this.GetSectorsInRectangle(rect)) {
 					sector.RemoveDynamicRegionRect(rect);
 				}
 			}
+		}
+
+		[Summary("Take the rectangle, find all sectors it belongs to and chek every dynamic region rectangle in the" +
+				"sector that they do not intersect")]
+		internal bool CheckDynRectIntersection(RegionRectangle rect) {
+			foreach (Sector sector in this.GetSectorsInRectangle(rect)) {//all sectors the examined rectangle belongs to
+				foreach (RegionRectangle existingRect in sector.RegionRectangles) {//all dynamic regions from the sector
+					if (existingRect.IntersectsWith(rect)) { //intersection check
+						return false; //problem here, stop trying !
+					}
+				}
+			}
+			return true;
 		}
 	}
 }

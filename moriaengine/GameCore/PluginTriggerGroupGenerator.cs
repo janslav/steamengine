@@ -38,6 +38,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
@@ -171,8 +172,8 @@ namespace SteamEngine.CompiledScripts {
 
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s = ((string) filterCriteria).ToLower();
-				return m.Name.ToLower().StartsWith(s);
+				string s = ((string) filterCriteria).ToLower(System.Globalization.CultureInfo.InvariantCulture);
+				return m.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith(s);
 			}
 		}
 	}

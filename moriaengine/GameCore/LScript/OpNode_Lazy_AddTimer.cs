@@ -25,6 +25,7 @@ using SteamEngine.Timers;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_Lazy_AddTimer : OpNode, IOpNodeHolder {
 		//accepts AddTimerExpression
 		//STRING , SimpleCode , (STRING | TRIGGERNAME) [, ArgsList];  

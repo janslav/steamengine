@@ -27,6 +27,7 @@ using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_For : OpNode, IOpNodeHolder {
 		private int localIndex;
 		private string localName;//just for the ToString()
@@ -102,8 +103,8 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			if (blockNode != null) {
 				try {
-					int leftBound = Convert.ToInt32(leftBoundNode.Run(vars));
-					int rightBound = Convert.ToInt32(rightBoundNode.Run(vars));
+					int leftBound = Convert.ToInt32(leftBoundNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+					int rightBound = Convert.ToInt32(rightBoundNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 					int step;
 					if (leftBound < rightBound) {
 						step = 1;

@@ -1126,9 +1126,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("Call the underlaying gump istance's methods")]
 		internal override void WriteComponent() {
 			if (textId == 0) { //no text ID was specified, use the text version
-				gump.AddHTMLGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);
+				gump.AddHtmlGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);
 			} else {
-				gump.AddHTMLGump(xPos, yPos, width, height, textId, hasBoundBox, isScrollable);
+				gump.AddHtmlGump(xPos, yPos, width, height, textId, hasBoundBox, isScrollable);
 			}
 		}
 

@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void AllRoles(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
 			newArgs.SetTag(D_RolesList.sortingTK, SortingCriteria.NameAsc);//default sorting
-			if (text == null || text.argv == null || text.argv.Length == 0) {
+			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_RolesList>.Instance, newArgs);
 			} else {
 				newArgs.SetTag(D_RolesList.criteriumTK, text.Args);//vyhl. kriterium

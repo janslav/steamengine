@@ -145,9 +145,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							CraftmenuItem itm = elem as CraftmenuItem;
 							if (itm != null) {//set this item's values (but only for items, leave categories)
 								try {
-									newWeight = gr.responseNumbers[5 * i + 11].number;
-									newRes = (ResourcesList) ObjectSaver.Load(gr.responseTexts[5 * i + 13].text);
-									newSkillmake = (ResourcesList) ObjectSaver.Load(gr.responseTexts[5 * i + 14].text);
+									newWeight = gr.responseNumbers[5 * i + 11].Number;
+									newRes = (ResourcesList) ObjectSaver.Load(gr.responseTexts[5 * i + 13].Text);
+									newSkillmake = (ResourcesList) ObjectSaver.Load(gr.responseTexts[5 * i + 14].Text);
 								} catch { //any problem? - nothing will be set here !
 									newRes = null;
 									newSkillmake = null;

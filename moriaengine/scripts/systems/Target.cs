@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 
 		abstract protected bool AllowGround { get; }
 
-		abstract protected void On_Targon(GameState state, IPoint4D getback, object parameter);
+		abstract protected void On_Targon(GameState state, IPoint3D getback, object parameter);
 
 		abstract protected void On_TargonCancel(GameState state, object parameter);
 	}
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 			return this.GetType().Name;
 		}
 
-		protected sealed override void On_Targon(GameState state, IPoint4D getback, object parameter) {
+		protected sealed override void On_Targon(GameState state, IPoint3D getback, object parameter) {
 			Player self = state.Character as Player;
 			if (self != null) {
 				if (this.On_TargonPoint(self, getback, parameter)) {
@@ -115,12 +115,12 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void On_TargonCancel(Player self, object parameter) {
 		}
 
-		protected virtual bool On_TargonPoint(Player self, IPoint4D targetted, object parameter) {
+		protected virtual bool On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
 			Thing thing = targetted as Thing;
 			if (thing != null) {
 				return On_TargonThing(self, thing, parameter);
 			}
-			Static s = targetted as Static;
+			AbstractInternalItem s = targetted as AbstractInternalItem;
 			if (s != null) {
 				return On_TargonStatic(self, s, parameter);
 			}
@@ -149,11 +149,11 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		protected virtual bool On_TargonStatic(Player self, Static targetted, object parameter) {
+		protected virtual bool On_TargonStatic(Player self, AbstractInternalItem targetted, object parameter) {
 			return On_TargonGround(self, targetted, parameter);
 		}
 
-		protected virtual bool On_TargonGround(Player self, IPoint4D targetted, object parameter) {
+		protected virtual bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
 			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
 			return true;
 		}
@@ -193,8 +193,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			string typeName = input.headerType.ToLower();
-			string defname = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower();
+			string defname = input.HeaderName.ToLower();
 
 			AbstractScript def;
 			AllScriptsByDefname.TryGetValue(defname, out def);
@@ -203,7 +203,7 @@ namespace SteamEngine.CompiledScripts {
 				if (def != null) {//it isnt ScriptedTargetDef
 					throw new OverrideNotAllowedException("ScriptedTargetDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 				} else {
-					td = new ScriptedTargetDef(defname, input.filename, input.headerLine);
+					td = new ScriptedTargetDef(defname, input.Filename, input.HeaderLine);
 				}
 			} else if (td.IsUnloaded) {
 				td.IsUnloaded = false;
@@ -227,14 +227,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (trigger_point != null) {
 				if (n > 1) {
-					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has targon_point defined. All other triggers ignored.");
+					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has targon_point defined. All other triggers ignored.");
 				}
 				td.targon_point = new LScriptHolder(trigger_point);
 			} else {
 
 				for (int i = 0; i < n; i++) {
 					TriggerSection trigger = input.GetTrigger(i);
-					switch (trigger.triggerName.ToLower()) {
+					switch (trigger.TriggerName.ToLower()) {
 						case "targon_ground":
 							td.targon_ground = new LScriptHolder(trigger);
 							break;
@@ -255,17 +255,17 @@ namespace SteamEngine.CompiledScripts {
 							td.targon_cancel = new LScriptHolder(trigger);
 							break;
 						default:
-							Logger.WriteWarning(trigger.filename, trigger.startline, LogStr.Ident(trigger.triggerName) + " is an invalid trigger name for a ScriptedTargetDef section. Ignored.");
+							Logger.WriteWarning(trigger.Filename, trigger.StartLine, LogStr.Ident(trigger.TriggerName) + " is an invalid trigger name for a ScriptedTargetDef section. Ignored.");
 							break;
 					}
 				}
 
 				if ((td.targon_thing != null) && (td.targon_item != null)) {
-					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_item defined. @targon_item ignored.");
+					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_item defined. @targon_item ignored.");
 					td.targon_item = null;
 				}
 				if ((td.targon_thing != null) && (td.targon_char != null)) {
-					Logger.WriteWarning(input.filename, input.headerLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_char defined. @targon_char ignored.");
+					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_char defined. @targon_char ignored.");
 					td.targon_char = null;
 				}
 			}
@@ -310,7 +310,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(ch, parameter);
 		}
 
-		protected override sealed void On_Targon(GameState state, IPoint4D getback, object parameter) {
+		protected override sealed void On_Targon(GameState state, IPoint3D getback, object parameter) {
 			Player player = state.Character as Player;
 			if (player != null) {
 				if (targon_point != null) {
@@ -343,7 +343,7 @@ namespace SteamEngine.CompiledScripts {
 							}
 						}
 					} else {
-						Static targettedStatic = getback as Static;
+						AbstractInternalItem targettedStatic = getback as AbstractInternalItem;
 						if (targettedStatic != null) {
 							if (targon_static != null) {
 								if (TryRunTrigger(targon_static, player, getback, parameter)) {

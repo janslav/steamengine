@@ -21,7 +21,7 @@ using System.IO;
 using SteamEngine.Common;
 
 namespace SteamEngine {
-	class CharData {
+	static class CharData {
 		private static Dictionary<int, bool> knownDispids = new Dictionary<int, bool>();
 
 		public static void AddDispid(int uid) {
@@ -76,8 +76,8 @@ namespace SteamEngine {
 									}
 									numWritten++;
 									scr.WriteLine("");
-									scr.WriteLine("[Character 0x" + model.ToString("x") + "]");
-									scr.WriteLine("model=0x" + model.ToString("x"));
+									scr.WriteLine("[Character 0x" + model.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
+									scr.WriteLine("model=0x" + model.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
 									scr.WriteLine("name=Unknown");
 								}
 							}

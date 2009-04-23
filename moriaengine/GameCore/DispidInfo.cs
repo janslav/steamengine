@@ -32,7 +32,7 @@ namespace SteamEngine {
 		private readonly int unknown1;
 		private readonly byte minItemsToDisplayThisArt;
 		private readonly byte quantity;
-		private readonly int animID;
+		private readonly int animId;
 		private readonly byte unknown2;
 		private readonly byte hue;
 		private readonly int unknown3;
@@ -84,9 +84,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public int AnimID {
+		public int AnimId {
 			get {
-				return this.animID;
+				return this.animId;
 			}
 		}
 
@@ -145,7 +145,7 @@ namespace SteamEngine {
 			this.unknown1 = unknown;
 			this.minItemsToDisplayThisArt = minItemsToDisplayThisArt;
 			this.quantity = quantity;
-			this.animID = animID;
+			this.animId = animID;
 			this.unknown2 = unknown2;
 			this.hue = hue;
 			this.unknown3 = unknown3;
@@ -162,19 +162,19 @@ namespace SteamEngine {
 
 			this.id = array.Count;
 			array.Add(this);
-			this.isEmpty = ((flags == 0 || flags == TileFlag.Unknown_2) && (weight == 1 || weight == 0 || weight == 255) &&
+			this.isEmpty = ((flags == 0 || flags == TileFlag.Unknown2) && (weight == 1 || weight == 0 || weight == 255) &&
 						quality == 0 && unknown == 0 && minItemsToDisplayThisArt == 0 && quantity == 0 && animID == 0 &&
 						unknown2 == 0 && hue == 0 && unknown3 == 0 && name.Length == 0);
 			//height is sometimes not 0 for these.
 		}
 
 		public override bool Equals(object obj) {
-			if (obj is ItemDispidInfo) {
-				ItemDispidInfo idi = (ItemDispidInfo) obj;
-				return (flags == idi.flags && weight == idi.weight && quality == idi.quality && unknown1 == idi.unknown1 &&
-						minItemsToDisplayThisArt == idi.minItemsToDisplayThisArt && quantity == idi.quantity &&
-						animID == idi.animID && unknown2 == idi.unknown2 && hue == idi.hue && unknown3 == idi.unknown3 &&
-						height == idi.height && singularName == idi.singularName);
+			ItemDispidInfo idi = obj as ItemDispidInfo;
+			if (idi != null) {
+				return (this.flags == idi.flags && this.weight == idi.weight && this.quality == idi.quality && this.unknown1 == idi.unknown1 &&
+						this.minItemsToDisplayThisArt == idi.minItemsToDisplayThisArt && this.quantity == idi.quantity &&
+						this.animId == idi.animId && this.unknown2 == idi.unknown2 && this.hue == idi.hue && this.unknown3 == idi.unknown3 &&
+						this.height == idi.height && this.singularName == idi.singularName);
 			}
 			return false;
 		}

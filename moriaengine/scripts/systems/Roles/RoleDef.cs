@@ -129,8 +129,8 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [RoleDef ro_starosta] etc.
-			string typeName = input.headerType.ToLower();
-			string roleDefName = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower();
+			string roleDefName = input.HeaderName.ToLower();
 
 			AbstractScript def;
 			AllScriptsByDefname.TryGetValue(roleDefName, out def);
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
 				if (def != null) {//it isnt roleDef
 					throw new ScriptException("RoleDef " + LogStr.Ident(roleDefName) + " has the same name as " + LogStr.Ident(def));
 				} else {
-					object[] cargs = new object[] { roleDefName, input.filename, input.headerLine };
+					object[] cargs = new object[] { roleDefName, input.Filename, input.HeaderLine };
 					roleDef = (RoleDef) constructor.Invoke(cargs);
 				}
 			} else if (roleDef.IsUnloaded) {
@@ -153,7 +153,7 @@ namespace SteamEngine.CompiledScripts {
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");
-				roleDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(), p.value);
+				roleDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
 
 				UnRegisterRoleDef(roleDef);//will be re-registered again
 			} else {
@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts {
 			//now do load the trigger code. 
 			//possibly will not be used until we decide to widen the roledef's functionality
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + input.headerName + "__"; //naming of the trigger group for @assign, unassign etc. triggers
+				input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @assign, unassign etc. triggers
 				roleDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			} else {
 				roleDef.scriptedTriggers = null;
@@ -253,10 +253,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public DenyResultRoles Result {
 			get {
-				return (DenyResultRoles) Convert.ToInt32(argv[0]);
+				return (DenyResultRoles) Convert.ToInt32(Argv[0]);
 			}
 			set {
-				argv[0] = value;
+				Argv[0] = value;
 			}
 		}
 	}

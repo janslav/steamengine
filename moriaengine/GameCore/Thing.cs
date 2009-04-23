@@ -37,10 +37,8 @@ namespace SteamEngine {
 		int Uid { get; set; }
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable<AbstractItem>, ObjectWithUid {
-		public static bool ThingTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Thing Trace Messages"]);
-		public static bool WeightTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Weight Trace Messages"]);
-
 		private TimeSpan createdAt = Globals.TimeAsSpan;//Server time of creation
 		private ushort color;
 		private ushort model;
@@ -52,23 +50,22 @@ namespace SteamEngine {
 
 		internal object contOrTLL; //internal cos of ThingLinkedList
 
-		private static int savedCharacters = 0;
-		private static int savedItems = 0;
+		private static int savedCharacters;
+		private static int savedItems;
 		private static List<bool> alreadySaved = new List<bool>();
 
 		private static int loadedCharacters;
 		private static int loadedItems;
 
-		internal Thing nextInList = null;
-		internal Thing prevInList = null;
+		internal Thing nextInList;
+		internal Thing prevInList;
 
 		private static List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
 
 		private static UIDArray<Thing> things = new UIDArray<Thing>();
 		private static int uidBeingLoaded = -1;
-		public static TagKey weightTag = TagKey.Get("_weight_");
 
-
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 		internal sealed class ThingSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?[\da-f]+)\s*$",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -92,18 +89,19 @@ namespace SteamEngine {
 				foreach (Thing t in things) {
 					SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
 				}
-				Logger.WriteDebug(string.Format(
+				Logger.WriteDebug(string.Format(System.Globalization.CultureInfo.InvariantCulture,
 												"Saved {0} things: {1} items and {2} characters.",
 												savedCharacters + savedItems, savedItems, savedCharacters));
 
 				alreadySaved = null;
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 			public void LoadingFinished() {
 				//this means real end of file(s)
 				uidBeingLoaded = -1;
 				things.LoadingFinished();
-				Logger.WriteDebug(string.Format(
+				Logger.WriteDebug(string.Format(System.Globalization.CultureInfo.InvariantCulture,
 												"Loaded {0} things: {1} items and {2} characters.",
 												loadedItems + loadedCharacters, loadedItems, loadedCharacters));
 				foreach (Thing t in things) {
@@ -125,8 +123,9 @@ namespace SteamEngine {
 				get { return thingUidRE; }
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
-				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer);
+				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
 				Thing thing = Thing.UidGetThing(uid);
 				if (thing != null) {
 					return thing;
@@ -146,7 +145,7 @@ namespace SteamEngine {
 				things.Add(this);//sets uid
 				this.Resend();
 			} else {
-				uid = uidBeingLoaded;				
+				this.uid = uidBeingLoaded;				
 			}
 			Globals.LastNew = this;
 		}
@@ -156,10 +155,10 @@ namespace SteamEngine {
 
 			this.Resend();
 			things.Add(this);//sets uid
-			point4d = new MutablePoint4D(copyFrom.point4d);
-			def = copyFrom.def;
-			color = copyFrom.color;
-			model = copyFrom.model;
+			this.point4d = new MutablePoint4D(copyFrom.point4d);
+			this.def = copyFrom.def;
+			this.color = copyFrom.color;
+			this.model = copyFrom.model;
 			//SetSectorPoint4D();
 			Globals.LastNew = this;
 		}
@@ -188,16 +187,16 @@ namespace SteamEngine {
 		//An identification number that no other Thing (AbstractItem, AbstractCharacter, etc) has.
 		public int Uid {
 			get {
-				return uid;
+				return this.uid;
 			}
 		}
 
 		int ObjectWithUid.Uid {
 			get {
-				return uid;
+				return this.uid;
 			}
 			set {
-				uid = value;
+				this.uid = value;
 			}
 		}
 
@@ -225,7 +224,7 @@ namespace SteamEngine {
 		public int X {
 			get {
 				ThrowIfDeleted();
-				return point4d.x;
+				return this.point4d.x;
 			}
 			set {
 				this.P(value, this.Y, this.Z, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
@@ -235,7 +234,7 @@ namespace SteamEngine {
 		public int Y {
 			get {
 				ThrowIfDeleted();
-				return point4d.y;
+				return this.point4d.y;
 			}
 			set {
 				this.P(this.X, value, this.Z, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
@@ -245,7 +244,7 @@ namespace SteamEngine {
 		public int Z {
 			get {
 				ThrowIfDeleted();
-				return point4d.z;
+				return this.point4d.z;
 			}
 			set {
 				this.P(this.X, this.Y, value, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
@@ -256,7 +255,7 @@ namespace SteamEngine {
 		public byte M {
 			get {
 				ThrowIfDeleted();
-				return point4d.m;
+				return this.point4d.m;
 			}
 			set {
 				this.P(this.X, this.Y, this.Z, value);	//maybe the compiler will optimize this for us... I hope so! -SL
@@ -264,7 +263,7 @@ namespace SteamEngine {
 		}
 
 		public Point4D P() {
-			return new Point4D(point4d);
+			return new Point4D(this.point4d);
 		}
 
 
@@ -286,6 +285,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool Flag_Disconnected {
 			get {
 				return false;
@@ -296,10 +296,12 @@ namespace SteamEngine {
 			this.SetPosImpl(x, y, this.Z, this.M);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(Point2D point) {
 			this.SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(IPoint2D point) {
 			this.SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
@@ -308,10 +310,12 @@ namespace SteamEngine {
 			this.SetPosImpl(x, y, z, M);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(Point3D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(IPoint3D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
@@ -320,10 +324,12 @@ namespace SteamEngine {
 			this.SetPosImpl(x, y, z, m);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(Point4D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(IPoint4D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
@@ -380,7 +386,7 @@ namespace SteamEngine {
 
 		public int Color {
 			get {
-				return color;
+				return this.color;
 			}
 			set {
 				if (value >= 0 && (value & ~0xc000) <= 0xbb6) {
@@ -424,11 +430,11 @@ namespace SteamEngine {
 
 		public TimeSpan CreatedAt {
 			get {
-				return createdAt;
+				return this.createdAt;
 			}
 		}
 
-		public ThingDef Def { get { return def; } }
+		public ThingDef Def { get { return this.def; } }
 
 		public virtual bool IsPlayer { get { return false; } }
 
@@ -438,7 +444,11 @@ namespace SteamEngine {
 			}
 		}
 
-		public override bool IsDeleted { get { return (uid == -1); } }
+		public override bool IsDeleted { 
+			get { 
+				return (this.uid == -1); 
+			}
+		}
 
 		//------------------------
 		//Static Thing methods
@@ -493,53 +503,53 @@ namespace SteamEngine {
 			}
 		}
 
-		public override void Trigger(TriggerKey td, ScriptArgs sa) {
+		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
-				tg.Run(this, td, sa);
+				tg.Run(this, tk, sa);
 			}
-			base.Trigger(td, sa);
-			def.Trigger(this, td, sa);
+			base.Trigger(tk, sa);
+			this.def.Trigger(this, tk, sa);
 		}
 
-		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
+		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
-				tg.TryRun(this, td, sa);
+				tg.TryRun(this, tk, sa);
 			}
-			base.TryTrigger(td, sa);
-			def.TryTrigger(this, td, sa);
+			base.TryTrigger(tk, sa);
+			this.def.TryTrigger(this, tk, sa);
 		}
 
-		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public override bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
-				if (TagMath.Is1(tg.Run(this, td, sa))) {
+				if (TagMath.Is1(tg.Run(this, tk, sa))) {
 					return true;
 				}
 			}
-			if (base.CancellableTrigger(td, sa)) {
+			if (base.CancellableTrigger(tk, sa)) {
 				return true;
 			} else {
-				return def.CancellableTrigger(this, td, sa);
+				return this.def.CancellableTrigger(this, tk, sa);
 			}
 		}
 
-		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public override bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
-				if (TagMath.Is1(tg.TryRun(this, td, sa))) {
+				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
 					return true;
 				}
 			}
-			if (base.TryCancellableTrigger(td, sa)) {
+			if (base.TryCancellableTrigger(tk, sa)) {
 				return true;
 			} else {
-				return def.TryCancellableTrigger(this, td, sa);
+				return this.def.TryCancellableTrigger(this, tk, sa);
 			}
 		}
 
@@ -631,7 +641,7 @@ namespace SteamEngine {
 		//------------------------
 		//Private & internal stuff
 
-		[LoadSection]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), LoadSection]
 		public static Thing Load(PropsSection input) {
 			//an Exception propagated away from this method is usually considered critical - load failed
 
@@ -642,10 +652,10 @@ namespace SteamEngine {
 
 			//we need defname and p(x,y, z, m)  to construct the thing.
 
-			ThingDef thingDef = ThingDef.Get(input.headerName) as ThingDef;
+			ThingDef thingDef = ThingDef.Get(input.HeaderName) as ThingDef;
 
 			if (thingDef == null) {
-				Logger.WriteError(input.filename, input.headerLine, "Defname '" + LogStr.Ident(input.headerName) + "' not found. Thing loading interrupted.");
+				Logger.WriteError(input.Filename, input.HeaderLine, "Defname '" + LogStr.Ident(input.HeaderName) + "' not found. Thing loading interrupted.");
 				return null;
 			}
 
@@ -655,18 +665,18 @@ namespace SteamEngine {
 				prop = input.TryPopPropsLine("serial");
 			}
 			if (prop != null) {
-				if (!TagMath.TryParseInt32(prop.value, out _uid)) {
-					Logger.WriteError(input.filename, prop.line, "Unrecognized UID property format. Thing loading interrupted.");
+				if (!TagMath.TryParseInt32(prop.Value, out _uid)) {
+					Logger.WriteError(input.Filename, prop.Line, "Unrecognized UID property format. Thing loading interrupted.");
 					return null;
 				}
 			} else {
-				Logger.WriteError(input.filename, input.headerLine, "UID property not found. Thing loading interrupted.");
+				Logger.WriteError(input.Filename, input.HeaderLine, "UID property not found. Thing loading interrupted.");
 				return null;
 			}
 			_uid = UidClearFlags(_uid);
 
 			Thing.uidBeingLoaded = _uid;//the constructor should set this as Uid
-			Thing constructed = thingDef.CreateWhenLoading(1, 1, 0, 0);//let's hope the P gets loaded properly later ;)
+			Thing constructed = thingDef.CreateWhenLoading();//let's hope the P gets loaded properly later ;)
 
 			Thing.things.AddLoaded(constructed, _uid);
 
@@ -683,11 +693,11 @@ namespace SteamEngine {
 		}
 
 
-		[Summary("This is called after this object was is being loaded.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("This is called after this object was is being loaded.")]
 		public virtual void On_AfterLoad() {
 		}
 
-		[Summary("This is called when this object is being loaded, before the LoadLine calls. It exists because of ClassTemplate and it's autogenerating of the Save method itself. With this, it's possible to implement user save code...")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("This is called when this object is being loaded, before the LoadLine calls. It exists because of ClassTemplate and it's autogenerating of the Save method itself. With this, it's possible to implement user save code...")]
 		public virtual void On_Load(PropsSection output) {
 		}
 
@@ -698,19 +708,19 @@ namespace SteamEngine {
 					object o = ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(Point4D));
 					Point4D asPoint = o as Point4D;
 					if (asPoint != null) {
-						point4d.SetP(asPoint);
+						this.point4d.SetP(asPoint);
 					} else {
 						MutablePoint4D.Parse(this.point4d, (string) o);
 					}
 					//it will be put in world later by map or Cont
 					break;
 				case "color":
-					color = TagMath.ParseUInt16(valueString);
+					this.color = TagMath.ParseUInt16(valueString);
 					break;
 				case "dispid":
 				case "model":
 				case "body":
-					model = TagMath.ParseUInt16(valueString);
+					this.model = TagMath.ParseUInt16(valueString);
 					break;
 				case "createdat":
 					this.createdAt = (TimeSpan) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(TimeSpan));
@@ -726,12 +736,12 @@ namespace SteamEngine {
 			things.ReIndexAll();
 		}
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), CLSCompliant(false)]
 		public static uint GetFakeUid() {
 			return (uint) things.GetFakeUid();
 		}
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), CLSCompliant(false)]
 		public static uint GetFakeItemUid() {
 			return (uint) things.GetFakeUid() | 0x40000000;
 		}
@@ -778,6 +788,7 @@ namespace SteamEngine {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public override void Save(SaveStream output) {
 			ThrowIfDeleted();
 			output.WriteValue("uid", this.uid);
@@ -799,7 +810,7 @@ namespace SteamEngine {
 			base.Save(output);//tagholder save
 		}
 
-		[Summary("This is called when this object is being saved. It exists because of ClassTemplate and it's autogenerating of the Save method itself. With this, it's possible to implement custom save code...")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("This is called when this object is being saved. It exists because of ClassTemplate and it's autogenerating of the Save method itself. With this, it's possible to implement custom save code...")]
 		public virtual void On_Save(SaveStream output) {
 
 		}
@@ -900,11 +911,12 @@ namespace SteamEngine {
 			base.Delete();
 			this.Trigger_Destroy();
 
-			things.RemoveAt(uid);
+			things.RemoveAt(this.uid);
 			this.uid = -1;
 		}
 
 		//fires the @destroy trigger on this Thing, after that removes the item from world. 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal virtual void Trigger_Destroy() {
 			this.TryTrigger(TriggerKey.destroy, null);
 			try {
@@ -915,6 +927,7 @@ namespace SteamEngine {
 		//method:On_Destroy
 		//Thing`s implementation of trigger @Destroy,
 		//does actually nothing, because finalizing of core Thing subclasses is done elsewhere
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Destroy() {
 			//this does nothing by default, because core classes use BeingDeleted (for safety against evil scripts)
 		}
@@ -925,6 +938,7 @@ namespace SteamEngine {
 
 		//method: Trigger_Click
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Trigger_AosClick(AbstractCharacter clicker) {
 			this.ThrowIfDeleted();
 			if (clicker == null)
@@ -951,6 +965,7 @@ namespace SteamEngine {
 
 		//method: Trigger_Click
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Trigger_Click(AbstractCharacter clicker) {
 			this.ThrowIfDeleted();
 			if (clicker == null)
@@ -984,14 +999,16 @@ namespace SteamEngine {
 		//method: On_Click
 		//Thing`s implementation of trigger @Click,
 		//sends the name (DecoratedName) of this Thing as plain overheadmessage
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				this.Name, 0);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
-			AosToolTips toolTips = this.GetAOSToolTips();
+			AosToolTips toolTips = this.GetAosToolTips();
 			PacketSequences.SendClilocNameFrom(clicker.GameState.Conn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
@@ -1006,6 +1023,7 @@ namespace SteamEngine {
 
 		//method: Trigger_DClick
 		//fires the @itemDClick / @charDClick and @dclick triggers where this is the Thing being doubleclicked.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Trigger_DClick(AbstractCharacter dclicker) {
 			this.ThrowIfDeleted();
 			if (dclicker == null)
@@ -1072,9 +1090,11 @@ namespace SteamEngine {
 		//method:On_DClick
 		//Thing`s implementation of trigger @DClick,
 		//does nothing.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_DClick(AbstractCharacter dclicker) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyDClick(DenyClickArgs args) {
 			return false;
 		}
@@ -1082,29 +1102,25 @@ namespace SteamEngine {
 		//method:On_Create
 		//Thing`s implementation of trigger @create,
 		//does nothing.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Create() {
 
 		}
 
 		public override string ToString() {
 			if (this.def != null) {
-				return this.Name + " (0x" + Uid.ToString("x") + ")";
+				return this.Name + " (0x" + this.uid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")";
 			} else {
-				return "incomplete Thing (0x" + Uid.ToString("x") + ")";
+				return "incomplete Thing (0x" + this.uid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")";
 			}
 		}
 
 		public override int GetHashCode() {
-			return Uid;
+			return this.uid;
 		}
 
 		public override bool Equals(Object obj) {
-			if (obj is Thing) {
-				Thing tobj = (Thing) obj;
-				return (tobj.Uid == this.Uid);
-			} else {
-				return false;
-			}
+			return Object.ReferenceEquals(this, obj);
 		}
 
 		public virtual bool IsItem {
@@ -1175,7 +1191,8 @@ namespace SteamEngine {
 
 		public abstract void Resend();
 
-		public AosToolTips GetAOSToolTips() {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		public AosToolTips GetAosToolTips() {
 			AosToolTips toolTips = AosToolTips.GetFromCache(this);
 			if (toolTips != null) {
 				return toolTips;
@@ -1188,18 +1205,19 @@ namespace SteamEngine {
 			this.GetNameCliloc(out id, out argument);
 			toolTips.AddLine(id, argument);
 
-			this.BuildAOSToolTips(toolTips);
+			this.BuildAosToolTips(toolTips);
 			toolTips.InitDone(this);
 
 			return toolTips;//new or changed
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
 		public virtual void GetNameCliloc(out int id, out string argument) {
 			id = 1042971;
 			argument = this.Name;
 		}
 
-		public virtual void BuildAOSToolTips(AosToolTips opc) {
+		public virtual void BuildAosToolTips(AosToolTips opc) {
 		}
 
 		public virtual void InvalidateProperties() {
@@ -1460,7 +1478,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocYell(int arg, params string[] args) {
-			this.ClilocYell(arg, 0);
+			this.ClilocYell(arg, 0, args);
 		}
 
 		/**
@@ -1469,7 +1487,7 @@ namespace SteamEngine {
 			@param arg The text to whisper
 		 */
 		public void Whisper(string arg) {
-			this.Whisper(arg, 0);
+			this.Whisper(arg, -1);
 		}
 		/**
 			Makes this thing send a whisper to all clients who can hear it.
@@ -1478,7 +1496,7 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocWhisper(int arg, params string[] args) {
-			this.ClilocWhisper(arg, 0);
+			this.ClilocWhisper(arg, -1, args);
 		}
 
 		/**
@@ -1496,13 +1514,13 @@ namespace SteamEngine {
 			@param args Additional args needed for the cliloc entry, if any.
 		 */
 		public void ClilocEmote(int arg, params string[] args) {
-			this.ClilocEmote(arg, 0x22);
+			this.ClilocEmote(arg, 0x22, args);
 		}
 
 		public void Fix() {
 			int oldZ = this.point4d.z;
 			int newZ;
-			GetMap().GetFixedZ(this, out newZ);
+			this.GetMap().GetFixedZ(this, out newZ);
 			if (oldZ != newZ) {
 				this.Z = newZ;
 			}
@@ -1593,7 +1611,7 @@ namespace SteamEngine {
 					a font. If this is not 3, then the speech will be sent in ASCII instead of Unicode, because
 					Unicode doesn't support special fonts like runic.
 		 */
-		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, int[] keywords, string[] args) {
+		public void Speech(string msg, int clilocMsg, SpeechType type, int color, ClientFont font, int[] keywords, string[] args) {
 			AbstractCharacter self = this as AbstractCharacter;
 
 			string language = "enu";
@@ -1603,17 +1621,17 @@ namespace SteamEngine {
 					language = state.ClientLanguage;
 				}
 			}
-			this.Speech(speech, clilocSpeech, type, color, font, language, keywords, args);
+			this.Speech(msg, clilocMsg, type, color, font, language, keywords, args);
 		}
 
-		public void Speech(string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, string language, int[] keywords, string[] args) {
+		public void Speech(string msg, int clilocMsg, SpeechType type, int color, ClientFont font, string language, int[] keywords, string[] args) {
 			this.ThrowIfDeleted();
 
 			AbstractCharacter self = this as AbstractCharacter;
 
 			bool selfIsPlayer = ((self != null) && (self.IsPlayer));
 			if (selfIsPlayer) {
-				bool cancel = self.Trigger_Say(speech, type, keywords);
+				bool cancel = self.Trigger_Say(msg, type, keywords);
 				if (cancel) {
 					return;
 				}
@@ -1645,19 +1663,19 @@ namespace SteamEngine {
 
 			if (selfIsPlayer) {
 				foreach (AbstractCharacter chr in map.GetCharsInRange(x, y, dist)) {
-					chr.Trigger_Hear(self, speech, clilocSpeech, type, color, font, language, keywords, args);
+					chr.Trigger_Hear(self, msg, clilocMsg, type, color, font, language, keywords, args);
 				}
 			} else {//item/npc is speaking... no triggers fired, just send it to players
 				PacketGroup pg = null;
 				foreach (TcpConnection<GameState> conn in map.GetConnectionsInRange(x, y, dist)) {
 					if (pg == null) {
 						pg = PacketGroup.AcquireMultiUsePG();
-						if (speech == null) {
-							pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocSpeech, this.Name, type, font, color,
+						if (msg == null) {
+							pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocMsg, this.Name, type, font, color,
 								args == null ? null : string.Join("\t", args));
 						} else {
 							pg.AddPacket(PacketSequences.PrepareMessagePacket(
-								this, speech, this.Name, type, font, color, language));
+								this, msg, this.Name, type, font, color, language));
 						}
 					}
 					conn.SendPacketGroup(pg);

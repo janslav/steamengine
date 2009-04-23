@@ -32,27 +32,21 @@ namespace SteamEngine {
 	//Valuetype parameters are automatically being converted using the System.Convert class.
 
 	public static class MemberWrapper {
-		private static AssemblyBuilder assembly;
-		internal static ModuleBuilder module; //this is needed by the typebuilders
-		private static Hashtable methodWrappers;
-		private static Hashtable constructorWrappers;
-		private static Hashtable fieldWrappers;
+		internal static ModuleBuilder module = AcquireModule(); //this is needed by the typebuilders
+		private static Hashtable methodWrappers = new Hashtable();
+		private static Hashtable constructorWrappers = new Hashtable();
+		private static Hashtable fieldWrappers = new Hashtable();
 		//private static Hashtable propertyWrappers;
 
 		private static Type[] singleObjTypeArr = new Type[] { typeof(object) };
-		private static Hashtable convertMethods;
-		private static int count = 0;
+		private static Hashtable convertMethods = new Hashtable();
+		private static int count;
 
-		static MemberWrapper() {
-			methodWrappers = new Hashtable();
-			constructorWrappers = new Hashtable();
-			fieldWrappers = new Hashtable();
-			//propertyWrappers = new Hashtable();
-			convertMethods = new Hashtable();
+		static ModuleBuilder AcquireModule() {			
 			AssemblyName name = new AssemblyName();
 			name.Name = "MemberWrapper Assembly";
-			assembly = Thread.GetDomain().DefineDynamicAssembly(name, AssemblyBuilderAccess.Run);
-			module = assembly.DefineDynamicModule("MemberWrapper Module");
+			AssemblyBuilder assembly = Thread.GetDomain().DefineDynamicAssembly(name, AssemblyBuilderAccess.Run);
+			return assembly.DefineDynamicModule("MemberWrapper Module");
 		}
 
 		//method: GetWrapperFor
@@ -142,15 +136,15 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void EmitPushParams(ILGenerator il, Type[] types, int argsAt) {
-			for (int i = 0, n = types.Length; i < n; i++) {
-				Type pt = types[i];
-				EmitPushArgument(il, argsAt);//Ldarg
-				EmitPushInt32(il, i);//Ldc_I4
-				il.Emit(OpCodes.Ldelem_Ref); //push the indexed value
-				EmitConvertOrUnBox(il, pt);
-			}
-		}
+		//internal static void EmitPushParams(ILGenerator il, Type[] types, int argsAt) {
+		//    for (int i = 0, n = types.Length; i < n; i++) {
+		//        Type pt = types[i];
+		//        EmitPushArgument(il, argsAt);//Ldarg
+		//        EmitPushInt32(il, i);//Ldc_I4
+		//        il.Emit(OpCodes.Ldelem_Ref); //push the indexed value
+		//        EmitConvertOrUnBox(il, pt);
+		//    }
+		//}
 
 		internal static void EmitConvertOrUnBox(ILGenerator il, Type type) {
 			if (type.IsValueType) {//we must first get a MethodInfo of converting method in Convert class
@@ -271,6 +265,7 @@ namespace SteamEngine {
 		//	
 		//	//class: ConstructorWrapper
 		//	//can instantiate new objects
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class ConstructorWrapper : ConstructorInfo {
 			private ConstructorInfo constructorInfo;
 
@@ -370,6 +365,7 @@ namespace SteamEngine {
 
 		//class: FieldWrapper
 		//can get or set a field value
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class FieldWrapper : FieldInfo {
 			private FieldInfo fieldInfo;
 
@@ -430,6 +426,7 @@ namespace SteamEngine {
 			//public abstract object GetValue(object obj);
 			private static Type[] getParamTypes = new Type[] { typeof(Object) };
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int32.ToString")]
 			private static string GetWrapperClassNameFor(FieldInfo fi) {
 				return EscapeTypeName(String.Concat(
 					fi.DeclaringType.Name, "_", fi.Name, "_", (count++).ToString()));
@@ -507,6 +504,7 @@ namespace SteamEngine {
 
 		//class: MethodWrapper 
 		//can invoke a method and return it`s return value
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class MethodWrapper : MethodInfo {
 			private MethodInfo methodInfo;
 

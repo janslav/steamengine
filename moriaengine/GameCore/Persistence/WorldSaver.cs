@@ -60,7 +60,7 @@ namespace SteamEngine.Persistence {
 
 			ScriptArgs sa = new ScriptArgs(path);
 			Globals.Instance.TryTrigger(TriggerKey.beforeSave, sa);
-			path = string.Concat(sa.argv[0]);
+			path = string.Concat(sa.Argv[0]);
 			if (path.Length < 1) {//scripts error or something...
 				path = Globals.SavePath;
 			}
@@ -76,7 +76,7 @@ namespace SteamEngine.Persistence {
 					string name = coordinator.FileNameToSave;
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
-					SaveStream saveStream = GetSaveStream(path, sa.argv[1]);
+					SaveStream saveStream = GetSaveStream(path, sa.Argv[1]);
 					saveStream.WriteComment("Textual SteamEngine save");
 					coordinator.SaveAll(saveStream);
 					saveStream.WriteLine("[EOF]");
@@ -87,7 +87,7 @@ namespace SteamEngine.Persistence {
 
 				sa = new ScriptArgs(path, "globals");
 				Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
-				globalsSaver = GetSaveStream(path, sa.argv[1]);
+				globalsSaver = GetSaveStream(path, sa.Argv[1]);
 				//currentfile = "globals.sav";
 				Globals.SaveGlobals(globalsSaver);
 				//Region.SaveRegions(globalsSaver);
@@ -152,7 +152,7 @@ namespace SteamEngine.Persistence {
 				path = Globals.SavePath;
 				ScriptArgs sa = new ScriptArgs(path);
 				Globals.Instance.Trigger(TriggerKey.beforeLoad, sa);
-				path = string.Concat(sa.argv[0]);
+				path = string.Concat(sa.Argv[0]);
 				if (path.Length < 1) {//scripts error or something...
 					path = Globals.SavePath;
 				}
@@ -169,7 +169,7 @@ namespace SteamEngine.Persistence {
 					}
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
-					TextReader loadStream = GetLoadStream(path, sa.argv[1]);
+					TextReader loadStream = GetLoadStream(path, sa.Argv[1]);
 					InvokeLoad(loadStream, Path.Combine(path, name + ".sav"));
 					try {
 						loadStream.Close();
@@ -178,7 +178,7 @@ namespace SteamEngine.Persistence {
 
 				sa = new ScriptArgs(path, "globals");
 				Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
-				globalsLoader = GetLoadStream(path, sa.argv[1]);
+				globalsLoader = GetLoadStream(path, sa.Argv[1]);
 				InvokeLoad(globalsLoader, Path.Combine(path, "globals.sav"));
 				Globals.Instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, true));
 				Console.WriteLine("Loading successful");
@@ -215,10 +215,10 @@ namespace SteamEngine.Persistence {
 			foreach (PropsSection section in PropsFileParser.Load(
 					filename, stream, new CanStartAsScript(StartsAsScript))) {
 
-				string type = section.headerType.ToLower();
-				string name = section.headerName;
+				string type = section.HeaderType.ToLower();
+				string name = section.HeaderName;
 				if (EOFMarked) {
-					Logger.WriteWarning(section.filename, section.headerLine, "[EOF] reached. Skipping " + section);
+					Logger.WriteWarning(section.Filename, section.HeaderLine, "[EOF] reached. Skipping " + section);
 					continue;
 				}
 				if (name == "") {
@@ -240,7 +240,7 @@ namespace SteamEngine.Persistence {
 					AbstractDef.LoadSectionFromSaves(section);
 					continue;
 				}
-				Logger.WriteError(section.filename, section.headerLine, "Unknown section " + LogStr.Ident(section));
+				Logger.WriteError(section.Filename, section.HeaderLine, "Unknown section " + LogStr.Ident(section));
 			}
 			if (!EOFMarked) {
 				throw new SEException("EOF Marker not reached!");

@@ -92,7 +92,7 @@ namespace SteamEngine.Converter {
 
 			Set("createdat", Persistence.ObjectSaver.Save(DateTime.Now), "");
 
-			string name = input.headerName;
+			string name = input.HeaderName;
 			Set("Name", "\"" + name + "\"", "");
 			if (StringComparer.OrdinalIgnoreCase.Equals(name, "%servname%")) {
 				//headerType = "WorldRegion";
@@ -117,18 +117,18 @@ namespace SteamEngine.Converter {
 
 			PropsLine defnameLine = input.TryPopPropsLine("defname");
 			if (defnameLine != null) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(defnameLine.value, "a_world")) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(defnameLine.Value, "a_world")) {
 					//headerType = "Worldregion";
 					hierarchyIndex = 0;
 				}
 				regionsByDefname.Remove(headerName);
-				headerName = defnameLine.value;
-				regionsByDefname[defnameLine.value] = this;//this could overwrite something, but that is not our fault I think :)
+				headerName = defnameLine.Value;
+				regionsByDefname[defnameLine.Value] = this;//this could overwrite something, but that is not our fault I think :)
 			}
 		}
 
 		private static string ParseRect(ConvertedDef def, PropsLine line) {
-			Match m = Region.rectRE.Match(line.value);
+			Match m = Region.rectRE.Match(line.Value);
 			if (m.Success) {
 				GroupCollection gc = m.Groups;
 				//Console.WriteLine("args: "+args);
@@ -157,18 +157,18 @@ namespace SteamEngine.Converter {
 				}
 				maxX--; maxY--; //this is because sphere has weird system of rectangle coordinates
 				string retVal = string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY);
-				def.Set("Rect", retVal, line.comment);
+				def.Set("Rect", retVal, line.Comment);
 				((ConvertedRegion) def).rectangles.Add(new ImmutableRectangle(minX, minY, maxX, maxY));
 				return retVal;
 			} else {
-				def.Warning(line.line, "Unrecognized Rectangle format ('" + line.value + "')");
+				def.Warning(line.Line, "Unrecognized Rectangle format ('" + line.Value + "')");
 			}
 			return "";
 		}
 
 		private static string ParseMapplane(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
-			r.mapplane = TagMath.ParseByte(line.value);
+			r.mapplane = TagMath.ParseByte(line.Value);
 			r.mapplaneSet = true;
 			r.mapplaneLine = line;
 			return "";
@@ -178,18 +178,18 @@ namespace SteamEngine.Converter {
 
 		private static string ParseP(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
-			Point4D p = Point4D.Parse(line.value);
+			Point4D p = Point4D.Parse(line.Value);
 			if (!r.mapplaneSet) {
 				r.mapplane = p.M;
 			}
 			string retVal = pImplementor.Save(p);
-			def.Set("Spawnpoint", retVal, line.comment);
+			def.Set("Spawnpoint", retVal, line.Comment);
 			return retVal;
 		}
 
 		private static string ParseFlags(ConvertedDef def, PropsLine line) {
-			string name = line.name;
-			switch (line.name.ToLower()) {
+			string name = line.Name;
+			switch (line.Name.ToLower()) {
 				case "flagsafe":
 					name = "Flag_safe";
 					break;
@@ -210,15 +210,15 @@ namespace SteamEngine.Converter {
 					break;
 			}
 
-			int value = TagMath.ParseInt32(line.value);
+			int value = TagMath.ParseInt32(line.Value);
 			if (value != 0) {//it is flagged region
 				//if (def.headerType.StartsWith("World")) {
 				//    def.headerType = "WorldFlaggedRegion";
 				//} else {
 				def.headerType = "FlaggedRegion";
 				//}
-				def.Set(name, line.value, line.comment);
-				return line.value;
+				def.Set(name, line.Value, line.Comment);
+				return line.Value;
 			}
 			return "";
 		}
@@ -259,7 +259,7 @@ namespace SteamEngine.Converter {
 				}
 			}
 			if ((occurences == 0) && (hierarchyIndex != 0)) {
-				Warning(origData.headerLine, "Region " + this.headerName + " has no parents!");
+				Warning(origData.HeaderLine, "Region " + this.headerName + " has no parents!");
 			}
 			parents = new ConvertedRegion[occurences];
 			int index = 0;
@@ -278,7 +278,7 @@ namespace SteamEngine.Converter {
 
 		public override void ThirdStage() {
 			if (mapplaneLine != null) {
-				Set("Mapplane", mapplane.ToString(), mapplaneLine.comment);
+				Set("Mapplane", mapplane.ToString(), mapplaneLine.Comment);
 			} else {
 				Set("Mapplane", mapplane.ToString(), "");
 			}
@@ -342,7 +342,7 @@ namespace SteamEngine.Converter {
 					Logger.WriteError("Region hierarchy not completely resolvable - No regions converted!");
 					Logger.WriteInfo(ConverterMain.AdditionalConverterMessages, "These are the unresolved ones:");
 					foreach (ConvertedRegion reg in temp) {
-						reg.Info(reg.origData.headerLine, reg + ", possible parents: " + Tools.ObjToString(reg.parents));
+						reg.Info(reg.origData.HeaderLine, reg + ", possible parents: " + Tools.ObjToString(reg.parents));
 					}
 
 					foreach (ConvertedRegion reg in allRegions) {

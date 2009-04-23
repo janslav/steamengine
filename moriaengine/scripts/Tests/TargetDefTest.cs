@@ -48,12 +48,12 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		protected override bool On_TargonStatic(Player self, Static targetted, object parameter) {
+		protected override bool On_TargonStatic(Player self, AbstractInternalItem targetted, object parameter) {
 			self.SysMessage("You targetted static item " + targetted + ", parameter " + parameter);
 			return true;
 		}
 
-		protected override bool On_TargonGround(Player self, IPoint4D targetted, object parameter) {
+		protected override bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
 			self.SysMessage("You targetted ground at " + targetted + ", parameter " + parameter);
 			return true;
 		}

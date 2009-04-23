@@ -124,9 +124,9 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
-			string typeName = input.headerType.ToLower();
+			string typeName = input.HeaderType.ToLower();
 
-			string spellDefName = input.PopPropsLine("defname").value;
+			string spellDefName = input.PopPropsLine("defname").Value;
 
 			AbstractScript def;
 			AllScriptsByDefname.TryGetValue(spellDefName, out def);
@@ -138,7 +138,7 @@ namespace SteamEngine.CompiledScripts {
 				if (def != null) {//it isnt SpellDef
 					throw new ScriptException("SpellDef " + LogStr.Ident(spellDefName) + " has the same name as " + LogStr.Ident(def));
 				} else {
-					object[] cargs = new object[] { spellDefName, input.filename, input.headerLine };
+					object[] cargs = new object[] { spellDefName, input.Filename, input.HeaderLine };
 					spellDef = (SpellDef) constructor.Invoke(cargs);
 				}
 			} else if (spellDef.IsUnloaded) {
@@ -149,20 +149,20 @@ namespace SteamEngine.CompiledScripts {
 				//we have to load the name first, so that it may be unloaded by it...
 
 				PropsLine p = input.PopPropsLine("name");
-				spellDef.LoadScriptLine(input.filename, p.line, p.name.ToLower(), p.value);
+				spellDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
 
 				UnRegisterSpellDef(spellDef);//will be re-registered again
 			} else {
 				throw new OverrideNotAllowedException("SpellDef " + LogStr.Ident(spellDefName) + " defined multiple times.");
 			}
 
-			if (!TagMath.TryParseInt32(input.headerName, out spellDef.id)) {
+			if (!TagMath.TryParseInt32(input.HeaderName, out spellDef.id)) {
 				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
 			}
 
 			//now do load the trigger code. 
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + spellDefName + "__";
+				input.HeaderName = "t__" + spellDefName + "__";
 				spellDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			} else {
 				spellDef.scriptedTriggers = null;
@@ -189,7 +189,7 @@ namespace SteamEngine.CompiledScripts {
 			return string.Concat(this.Defname, " (spellId ", this.id.ToString(), ")");
 		}
 
-		public bool TryCancellableTrigger(IPoint4D self, TriggerKey td, ScriptArgs sa) {
+		public bool TryCancellableTrigger(IPoint3D self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
 				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
@@ -485,14 +485,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			SpellFlag flags = this.Flags;
-			IPoint4D target = mageryArgs.Target1;
+			IPoint3D target = mageryArgs.Target1;
 			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
 			SpellEffectArgs sea = null;
-
-			int sound = (int) this.Sound;
-			if (sound != -1) {
-				Networking.PacketSequences.SendSound(target, sound, Globals.MaxUpdateRange);
-			}
 
 			SpellSourceType sourceType;
 			if (mageryArgs.Tool is SpellScroll) {
@@ -525,10 +520,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (!singleEffectDone) {
 				if (((flags & SpellFlag.CanEffectGround) == SpellFlag.CanEffectGround) ||
-					(((flags & SpellFlag.CanEffectStatic) == SpellFlag.CanEffectStatic) && (target is Static))) {
+					(((flags & SpellFlag.CanEffectStatic) == SpellFlag.CanEffectStatic) && (target is AbstractInternalItem))) {
 					singleEffectDone = true;
 
-					IPoint4D targetTop = target.TopPoint;
+					IPoint3D targetTop = target.TopPoint;
 					this.GetSpellPowerAgainstNonChar(caster, target, targetTop, sourceType, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectGround(targetTop, sea);
@@ -544,7 +539,7 @@ namespace SteamEngine.CompiledScripts {
 				bool canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
 				bool canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
 				if (canEffectItem || canEffectChar) {
-					foreach (Thing t in target.GetMap().GetThingsInRange(target.X, target.Y, this.EffectRange)) {
+					foreach (Thing t in caster.GetMap().GetThingsInRange(target.X, target.Y, this.EffectRange)) {
 						if (t == target) {
 							continue;
 						}
@@ -608,7 +603,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		private void GetSpellPowerAgainstChar(Character caster, IPoint4D mainTarget, Character currentTarget, SpellSourceType sourceType, ref SpellEffectArgs sea) {
+		private void GetSpellPowerAgainstChar(Character caster, IPoint3D mainTarget, Character currentTarget, SpellSourceType sourceType, ref SpellEffectArgs sea) {
 			int spellPower;
 			SpellFlag flags = this.Flags;
 			if ((flags & SpellFlag.UseMindPower) == SpellFlag.UseMindPower) {
@@ -642,7 +637,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private void GetSpellPowerAgainstNonChar(Character caster, IPoint4D target, IPoint4D currentTarget, SpellSourceType sourceType, ref SpellEffectArgs sea) {
+		private void GetSpellPowerAgainstNonChar(Character caster, IPoint3D target, IPoint3D currentTarget, SpellSourceType sourceType, ref SpellEffectArgs sea) {
 			int spellPower = caster.GetSkill(SkillName.Magery);
 			if (sea == null) {
 				sea = SpellEffectArgs.Acquire(caster, target, currentTarget, this, spellPower, sourceType);
@@ -686,7 +681,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void Trigger_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+		public void Trigger_EffectGround(IPoint3D target, SpellEffectArgs spellEffectArgs) {
 			bool cancel = this.TryCancellableTrigger(target, tkEffectGround, spellEffectArgs.scriptArgs);
 			if (!cancel) {
 				try {
@@ -699,7 +694,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		protected virtual void On_EffectGround(IPoint4D target, SpellEffectArgs spellEffectArgs) {
+		protected virtual void On_EffectGround(IPoint3D target, SpellEffectArgs spellEffectArgs) {
 		}
 
 		protected virtual void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
@@ -710,12 +705,19 @@ namespace SteamEngine.CompiledScripts {
 
 		protected virtual void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
 		}
+
+		public void MakeSound(IPoint4D place) {
+			int sound = (int) this.Sound;
+			if (sound != -1) {
+				Networking.PacketSequences.SendSound(place, sound, Globals.MaxUpdateRange);
+			}
+		}
 	}
 
 	public class SpellEffectArgs {
 		private Character caster;
-		private IPoint4D currentTarget;
-		private IPoint4D mainTarget;
+		private IPoint3D currentTarget;
+		private IPoint3D mainTarget;
 		private SpellDef spellDef;
 		private int spellPower;
 		private CharRelation relation;
@@ -729,7 +731,7 @@ namespace SteamEngine.CompiledScripts {
 			this.scriptArgs = new ScriptArgs(this);
 		}
 
-		public static SpellEffectArgs Acquire(Character caster, IPoint4D mainTarget, IPoint4D currentTarget, SpellDef spellDef, int spellPower, SpellSourceType sourceType) {
+		public static SpellEffectArgs Acquire(Character caster, IPoint3D mainTarget, IPoint3D currentTarget, SpellDef spellDef, int spellPower, SpellSourceType sourceType) {
 			SpellEffectArgs retVal = new SpellEffectArgs();
 			retVal.caster = caster;
 			retVal.mainTarget = mainTarget;
@@ -754,13 +756,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public IPoint4D MainTarget {
+		public IPoint3D MainTarget {
 			get {
 				return this.mainTarget;
 			}
 		}
 
-		public IPoint4D CurrentTarget {
+		public IPoint3D CurrentTarget {
 			get {
 				return this.currentTarget;
 			}
@@ -818,7 +820,7 @@ namespace SteamEngine.CompiledScripts {
 			//mageryArgs.Dispose();
 		}
 
-		protected override bool On_TargonGround(Player caster, IPoint4D targetted, object parameter) {
+		protected override bool On_TargonGround(Player caster, IPoint3D targetted, object parameter) {
 			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
 			SpellDef spell = (SpellDef) mageryArgs.Param1;
 			SpellFlag flags = spell.Flags;
@@ -826,7 +828,7 @@ namespace SteamEngine.CompiledScripts {
 			if ((flags & SpellFlag.CanTargetGround) == SpellFlag.CanTargetGround) {
 				if (((flags & SpellFlag.TargetCanMove) != SpellFlag.TargetCanMove) && targetted is Thing) {
 					//we pretend to have targetted the ground, cos we don't want it to move
-					mageryArgs.Target1 = new Point4D(targetted.TopPoint);
+					mageryArgs.Target1 = new Point3D(targetted.TopPoint);
 				} else {
 					mageryArgs.Target1 = targetted;
 				}
@@ -845,11 +847,11 @@ namespace SteamEngine.CompiledScripts {
 			return this.TargonNonGround(caster, targetted, parameter, SpellFlag.CanTargetItem);
 		}
 
-		protected override bool On_TargonStatic(Player caster, Static targetted, object parameter) {
+		protected override bool On_TargonStatic(Player caster, AbstractInternalItem targetted, object parameter) {
 			return this.TargonNonGround(caster, targetted, parameter, SpellFlag.CanTargetStatic);
 		}
 
-		private bool TargonNonGround(Player caster, IPoint4D targetted, object parameter, SpellFlag targetSF) {
+		private bool TargonNonGround(Player caster, IPoint3D targetted, object parameter, SpellFlag targetSF) {
 			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
 			SpellDef spell = (SpellDef) mageryArgs.Param1;
 

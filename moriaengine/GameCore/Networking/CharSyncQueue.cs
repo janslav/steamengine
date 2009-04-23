@@ -520,7 +520,7 @@ namespace SteamEngine.Networking {
 
 			private static bool ProcessCharProperties(AbstractCharacter target, ref AosToolTips toolTips, GameState viewerState, TcpConnection<GameState> viewerConn) {
 				if (toolTips == null) {
-					toolTips = target.GetAOSToolTips();
+					toolTips = target.GetAosToolTips();
 					if (toolTips != null) {
 						toolTips.SendIdPacket(viewerState, viewerConn);
 						return true;

@@ -55,8 +55,9 @@ namespace SteamEngine {
 		}
 
 		internal TriggerGroup scriptedTriggers;
-		internal protected PluginTriggerGroup compiledTriggers;
+		internal PluginTriggerGroup compiledTriggers;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class PluginTriggerGroup {
 			public abstract object Run(Plugin self, TriggerKey tk, ScriptArgs sa);
 		}
@@ -120,8 +121,8 @@ namespace SteamEngine {
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			Type pluginDefType = null;
-			string typeName = input.headerType.ToLower();
-			string defname = input.headerName.ToLower();
+			string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			string defname = input.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 			//Console.WriteLine("loading section "+input.HeadToString());
 			//[typeName defname]
 
@@ -143,7 +144,7 @@ namespace SteamEngine {
 					throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
 				} else {
 					ConstructorInfo cw = pluginDefCtors[pluginDefType];
-					pluginDef = (PluginDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.filename, input.headerLine }, null);
+					pluginDef = (PluginDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.Filename, input.HeaderLine }, null);
 				}
 			} else if (pluginDef.IsUnloaded) {
 				if (pluginDef.GetType() != pluginDefType) {
@@ -164,7 +165,7 @@ namespace SteamEngine {
 
 			//now do load the trigger code. 
 			if (input.TriggerCount > 0) {
-				input.headerName = "t__" + input.headerName + "__";
+				input.HeaderName = "t__" + input.HeaderName + "__";
 				pluginDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
 			}
 			if (pluginDef.scriptedTriggers == null) {

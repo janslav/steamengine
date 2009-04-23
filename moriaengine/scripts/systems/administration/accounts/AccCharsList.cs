@@ -104,10 +104,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"Usage - .x AccChars. or .AccChars('accname')")]
 		[SteamFunction]
 		public static void AccChars(AbstractCharacter target, ScriptArgs text) {
-			if (text.argv == null || text.argv.Length == 0) {
+			if (text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(target.Account.Name));
 			} else {
-				string accName = (String) text.argv[0];
+				string accName = (String) text.Argv[0];
 				//overime zda existuje (uz ted)
 				AbstractAccount acc = AbstractAccount.Get(accName);
 				if (acc == null) {

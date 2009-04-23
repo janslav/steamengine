@@ -59,7 +59,7 @@ namespace SteamEngine.Timers {
 
 		[Save]
 		public override void Save(SaveStream output) {
-			output.WriteValue("function", function.name);
+			output.WriteValue("function", function.Name);
 			base.Save(output);
 		}
 

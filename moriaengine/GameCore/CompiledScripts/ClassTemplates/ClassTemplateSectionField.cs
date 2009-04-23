@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		}
 
 		private void SetType(string typeName) {
-			switch (typeName.ToLower()) {
+			switch (typeName.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
 				case "bool": {
 						typeName = "Boolean";
 						break;
@@ -140,7 +140,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		private MemberAttributes ParseAccess(string s) {
 			MemberAttributes ret = MemberAttributes.Final;
-			switch (s.ToLower()) {
+			switch (s.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
 				case "public":
 					ret |= MemberAttributes.Public;
 					break;

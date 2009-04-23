@@ -60,7 +60,7 @@ namespace SteamEngine {
 					wrapper(this);
 				}
 			}
-			if (defname.ToLower().EndsWith("_global")) {
+			if (defname.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith("_global")) {
 				Globals.Instance.AddTriggerGroup(this);
 			}
 		}
@@ -85,7 +85,7 @@ namespace SteamEngine {
 			foreach (AbstractScript script in AllScriptsByDefname.Values) {
 				TriggerGroup tg = script as TriggerGroup;
 				if (tg != null) {
-					if (tg.Defname.ToLower().EndsWith("_global")) {
+					if (tg.Defname.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith("_global")) {
 						Globals.Instance.AddTriggerGroup(tg);
 					}
 				}
@@ -106,9 +106,17 @@ namespace SteamEngine {
 	}
 
 	public class TGRemover {
-		public readonly TriggerGroup tg;
+		private readonly TriggerGroup tg;
+
 		public TGRemover(TriggerGroup tg) {
 			this.tg = tg;
 		}
+
+		public TriggerGroup TG {
+			get {
+				return this.tg;
+			}
+		} 
+
 	}
 }

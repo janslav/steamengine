@@ -70,19 +70,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			ResizePic(10, 10, 3000, 640, 145 + radku * 80);
 			Button(15, 25, 4005, 4007, true, 0, 1);		// add reagents
 			Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
-			HTMLGumpA(255, 15, 150, 20, "Bedýnka na regy", false, false);
-			HTMLGumpA(55, 27, 100, 20, "Pøidat regy", false, false);
+			HtmlGumpA(255, 15, 150, 20, "Bedýnka na regy", false, false);
+			HtmlGumpA(55, 27, 100, 20, "Pøidat regy", false, false);
 			if ((radku == 0) && (i == 0)) {
-				HTMLGumpA(baseX, 75, 200, 20, "Bedna na regy je prázdná", false, false);
+				HtmlGumpA(baseX, 75, 200, 20, "Bedna na regy je prázdná", false, false);
 			} else {
 				i = 0;
 				foreach (KeyValuePair<ItemDef, int> pair in box.inBoxReags) {
 					Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
-					HTMLGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
-					HTMLGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
-					HTMLGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
+					HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
+					HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
+					HtmlGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
 					CheckBox(baseX, baseY + 38, 9903, 9904, false, buttonsCount);
-					HTMLGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
+					HtmlGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
 					NumberEntryA(baseX + 80, baseY + 38, 65, 20, 0, buttonsCount, 0);
 					TilePic(baseX + 110, baseY, pair.Key.Model);
 					dictButtonForReags.Add(buttonsCount, pair.Key);
@@ -117,12 +117,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int i = 0;
 				int reagsToGive = 0;
 				while (i < buttonsCount) {
-					if ((gr.IsSwitched(i)) && (gr.responseNumbers[i].number > 0)) {	// player wants to take at least one reagent
-						if (box.inBoxReags[buttonShowItemDef[i]] < (int) gr.responseNumbers[i].number) {
+					if ((gr.IsSwitched(i)) && (gr.responseNumbers[i].Number > 0)) {	// player wants to take at least one reagent
+						if (box.inBoxReags[buttonShowItemDef[i]] < (int) gr.responseNumbers[i].Number) {
 							((Player) gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho regù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
 							reagsToGive = box.inBoxReags[buttonShowItemDef[i]];
 						} else {
-							reagsToGive = (int) gr.responseNumbers[i].number;
+							reagsToGive = (int) gr.responseNumbers[i].Number;
 						}
 						buttonShowItemDef[i].Create(((Player) gi.Cont).Backpack);
 						Globals.LastNewItem.Amount = reagsToGive;

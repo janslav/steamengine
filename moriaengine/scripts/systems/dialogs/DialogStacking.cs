@@ -56,12 +56,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				oldGi.Cont.SetTag(dialogStackTK, dialogsMultiStack);
 			}
 			Stack<Gump> actualStack;
-			if (!dialogsMultiStack.TryGetValue(oldGi.uid, out actualStack)) {
+			if (!dialogsMultiStack.TryGetValue(oldGi.Uid, out actualStack)) {
 				actualStack = new Stack<Gump>(); //vytvortit a ulozit
-				dialogsMultiStack[oldGi.uid] = actualStack;
+				dialogsMultiStack[oldGi.Uid] = actualStack;
 			}
 			actualStack.Push(oldGi); //stackneme si starej dialog
-			dialogsMultiStack[newGi.uid] = actualStack; //dat k dispozici novemu dialogu pro pozdejsi navraty
+			dialogsMultiStack[newGi.Uid] = actualStack; //dat k dispozici novemu dialogu pro pozdejsi navraty
 		}
 
 		[Summary("Recall the last stored dialog from the dialog stack." +
@@ -72,14 +72,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Gump sgi = null;
 			if (dialogsMultiStack != null) { //something was stored
 				Stack<Gump> actualsOwnStack;
-				if (dialogsMultiStack.TryGetValue(actualGi.uid, out actualsOwnStack)) {
+				if (dialogsMultiStack.TryGetValue(actualGi.Uid, out actualsOwnStack)) {
 					if (actualsOwnStack.Count != 0) {
 						sgi = actualsOwnStack.Pop(); //popovat budem jen pokud ve stacku vubec neco je
-						dialogsMultiStack.Remove(actualGi.uid); //po popnuti uz muzeme vyhodit soucasny dialog z multistacku (uz ho stejne zaviram...)					
+						dialogsMultiStack.Remove(actualGi.Uid); //po popnuti uz muzeme vyhodit soucasny dialog z multistacku (uz ho stejne zaviram...)					
 					}
 
 					if (actualsOwnStack.Count == 0) {//stack je uz prazdnej (nebo byl prazdnej i predtim), odstranit stack
-						dialogsMultiStack.Remove(actualGi.uid);
+						dialogsMultiStack.Remove(actualGi.Uid);
 						if (dialogsMultiStack.Count == 0) {
 							actualGi.Cont.RemoveTag(dialogStackTK);//multistack je prazdnej, uvolnit
 						}
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"This is necesasry since the resent dialog has a different uid than its older form")]
 		public static void ResendAndRestackDialog(Gump oldInstance) {
 			Gump newInstance = oldInstance.Cont.SendGump(
-				oldInstance.Focus, oldInstance.def, oldInstance.InputArgs);//resend
+				oldInstance.Focus, oldInstance.Def, oldInstance.InputArgs);//resend
 			RenewStackedDialog(oldInstance, newInstance);//and restack
 		}
 
@@ -106,10 +106,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Dictionary<int, Stack<Gump>> dialogsMultiStack = oldInstance.Cont.GetTag(dialogStackTK) as Dictionary<int, Stack<Gump>>;
 			if (dialogsMultiStack != null) { //something was stored
 				Stack<Gump> storedStack;
-				if (dialogsMultiStack.TryGetValue(oldInstance.uid, out storedStack)) {
+				if (dialogsMultiStack.TryGetValue(oldInstance.Uid, out storedStack)) {
 					//store the stack back to the multistack but now under the new UID!
-					dialogsMultiStack[resentInstance.uid] = storedStack;
-					dialogsMultiStack.Remove(oldInstance.uid); //the old dialog has been discarded
+					dialogsMultiStack[resentInstance.Uid] = storedStack;
+					dialogsMultiStack.Remove(oldInstance.Uid); //the old dialog has been discarded
 				}
 			}
 		}

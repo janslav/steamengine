@@ -27,6 +27,7 @@ using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_MethodWrapper : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly MethodInfo method;
 		private readonly OpNode[] args;
@@ -104,6 +105,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_MethodWrapper_Params : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly MethodInfo method;
 		private readonly OpNode[] normalArgs;
@@ -211,6 +213,7 @@ namespace SteamEngine.LScript {
 	//but doesnt have separated their arguments results... I dont think anyone understands that anyway (maybe except me :) -tar
 	//it would also remove the GOTOs that are inside the resolveas* methods
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class OpNode_MethodWrapper_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly MethodInfo method;
 		private readonly OpNode[] args;
@@ -246,7 +249,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(formatString, results);
+				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, formatString, results);
 				return method.Invoke(oSelf, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;
@@ -261,7 +264,8 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			//Console.WriteLine("OpNode_MethodWrapper results: "+Tools.ObjToString(results));
 			try {
-				string resultString = String.Format(formatString, results);
+				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+					formatString, results);
 				return method.Invoke(vars.self, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;
@@ -290,6 +294,7 @@ namespace SteamEngine.LScript {
 	}
 
 	//a specialized opnode. not really necesarry to exist...
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public class OpNode_RunOnArgo : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		OpNode_MethodWrapper toRun;
 		internal OpNode_RunOnArgo(IOpNodeHolder parent, string filename, int line, int column, Node origNode, OpNode_MethodWrapper toRun)
@@ -300,7 +305,7 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object origSelf = vars.self;
 			try {
-				vars.self = vars.scriptArgs.argv[0];
+				vars.self = vars.scriptArgs.Argv[0];
 				return toRun.Run(vars);
 			} finally {
 				vars.self = origSelf;
@@ -318,7 +323,7 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			object origSelf = vars.self;
 			try {
-				vars.self = vars.scriptArgs.argv[0];
+				vars.self = vars.scriptArgs.Argv[0];
 				return toRun.TryRun(vars, results);
 			} finally {
 				vars.self = origSelf;

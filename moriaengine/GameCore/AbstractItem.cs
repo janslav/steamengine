@@ -33,13 +33,23 @@ namespace SteamEngine {
 	[CLSCompliant(false)]
 	public interface ICorpseEquipInfo {
 		uint FlaggedUid { get; }
-		byte Layer { get; }
+		int Layer { get; }
 		int Color { get; }
 		int Model { get; }
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	public abstract partial class AbstractItem : Thing, ICorpseEquipInfo {
+
+		private static int instances;
+		private static ArrayList registeredTGs = new ArrayList();
+
+		public static int Instances {
+			get {
+				return instances;
+			}
+		}
+
 		private int amount;
 		private string name;
 		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
@@ -61,15 +71,6 @@ namespace SteamEngine {
 
 		private TriggerGroup type;
 		internal object contentsOrComponents;
-		private static int instances;
-		private static ArrayList registeredTGs = new ArrayList();
-
-
-		public static int Instances {
-			get {
-				return instances;
-			}
-		}
 
 		#region Constructors
 		protected AbstractItem(ThingDef myDef)
@@ -86,9 +87,9 @@ namespace SteamEngine {
 		protected AbstractItem(AbstractItem copyFrom)
 			: base(copyFrom) { //copying constuctor
 			instances++;
-			name = copyFrom.name;
-			flags = copyFrom.flags;
-			amount = copyFrom.amount;
+			this.name = copyFrom.name;
+			this.flags = copyFrom.flags;
+			this.amount = copyFrom.amount;
 			Globals.LastNewItem = this;
 		}
 		#endregion Constructors
@@ -284,14 +285,14 @@ namespace SteamEngine {
 
 		public bool IsInVisibleLayer {
 			get {
-				if (point4d.x == 7000) {
-					return (point4d.z < 26);
+				if (this.point4d.x == 7000) {
+					return (this.point4d.z < 26);
 				}
 				return true;
 			}
 		}
 
-		public virtual byte Layer {
+		public virtual int Layer {
 			get {
 				return (int) LayerNames.None;
 			}
@@ -316,7 +317,7 @@ namespace SteamEngine {
 		}
 
 		public override AbstractItem FindCont(int index) {
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
+			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				return null;
 			} else {
@@ -376,7 +377,7 @@ namespace SteamEngine {
 		}
 
 		internal sealed override void Trigger_Destroy() {
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
+			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				tll.BeingDeleted();
 			}
@@ -386,7 +387,7 @@ namespace SteamEngine {
 		}
 
 		public void EmptyCont() {
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
+			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				tll.Empty();
 			}
@@ -430,43 +431,43 @@ namespace SteamEngine {
 			}
 		}
 
-		public override void Trigger(TriggerKey td, ScriptArgs sa) {
+		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
-				tg.Run(this, td, sa);
+				tg.Run(this, tk, sa);
 			}
-			base.TryTrigger(td, sa);
-			if (type != null) {
-				type.Run(this, td, sa);
+			base.TryTrigger(tk, sa);
+			if (this.type != null) {
+				this.type.Run(this, tk, sa);
 			}
 		}
 
-		public override void TryTrigger(TriggerKey td, ScriptArgs sa) {
+		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
-				tg.TryRun(this, td, sa);
+				tg.TryRun(this, tk, sa);
 			}
-			base.TryTrigger(td, sa);
-			if (type != null) {
-				type.TryRun(this, td, sa);
+			base.TryTrigger(tk, sa);
+			if (this.type != null) {
+				this.type.TryRun(this, tk, sa);
 			}
 		}
 
-		public override bool CancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public override bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
-				if (TagMath.Is1(tg.Run(this, td, sa))) {
+				if (TagMath.Is1(tg.Run(this, tk, sa))) {
 					return true;
 				}
 			}
-			if (base.CancellableTrigger(td, sa)) {
+			if (base.CancellableTrigger(tk, sa)) {
 				return true;
 			} else {
-				if (type != null) {
-					if (TagMath.Is1(type.Run(this, td, sa))) {
+				if (this.type != null) {
+					if (TagMath.Is1(this.type.Run(this, tk, sa))) {
 						return true;
 					}
 				}
@@ -474,19 +475,19 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public override bool TryCancellableTrigger(TriggerKey td, ScriptArgs sa) {
+		public override bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
-				if (TagMath.Is1(tg.TryRun(this, td, sa))) {
+				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
 					return true;
 				}
 			}
-			if (base.TryCancellableTrigger(td, sa)) {
+			if (base.TryCancellableTrigger(tk, sa)) {
 				return true;
 			} else {
-				if (type != null) {
-					if (TagMath.Is1(type.TryRun(this, td, sa))) {
+				if (this.type != null) {
+					if (TagMath.Is1(this.type.TryRun(this, tk, sa))) {
 						return true;
 					}
 				}
@@ -530,8 +531,8 @@ namespace SteamEngine {
 		public override void Save(SaveStream output) {
 			base.Save(output);
 			AbstractItemDef def = this.TypeDef;
-			if ((name != null) && (!def.Name.Equals(name))) {
-				output.WriteValue("name", name);
+			if ((this.name != null) && (!def.Name.Equals(this.name))) {
+				output.WriteValue("name", this.name);
 			}
 			Thing c = this.Cont;
 			if (c != null) {
@@ -633,7 +634,7 @@ namespace SteamEngine {
 
 		public override sealed IEnumerator<AbstractItem> GetEnumerator() {
 			this.ThrowIfDeleted();
-			ThingLinkedList tll = contentsOrComponents as ThingLinkedList;
+			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
 			} else {
