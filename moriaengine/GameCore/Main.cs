@@ -143,11 +143,11 @@ namespace SteamEngine {
 #if DEBUG
 				Console.WriteLine("Starting SteamEngine (" + Globals.Version + ", DEBUG build)" + " - " + Globals.ServerName);
 #elif SANE
-			Console.WriteLine("Starting SteamEngine ("+Globals.version+", SANE build)"+" - "+Globals.serverName);
+				Console.WriteLine("Starting SteamEngine (" + Globals.Version + ", SANE build)"+" - " + Globals.ServerName);
 #elif OPTIMIZED
-			Console.WriteLine("Starting SteamEngine ("+Globals.version+", OPTIMIZED build)"+" - "+Globals.serverName);
+				Console.WriteLine("Starting SteamEngine (" + Globals.Version + ", OPTIMIZED build)"+" - " + Globals.ServerName);
 #else
-			throw new SanityCheckException("None of these flags were set: DEBUG, SANE, or OPTIMIZED?");
+				throw new SanityCheckException("None of these flags were set: DEBUG, SANE, or OPTIMIZED?");
 #endif
 				Console.WriteLine("http://kec.cz:8008/trac");
 				Console.WriteLine("Running under " + Environment.OSVersion + ", Framework version: " + Environment.Version + ".");
