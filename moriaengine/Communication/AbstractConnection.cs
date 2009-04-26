@@ -318,7 +318,8 @@ namespace SteamEngine.Communication {
 
 				group.Dequeued();
 			} catch (Exception e) {
-				Logger.WriteError(e);
+				Logger.WriteError("Exception while sending", e);
+				this.Close(e.Message);
 			}
 		}
 
