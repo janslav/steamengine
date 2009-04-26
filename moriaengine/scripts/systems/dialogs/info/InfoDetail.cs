@@ -70,8 +70,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
 				dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build();
 				dlg.LastTable[0, 1] = GUTAText.Builder.Text("Uložit").Build();
-				dlg.MakeLastTableTransparent();
 			}
+			dlg.MakeLastTableTransparent();
 			
 			dlg.WriteOut();
 		}

@@ -194,23 +194,32 @@ dlg.LastTable.AddToCell(0,3,GUTAButton.Builder.Type(LeafComponentTypes.ButtonCro
 dlg.MakeLastTableTransparent()
 
 //"new subcategory" button
-dlg.AddTable(GUTATable(1,ButtonMetrics.D_BUTTON_WIDTH,0))
-dlg.LastTable.AddToCell(0,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build()) //new subcategory btn
-dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextHeadline("Pøidat podkategorii").Build())
-dlg.MakeLastTableTransparent()
+if src.IsGM 
+  dlg.AddTable(GUTATable(1,ButtonMetrics.D_BUTTON_WIDTH, 203, ButtonMetrics.D_BUTTON_WIDTH, 0))
+  dlg.LastTable.AddToCell(0,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(3).Build()) //new item(s) btn
+  dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextHeadline("Pøidat pøedmìt(y)").Build())
+  dlg.LastTable.AddToCell(0,2,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build()) //new subcategory btn
+  dlg.LastTable.AddToCell(0,3,GUTAText.Builder.TextHeadline("Pøidat podkategorii").Build())
+  dlg.MakeLastTableTransparent()
+  
+  //headlines row
+  //make | howmuch | icon | name | move up/down | info | smaz | resources
+  dlg.AddTable(GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, ImprovedDialog.ICON_WIDTH, 150, 10, ButtonMetrics.D_BUTTON_WIDTH, ButtonMetrics.D_BUTTON_WIDTH, 0));
+else
+  //headlines row
+  //make | howmuch | icon | name | move up/down | info | resources
+  dlg.AddTable(GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, ImprovedDialog.ICON_WIDTH, 150, 10, ButtonMetrics.D_BUTTON_WIDTH, 0));
+endif
 
-//"new item(s)" button
-dlg.AddTable(GUTATable(1,ButtonMetrics.D_BUTTON_WIDTH,0))
-dlg.LastTable.AddToCell(0,0,GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(3).Build()) //new item(s) btn
-dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextHeadline("Pøidat pøedmìt(y)").Build())
-dlg.MakeLastTableTransparent()
-
-//headlines row
-//make | icon | name | move up/down | info | resources
-dlg.AddTable(GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 150, 10, ButtonMetrics.D_BUTTON_WIDTH, 0));
-dlg.LastTable.AddToCell(0,2,GUTAText.Builder.TextLabel("Jméno").Build())
-dlg.LastTable.AddToCell(0,4,GUTAText.Builder.TextLabel("Info").Build())
-dlg.LastTable.AddToCell(0,5,GUTAText.Builder.TextLabel("Suroviny").Build())
+dlg.LastTable.AddToCell(0,1,GUTAText.Builder.TextLabel("Kolik").Build())
+dlg.LastTable.AddToCell(0,3,GUTAText.Builder.TextLabel("Jméno").Align(DialogAlignment.Align_Center).Build())
+dlg.LastTable.AddToCell(0,5,GUTAText.Builder.TextLabel("Info").Build())
+if src.IsGM 
+  dlg.LastTable.AddToCell(0,6,GUTAText.Builder.TextLabel("Del").Build())
+  dlg.LastTable.AddToCell(0,7,GUTAText.Builder.TextLabel("Suroviny").Build())
+else
+  dlg.LastTable.AddToCell(0,6,GUTAText.Builder.TextLabel("Suroviny").Build()) 
+endif
 dlg.MakeLastTableTransparent()
 
 //konecne seznam polozek
@@ -221,8 +230,14 @@ dlg.LastTable.InnerRowsDelimited = true
 
 //add one item just for test...
 dlg.LastTable.AddToCell(0, 0, GUTACheckbox.Builder.Id(10).Build())
-dlg.LastTable.AddToCell(0, 1, GUTAImage.Builder.Gump(i_maul.Model).Build())
-dlg.LastTable.AddToCell(0, 4, GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(13).Valign(DialogAlignment.Valign_Center).Build()) //display info
+dlg.LastTable.AddToCell(0, 1, GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(15).Valign(DialogAlignment.Valign_Center).Text("0").Build()) //how many to make of this item (if any)
+dlg.LastTable.AddToCell(0, 2, GUTAImage.Builder.Gump(i_maul.Model).Build())
+dlg.LastTable.AddToCell(0, 5, GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(13).Valign(DialogAlignment.Valign_Center).Build()) //display info
+arg resCol = 6 //resources Column
+if src.IsGM //delete button
+  dlg.LastTable.AddToCell(0, 6, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(14).Valign(DialogAlignment.Valign_Center).Build()) //remove from the list
+  arg resCol = 7
+endif
 					
 //now the list of resources
 arg reses = i_maul.Resources;
@@ -232,9 +247,9 @@ arg reses = i_maul.Resources;
 		  	arg textToShow = ""
         arg textToShow = <textToShow>+rlItm.DesiredCount.ToString() + " "
         src.sysmessage("maul: "+textToShow)
-				dlg.LastTable.AddToCell(0, 5, GUTAText.Builder.XPos(lastColPos).Text(textToShow).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build())
+				dlg.LastTable.AddToCell(0, resCol, GUTAText.Builder.XPos(lastColPos).Text(textToShow).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build())
 				arg countLength = ImprovedDialog.TextLength(textToShow)
-				dlg.LastTable.AddToCell(0, 5, GUTAImage.Builder.NamedGump(rlItm.ItemDef.Model).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build())
+				dlg.LastTable.AddToCell(0, resCol, GUTAImage.Builder.NamedGump(rlItm.ItemDef.Model).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build())
 				//prepare next offset:
 				arg gad = GumpDimensions.Table[rlItm.ItemDef.Model]
 				arg lastColPos = <lastColPos>+ <spaceLength> + <countLength> + <gad.Width> //first offset, counted length of the number text including separating space, width of the icon, space after the icon
@@ -246,14 +261,13 @@ dlg.MakeLastTableTransparent() //zpruhledni zbytek dialogu
 //ted paging
 dlg.CreatePaging(cat.contents.Count, firstiVal, 1)
 
-dlg.AddTable(GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 160, ButtonMetrics.D_BUTTON_WIDTH, 150, 0, ButtonMetrics.D_BUTTON_WIDTH))
+dlg.AddTable(GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH + 160, ButtonMetrics.D_BUTTON_WIDTH, 150, 0, ButtonMetrics.D_BUTTON_WIDTH))
 dlg.LastTable.AddToCell(0, 0, GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(4).Build()) //start making
-dlg.LastTable.AddToCell(0, 1, GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(5).Build()) //how many to make of the selected items
-dlg.LastTable.AddToCell(0, 2, GUTAText.Builder.TextLabel("Množství k vyrobení").Build())
-dlg.LastTable.AddToCell(0, 3, GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(6).Build()) //next time open here
-dlg.LastTable.AddToCell(0, 4, GUTAText.Builder.TextLabel("Pøíštì otevøít zde").Build())
-dlg.LastTable.AddToCell(0, 5, GUTAText.Builder.TextLabel("Zrušit otevírání").Build())
-dlg.LastTable.AddToCell(0, 6, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(7).Build()) //discard saved position
+dlg.LastTable.AddToCell(0, 1, GUTAText.Builder.TextLabel("Vyrobit vybrané").Build())
+dlg.LastTable.AddToCell(0, 2, GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(6).Build()) //next time open here
+dlg.LastTable.AddToCell(0, 3, GUTAText.Builder.TextLabel("Pøíštì otevøít zde").Build())
+dlg.LastTable.AddToCell(0, 4, GUTAText.Builder.TextLabel("Zrušit otevírání").Build())
+dlg.LastTable.AddToCell(0, 5, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(7).Build()) //discard saved position
 dlg.MakeLastTableTransparent();
 
 dlg.WriteOut()

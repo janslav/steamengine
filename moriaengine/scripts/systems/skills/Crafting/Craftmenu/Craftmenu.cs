@@ -228,25 +228,46 @@ namespace SteamEngine.CompiledScripts {
 			typeNames["t_book_bottle"] = "Recept Láhev";
 			typeNames["t_src_changer"] = "mìnitko Src(script)";
 			typeNames["t_book_inscription"] = "Kniha inscripce";
-			typeNames["t_bottle_empty"] = "Prázdná láhev";
+			typeNames["t_bottle_empty"] = "Prázdná láhev";			
 		}
 
 		[SavedMember]
-		public static CraftmenuCategory categoryAlchemy = new CraftmenuCategory("Alchemy", null);
-		[SavedMember]
-		public static CraftmenuCategory categoryBlacksmithing = new CraftmenuCategory("Blacksmithing", null);
-		[SavedMember]
-		public static CraftmenuCategory categoryBowcraft = new CraftmenuCategory("Bowcraft", null);
-		[SavedMember]
-		public static CraftmenuCategory categoryCarpentry = new CraftmenuCategory("Carpentry", null);
-		[SavedMember]
-		public static CraftmenuCategory categoryCooking = new CraftmenuCategory("Cooking", null);
-		[SavedMember]
-		public static CraftmenuCategory categoryInscription = new CraftmenuCategory("Inscription", null);
-		[SavedMember]
-		public static CraftmenuCategory categoryTailoring = new CraftmenuCategory("Tailoring", null);
-		[SavedMember]
-		public static CraftmenuCategory categoryTinkering = new CraftmenuCategory("Tinkering", null);
+		private static readonly Dictionary<SkillName, CraftmenuCategory> mainCategories = new Dictionary<SkillName, CraftmenuCategory>();
+		
+		//[SavedMember]
+		//public static CraftmenuCategory categoryAlchemy = new CraftmenuCategory("Alchemy", null);
+		//[SavedMember]
+		//public static CraftmenuCategory categoryBlacksmithing = new CraftmenuCategory("Blacksmithing", null);
+		//[SavedMember]
+		//public static CraftmenuCategory categoryBowcraft = new CraftmenuCategory("Bowcraft", null);
+		//[SavedMember]
+		//public static CraftmenuCategory categoryCarpentry = new CraftmenuCategory("Carpentry", null);
+		//[SavedMember]
+		//public static CraftmenuCategory categoryCooking = new CraftmenuCategory("Cooking", null);
+		//[SavedMember]
+		//public static CraftmenuCategory categoryInscription = new CraftmenuCategory("Inscription", null);
+		//[SavedMember]
+		//public static CraftmenuCategory categoryTailoring = new CraftmenuCategory("Tailoring", null);
+		//[SavedMember]
+		//public static CraftmenuCategory categoryTinkering = new CraftmenuCategory("Tinkering", null);
+
+		public static Dictionary<SkillName, CraftmenuCategory> MainCategories {
+			get {
+				if (mainCategories.Count == 0) {//yet empty - first access, initialize it
+					//every other access will return an unempty dictionary as it will be initialized at least with te main categories
+					//initialize the dictionary with categories
+					mainCategories[SkillName.Alchemy] = new CraftmenuCategory("Alchemy");
+					mainCategories[SkillName.Blacksmith] = new CraftmenuCategory("Blacksmithing");
+					mainCategories[SkillName.Fletching] = new CraftmenuCategory("Bowcraft");
+					mainCategories[SkillName.Carpentry] = new CraftmenuCategory("Carpentry");
+					mainCategories[SkillName.Cooking] = new CraftmenuCategory("Cooking");
+					mainCategories[SkillName.Inscribe] = new CraftmenuCategory("Inscription");
+					mainCategories[SkillName.Tailoring] = new CraftmenuCategory("Tailoring");
+					mainCategories[SkillName.Tinkering] = new CraftmenuCategory("Tinkering");
+				}
+				return mainCategories;
+			}
+		}
 
 		[Summary("Get the category path ('cat1->cat2->cat3') and try to find and return the category specified")]
 		public static CraftmenuCategory GetCategoryByPath(string path) {
@@ -254,28 +275,28 @@ namespace SteamEngine.CompiledScripts {
 			CraftmenuCategory candidateCat = null;
 			switch (catChain[0]) {
 				case "Alchemy":
-					candidateCat = categoryAlchemy;
+					candidateCat = MainCategories[SkillName.Alchemy];
 					break;
 				case "Blacksmithing":
-					candidateCat = categoryBlacksmithing;
+					candidateCat = MainCategories[SkillName.Blacksmith];
 					break;
 				case "Bowcraft":
-					candidateCat = categoryBowcraft;
+					candidateCat = MainCategories[SkillName.Fletching];
 					break;
 				case "Carpentry":
-					candidateCat = categoryCarpentry;
+					candidateCat = MainCategories[SkillName.Carpentry];
 					break;
 				case "Cooking":
-					candidateCat = categoryCooking;
+					candidateCat = MainCategories[SkillName.Cooking];
 					break;
 				case "Inscription":
-					candidateCat = categoryInscription;
+					candidateCat = MainCategories[SkillName.Inscribe];
 					break;
 				case "Tailoring":
-					candidateCat = categoryTailoring;
+					candidateCat = MainCategories[SkillName.Tailoring];
 					break;
 				case "Tinkering":
-					candidateCat = categoryTinkering;
+					candidateCat = MainCategories[SkillName.Tinkering];
 					break;
 			}
 			if (candidateCat != null) {
@@ -294,6 +315,27 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return null;//nothing was found which will not occur
 		}
+
+		//method for lazy loading the ICraftmenuElement parental info, used only when accessing some element's parent which is yet null
+		internal static void TryLoadParents() {
+			foreach (CraftmenuCategory mainCat in mainCategories.Values) { //these dont have Parents...
+				ResolveChildParent(mainCat);
+			}
+		}
+
+		//for the given category iterate through all of its children and set itself as parent to them
+		//continue recursively into subcategories
+		private static void ResolveChildParent(CraftmenuCategory ofWhat) {
+			foreach (ICraftmenuElement elem in ofWhat.Contents) {
+				CraftmenuCategory elemCat = elem as CraftmenuCategory;
+				if (elemCat != null) {//we have the subcategory - resolve parents inside
+					elemCat.Parent = ofWhat; //set the subcategory's parent
+					ResolveChildParent(elemCat); //and recurse into children
+				} else {//we have the item
+					((CraftmenuItem) elem).Parent = ofWhat;
+				}
+			}
+		}
 	}
 
 	[Summary("One line in the craftmenu - can be either the category of items or the particular item(def) itself")]
@@ -311,6 +353,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		void Remove();
+
+		void Bounce(AbstractItem whereto);
 	}
 
 	[SaveableClass]
@@ -322,25 +366,23 @@ namespace SteamEngine.CompiledScripts {
 		public string name; //name of the category
 		[SaveableData]
 		public List<ICraftmenuElement> contents = new List<ICraftmenuElement>(); //itemdefs and subcategorties contained in the category
-		[SaveableData]
-		public CraftmenuCategory parent = null;
+		private CraftmenuCategory parent = null;
 
 		[LoadingInitializer]
 		public CraftmenuCategory() {
 		}
 
-		public CraftmenuCategory(string name, CraftmenuCategory parent) {
+		public CraftmenuCategory(string name) {
 			this.name = name;
-			this.parent = parent;
 		}
 
 		[Summary("Get name compound also from the possible parent's name (if any)")]
 		public string FullName {
 			get {
-				if (parent == null) {
+				if (this.Parent == null) {
 					return name;
 				} else {
-					return parent.FullName + "->" + name;
+					return this.Parent.FullName + "->" + name;
 				}
 			}
 		}
@@ -366,16 +408,33 @@ namespace SteamEngine.CompiledScripts {
 
 		public CraftmenuCategory Parent {
 			get {
+				if (parent == null && !CraftmenuContents.MainCategories.ContainsValue(this)) {
+					//if the parent is null and we aren't working with one of the main categories, try load all craftmenu elements' parental hierarchy
+					CraftmenuContents.TryLoadParents();
+				}
 				return parent;
+			}
+			internal set {
+				this.parent = value;
 			}
 		}
 
 		[Summary("Category cleaning method - clear the contents and remove from the parent")]
 		public void Remove() {
-			if (parent != null) {
-				parent.contents.Remove(this);
+			if (this.Parent != null) {
+				this.Parent.Contents.Remove(this);
+				this.parent = null;
 			}
-			contents.Clear();
+			Contents.Clear();
+		}
+
+		[Summary("After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it")]
+		public void Bounce(AbstractItem whereto) {
+			Item newPouch = (Item)ItemDef.Get("i_pouch").Create(whereto);
+			newPouch.Name = this.Name;
+			foreach (ICraftmenuElement innerElem in this.Contents) {
+				innerElem.Bounce(newPouch);
+			}
 		}
 		#endregion
 	}
@@ -386,16 +445,14 @@ namespace SteamEngine.CompiledScripts {
 	public class CraftmenuItem : ICraftmenuElement {
 		[SaveableData]
 		public ItemDef itemDef;
-		[SaveableData]
-		public CraftmenuCategory parent;
+		private CraftmenuCategory parent = null;
 
 		[LoadingInitializer]
 		public CraftmenuItem() {
 		}
 
-		public CraftmenuItem(ItemDef itemDef, CraftmenuCategory parent) {
+		public CraftmenuItem(ItemDef itemDef) {
 			this.itemDef = itemDef;
-			this.parent = parent;
 		}
 
 		#region ICraftmenuElement Members
@@ -414,15 +471,28 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("CraftmenuItem must always be in some CraftmenuCategory!")]
 		public CraftmenuCategory Parent {
 			get {
+				if (parent == null) {
+					//if the parent is null try to load the parental hierarchy
+					CraftmenuContents.TryLoadParents();
+				}
 				return parent;
+			}
+			internal set {
+				this.parent = value;
 			}
 		}
 
 		[Summary("Remove the item from the parent's list")]
 		public void Remove() {
-			if (parent != null) {
-				parent.contents.Remove(this);
+			if (this.Parent != null) {
+				this.Parent.Contents.Remove(this);
+				this.parent = null;
 			}
+		}
+
+		[Summary("Bouncing of the item means creating an instance and putting to the specified location")]
+		public void Bounce(AbstractItem whereto) {
+			Item newItm = (Item)itemDef.Create(whereto);
 		}
 		#endregion
 	}
@@ -434,25 +504,34 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
+		//put the given item into the category. if the item is a non-empty container, make it a subcategory
+		//and add its contents recursively
+		private void Encategorize(Item oneItm, CraftmenuCategory whereto) {
+			if (oneItm.IsContainer) {
+				if (oneItm.Count > 0) {//make it a subcategory
+						//use the container's name for the category name - it is up to user to name all containers properly..
+					CraftmenuCategory newSubcat = new CraftmenuCategory(oneItm.Name);
+					newSubcat.Parent = whereto;
+					whereto.Contents.Add(newSubcat);
+					foreach (Item inner in oneItm) {
+						Encategorize(inner, newSubcat);//proceed with every found item
+					}
+				} else {//empty container - it will be a single item...
+					CraftmenuItem newItem = new CraftmenuItem((ItemDef) oneItm.Def);//add the contained items
+					newItem.Parent = whereto;
+					whereto.Contents.Add(newItem);
+				}
+			} else {//normal item
+				CraftmenuItem newItem = new CraftmenuItem((ItemDef) oneItm.Def);//add the contained items
+				newItem.Parent = whereto;
+				whereto.Contents.Add(newItem);
+			}
+		}
+
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			CraftmenuCategory catToPut = (CraftmenuCategory) parameter;
 
-			CraftmenuItem newItem = null;
-			if (targetted.IsContainer) {
-				int containedCount = 0;
-				foreach (Item inner in targetted.EnumShallow()) {
-					newItem = new CraftmenuItem((ItemDef) inner.Def, catToPut);//add the contained items
-					catToPut.contents.Add(newItem);
-					containedCount++;
-				}
-				if (containedCount == 0) {//nothing was inside, we attempted to add the empty container
-					newItem = new CraftmenuItem((ItemDef) targetted.Def, catToPut);//add the container itself
-					catToPut.contents.Add(newItem);
-				}
-			} else {//single item - add it now
-				newItem = new CraftmenuItem((ItemDef) targetted.Def, catToPut);
-				catToPut.contents.Add(newItem);
-			}
+			Encategorize(targetted, catToPut);
 
 			//reopen the dialog on the stored position
 			//check the stored last displayed category
