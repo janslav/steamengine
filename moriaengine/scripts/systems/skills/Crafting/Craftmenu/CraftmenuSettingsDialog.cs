@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			CraftmenuCategory cat = (CraftmenuCategory) args[0]; //this is a CraftmenuCategory for setting
 
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.contents.Count); //nejvyssi index na strance
+			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
 
 			int innerWidth = (width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE);
 
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			string skillmake = "";
 			string weight = "";
 			for (int i = firstiVal; i < imax; i++) { //pojedeme pres polozky kategorie ale jen v danem rozsahu co se vejde...
-				ICraftmenuElement elem = cat.contents[i];
+				ICraftmenuElement elem = cat.Contents[i];
 				if (elem.IsCategory) { //for category element we will just add a category navigating link to the dlg.
 					GUTARow oneRow = new GUTARow(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 0);
 					mainTable.AddRow(oneRow);
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			//ted paging
-			dlg.CreatePaging(cat.contents.Count, firstiVal, 1);
+			dlg.CreatePaging(cat.Contents.Count, firstiVal, 1);
 
 			//dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
 			//dlg.LastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(3).Build(); //store changes
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
 			int btnNo = (int) gr.pressedButton;
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.contents.Count); //nejvyssi index na strance
+			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
 
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						ResourcesList newSkillmake = null;
 						double newWeight = 0;
 						for (int i = firstiVal; i < imax; i++) {
-							ICraftmenuElement elem = cat.contents[i];
+							ICraftmenuElement elem = cat.Contents[i];
 							CraftmenuItem itm = elem as CraftmenuItem;
 							if (itm != null) {//set this item's values (but only for items, leave categories)
 								try {
@@ -163,12 +163,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
-			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, cat.contents.Count, 1)) {
+			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, cat.Contents.Count, 1)) {
 				return;
 			} else {
 				int btnNumber = (btnNo - 10) % 5; //on one line we have numbers 10,11,12,13,14 next line is 15,16,17,18 etc.
 				int line = (int) ((btnNo - (10 + btnNumber)) / 5);
-				ICraftmenuElement elem = cat.contents[line];
+				ICraftmenuElement elem = cat.Contents[line];
 				Gump newGi = null;
 				switch (btnNumber) {
 					case 0://show the subcategory contents
