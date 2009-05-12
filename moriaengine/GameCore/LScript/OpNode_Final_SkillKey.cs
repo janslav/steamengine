@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_SkillKey_Set : OpNode, IOpNodeHolder, ITriable {
+	internal class OpNode_SkillKey_Set : OpNode, IOpNodeHolder, ITriable {
 		private OpNode arg;
 		private readonly int skillId;
 
@@ -60,18 +60,18 @@ namespace SteamEngine.LScript {
 			try {
 				AbstractCharacter ch = (AbstractCharacter) oSelf;
 				//ch.SkillById(skillId).RealValue = Convert.ToUInt16(result);
-				ch.SetSkill(skillId, Convert.ToInt32(result));
+				ch.SetSkill(skillId, Convert.ToInt32(result, System.Globalization.CultureInfo.InvariantCulture));
 				//ch.Skills[skillId].RealValue = Convert.ToUInt16(result);
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating SkillKey (skill id " + this.skillId + ") expression",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			AbstractCharacter ch = (AbstractCharacter) vars.self;
-			ch.SetSkill(skillId, Convert.ToInt32(results[0]));
+			ch.SetSkill(skillId, Convert.ToInt32(results[0], System.Globalization.CultureInfo.InvariantCulture));
 			//ch.Skills[skillId].RealValue = Convert.ToUInt16(results[0]);
 			return null;
 		}
@@ -82,7 +82,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_SkillKey_Get : OpNode, ITriable {
+	internal class OpNode_SkillKey_Get : OpNode, ITriable {
 		private readonly int skillId;
 
 		internal OpNode_SkillKey_Get(IOpNodeHolder parent, string filename,
@@ -98,7 +98,7 @@ namespace SteamEngine.LScript {
 				//return ch.Skills[skillId].RealValue;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating SkillKey (skill id " + this.skillId + ") expression",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 

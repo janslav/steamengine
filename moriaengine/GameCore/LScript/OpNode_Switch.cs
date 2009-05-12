@@ -24,7 +24,7 @@ using PerCederberg.Grammatica.Parser;
 namespace SteamEngine.LScript {
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public abstract class OpNode_Switch : OpNode, IOpNodeHolder {
+	internal abstract class OpNode_Switch : OpNode, IOpNodeHolder {
 		protected OpNode switchNode;
 		protected Hashtable cases;
 		protected OpNode defaultNode;
@@ -37,7 +37,7 @@ namespace SteamEngine.LScript {
 		private static TempParent tempParent = new TempParent();
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-		protected class NullOpNode : OpNode {
+		internal class NullOpNode : OpNode {
 			internal NullOpNode()
 				: base(null, null, -1, -1, null) {
 			}
@@ -47,21 +47,22 @@ namespace SteamEngine.LScript {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", MessageId = "Member")]
-		protected static readonly NullOpNode nullOpNodeInstance = new NullOpNode();
+		internal static readonly NullOpNode nullOpNodeInstance = new NullOpNode();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScript.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
 
 			//LScript.DisplayTree(code);
 
 			Production switchProd = (Production) code;
 			int caseBlocksCount = switchProd.GetChildCount() - 4;
 			if (caseBlocksCount == 0) {//we just run the expression
-				return LScript.CompileNode(parent, switchProd.GetChildAt(1));
+				return LScriptMain.CompileNode(parent, switchProd.GetChildAt(1));
 			} else {
-				OpNode switchNode = LScript.CompileNode(parent, switchProd.GetChildAt(1));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+				OpNode switchNode = LScriptMain.CompileNode(parent, switchProd.GetChildAt(1));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 				OpNode defaultNode = null;
 				ArrayList tempCases = new ArrayList();
 				Hashtable cases = new Hashtable(StringComparer.OrdinalIgnoreCase);
@@ -75,7 +76,7 @@ namespace SteamEngine.LScript {
 					if (IsType(caseValue, StrictConstants.DEFAULT)) {//default
 						isDefault = true;
 					} else {
-						OpNode caseValueNode = LScript.CompileNode(tempParent, caseValue);//the parent here is false, it doesn't matter tho.
+						OpNode caseValueNode = LScriptMain.CompileNode(tempParent, caseValue);//the parent here is false, it doesn't matter tho.
 						key = caseValueNode.Run(new ScriptVars(null, new object(), 0));
 						try {
 							key = ConvertTools.ToInt32(key);
@@ -88,14 +89,14 @@ namespace SteamEngine.LScript {
 						}
 						if (key == null) {
 							throw new InterpreterException("The expression in a Case must be either convertible to an integer, or a string.",
-								caseProd.GetStartLine() + LScript.startLine, caseProd.GetStartColumn(),
-								filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+								caseProd.GetStartLine() + LScriptMain.startLine, caseProd.GetStartColumn(),
+								filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 						}
 					}
 					if (caseProd.GetChildCount() > 3) {
 						OpNode caseCode = null;
 						if (caseProd.GetChildCount() == 6) {//has script
-							caseCode = LScript.CompileNode(parent, caseProd.GetChildAt(3));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+							caseCode = LScriptMain.CompileNode(parent, caseProd.GetChildAt(3));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 						} else {
 							caseCode = nullOpNodeInstance;
 						}
@@ -114,7 +115,7 @@ namespace SteamEngine.LScript {
 						//else only has "break" in it
 					} else if (isDefault) {
 						throw new InterpreterException("The Default block must have some code.",
-							line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+							line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 					} else {
 						tempCases.Add(key);
 					}
@@ -122,7 +123,7 @@ namespace SteamEngine.LScript {
 				OpNode_Switch constructed;
 				if (isString && isInteger) {
 					throw new InterpreterException("All cases must be either integers or strings.",
-						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 				} else if (isInteger) {
 					constructed = new OpNode_Switch_Integer(
 						parent, filename, line, column, code);
@@ -196,7 +197,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Switch_String : OpNode_Switch {
+	internal class OpNode_Switch_String : OpNode_Switch {
 		internal OpNode_Switch_String(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
@@ -217,7 +218,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Switch_Integer : OpNode_Switch {
+	internal class OpNode_Switch_Integer : OpNode_Switch {
 		internal OpNode_Switch_Integer(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 		}
@@ -225,10 +226,10 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object value;
 			try {
-				value = Convert.ToInt32(switchNode.Run(vars));
+				value = Convert.ToInt32(switchNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while parsing integer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 			OpNode node = (OpNode) cases[value];
 			if (node != nullOpNodeInstance) {

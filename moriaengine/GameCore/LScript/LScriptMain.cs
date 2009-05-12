@@ -30,7 +30,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 
-	public static class LScript {
+	public static class LScriptMain {
 		internal static int startLine;
 
 		internal static LScriptHolder snippetRunner = new LScriptHolder();
@@ -55,7 +55,7 @@ namespace SteamEngine.LScript {
 			return TryRunSnippet("<snippet>", 0, self, script);
 		}
 
-		internal static LScriptHolder GetNewSnippetRunner(string filename, int line, TagHolder self, string script) {
+		internal static LScriptHolder GetNewSnippetRunner(string filename, int line, string script) {
 			//Logger.WriteDebug("GetNewSnippetRunner("+script+")");
 
 			script += Environment.NewLine;
@@ -63,7 +63,9 @@ namespace SteamEngine.LScript {
 			newSnippetRunner.filename = filename;
 			newSnippetRunner.line = line;
 			try {
-				newSnippetRunner.code = LScript.Compile(newSnippetRunner, new StringReader(script), line);
+				using (StringReader reader = new StringReader(script)) {
+					newSnippetRunner.code = LScriptMain.Compile(newSnippetRunner, reader, line);
+				}
 				newSnippetRunner.lastRunSuccesful = true;
 				return newSnippetRunner;
 			} catch (ParserLogException ple) {
@@ -95,7 +97,9 @@ namespace SteamEngine.LScript {
 			//snippetRunner.registerNames.Clear();
 			snippetRunner.lastRunSuccesful = false;
 			try {
-				snippetRunner.code = LScript.Compile(snippetRunner, new StringReader(script), line);
+				using (StringReader reader = new StringReader(script)) {
+					snippetRunner.code = LScriptMain.Compile(snippetRunner, reader, line);
+				}
 				object retVal = snippetRunner.code.Run(new ScriptVars(null, self, snippetRunner.registerNames.Count));
 				snippetRunner.lastRunSuccesful = true;
 				return retVal;
@@ -171,7 +175,7 @@ namespace SteamEngine.LScript {
 		}
 
 		internal static OpNode Compile(LScriptHolder parent, TextReader stream, int startLine) {
-			LScript.startLine = startLine;
+			LScriptMain.startLine = startLine;
 			Parser parser = new LScriptParser(stream);
 			//Parser parser = new LScriptParser(stream, new DebugAnalyzer());
 
@@ -227,7 +231,7 @@ namespace SteamEngine.LScript {
 						return OpNode_Lazy_Expression.Construct(parent, code, true);
 
 					case StrictConstants.DOTTED_EXPRESSION_CHAIN:
-						return OpNode_Lazy_ExpressionChain.Construct(parent, code, true);
+						return OpNode_Lazy_ExpressionChain.Construct(parent, code); 
 
 					case StrictConstants.CODE_BODY_PARENS:
 					case StrictConstants.SIMPLE_CODE_BODY_PARENS:
@@ -236,7 +240,7 @@ namespace SteamEngine.LScript {
 
 
 				throw new InterpreterException("Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) + "'(Node type " + LogStr.Ident(code.ToString()) + ") in an invalid way.",
-					LScript.startLine + code.GetStartLine(), code.GetStartColumn(),
+					LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
 					GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName());
 			} else {
 				return CompileNode(parent, code);
@@ -354,7 +358,7 @@ namespace SteamEngine.LScript {
 						i = TagMath.ParseInt64(((Token) code).GetImage());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing integer",
-							LScript.startLine + code.GetStartLine(), code.GetStartColumn(),
+							LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
 							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
 					if ((i <= int.MaxValue) && (i >= int.MinValue)) {
@@ -369,7 +373,7 @@ namespace SteamEngine.LScript {
 						h = TagMath.ParseUInt64(((Token) code).GetImage().Trim());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing hexadecimal integer",
-							LScript.startLine + code.GetStartLine(), code.GetStartColumn(),
+							LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
 							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
 					if ((h <= uint.MaxValue) && (h >= uint.MinValue)) {
@@ -384,14 +388,14 @@ namespace SteamEngine.LScript {
 						d = TagMath.ParseDouble(((Token) code).GetImage());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing decimal number",
-							LScript.startLine + code.GetStartLine(), code.GetStartColumn(),
+							LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
 							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
 					return OpNode_Object.Construct(parent, d);
 			}
 
 			throw new InterpreterException("Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) + "'(Node type " + LogStr.Ident(code.ToString()) + ")  in an invalid way.",
-				LScript.startLine + code.GetStartLine(), code.GetStartColumn(),
+				LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
 				GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName());
 		}
 
@@ -406,6 +410,7 @@ namespace SteamEngine.LScript {
 
 		private static string indent;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void DisplayTree(Node node) {
 			Console.WriteLine(indent + node + " : " + GetString(node));
 			//Console.WriteLine(indent+node);
@@ -427,13 +432,13 @@ namespace SteamEngine.LScript {
 
 		internal static string GetString(Node node) {
 			StringBuilder builder = new StringBuilder();
-			GetStringBuilder(node, builder);
+			BuildToString(node, builder);
 			return builder.ToString();
 		}
 
-		private static void GetStringBuilder(Node node, StringBuilder builder) {
-			if (node is Token) {
-				Token token = (Token) node;
+		private static void BuildToString(Node node, StringBuilder builder) {
+			Token token = node as Token;
+			if (token != null) {
 				if (node.GetId() == (int) StrictConstants.ESCAPEDCHAR) {
 					builder.Append(token.GetImage()[1]);
 				} else {
@@ -443,7 +448,7 @@ namespace SteamEngine.LScript {
 			if (node != null) {
 				for (int i = 0, n = node.GetChildCount(); i < n; i++) {
 					Node child = node.GetChildAt(i);
-					GetStringBuilder(child, builder);
+					BuildToString(child, builder);
 				}
 			}
 		}

@@ -20,7 +20,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_SetArg : OpNode, IOpNodeHolder, ITriable {
+	internal class OpNode_SetArg : OpNode, IOpNodeHolder, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 		private OpNode arg;
@@ -30,7 +30,7 @@ namespace SteamEngine.LScript {
 			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.name = name;
-			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
@@ -63,14 +63,14 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_GetArg : OpNode, ITriable {
+	internal class OpNode_GetArg : OpNode, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 
 		internal OpNode_GetArg(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
 			this.name = name;
 		}
 
@@ -88,14 +88,14 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_ArgExists : OpNode, ITriable {
+	internal class OpNode_ArgExists : OpNode, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 
 		internal OpNode_ArgExists(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
 			this.name = name;
 		}
 
@@ -113,14 +113,14 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_RemoveArg : OpNode, ITriable {
+	internal class OpNode_RemoveArg : OpNode, ITriable {
 		private readonly int registerIndex;
 		private readonly string name;
 
 		internal OpNode_RemoveArg(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.registerIndex = ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
 			this.name = name;
 		}
 

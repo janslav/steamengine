@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			Console.WriteLine("OnResponse");
 			gi.Cont.SysMessage("OnResponse from " + gi);
-			gi.Cont.SysMessage("button : " + gr.pressedButton);
+			gi.Cont.SysMessage("button : " + gr.PressedButton);
 			gi.Cont.SysMessage("checkbutton: " + gr.IsSwitched(786));
 			gi.Cont.SysMessage("textentry: " + gr.GetTextResponse(762));
 			gi.Cont.SysMessage("number textentry: " + gr.GetTextResponse(763));

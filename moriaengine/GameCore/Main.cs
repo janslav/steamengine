@@ -382,6 +382,7 @@ namespace SteamEngine {
 
 		private static void Exit() {
 			RunLevelManager.SetShutdown();
+			GameServer.Exit();
 			FastDLL.ShutDownFastDLL();
 			Console.WriteLine("Shutdown...");
 			if (Globals.Instance != null) { //is null when first run (and writing steamengine.ini)

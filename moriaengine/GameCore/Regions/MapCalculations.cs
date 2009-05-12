@@ -168,6 +168,7 @@ namespace SteamEngine.Regions {
 
 		#region CheckMovement
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "5#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "4#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "6#")]
 		public bool CheckMovement(IPoint3D point, IMovementSettings settings, Direction d, bool hackMove, out int xForward, out int yForward, out int newZ) {
 			int xStart = point.X;
 			int yStart = point.Y;
@@ -747,14 +748,15 @@ namespace SteamEngine.Regions {
 			return (v / 2);
 		}
 
-		public void GetFixedZ(IPoint3D point, out int newZ) {
+		//TODO needs work
+		public int GetFixedZ(IPoint3D point) {
 			int oldZ = point.Z;
 			int x = point.X;
 			int y = point.Y;
-			if (IsValidPos(x, y)) {
-				newZ = this.GetTileZ(x, y);
-			}
-			newZ = (sbyte) oldZ;
+			//if (this.IsValidPos(x, y)) {
+				return this.GetTileZ(x, y);
+			//}
+			//return oldZ;
 		}
 	}
 }

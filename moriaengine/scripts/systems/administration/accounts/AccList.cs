@@ -94,8 +94,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(D_AccList.accListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else { //skutecna talcitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
-				int row = (int) (gr.pressedButton - 10);
+				int row = (int) (gr.PressedButton - 10);
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ga));

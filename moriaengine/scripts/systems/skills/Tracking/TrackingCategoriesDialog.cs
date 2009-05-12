@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			SkillSequenceArgs skillSeqArgs = (SkillSequenceArgs) args[0];
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case 0: //exit - finish tracking without selecting anything
 					skillSeqArgs.PhaseAbort();
 					break;

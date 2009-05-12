@@ -52,7 +52,7 @@ namespace SteamEngine.AuxServerPipe {
 		string accName;
 		bool loginSuccessful;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "loginSuccessful"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "loginSuccessful"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId")]
 		public void Prepare(int consoleId, string accName, bool loginSuccessful) {
 			this.consoleId = consoleId;
 			this.accName = accName;
@@ -73,9 +73,12 @@ namespace SteamEngine.AuxServerPipe {
 	}
 
 	internal class StartupFinishedPacket : OutgoingPacket {
-		static StartupFinishedPacket() {
-			group = PacketGroup.CreateFreePG();
+		public static readonly PacketGroup group = InitGroup();
+
+		private static PacketGroup InitGroup() {
+			PacketGroup group = PacketGroup.CreateFreePG();
 			group.AddPacket(new StartupFinishedPacket());
+			return group;
 		}
 
 		public override byte Id {
@@ -83,8 +86,6 @@ namespace SteamEngine.AuxServerPipe {
 				return 0x04;
 			}
 		}
-
-		public static readonly PacketGroup group;
 
 		protected override void Write() {
 		}

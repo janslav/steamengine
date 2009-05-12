@@ -66,13 +66,13 @@ namespace SteamEngine.Networking {
 					this.subPacket = Pool<UnknownSubPacket>.Acquire();
 					break;
 				default:
-					Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x" + subCmd.ToString("x") + " (len " + blockSize + ")");
+					Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x" + subCmd.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (len " + blockSize + ")");
 					this.OutputPacketLog();
 					return ReadPacketResult.DiscardSingle;
 			}
 
 			if (subCmd != 0x24) { //0x24 is boringly frequent, albeit ignored
-				Logger.WriteDebug("Handling packet 0xbf - subpacket 0x" + subCmd.ToString("x") + " (len " + blockSize + ")");
+				Logger.WriteDebug("Handling packet 0xbf - subpacket 0x" + subCmd.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (len " + blockSize + ")");
 			}
 			return this.subPacket.ReadSubPacket(this, blockSize);
 		}
@@ -81,19 +81,24 @@ namespace SteamEngine.Networking {
 			this.subPacket.Handle(this, conn, state);
 		}
 
-		public override void Dispose() {
-			if (this.subPacket != null) {
-				this.subPacket.Dispose();
-				this.subPacket = null;
+		protected override void On_DisposeManagedResources() {
+			try {
+				if (this.subPacket != null) {
+					this.subPacket.Dispose();
+					this.subPacket = null;
+				}
+			} finally {
+				base.On_DisposeManagedResources();
 			}
-			base.Dispose();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class SubPacket : Poolable {
 			internal protected abstract ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize);
 			internal protected abstract void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public sealed class ScreenSizeSubPacket : SubPacket {
 			short x, y;
 
@@ -114,6 +119,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public sealed class UnknownSubPacket : SubPacket {
 			protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
 				return ReadPacketResult.DiscardSingle;
@@ -124,6 +130,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public sealed class SetLanguageSubPacket : SubPacket {
 			string language;
 
@@ -137,6 +144,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public sealed class SpellSelectedSubPacket : SubPacket {
 			short spellId;
 
@@ -151,6 +159,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public sealed class PartySubPacket : SubPacket {
 			SubPacket subSubPacket;
 
@@ -179,12 +188,12 @@ namespace SteamEngine.Networking {
 						this.subSubPacket = Pool<DeclineJoinPartyInvitationSubSubPacket>.Acquire();
 						break;
 					default:
-						Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x6 (Party) - subsubpacket " + subSubId.ToString("x") + " (len " + blockSize + ")");
+						Logger.WriteDebug("Unknown packet 0xbf - subpacket 0x6 (Party) - subsubpacket " + subSubId.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (len " + blockSize + ")");
 						packet.OutputPacketLog();
 						return ReadPacketResult.DiscardSingle;
 				}
 
-				Logger.WriteDebug("Handling packet 0xbf - subpacket 0x6 (Party) - subsubpacket " + subSubId.ToString("x") + " (len " + blockSize + ")");
+				Logger.WriteDebug("Handling packet 0xbf - subpacket 0x6 (Party) - subsubpacket " + subSubId.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (len " + blockSize + ")");
 				return this.subSubPacket.ReadSubPacket(packet, blockSize);
 			}
 
@@ -192,14 +201,18 @@ namespace SteamEngine.Networking {
 				this.subSubPacket.Handle(packet, conn, state);
 			}
 
-			public override void Dispose() {
-				if (this.subSubPacket != null) {
-					this.subSubPacket.Dispose();
-					this.subSubPacket = null;
+			protected override void On_DisposeManagedResources() {
+				try {
+					if (this.subSubPacket != null) {
+						this.subSubPacket.Dispose();
+						this.subSubPacket = null;
+					}
+				} finally {
+					base.On_DisposeManagedResources();
 				}
-				base.Dispose();
-			}
+			}			
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 			public sealed class AddAPartyMemberSubSubPacket : SubPacket {
 				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
 					return ReadPacketResult.Success;
@@ -213,6 +226,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 			public sealed class RemoveAPartyMemberSubSubPacket : SubPacket {
 				int uid;
 
@@ -229,10 +243,12 @@ namespace SteamEngine.Networking {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 			public sealed class TellPartyMemberAMessageSubSubPacket : SubPacket {
 				int uid;
 				string message;
 
+				[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "blockSize-10")]
 				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
 					this.uid = packet.DecodeInt();
 					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 10);
@@ -247,10 +263,11 @@ namespace SteamEngine.Networking {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 			public sealed class TellFullPartyAMessageSubSubPacket : SubPacket {
 				string message;
 				protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
-					this.message = packet.DecodeBigEndianUnicodeString(blockSize - 6);
+					this.message = packet.DecodeBigEndianUnicodeString(checked(blockSize - 6));
 					return ReadPacketResult.Success;
 				}
 
@@ -262,6 +279,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 			public sealed class PartyCanLootMeSubSubPacket : SubPacket {
 				bool canLoot;
 
@@ -278,6 +296,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 			public sealed class AcceptJoinPartyInvitationSubSubPacket : SubPacket {
 				int uid;
 
@@ -294,6 +313,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 			public sealed class DeclineJoinPartyInvitationSubSubPacket : SubPacket {
 				int uid;
 
@@ -320,7 +340,7 @@ namespace SteamEngine.Networking {
 			get { return instance; }
 		}
 
-		public PartyCommands() {
+		protected PartyCommands() {
 			instance = this;
 		}
 
@@ -449,7 +469,7 @@ namespace SteamEngine.Networking {
 
 					default:
 						//Server.SendSystemMessage(c, "Unknown type=" + getType.ToString("x") + " in GetPlayerStatusPacket.", 0);
-						Logger.WriteDebug(state + ": Unknown status/skills request type=" + this.type.ToString("x") + " in GetPlayerStatusPacket.");
+						Logger.WriteDebug(state + ": Unknown status/skills request type=" + this.type.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " in GetPlayerStatusPacket.");
 						return;
 				}
 			} else {
@@ -461,6 +481,7 @@ namespace SteamEngine.Networking {
 	public sealed class RequestMultiplePropertiesInPacket : DynamicLenInPacket {
 		List<int> uids = new List<int>();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "blockSize-3")]
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.uids.Clear();
 			if (Globals.UseAosToolTips) {
@@ -500,6 +521,7 @@ namespace SteamEngine.Networking {
 		ushort color, font;
 		string speech;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "blockSize-8")]
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.type = this.DecodeByte();
 			this.color = this.DecodeUShort();
@@ -533,6 +555,7 @@ namespace SteamEngine.Networking {
 
 		private static int[] emptyInts = new int[0];
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "blockSize-12")]
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.type = this.DecodeByte();
 			this.color = this.DecodeUShort();
@@ -732,7 +755,10 @@ namespace SteamEngine.Networking {
 			this.args.hairColor = this.DecodeUShort();
 			this.args.facialHair = this.DecodeUShort();
 			this.args.facialHairColor = this.DecodeUShort();
-			this.SeekFromCurrent(10);//some versions may not be sending this part... we'll see how it turns out
+			this.args.locationNum = this.DecodeUShort();
+
+			this.SeekFromCurrent(8);//some versions may not be sending this part... we'll see how it turns out
+			//2 unknown, 2 slot, 4 ip
 
 			this.args.shirtColor = this.DecodeUShort();
 			this.args.pantsColor = this.DecodeUShort();
@@ -740,6 +766,7 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractAccount acc = state.Account;
 			if (!acc.HasFreeSlot) {
@@ -749,7 +776,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 
-			string charname = this.args.charname;
+			string charname = this.args.Charname;
 			for (int a = 0; a < charname.Length; a++) {
 				if (!(charname[a] == ' ' || (charname[a] >= 'a' && charname[a] <= 'z') || (charname[a] >= 'A' && charname[a] <= 'Z'))) {
 					state.WriteLine(ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalCharsInName);
@@ -770,71 +797,71 @@ namespace SteamEngine.Networking {
 				conn.Close("Illegal name - More than one space in a row.");
 				return;
 			}
-			if (this.args.gender < 0 || this.args.gender > 1) {
-				state.WriteLine(String.Format(
+			if (this.args.Gender < 0 || this.args.Gender > 1) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalGender,
-					this.args.gender));
+					this.args.Gender));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal gender=" + this.args.gender);
+				conn.Close("Illegal gender=" + this.args.Gender);
 				return;
 			}
-			if (this.args.skinColor < 0x3ea || this.args.skinColor > 0x422) {
-				state.WriteLine(String.Format(
+			if (this.args.SkinColor < 0x3ea || this.args.SkinColor > 0x422) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalSkinColor,
-					this.args.skinColor));
+					this.args.SkinColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal skinColor=" + this.args.skinColor);
+				conn.Close("Illegal skinColor=" + this.args.SkinColor);
 				return;
 			}
-			if (this.args.hairStyle == 0) {
-			} else if (this.args.hairStyle < 0x203B || this.args.hairStyle > 0x204A ||
-					   (this.args.hairStyle > 0x203D && this.args.hairStyle < 0x2044)) {
-				state.WriteLine(String.Format(
+			if (this.args.HairStyle == 0) {
+			} else if (this.args.HairStyle < 0x203B || this.args.HairStyle > 0x204A ||
+					   (this.args.HairStyle > 0x203D && this.args.HairStyle < 0x2044)) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalHairStyle,
-					this.args.hairStyle));
+					this.args.HairStyle));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal hairStyle=" + this.args.hairStyle);
+				conn.Close("Illegal hairStyle=" + this.args.HairStyle);
 				return;
 			}
-			if (this.args.hairColor < 0x44e || this.args.hairColor > 0x4ad) {
-				state.WriteLine(String.Format(
+			if (this.args.HairColor < 0x44e || this.args.HairColor > 0x4ad) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalHairColor,
-					this.args.hairColor));
+					this.args.HairColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal hairColor=" + this.args.hairColor);
+				conn.Close("Illegal hairColor=" + this.args.HairColor);
 				return;
 			}
-			if (this.args.facialHair == 0) {
-			} else if (this.args.facialHair < 0x203E || this.args.facialHair > 0x204D || (this.args.facialHair > 0x2041 && this.args.facialHair < 0x204B)) {
-				state.WriteLine(String.Format(
+			if (this.args.FacialHair == 0) {
+			} else if (this.args.FacialHair < 0x203E || this.args.FacialHair > 0x204D || (this.args.FacialHair > 0x2041 && this.args.FacialHair < 0x204B)) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialhair,
-					this.args.facialHair));
+					this.args.FacialHair));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal facialHair=" + this.args.facialHair);
+				conn.Close("Illegal facialHair=" + this.args.FacialHair);
 				return;
 			}
-			if (this.args.facialHairColor < 0x44e || this.args.facialHairColor > 0x4ad) {
-				state.WriteLine(String.Format(
+			if (this.args.FacialHairColor < 0x44e || this.args.FacialHairColor > 0x4ad) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialHairColor,
-					this.args.facialHairColor));
+					this.args.FacialHairColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal facialHairColor=" + this.args.facialHairColor);
+				conn.Close("Illegal facialHairColor=" + this.args.FacialHairColor);
 				return;
 			}
-			if (this.args.shirtColor < 0x02 || this.args.shirtColor > 0x3e9) {
-				state.WriteLine(String.Format(
+			if (this.args.ShirtColor < 0x02 || this.args.ShirtColor > 0x3e9) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalShirtColor,
-					this.args.shirtColor));
+					this.args.ShirtColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal shirtColor=" + this.args.shirtColor);
+				conn.Close("Illegal shirtColor=" + this.args.ShirtColor);
 				return;
 			}
-			if (this.args.pantsColor < 0x02 || this.args.pantsColor > 0x3e9) {
-				state.WriteLine(String.Format(
+			if (this.args.PantsColor < 0x02 || this.args.PantsColor > 0x3e9) {
+				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalPantsColor,
-					this.args.pantsColor));
+					this.args.PantsColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal pantsColor=" + this.args.pantsColor);
+				conn.Close("Illegal pantsColor=" + this.args.PantsColor);
 				return;
 			}
 
@@ -869,32 +896,128 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public class CreateCharArguments {
-			public string charname;
+			internal string charname;
+			public string Charname {
+				get {
+					return this.charname;
+				}
+			}
 
-			public byte gender;
+			internal byte gender;
+			public byte Gender {
+				get {
+					return this.gender;
+				}
+			}
 
-			public int startStr;
-			public int startDex;
-			public int startInt;
+			internal int startStr;
+			public int StartStr {
+				get {
+					return this.startStr;
+				}
+			}
+			internal int startDex;
+			public int StartDex {
+				get {
+					return this.startDex;
+				}
+			}
+			internal int startInt;
+			public int StartInt {
+				get {
+					return this.startInt;
+				}
+			}
 
-			public int skinColor;
-			public int hairStyle;
-			public int hairColor;
-			public int facialHair;
-			public int facialHairColor;
+			internal int skinColor;
+			public int SkinColor {
+				get {
+					return this.skinColor;
+				}
+			}
+			internal int hairStyle;
+			public int HairStyle {
+				get {
+					return this.hairStyle;
+				}
+			}
+			internal int hairColor;
+			public int HairColor {
+				get {
+					return this.hairColor;
+				}
+			}
+			internal int facialHair;
+			public int FacialHair {
+				get {
+					return this.facialHair;
+				}
+			}
+			internal int facialHairColor;
+			public int FacialHairColor {
+				get {
+					return this.facialHairColor;
+				}
+			}
 
-			public int shirtColor;
-			public int pantsColor;
+			internal int shirtColor;
+			public int ShirtColor {
+				get {
+					return this.shirtColor;
+				}
+			}
+			internal int pantsColor;
+			public int PantsColor {
+				get {
+					return this.pantsColor;
+				}
+			}
 
-			public int locationNum;
+			internal int locationNum;
+			public int LocationNum {
+				get {
+					return this.locationNum;
+				}
+			}
 
-			public int skillId1;
-			public int skillValue1;
-			public int skillId2;
-			public int skillValue2;
-			public int skillId3;
-			public int skillValue3;
+			internal int skillId1;
+			public int SkillId1 {
+				get {
+					return this.skillId1;
+				}
+			}
+			internal int skillValue1;
+			public int SkillValue1 {
+				get {
+					return this.skillValue1;
+				}
+			}
+			internal int skillId2;
+			public int SkillId2 {
+				get {
+					return this.skillId2;
+				}
+			}
+			internal int skillValue2;
+			public int SkillValue2 {
+				get {
+					return this.skillValue2;
+				}
+			}
+			internal int skillId3;
+			public int SkillId3 {
+				get {
+					return this.skillId3;
+				}
+			}
+			internal int skillValue3;
+			public int SkillValue3 {
+				get {
+					return this.skillValue3;
+				}
+			} 
 		}
 	}
 
@@ -1070,6 +1193,7 @@ namespace SteamEngine.Networking {
 		int actionParseResult;
 		bool actionParsed;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "blockSize-4")]
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.type = this.DecodeByte();
 			this.actionStr = this.DecodeAsciiString(blockSize - 4);
@@ -1317,7 +1441,7 @@ namespace SteamEngine.Networking {
 							if (ConvertTools.TryParseDouble(rt.Text, out number)) {
 								responseNumbers[i] = new ResponseNumber(rt.Id, number);
 							} else {
-								state.WriteLine(String.Format(
+								state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 									ServLoc<IncomingPacketsLoc>.Get(state.Language).NotANumber,
 									rt.Text));
 								SendGumpBack(conn, state, gi, responseTexts);

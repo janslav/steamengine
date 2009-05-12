@@ -36,7 +36,7 @@ namespace SteamEngine.LScript {
 	//}
 
 	internal class LScriptAnalyzer : StrictAnalyzer {
-		private int flag = 0;
+		private int flag;
 		private bool isInQuotes;
 		private Stack quotes = new Stack();
 
@@ -55,6 +55,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override Node Exit(Node node) {
 			if (flag == 0) {
 				if (node.GetId() != (int) StrictConstants.ARGS_LIST) {

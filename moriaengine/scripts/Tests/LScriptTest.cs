@@ -91,22 +91,22 @@ namespace SteamEngine.LScript {
 				"calling one string param method with = with multiple params");
 
 			//returning value
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return 5"), 5), "Error while return integer");
-			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return \"some test string 7hgf456\""), "some test string 7hgf456"),
+			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return 5"), 5), "Error while return integer");
+			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return \"some test string 7hgf456\""), "some test string 7hgf456"),
 				"Error while returning quoted string");
-			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return \" \\\" \""), " \" "),
+			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return \" \\\" \""), " \" "),
 				"Error while returning quoted string with escaped character");
 
-			Sanity.IfTrueThrow(!string.Equals(LScript.RunSnippet(testObj, "return some test string 7hgf456"), "some test string 7hgf456"),
+			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return some test string 7hgf456"), "some test string 7hgf456"),
 				"Error while returning nonquoted string");
 
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return GetInteger"), 564),
+			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return GetInteger"), 564),
 				"Error while returning integer from a method");
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <GetInteger>"), 564),
+			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return <GetInteger>"), 564),
 				"Error while returning integer from a <method>");
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <GetInteger()>"), 564),
+			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return <GetInteger()>"), 564),
 				"Error while returning integer from a <method()>");
-			Sanity.IfTrueThrow(!int.Equals(LScript.RunSnippet(testObj, "return <?GetInteger?>"), 564),
+			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return <?GetInteger?>"), 564),
 				"Error while returning integer from a <method>");
 
 			TestSnippet(2, "TestMethod_NoParams;TestMethod_NoParams", "calling two expressions in a row, syntax 1");
@@ -149,11 +149,11 @@ namespace SteamEngine.LScript {
 
 
 			TestSnippet(Globals.Port, "return Globals.port", "dotted expression");
-			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())"), "[]"),
+			Sanity.IfTrueThrow(!string.Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())"), "[]"),
 				"dotted expression: method and constructor witn no params"); //this could outcome false if someone changed the ObjToString method...
-			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))"), "[]"),
+			Sanity.IfTrueThrow(!string.Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))"), "[]"),
 				"dotted expression: method and constructor witn one param with parens"); //this could outcome false if someone changed the ObjToString method...
-			Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList=0)"), "[]"),
+			Sanity.IfTrueThrow(!string.Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList=0)"), "[]"),
 				"dotted expression: method and constructor witn one param with with ="); //this could outcome false if someone changed the ObjToString method...	
 			//this doesn't work (it should never have I think...)
 			//Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList 0)"), "[]"), 
@@ -198,32 +198,32 @@ namespace SteamEngine.LScript {
 			TestSnippet(5, "TestMethod_IPointParam(LScriptTesterIPoint4D())", "ambiguity test 7");
 			TestSnippet(5, "TestMethod_PointAndIpointParam(LScriptTesterIPoint4D())", "ambiguity test 8");
 
-			Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Get("testtimerkey").Equals(LScript.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
-			Sanity.IfTrueThrow(!TriggerKey.Get("testtriggerkey").Equals(LScript.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
+			Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Get("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
+			Sanity.IfTrueThrow(!TriggerKey.Get("testtriggerkey").Equals(LScriptMain.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
 
-			LScript.RunSnippet(testObj, "return {0 1}");
-			LScript.RunSnippet(testObj, "return { 0 1}");
-			LScript.RunSnippet(testObj, "return {0 1 }");
-			LScript.RunSnippet(testObj, "return { 0 1 }");
-			LScript.RunSnippet(testObj, "return {0,1}");
-			LScript.RunSnippet(testObj, "return { 0,1}");
-			LScript.RunSnippet(testObj, "return {0,1 }");
-			LScript.RunSnippet(testObj, "return { 0,1 }");
-			LScript.RunSnippet(testObj, "return({0 1})");
-			LScript.RunSnippet(testObj, "return({ 0 1})");
-			LScript.RunSnippet(testObj, "return({0 1 })");
-			LScript.RunSnippet(testObj, "return({ 0 1 })");
-			LScript.RunSnippet(testObj, "return({0,1})");
-			LScript.RunSnippet(testObj, "return({ 0,1})");
-			LScript.RunSnippet(testObj, "return({0,1 })");
-			LScript.RunSnippet(testObj, "return({ 0,1 })");
+			LScriptMain.RunSnippet(testObj, "return {0 1}");
+			LScriptMain.RunSnippet(testObj, "return { 0 1}");
+			LScriptMain.RunSnippet(testObj, "return {0 1 }");
+			LScriptMain.RunSnippet(testObj, "return { 0 1 }");
+			LScriptMain.RunSnippet(testObj, "return {0,1}");
+			LScriptMain.RunSnippet(testObj, "return { 0,1}");
+			LScriptMain.RunSnippet(testObj, "return {0,1 }");
+			LScriptMain.RunSnippet(testObj, "return { 0,1 }");
+			LScriptMain.RunSnippet(testObj, "return({0 1})");
+			LScriptMain.RunSnippet(testObj, "return({ 0 1})");
+			LScriptMain.RunSnippet(testObj, "return({0 1 })");
+			LScriptMain.RunSnippet(testObj, "return({ 0 1 })");
+			LScriptMain.RunSnippet(testObj, "return({0,1})");
+			LScriptMain.RunSnippet(testObj, "return({ 0,1})");
+			LScriptMain.RunSnippet(testObj, "return({0,1 })");
+			LScriptMain.RunSnippet(testObj, "return({ 0,1 })");
 
 			Console.WriteLine("LScript tests complete.");
 		}
 
 		private static void TestSnippet(double difference, string script, Type expectedException, string errormessage) {
 			try {
-				LScript.RunSnippet(testObj, script);
+				LScriptMain.RunSnippet(testObj, script);
 			} catch (Exception e) {
 				if ((expectedException != null)) {
 					while (e.InnerException != null) {
@@ -245,7 +245,7 @@ namespace SteamEngine.LScript {
 			}
 			bool wasException = false;
 			try {
-				LScript.RunSnippet(testObj, script);
+				LScriptMain.RunSnippet(testObj, script);
 			} catch (Exception e) {
 				if ((expectedExcString != null) &&
 						(expectedExcString == e.Message)) {
@@ -262,7 +262,7 @@ namespace SteamEngine.LScript {
 
 		private static void TestSnippet(double difference, string script, string errormessage) {
 			try {
-				LScript.RunSnippet(testObj, script);
+				LScriptMain.RunSnippet(testObj, script);
 			} catch (Exception e) {
 				throw new SanityCheckException("Error while " + errormessage + ": " + e);
 			}

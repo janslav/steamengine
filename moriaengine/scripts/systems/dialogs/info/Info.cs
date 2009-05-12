@@ -116,8 +116,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			object target = args[0];//target of info dialog
 
-			if (gr.pressedButton < 10) { //basic dialog buttons (close, info, store)
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //basic dialog buttons (close, info, store)
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//kliknuto na paging? 
 				return;
 			} else { //info dialog buttons
-				int pressedButtonNo = gr.pressedButton;
+				int pressedButtonNo = gr.PressedButton;
 				
 				if (pressedButtonNo >= 1000) { //display detail of too long fields
 					Dictionary<int, IDataFieldView> detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.detailIndexPairingTK);

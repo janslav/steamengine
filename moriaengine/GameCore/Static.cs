@@ -31,15 +31,15 @@ namespace SteamEngine {
 		private int z;
 		private byte facet;
 
-		internal AbstractInternalItem(int id, byte facet) {
+		internal AbstractInternalItem(int id, int facet) {
 			this.dispidInfo = ItemDispidInfo.Get(id);
 			if (this.dispidInfo == null) {
 				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ". Something's wrong.");
 			}
-			this.facet = facet;
+			this.facet = (byte) facet;
 		}
 
-		internal AbstractInternalItem(int id, int x, int y, int z, byte facet)
+		internal AbstractInternalItem(int id, int x, int y, int z, int facet)
 			: this(id, facet) {
 			this.x = x;
 			this.y = y;
@@ -92,12 +92,12 @@ namespace SteamEngine {
 			}
 		}
 
-		public byte Facet {
+		public int Facet {
 			get {
 				return this.facet;
 			}
 			internal set {
-				this.facet = value;
+				this.facet = (byte) value;
 			}
 		}
 

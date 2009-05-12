@@ -45,7 +45,7 @@ namespace SteamEngine.Regions {
 		}
 
 		internal static StaticSector GetStaticSector(int sx, int sy, int m) {
-			byte facet = Map.GetMap(m).Facet;
+			int facet = Map.GetMap(m).Facet;
 
 			bool exists = (staticMaps.Count > facet);
 			StaticSector[,] staticMap = null;

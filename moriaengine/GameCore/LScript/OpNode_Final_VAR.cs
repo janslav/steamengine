@@ -20,7 +20,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_SetVar : OpNode, IOpNodeHolder, ITriable {
+	internal class OpNode_SetVar : OpNode, IOpNodeHolder, ITriable {
 		private readonly TagKey name;
 		private OpNode arg;
 
@@ -61,7 +61,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_GetVar : OpNode, ITriable {
+	internal class OpNode_GetVar : OpNode, ITriable {
 		private readonly TagKey name;
 
 		internal OpNode_GetVar(IOpNodeHolder parent, string filename,
@@ -84,7 +84,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_VarExists : OpNode, ITriable {
+	internal class OpNode_VarExists : OpNode, ITriable {
 		private readonly TagKey name;
 
 		internal OpNode_VarExists(IOpNodeHolder parent, string filename,
@@ -107,7 +107,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_RemoveVar : OpNode, ITriable {
+	internal class OpNode_RemoveVar : OpNode, ITriable {
 		private readonly TagKey name;
 
 		internal OpNode_RemoveVar(IOpNodeHolder parent, string filename,

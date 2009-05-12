@@ -181,7 +181,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 		}
 
-		private CodeStatement SaveFieldStatement(ClassTemplateInstanceField field) {
+		private static CodeStatement SaveFieldStatement(ClassTemplateInstanceField field) {
 			CodeFieldReferenceExpression fieldExpression = new CodeFieldReferenceExpression(
 				new CodeThisReferenceExpression(), field.uncapName);
 

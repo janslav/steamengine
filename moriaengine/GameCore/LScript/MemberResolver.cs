@@ -167,6 +167,7 @@ namespace SteamEngine.LScript {
 		private MemberResolver() {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal OpNode[] Args {
 			get {
 				return args;
@@ -190,6 +191,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal bool Resolve(Type type, BindingFlags flags,
 				MemberTypes memberTypes, out MemberDescriptor desc) {
 			//resolve as any member (method or property(as getter/setter method) or constructor or field)
@@ -447,6 +449,7 @@ namespace SteamEngine.LScript {
 			return (memberType & MemberTypes.Method) == MemberTypes.Method;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static bool IsProperty(MemberInfo info) {
 			return IsProperty(info.MemberType);
 		}

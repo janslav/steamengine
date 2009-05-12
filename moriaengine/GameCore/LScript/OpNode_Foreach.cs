@@ -28,17 +28,17 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_Foreach : OpNode, IOpNodeHolder {
+	internal class OpNode_Foreach : OpNode, IOpNodeHolder {
 		private int localIndex;
 		private string localName;//just for the ToString()
 		private OpNode enumerableNode;
 		private OpNode blockNode;//can be null
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Foreach constructed = new OpNode_Foreach(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
@@ -47,16 +47,17 @@ namespace SteamEngine.LScript {
 			string localName = GetLocalName(headProd.GetChildAt(0));
 			constructed.localName = localName;
 			constructed.localIndex = constructed.ParentScriptHolder.GetRegisterIndex(localName);
-			constructed.enumerableNode = LScript.CompileNode(constructed, headProd.GetChildAt(2), true);
+			constructed.enumerableNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2), true);
 			if (mainProd.GetChildCount() == 6) {//has the Script node inside?
-				constructed.blockNode = LScript.CompileNode(constructed, mainProd.GetChildAt(3), true);
+				constructed.blockNode = LScriptMain.CompileNode(constructed, mainProd.GetChildAt(3), true);
 			}
 			return constructed;
 		}
 
 		private static string GetLocalName(Node node) {
-			if (node is Token) {
-				return ((Token) node).GetImage().Trim();
+			Token asToken = node as Token;
+			if (asToken != null) {
+				return asToken.GetImage().Trim();
 			} else {
 				return ((Token) node.GetChildAt(2)).GetImage().Trim();
 			}
@@ -101,7 +102,7 @@ namespace SteamEngine.LScript {
 					}
 				} else {
 					throw new InterpreterException("Result of the expression '" + LogStr.Ident(enumerableNode) + "' is not an IEnumerable instance",
-						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
 				return retVal;
 			} else {

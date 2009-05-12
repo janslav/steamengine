@@ -29,12 +29,11 @@ namespace SteamEngine.Networking {
 
 		private static GameServer instance = new GameServer();
 
-		private static HashSet<GameState> clients;
-		private static ReadOnlyCollection<GameState> clientsReadOnly;
+		private static HashSet<GameState> clients = new HashSet<GameState>();
+		private static ReadOnlyCollection<GameState> clientsReadOnly = CreateClientsWrapper();
 
-		static GameServer() {
-			clients = new HashSet<GameState>();
-			clientsReadOnly = new ReadOnlyCollection<GameState>(clients);
+		static ReadOnlyCollection<GameState> CreateClientsWrapper() {
+			return new ReadOnlyCollection<GameState>(clients);
 		}
 
 		private GameServer()
@@ -70,6 +69,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static IEnumerable<AbstractCharacter> GetAllPlayers() {
 			foreach (GameState state in clients) {
 				AbstractCharacter ch = state.Character;
@@ -169,7 +169,7 @@ namespace SteamEngine.Networking {
 			point = point.TopPoint;
 			PacketGroup pg = null;
 
-			foreach (TcpConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y)) {
+			foreach (TcpConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y, range)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);

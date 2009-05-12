@@ -26,24 +26,24 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Lazy_AddTimer : OpNode, IOpNodeHolder {
+	internal class OpNode_Lazy_AddTimer : OpNode, IOpNodeHolder {
 		//accepts AddTimerExpression
 		//STRING , SimpleCode , (STRING | TRIGGERNAME) [, ArgsList];  
 
 		protected TimerKey name;
 		protected OpNode secondsNode;
 		protected OpNode[] args;// = new OpNode[0]; //
-		protected OpNode str; //as if it was a quoted string
-		protected string funcName;
+		private OpNode str; //as if it was a quoted string
+		private string funcName;
 		protected string formatString;
-		private object[] results = null;
+		private object[] results;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
 			Commands.AuthorizeCommandThrow(Globals.Src, "addtimer");
 
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScript.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
 			OpNode_Lazy_AddTimer constructed;
 
 			Production body = (Production) code.GetChildAt(2);
@@ -61,7 +61,7 @@ namespace SteamEngine.LScript {
 
 			Node timerKeyNode = body.GetChildAt(0);
 			constructed.name = TimerKey.Get(((Token) timerKeyNode.GetChildAt(timerKeyNode.GetChildCount() - 1)).GetImage());
-			constructed.secondsNode = LScript.CompileNode(constructed, body.GetChildAt(2));
+			constructed.secondsNode = LScriptMain.CompileNode(constructed, body.GetChildAt(2));
 			if (body.GetChildCount() > 5) {
 				constructed.GetArgsFrom(body.GetChildAt(6));
 			} else {
@@ -84,7 +84,7 @@ namespace SteamEngine.LScript {
 				Type type = vars.self.GetType();
 
 				MemberResolver resolver = MemberResolver.GetInstance(
-					vars, parent, funcName, args, line, column, filename);
+					vars, this.parent, funcName, args, this.line, this.column, this.filename);
 				MemberDescriptor desc = null;
 
 				//as Method
@@ -100,7 +100,7 @@ namespace SteamEngine.LScript {
 				//as function
 				ScriptHolder function = ScriptHolder.GetFunction(funcName);//no, this is not unreachable, whatever the mono compjiler says...
 				if (function != null) {
-					finalOpNode = new OpNode_AddFunctionTimer(parent, filename, line, column, origNode,
+					finalOpNode = new OpNode_AddFunctionTimer(this.parent, filename, line, column, this.OrigNode,
 						name, function, formatString, secondsNode, args);
 					goto runit;
 				}
@@ -125,7 +125,7 @@ namespace SteamEngine.LScript {
 				//} else if (matches.Count < 1) {
 				if (memberNameMatched) {
 					throw new InterpreterException("Method '" + LogStr.Ident(funcName) + "' is getting bad arguments",
-						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				} else {
 					throw new InterpreterException("Undefined identifier '" + LogStr.Ident(funcName) + "'",
 						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
@@ -134,6 +134,7 @@ namespace SteamEngine.LScript {
 
 runit:	//I know that goto is usually considered dirty, but I find this case quite suitable for it...
 				if (resolver != null) {
+					results = resolver.results;
 					MemberResolver.ReturnInstance(resolver);
 				}
 
@@ -141,7 +142,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 				if (finalAsHolder != null) {
 					SetNewParentToArgs(finalAsHolder);
 				}
-				ReplaceSelf(finalOpNode);
+				this.ReplaceSelf(finalOpNode);
 				if (results != null) {
 					return ((ITriable) finalOpNode).TryRun(vars, results);
 				} else {
@@ -149,7 +150,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 				}
 			} else {
 				throw new InterpreterException("AddTimer must be called on PluginHolder, not " + vars.self,
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
 		}
 
@@ -171,15 +172,15 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 
 			switch (desc.specialType) {
 				case SpecialType.Normal:
-					finalOpNode = new OpNode_AddMethodTimer(parent, filename, line, column,
-						origNode, name, MethodInfo, secondsNode, args);
+					finalOpNode = new OpNode_AddMethodTimer(this.parent, this.filename, this.line, this.column,
+						this.OrigNode, name, MethodInfo, secondsNode, args);
 					break;
 				case SpecialType.String:
 					if ((args.Length == 1) && (MemberResolver.ReturnsString(args[0]))) {
 						goto case SpecialType.Normal; //is it not nice? :)
 					}
-					finalOpNode = new OpNode_AddMethodTimer_String(parent, filename, line, column,
-						origNode, name, MethodInfo, secondsNode, args, formatString);
+					finalOpNode = new OpNode_AddMethodTimer_String(this.parent, this.filename, this.line, this.column,
+						this.OrigNode, name, MethodInfo, secondsNode, args, formatString);
 					break;
 				case SpecialType.Params:
 					ParameterInfo[] pars = MethodInfo.GetParameters();//these are guaranteed to have the right number of arguments...
@@ -192,8 +193,8 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					Array.Copy(args, normalArgs, normalArgsLength);
 					Array.Copy(args, normalArgsLength, paramArgs, 0, paramArgsLength);
 
-					finalOpNode = new OpNode_AddMethodTimer_Params(parent, filename, line, column,
-						origNode, name, MethodInfo, secondsNode, normalArgs, paramArgs, paramsElementType);
+					finalOpNode = new OpNode_AddMethodTimer_Params(this.parent, this.filename, this.line, this.column,
+						this.OrigNode, name, MethodInfo, secondsNode, normalArgs, paramArgs, paramsElementType);
 					break;
 			}
 			return true;
@@ -209,10 +210,10 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					sb.Append("{" + i / 2 + "}");
 					if (i + 1 < n) {
 						Node separator = arg.GetChildAt(i + 1);
-						sb.Append(LScript.GetString(separator));
+						sb.Append(LScriptMain.GetString(separator));
 					}
 					Node node = arg.GetChildAt(i);
-					argsList.Add(LScript.CompileNode(this, node));
+					argsList.Add(LScriptMain.CompileNode(this, node));
 				}
 				args = new OpNode[argsList.Count];
 				argsList.CopyTo(args);
@@ -223,7 +224,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					this, arg, stringTokens);
 				formatString = sb.ToString();
 			} else {
-				OpNode compiled = LScript.CompileNode(this, arg);
+				OpNode compiled = LScriptMain.CompileNode(this, arg);
 				args = new OpNode[] { compiled };
 				str = OpNode_ToString.Construct(this, arg);
 				formatString = "{0}";

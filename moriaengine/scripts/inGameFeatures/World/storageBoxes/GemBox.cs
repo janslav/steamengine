@@ -111,22 +111,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (!((Player) gi.Cont).CanReachWithMessage(box)) {
 				return;
 			}
-			if (gr.pressedButton == 0) {			// cancel
+			if (gr.PressedButton == 0) {			// cancel
 				return;
-			} else if (gr.pressedButton == 1) {		// Add gems
+			} else if (gr.PressedButton == 1) {		// Add gems
 				((Player) gi.Cont).Target(SingletonScript<Targ_GemBox>.Instance, gi.Focus);
-			} else if (gr.pressedButton == 2) {		// OK -> give selected gems
+			} else if (gr.PressedButton == 2) {		// OK -> give selected gems
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_GemBox.buttonsForGemsTK);
 				int buttonsCount = TagMath.IGetTag(args, D_GemBox.buttonsCountTK);
 				int i = 0;
 				int gemsToGive = 0;
 				while (i < buttonsCount) {
-					if ((gr.IsSwitched(i)) && (gr.responseNumbers[i].Number > 0)) {	// player wants to take at least one gem
-						if (box.inBoxGems[buttonShowItemDef[i]] < (int) gr.responseNumbers[i].Number) {
+					int desiredCount = (int) gr.GetNumberResponse(i);
+					if ((gr.IsSwitched(i)) && (desiredCount > 0)) {	// player wants to take at least one gem
+						if (box.inBoxGems[buttonShowItemDef[i]] < desiredCount) {
 							((Player) gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho gemù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
 							gemsToGive = box.inBoxGems[buttonShowItemDef[i]];
 						} else {
-							gemsToGive = (int) gr.responseNumbers[i].Number;
+							gemsToGive = desiredCount;
 						}
 						buttonShowItemDef[i].Create(((Player) gi.Cont).Backpack);
 						Globals.LastNewItem.Amount = gemsToGive;
@@ -139,8 +140,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 					i++;
 				}
-			} else if (gr.pressedButton >= 1000) {
-				int thisButtonValue = (int) gr.pressedButton - 1000;
+			} else if (gr.PressedButton >= 1000) {
+				int thisButtonValue = (int) gr.PressedButton - 1000;
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_GemBox.buttonsForGemsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
 				Globals.LastNewItem.Amount = box.inBoxGems[buttonShowItemDef[thisButtonValue]];

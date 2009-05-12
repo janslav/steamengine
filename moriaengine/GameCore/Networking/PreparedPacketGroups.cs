@@ -28,80 +28,50 @@ namespace SteamEngine.Networking {
 
 	public static class PreparedPacketGroups {
 
-		private static PacketGroup[] loginDeniedPGs = new PacketGroup[Tools.GetEnumLength<LoginDeniedReason>()];
+		#region LoginDenied
+		private static PacketGroup[] loginDeniedPGs = InitLoginDeniedPGs();
 
-		private static PacketGroup targetGround;
-		private static PacketGroup targetXYZ;
-		private static PacketGroup targetCancelled;
-
-		private static PacketGroup[] facetChange = new PacketGroup[5];
-
-		private static PacketGroup[] warMode = new PacketGroup[2];
-
-		private static PacketGroup[] pickUpFailed = new PacketGroup[7];
-
-		private static PacketGroup[] rejectDeleteCharacter = new PacketGroup[8];
-
-		private static PacketGroup[] deathMessages = new PacketGroup[3];
-
-		private static PacketGroup enableMapDiffFiles;
-
-		private static PacketGroup clientVersion;
-
-		private static PacketGroup clientFeatures;
-
-		static PreparedPacketGroups() {
-			for (int i = 0, n = loginDeniedPGs.Length; i < n; i++) {
-				loginDeniedPGs[i] = PacketGroup.CreateFreePG();
-				loginDeniedPGs[i].AcquirePacket<LoginDeniedOutPacket>().Prepare((LoginDeniedReason) i);
+		private static PacketGroup[] InitLoginDeniedPGs() {
+			PacketGroup[] retVal = new PacketGroup[Tools.GetEnumLength<LoginDeniedReason>()];
+			for (int i = 0, n = retVal.Length; i < n; i++) {
+				retVal[i] = PacketGroup.CreateFreePG();
+				retVal[i].AcquirePacket<LoginDeniedOutPacket>().Prepare((LoginDeniedReason) i);
 			}
-
-			targetGround = PacketGroup.CreateFreePG();
-			targetGround.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(true);
-			targetXYZ = PacketGroup.CreateFreePG();
-			targetXYZ.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(false);
-			targetCancelled = PacketGroup.CreateFreePG();
-			targetCancelled.AcquirePacket<TargetCursorCommandsOutPacket>().PrepareAsCancel();
-
-			warMode[0] = PacketGroup.CreateFreePG();
-			warMode[0].AcquirePacket<SetWarModeOutPacket>().Prepare(false);
-			warMode[1] = PacketGroup.CreateFreePG();
-			warMode[1].AcquirePacket<SetWarModeOutPacket>().Prepare(true);
-
-			for (int i = 0, n = pickUpFailed.Length; i < n; i++) {
-				pickUpFailed[i] = PacketGroup.CreateFreePG();
-				pickUpFailed[i].AcquirePacket<RejectMoveItemRequestOutPacket>().Prepare((DenyResult) i);
-			}
-
-			for (int i = 0; i < 6; i++) {
-				rejectDeleteCharacter[i] = PacketGroup.CreateFreePG();
-				rejectDeleteCharacter[i].AcquirePacket<RejectDeleteCharacterOutPacket>().Prepare((DeleteCharacterResult) i);
-			}
-			rejectDeleteCharacter[6] = PacketGroup.CreateFreePG();
-			rejectDeleteCharacter[6].AcquirePacket<RejectDeleteCharacterOutPacket>().Prepare(DeleteCharacterResult.Deny_NoMessage);
-			rejectDeleteCharacter[7] = PacketGroup.CreateFreePG();
-			rejectDeleteCharacter[7].AcquirePacket<RejectDeleteCharacterOutPacket>().Prepare(DeleteCharacterResult.Allow);
-
-			for (byte i = 0, n = (byte) deathMessages.Length; i < n; i++) {
-				deathMessages[i] = PacketGroup.CreateFreePG();
-				deathMessages[i].AcquirePacket<ResurrectionMenuOutPacket>().Prepare(i);
-			}
-
-			enableMapDiffFiles = PacketGroup.CreateFreePG();
-			enableMapDiffFiles.AcquirePacket<EnableMapDiffFilesOutPacket>().Prepare();
-
-			clientVersion = PacketGroup.CreateFreePG();
-			clientVersion.AcquirePacket<ClientVersionOutPacket>();
-
-			clientFeatures = PacketGroup.CreateFreePG();
-			clientFeatures.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.FeaturesFlags);
+			return retVal;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendLoginDenied(TcpConnection<GameState> conn, LoginDeniedReason why) {
 			PacketGroup pg = loginDeniedPGs[(int) why];
 			conn.SendPacketGroup(pg);
 		}
+		#endregion LoginDenied
 
+		#region TargetCursorCommands
+		private static PacketGroup targetGround = InitTargetGround();
+
+		private static PacketGroup InitTargetGround() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			retVal.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(true);
+			return retVal;
+		}
+
+		private static PacketGroup targetXYZ = InitTargetXYZ();
+
+		private static PacketGroup InitTargetXYZ() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			retVal.AcquirePacket<TargetCursorCommandsOutPacket>().Prepare(false);
+			return retVal;
+		}
+		private static PacketGroup targetCancelled = InitTargetCancelled();
+
+		private static PacketGroup InitTargetCancelled() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			retVal.AcquirePacket<TargetCursorCommandsOutPacket>().PrepareAsCancel();
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendTargettingCursor(TcpConnection<GameState> conn, bool ground) {
 			if (ground) {
 				conn.SendPacketGroup(targetGround);
@@ -110,56 +80,153 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendCancelTargettingCursor(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(targetCancelled);
 		}
+		#endregion TargetCursorCommands
 
-		public static void SendFacetChange(TcpConnection<GameState> conn, byte facet) {
-			PacketGroup pg = facetChange[facet];
-			if (pg == null) {
-				pg = PacketGroup.CreateFreePG();
-				pg.AcquirePacket<SetFacetOutPacket>().Prepare(facet);
-				facetChange[facet] = pg;
+		#region SetFacet
+		private static PacketGroup[] facetChange = InitFacetChange();
+
+		private static PacketGroup[] InitFacetChange() {
+			PacketGroup[] retVal = new PacketGroup[Regions.Map.FacetCount];
+			for (int i = 0, n = retVal.Length; i < n; i++) {
+				retVal[i] = PacketGroup.CreateFreePG();
+				retVal[i].AcquirePacket<SetFacetOutPacket>().Prepare(i);
 			}
-			conn.SendPacketGroup(pg);
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		public static void SendFacetChange(TcpConnection<GameState> conn, int facet) {
+			conn.SendPacketGroup(facetChange[facet]);
+		}
+		#endregion SetFacet
+
+		#region SetWarMode
+		private static PacketGroup[] warMode = InitWarMode();
+
+		private static PacketGroup[] InitWarMode() {
+			PacketGroup[] retVal = new PacketGroup[2];
+			retVal[0] = PacketGroup.CreateFreePG();
+			retVal[0].AcquirePacket<SetWarModeOutPacket>().Prepare(false);
+			retVal[1] = PacketGroup.CreateFreePG();
+			retVal[1].AcquirePacket<SetWarModeOutPacket>().Prepare(true);
+			return retVal;
 		}
 
 		public static void SendWarMode(TcpConnection<GameState> conn, bool enabled) {
 			conn.SendPacketGroup(warMode[enabled ? 1 : 0]);
 		}
+		#endregion SetWarMode
 
+		#region RejectMoveItemRequest
+		private static PacketGroup[] pickUpFailed = InitPickupFailed();
+
+		private static PacketGroup[] InitPickupFailed() {
+			PacketGroup[] retVal = new PacketGroup[7];
+			for (int i = 0, n = retVal.Length; i < n; i++) {
+				retVal[i] = PacketGroup.CreateFreePG();
+				retVal[i].AcquirePacket<RejectMoveItemRequestOutPacket>().Prepare((DenyResult) i);
+			}
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendRejectMoveItemRequest(TcpConnection<GameState> conn, DenyResult msg) {
 			conn.SendPacketGroup(pickUpFailed[(int) msg]);
 		}
+		#endregion RejectMoveItemRequest
 
-		public static void SendRejectDeleteCharacter(TcpConnection<GameState> conn, DeleteCharacterResult msg) {
-			int imsg = (int) msg;
-			if (imsg >= 254) {
-				imsg -= 248;
+		#region RejectDeleteCharacter
+		private static PacketGroup[] rejectDeleteCharacter = InitRejectDeleteCharacter();
+
+		private static PacketGroup[] InitRejectDeleteCharacter() {
+			PacketGroup[] retVal = new PacketGroup[Tools.GetEnumLength<DeleteCharacterResult>()];
+			for (int i = 0, n = retVal.Length; i < n; i++) {
+				retVal[i] = PacketGroup.CreateFreePG();
+				retVal[i].AcquirePacket<RejectDeleteCharacterOutPacket>().Prepare((DeleteCharacterResult) i);
 			}
-			Sanity.IfTrueThrow(imsg < 0 || imsg > 7, "Invalid DeleteCharacterResult '" + msg + "'.");
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		public static void SendRejectDeleteCharacter(TcpConnection<GameState> conn, DeleteCharacterResult msg) {
 			conn.SendPacketGroup(rejectDeleteCharacter[(int) msg]);
 		}
+		#endregion RejectDeleteCharacter
 
-		public static void SendYouAreDeathMessage(TcpConnection<GameState> conn) {
-			conn.SendPacketGroup(deathMessages[2]);
+		#region ResurrectionMenu
+		private static PacketGroup deathMessage = InitDeathMessages();
+		private static PacketGroup resurrectMessage = InitResurrectMessages();
+
+		private static PacketGroup InitDeathMessages() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			retVal.AcquirePacket<ResurrectionMenuOutPacket>().Prepare(1);
+			return retVal;
 		}
 
+		private static PacketGroup InitResurrectMessages() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			retVal.AcquirePacket<ResurrectionMenuOutPacket>().Prepare(2);
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendResurrectMessage(TcpConnection<GameState> conn) {
-			conn.SendPacketGroup(deathMessages[1]);
+			conn.SendPacketGroup(deathMessage);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		public static void SendYouAreDeathMessage(TcpConnection<GameState> conn) {
+			conn.SendPacketGroup(resurrectMessage);
+		}
+		#endregion ResurrectionMenu
+
+		#region EnableMapDiffFiles
+		private static PacketGroup enableMapDiffFiles = InitMapDiff();
+
+		private static PacketGroup InitMapDiff() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			retVal.AcquirePacket<EnableMapDiffFilesOutPacket>().Prepare();
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendEnableMapDiffFiles(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(enableMapDiffFiles);
 		}
+		#endregion EnableMapDiffFiles
 
+		#region ClientVersion
+		private static PacketGroup clientVersion = InitClientVersion();
+
+		private static PacketGroup InitClientVersion() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			clientVersion.AcquirePacket<ClientVersionOutPacket>();
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendClientVersionQuery(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(clientVersion);
 		}
+		#endregion ClientVersion
 
+		#region EnableLockedClientFeatures
+		private static PacketGroup clientFeatures = InitClientFeatures();
+
+		private static PacketGroup InitClientFeatures() {
+			PacketGroup retVal = PacketGroup.CreateFreePG();
+			clientFeatures.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.FeaturesFlags);
+			return retVal;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendClientFeatures(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(clientFeatures);
 		}
-
+		#endregion EnableLockedClientFeatures
 	}
 }

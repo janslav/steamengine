@@ -96,8 +96,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if (gr.pressedButton < 10) {
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) {
+				switch (gr.PressedButton) {
 					case 0: //exit - finish tracking without selecting anything
 						((SkillSequenceArgs) args[0]).PhaseAbort();
 						break;
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//check which character from the list is to be tracked
 				SkillSequenceArgs ssa = (SkillSequenceArgs) args[0];
 				List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args[1];
-				Character charToTrack = (Character) charsAround[(int) gr.pressedButton - 10];
+				Character charToTrack = (Character) charsAround[(int) gr.PressedButton - 10];
 
 				ssa.Target1 = charToTrack;
 				ssa.Param2 = TrackingEnums.Phase_Character_Track; //track the particular character

@@ -35,6 +35,7 @@ namespace SteamEngine.LScript {
 			: base(name) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static ScriptedGumpDef Load(PropsSection input) {
 			string[] headers = input.HeaderName.Split(new char[] { ' ', '\t' }, 2);
 			string name = headers[0];//d_something
@@ -61,7 +62,7 @@ namespace SteamEngine.LScript {
 				sgd.IsUnloaded = false;
 				return sgd;
 			} else if (headers.Length == 2) {//buttons or texts section
-				string type = headers[1].ToLower();
+				string type = headers[1].ToLower(System.Globalization.CultureInfo.InvariantCulture);
 				switch (type) {
 					case "text":
 					case "texts":
@@ -114,7 +115,7 @@ namespace SteamEngine.LScript {
 									int index = TagMath.ParseInt32(triggerName);
 									responsesList.Add(new ResponseTrigger(index, index, trigger));
 									continue;
-								} catch (Exception) {
+								} catch {
 									string[] boundStrings = triggerName.Split(' ', '\t', ',');
 									if (boundStrings.Length == 2) {
 										try {
@@ -122,7 +123,7 @@ namespace SteamEngine.LScript {
 											int upperBound = TagMath.ParseInt32(boundStrings[1].Trim());
 											responsesList.Add(new ResponseTrigger(lowerBound, upperBound, trigger));
 											continue;
-										} catch (Exception) { }
+										} catch { }
 									}
 								}
 							}
@@ -293,9 +294,9 @@ namespace SteamEngine.LScript {
 			: base(def) {
 		}
 
-		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
+		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
 			ScriptedGumpDef sdef = (ScriptedGumpDef) Def;
-			sdef.OnResponse(this, pressedButton, selectedSwitches, returnedTexts, responseNumbers);
+			sdef.OnResponse(this, pressedButton, selectedSwitches, responseTexts, responseNumbers);
 		}
 
 		public void CheckerTrans(int x, int y, int width, int height) {
@@ -318,7 +319,7 @@ namespace SteamEngine.LScript {
 			this.AddGroup(groupId);
 		}
 
-		public void HTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
+		public void HtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
 			this.AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 
@@ -326,28 +327,28 @@ namespace SteamEngine.LScript {
 		//    builder.AddHTMLGump(x, y, width, height, textId, hasBoundBox!=0, isScrollable!=0);
 		//}
 		//99z+ interface
-		public void HTMLGumpA(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
+		public void HtmlGumpA(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
 			this.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 		//public void HTMLGumpA(int x, int y, int width, int height, string text, int hasBoundBox, int isScrollable) {
 		//    builder.AddHTMLGump(x, y, width, height, text, hasBoundBox!=0, isScrollable!=0);
 		//}
 		//55ir interface
-		public void DHTMLGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
+		public void DhtmlGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
 			this.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 		//public void DHTMLGump(int x, int y, int width, int height, string text, int hasBoundBox, int isScrollable) {
 		//    builder.AddHTMLGump(x, y, width, height, text, hasBoundBox!=0, isScrollable!=0);
 		//}
 
-		public void XMFHTMLGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
+		public void XmfhtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
 			this.AddXmfhtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 		//public void XMFHTMLGump(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable) {
 		//    builder.AddXMFHTMLGump(x, y, width, height, textId, hasBoundBox!=0, isScrollable!=0);
 		//}
 
-		public void XMFHTMLGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
+		public void XmfhtmlGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
 			this.AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
 		}
 		//public void XMFHTMLGumpColor(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable, int hue) {
@@ -397,8 +398,8 @@ namespace SteamEngine.LScript {
 			this.AddCroppedText(x, y, width, height, hue, textId);
 		}
 
-		public void Page(int page) {
-			this.AddPage(page);
+		public void Page(int pageId) {
+			this.AddPage(pageId);
 		}
 
 		public void Radio(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
@@ -453,8 +454,9 @@ namespace SteamEngine.LScript {
 			this.disposable = false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal static bool IsMethodName(string name) {//used in OpNode_Lazy_Expresion for a little hack
-			switch (name.ToLower()) {
+			switch (name.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
 				case "checkertrans":
 				case "resizepic":
 				case "button":

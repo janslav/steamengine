@@ -95,9 +95,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if (gr.pressedButton == 0) { //exit
+			if (gr.PressedButton == 0) { //exit
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-			} else if (gr.pressedButton == 1) { //ulozit				
+			} else if (gr.PressedButton == 1) { //ulozit				
 				//zkusime precist vsechny parametry
 				int startX = (int) gr.GetNumberResponse(31);
 				int startY = (int) gr.GetNumberResponse(32);
@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				return; //konec at uz se stackem nebo ne, dalsi navigace bude z infotextu
 				//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-			} else if (gr.pressedButton == 2) {//vyber regionu parenta                         dialog,vyhledavani,prvni index, seznam regionu, trideni
+			} else if (gr.PressedButton == 2) {//vyber regionu parenta                         dialog,vyhledavani,prvni index, seznam regionu, trideni
 				//zkusime precist vsechyn parametry abychom je kdyztak meli
 				object[] argsArray = args.GetArgsArray();
 				argsArray[0] = (int) gr.GetNumberResponse(31);

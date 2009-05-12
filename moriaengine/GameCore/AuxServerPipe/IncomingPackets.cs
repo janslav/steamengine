@@ -61,6 +61,7 @@ namespace SteamEngine.AuxServerPipe {
 			return ReadPacketResult.Success;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxServerPipe.RequestAccountLoginPacket+AccountLoginDelayTimer")]
 		protected override void Handle(NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state) {
 			//instead of replting right away, we use a timer. That way we ensure the reply is sent no sooner than when the server is started properly, 
 			//i.e. including loading of account list.

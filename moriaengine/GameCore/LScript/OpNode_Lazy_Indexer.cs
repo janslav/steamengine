@@ -28,33 +28,33 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Lazy_Indexer : OpNode, IOpNodeHolder {
+	internal class OpNode_Lazy_Indexer : OpNode, IOpNodeHolder {
 		private OpNode index;
 		internal OpNode arg;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_Indexer constructed = new OpNode_Lazy_Indexer(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 			//skipped "["
-			constructed.index = LScript.CompileNode(constructed, code.GetChildAt(1));
+			constructed.index = LScriptMain.CompileNode(constructed, code.GetChildAt(1));
 			//skipped "]"
 			if (IsAssigner(code.GetChildAt(3))) {
 				Node assigner = code.GetChildAt(3);
-				constructed.arg = LScript.CompileNode(constructed, assigner.GetChildAt(1));
+				constructed.arg = LScriptMain.CompileNode(constructed, assigner.GetChildAt(1));
 			}
 			//LScript.DisplayTree(code);			
 			return constructed;
 		}
 
 		internal static OpNode_Lazy_Indexer Construct(IOpNodeHolder parent, Node code, OpNode index, OpNode arg) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_Indexer constructed = new OpNode_Lazy_Indexer(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 			constructed.index = index;
 			if (index != null) {
 				index.parent = constructed;
@@ -80,19 +80,21 @@ namespace SteamEngine.LScript {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal override object Run(ScriptVars vars) {
 			OpNode newNode = null; //return this one to my parent if something failed
 			if (vars.self == null) {
 				throw new InterpreterException("Attempted to index null...",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
 			if (vars.self is ArrayList) {//arraylist is special :)
 				if (arg != null) {
-					newNode = new OpNode_ArrayListIndex(parent, filename, line, column,
-						origNode, arg, index);
-					arg.parent = (IOpNodeHolder) newNode;
-					index.parent = (IOpNodeHolder) newNode;
-					ReplaceSelf(newNode);
+					newNode = new OpNode_ArrayListIndex(this.parent, this.filename, this.line, this.column,
+						this.OrigNode, arg, index);
+					IOpNodeHolder newNodeAsHolder = (IOpNodeHolder) newNode;
+					arg.parent = newNodeAsHolder;
+					index.parent = newNodeAsHolder;
+					this.ReplaceSelf(newNode);
 					newNode.Run(vars);
 					return null;
 				}
@@ -121,7 +123,7 @@ namespace SteamEngine.LScript {
 			}
 			if (matches.Count == 0) {
 				throw new InterpreterException("The type " + vars.self.GetType() + " is not indexable",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			} else {
 				if (arg == null) {//getter
 					object indexResult;
@@ -144,23 +146,23 @@ namespace SteamEngine.LScript {
 					}
 					if (exactMatches.Count == 1) {
 						MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) exactMatches[0]);
-						newNode = new OpNode_MethodWrapper(parent, filename, line, column, origNode,
+						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 							method, new OpNode[] { index });
 						index.parent = (IOpNodeHolder) newNode;
-						ReplaceSelf(newNode);
+						this.ReplaceSelf(newNode);
 						return ((ITriable) newNode).TryRun(vars, new object[] { indexResult });
 					} else if (exactMatches.Count == 0) {
 						if (stringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(parent, filename, line, column, origNode, index);
+							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, index);
 							index.parent = toStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) stringMatches[0]);
-							newNode = new OpNode_MethodWrapper(parent, filename, line, column, origNode,
+							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								method, new OpNode[] { index });
-							ReplaceSelf(newNode);
+							this.ReplaceSelf(newNode);
 							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult) });
 						} else {
 							throw new InterpreterException("No suitable indexer found for type " + vars.self.GetType(),
-								this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+								this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 						}
 					} else {//exactMatches.Count >1
 						StringBuilder sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
@@ -168,7 +170,7 @@ namespace SteamEngine.LScript {
 							sb.Append(Environment.NewLine).Append(obj.ToString());
 						}
 						throw new InterpreterException(sb.ToString(),
-							this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+							this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 					}
 				} else {
 					object indexResult;
@@ -207,48 +209,48 @@ namespace SteamEngine.LScript {
 
 					if (exactMatches.Count == 1) {
 						MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) exactMatches[0]);
-						newNode = new OpNode_MethodWrapper(parent, filename, line, column, origNode,
+						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 							method, new OpNode[] { index, arg });
 						index.parent = (IOpNodeHolder) newNode;
 						arg.parent = (IOpNodeHolder) newNode;
-						ReplaceSelf(newNode);
+						this.ReplaceSelf(newNode);
 						return ((ITriable) newNode).TryRun(vars, new object[] { indexResult, argResult }); ;
 					} else if (exactMatches.Count == 0) {
 						if (argStringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(parent, filename, line, column, origNode, arg);
+							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, arg);
 							arg.parent = toStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) argStringMatches[0]);
-							newNode = new OpNode_MethodWrapper(parent, filename, line, column, origNode,
+							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								method, new OpNode[] { index, toStringNode });
 							index.parent = (IOpNodeHolder) newNode;
 							toStringNode.parent = (IOpNodeHolder) newNode;
-							ReplaceSelf(newNode);
+							this.ReplaceSelf(newNode);
 							return ((ITriable) newNode).TryRun(vars, new object[] { indexResult, string.Concat(argResult) }); ;
 						} else if (indexStringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(parent, filename, line, column, origNode, index);
+							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, index);
 							index.parent = toStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) indexStringMatches[0]);
-							newNode = new OpNode_MethodWrapper(parent, filename, line, column, origNode,
+							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								method, new OpNode[] { toStringNode, arg });
 							toStringNode.parent = (IOpNodeHolder) newNode;
 							arg.parent = (IOpNodeHolder) newNode;
-							ReplaceSelf(newNode);
+							this.ReplaceSelf(newNode);
 							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult), argResult }); ;
 						} else if (bothStringMatches.Count == 1) {
-							OpNode_ToString indexToStringNode = new OpNode_ToString(parent, filename, line, column, origNode, index);
+							OpNode_ToString indexToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, index);
 							index.parent = indexToStringNode;
-							OpNode_ToString argToStringNode = new OpNode_ToString(parent, filename, line, column, origNode, arg);
+							OpNode_ToString argToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, arg);
 							arg.parent = argToStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) indexStringMatches[0]);
-							newNode = new OpNode_MethodWrapper(parent, filename, line, column, origNode,
+							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								method, new OpNode[] { indexToStringNode, argToStringNode });
 							indexToStringNode.parent = (IOpNodeHolder) newNode;
 							argToStringNode.parent = (IOpNodeHolder) newNode;
-							ReplaceSelf(newNode);
+							this.ReplaceSelf(newNode);
 							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult), string.Concat(argResult) });
 						} else {
 							throw new InterpreterException("No suitable indexer found for type " + vars.self.GetType(),
-								this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+								this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 						}
 					} else { //exactMatches.Count >1
 
@@ -262,7 +264,7 @@ namespace SteamEngine.LScript {
 							sb.Append(Environment.NewLine).Append(obj.ToString());
 						}
 						throw new InterpreterException(sb.ToString(),
-							this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+							this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 					}
 				}
 			}

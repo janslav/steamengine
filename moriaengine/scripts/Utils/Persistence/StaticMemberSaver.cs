@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts {
 			LoadMembers();
 
 			registeredMembers.Clear();
-			foreach (Type type in ClassManager.allTypesbyName.Values) {
+			foreach (Type type in ClassManager.AllManagedTypes) {
 				if (Attribute.IsDefined(type, typeof(HasSavedMembersAttribute))) {
 					foreach (MemberInfo mi in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)) {
 						TryRegisterMember(mi);

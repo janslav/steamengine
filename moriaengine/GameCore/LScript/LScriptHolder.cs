@@ -32,10 +32,10 @@ namespace SteamEngine.LScript {
 	public class LScriptHolder : ScriptHolder, IOpNodeHolder, IUnloadable {
 		internal string filename = "<default>";
 		internal int line;
-		internal OpNode code = null;
+		internal OpNode code;
 		internal Hashtable registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
-		//this gets set by the nodes, when an arg gets declared, so that we know how many ARGs can appear in this function
-		internal OpNode nodeToReturn = null;
+		
+		//internal OpNode nodeToReturn;
 
 		//used by TriggerGroup/GumpDef/templatedef/... loading, and LoadAsFunction here
 		public LScriptHolder(TriggerSection input)
@@ -56,7 +56,7 @@ namespace SteamEngine.LScript {
 			: base("temporary") {
 		}
 
-		public void Replace(OpNode oldNode, OpNode newNode) {
+		void IOpNodeHolder.Replace(OpNode oldNode, OpNode newNode) {
 			if (code == oldNode) {
 				code = newNode;
 			} else {
@@ -72,7 +72,7 @@ namespace SteamEngine.LScript {
 		}
 
 
-		internal bool containsRandom = false;
+		internal bool containsRandom;
 		public bool ContainsRandomExpression {
 			get {
 				return containsRandom;
@@ -86,7 +86,9 @@ namespace SteamEngine.LScript {
 			//	registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
 			//}
 			//Console.WriteLine("compiling text "+input.code);
-			code = LScript.TryCompile(this, new StringReader(input.Code.ToString()), input.StartLine);
+			using (StringReader reader = new StringReader(input.Code.ToString())) {
+				code = LScriptMain.TryCompile(this, reader, input.StartLine);
+			}
 			this.unloaded = (code == null);
 			//Logger.WriteDebug("the code is: "+code);
 		}
@@ -141,17 +143,17 @@ namespace SteamEngine.LScript {
 		internal object[] localVars;
 		internal bool returned;
 		internal readonly object defaultObject;
-		internal readonly int uid;
+		//internal readonly int uid;
 
-		private static int uids;
+		//private static int uids;
 
 		internal ScriptVars(ScriptArgs scriptArgs, object self, int capacity) {
 			this.scriptArgs = scriptArgs;
 			this.self = self;
-			this.uid = uids++;
+			//this.uid = uids++;
 			this.defaultObject = self;
 			this.localVars = new object[capacity];
-			this.returned = false;
+			//this.returned = false;
 		}
 	}
 }

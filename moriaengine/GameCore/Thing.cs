@@ -1517,10 +1517,10 @@ namespace SteamEngine {
 			this.ClilocEmote(arg, 0x22, args);
 		}
 
+		//TODO needs work
 		public void Fix() {
 			int oldZ = this.point4d.z;
-			int newZ;
-			this.GetMap().GetFixedZ(this, out newZ);
+			int newZ = this.GetMap().GetFixedZ(this);
 			if (oldZ != newZ) {
 				this.Z = newZ;
 			}

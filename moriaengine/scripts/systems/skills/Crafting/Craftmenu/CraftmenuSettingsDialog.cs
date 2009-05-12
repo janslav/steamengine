@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
-			int btnNo = (int) gr.pressedButton;
+			int btnNo = (int) gr.PressedButton;
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
 
@@ -145,9 +145,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							CraftmenuItem itm = elem as CraftmenuItem;
 							if (itm != null) {//set this item's values (but only for items, leave categories)
 								try {
-									newWeight = gr.responseNumbers[5 * i + 11].Number;
-									newRes = (ResourcesList) ObjectSaver.Load(gr.responseTexts[5 * i + 13].Text);
-									newSkillmake = (ResourcesList) ObjectSaver.Load(gr.responseTexts[5 * i + 14].Text);
+									newWeight = gr.GetNumberResponse(5 * i + 11);
+									//newRes = (ResourcesList) ObjectSaver.Load(gr.ResponseTexts[5 * i + 13].Text);
+									//newSkillmake = (ResourcesList) ObjectSaver.Load(gr.ResponseTexts[5 * i + 14].Text);
 								} catch { //any problem? - nothing will be set here !
 									newRes = null;
 									newSkillmake = null;

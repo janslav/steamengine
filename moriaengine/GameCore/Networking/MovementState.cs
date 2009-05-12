@@ -41,7 +41,8 @@ namespace SteamEngine.Networking {
 		//private readonly long RidingWalkStepTime = HighPerformanceTimer.SecondsToTicks(0.18);
 
 		private static LinkedList<MovementState> queue = new LinkedList<MovementState>();
-		private static Thread thread;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+		private static Thread thread = InitThread();
 		private static ManualResetEvent manualResetEvent = new ManualResetEvent(false);
 
 		private readonly LinkedListNode<MovementState> listNode;
@@ -50,7 +51,7 @@ namespace SteamEngine.Networking {
 		private long lastStepReserve;
 		private long secondLastStepReserve;
 		private long thirdLastStepReserve;
-		private long lastMovementTime;
+		//private long lastMovementTime;
 		private long nextMovementTime;
 
 		private GameState gameState;
@@ -67,10 +68,11 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		static MovementState() {
-			thread = new Thread(Cycle);
+		private static Thread InitThread() {
+			Thread thread = new Thread(Cycle);
 			thread.IsBackground = true;
 			thread.Start();
+			return thread;
 		}
 
 		static void Cycle() {
@@ -114,7 +116,7 @@ namespace SteamEngine.Networking {
 			this.lastStepReserve = 0;
 			this.secondLastStepReserve = 0;
 			this.thirdLastStepReserve = 0;
-			this.lastMovementTime = 0;
+			//this.lastMovementTime = 0;
 			this.nextMovementTime = 0;
 			this.moveRequests.Clear();
 		}
@@ -175,7 +177,7 @@ namespace SteamEngine.Networking {
 				thirdLastStepReserve = secondLastStepReserve;
 				secondLastStepReserve = lastStepReserve;
 				lastStepReserve = Math.Max(diff, 0);
-				lastMovementTime = currentTime;//...because sometimes the client tends to send more steps at once (or it looks like that), but it still isn't speedhacking
+				//lastMovementTime = currentTime;//...because sometimes the client tends to send more steps at once (or it looks like that), but it still isn't speedhacking
 				return true;
 			} else {
 				////Logger.WriteInfo(MovementTracingOn, "Delaying movement, the packet is "+seconds+" seconds early.");

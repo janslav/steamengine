@@ -64,10 +64,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if (gr.pressedButton == 0) {
+			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 				return;
-			} else if (gr.pressedButton == 1) {
+			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
 				string tagName = gr.GetTextResponse(10);
 				string tagValue = gr.GetTextResponse(11);
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				prevStacked.InputArgs.RemoveTag(D_TagList.tagListTK);
 				//}
 				DialogStacking.ResendAndRestackDialog(prevStacked);
-			} else if (gr.pressedButton == 2) {
+			} else if (gr.PressedButton == 2) {
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 				DialogStacking.EnstackDialog(gi, newGi); //ulozime dialog do stacku
 			}

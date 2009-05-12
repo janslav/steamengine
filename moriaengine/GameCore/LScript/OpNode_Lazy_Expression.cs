@@ -30,14 +30,14 @@ using SteamEngine.Regions;
 namespace SteamEngine.LScript {
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Lazy_Expression : OpNode, IOpNodeHolder {
+	internal class OpNode_Lazy_Expression : OpNode, IOpNodeHolder {
 		//accepts STRING, SimpleExpression, 
 		private string name;
 		protected OpNode[] args;
 		private string formatString;
-		private object[] results = null;
-		private bool mustEval = false;
-		private bool noArgs = false;
+		private object[] results;
+		private bool mustEval;
+		private bool noArgs;
 		private string classOrNamespaceName = "";
 		private bool isClass;
 
@@ -46,9 +46,9 @@ namespace SteamEngine.LScript {
 		}
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, bool mustEval) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScript.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
 			OpNode_Lazy_Expression constructed = new OpNode_Lazy_Expression(
 				parent, filename, line, column, code);
 
@@ -86,8 +86,7 @@ namespace SteamEngine.LScript {
 				constructed.noArgs = true;
 				return constructed;
 			} else if (IsType(code, StrictConstants.SIMPLE_EXPRESSION)) {
-				constructed.name = LScript.GetFirstTokenString(code);
-				Commands.AuthorizeCommandThrow(Globals.Src, constructed.name);
+				constructed.name = LScriptMain.GetFirstTokenString(code);
 				int current = 1;
 				Node caller = code.GetChildAt(current);
 				if (IsType(caller, StrictConstants.CALLER)) {
@@ -113,8 +112,8 @@ namespace SteamEngine.LScript {
 						constructed.GetArgsFrom(assigner);
 					} else {
 						throw new InterpreterException("This expression is invalid : 'identifier(...) = ... '",
-							LScript.startLine + assigner.GetStartLine(), assigner.GetStartColumn(),
-							filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+							LScriptMain.startLine + assigner.GetStartLine(), assigner.GetStartColumn(),
+							filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 						//this could also (maybe?) be a parser error, but I wasn`t yet able to make the grammar that way :)
 						//for the scripter is it irrelevant - it`s anyway an error at "compile" time.
 					}
@@ -135,12 +134,13 @@ namespace SteamEngine.LScript {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		protected void GetArgsFrom(Node caller) {
 			//caller / assigner
 			Node arg = caller.GetChildAt(1); //ArgsList or just one expression
 			//skipped the caller`s first token - "(" / "=" / " "
 			if (IsType(arg, StrictConstants.RIGHT_PAREN)) {
-				args = new OpNode[0];
+				this.args = new OpNode[0];
 				return;
 			}
 			if (IsType(arg, StrictConstants.ARGS_LIST)) {
@@ -151,21 +151,21 @@ namespace SteamEngine.LScript {
 					sb.Append("{" + i / 2 + "}");
 					if (i + 1 < n) {
 						Node separator = arg.GetChildAt(i + 1);
-						sb.Append(LScript.GetString(separator));
+						sb.Append(LScriptMain.GetString(separator));
 					}
 					Node node = arg.GetChildAt(i);
-					argsList.Add(LScript.CompileNode(this, node));
+					argsList.Add(LScriptMain.CompileNode(this, node));
 				}
-				args = new OpNode[argsList.Count];
-				argsList.CopyTo(args);
+				this.args = new OpNode[argsList.Count];
+				argsList.CopyTo(this.args);
 
 				object[] stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);
-				formatString = sb.ToString();
+				this.formatString = sb.ToString();
 			} else {
-				OpNode compiled = LScript.CompileNode(this, arg);
-				args = new OpNode[] { compiled };
-				formatString = "{0}";
+				OpNode compiled = LScriptMain.CompileNode(this, arg);
+				this.args = new OpNode[] { compiled };
+				this.formatString = "{0}";
 			}
 		}
 
@@ -174,14 +174,15 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				args[index] = newNode;
+				this.args[index] = newNode;
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal override object Run(ScriptVars vars) {
 			//Console.WriteLine("OpNode_Lazy_Expression.Run on "+vars.self);
 			//Console.WriteLine("Running as lazyexpression: "+LScript.GetString(origNode));
@@ -204,20 +205,20 @@ namespace SteamEngine.LScript {
 			//ArrayList matches = new ArrayList(1); //list of possible OpNodes. only the first one is really used.
 
 			//return
-			if (StringComparer.OrdinalIgnoreCase.Equals(name, "return")) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(this.name, "return")) {
 				OpNode newNode;
-				if (args.Length == 1) {
-					newNode = new OpNode_Return(parent, filename, line, column, origNode, args[0]);
+				if (this.args.Length == 1) {
+					newNode = new OpNode_Return(this.parent, this.filename, this.line, this.column, this.OrigNode, this.args[0]);
 					SetNewParentToArgs((IOpNodeHolder) newNode);
-				} else if (args.Length > 1) {
-					newNode = new OpNode_Return_String(parent, filename, line, column, origNode, args, formatString);
+				} else if (this.args.Length > 1) {
+					newNode = new OpNode_Return_String(this.parent, this.filename, this.line, this.column, this.OrigNode, this.args, this.formatString);
 					SetNewParentToArgs((IOpNodeHolder) newNode);
 				} else { //args.Length == 0
 					//Console.WriteLine("OpNode_Object.Construct from return");
 					OpNode nullNode = OpNode_Object.Construct(null, (object) null);
-					newNode = new OpNode_Return(parent, filename, line, column, origNode, nullNode);
+					newNode = new OpNode_Return(this.parent, this.filename, this.line, this.column, this.OrigNode, nullNode);
 				}
-				ReplaceSelf(newNode);
+				this.ReplaceSelf(newNode);
 
 				object oSelf = vars.self;
 				vars.self = vars.defaultObject;
@@ -229,15 +230,15 @@ namespace SteamEngine.LScript {
 			}
 
 			//scripts
-			AbstractScript ad = AbstractScript.Get(name);
+			AbstractScript ad = AbstractScript.Get(this.name);
 			if (ad != null) {
-				finalOpNode = OpNode_Object.Construct(parent, ad);
+				finalOpNode = OpNode_Object.Construct(this.parent, ad);
 				goto runit;
 			}
 
 			//self is namespace
 			if (vars.self is NameRef) {
-				classOrNamespaceName += ((NameRef) vars.self).name;
+				this.classOrNamespaceName += ((NameRef) vars.self).name;
 				if (vars.self is NameSpaceRef) {
 					this.isClass = false;
 				} else { //vars.self is ClassNameRef
@@ -246,19 +247,19 @@ namespace SteamEngine.LScript {
 			}
 
 			if (haveBaseInstance) {
-				if (classOrNamespaceName != "") {
+				if (!String.IsNullOrEmpty(this.classOrNamespaceName)) {
 					//noArgs
 					if (!this.isClass) {
-						string className = classOrNamespaceName + "." + name;
+						string className = this.classOrNamespaceName + "." + this.name;
 						type = Type.GetType(className, false, true);
 						if (type == null) {
 							throw new NameRefException(this.line, this.column, this.filename,
-								new NameSpaceRef(className), ParentScriptHolder.GetDecoratedName());
+								new NameSpaceRef(className), this.ParentScriptHolder.GetDecoratedName());
 							//in fact we dunno if it`s a _valid_ namespace name, but there seems to be no way to confirm that
 						} else {
-							if (noArgs) {//it`s just reference to class, so that the next in chain is a static member, or is it wrong
+							if (this.noArgs) {//it`s just reference to class, so that the next in chain is a static member, or is it wrong
 								throw new NameRefException(this.line, this.column,
-									this.filename, new ClassNameRef(className), ParentScriptHolder.GetDecoratedName());
+									this.filename, new ClassNameRef(className), this.ParentScriptHolder.GetDecoratedName());
 							} else {//it`s a constructor/member with same name
 								tryInstance = false;
 								//Console.WriteLine("tryInstance = false: {0} ({1}) at {2}:{3}", type, className, this.line, this.column);
@@ -277,41 +278,41 @@ namespace SteamEngine.LScript {
 						tryInstance = false;//we look for a static member
 					}
 				} else if (vars.self == vars.defaultObject) {
-					seType = SteamEngine.CompiledScripts.ClassManager.GetType(name);//some SteamEngine class from our ClassManager class
+					seType = SteamEngine.CompiledScripts.ClassManager.GetType(this.name);//some SteamEngine class from our ClassManager class
 					type = vars.self.GetType();
 				} else {
 					type = vars.self.GetType();
 				}
 			}
 			//I am namespace name ("system")
-			if (StringComparer.OrdinalIgnoreCase.Equals(name, "system")) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(this.name, "system")) {
 				throw new NameRefException(this.line, this.column, this.filename,
-					new NameSpaceRef(name), ParentScriptHolder.GetDecoratedName());
+					new NameSpaceRef(this.name), this.ParentScriptHolder.GetDecoratedName());
 				//this exception being thrown doesnt really mean something is wrong. 
 				//It may be also harmlessly caught by superior ExpressionChain. but if there is no such present, it becomes really an error
 			}
 			//arg/local
-			if (args.Length == 0) {
-				if (ParentScriptHolder.registerNames.ContainsKey(name)) {
-					finalOpNode = new OpNode_GetArg(parent, filename, line, column, origNode, name);
+			if (this.args.Length == 0) {
+				if (this.ParentScriptHolder.registerNames.ContainsKey(this.name)) {
+					finalOpNode = new OpNode_GetArg(this.parent, this.filename, this.line, this.column, this.OrigNode, this.name);
 					goto runit;
 				}
 			}
 
 
 			resolver = MemberResolver.GetInstance(
-				vars, parent, name, args, line, column, filename);
+				vars, this.parent, this.name, this.args, this.line, this.column, this.filename);
 			MemberDescriptor desc = null;
 			//methods/properties /fields/constructors
 
 			//Console.WriteLine("resolving "+name);
 			if (haveBaseInstance) {
 				if ((vars.defaultObject is Thing) &&
-						((StringComparer.OrdinalIgnoreCase.Equals(name, "item")) ||
-						(StringComparer.OrdinalIgnoreCase.Equals(name, "itemnewbie")) ||
-						(StringComparer.OrdinalIgnoreCase.Equals(name, "sell")) ||
-						(StringComparer.OrdinalIgnoreCase.Equals(name, "buy")))) {
-					int argsLength = args.Length;
+						((StringComparer.OrdinalIgnoreCase.Equals(this.name, "item")) ||
+						(StringComparer.OrdinalIgnoreCase.Equals(this.name, "itemnewbie")) ||
+						(StringComparer.OrdinalIgnoreCase.Equals(this.name, "sell")) ||
+						(StringComparer.OrdinalIgnoreCase.Equals(this.name, "buy")))) {
+					int argsLength = this.args.Length;
 					if ((argsLength == 1) || (argsLength == 2)) {
 						resolver.RunArgs();
 						if ((resolver.results[0] is IThingFactory) && ((argsLength == 1) ||
@@ -320,11 +321,11 @@ namespace SteamEngine.LScript {
 							if (argsLength == 1) {
 								amountNode = OpNode_Object.Construct(this, (uint) 1);
 							} else {
-								amountNode = args[1];
+								amountNode = this.args[1];
 							}
-							bool newbie = (StringComparer.OrdinalIgnoreCase.Equals(name, "itemnewbie"));
-							finalOpNode = new OpNode_TemplateItem(parent, filename, line, column, origNode,
-								newbie, args[0], amountNode);
+							bool newbie = (StringComparer.OrdinalIgnoreCase.Equals(this.name, "itemnewbie"));
+							finalOpNode = new OpNode_TemplateItem(this.parent, this.filename, this.line, this.column, this.OrigNode,
+								newbie, this.args[0], amountNode);
 							goto runit;
 						}
 					}
@@ -347,7 +348,7 @@ namespace SteamEngine.LScript {
 				}
 
 				throw new NameRefException(this.line, this.column, this.filename,
-					new ClassNameRef(name), ParentScriptHolder.GetDecoratedName());
+					new ClassNameRef(this.name), this.ParentScriptHolder.GetDecoratedName());
 			}
 
 			memberNameMatched |= resolver.Resolve(typeof(IntrinsicMethods), BindingFlags.Static, MemberTypes.Method | MemberTypes.Property, out desc);
@@ -356,52 +357,54 @@ namespace SteamEngine.LScript {
 			}
 
 			//var
-			if (args.Length == 0) {
-				if (Globals.Instance.HasTag(TagKey.Get(name))) {
-					finalOpNode = new OpNode_GetVar(parent, filename, line, column, origNode, name);
+			if (this.args.Length == 0) {
+				if (Globals.Instance.HasTag(TagKey.Get(this.name))) {
+					finalOpNode = new OpNode_GetVar(this.parent, this.filename, this.line, this.column, this.OrigNode, this.name);
 					goto runit;
 				}
 			}
 			//function
-			ScriptHolder function = ScriptHolder.GetFunction(name);
+			ScriptHolder function = ScriptHolder.GetFunction(this.name);
 			if (function != null) {
-				finalOpNode = new OpNode_Function(parent, filename, line, column, origNode,
-					function, args, formatString);
+				finalOpNode = new OpNode_Function(this.parent, this.filename, this.line, this.column, this.OrigNode,
+					function, this.args, this.formatString);
 				goto runit;
 			}
 
 			//skillkey
-			AbstractSkillDef sd = AbstractSkillDef.GetByKey(name);
-			if ((sd != null) && (vars.self is AbstractCharacter)) {
-				skillKeyMatched = true;
-				if (args.Length == 0) {
-					finalOpNode = new OpNode_SkillKey_Get(parent, filename, line, column, origNode,
-						sd.Id);
-					goto runit;
-				} else if (args.Length == 1) {
-					resolver.RunArgs();
-					try {
-						Convert.ToUInt16(resolver.results[0], System.Globalization.CultureInfo.InvariantCulture);
-						finalOpNode = new OpNode_SkillKey_Set(parent, filename, line, column, origNode,
-							sd.Id, args[0]);
+			if (vars.self is AbstractCharacter) {
+				AbstractSkillDef sd = AbstractSkillDef.GetByKey(this.name);
+				if (sd != null) {
+					skillKeyMatched = true;
+					if (this.args.Length == 0) {
+						finalOpNode = new OpNode_SkillKey_Get(this.parent, this.filename, this.line, this.column, this.OrigNode,
+							sd.Id);
 						goto runit;
-					} catch (Exception) {//cos of the convert
+					} else if (this.args.Length == 1) {
+						resolver.RunArgs();
+						try {
+							Convert.ToInt32(resolver.results[0], System.Globalization.CultureInfo.InvariantCulture);
+							finalOpNode = new OpNode_SkillKey_Set(this.parent, this.filename, this.line, this.column, this.OrigNode,
+								sd.Id, this.args[0]);
+							goto runit;
+						} catch {//if an exception happens here, it means we can't construct this, so we can ignore the exception
+						}
 					}
 				}
 			}
 
-			if (args.Length == 0) {
+			if (this.args.Length == 0) {
 				//constant (defnames)
-				Constant con = Constant.Get(name);
+				Constant con = Constant.Get(this.name);
 				if (con != null) {
-					finalOpNode = new OpNode_Constant(parent, filename, line, column, origNode, con);
+					finalOpNode = new OpNode_Constant(this.parent, this.filename, this.line, this.column, this.OrigNode, con);
 					goto runit;
 				}
 
 				//regions
-				StaticRegion reg = StaticRegion.GetByDefname(name);
+				StaticRegion reg = StaticRegion.GetByDefname(this.name);
 				if (reg != null) {
-					finalOpNode = OpNode_Object.Construct(parent, reg);
+					finalOpNode = OpNode_Object.Construct(this.parent, reg);
 					goto runit;
 				}
 			}
@@ -410,13 +413,13 @@ namespace SteamEngine.LScript {
 			if ((vars.self == vars.defaultObject) && (vars.scriptArgs != null) && (vars.scriptArgs.Argv.Length > 0)) {
 				ScriptedGump sgi = vars.scriptArgs.Argv[0] as ScriptedGump;
 				if (sgi != null) {
-					if (ScriptedGump.IsMethodName(name)) {
+					if (ScriptedGump.IsMethodName(this.name)) {
 						desc = null;
 						memberNameMatched = resolver.Resolve(typeof(ScriptedGump), BindingFlags.Instance, MemberTypes.Method, out desc);
 						ResolveAsClassMember(desc, out finalOpNode);
 						if (finalOpNode != null) {
 							OpNode_MethodWrapper onmw = (OpNode_MethodWrapper) finalOpNode;
-							OpNode_RunOnArgo newNode = new OpNode_RunOnArgo(parent, filename, line, column, origNode, onmw);
+							OpNode_RunOnArgo newNode = new OpNode_RunOnArgo(this.parent, this.filename, this.line, this.column, this.OrigNode, onmw);
 							onmw.parent = newNode;
 							finalOpNode = newNode;
 							goto runit;
@@ -442,24 +445,24 @@ namespace SteamEngine.LScript {
 			//				}
 			//				Logger.WriteWarning(filename, line, sb.ToString());
 			//			} else if (matches.Count < 1) {
-			if (mustEval) {
+			if (this.mustEval) {
 				if (memberNameMatched) {
 					throw new InterpreterException(
-						"Class member (method/property/field/constructor) '" + LogStr.Ident(name) + "' is getting wrong arguments",
-						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+						"Class member (method/property/field/constructor) '" + LogStr.Ident(this.name) + "' is getting wrong arguments",
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				} else if (skillKeyMatched) {
 					throw new InterpreterException(
 						"The skill is getting wrong number or type of arguments",
-						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				} else {
-					throw new InterpreterException("Undefined identifier '" + LogStr.Ident(name) + "'",
-						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+					throw new InterpreterException("Undefined identifier '" + LogStr.Ident(this.name) + "'",
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
 			} else {
 				string thisNodeString = this.OrigString;
 				//Console.WriteLine("OpNode_Object.Construct from !mustEval");
-				OpNode finalStringOpNode = OpNode_Object.Construct(parent, thisNodeString);
-				ReplaceSelf(finalStringOpNode);
+				OpNode finalStringOpNode = OpNode_Object.Construct(this.parent, thisNodeString);
+				this.ReplaceSelf(finalStringOpNode);
 				return thisNodeString;
 			}
 		//			}
@@ -468,7 +471,7 @@ namespace SteamEngine.LScript {
 
 runit:	//I know that goto is usually considered dirty, but I find this case quite suitable for it...
 			if (resolver != null) {
-				results = resolver.results;
+				this.results = resolver.results;
 				MemberResolver.ReturnInstance(resolver);
 			}
 			//finally run it
@@ -476,14 +479,15 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 			if (finalAsHolder != null) {
 				SetNewParentToArgs(finalAsHolder);
 			}
-			ReplaceSelf(finalOpNode);
-			if ((results != null) && (results.Length > 0)) {
-				return ((ITriable) finalOpNode).TryRun(vars, results);
+			this.ReplaceSelf(finalOpNode);
+			if ((this.results != null) && (this.results.Length > 0)) {
+				return ((ITriable) finalOpNode).TryRun(vars, this.results);
 			} else {
 				return finalOpNode.Run(vars);
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		private bool ResolveAsClassMember(MemberDescriptor desc, out OpNode finalOpNode) {
 			//Console.WriteLine("ResolveAsClassMember: "+desc);
 			finalOpNode = null;
@@ -499,45 +503,45 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 				case SpecialType.Normal:
 					if (MemberResolver.IsMethod(info)) {
 						methodInfo = MemberWrapper.GetWrapperFor((MethodInfo) info);
-						finalOpNode = new OpNode_MethodWrapper(parent, filename, line, column,
-							origNode, methodInfo, args);
+						finalOpNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column,
+							this.OrigNode, methodInfo, this.args);
 					} else if (MemberResolver.IsConstructor(info)) {
 						constructorInfo = MemberWrapper.GetWrapperFor((ConstructorInfo) info);
-						finalOpNode = new OpNode_ConstructorWrapper(parent, filename, line, column,
-							origNode, constructorInfo, args);
+						finalOpNode = new OpNode_ConstructorWrapper(this.parent, this.filename, this.line, this.column,
+							this.OrigNode, constructorInfo, this.args);
 					} else if (MemberResolver.IsField(info)) {
 						fieldInfo = (FieldInfo) info;
 						if ((fieldInfo.Attributes & FieldAttributes.Literal) == FieldAttributes.Literal) {
 							object retVal = fieldInfo.GetValue(null);
-							finalOpNode = OpNode_Object.Construct(parent, retVal);
+							finalOpNode = OpNode_Object.Construct(this.parent, retVal);
 						} else {
 							fieldInfo = MemberWrapper.GetWrapperFor((FieldInfo) info);
-							if (args.Length == 0) {
-								finalOpNode = new OpNode_GetField(parent, filename, line, column,
-									origNode, fieldInfo);
+							if (this.args.Length == 0) {
+								finalOpNode = new OpNode_GetField(this.parent, this.filename, this.line, this.column,
+									this.OrigNode, fieldInfo);
 							} else {
-								finalOpNode = new OpNode_SetField(parent, filename, line, column,
-									origNode, fieldInfo, args[0]);
+								finalOpNode = new OpNode_SetField(this.parent, this.filename, this.line, this.column,
+									this.OrigNode, fieldInfo, this.args[0]);
 							}
 						}
 					}
 					break;
 				case SpecialType.String:
-					if ((args.Length == 1) && (MemberResolver.ReturnsString(args[0]))) {
+					if ((this.args.Length == 1) && (MemberResolver.ReturnsString(args[0]))) {
 						goto case SpecialType.Normal; //is it not nice? :)
 					}
 					if (MemberResolver.IsMethod(info)) {
 						methodInfo = MemberWrapper.GetWrapperFor((MethodInfo) info);
-						finalOpNode = new OpNode_MethodWrapper_String(parent, filename, line, column,
-							origNode, methodInfo, args, formatString);
+						finalOpNode = new OpNode_MethodWrapper_String(this.parent, this.filename, this.line, this.column,
+							this.OrigNode, methodInfo, this.args, this.formatString);
 					} else if (MemberResolver.IsConstructor(info)) {
 						constructorInfo = MemberWrapper.GetWrapperFor((ConstructorInfo) info);
-						finalOpNode = new OpNode_ConstructorWrapper_String(parent, filename, line, column,
-							origNode, constructorInfo, args, formatString);
+						finalOpNode = new OpNode_ConstructorWrapper_String(this.parent, this.filename, this.line, this.column,
+							this.OrigNode, constructorInfo, this.args, this.formatString);
 					} else if (MemberResolver.IsField(info)) {
 						fieldInfo = MemberWrapper.GetWrapperFor((FieldInfo) info);
-						finalOpNode = new OpNode_InitField_String(parent, filename, line, column,
-							origNode, fieldInfo, args, formatString);
+						finalOpNode = new OpNode_InitField_String(this.parent, this.filename, this.line, this.column,
+							this.OrigNode, fieldInfo, this.args, this.formatString);
 					}
 					break;
 				case SpecialType.Params:
@@ -546,20 +550,20 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					int methodParamLength = pars.Length;
 					Type paramsElementType = pars[methodParamLength - 1].ParameterType.GetElementType();
 					int normalArgsLength = methodParamLength - 1;
-					int paramArgsLength = args.Length - normalArgsLength;
+					int paramArgsLength = this.args.Length - normalArgsLength;
 					OpNode[] normalArgs = new OpNode[normalArgsLength];
 					OpNode[] paramArgs = new OpNode[paramArgsLength];
-					Array.Copy(args, normalArgs, normalArgsLength);
-					Array.Copy(args, normalArgsLength, paramArgs, 0, paramArgsLength);
+					Array.Copy(this.args, normalArgs, normalArgsLength);
+					Array.Copy(this.args, normalArgsLength, paramArgs, 0, paramArgsLength);
 
 					if (MemberResolver.IsMethod(info)) {
 						methodInfo = MemberWrapper.GetWrapperFor((MethodInfo) info);
-						finalOpNode = new OpNode_MethodWrapper_Params(parent, filename, line, column,
-							origNode, methodInfo, normalArgs, paramArgs, paramsElementType);
+						finalOpNode = new OpNode_MethodWrapper_Params(this.parent, this.filename, this.line, this.column,
+							this.OrigNode, methodInfo, normalArgs, paramArgs, paramsElementType);
 					} else if (MemberResolver.IsConstructor(info)) {
 						constructorInfo = MemberWrapper.GetWrapperFor((ConstructorInfo) info);
-						finalOpNode = new OpNode_ConstructorWrapper_Params(parent, filename, line, column,
-							origNode, constructorInfo, normalArgs, paramArgs, paramsElementType);
+						finalOpNode = new OpNode_ConstructorWrapper_Params(this.parent, this.filename, this.line, this.column,
+							this.OrigNode, constructorInfo, normalArgs, paramArgs, paramsElementType);
 					}
 
 					break;
@@ -568,8 +572,8 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 		}
 
 		private void SetNewParentToArgs(IOpNodeHolder newParent) {
-			for (int i = 0, n = args.Length; i < n; i++) {
-				OpNode node = args[i];
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				OpNode node = this.args[i];
 				//Console.WriteLine("Setting new parent {0} (type {1}) to {2} ({3})", newParent, newParent.GetType(), node, node.GetType());
 				node.parent = newParent;
 			}
@@ -577,9 +581,9 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder(name).Append("(");
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			StringBuilder str = new StringBuilder(this.name).Append("(");
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append(")").ToString();
 		}

@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Button pressed - exit the dialog or pass the calling onto the underlaying inputDef")]
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case 0: //exit or rightclick
 					//znovuzavolat pripadny predchozi dialog
 					DialogStacking.ShowPreviousDialog(gi);

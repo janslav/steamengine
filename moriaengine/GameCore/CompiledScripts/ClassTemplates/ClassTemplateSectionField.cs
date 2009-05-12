@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		internal string typeString;
 		internal Type type;
 		internal bool needsCopying;
-		internal bool isStatic = false;
+		internal bool isStatic;
 
 		//<access>(public)|(private)|(protected)|(internal))\s+)?
 		//(?<static>static\s+)?
@@ -138,7 +138,8 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 		}
 
-		private MemberAttributes ParseAccess(string s) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
+		private static MemberAttributes ParseAccess(string s) {
 			MemberAttributes ret = MemberAttributes.Final;
 			switch (s.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
 				case "public":

@@ -95,7 +95,7 @@ namespace SteamEngine.Packets {
 			string s = "";
 			string t = "";
 			for (int a = 0; a < len; a++) {
-				t = array[a].ToString("X");
+				t = array[a].ToString("X", System.Globalization.CultureInfo.InvariantCulture);
 				while (t.Length < 2) {
 					t = "0" + t;
 				}

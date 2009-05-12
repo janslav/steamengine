@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 		}
 
-		private CodeMemberField CodeField(ClassTemplateInstanceField ctfi) {
+		private static CodeMemberField CodeField(ClassTemplateInstanceField ctfi) {
 			CodeMemberField field = new CodeMemberField("FieldValue", ctfi.uncapName);
 			field.Attributes = MemberAttributes.Final | MemberAttributes.Private;
 			if (ctfi.isStatic) {
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			return field;
 		}
 
-		private CodeMemberProperty CodeProperty(ClassTemplateInstanceField ctfi) {
+		private static CodeMemberProperty CodeProperty(ClassTemplateInstanceField ctfi) {
 			CodeMemberProperty prop = new CodeMemberProperty();
 			prop.Type = new CodeTypeReference(ctfi.typeString);
 			prop.Name = ctfi.capName;

@@ -204,7 +204,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam nastavenych nebo zkousenych polozek
-			if (gr.pressedButton == 0) { //end
+			if (gr.PressedButton == 0) { //end
 				DialogStacking.ShowPreviousDialog(gi);
 			}
 		}

@@ -26,6 +26,7 @@ using System.Net;
 using System.Security.Cryptography;
 
 namespace SteamEngine.Networking {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
 	public class GameEncryption : IEncryption {
 
 		private TwofishEncryption engine;
@@ -44,11 +45,11 @@ namespace SteamEngine.Networking {
 			//uint seed = (uint) ((bytesIn[offsetIn] << 24) | (bytesIn[offsetIn + 1] << 16) | (bytesIn[offsetIn + 2] << 8) | bytesIn[offsetIn + 3]);
 			bytesUsed = 4;
 
-			if ((bytesIn[offsetIn + 4] == 0x91) && //0x91 packet and matching seed in the packet = no encryption
-				(bytesIn[offsetIn + 5] == bytesIn[offsetIn]) &&
-				(bytesIn[offsetIn + 6] == bytesIn[offsetIn + 1]) &&
-				(bytesIn[offsetIn + 7] == bytesIn[offsetIn + 2]) &&
-				(bytesIn[offsetIn + 8] == bytesIn[offsetIn + 3])) {
+			if ((bytesIn[checked(offsetIn + 4)] == 0x91) && //0x91 packet and matching seed in the packet = no encryption
+				(bytesIn[checked(offsetIn + 5)] == bytesIn[checked(offsetIn)]) &&
+				(bytesIn[checked(offsetIn + 6)] == bytesIn[checked(offsetIn + 1)]) &&
+				(bytesIn[checked(offsetIn + 7)] == bytesIn[checked(offsetIn + 2)]) &&
+				(bytesIn[checked(offsetIn + 8)] == bytesIn[checked(offsetIn + 3)])) {
 				return EncryptionInitResult.SuccessNoEncryption;
 			}
 
@@ -57,10 +58,10 @@ namespace SteamEngine.Networking {
 
 			// Set up the crypt key
 			byte[] key = new byte[16];
-			key[0] = key[4] = key[8] = key[12] = bytesIn[offsetIn]; // (byte) ((seed >> 24) & 0xff);
-			key[1] = key[5] = key[9] = key[13] = bytesIn[offsetIn + 1]; // (byte) ((seed >> 16) & 0xff);
-			key[2] = key[6] = key[10] = key[14] = bytesIn[offsetIn + 2]; // (byte) ((seed >> 8) & 0xff);
-			key[3] = key[7] = key[11] = key[15] = bytesIn[offsetIn + 3]; // (byte) (seed & 0xff);
+			key[0] = key[4] = key[8] = key[12] = bytesIn[checked(offsetIn)]; // (byte) ((seed >> 24) & 0xff);
+			key[1] = key[5] = key[9] = key[13] = bytesIn[checked(offsetIn + 1)]; // (byte) ((seed >> 16) & 0xff);
+			key[2] = key[6] = key[10] = key[14] = bytesIn[checked(offsetIn + 2)]; // (byte) ((seed >> 8) & 0xff);
+			key[3] = key[7] = key[11] = key[15] = bytesIn[checked(offsetIn + 3)]; // (byte) (seed & 0xff);
 
 			byte[] iv = new byte[0];
 			this.engine = new SteamEngine.Networking.TwofishEncryption(128, ref key, ref iv, CipherMode.ECB, SteamEngine.Networking.TwofishBase.EncryptionDirection.Decrypting);
@@ -102,7 +103,9 @@ namespace SteamEngine.Networking {
 				bytesOut[offsetOut] = (byte) (bytesIn[i] ^ this.xorData[this.sendPos++]);
 				this.sendPos &= 0x0F; // Maximum Value is 0xF = 15, then 0xF + 1 = 0 again
 
-				offsetOut++;
+				checked {
+					offsetOut++;
+				}
 			}
 
 			return length;
@@ -119,7 +122,9 @@ namespace SteamEngine.Networking {
 				// Simple XOR operation
 				bytesOut[offsetOut] = (byte) (bytesIn[i] ^ this.cipherTable[this.recvPos++]);
 
-				offsetOut++;
+				checked {
+					offsetOut++;
+				}
 			}
 
 			return length;

@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_TemplateItem : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
+	internal class OpNode_TemplateItem : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		private OpNode defNode;
 		private OpNode amountNode;
 		private readonly bool isnewbie;
@@ -53,6 +53,7 @@ namespace SteamEngine.LScript {
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			Thing t = (Thing) vars.defaultObject;
 			vars.self = t;
@@ -61,7 +62,7 @@ namespace SteamEngine.LScript {
 			int amount;
 			try {
 				tf = (IThingFactory) defNode.Run(vars);
-				amount = Convert.ToInt32(amountNode.Run(vars));
+				amount = Convert.ToInt32(amountNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 			} finally {
 				vars.self = t;
 			}
@@ -77,17 +78,18 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating (TEMPLATE)ITEM expression",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			Thing t = (Thing) vars.defaultObject;
 			vars.self = t;
 			IThingFactory tf = (IThingFactory) results[0];
 			int amount = 1;
 			if (results.Length > 1) {
-				amount = Convert.ToInt32(results[1]);
+				amount = Convert.ToInt32(results[1], System.Globalization.CultureInfo.InvariantCulture);
 			}
 			try {
 				AbstractItem i = t.NewItem(tf, amount);
@@ -100,7 +102,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating (TEMPLATE)ITEM expression",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 

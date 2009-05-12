@@ -218,9 +218,9 @@ namespace SteamEngine {
 				return (string) this.key.CurrentValue;
 			}
 			set {
-				string prev = Key;
+				string prev = this.Key;
 				key.CurrentValue = value;
-				string after = Key;
+				string after = this.Key;
 				if (!StringComparer.OrdinalIgnoreCase.Equals(prev, after)) {
 					byKey.Remove(prev);
 					byKey[after] = this;

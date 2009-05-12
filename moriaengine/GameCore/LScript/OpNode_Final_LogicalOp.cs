@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_LogicalAnd : OpNode_Lazy_BinOperator {
+	internal class OpNode_LogicalAnd : OpNode_Lazy_BinOperator {
 		//gets created from OpNode
 		internal OpNode_LogicalAnd(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -45,7 +45,7 @@ namespace SteamEngine.LScript {
 				}
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating && operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 
 			object righVar = right.Run(vars);
@@ -53,13 +53,13 @@ namespace SteamEngine.LScript {
 				return TagMath.ToBoolean(righVar);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating && operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_LogicalOr : OpNode_Lazy_BinOperator {
+	internal class OpNode_LogicalOr : OpNode_Lazy_BinOperator {
 		//gets created from OpNode
 		internal OpNode_LogicalOr(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
@@ -76,7 +76,7 @@ namespace SteamEngine.LScript {
 				}
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating || operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 
 			object righVar = right.Run(vars);
@@ -84,7 +84,7 @@ namespace SteamEngine.LScript {
 				return TagMath.ToBoolean(righVar);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating || operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}

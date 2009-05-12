@@ -27,14 +27,14 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Return : OpNode, IOpNodeHolder {
+	internal class OpNode_Return : OpNode, IOpNodeHolder {
 		private OpNode arg;
 
 		internal OpNode_Return(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, OpNode arg)
 			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
-			ParentScriptHolder.nodeToReturn = arg;
+			//ParentScriptHolder.nodeToReturn = arg;
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
@@ -42,7 +42,7 @@ namespace SteamEngine.LScript {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
 				arg = newNode;
-				ParentScriptHolder.nodeToReturn = newNode;
+				//ParentScriptHolder.nodeToReturn = newNode;
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Return_String : OpNode, IOpNodeHolder {
+	internal class OpNode_Return_String : OpNode, IOpNodeHolder {
 		private readonly OpNode[] args;
 		private readonly string formatString;
 

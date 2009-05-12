@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts {
 			return iogu;
 		}
 
-		public class CorpseOnGroundUpdater : ItemOnGroundUpdater {
+		public sealed class CorpseOnGroundUpdater : ItemOnGroundUpdater {
 			PacketGroup equippedItemsPackets;
 
 			public CorpseOnGroundUpdater(Corpse corpse)
@@ -200,7 +200,7 @@ namespace SteamEngine.CompiledScripts {
 			public override void SendTo(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TcpConnection<GameState> viewerConn) {
 				base.SendTo(viewer, viewerState, viewerConn);
 
-				Corpse corpse = (Corpse) this.item;
+				Corpse corpse = (Corpse) this.ContItem;
 				if (corpse.hasEquippedItems) {
 					if (this.equippedItemsPackets == null) {
 						CorpseEquipInfo hair = null;
@@ -262,12 +262,14 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			public override void Dispose() {
-				base.Dispose();
-
-				if (this.equippedItemsPackets != null) {
-					this.equippedItemsPackets.Dispose();
-					this.equippedItemsPackets = null;
+			protected override void On_DisposeManagedResources() {
+				try {
+					if (this.equippedItemsPackets != null) {
+						this.equippedItemsPackets.Dispose();
+						this.equippedItemsPackets = null;
+					}
+				} finally {
+					base.On_DisposeManagedResources();
 				}
 			}
 		}

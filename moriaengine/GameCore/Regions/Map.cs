@@ -202,14 +202,16 @@ namespace SteamEngine.Regions {
 		/**
 			This returns the real map number for a particular mapplane. Currently, it's 0 for all mapplanes.
 		*/
-		public byte Facet {
+		public int Facet {
 			get {
 				return 0;//this will be variable once (if) we have support for more mapxx.mul
 			}
 		}
 
-		public static int GetFacetCount() {
-			return 1;
+		public static int FacetCount {
+			get {
+				return 1;
+			}
 		}
 
 		public static int GetFacetPatchesMapCount(int facet) {
@@ -714,6 +716,7 @@ namespace SteamEngine.Regions {
 		//    }
 		//}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
 				foreach (AbstractCharacter player in sector.Players) {
@@ -879,6 +882,7 @@ namespace SteamEngine.Regions {
 		//    }
 		//}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsWhoCanSee(Thing thing) {
 			Thing top = thing.TopObj();
 			ImmutableRectangle rectangle = new ImmutableRectangle(top.X, top.Y, Globals.MaxUpdateRange);
@@ -1001,6 +1005,7 @@ namespace SteamEngine.Regions {
 			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + this.m + ".");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
 		public void GetTile(int x, int y, out int z, out int id) {
 			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
@@ -1176,6 +1181,7 @@ namespace SteamEngine.Regions {
 			return true; //OK
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void RemoveDynamicRegion(DynamicRegion region) {
 			foreach (RegionRectangle rect in region.Rectangles) {
 				foreach (Sector sector in this.GetSectorsInRectangle(rect)) {

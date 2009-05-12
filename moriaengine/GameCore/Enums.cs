@@ -21,6 +21,17 @@ namespace SteamEngine {
 	//Microsoft says to make enums names' singular, but to make bit-flag enums names' plural. So I've changed all
 	//these plural ones to singular (I had added half of them myself anyways). -SL
 
+	public enum LoginAttemptResult {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Failed_NoSuchAccount,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Failed_BadPassword,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Failed_Blocked,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Failed_AlreadyOnline,
+		Success
+	}
 
 	//This is actually used now, for Character's direction, and you pass this instead of a byte
 	//to WalkRunOrFly and to the methods in OutPackets which take a direction as a parameter.
@@ -69,8 +80,8 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CouldntCarryOutRequest = 5,
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_NoMessage = 254,
-		Allow = 255
+		Deny_NoMessage = 6,
+		Allow = 7
 	}
 
 	public enum LoginDeniedReason {

@@ -120,19 +120,17 @@ namespace SteamEngine.Networking {
 		}
 
 		// not worked out this property yet - placing break points here just don't get caught.
-		private bool canReuseTransform = true;
 		public bool CanReuseTransform {
 			get {
-				return canReuseTransform;
+				return true;
 			}
 		}
 
 		// I normally set this to false when block encrypting so that I can work on one block at a time
 		// but for compression and stream type ciphers this can be set to true so that you get all the data
-		private bool canTransformMultipleBlocks = false;
 		public bool CanTransformMultipleBlocks {
 			get {
-				return canTransformMultipleBlocks;
+				return false;
 			}
 		}
 

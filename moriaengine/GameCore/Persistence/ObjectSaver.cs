@@ -159,9 +159,9 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(SaveableClassAttribute))]
 	[SeeAlso(typeof(ISimpleSaveImplementor))]
 	public static partial class ObjectSaver {
-		public static readonly Regex abstractScriptRE = new Regex(@"^\s*#(?<value>[a-z_][a-z0-9_]+)\s*$",
+		internal static readonly Regex abstractScriptRE = new Regex(@"^\s*#(?<value>[a-z_][a-z0-9_]+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-		public static readonly Regex genericUidRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
+		private static readonly Regex genericUidRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		//public static Regex dateTimeRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
 		//RegexOptions.IgnoreCase|RegexOptions.CultureInvariant|RegexOptions.Compiled);
@@ -186,7 +186,7 @@ namespace SteamEngine.Persistence {
 		private static Dictionary<Type, ISimpleSaveImplementor> simpleImplementorsByType = new Dictionary<Type, ISimpleSaveImplementor>();
 		//Type-ISimpleSaveImplementor pairs		
 
-		private static uint uids = 0;
+		private static uint uids;
 
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclassInstances<ISaveImplementor>(RegisterImplementor, true, true);
@@ -218,7 +218,7 @@ namespace SteamEngine.Persistence {
 			Type t = value.GetType();
 
 			if (t.IsEnum) {
-				return Convert.ToUInt64(value).ToString();
+				return Convert.ToUInt64(value, System.Globalization.CultureInfo.InvariantCulture).ToString();
 			} else if (TagMath.IsNumberType(t)) {
 				return ((IConvertible) value).ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 			} else if (t.Equals(typeof(String))) {
@@ -263,7 +263,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[Summary("Writes out the object previously cached by the Save method.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Writes out the object previously cached by the Save method.")]
 		[Remark("If any of the previous calls to the Save method required to save some more complex "
 		+ "object,only a string-reference to them has been returned by it, and they were cached here. "
 		+ "Now they will be written to the supplied SaveStream, each in it's own proper section, etc. "
@@ -496,14 +496,14 @@ namespace SteamEngine.Persistence {
 
 			m = genericUidRE.Match(input);
 			if (m.Success) {
-				uint uid = uint.Parse(m.Groups["uid"].Value);//should we also check something using the "name" part?
+				uint uid = uint.Parse(m.Groups["uid"].Value, System.Globalization.CultureInfo.InvariantCulture);//should we also check something using the "name" part?
 				PushDelayedLoader(new GenericDelayedLoader_Param(deleg, filename, line, additionalParameter, uid));
 				return;
 			}
 			throw new UnrecognizedValueException("We really do not know what could the loaded string '" + LogStr.Ident(input) + "' refer to.");
 		}
 
-		[Summary("Use this if you know that the loaded value is supposed to be a string. "
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Use this if you know that the loaded value is supposed to be a string. "
 		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
 		public static object OptimizedLoad_String(string input) {
 			object retVal = null;
@@ -513,7 +513,7 @@ namespace SteamEngine.Persistence {
 			return Load(input);//we failed to load string, lets try all other possibilities
 		}
 
-		[Summary("Use this if you know that the loaded value is supposed to be an AbstractScript instance. "
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Use this if you know that the loaded value is supposed to be an AbstractScript instance. "
 		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
 		public static object OptimizedLoad_Script(string input) {
 			object retVal = null;
@@ -523,7 +523,7 @@ namespace SteamEngine.Persistence {
 			return Load(input);//we failed to load string, lets try all other possibilities
 		}
 
-		[Summary("Use this if you know that the loaded value is supposed to be of a simple-saveable type (other than a number or enum). "
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Use this if you know that the loaded value is supposed to be of a simple-saveable type (other than a number or enum). "
 		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
 		public static object OptimizedLoad_SimpleType(string input, Type suggestedType) {
 			ISimpleSaveImplementor issi;
@@ -540,6 +540,7 @@ namespace SteamEngine.Persistence {
 		//or should this all not be public at all? :)
 		//in other words: do scripters need enabling saving/loading other than normal core worldsaving&loading?
 		//I am not sure what all would be needed to do that...
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadSection(PropsSection input) {
 			string name = input.HeaderType;
 
@@ -550,7 +551,7 @@ namespace SteamEngine.Persistence {
 					if (coordinatorsByImplementor.TryGetValue(isi, out coordinator)) {
 						isi.LoadSection(input);
 					} else {
-						uint uid = uint.Parse(input.HeaderName);
+						uint uid = uint.Parse(input.HeaderName, System.Globalization.CultureInfo.InvariantCulture);
 						//[name uid]
 						object loaded = isi.LoadSection(input);
 						while (loadedObjectsByUid.Count <= uid) {
@@ -642,7 +643,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[Summary("Call this after you finish loading using this class.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Call this after you finish loading using this class.")]
 		public static void LoadingFinished() {
 			while (LoaderListIsNotEmpty) {
 				DelayedLoader loader = null;
@@ -797,7 +798,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run(SaveStream writer) {
-				writer.WriteSection(implementor.HeaderName, uid.ToString());
+				writer.WriteSection(implementor.HeaderName, uid.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				base.Run(writer);
 			}
 		}
@@ -940,6 +941,7 @@ namespace SteamEngine.Persistence {
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public class SaveStream {
 		TextWriter writer;
 
@@ -955,6 +957,7 @@ namespace SteamEngine.Persistence {
 			writer.WriteLine();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Close() {
 			try {
 				writer.Flush();

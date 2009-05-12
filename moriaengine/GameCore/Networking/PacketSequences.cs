@@ -105,7 +105,7 @@ namespace SteamEngine.Networking {
 					this.ch.Resync();
 
 
-					state.WriteLine(String.Format(
+					state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 						Common.ServLoc<PacketSequencesLoc>.Get(state.Language).WelcomeToShard,
 						Globals.ServerName));
 				}

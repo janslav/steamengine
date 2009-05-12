@@ -108,8 +108,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			ArrayList entries = (ArrayList) args.GetTag(D_BlockedIP.ipsListTK);//tam jsou ulozeny
 
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)				
+				switch (gr.PressedButton) {
 					case 0: //rmouseButton anebo zavreni tlacitkem v rohu
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
 						return;
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				//porad jsme zde - klikalo se na tlacitko primo u bloknute IP
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.pressedButton - 10);
+				int row = (int) (gr.PressedButton - 10);
 				ISortableIpBlockEntry entry = (ISortableIpBlockEntry) entries[row];
 				if (entry.toIp == "") {
 					Firewall.RemoveBlockedIP(entry.Ip);
@@ -227,7 +227,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		}
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if (gr.pressedButton == 1) { //OK button
+			if (gr.PressedButton == 1) { //OK button
 				Firewall.AddBlockedIP(gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//zavolat stacklej dialog (if any)				
 				DialogStacking.ShowPreviousDialog(gi);
@@ -307,7 +307,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		}
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if (gr.pressedButton == 1) {
+			if (gr.PressedButton == 1) {
 				Firewall.AddBlockedIPRange(gr.GetTextResponse(9), gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//rovnou se vracime			
 				DialogStacking.ShowPreviousDialog(gi);

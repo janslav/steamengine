@@ -10,9 +10,9 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.Networking {
-	public class ItemOnGroundUpdater : IDisposable {
-		protected readonly AbstractItem item;
-		private bool isInCache = false;
+	public class ItemOnGroundUpdater : Disposable {
+		private readonly AbstractItem contItem;
+		private bool isInCache;
 
 		private PacketGroup packetGroupNormal;
 		private PacketGroup packetGroupMovable;
@@ -22,10 +22,16 @@ namespace SteamEngine.Networking {
 
 
 		public ItemOnGroundUpdater(AbstractItem item) {
-			this.item = item;
+			this.contItem = item;
 			cache[item] = this;
 			this.isInCache = true;
 		}
+
+		protected AbstractItem ContItem {
+			get {
+				return this.contItem;
+			}
+		} 
 
 		public static ItemOnGroundUpdater GetFromCache(AbstractItem item) {
 			ItemOnGroundUpdater iogu;
@@ -37,16 +43,25 @@ namespace SteamEngine.Networking {
 			cache.Remove(item);
 		}
 
-		public virtual void Dispose() {
-			if (this.packetGroupNormal != null) {
-				this.packetGroupNormal.Dispose();
-			}
-			if (this.packetGroupMovable != null) {
-				this.packetGroupMovable.Dispose();
-			}
-			if (this.isInCache) {
-				cache.Remove(this.item);
-				this.isInCache = false;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
+		public sealed override void Dispose() {
+			base.Dispose();
+		}
+
+		protected override void On_DisposeManagedResources() {
+			try {
+				if (this.packetGroupNormal != null) {
+					this.packetGroupNormal.Dispose();
+				}
+				if (this.packetGroupMovable != null) {
+					this.packetGroupMovable.Dispose();
+				}
+				if (this.isInCache) {
+					cache.Remove(this.contItem);
+					this.isInCache = false;
+				}
+			} finally {
+				base.On_DisposeManagedResources();
 			}
 		}
 
@@ -61,13 +76,13 @@ namespace SteamEngine.Networking {
 			if (viewer.IsPlevelAtLeast(Globals.PlevelOfGM)) {
 				if (this.packetGroupMovable == null) {
 					this.packetGroupMovable = PacketGroup.CreateFreePG();
-					this.packetGroupMovable.AcquirePacket<ObjectInfoOutPacket>().Prepare(this.item, MoveRestriction.Movable);
+					this.packetGroupMovable.AcquirePacket<ObjectInfoOutPacket>().Prepare(this.contItem, MoveRestriction.Movable);
 				}
 				viewerConn.SendPacketGroup(this.packetGroupMovable);
 			} else {
 				if (this.packetGroupNormal == null) {
 					this.packetGroupNormal = PacketGroup.CreateFreePG();
-					this.packetGroupNormal.AcquirePacket<ObjectInfoOutPacket>().Prepare(this.item, MoveRestriction.Normal);
+					this.packetGroupNormal.AcquirePacket<ObjectInfoOutPacket>().Prepare(this.contItem, MoveRestriction.Normal);
 				}
 				viewerConn.SendPacketGroup(this.packetGroupNormal);
 			}

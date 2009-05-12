@@ -73,10 +73,13 @@ namespace SteamEngine.Networking {
 
 		public override string FullName {
 			get {
-				return string.Concat(this.Name, " ( 0x", this.Id.ToString("X"), "-0x", this.SubCmdId.ToString("X"), " )");
+				return string.Concat(this.Name, 
+					" ( 0x", this.Id.ToString("X", System.Globalization.CultureInfo.InvariantCulture), 
+					"-0x", this.SubCmdId.ToString("X", System.Globalization.CultureInfo.InvariantCulture), " )");
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Byte.ToString(System.String)"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.UInt16.ToString(System.String)")]
 		public override string ToString() {
 			return string.Concat("0x", this.Id.ToString("X"), "-0x", this.SubCmdId.ToString("X"));
 		}
@@ -85,6 +88,7 @@ namespace SteamEngine.Networking {
 	public sealed class LoginDeniedOutPacket : GameOutgoingPacket {
 		byte why;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "why")]
 		public void Prepare(LoginDeniedReason why) {
 			this.why = (byte) why;
 		}
@@ -101,6 +105,7 @@ namespace SteamEngine.Networking {
 	public sealed class EnableLockedClientFeaturesOutPacket : GameOutgoingPacket {
 		ushort features;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "features")]
 		public void Prepare(int features) {
 			this.features = (ushort) features;
 		}
@@ -118,6 +123,7 @@ namespace SteamEngine.Networking {
 		string[] charNames = new string[AbstractAccount.maxCharactersPerGameAccount];
 		int loginFlags;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "loginFlags")]
 		public void Prepare(AbstractAccount charsSource, int loginFlags) {
 			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
 				AbstractCharacter ch = charsSource.GetCharacterInSlot(i);
@@ -173,6 +179,7 @@ namespace SteamEngine.Networking {
 		sbyte z;
 		byte direction;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "mapSizeX-8"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "mapSizeY"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "mapSizeX")]
 		public void Prepare(AbstractCharacter chr, int mapSizeX, int mapSizeY) {
 			this.flaggedUid = chr.FlaggedUid;
 			this.model = chr.ShortModel;
@@ -213,8 +220,9 @@ namespace SteamEngine.Networking {
 	public sealed class SetFacetOutPacket : GeneralInformationOutPacket {
 		byte facet;
 
-		public void Prepare(byte facet) {
-			this.facet = facet;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "facet")]
+		public void Prepare(int facet) {
+			this.facet = (byte) facet;
 		}
 
 		public override ushort SubCmdId {
@@ -229,6 +237,7 @@ namespace SteamEngine.Networking {
 	public sealed class SeasonalInformationOutPacket : GameOutgoingPacket {
 		byte season, cursor;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cursor"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "season")]
 		public void Prepare(Season season, CursorType cursor) {
 			this.season = (byte) season;
 			this.cursor = (byte) cursor;
@@ -250,6 +259,7 @@ namespace SteamEngine.Networking {
 		sbyte z;
 		byte flagsToSend, direction;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void Prepare(GameState state, AbstractCharacter ch) {
 			this.flaggedUid = ch.FlaggedUid;
 			this.model =  ch.ShortModel;
@@ -285,6 +295,7 @@ namespace SteamEngine.Networking {
 	public sealed class SetWarModeOutPacket : GameOutgoingPacket {
 		bool warModeEnabled;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "warModeEnabled")]
 		public void Prepare(bool warModeEnabled) {
 			this.warModeEnabled = warModeEnabled;
 		}
@@ -304,6 +315,7 @@ namespace SteamEngine.Networking {
 	public sealed class ClientViewRangeOutPacket : GameOutgoingPacket {
 		byte range;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "range")]
 		public void Prepare(byte range) {
 			this.range = range;
 		}
@@ -347,6 +359,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "highlight")]
 		public void Prepare(AbstractCharacter ch, HighlightColor highlight) {
 			this.flaggedUid = ch.FlaggedUid;
 			this.model = ch.ShortModel;
@@ -407,6 +420,7 @@ namespace SteamEngine.Networking {
 		sbyte z;
 		byte dir, flagsToSend, highlight;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "highlight")]
 		public void Prepare(AbstractCharacter chr, bool running, HighlightColor highlight) {
 			this.flaggedUid = chr.FlaggedUid;
 			this.model = chr.ShortModel;
@@ -444,13 +458,13 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		short gump;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "gump"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), CLSCompliant(false)]
 		public void PrepareContainer(uint flaggedUid, short gump) {
 			this.flaggedUid = flaggedUid;
 			this.gump = gump;
 		}
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), CLSCompliant(false)]
 		public void PrepareSpellbook(uint flaggedUid) {
 			this.flaggedUid = flaggedUid;
 			this.gump = -1;
@@ -470,10 +484,10 @@ namespace SteamEngine.Networking {
 		uint flaggedUid, contFlaggedUid;
 		ushort model, x, y, color, amount;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "contFlaggedUid"), CLSCompliant(false)]
 		public void Prepare(uint contFlaggedUid, AbstractItem i) {
 			this.flaggedUid = i.FlaggedUid;
-			this.contFlaggedUid = i.Cont.FlaggedUid;
+			this.contFlaggedUid = contFlaggedUid;
 			this.model = i.ShortModel;
 			this.x = (ushort) i.X;
 			this.y = (ushort) i.Y;
@@ -481,7 +495,7 @@ namespace SteamEngine.Networking {
 			this.amount = i.ShortAmount;
 		}
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), CLSCompliant(false)]
 		public void PrepareItemInCorpse(uint corpseUid, ICorpseEquipInfo i) {
 			this.flaggedUid = i.FlaggedUid;
 			this.contFlaggedUid = corpseUid;
@@ -512,7 +526,7 @@ namespace SteamEngine.Networking {
 		List<ItemInfo> items = new List<ItemInfo>();
 		uint corpseUid;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "corpseUid"), CLSCompliant(false)]
 		public void Prepare(uint corpseUid, IEnumerable<ICorpseEquipInfo> equippedItems) {
 			this.corpseUid = corpseUid;
 
@@ -609,7 +623,7 @@ namespace SteamEngine.Networking {
 			return this.items.Count > 0;
 		}
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), CLSCompliant(false)]
 		public void PrepareSpellbook(uint flaggedUid, int offset, ulong content) {
 			this.flaggedUid = flaggedUid;
 
@@ -651,6 +665,7 @@ namespace SteamEngine.Networking {
 		short firstSpellId;
 		ulong content;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "firstSpellId"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "content"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "bookModel")]
 		public void Prepare(uint bookUid, int bookModel, int firstSpellId, ulong content) {
 			this.flaggedUid = bookUid;
 			this.bookModel = (ushort) bookModel;
@@ -679,6 +694,7 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		int propertiesUid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "propertiesUid"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid")]
 		public void Prepare(uint flaggedUid, int propertiesUid) {
 			this.flaggedUid = flaggedUid;
 			this.propertiesUid = propertiesUid;
@@ -698,7 +714,7 @@ namespace SteamEngine.Networking {
 		uint flaggedUid;
 		int propertiesUid;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "propertiesUid"), CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, int propertiesUid) {
 			this.flaggedUid = flaggedUid;
 			this.propertiesUid = propertiesUid;
@@ -720,6 +736,7 @@ namespace SteamEngine.Networking {
 		sbyte z;
 		byte dir, flagsToSend;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void Prepare(AbstractItem item, MoveRestriction restrict) {
 			this.flaggedUid = item.FlaggedUid;
 			this.amount = item.ShortAmount;
@@ -736,16 +753,16 @@ namespace SteamEngine.Networking {
 			this.color = (ushort) item.Color;
 		}
 
-		[Summary("Prepare method for creating the 'fake item' packets")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1718:AvoidLanguageSpecificTypeNamesInParameters", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "dir"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "color"), Summary("Prepare method for creating the 'fake item' packets")]
 		[CLSCompliant(false)]
-		public void PrepareFakeItem(uint itemUid, int model, IPoint4D point4D, ushort shortAmount, Direction dir, int color) {
+		public void PrepareFakeItem(uint itemUid, int model, IPoint3D point3D, ushort shortAmount, Direction dir, int color) {
 			//this must be the item UID (containing 0x40000000)
 			this.flaggedUid = itemUid | 0x40000000;
 			this.amount = shortAmount;
 			this.model = (ushort) model;
-			this.x = (ushort) point4D.X;
-			this.y = (ushort) point4D.Y;
-			this.z = (sbyte) point4D.Z;
+			this.x = (ushort) point3D.X;
+			this.y = (ushort) point3D.Y;
+			this.z = (sbyte) point3D.Z;
 			this.dir = (byte) dir;
 			this.flagsToSend = 0x00;
 			this.color = (ushort) color;
@@ -795,6 +812,7 @@ namespace SteamEngine.Networking {
 		short mana, maxMana, hits, maxHits, stam, maxStam;
 		uint flaggedUid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "showReal")]
 		public void Prepare(AbstractCharacter cre, bool showReal) {
 			this.flaggedUid = cre.FlaggedUid;
 			this.mana = cre.Mana;
@@ -823,7 +841,7 @@ namespace SteamEngine.Networking {
 		short hits, maxHits;
 		uint flaggedUid;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "hits"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "maxHits"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "showReal"), CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, short hits, short maxHits, bool showReal) {
 			this.flaggedUid = flaggedUid;
 			this.hits = hits;
@@ -846,7 +864,7 @@ namespace SteamEngine.Networking {
 		short mana, maxMana;
 		uint flaggedUid;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "mana"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "maxMana"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "showReal"), CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, short mana, short maxMana, bool showReal) {
 			this.flaggedUid = flaggedUid;
 			this.mana = mana;
@@ -869,7 +887,7 @@ namespace SteamEngine.Networking {
 		short stam, maxStam;
 		uint flaggedUid;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "maxStam"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "showReal"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "stam"), CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, short stam, short maxStam, bool showReal) {
 			this.flaggedUid = flaggedUid;
 			this.stam = stam;
@@ -898,6 +916,7 @@ namespace SteamEngine.Networking {
 		bool isFemale;
 		bool canRenameSelf;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type")]
 		public void Prepare(AbstractCharacter ch, StatusBarType type) {
 			Sanity.IfTrueThrow(ch == null, "PrepareStatusBar called with a null character.");
 			//Sanity.IfTrueThrow(!Enum.IsDefined(typeof(StatusBarType), type), "Invalid value " + type + " for StatusBarType in PrepareStatusBar.");
@@ -1007,6 +1026,7 @@ namespace SteamEngine.Networking {
 		//0x00= full list, 0xFF = single skill update, 
 		//0x02 full list with skillcap, 0xDF single skill update with cap
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "displaySkillCaps")]
 		public void PrepareAllSkillsUpdate(IEnumerable<ISkill> skills, bool displaySkillCaps) {
 			this.singleSkill = false;
 			this.displaySkillCaps = displaySkillCaps;
@@ -1104,7 +1124,7 @@ namespace SteamEngine.Networking {
 	public sealed class DeleteObjectOutPacket : GameOutgoingPacket {
 		uint flaggedUid;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), CLSCompliant(false)]
 		public void Prepare(uint flaggedUid) {
 			this.flaggedUid = flaggedUid;
 		}
@@ -1113,6 +1133,7 @@ namespace SteamEngine.Networking {
 			this.flaggedUid = (uint) uid;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void Prepare(Thing thing) {
 			this.flaggedUid = thing.FlaggedUid;
 		}
@@ -1132,7 +1153,7 @@ namespace SteamEngine.Networking {
 		IList<int> ids;
 		IList<string> strings;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "strings"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "propertiesUid"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ids"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid"), CLSCompliant(false)]
 		public void Prepare(uint flaggedUid, int propertiesUid, IList<int> ids, IList<string> strings) {
 			this.flaggedUid = flaggedUid;
 			this.propertiesUid = propertiesUid;
@@ -1170,6 +1191,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "font"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "color"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "message"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type")]
 		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ClientFont font, int color) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
@@ -1208,6 +1230,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "color"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "font"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "language"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "message"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type")]
 		public void Prepare(Thing from, string message, string sourceName, SpeechType type, ClientFont font, int color, string language) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
@@ -1250,6 +1273,7 @@ namespace SteamEngine.Networking {
 		byte type;
 
 		//from can be null
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "message"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "font"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "color"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "args")]
 		public void Prepare(Thing from, int message, string sourceName, SpeechType type, ClientFont font, int color, string args) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
@@ -1284,7 +1308,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
-	public enum AffixType : byte {
+	public enum AffixType {
 		Append = 0x00,
 		Prepend = 0x01,
 		//System = 0x02
@@ -1298,7 +1322,7 @@ namespace SteamEngine.Networking {
 		byte type, flags;
 
 		//from can be null
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "message"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "color"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "font"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flags"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "args"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "affix"), CLSCompliant(false)]
 		public void Prepare(Thing from, int message, string sourceName, SpeechType type, ClientFont font, int color, AffixType flags, string affix, string args) {
 			if (from == null) {
 				this.flaggedUid = 0xffffffff;
@@ -1368,6 +1392,7 @@ namespace SteamEngine.Networking {
 	public sealed class GiveBoatOrHousePlacementViewOutPacket : GameOutgoingPacket {
 		ushort model;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model")]
 		public void Prepare(int model) {
 			this.model = (ushort) model;
 		}
@@ -1389,6 +1414,7 @@ namespace SteamEngine.Networking {
 		string text;
 		byte flagsToSend;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void Prepare(AbstractCharacter character, bool canEquip) {
 			this.flaggedUid = character.FlaggedUid;
 			this.text = character.PaperdollName;
@@ -1416,7 +1442,7 @@ namespace SteamEngine.Networking {
 		sbyte layer;
 		ushort model, color;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
 		public void PrepareItem(uint charUid, AbstractItem item) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = item.FlaggedUid;
@@ -1425,7 +1451,7 @@ namespace SteamEngine.Networking {
 			this.color = item.ShortColor;
 		}
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
 		public void PrepareMount(uint charUid, AbstractCharacter mount) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = (uint) (mount.Uid | 0x40000000);
@@ -1451,6 +1477,7 @@ namespace SteamEngine.Networking {
 	public sealed class CharacterMoveAcknowledgeOutPacket : GameOutgoingPacket {
 		byte sequence, highlight;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sequence"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "highlight")]
 		public void Prepare(byte sequence, HighlightColor highlight) {
 			this.sequence = sequence;
 			this.highlight = (byte) highlight;
@@ -1471,6 +1498,7 @@ namespace SteamEngine.Networking {
 		ushort x, y;
 		sbyte z;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sequence")]
 		public void Prepare(byte sequence, AbstractCharacter ch) {
 			this.sequence = sequence;
 			this.direction = ch.DirectionByte;
@@ -1495,6 +1523,7 @@ namespace SteamEngine.Networking {
 	public sealed class RejectMoveItemRequestOutPacket : GameOutgoingPacket {
 		byte denyResult;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "denyResult")]
 		public void Prepare(DenyResult denyResult) {
 			this.denyResult = (byte) denyResult;
 		}
@@ -1511,8 +1540,19 @@ namespace SteamEngine.Networking {
 	public sealed class RejectDeleteCharacterOutPacket : GameOutgoingPacket {
 		byte reason;
 
-		public void Prepare(DeleteCharacterResult reason) {
-			this.reason = (byte) reason;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "reason")]
+		public void Prepare(DeleteCharacterResult reasonEnum) {
+			switch (reasonEnum) {
+				case DeleteCharacterResult.Deny_NoMessage:
+					this.reason = 254;
+					break;
+				case DeleteCharacterResult.Allow:
+					this.reason = 255;
+					break;
+				default:
+					this.reason = (byte) reasonEnum;
+					break;
+			}
 		}
 
 		public override byte Id {
@@ -1556,6 +1596,7 @@ namespace SteamEngine.Networking {
 		int flaggedUid;
 		string name;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid")]
 		public void Prepare(int flaggedUid, string name) {
 			this.flaggedUid = flaggedUid;
 			this.name = name;
@@ -1616,6 +1657,7 @@ namespace SteamEngine.Networking {
 		int gumpUid;
 		int buttonId;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "gumpUid"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "buttonId")]
 		public void Prepare(int gumpUid, int buttonId) {
 			this.gumpUid = gumpUid;
 			this.buttonId = buttonId;
@@ -1636,6 +1678,7 @@ namespace SteamEngine.Networking {
 		ushort x, y;
 		sbyte z;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sound")]
 		public void Prepare(IPoint3D source, int sound) {
 			source = source.TopPoint;
 			this.sound = (ushort) sound;
@@ -1712,6 +1755,7 @@ namespace SteamEngine.Networking {
 		ushort animId, numAnims;
 		bool backwards, undo;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "undo"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "numAnims"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "frameDelay"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "backwards"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "animId")]
 		public void Prepare(AbstractCharacter cre, int animId, int numAnims, bool backwards, bool undo, byte frameDelay) {
 			this.charUid = cre.FlaggedUid;
 			this.dir = cre.DirectionByte;
@@ -1746,6 +1790,7 @@ namespace SteamEngine.Networking {
 		ushort effect, unk, sourceX, sourceY, targetX, targetY;
 		sbyte sourceZ, targetZ;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "unk"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "speed"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "renderMode"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "hue"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "fixedDirection"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "explodes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "effect"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "duration")]
 		public void Prepare(IPoint4D source, IPoint4D target, byte type, int effect, byte speed, byte duration, int unk, bool fixedDirection, bool explodes, int hue, RenderModes renderMode) {
 			source = source.TopPoint;
 			target = target.TopPoint;
@@ -1816,6 +1861,7 @@ namespace SteamEngine.Networking {
 		ushort model, amount, sourceX, sourceY, targetX, targetY;
 		sbyte sourceZ, targetZ;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void Prepare(IPoint4D source, IPoint4D target, AbstractItem i) {
 			source = source.TopPoint;
 			target = target.TopPoint;
@@ -1873,6 +1919,7 @@ namespace SteamEngine.Networking {
 		byte statLockByte;
 		uint flaggedUid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "statLockByte"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "flaggedUid")]
 		public void Prepare(uint flaggedUid, byte statLockByte) {
 			this.flaggedUid = flaggedUid;
 			this.statLockByte = statLockByte;
@@ -1893,6 +1940,7 @@ namespace SteamEngine.Networking {
 	public sealed class ResurrectionMenuOutPacket : GameOutgoingPacket {
 		byte action;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "action")]
 		public void Prepare(byte action) {
 			this.action = action;
 		}
@@ -1909,7 +1957,7 @@ namespace SteamEngine.Networking {
 	public sealed class DisplayDeathActionOutPacket : GameOutgoingPacket {
 		uint charUid, corpseUid;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
 		public void Prepare(uint charUid, AbstractItem corpse) {
 			this.charUid = charUid;
 			if (corpse == null) {
@@ -1934,6 +1982,7 @@ namespace SteamEngine.Networking {
 	public sealed class AddPartyMembersOutPacket : GeneralInformationOutPacket {
 		List<uint> members = new List<uint>();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "members")]
 		public void Prepare(IEnumerable<AbstractCharacter> members) {
 			this.members.Clear();
 			foreach (AbstractCharacter ch in members) {
@@ -1964,6 +2013,7 @@ namespace SteamEngine.Networking {
 			this.members.Add(self.FlaggedUid);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "members")]
 		public void Prepare(AbstractCharacter removedMember, IEnumerable<AbstractCharacter> members) {
 			this.members.Clear();
 			this.members.Add(removedMember.FlaggedUid);
@@ -1993,6 +2043,7 @@ namespace SteamEngine.Networking {
 		uint sourceUid;
 		string message;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "message"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceUid")]
 		public void Prepare(uint sourceUid, string message) {
 			this.sourceUid = sourceUid;
 			this.message = message;
@@ -2014,6 +2065,7 @@ namespace SteamEngine.Networking {
 		uint sourceUid;
 		string message;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "message"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceUid")]
 		public void Prepare(uint sourceUid, string message) {
 			this.sourceUid = sourceUid;
 			this.message = message;
@@ -2034,6 +2086,7 @@ namespace SteamEngine.Networking {
 	public sealed class PartyInvitationOutPacket : GeneralInformationOutPacket {
 		uint leaderUid;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "leaderUid")]
 		public void Prepare(uint leaderUid) {
 			this.leaderUid = leaderUid;
 		}
@@ -2055,7 +2108,7 @@ namespace SteamEngine.Networking {
 		List<int> staticsPatches = new List<int>();
 
 		public void Prepare() {
-			this.facetsCount = (byte) Regions.Map.GetFacetCount();
+			this.facetsCount = (byte) Regions.Map.FacetCount;
 			this.mapPatches.Clear();
 			this.staticsPatches.Clear();
 			for (int i = 0; i < this.facetsCount; i++) {
@@ -2090,7 +2143,7 @@ namespace SteamEngine.Networking {
 		uint charUid;
 		byte lightLevel;
 
-		[CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "lightLevel"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
 		public void Prepare(uint charUid, byte lightLevel) {
 			this.charUid = charUid;
 			this.lightLevel = lightLevel;
@@ -2109,6 +2162,7 @@ namespace SteamEngine.Networking {
 	public sealed class OverallLightLevelOutPacket : GameOutgoingPacket {
 		byte lightLevel;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "lightLevel")]
 		public void Prepare(byte lightLevel) {
 			this.lightLevel = lightLevel;
 		}

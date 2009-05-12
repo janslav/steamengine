@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public abstract class CompiledGumpDef : GumpDef {
-		internal Gump gumpInstance = null; //this is to be used only in the abstract methods
+		internal Gump gumpInstance; //this is to be used only in the abstract methods
 		public Gump GumpInstance {
 			get {
 				return gumpInstance;
@@ -241,8 +241,8 @@ namespace SteamEngine.CompiledScripts {
 			GumpInstance.AddPage(page);
 		}
 
-		public void Page(int page) {
-			GumpInstance.AddPage(page);
+		public void Page(int pageId) {
+			GumpInstance.AddPage(pageId);
 		}
 
 		public void AddRadio(int x, int y, int inactiveId, int activeId, bool initialState, int switchId) {
@@ -354,11 +354,11 @@ namespace SteamEngine.CompiledScripts {
 			: base(def) {
 		}
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] returnedNumbers) {
+		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
 			CompiledGumpDef gdef = (CompiledGumpDef) Def;
 			gdef.gumpInstance = this;
 			try {
-				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, returnedTexts, returnedNumbers), this.InputArgs);
+				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, responseTexts, responseNumbers), this.InputArgs);
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
@@ -370,10 +370,10 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class GumpResponse {
-		public readonly int pressedButton;
-		public readonly int[] selectedSwitches;
-		public readonly ResponseText[] responseTexts;
-		public readonly ResponseNumber[] responseNumbers;
+		private readonly int pressedButton;
+		private readonly int[] selectedSwitches; 
+		private readonly ResponseText[] responseTexts;
+		private readonly ResponseNumber[] responseNumbers;
 
 		public GumpResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
 			this.pressedButton = pressedButton;
@@ -381,6 +381,30 @@ namespace SteamEngine.CompiledScripts {
 			this.responseTexts = responseTexts;
 			this.responseNumbers = responseNumbers;
 		}
+
+		public int PressedButton {
+			get {
+				return pressedButton;
+			}
+		}
+
+		//public int[] SelectedSwitches {
+		//    get {
+		//        return selectedSwitches;
+		//    }
+		//}
+
+		//public ResponseText[] ResponseTexts {
+		//    get {
+		//        return responseTexts;
+		//    }
+		//}
+
+		//public ResponseNumber[] ResponseNumbers {
+		//    get {
+		//        return responseNumbers;
+		//    }
+		//} 
 
 		public bool IsSwitched(int id) {
 			for (int i = 0, n = selectedSwitches.Length; i < n; i++) {

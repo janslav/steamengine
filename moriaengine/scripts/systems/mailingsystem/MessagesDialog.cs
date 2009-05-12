@@ -109,8 +109,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam zprav z kontextu (mohl jiz byt trideny apd.)
 			ArrayList messagesList = (ArrayList) args.GetTag(D_DelayedMessages.msgsListTK);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -149,8 +149,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.pressedButton - 10) / 2;
-				int buttNum = (int) (gr.pressedButton - 10) % 2;
+				int row = (int) (gr.PressedButton - 10) / 2;
+				int buttNum = (int) (gr.PressedButton - 10) % 2;
 				DelayedMsg msg = (DelayedMsg) messagesList[row];
 				switch (buttNum) {
 					case 0: //èíst

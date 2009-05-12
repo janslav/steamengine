@@ -45,14 +45,14 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static Dictionary<string, ISteamCSCodeGenerator> generators = new Dictionary<string, ISteamCSCodeGenerator>(StringComparer.OrdinalIgnoreCase);
 
-		private static CodeDomProvider provider;
-		private static CodeGeneratorOptions options;
+		private static CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider();
+		private static CodeGeneratorOptions options = CreateOptions();
 
-		static GeneratedCodeUtil() {
-			options = new CodeGeneratorOptions();
+		static CodeGeneratorOptions CreateOptions() {
+			CodeGeneratorOptions options = new CodeGeneratorOptions();
 			options.IndentString = "\t";
 			options.ElseOnClosing = true;
-			provider = new Microsoft.CSharp.CSharpCodeProvider();
+			return options;
 		}
 
 		internal static void RegisterGenerator(ISteamCSCodeGenerator generator) {
@@ -75,6 +75,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		internal static bool DumpAndCompile() {
 			foreach (ISteamCSCodeGenerator generator in generators.Values) {
 				CodeCompileUnit codeCompileUnit = generator.WriteSources();
@@ -129,6 +130,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static CodeExpression GenerateSimpleLoadExpression(Type dataType, CodeExpression inputStringExpression) {
 			if (dataType == typeof(string)) {
 				return new CodeCastExpression(
@@ -191,6 +193,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static CodeExpression GenerateDelayedLoadExpression(Type dataType, CodeExpression inputObjectExpression) {
 			if (dataType == typeof(object)) {
 				return inputObjectExpression;

@@ -107,22 +107,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (!((Player) gi.Cont).CanReachWithMessage(box)) {
 				return;
 			}
-			if (gr.pressedButton == 0) {			// cancel
+			if (gr.PressedButton == 0) {			// cancel
 				return;
-			} else if (gr.pressedButton == 1) {		// Add reags
+			} else if (gr.PressedButton == 1) {		// Add reags
 				((Player) gi.Cont).Target(SingletonScript<Targ_RegBox>.Instance, gi.Focus);
-			} else if (gr.pressedButton == 2) {		// OK -> give selected reags
+			} else if (gr.PressedButton == 2) {		// OK -> give selected reags
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
 				int buttonsCount = TagMath.IGetTag(args, D_RegBox.buttonsCountTK);
 				int i = 0;
 				int reagsToGive = 0;
 				while (i < buttonsCount) {
-					if ((gr.IsSwitched(i)) && (gr.responseNumbers[i].Number > 0)) {	// player wants to take at least one reagent
-						if (box.inBoxReags[buttonShowItemDef[i]] < (int) gr.responseNumbers[i].Number) {
+					int desiredCount = (int) gr.GetNumberResponse(i);
+					if ((gr.IsSwitched(i)) && (desiredCount > 0)) {	// player wants to take at least one reagent
+						if (box.inBoxReags[buttonShowItemDef[i]] < desiredCount) {
 							((Player) gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho regù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
 							reagsToGive = box.inBoxReags[buttonShowItemDef[i]];
 						} else {
-							reagsToGive = (int) gr.responseNumbers[i].Number;
+							reagsToGive = desiredCount;
 						}
 						buttonShowItemDef[i].Create(((Player) gi.Cont).Backpack);
 						Globals.LastNewItem.Amount = reagsToGive;
@@ -135,8 +136,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 					i++;
 				}
-			} else if (gr.pressedButton >= 1000) {
-				int thisButtonValue = (int) gr.pressedButton - 1000;
+			} else if (gr.PressedButton >= 1000) {
+				int thisButtonValue = (int) gr.PressedButton - 1000;
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
 				Globals.LastNewItem.Amount = box.inBoxReags[buttonShowItemDef[thisButtonValue]];

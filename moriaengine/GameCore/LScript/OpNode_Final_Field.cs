@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_SetField : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
+	internal class OpNode_SetField : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode arg;
 
@@ -61,7 +61,7 @@ namespace SteamEngine.LScript {
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -71,7 +71,7 @@ namespace SteamEngine.LScript {
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -88,7 +88,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_GetField : OpNode, ITriable, IKnownRetType {
+	internal class OpNode_GetField : OpNode, ITriable, IKnownRetType {
 		private readonly FieldInfo field;
 
 		internal OpNode_GetField(IOpNodeHolder parent, string filename,
@@ -102,7 +102,7 @@ namespace SteamEngine.LScript {
 				return field.GetValue(vars.self);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while getting field '" + field.Name + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace SteamEngine.LScript {
 				return field.GetValue(vars.self);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while getting field '" + field.Name + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace SteamEngine.LScript {
 
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_InitField_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
+	internal class OpNode_InitField_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode[] args;
 		private readonly string formatString;
@@ -170,7 +170,7 @@ namespace SteamEngine.LScript {
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -182,7 +182,7 @@ namespace SteamEngine.LScript {
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
