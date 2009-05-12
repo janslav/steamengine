@@ -29,13 +29,11 @@ using SteamEngine.Communication.TCP;
 namespace SteamEngine.Regions {
 
 	public partial class Map {
-		public static bool MapTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Map Trace Messages"]);
-
-		public const int sectorFactor = 4;
-		public const int sectorWidth = 1 << sectorFactor; //16 for sectorfactor 4, 32 for 5, etc. set as const for speed
-		public const int sectorAnd = ~(sectorWidth - 1);	//Used to quickly determine whether the sector of a thing has changed
+		internal const int sectorFactor = 4;
+		internal const int sectorWidth = 1 << sectorFactor; //16 for sectorfactor 4, 32 for 5, etc. set as const for speed
+		internal const int sectorAnd = ~(sectorWidth - 1);	//Used to quickly determine whether the sector of a thing has changed
 		//Sector size is required to be a power of 2 for speed & efficiency. -SL
-		public const int mulSectorAnd = ~7;
+		internal const int mulSectorAnd = ~7;
 
 		//sectorAnd and mulSectorAnd are also used to calculate relative x/y coordinates - much faster than using shifts.
 
@@ -47,6 +45,7 @@ namespace SteamEngine.Regions {
 		private readonly int sizeX;
 		private readonly int sizeY;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
 		private Sector[,] sectors;
 		private StaticRegion[] regions;
 		private readonly byte m;
@@ -58,7 +57,7 @@ namespace SteamEngine.Regions {
 		private static GroundTileType t_lava;
 		private static GroundTileType t_dirt;
 
-		internal static void UnLoadScripts() {
+		internal static void UnloadScripts() {
 			t_rock = null;
 			t_grass = null;
 			t_lava = null;
@@ -104,10 +103,12 @@ namespace SteamEngine.Regions {
 			This determines if the specified x/y coordinates are within the specified mapplane.
 			It does not check if the tile is walkable, or anything else (including z).
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static bool IsValidPos(Point4D point) {
 			return point.GetMap().IsValidPos(point.X, point.Y);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static bool IsValidPos(IPoint4D point) {
 			return point.GetMap().IsValidPos(point.X, point.Y);
 		}
@@ -132,6 +133,7 @@ namespace SteamEngine.Regions {
 			This determines if the specified x/y coordinates are within this mapplane.
 			It does not check if the tile is walkable, or anything else.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool IsValidPos(IPoint2D point) {
 			int x = point.X;
 			int y = point.Y;
@@ -168,6 +170,7 @@ namespace SteamEngine.Regions {
 				map.ClearThings();
 				map.InactivateRegions(true); //true - clear also the dynamic regions
 			}
+			StaticRegion.ClearAll(); //vycisteni vsech loadnutych regionu...
 		}
 
 		#region facets
@@ -178,6 +181,7 @@ namespace SteamEngine.Regions {
 		/**
 			Returns the number of X tiles in the specified mapplane.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetMapSizeX(int facet) {
 			//if (mapplane >= 0 && mapplane < mapSizeX.Length) {
 			//    return mapSizeX[mapplane];
@@ -190,6 +194,7 @@ namespace SteamEngine.Regions {
 		/**
 			Returns the number of Y tiles in the specified mapplane.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetMapSizeY(int facet) {
 			//if (mapplane >= 0 && mapplane < mapSizeY.Length) {
 			//    return mapSizeY[mapplane];
@@ -214,10 +219,12 @@ namespace SteamEngine.Regions {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetFacetPatchesMapCount(int facet) {
 			return 0; //we have no support for map patches (yet?) so we ignore them
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetFacetPatchesStaticsCount(int facet) {
 			return 0; //we have no support for map patches (yet?) so we ignore them
 		}
@@ -329,7 +336,7 @@ namespace SteamEngine.Regions {
 		*/
 		internal void Disconnected(Thing t) {
 			Sanity.IfTrueThrow(t == null, "You can't tell us a NULL thing has disconnected!");
-			Logger.WriteInfo(MapTracingOn, this + ".Disconnected " + t);
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".Disconnected " + t);
 			if (t.IsOnGround) {
 				int sx = t.X >> sectorFactor;
 				int sy = t.Y >> sectorFactor;
@@ -346,7 +353,7 @@ namespace SteamEngine.Regions {
 		*/
 		internal void Reconnected(Thing t) {
 			Sanity.IfTrueThrow(t == null, "You can't tell us a NULL thing has reconnected!");
-			Logger.WriteInfo(MapTracingOn, this + ".Reconnected " + t);
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".Reconnected " + t);
 			if (t.IsOnGround) {
 				int sx = t.X >> sectorFactor;
 				int sy = t.Y >> sectorFactor;
@@ -362,7 +369,7 @@ namespace SteamEngine.Regions {
 		*/
 		internal void Add(Thing t) {
 			Sanity.IfTrueThrow(t == null, "You can't tell us to add a NULL thing to the map!");
-			Logger.WriteInfo(MapTracingOn, this + ".Add " + t);
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".Add " + t);
 			int sx = t.X >> sectorFactor;
 			int sy = t.Y >> sectorFactor;
 			this.GetSector(sx, sy).Add(t);
@@ -397,7 +404,7 @@ namespace SteamEngine.Regions {
 			//    return;
 			//}
 			Sanity.IfTrueThrow(t == null, "You can't tell us to remove a NULL thing from the map!");
-			Logger.WriteInfo(MapTracingOn, this + ".Remove " + t);
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".Remove " + t);
 			int sx = x >> sectorFactor;
 			int sy = y >> sectorFactor;
 			this.GetSector(sx, sy).Remove(t);
@@ -409,7 +416,7 @@ namespace SteamEngine.Regions {
 		private void RemoveMulti(AbstractItem multiItem) {
 			MultiItemComponent[] components = multiItem.contentsOrComponents as MultiItemComponent[];
 			Sanity.IfTrueThrow(components == null, "MultiItem being removed from map when it doesn't have it's components instantiated!");
-			MutablePoint4D p = multiItem.point4d;
+			//MutablePoint4D p = multiItem.point4d;
 			foreach (MultiItemComponent mic in components) {
 				int sx = mic.X >> sectorFactor;
 				int sy = mic.Y >> sectorFactor;
@@ -420,9 +427,10 @@ namespace SteamEngine.Regions {
 		/**
 			This removes a character from their sector's list of players.
 		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal void MadeIntoNonPlayer(AbstractCharacter t) {
 			Sanity.IfTrueThrow(t == null, "You can't tell us a NULL character is now a non-player!");
-			Logger.WriteInfo(MapTracingOn, this + ".MadeIntoNonPlayer " + t);
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".MadeIntoNonPlayer " + t);
 			int sx = t.X >> sectorFactor;
 			int sy = t.Y >> sectorFactor;
 			this.GetSector(sx, sy).MadeIntoNonPlayer(t);
@@ -433,7 +441,7 @@ namespace SteamEngine.Regions {
 		*/
 		internal void MadeIntoPlayer(AbstractCharacter t) {
 			Sanity.IfTrueThrow(t == null, "You can't tell us a NULL character is now a player!");
-			Logger.WriteInfo(MapTracingOn, this + ".MadeIntoPlayer " + t);
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".MadeIntoPlayer " + t);
 			int sx = t.X >> sectorFactor;
 			int sy = t.Y >> sectorFactor;
 			this.GetSector(sx, sy).MadeIntoPlayer(t);
@@ -475,7 +483,7 @@ namespace SteamEngine.Regions {
 
 
 		private void RemoveFromPImpl(Thing thing, Point4D oldP) {
-			Logger.WriteInfo(MapTracingOn, this + ".RemoveFromPImpl(" + thing + "," + oldP + ")");
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".RemoveFromPImpl(" + thing + "," + oldP + ")");
 			int oldSx = oldP.X >> sectorFactor;
 			int oldSy = oldP.Y >> sectorFactor;
 			this.GetSector(oldSx, oldSy).Remove(thing);
@@ -550,7 +558,7 @@ namespace SteamEngine.Regions {
 		*/
 		private void ChangedPImpl(Thing thing, Point2D oldP) {
 			MutablePoint4D newP = thing.point4d;
-			Logger.WriteInfo(MapTracingOn, this + ".ChangedPImpl(" + newP + "," + oldP + ")");
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".ChangedPImpl(" + newP + "," + oldP + ")");
 			int oldXPre = oldP.X & sectorAnd;
 			int newXPre = newP.x & sectorAnd;
 			int oldYPre = oldP.Y & sectorAnd;
@@ -563,7 +571,7 @@ namespace SteamEngine.Regions {
 				Sector oldSector = this.GetSector(oldSx, oldSy);
 				Sector newSector = this.GetSector(newSx, newSy);
 				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");	//P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
-				Logger.WriteInfo(MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
+				Logger.WriteInfo(Globals.MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
 				oldSector.Remove(thing);
 				newSector.Add(thing);
 			}
@@ -581,7 +589,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private void ChangedMultiCOmponentPImpl(MultiItemComponent mic, int oldX, int oldY) {
-			Logger.WriteInfo(MapTracingOn, this + ".ChangedMultiCOmponentPImpl(" + mic + "," + oldX + "," + oldY + ")");
+			Logger.WriteInfo(Globals.MapTracingOn, this + ".ChangedMultiCOmponentPImpl(" + mic + "," + oldX + "," + oldY + ")");
 			int oldXPre = oldX & sectorAnd;
 			int newXPre = mic.X & sectorAnd;
 			int oldYPre = oldY & sectorAnd;
@@ -594,7 +602,7 @@ namespace SteamEngine.Regions {
 				Sector oldSector = this.GetSector(oldSx, oldSy);
 				Sector newSector = this.GetSector(newSx, newSy);
 				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");	//P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
-				Logger.WriteInfo(MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
+				Logger.WriteInfo(Globals.MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
 				oldSector.RemoveMultiComponent(mic);
 				newSector.AddMultiComponent(mic);
 			}
@@ -925,7 +933,7 @@ namespace SteamEngine.Regions {
 			return GetMapTileType(id);
 		}
 
-		public MapTileType GetMapTileType(int id) {
+		public static MapTileType GetMapTileType(int id) {
 			MapTileType type = MapTileType.Other;
 			if ((TileData.GetTileFlags(id) & TileFlag.Wet) == TileFlag.Wet) {
 				type = MapTileType.Water;
@@ -1022,7 +1030,7 @@ namespace SteamEngine.Regions {
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).GetStatic(x, y, z, staticId);
 			} else {
-				Logger.WriteInfo(MapTracingOn, "GetStatic(" + x + "," + y + "): Invalid pos.");
+				Logger.WriteInfo(Globals.MapTracingOn, "GetStatic(" + x + "," + y + "): Invalid pos.");
 				return null;
 			}
 		}
@@ -1033,7 +1041,7 @@ namespace SteamEngine.Regions {
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).GetMultiComponent(x, y, z, staticId);
 			} else {
-				Logger.WriteInfo(MapTracingOn, "GetMultiComponent(" + x + "," + y + "): Invalid pos.");
+				Logger.WriteInfo(Globals.MapTracingOn, "GetMultiComponent(" + x + "," + y + "): Invalid pos.");
 				return null;
 			}
 		}
@@ -1047,7 +1055,7 @@ namespace SteamEngine.Regions {
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).HasStaticId(x, y, staticId);
 			} else {
-				Logger.WriteInfo(MapTracingOn, "HasStaticId(" + x + "," + y + "): Invalid pos.");
+				Logger.WriteInfo(Globals.MapTracingOn, "HasStaticId(" + x + "," + y + "): Invalid pos.");
 				return false;
 			}
 		}
@@ -1057,6 +1065,7 @@ namespace SteamEngine.Regions {
 			return this.GetSector(point.x >> sectorFactor, point.y >> sectorFactor).GetRegionFor(point.x, point.y);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Region GetRegionFor(Point2D point) {
 			return this.GetSector(point.X >> sectorFactor, point.Y >> sectorFactor).GetRegionFor(point);
 		}
@@ -1065,6 +1074,7 @@ namespace SteamEngine.Regions {
 			return this.GetSector(x >> sectorFactor, y >> sectorFactor).GetRegionFor(x, y);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		internal void ActivateRegions(List<StaticRegion> list) {
 			//we dont add the rectangles directly to sectors, we first create a "matrix" of arraylists which are then "Staticed" to arrays and assigned to sectors
 			this.regions = list.ToArray();
@@ -1074,10 +1084,10 @@ namespace SteamEngine.Regions {
 				foreach (RegionRectangle rect in region.Rectangles) {
 					int minXs = rect.MinX >> sectorFactor;
 					int maxXs = rect.MaxX >> sectorFactor;
-					maxXs = (int) Math.Min(maxXs, this.numXSectors - 1);
+					maxXs = Math.Min(maxXs, this.numXSectors - 1);
 					int minYs = rect.MinY >> sectorFactor;
 					int maxYs = rect.MaxY >> sectorFactor;
-					maxYs = (int) Math.Min(maxYs, this.numYSectors - 1);
+					maxYs = Math.Min(maxYs, this.numYSectors - 1);
 					for (int sx = minXs, topx = maxXs + 1; sx < topx; sx++) {
 						for (int sy = minYs, topy = maxYs + 1; sy < topy; sy++) {
 							List<RegionRectangle> al = matrix[sx, sy];

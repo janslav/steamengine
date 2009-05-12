@@ -454,6 +454,7 @@ namespace SteamEngine.Networking {
 		* log2(skXor[ 0.. 0])
 		* log2(skDup[ 0.. 6])=   ---  2.37  0.44  3.94  8.36 13.04 17.99
 		***********************************************************************/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
 		static private byte[,] P8x8 = 
         {
             /*  p0:   */

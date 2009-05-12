@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using SteamEngine.Timers;
 using SteamEngine.Common;
-using SteamEngine.Packets;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 using SteamEngine.Networking;

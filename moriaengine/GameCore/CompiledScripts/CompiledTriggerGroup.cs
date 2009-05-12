@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public abstract bool IsTypeOfMapTile(int mapTileId);
 
-		internal static void UnLoadScripts() {
+		internal static void UnloadScripts() {
 			byName.Clear();
 		}
 	}

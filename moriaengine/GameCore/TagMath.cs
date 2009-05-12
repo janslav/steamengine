@@ -25,7 +25,6 @@ using System.Reflection;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine;
-using SteamEngine.Packets;
 using SteamEngine.Timers;
 using SteamEngine.Common;
 

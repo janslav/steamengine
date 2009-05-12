@@ -27,7 +27,7 @@ namespace SteamEngine.Persistence {
 	public delegate IUnloadable LoadSection(PropsSection data);
 	public delegate bool CanStartAsScript(string data);
 
-	public class WorldSaver {
+	public static class WorldSaver {
 
 		//internal static string currentfile;
 		//public static string CurrentFile {
@@ -164,11 +164,11 @@ namespace SteamEngine.Persistence {
 				HashSet<string> nameSet = new HashSet<string>();
 				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
 					string name = coordinator.FileNameToSave;
-					if (nameSet.Contains(name.ToLower())) {
+					if (nameSet.Contains(name.ToLower(System.Globalization.CultureInfo.InvariantCulture))) {
 						//we already loaded this file.
 						continue;
 					} else {
-						nameSet.Add(name.ToLower());
+						nameSet.Add(name.ToLower(System.Globalization.CultureInfo.InvariantCulture));
 					}
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
@@ -218,13 +218,13 @@ namespace SteamEngine.Persistence {
 			foreach (PropsSection section in PropsFileParser.Load(
 					filename, stream, new CanStartAsScript(StartsAsScript))) {
 
-				string type = section.HeaderType.ToLower();
+				string type = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 				string name = section.HeaderName;
 				if (EOFMarked) {
 					Logger.WriteWarning(section.Filename, section.HeaderLine, "[EOF] reached. Skipping " + section);
 					continue;
 				}
-				if (name == "") {
+				if (string.IsNullOrEmpty(name)) {
 					if (type == "eof") {
 						EOFMarked = true;
 						continue;

@@ -20,7 +20,6 @@ using System.Collections;
 using System.Reflection;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using SteamEngine.Packets;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using System.Threading;
@@ -190,7 +189,7 @@ namespace SteamEngine {
 				}
 
 				Map map = fromCoordinates.GetMap();
-				if (!map.CanSeeLOSFromTo(fromCoordinates, targetMapCoordinates)) {
+				if (!map.CanSeeLosFromTo(fromCoordinates, targetMapCoordinates)) {
 					return DenyResult.Deny_ThatIsOutOfSight;
 				}
 
@@ -225,7 +224,7 @@ namespace SteamEngine {
 				return DenyResult.Deny_ThatIsTooFarAway;
 			}
 			Map m = this.GetMap();
-			if (!m.CanSeeLOSFromTo(this, target)) {
+			if (!m.CanSeeLosFromTo(this, target)) {
 				return DenyResult.Deny_ThatIsOutOfSight;
 			}
 			return DenyResult.Allow;
@@ -252,7 +251,8 @@ namespace SteamEngine {
 
 namespace SteamEngine.Regions {
 	public partial class Map {
-		public bool CanSeeLOSFromTo(IPoint3D from, IPoint3D to) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "to"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "from"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+		public bool CanSeeLosFromTo(IPoint3D from, IPoint3D to) {
 			return true;
 		}
 	}

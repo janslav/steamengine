@@ -17,7 +17,6 @@
 
 using System;
 using System.IO;
-using SteamEngine.Packets;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Collections;

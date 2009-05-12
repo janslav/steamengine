@@ -26,25 +26,25 @@ using SteamEngine.Persistence;
 namespace SteamEngine.Regions {
 
 	public class Region : PluginHolder {
-		public static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
+		internal static Regex rectRE = new Regex(@"(?<x1>(0x)?\d+)\s*(,|/s+)\s*(?<y1>(0x)?\d+)\s*(,|/s+)\s*(?<x2>(0x)?\d+)\s*(,|/s+)\s*(?<y2>(0x)?\d+)",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		private string defname; //protected, we will make use of it in StaticRegion loading part...
+		private string defname;
 		private Point4D p = new Point4D(0, 0, 0, 0); //spawnpoint
 
 		internal IList<RegionRectangle> rectangles = new List<RegionRectangle>();
 		private Region parent;
-		private byte mapplane = 0; //protected, we will make use of it in StaticRegion loading part...
+		private byte mapplane; //protected, we will make use of it in StaticRegion loading part...
 		private bool mapplaneIsSet;
 		private int hierarchyIndex = -1;
 		private TimeSpan createdAt = Globals.TimeAsSpan;
 
 
-		protected bool inactivated;
+		internal bool inactivated;
 		//this will be set to false when the region is going to be edited
 		//after succesful editing (changing of P or changing rectnagles) it will be then reset to true
 		//without this, the region won't be activated (Error will occur)
-		protected bool canBeActivated = true;
+		internal bool canBeActivated = true;
 
 
 		//private readonly static Type[] constructorTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
@@ -110,6 +110,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual Point4D P {
 			get {
 				return p;
@@ -189,6 +190,7 @@ namespace SteamEngine.Regions {
 			child.Enter(ch);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void Trigger_ItemEnter(ItemOnGroundArgs args) {
 			Region region = args.Region;
 			Point4D point = args.Point;
@@ -206,6 +208,7 @@ namespace SteamEngine.Regions {
 			} while (region != null);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void Trigger_ItemLeave(ItemOnGroundArgs args) {
 			Region region = args.Region;
 			Point4D point = args.Point;
@@ -223,6 +226,7 @@ namespace SteamEngine.Regions {
 			} while (region != null);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool Trigger_DenyPickupItemFrom(DenyPickupArgs args) {
 			Region region = this;
 
@@ -247,11 +251,13 @@ namespace SteamEngine.Regions {
 			return cancel;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
 			ThrowIfDeleted();
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
 			ThrowIfDeleted();
 			Region region = this;
@@ -277,6 +283,7 @@ namespace SteamEngine.Regions {
 			return cancel;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool On_DenyPutItemOn(DenyPutOnGroundArgs args) {
 			ThrowIfDeleted();
 			return false;
@@ -290,10 +297,12 @@ namespace SteamEngine.Regions {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemLeave(ItemOnGroundArgs args) {
 			ThrowIfDeleted();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
 			ThrowIfDeleted();
 		}
@@ -362,12 +371,14 @@ namespace SteamEngine.Regions {
 			On_Exit(ch, true);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual bool On_Enter(AbstractCharacter ch, bool forced) {//if forced is true, the return value is irrelevant
 			Logger.WriteDebug(ch + " entered " + this);
 			ch.SysMessage("You have just entered " + this);
 			return false;//maybe we could just return false or whatever...
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual bool On_Exit(AbstractCharacter ch, bool forced) {
 			Logger.WriteDebug(ch + " left " + this);
 			ch.SysMessage("You have just left " + this);
@@ -437,7 +448,7 @@ namespace SteamEngine.Regions {
 			if (reg != null) {
 				parent = reg;
 			} else {
-				Logger.WriteWarning(LogStr.FileLine(filename, line) + "'" + LogStr.Ident(resolvedObject) + "' is not a valid Region. Referenced as parent by '" + LogStr.Ident(Defname) + "'.");
+				Logger.WriteWarning(LogStr.FileLine(filename, line) + "'" + LogStr.Ident(resolvedObject) + "' is not a valid Region. Referenced as parent by '" + LogStr.Ident(this.Defname) + "'.");
 			}
 		}
 

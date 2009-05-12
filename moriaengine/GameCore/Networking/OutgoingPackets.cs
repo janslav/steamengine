@@ -420,7 +420,7 @@ namespace SteamEngine.Networking {
 		sbyte z;
 		byte dir, flagsToSend, highlight;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "highlight")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "highlight")]
 		public void Prepare(AbstractCharacter chr, bool running, HighlightColor highlight) {
 			this.flaggedUid = chr.FlaggedUid;
 			this.model = chr.ShortModel;
@@ -916,7 +916,7 @@ namespace SteamEngine.Networking {
 		bool isFemale;
 		bool canRenameSelf;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "type")]
 		public void Prepare(AbstractCharacter ch, StatusBarType type) {
 			Sanity.IfTrueThrow(ch == null, "PrepareStatusBar called with a null character.");
 			//Sanity.IfTrueThrow(!Enum.IsDefined(typeof(StatusBarType), type), "Invalid value " + type + " for StatusBarType in PrepareStatusBar.");
@@ -1442,7 +1442,7 @@ namespace SteamEngine.Networking {
 		sbyte layer;
 		ushort model, color;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
 		public void PrepareItem(uint charUid, AbstractItem item) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = item.FlaggedUid;
@@ -1451,7 +1451,7 @@ namespace SteamEngine.Networking {
 			this.color = item.ShortColor;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
 		public void PrepareMount(uint charUid, AbstractCharacter mount) {
 			this.charUid = charUid;
 			this.itemFlaggedUid = (uint) (mount.Uid | 0x40000000);

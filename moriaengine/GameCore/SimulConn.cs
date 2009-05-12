@@ -23,7 +23,6 @@ using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Globalization;
-using SteamEngine.Packets;
 
 namespace SteamEngine {
 

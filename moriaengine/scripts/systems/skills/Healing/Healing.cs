@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//nevidi na cil
 			if (targetted != self) {
-				if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
+				if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLosFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
 					self.SysMessage(targetted.Name + " je od tebe pøíliš daleko!");
 					return false;
 				}
@@ -153,7 +153,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//nevidi na cil
 			if (targetted != self) {
-				if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLOSFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
+				if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLosFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
 					self.SysMessage(targetted.Name + " je od tebe pøíliš daleko!");
 					return;
 				}

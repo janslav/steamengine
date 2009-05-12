@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//removes all non-core references
-		internal static void UnLoadScripts() {
+		internal static void UnloadScripts() {
 			ISteamCSCodeGenerator[] allGens = new ISteamCSCodeGenerator[generators.Count];
 			generators.Values.CopyTo(allGens, 0);
 			generators.Clear();

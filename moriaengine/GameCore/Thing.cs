@@ -23,7 +23,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using SteamEngine.Common;
-using SteamEngine.Packets;
 using System.Diagnostics;
 using System.Configuration;
 using SteamEngine.Persistence;

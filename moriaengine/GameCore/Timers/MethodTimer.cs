@@ -30,7 +30,9 @@ namespace SteamEngine.Timers {
 	[DeepCopyableClass]
 	[SaveableClass]
 	public class MethodTimer : BoundTimer {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		public MethodInfo method;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData]
 		[CopyableData]
 		public object[] args;
@@ -49,7 +51,7 @@ namespace SteamEngine.Timers {
 			this.args = args;
 		}
 
-		[Save]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public override void Save(SteamEngine.Persistence.SaveStream output) {
 			StringBuilder sb = new StringBuilder(method.DeclaringType.ToString());
 			sb.Append(".").Append(method.Name);
@@ -67,10 +69,10 @@ namespace SteamEngine.Timers {
 			base.Save(output);
 		}
 
-		public static Regex methodSignRE = new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",
+		private static Regex methodSignRE = new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[LoadLine]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), LoadLine]
 		public override void LoadLine(string filename, int line, string name, string value) {
 			if (name.Equals("method")) {
 				//Console.WriteLine("loading method with string: "+value);
