@@ -265,12 +265,12 @@ namespace SteamEngine.Networking {
 
 
 		#region These are all the definitions that were found in AES.H
-		static private readonly int BLOCK_SIZE = 128;	/* number of bits per block */
-		static private readonly int MAX_ROUNDS = 16;	/* max # rounds (for allocating subkey array) */
-		static private readonly int ROUNDS_128 = 16;	/* default number of rounds for 128-bit keys*/
-		static private readonly int ROUNDS_192 = 16;	/* default number of rounds for 192-bit keys*/
-		static private readonly int ROUNDS_256 = 16;	/* default number of rounds for 256-bit keys*/
-		static private readonly int MAX_KEY_BITS = 256;	/* max number of bits of key */
+		private const int BLOCK_SIZE = 128;	/* number of bits per block */
+		private const int MAX_ROUNDS = 16;	/* max # rounds (for allocating subkey array) */
+		private const int ROUNDS_128 = 16;	/* default number of rounds for 128-bit keys*/
+		private const int ROUNDS_192 = 16;	/* default number of rounds for 192-bit keys*/
+		private const int ROUNDS_256 = 16;	/* default number of rounds for 256-bit keys*/
+		private const int MAX_KEY_BITS = 256;	/* max number of bits of key */
 		//		static private readonly int	MIN_KEY_BITS = 128;	/* min number of bits of key (zero pad) */
 		//it says this is not used, so...
 
@@ -279,24 +279,24 @@ namespace SteamEngine.Networking {
 		//#define		MCT_INNER		  10000	/* MCT inner loop */
 		//#define		REENTRANT			  1	/* nonzero forces reentrant code (slightly slower) */
 
-		static private readonly int INPUT_WHITEN = 0;	/* subkey array indices */
-		static private readonly int OUTPUT_WHITEN = (INPUT_WHITEN + BLOCK_SIZE / 32);
-		static private readonly int ROUND_SUBKEYS = (OUTPUT_WHITEN + BLOCK_SIZE / 32);	/* use 2 * (# rounds) */
-		static private readonly int TOTAL_SUBKEYS = (ROUND_SUBKEYS + 2 * MAX_ROUNDS);
+		private const int INPUT_WHITEN = 0;	/* subkey array indices */
+		private const int OUTPUT_WHITEN = (INPUT_WHITEN + BLOCK_SIZE / 32);
+		private const int ROUND_SUBKEYS = (OUTPUT_WHITEN + BLOCK_SIZE / 32);	/* use 2 * (# rounds) */
+		private const int TOTAL_SUBKEYS = (ROUND_SUBKEYS + 2 * MAX_ROUNDS);
 
 
 		#endregion
 
 		#region These are all the definitions that were found in TABLE.H that we need
 		/* for computing subkeys */
-		static private readonly uint SK_STEP = 0x02020202u;
-		static private readonly uint SK_BUMP = 0x01010101u;
-		static private readonly int SK_ROTL = 9;
+		private const uint SK_STEP = 0x02020202u;
+		private const uint SK_BUMP = 0x01010101u;
+		private const int SK_ROTL = 9;
 
 		/* Reed-Solomon code parameters: (12,8) reversible code
 		g(x) = x**4 + (a + 1/a) x**3 + a x**2 + (a + 1/a) x + 1
 		where a = primitive root of field generator 0x14D */
-		static private readonly uint RS_GF_FDBK = 0x14D;		/* field generator */
+		private const uint RS_GF_FDBK = 0x14D;		/* field generator */
 		static private void RS_rem(ref uint x) {
 			byte b = (byte) (x >> 24);
 			// TODO: maybe change g2 and g3 to bytes			 
@@ -329,7 +329,7 @@ namespace SteamEngine.Networking {
 		* MDS OK, ROR:   6+  7+  8+  9+ 10+ 11+ 12+ 13+ 14+ 15+ 16+
 		*               17+ 18+ 19+ 20+ 21+ 22+ 23+ 24+ 25+ 26+
 		*/
-		static private readonly int MDS_GF_FDBK = 0x169;	/* primitive polynomial for GF(256)*/
+		private const int MDS_GF_FDBK = 0x169;	/* primitive polynomial for GF(256)*/
 		static private int LFSR1(int x) {
 			return (((x) >> 1) ^ ((((x) & 0x01) == 0x01) ? MDS_GF_FDBK / 2 : 0));
 		}
@@ -419,29 +419,29 @@ namespace SteamEngine.Networking {
 			the "outermost" 8x8 permutation applied.  See the f32() function to see
 			how these constants are to be  used.
 		*/
-		static private readonly int P_00 = 1;					/* "outermost" permutation */
-		static private readonly int P_01 = 0;
-		static private readonly int P_02 = 0;
-		static private readonly int P_03 = (P_01 ^ 1);			/* "extend" to larger key sizes */
-		static private readonly int P_04 = 1;
+		private const int P_00 = 1;					/* "outermost" permutation */
+		private const int P_01 = 0;
+		private const int P_02 = 0;
+		private const int P_03 = (P_01 ^ 1);			/* "extend" to larger key sizes */
+		private const int P_04 = 1;
+		
+		private const int P_10 = 0;
+		private const int P_11 = 0;
+		private const int P_12 = 1;
+		private const int P_13 = (P_11 ^ 1);
+		private const int P_14 = 0;
 
-		static private readonly int P_10 = 0;
-		static private readonly int P_11 = 0;
-		static private readonly int P_12 = 1;
-		static private readonly int P_13 = (P_11 ^ 1);
-		static private readonly int P_14 = 0;
+		private const int P_20 = 1;
+		private const int P_21 = 1;
+		private const int P_22 = 0;
+		private const int P_23 = (P_21 ^ 1);
+		private const int P_24 = 0;
 
-		static private readonly int P_20 = 1;
-		static private readonly int P_21 = 1;
-		static private readonly int P_22 = 0;
-		static private readonly int P_23 = (P_21 ^ 1);
-		static private readonly int P_24 = 0;
-
-		static private readonly int P_30 = 0;
-		static private readonly int P_31 = 1;
-		static private readonly int P_32 = 1;
-		static private readonly int P_33 = (P_31 ^ 1);
-		static private readonly int P_34 = 1;
+		private const int P_30 = 0;
+		private const int P_31 = 1;
+		private const int P_32 = 1;
+		private const int P_33 = (P_31 ^ 1);
+		private const int P_34 = 1;
 
 		/* fixed 8x8 permutation S-boxes */
 

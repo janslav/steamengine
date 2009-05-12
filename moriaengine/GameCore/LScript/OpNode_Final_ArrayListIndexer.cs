@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_ArrayListIndex : OpNode, IOpNodeHolder {
+	internal class OpNode_ArrayListIndex : OpNode, IOpNodeHolder {
 		private OpNode arg;
 		private OpNode index;
 
@@ -74,7 +74,7 @@ namespace SteamEngine.LScript {
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating [] operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 

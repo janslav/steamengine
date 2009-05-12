@@ -27,22 +27,22 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Lazy_EvalExpression : OpNode, IOpNodeHolder {
+	internal class OpNode_Lazy_EvalExpression : OpNode, IOpNodeHolder {
 		//accepts EvalExpression, StrongEvalExpression
-		protected OpNode arg;
+		private OpNode arg;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_EvalExpression constructed = new OpNode_Lazy_EvalExpression(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			//todo ?
 
 			if (IsType(code, StrictConstants.STRONG_EVAL_EXPRESSION)) {
-				constructed.arg = LScript.CompileNode(constructed, code.GetChildAt(2), true);
+				constructed.arg = LScriptMain.CompileNode(constructed, code.GetChildAt(2), true);
 			} else {
-				constructed.arg = LScript.CompileNode(constructed, code.GetChildAt(1), true);
+				constructed.arg = LScriptMain.CompileNode(constructed, code.GetChildAt(1), true);
 			}
 
 			if (constructed.arg is OpNode_Object) {
@@ -66,7 +66,7 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			object retVar = arg.Run(vars);
-			ReplaceSelf(arg);
+			this.ReplaceSelf(arg);
 			return retVar;
 		}
 

@@ -61,9 +61,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			if (gr.pressedButton == 0) {
+			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog				
-			} else if (gr.pressedButton == 1) {
+			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
 				string accName = gr.GetTextResponse(10);
 				string pass = gr.GetTextResponse(11);

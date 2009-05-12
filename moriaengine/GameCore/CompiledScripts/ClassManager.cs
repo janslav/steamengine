@@ -35,15 +35,28 @@ namespace SteamEngine.CompiledScripts {
 
 	public static class ClassManager {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		public readonly static Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+		private readonly static Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
-		private static Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
+		private readonly static Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
 
 		private static List<SupplyDecoratedTypeBase> supplyDecoratedTypesDelegs = new List<SupplyDecoratedTypeBase>();
 
-		private static List<SupplySubclassInstanceBase> supplySubclassInstanceDelegs = new List<SupplySubclassInstanceBase>();
+		private static List<SupplySubclassInstanceBase> supplySubclassInstanceDelegs = InitDecoratedTypesDelegsList();
 
 		private static List<TypeDelegPair> supplySubclassDelegs = new List<TypeDelegPair>();
+
+		static List<SupplySubclassInstanceBase> InitDecoratedTypesDelegsList() {
+			//can't be in GeneratedCodeUtil's Bootstrap, cos that's too late.
+			List<SupplySubclassInstanceBase> list = new List<SupplySubclassInstanceBase>();
+			list.Add(new SupplySubclassInstanceTuple<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true)); //ClassManager.RegisterSupplySubclassInstances<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true);
+			return list;			
+		}
+
+		public static ICollection<Type> AllManagedTypes {
+			get {
+				return ClassManager.allTypesbyName.Values;
+			}
+		} 
 
 		private static Assembly commonAssembly = typeof(LogStr).Assembly;
 		public static Assembly CommonAssembly {
@@ -142,11 +155,6 @@ namespace SteamEngine.CompiledScripts {
 			supplySubclassInstanceDelegs.Add(new SupplySubclassInstanceTuple<T>(deleg, sealedOnly, throwIfNoCtor));
 		}
 
-		static ClassManager() {
-			//can't be in GeneratedCodeUtil's Bootstrap, cos that's too late.
-			ClassManager.RegisterSupplySubclassInstances<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true);
-		}
-
 		private class TypeDelegPair {
 			internal readonly Type type;
 			internal readonly SupplyType deleg;
@@ -206,7 +214,7 @@ namespace SteamEngine.CompiledScripts {
 				this.type = type;
 			}
 
-			internal abstract bool InvokeDeleg(Type type, Attribute attr);
+			internal abstract bool InvokeDeleg(Type suppliedType, Attribute attr);
 			internal abstract Type TargetClass { get; }
 		}
 
@@ -218,18 +226,20 @@ namespace SteamEngine.CompiledScripts {
 				this.deleg = deleg;
 			}
 
-			internal override bool InvokeDeleg(Type type, Attribute attr) {
-				return deleg(type, (T) attr);
+			internal override bool InvokeDeleg(Type suppliedType, Attribute attr) {
+				return this.deleg(suppliedType, (T) attr);
 			}
 
 			internal override Type TargetClass {
-				get { return deleg.Method.DeclaringType; }
+				get {
+					return this.deleg.Method.DeclaringType;
+				}
 			}
 		}
 
 		internal static bool InitClasses(Assembly assembly) {
 			Type[] types = assembly.GetTypes();
-			if (!InitClasses(types, assembly.GetName().Name, (coreAssembly == assembly))) {
+			if (!InitClasses(types, assembly.GetName().Name)) {
 				Logger.WriteCritical("Scripts invalid.");
 				return false;
 			}
@@ -238,7 +248,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		private static bool InitClasses(Type[] types, string assemblyName, bool isCoreAssembly) {
+		private static bool InitClasses(Type[] types, string assemblyName) {
 			bool success = true;
 
 			//first call the Bootstrap methods (if present)
@@ -251,7 +261,7 @@ namespace SteamEngine.CompiledScripts {
 			//then Initialize the classes as needed
 			for (int i = 0; i < types.Length; i++) {
 				try {
-					InitClass(types[i], isCoreAssembly);
+					InitClass(types[i]);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception e) {
@@ -262,7 +272,7 @@ namespace SteamEngine.CompiledScripts {
 			return success;
 		}
 
-		private static void InitClass(Type type, bool isCoreAssembly) {
+		private static void InitClass(Type type) {
 			allTypesbyName[type.Name] = type;
 
 			foreach (MethodInfo meth in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)) {
@@ -346,7 +356,7 @@ namespace SteamEngine.CompiledScripts {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void InitScripts() {
 			Type[] types = commonAssembly.GetTypes();
-			if (!ClassManager.InitClasses(types, commonAssembly.GetName().Name, false)) {
+			if (!ClassManager.InitClasses(types, commonAssembly.GetName().Name)) {
 				throw new SEException("Common library invalid.");
 			}
 

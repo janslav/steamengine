@@ -27,7 +27,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public interface IOpNodeHolder {
+	internal interface IOpNodeHolder {
 		void Replace(OpNode oldNode, OpNode newNode);
 	}
 
@@ -43,11 +43,11 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public abstract class OpNode {
+	internal abstract class OpNode {
 		internal readonly string filename;
 		internal int line;
 		internal int column;
-		protected Node origNode; //to get the string from
+		private Node origNode; //to get the string from
 		internal IOpNodeHolder parent;
 
 		protected OpNode(IOpNodeHolder parent, string filename, int line, int column, Node origNode) {
@@ -58,11 +58,20 @@ namespace SteamEngine.LScript {
 			this.origNode = origNode;
 		}
 
+		protected Node OrigNode {
+			get {
+				return this.origNode;
+			}
+			//set {
+			//    this.origNode = value;
+			//}
+		}
+
 		//helper method
 		protected void ReplaceSelf(OpNode newNode) {
 			//Console.WriteLine("Replacing self - {0} (type {1}) by {2} ({3}), parent {4} ({5})", this, this.GetType(), newNode, newNode.GetType(), parent, parent.GetType());
-			newNode.parent = parent; //just to be sure
-			parent.Replace(this, newNode);
+			newNode.parent = this.parent; //just to be sure
+			this.parent.Replace(this, newNode);
 		}
 
 		internal static bool IsType(Node node, StrictConstants type) {
@@ -84,17 +93,17 @@ namespace SteamEngine.LScript {
 
 		internal virtual string OrigString {
 			get {
-				return LScript.GetString(origNode);
+				return LScriptMain.GetString(this.origNode);
 			}
 		}
 
 		internal LScriptHolder ParentScriptHolder {
 			get {//"topobj" of a node
-				LScriptHolder parentAsHolder = parent as LScriptHolder;
+				LScriptHolder parentAsHolder = this.parent as LScriptHolder;
 				if (parentAsHolder != null) {
 					return parentAsHolder;
 				}
-				OpNode parentAsOpNode = parent as OpNode;
+				OpNode parentAsOpNode = this.parent as OpNode;
 				if (parentAsOpNode != null) {
 					return parentAsOpNode.ParentScriptHolder;
 				}

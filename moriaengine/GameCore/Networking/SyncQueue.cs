@@ -27,9 +27,10 @@ using System.Threading;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public abstract class SyncQueue {
 		private Thread thread;
-		protected AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+		internal AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
 		static protected bool enabled = false;
 
@@ -39,6 +40,7 @@ namespace SteamEngine.Networking {
 			this.thread.Start();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Cycle() {
 			while (this.autoResetEvent.WaitOne()) {
 				lock (MainClass.globalLock) {

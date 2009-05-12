@@ -104,8 +104,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<TriggerGroup> tgList = (List<TriggerGroup>) args.GetTag(D_TriggerGroupsList.tgListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tgList.Count);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -127,8 +127,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				//zjistime si radek
-				int row = (int) gr.pressedButton - 10;
-				int buttNo = ((int) gr.pressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
+				int row = (int) gr.PressedButton - 10;
+				int buttNo = ((int) gr.PressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
 				TriggerGroup tg = tgList[row];
 				switch (buttNo) {
 					case 0: //smazat						

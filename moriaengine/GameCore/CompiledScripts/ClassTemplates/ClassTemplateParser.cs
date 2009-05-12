@@ -29,8 +29,6 @@ using System.Text.RegularExpressions;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 	internal static class ClassTemplateParser {
-		public static bool classTemplateMessages = TagMath.ParseBoolean(ConfigurationManager.AppSettings["ClassTemplate Trace Messages"]);
-
 		private static Regex sectionHeaderRE = new Regex(@"^\[\s*(?<templatename>.*?)\s+(?<classname>.*?)\s*:\s*(?<baseclassname>.*?)\s*\]\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -42,11 +40,12 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		static ScriptFileCollection allFiles;
-		static CodeGeneratorOptions options;
+		static CodeGeneratorOptions options = CreateOptions();
 
-		static ClassTemplateParser() {
-			options = new CodeGeneratorOptions();
+		private static CodeGeneratorOptions CreateOptions() {
+			CodeGeneratorOptions options = new CodeGeneratorOptions();
 			options.IndentString = "\t";
+			return options;
 		}
 
 		public static void Init() {
@@ -67,7 +66,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ProcessFile(ScriptFile scriptFile) {
 
 			CodeCompileUnit ccu = CreateCompileUnit();

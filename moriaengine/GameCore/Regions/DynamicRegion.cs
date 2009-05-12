@@ -141,7 +141,7 @@ namespace SteamEngine.Regions {
 			return movingOK;
 		}
 
-		[Summary("Take the list of rectangles and make an array of RegionRectangles of it." +
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter"), Summary("Take the list of rectangles and make an array of RegionRectangles of it." +
 				"The purpose is the same as for StaticRegion but the checks are different." +
 				"The map parameter allows us to specifiy the map where the region should be")]
 		public bool SetRectangles<T>(IList<T> list, Map map) where T : ImmutableRectangle {

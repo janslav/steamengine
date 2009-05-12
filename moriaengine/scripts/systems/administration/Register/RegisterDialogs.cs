@@ -119,8 +119,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//seznam poznamek bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<AccountNote> notesList = (List<AccountNote>) args.GetTag(D_AccountNotes.issuesListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -167,8 +167,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				//zjistime si radek
-				int row = ((int) gr.pressedButton - 10) / 4;
-				int buttNo = ((int) gr.pressedButton - 10) % 4;
+				int row = ((int) gr.PressedButton - 10) / 4;
+				int buttNo = ((int) gr.PressedButton - 10) % 4;
 				AccountNote note = notesList[row];
 				Gump newGi;
 				switch (buttNo) {
@@ -336,8 +336,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//seznam crimu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<AccountCrime> crimesList = (List<AccountCrime>) args.GetTag(D_AccountNotes.issuesListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -384,8 +384,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				//zjistime si radek
-				int row = ((int) gr.pressedButton - 10) / 5;
-				int buttNo = ((int) gr.pressedButton - 10) % 5;
+				int row = ((int) gr.PressedButton - 10) / 5;
+				int buttNo = ((int) gr.PressedButton - 10) % 5;
 				AccountCrime crime = crimesList[row];
 				Gump newGi;
 				switch (buttNo) {
@@ -531,9 +531,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			AbstractCharacter refChar = args.GetTag(D_New_AccountNote.issuedCharTK) as AbstractCharacter; //if not present the note is for the whole account
 			ScriptedAccount acc = args.GetTag(D_AccountNotes.accountTK) as ScriptedAccount; //the account could or might not have arrived... :]
 
-			if (gr.pressedButton == 0) {
+			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi);
-			} else if (gr.pressedButton == 1) {
+			} else if (gr.PressedButton == 1) {
 				if (refChar != null) {//creating note for the player
 					acc = (ScriptedAccount) refChar.Account; //get the account
 				} else {

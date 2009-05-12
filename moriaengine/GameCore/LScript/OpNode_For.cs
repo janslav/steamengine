@@ -28,7 +28,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_For : OpNode, IOpNodeHolder {
+	internal class OpNode_For : OpNode, IOpNodeHolder {
 		private int localIndex;
 		private string localName;//just for the ToString()
 		private OpNode leftBoundNode;
@@ -36,10 +36,10 @@ namespace SteamEngine.LScript {
 		private OpNode blockNode;//can be null
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_For constructed = new OpNode_For(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 			constructed.localName = "localName";
@@ -51,19 +51,20 @@ namespace SteamEngine.LScript {
 			constructed.localIndex = constructed.ParentScriptHolder.GetRegisterIndex(localName);
 
 
-			constructed.leftBoundNode = LScript.CompileNode(constructed, headProd.GetChildAt(2));
-			constructed.rightBoundNode = LScript.CompileNode(constructed, headProd.GetChildAt(4));
+			constructed.leftBoundNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2));
+			constructed.rightBoundNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(4));
 
 
 			if (mainProd.GetChildCount() == 6) {//has the Script node inside?
-				constructed.blockNode = LScript.CompileNode(constructed, mainProd.GetChildAt(3), true);
+				constructed.blockNode = LScriptMain.CompileNode(constructed, mainProd.GetChildAt(3), true);
 			}
 			return constructed;
 		}
 
 		private static string GetLocalName(Node node) {
-			if (node is Token) {
-				return ((Token) node).GetImage().Trim();
+			Token asToken = node as Token;
+			if (asToken != null) {
+				return asToken.GetImage().Trim();
 			} else {
 				return ((Token) node.GetChildAt(2)).GetImage().Trim();
 			}
@@ -129,7 +130,7 @@ namespace SteamEngine.LScript {
 					throw;
 				} catch (Exception e) {
 					throw new InterpreterException("Expression while evaluating FOR statement",
-						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 				}
 			} else {
 				return null;//if there is no code to run, we dont do anything.

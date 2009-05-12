@@ -289,7 +289,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//how many columns for fields do we have?
 			int fieldsColumnsCount = (buttonCount > 0) ? COLS_COUNT : (COLS_COUNT + 1);
 			bool pagingHandled = false; //indicator if the pressed button was the paging one.
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case ID_PREV_BUTTON:
 					//set the first indexes one page to the back
 					args.SetTag(D_Info.pagingFieldsTK, TagMath.IGetTag(args, D_Info.pagingFieldsTK) - PAGE_ROWS * fieldsColumnsCount);

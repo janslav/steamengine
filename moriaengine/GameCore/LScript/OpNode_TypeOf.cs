@@ -29,17 +29,17 @@ using SteamEngine.CompiledScripts;
 namespace SteamEngine.LScript {
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Is : OpNode, IOpNodeHolder {
+	internal class OpNode_Is : OpNode, IOpNodeHolder {
 		private Type type;
 		internal OpNode opNode;
 
 		internal static OpNode_Is Construct(IOpNodeHolder parent, Node code, int typeNameFromIndex) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScript.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
 
 			OpNode_Is constructed = new OpNode_Is(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
@@ -56,7 +56,7 @@ namespace SteamEngine.LScript {
 			}
 			if (type == null) {
 				throw new InterpreterException("Type '" + typeName + "' not recognised.",
-					line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+					line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 			}
 
 			constructed.type = type;
@@ -91,9 +91,9 @@ namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public static class OpNode_Typeof {
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScript.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
 
 			int n = code.GetChildCount();
 			if (OpNode.IsType(code.GetChildAt(1), StrictConstants.LEFT_PAREN)) {
@@ -112,7 +112,7 @@ namespace SteamEngine.LScript {
 			}
 			if (type == null) {
 				throw new InterpreterException("Type '" + typeName + "' not recognised.",
-					line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+					line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 			}
 
 			return OpNode_Object.Construct(parent, type);

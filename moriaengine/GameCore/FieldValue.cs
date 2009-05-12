@@ -128,7 +128,7 @@ namespace SteamEngine {
 								//if ((type != null) && ((ConvertTools.IsNumberType(type)) || (fvType == FieldValueType.ThingDefType) || (fvType == FieldValueType.Model))
 								if (!ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
 									string statement = string.Concat("return ", value);
-									retVal = SteamEngine.LScript.LScript.RunSnippet(
+									retVal = SteamEngine.LScript.LScriptMain.RunSnippet(
 										tempVI.filename, tempVI.line, Globals.Instance, statement);
 								}
 							} else {

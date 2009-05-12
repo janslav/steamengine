@@ -26,6 +26,7 @@ using System.Net;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public sealed class CharSyncQueue : SyncQueue {
 		internal static CharSyncQueue instance = new CharSyncQueue();
 
@@ -173,6 +174,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 		internal class CharState : Poolable {
 			internal AbstractCharacter thing;
 			internal NSFlags changeflags;
@@ -461,7 +463,7 @@ namespace SteamEngine.Networking {
 				if (!this.thing.IsDeleted) {//deleted items are supposed to be removedfromview by the delete code
 					if ((this.changeflags != NSFlags.None) || (this.changedSkillsCount > 0)) {
 						if ((changeflags & NSFlags.Resend) == NSFlags.Resend) {
-							this.ProcessCharResend(this.thing);
+							ProcessCharResend(this.thing);
 						} else {
 							this.ProcessCharUpdate(this.thing);
 						}
@@ -471,7 +473,7 @@ namespace SteamEngine.Networking {
 
 			private static PacketGroup[] charInfoPackets = new PacketGroup[Tools.GetEnumLength<HighlightColor>()]; //0x78
 
-			private void ProcessCharResend(AbstractCharacter ch) {
+			private static void ProcessCharResend(AbstractCharacter ch) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessCharResend " + ch);
 
 				GameState state = ch.GameState;
@@ -535,6 +537,7 @@ namespace SteamEngine.Networking {
 			private static PacketGroup[] myCharInfos = new PacketGroup[Tools.GetEnumLength<HighlightColor>()];
 			private static PacketGroup[] myMovings = new PacketGroup[Tools.GetEnumLength<HighlightColor>()];
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1809:AvoidExcessiveLocals"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 			private void ProcessCharUpdate(AbstractCharacter ch) {
 				//TODO: party update
 				//triggers - @seenewplayer and stuff?
@@ -642,17 +645,17 @@ namespace SteamEngine.Networking {
 							byte updateRange = ch.UpdateRange;
 
 							if (mapChanged) {//other map. We must clear the view, and possibly change client's facet
-								byte newFacet = chMap.Facet;
+								int newFacet = chMap.Facet;
 								if (oldMap.Facet != newFacet) {
 									PreparedPacketGroups.SendFacetChange(myConn, newFacet);
 								}
 								PacketGroup pg = null;
-								foreach (Thing thing in oldMap.GetThingsInRange(point.X, point.Y, updateRange)) {
-									Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing thing (" + thing + ") from own view");
+								foreach (Thing t in oldMap.GetThingsInRange(point.X, point.Y, updateRange)) {
+									Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing thing (" + t + ") from own view");
 									if (pg == null) {
 										pg = PacketGroup.AcquireSingleUsePG();
 									}
-									pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(thing);
+									pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(t);
 								}
 								if (pg != null) {
 									myConn.SendPacketGroup(pg);
@@ -885,14 +888,14 @@ namespace SteamEngine.Networking {
 						pgRemoveMount = PacketGroup.AcquireMultiUsePG();
 						pgRemoveMount.AcquirePacket<DeleteObjectOutPacket>().Prepare(mountUid | 0x40000000);
 					}
-					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing mount (#" + mountUid.ToString("x") + ") for " + viewerConn.State.Character);
+					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing mount (#" + mountUid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ") for " + viewerConn.State.Character);
 					viewerConn.SendPacketGroup(pgRemoveMount);
 				} else {
 					if (pgUpdateMount == null) {
 						pgUpdateMount = PacketGroup.AcquireMultiUsePG();
 						pgUpdateMount.AcquirePacket<WornItemOutPacket>().PrepareMount(ch.FlaggedUid, myMount);
 					}
-					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending mount (#" + mountUid.ToString("x") + ") to " + viewerConn.State.Character);
+					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending mount (#" + mountUid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ") to " + viewerConn.State.Character);
 					viewerConn.SendPacketGroup(pgUpdateMount);
 				}
 			}

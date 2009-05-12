@@ -26,10 +26,13 @@ using System.Net;
 
 namespace SteamEngine.Networking {
 	public class GameCompression : ICompression {
-		internal static int[] flatBitTable;
-		internal static int[,] bitTable;
-		internal static uint[] bitAmtTable;
+		private static int[] flatBitTable;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
+		private static int[,] bitTable;
+		private static uint[] bitAmtTable;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public readonly static GameCompression instance = new GameCompression();
 
 		static GameCompression() {
@@ -44,7 +47,7 @@ namespace SteamEngine.Networking {
 			int curByte = 0;
 			int bitByte = 0;
 			long value;
-			int[] packed = new int[length * 4];
+			int[] packed = new int[checked(length * 4)];
 			while (length-- > 0) {
 				//try {
 				numBits = bitTable[bytesIn[offsetIn], 0];
@@ -96,6 +99,7 @@ namespace SteamEngine.Networking {
 		//This builds our compression-tables. bitAmtTable is used by some of the compression methods,
 		//but not the fastest ones.
 		//flatBitTable is faster to access than bitTable.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static void ConstructBitTables() {
 			bitAmtTable = new uint[32];
 			for (int a = 0; a < 31; a++) {

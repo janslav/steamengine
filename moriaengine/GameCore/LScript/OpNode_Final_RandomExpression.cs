@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_Final_RandomExpression_Simple_Constant : OpNode {
+	internal class OpNode_Final_RandomExpression_Simple_Constant : OpNode {
 		int min, max;
 
 		internal OpNode_Final_RandomExpression_Simple_Constant(IOpNodeHolder parent, string filename,
@@ -48,7 +48,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_Final_RandomExpression_Simple_Variable : OpNode, IOpNodeHolder {
+	internal class OpNode_Final_RandomExpression_Simple_Variable : OpNode, IOpNodeHolder {
 		OpNode leftNode, rightNode;
 
 		internal OpNode_Final_RandomExpression_Simple_Variable(IOpNodeHolder parent, string filename,
@@ -89,7 +89,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating random expression",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -99,7 +99,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_Final_RandomExpression_Constant : OpNode, IOpNodeHolder {
+	internal class OpNode_Final_RandomExpression_Constant : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		int totalOdds;
 
@@ -141,7 +141,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_Final_RandomExpression_Variable : OpNode, IOpNodeHolder {
+	internal class OpNode_Final_RandomExpression_Variable : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		OpNode[] odds;
 
@@ -176,7 +176,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating random expression",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			} finally {
 				vars.self = oSelf;
 			}

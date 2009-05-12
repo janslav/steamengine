@@ -88,7 +88,7 @@ namespace SteamEngine.Regions {
 		}
 
 		[Summary("Do the two rectangles have any intersection?")]
-		public static bool Intersects(ImmutableRectangle a, ImmutableRectangle b) {
+		public static bool Intersects(AbstractRectangle a, AbstractRectangle b) {
 			return a.IntersectsWith(b) || b.IntersectsWith(a);
 		}
 

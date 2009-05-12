@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_NotOperator : OpNode_Lazy_UnOperator, ITriable { // !
+	internal class OpNode_NotOperator : OpNode_Lazy_UnOperator, ITriable { // !
 		internal OpNode_NotOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
 		}
@@ -39,7 +39,7 @@ namespace SteamEngine.LScript {
 				return !(TagMath.ToBoolean(retVal));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ! operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -48,13 +48,13 @@ namespace SteamEngine.LScript {
 				return !(TagMath.ToBoolean(results[0]));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ! operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_BitComplementOperator : OpNode_Lazy_UnOperator, ITriable { // ~
+	internal class OpNode_BitComplementOperator : OpNode_Lazy_UnOperator, ITriable { // ~
 		internal OpNode_BitComplementOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
 		}
@@ -65,7 +65,7 @@ namespace SteamEngine.LScript {
 				return ~(Convert.ToInt64(retVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ~ operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -74,13 +74,13 @@ namespace SteamEngine.LScript {
 				return ~(Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ~ operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_MinusOperator : OpNode_Lazy_UnOperator, ITriable { // ~
+	internal class OpNode_MinusOperator : OpNode_Lazy_UnOperator, ITriable { // ~
 		internal OpNode_MinusOperator(IOpNodeHolder parent, Node code)
 			: base(parent, code) {
 		}
@@ -91,7 +91,7 @@ namespace SteamEngine.LScript {
 				return -(Convert.ToDouble(retVal, System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating - operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -100,7 +100,7 @@ namespace SteamEngine.LScript {
 				return -(Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating - operator",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 	}

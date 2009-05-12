@@ -39,6 +39,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			DefaultConstructor();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0")]
 		private void LoadSaveAttributes() {
 			foreach (CodeTypeMember member in generatedType.Members) {
 				CodeMemberMethod method = member as CodeMemberMethod;

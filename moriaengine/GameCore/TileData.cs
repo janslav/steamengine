@@ -106,106 +106,110 @@ namespace SteamEngine {
 			if (File.Exists(mulFileP)) {
 				landFlags = new TileFlag[numLandTiles];
 
-				FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
-				BinaryReader mulbr = new BinaryReader(mulfs);
-				StreamWriter mtfi = null;
+				using (BinaryReader mulbr = new BinaryReader(new FileStream(mulFileP, FileMode.Open, FileAccess.Read))) {
+					StreamWriter mtfi = null;
+					string tileNameS;
 
-				if (Globals.WriteMulDocsFiles) {
-					mtfi = File.CreateText(Globals.GetMulDocPathFor("TileData - map tiles.txt"));
-				}
-				ushort texId;
-				int tileId = 0;
-				string tileNameS;
-				for (int block = 0; block < 512; block++) {
-					mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
-					for (int tileNum = 0; tileNum < 32; tileNum++) {
-						landFlags[tileId] = (TileFlag) mulbr.ReadUInt32();
-						texId = mulbr.ReadUInt16();
-						tileNameS = Utility.GetCAsciiString(mulbr, 20);
+					try {
 						if (Globals.WriteMulDocsFiles) {
-							if (tileNameS.Length > 0 || texId != 0) {
-								mtfi.WriteLine("TileID: 0x" + tileId.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (" + 
-									tileId + ")\tName: " + tileNameS + "\tFlags: " + landFlags[tileId] + "\ttexId: " + texId);
-							}
+							mtfi = File.CreateText(Globals.GetMulDocPathFor("TileData - map tiles.txt"));
 						}
-						tileId++;
-					}
-				}
-				if (Globals.WriteMulDocsFiles) {
-					mtfi.Close();
-				}
-				Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - item dispid info.");
-				long bytes = 0;
-				//bool multipleModels=false;	// Kemoc - I didnt find reason for this
-				//uint lastAmount=0;
-				//int dispIDNum=0;
-				//bool firstModel=false;
-				//ItemDispidInfo cur=null;
-				//ItemDispidInfo idi = null;
-				TileFlag flags;
-				byte weight;
-				byte quality;
-				ushort unknown;
-				byte minItemsToDisplayThisArt;
-				byte quantity;
-				ushort animID;
-				byte unknown2;
-				byte hue;
-				ushort unknown3;
-				byte height;
+						ushort texId;
+						int tileId = 0;
 
-				try {
-					while (true) {
-						mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
-						for (int tileNum = 0; tileNum < 32; tileNum++) {
-							flags = (TileFlag) mulbr.ReadUInt32();
-							weight = mulbr.ReadByte();
-							quality = mulbr.ReadByte();
-							unknown = mulbr.ReadUInt16();
-							minItemsToDisplayThisArt = mulbr.ReadByte();
-							quantity = mulbr.ReadByte();
-							animID = mulbr.ReadUInt16();
-							unknown2 = mulbr.ReadByte();
-							hue = mulbr.ReadByte();
-							unknown3 = mulbr.ReadUInt16();
-							height = mulbr.ReadByte();
-							tileNameS = Utility.GetCAsciiString(mulbr, 20);
-							bytes += 20 + tileNameS.Length * 2;
-							/*idi = */new ItemDispidInfo(flags, weight, quality, unknown, minItemsToDisplayThisArt, quantity, animID, unknown2, hue, unknown3, height, tileNameS);
-							/* Kemoc - not used for anything
-							if (idi==null || multipleModels==false || idi.unknown<=lastAmount || (!(HasFlag(idi.flags,TileFlag.stackable)))) {
-								if (HasFlag(idi.flags,TileFlag.stackable)) {
-									multipleModels=true;
-									firstModel=true;
-									cur=idi;
-								} else {
-									multipleModels=false;
+						for (int block = 0; block < 512; block++) {
+							mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
+							for (int tileNum = 0; tileNum < 32; tileNum++) {
+								landFlags[tileId] = (TileFlag) mulbr.ReadUInt32();
+								texId = mulbr.ReadUInt16();
+								tileNameS = Utility.GetCAsciiString(mulbr, 20);
+								if (Globals.WriteMulDocsFiles) {
+									if (tileNameS.Length > 0 || texId != 0) {
+										mtfi.WriteLine("TileID: 0x" + tileId.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (" +
+											tileId + ")\tName: " + tileNameS + "\tFlags: " + landFlags[tileId] + "\ttexId: " + texId);
+									}
 								}
+								tileId++;
 							}
-							if (HasFlag(idi.flags,TileFlag.stackable)) {
-								lastAmount=idi.unknown;
-								//string aname = "Unnamed";
-								//if (idi.name.Length>0) {
-								//	aname=idi.name;
-								//}
-								//int amt=idi.unknown;
-								//if (firstModel) {
-								//	amt=1;
-								//}
-								//scr.WriteLine("stackmodel="+amt+":0x"+a.ToString("x")+":"+name);
-								//firstModel=false;
-								//dunno what does the firstModel and aname variable mean, but they wasn't used... maybe the values should be set back to the info instance somehow...?
-							}
-							*/
-							//dispIDNum++;	// Kemoc - not used
+						}
+					} finally {
+						if (mtfi != null) {
+							mtfi.Close();
 						}
 					}
-				} catch (EndOfStreamException) {
+					Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - item dispid info.");
+					long bytes = 0;
+					//bool multipleModels=false;	// Kemoc - I didnt find reason for this
+					//uint lastAmount=0;
+					//int dispIDNum=0;
+					//bool firstModel=false;
+					//ItemDispidInfo cur=null;
+					//ItemDispidInfo idi = null;
+					TileFlag flags;
+					byte weight;
+					byte quality;
+					ushort unknown;
+					byte minItemsToDisplayThisArt;
+					byte quantity;
+					ushort animID;
+					byte unknown2;
+					byte hue;
+					ushort unknown3;
+					byte height;
+
+					try {
+						while (true) {
+							mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
+							for (int tileNum = 0; tileNum < 32; tileNum++) {
+								flags = (TileFlag) mulbr.ReadUInt32();
+								weight = mulbr.ReadByte();
+								quality = mulbr.ReadByte();
+								unknown = mulbr.ReadUInt16();
+								minItemsToDisplayThisArt = mulbr.ReadByte();
+								quantity = mulbr.ReadByte();
+								animID = mulbr.ReadUInt16();
+								unknown2 = mulbr.ReadByte();
+								hue = mulbr.ReadByte();
+								unknown3 = mulbr.ReadUInt16();
+								height = mulbr.ReadByte();
+								tileNameS = Utility.GetCAsciiString(mulbr, 20);
+								bytes += 20 + tileNameS.Length * 2;
+								/*idi = */
+								new ItemDispidInfo(flags, weight, quality, unknown, minItemsToDisplayThisArt, quantity, animID, unknown2, hue, unknown3, height, tileNameS);
+								/* Kemoc - not used for anything
+								if (idi==null || multipleModels==false || idi.unknown<=lastAmount || (!(HasFlag(idi.flags,TileFlag.stackable)))) {
+									if (HasFlag(idi.flags,TileFlag.stackable)) {
+										multipleModels=true;
+										firstModel=true;
+										cur=idi;
+									} else {
+										multipleModels=false;
+									}
+								}
+								if (HasFlag(idi.flags,TileFlag.stackable)) {
+									lastAmount=idi.unknown;
+									//string aname = "Unnamed";
+									//if (idi.name.Length>0) {
+									//	aname=idi.name;
+									//}
+									//int amt=idi.unknown;
+									//if (firstModel) {
+									//	amt=1;
+									//}
+									//scr.WriteLine("stackmodel="+amt+":0x"+a.ToString("x")+":"+name);
+									//firstModel=false;
+									//dunno what does the firstModel and aname variable mean, but they wasn't used... maybe the values should be set back to the info instance somehow...?
+								}
+								*/
+								//dispIDNum++;	// Kemoc - not used
+							}
+						}
+					} catch (EndOfStreamException) {
+					}
+					long kilobytes = bytes / 1024;
+					long megabytes = bytes / (1024 * 1024);
+					Console.WriteLine("Finished loading tiledata.mul, item dispid info takes about " + LogStr.Number(bytes) + " bytes or " + LogStr.Number(kilobytes) + " KB or " + LogStr.Number(megabytes) + " MB (of RAM).");
 				}
-				long kilobytes = bytes / 1024;
-				long megabytes = bytes / (1024 * 1024);
-				Console.WriteLine("Finished loading tiledata.mul, item dispid info takes about " + LogStr.Number(bytes) + " bytes or " + LogStr.Number(kilobytes) + " KB or " + LogStr.Number(megabytes) + " MB (of RAM).");
-				mulbr.Close();
 			} else {
 				Logger.WriteCritical("Unable to locate tiledata.mul. We're gonna crash soon ;)");
 			}

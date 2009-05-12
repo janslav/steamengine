@@ -28,7 +28,8 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	internal class InterpreterException : SEException {
-		private bool hasTrace = false;
+		private bool hasTrace;
+
 		internal InterpreterException(string s) : base(s) { }
 		internal InterpreterException(LogStr s) : base(s) { }
 

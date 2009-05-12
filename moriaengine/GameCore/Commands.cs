@@ -186,7 +186,7 @@ namespace SteamEngine {
 					LScriptHolder scriptHolder;
 					if (!gmCommandsCache.TryGetValue(codeAsKey, out scriptHolder)) {
 						try {
-							scriptHolder = LScript.LScript.GetNewSnippetRunner("<command>", 0, self, code);
+							scriptHolder = LScript.LScriptMain.GetNewSnippetRunner("<command>", 0, code);
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
@@ -222,7 +222,7 @@ namespace SteamEngine {
 		}
 
 		private static SteamEngine.Networking.OnTargon xCommand_Targon = XCommandTargon;
-		private static SteamEngine.Networking.OnTargon_Cancel xCommand_Cancel = XCommandCancel;
+		private static SteamEngine.Networking.OnTargonCancel xCommand_Cancel = XCommandCancel;
 
 		public static void XCommandCancel(GameState state, object parameter) {
 			//?

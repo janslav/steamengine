@@ -24,6 +24,7 @@ namespace SteamEngine.LScript {
 		 * <exception cref='ParseException'>if the node analysis
 		 * discovered errors</exception>
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		public override void Enter(Node node) {
 			switch (node.GetId()) {
 				case (int) StrictConstants.IF:
@@ -415,6 +416,7 @@ namespace SteamEngine.LScript {
 		 * <exception cref='ParseException'>if the node analysis
 		 * discovered errors</exception>
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		public override Node Exit(Node node) {
 			switch (node.GetId()) {
 				case (int) StrictConstants.IF:
@@ -681,6 +683,7 @@ namespace SteamEngine.LScript {
 		 * <exception cref='ParseException'>if the node analysis
 		 * discovered errors</exception>
 		 */
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		public override void Child(Production node, Node child) {
 			switch (node.GetId()) {
 				case (int) StrictConstants.SCRIPT:

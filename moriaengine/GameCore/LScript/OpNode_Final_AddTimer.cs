@@ -24,7 +24,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_AddTriggerTimer : OpNode_Lazy_AddTimer {
+	internal class OpNode_AddTriggerTimer : OpNode_Lazy_AddTimer {
 		private readonly TriggerKey triggerKey;
 
 		internal OpNode_AddTriggerTimer(IOpNodeHolder parent, string filename,
@@ -55,7 +55,7 @@ namespace SteamEngine.LScript {
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding TriggerTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -75,7 +75,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_AddMethodTimer : OpNode, ITriable, IOpNodeHolder {
+	internal class OpNode_AddMethodTimer : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		internal readonly MethodInfo method;
 		private OpNode secondsNode;
@@ -113,7 +113,7 @@ namespace SteamEngine.LScript {
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -134,7 +134,7 @@ namespace SteamEngine.LScript {
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -167,7 +167,7 @@ namespace SteamEngine.LScript {
 
 	//"string" version... concatenates all it's arguments into one string.
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_AddMethodTimer_String : OpNode, ITriable, IOpNodeHolder {
+	internal class OpNode_AddMethodTimer_String : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		internal readonly MethodInfo method;
 		private OpNode secondsNode;
@@ -209,7 +209,7 @@ namespace SteamEngine.LScript {
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -232,7 +232,7 @@ namespace SteamEngine.LScript {
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -264,7 +264,7 @@ namespace SteamEngine.LScript {
 
 	//"params" version: to handle methods with params argument
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_AddMethodTimer_Params : OpNode, ITriable, IOpNodeHolder {
+	internal class OpNode_AddMethodTimer_Params : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		internal readonly MethodInfo method;
 		private OpNode secondsNode;
@@ -311,7 +311,7 @@ namespace SteamEngine.LScript {
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -342,7 +342,7 @@ namespace SteamEngine.LScript {
 				return timer;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding MethodTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -375,7 +375,7 @@ namespace SteamEngine.LScript {
 
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class OpNode_AddFunctionTimer : OpNode, ITriable, IOpNodeHolder {
+	internal class OpNode_AddFunctionTimer : OpNode, ITriable, IOpNodeHolder {
 		private readonly TimerKey timerKey;
 		private readonly ScriptHolder function;
 		private OpNode secondsNode;
@@ -419,7 +419,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding FunctionTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -444,7 +444,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while adding FunctionTimer",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 

@@ -384,8 +384,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			TreasureChest treasure = (TreasureChest) gi.Focus;
 			Player p = gi.Cont as Player;
-			int button = gr.pressedButton;
-			switch (gr.pressedButton) {
+			int button = gr.PressedButton;
+			switch (gr.PressedButton) {
 				case 0:	// cancel
 					p.SysMessage("Nastaveni zustava nezmeneno.");
 					return;
@@ -507,7 +507,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			Player p = gi.Cont as Player;
 			TreasureChest treasure = (TreasureChest) gi.Focus;
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case 0:	//exit
 					p.SysMessage("Nastavení nezmìnìno.");
 					break;
@@ -516,8 +516,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					string thisDef;
 					ItemDef thisItem;
 					int ignore = -1;					// variable ignore has assigned a safe value, which garantees that all values will be modified
-					if (gr.pressedButton > 2) {	// not OK or add button - i.e. removing button
-						ignore = Convert.ToInt32(gr.pressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
+					if (gr.PressedButton > 2) {	// not OK or add button - i.e. removing button
+						ignore = Convert.ToInt32(gr.PressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
 					}
 					for (int i = 0; i < treasure.TreasureItems.Count; i++) {
 						if (i != ignore) {
@@ -540,12 +540,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							}
 						}
 					}
-					if (gr.pressedButton > 2) { // not OK or add button
-						treasure.RemoveTreasureItem(Convert.ToInt32(gr.pressedButton) - 10);	//Gets the value correspondent to the position of an item in the List of treasureItems
+					if (gr.PressedButton > 2) { // not OK or add button
+						treasure.RemoveTreasureItem(Convert.ToInt32(gr.PressedButton) - 10);	//Gets the value correspondent to the position of an item in the List of treasureItems
 						treasure.Dialog(p, this);
 						return;
 					}
-					if (gr.pressedButton == 2) { //add
+					if (gr.PressedButton == 2) { //add
 						p.SysMessage("Pøidán defaultní item.");
 						treasure.AddTreasureItem(treasure.DefaultTreasureItem, 1, 100, 0);
 						treasure.Dialog(p, this);
@@ -608,7 +608,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			Player p = gi.Cont as Player;
 			TreasureChest treasure = (TreasureChest) gi.Focus;
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case 0:	//Cancel
 					p.SysMessage("Nastavení nezmìnìno.");
 					break;
@@ -617,8 +617,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					string thisDef;
 					CharacterDef thisChar;
 					int ignore = -1;					// a safe value was assigned to the variable ignore, which garantees that all values will be modified
-					if (gr.pressedButton > 2) {	// not OK or Add button - i.e. removing button
-						ignore = Convert.ToInt32(gr.pressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
+					if (gr.PressedButton > 2) {	// not OK or Add button - i.e. removing button
+						ignore = Convert.ToInt32(gr.PressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
 					}
 					for (int i = 0; i < treasure.TreasureSpawns.Count; i++) {
 						if (i != ignore) {
@@ -635,12 +635,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							}
 						}
 					}
-					if (gr.pressedButton > 2) { // not OK or Add button
-						treasure.RemoveTreasureSpawn(Convert.ToInt32(gr.pressedButton) - 10);	//Gets the value correspondent to the position of an item in the List of treasureItems
+					if (gr.PressedButton > 2) { // not OK or Add button
+						treasure.RemoveTreasureSpawn(Convert.ToInt32(gr.PressedButton) - 10);	//Gets the value correspondent to the position of an item in the List of treasureItems
 						treasure.Dialog(p, this);
 						return;
 					}
-					if (gr.pressedButton == 2) { // pressed Add button
+					if (gr.PressedButton == 2) { // pressed Add button
 						p.SysMessage("Pøidán defaultní spawn.");
 						treasure.AddTreasureSpawn((CharacterDef) CharacterDef.Get("c_ostard_zostrich"), 1);
 						treasure.Dialog(p, this);

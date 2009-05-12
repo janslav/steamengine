@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			IDataFieldView view = (IDataFieldView) args[0];//view
 			object target = args[1];//target of info dialog
 
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case 0: //exit
 					DialogStacking.ShowPreviousDialog(gi); //zobrazit predchozi infodialog
 					break;

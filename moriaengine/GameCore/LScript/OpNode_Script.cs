@@ -14,15 +14,15 @@ namespace SteamEngine.LScript {
 	using SteamEngine.Common;
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Script : OpNode, IOpNodeHolder {
+	internal class OpNode_Script : OpNode, IOpNodeHolder {
 		private OpNode[] blocks;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			string filename = "<unknown>";//the name should in fact be irrelevant cos this node should never tthrow any exception by its nature
 			if (parent != null) {
-				filename = LScript.GetParentScriptHolder(parent).filename;
+				filename = LScriptMain.GetParentScriptHolder(parent).filename;
 			}
 
 			OpNode_Script constructed = new OpNode_Script(
@@ -32,7 +32,7 @@ namespace SteamEngine.LScript {
 			for (int i = 0, n = code.GetChildCount(); i < n; i++) {
 				Node block = code.GetChildAt(i);
 				if (block.GetId() != (int) StrictConstants.COMEOL) {
-					blocksList.Add(LScript.CompileNode(constructed, block, true));
+					blocksList.Add(LScriptMain.CompileNode(constructed, block, true));
 				}
 			}
 
@@ -77,23 +77,23 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Object : OpNode, IKnownRetType {
+	internal class OpNode_Object : OpNode, IKnownRetType {
 		internal object obj;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Object constructed = new OpNode_Object(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 			//Console.WriteLine("OpNode_Object: getting string "+LScript.GetString(code));
-			constructed.obj = LScript.GetString(code);
+			constructed.obj = LScriptMain.GetString(code);
 			return constructed;
 		}
 
 		internal static OpNode Construct(IOpNodeHolder parent, object obj) {
 			string filename = "<unknown>";//the name should in fact be irrelevant cos this node should never tthrow any exception by its nature
 			if (parent != null) {
-				filename = LScript.GetParentScriptHolder(parent).filename;
+				filename = LScriptMain.GetParentScriptHolder(parent).filename;
 			}
 			OpNode_Object constructed = new OpNode_Object(
 				parent, filename, -1, -1, null);
@@ -129,16 +129,16 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_ToString : OpNode, IOpNodeHolder, IKnownRetType {
+	internal class OpNode_ToString : OpNode, IOpNodeHolder, IKnownRetType {
 		private OpNode node;
 
 		internal static OpNode_ToString Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_ToString constructed = new OpNode_ToString(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
-			constructed.node = LScript.CompileNode(constructed, code);
+			constructed.node = LScriptMain.CompileNode(constructed, code);
 			return constructed;
 		}
 
@@ -176,7 +176,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_This : OpNode {
+	internal class OpNode_This : OpNode {
 		internal OpNode_This(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 
@@ -192,7 +192,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Constant : OpNode {
+	internal class OpNode_Constant : OpNode {
 		private Constant con;
 		internal OpNode_Constant(IOpNodeHolder parent, string filename, int line, int column, Node origNode, Constant con)
 			: base(parent, filename, line, column, origNode) {
@@ -206,7 +206,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while getting value of Constant '" + con.Name + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 

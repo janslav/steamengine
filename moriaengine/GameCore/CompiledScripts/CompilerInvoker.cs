@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		internal static uint compilenumber = 0;
+		internal static uint compilenumber;
 
 		internal static bool CompileScripts(bool firstCompiling) {
 			using (StopWatch.StartAndDisplay("Compiling...")) {
@@ -123,23 +123,6 @@ namespace SteamEngine.CompiledScripts {
 					Logger.StaticWriteLine(o);
 				}
 				//Console.WriteLine(pMessage);
-			}
-		}
-
-		internal static void InitScripts() {
-			if (compiledScripts != null) {
-				Logger.WriteDebug("Initializing Scripts.");
-				Assembly scripts = compiledScripts.assembly;
-				if (scripts != null) {
-					Type[] types = scripts.GetTypes();
-					for (int i = 0; i < types.Length; i++) {
-						MethodInfo m = types[i].GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
-						if (m != null) {
-							m.Invoke(null, null);
-						}
-					}
-				}
-				Logger.WriteDebug("Initializing Scripts done.");
 			}
 		}
 	}

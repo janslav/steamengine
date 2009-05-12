@@ -259,16 +259,16 @@ namespace SteamEngine {
 				this.implementation = new NormalConstant(retVal);
 			} else {
 				string statement = string.Concat("return ", value);
-				retVal = SteamEngine.LScript.LScript.TryRunSnippet(
+				retVal = SteamEngine.LScript.LScriptMain.TryRunSnippet(
 					this.filename, this.line, Globals.Instance, statement);
-				if (!SteamEngine.LScript.LScript.LastSnippetSuccess) {
+				if (!SteamEngine.LScript.LScriptMain.LastSnippetSuccess) {
 					this.unloaded = true;
 					Logger.WriteWarning(this.filename, this.line, "No value was set on this (" + this + "): It is now unloaded!");
 				} else {
 					this.unloaded = false;
-					if (SteamEngine.LScript.LScript.snippetRunner.ContainsRandomExpression) {
-						this.implementation = new LScriptHolderConstant(SteamEngine.LScript.LScript.snippetRunner);
-						SteamEngine.LScript.LScript.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
+					if (SteamEngine.LScript.LScriptMain.snippetRunner.ContainsRandomExpression) {
+						this.implementation = new LScriptHolderConstant(SteamEngine.LScript.LScriptMain.snippetRunner);
+						SteamEngine.LScript.LScriptMain.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
 					} else {
 						this.implementation = new NormalConstant(retVal);
 					}

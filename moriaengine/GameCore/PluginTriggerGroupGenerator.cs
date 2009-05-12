@@ -27,6 +27,7 @@ namespace SteamEngine.CompiledScripts {
 	internal sealed class PluginTriggerGroupGenerator : ISteamCSCodeGenerator {
 		static List<Type> pluginTGs = new List<Type>();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<Plugin>(AddPluginTGType);
 		}

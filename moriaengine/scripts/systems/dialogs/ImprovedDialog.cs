@@ -319,7 +319,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//dialog construct method!)
 			DialogArgs args = gi.InputArgs;//arguments of the dialog			
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case ID_PREV_BUTTON:
 					args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) - (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(gi);

@@ -55,6 +55,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		static bool TrySave() {
 			string path = Globals.SavePath;
 
@@ -125,6 +126,7 @@ namespace SteamEngine.Persistence {
 
 		private static SaveStream globalsSaver;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		static void CloseSaveStreams() {
 			try {
 				globalsSaver.Close();
@@ -142,6 +144,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static bool TryLoad() {
 			Timer.StartingLoading();
 			ObjectSaver.StartingLoading();
@@ -270,10 +273,13 @@ namespace SteamEngine.Persistence {
 
 		private static TextReader globalsLoader;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		static void CloseLoadStreams() {
 			try {
 				globalsLoader.Close();
-			} catch { }
+			} catch (Exception e) {
+				Logger.WriteDebug(e);
+			}
 		}
 	}
 }

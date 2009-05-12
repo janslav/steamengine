@@ -389,10 +389,6 @@
       <Link>LScript\LocalVarKey.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\GameCore\LScript\LScript.cs">
-      <Link>LScript\LScript.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\GameCore\LScript\LScriptAnalyzer.cs">
       <Link>LScript\LScriptAnalyzer.cs</Link>
       <SubType>Code</SubType>
@@ -400,6 +396,9 @@
     <Compile Include="..\..\GameCore\LScript\LScriptHolder.cs">
       <Link>LScript\LScriptHolder.cs</Link>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\GameCore\LScript\LScriptMain.cs">
+      <Link>LScript\LScriptMain.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\LScript\LScriptParser.cs">
       <Link>LScript\LScriptParser.cs</Link>
@@ -428,6 +427,9 @@
     <Compile Include="..\..\GameCore\LScript\OpNode_Final_Arguments.cs">
       <Link>LScript\OpNode_Final_Arguments.cs</Link>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\..\GameCore\LScript\OpNode_Final_Array.cs">
+      <Link>LScript\OpNode_Final_Array.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\LScript\OpNode_Final_ArrayListIndexer.cs">
       <Link>LScript\OpNode_Final_ArrayListIndexer.cs</Link>

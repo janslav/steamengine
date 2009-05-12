@@ -25,32 +25,34 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public abstract class CompiledScriptHolder : ScriptHolder {
-		protected string desc;
+		private string desc;
 
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclassInstances<CompiledScriptHolder>(null, false, false);
 		}
 
-		protected CompiledScriptHolder()
-			: base() {
+		//protected CompiledScriptHolder()
+		//    : base() {
 
-		}
+		//}
 
-		protected CompiledScriptHolder(string name)
+		protected CompiledScriptHolder(string name, string description)
 			: base(name) {
 
+			this.desc = description;
 		}
 
 		[Summary("Description provided in any SteamDocAttribute on the SteamFunction")]
 		public override string Description {
 			get {
-				return desc;
+				return this.desc;
+				//return Tools.TypeToString(this.GetType());
 			}
 		}
 	}
 
 	[AttributeUsage(AttributeTargets.Method)]
-	public class SteamFunctionAttribute : Attribute {
+	public sealed class SteamFunctionAttribute : Attribute {
 		private readonly string newFunctionName;
 
 		public SteamFunctionAttribute() {
@@ -237,13 +239,10 @@ namespace SteamEngine.CompiledScripts {
 				CodeConstructor retVal = new CodeConstructor();
 				retVal.Attributes = MemberAttributes.Public;
 				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(name));
+				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(desc));
 
 				retVal.Statements.Add(new CodeMethodInvokeExpression(
 					new CodeBaseReferenceExpression(), "RegisterAsFunction"));
-
-				//initialize the desc. field
-				retVal.Statements.Add(new CodeAssignStatement(
-					new CodeVariableReferenceExpression("desc"), new CodePrimitiveExpression(desc)));
 				return retVal;
 			}
 
@@ -267,10 +266,10 @@ namespace SteamEngine.CompiledScripts {
 				return retVal;
 			}
 
-			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s = ((string) filterCriteria).ToLower(System.Globalization.CultureInfo.InvariantCulture);
-				return m.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith(s);
-			}
+			//private static bool StartsWithString(MemberInfo m, object filterCriteria) {
+			//    string s = ((string) filterCriteria).ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			//    return m.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith(s);
+			//}
 		}
 	}
 

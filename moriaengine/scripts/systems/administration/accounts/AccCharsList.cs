@@ -84,15 +84,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			AbstractAccount acc = (AbstractAccount) args.GetTag(D_Acc_Characters.accountTK);
 
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 				}
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
-				int row = (int) (gr.pressedButton - 10);
+				int row = (int) (gr.PressedButton - 10);
 				Character oneChar = (Character) acc.Characters[row];
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
 				//ulozime dialog pro navrat

@@ -102,8 +102,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<AbilityDef> abList = (List<AbilityDef>) args.GetTag(D_AbilitiesList.listTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				//zjistime si radek
-				int row = ((int) gr.pressedButton - 10);
+				int row = ((int) gr.PressedButton - 10);
 				AbilityDef ad = abList[row];
 				//a zobrazime info dialog
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ad));

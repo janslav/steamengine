@@ -33,9 +33,9 @@ namespace SteamEngine.LScript {
 		private const int VAR = 2;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node origNode) {
-			int line = origNode.GetStartLine() + LScript.startLine;
+			int line = origNode.GetStartLine() + LScriptMain.startLine;
 			int column = origNode.GetStartColumn();
-			string filename = LScript.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
 
 			//LScript.DisplayTree(origNode);
 			int type = ResolveTokenType(origNode.GetChildAt(0));
@@ -44,7 +44,7 @@ namespace SteamEngine.LScript {
 			OpNode_Lazy_Indexer lastIndex = null;
 			while (OpNode.IsType(origNode.GetChildAt(current), StrictConstants.INDEXER)) {
 				Production indexprod = (Production) origNode.GetChildAt(current);
-				OpNode index = LScript.CompileNode(parent, indexprod.GetChildAt(1));
+				OpNode index = LScriptMain.CompileNode(parent, indexprod.GetChildAt(1));
 				lastIndex = OpNode_Lazy_Indexer.Construct(parent, indexprod.GetChildAt(1), index, null);
 				indicesList.Add(lastIndex);
 				current++;
@@ -54,17 +54,17 @@ namespace SteamEngine.LScript {
 			if (lastIndex == null) {
 				argNode = origNode.GetChildAt(current);
 			} else if (origNode.GetChildAt(current) != null) {
-				lastIndex.arg = LScript.CompileNode(lastIndex, origNode.GetChildAt(current));
+				lastIndex.arg = LScriptMain.CompileNode(lastIndex, origNode.GetChildAt(current));
 			}
 
-			string name = LScript.GetString(origNode.GetChildAt(2));
+			string name = LScriptMain.GetString(origNode.GetChildAt(2));
 			if (StringComparer.OrdinalIgnoreCase.Equals(name, "remove")) {
 				if (indicesList.Count != 0) {
 					throw new InterpreterException("Remove in this context means removing of a single value, thus indexing is invalid.",
-						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 				}
 				if (OpNode.IsType(argNode, StrictConstants.STRING)) {
-					name = LScript.GetString(argNode);
+					name = LScriptMain.GetString(argNode);
 					switch (type) {
 						case TAG:
 							return new OpNode_RemoveTag(parent, filename, line, column, origNode, name);
@@ -76,15 +76,15 @@ namespace SteamEngine.LScript {
 					throw new FatalException("this will never happen");
 				} else {
 					throw new InterpreterException("Invalid/missing token specifying the name of the value to remove",
-						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 				}
 			} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "exists")) {
 				if (indicesList.Count != 0) {
 					throw new InterpreterException("Exists in this context means finding out if given value exists, thus indexing is invalid.",
-						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 				}
 				if (OpNode.IsType(argNode, StrictConstants.STRING)) {
-					name = LScript.GetString(argNode);
+					name = LScriptMain.GetString(argNode);
 					switch (type) {
 						case TAG:
 							return new OpNode_TagExists(parent, filename, line, column, origNode, name);
@@ -96,14 +96,14 @@ namespace SteamEngine.LScript {
 					throw new FatalException("this will never happen");
 				} else {
 					throw new InterpreterException("Invalid/missing token specifying the name of the value to examine",
-						line, column, filename, LScript.GetParentScriptHolder(parent).GetDecoratedName());
+						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 				}
 			} else {
 				if (indicesList.Count == 0) {
 					if (argNode == null) {
 						return ConstructGetNode(type, parent, line, column, origNode, name);
 					} else {
-						OpNode arg = LScript.CompileNode(parent, argNode);
+						OpNode arg = LScriptMain.CompileNode(parent, argNode);
 						switch (type) {
 							case TAG:
 								OpNode_SetTag setTagNode = new OpNode_SetTag(parent, filename, line, column, origNode, name, arg);
@@ -140,7 +140,7 @@ namespace SteamEngine.LScript {
 		}
 
 		private static OpNode ConstructGetNode(int type, IOpNodeHolder parent, int line, int column, Node origNode, string name) {
-			string filename = LScript.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
 			switch (type) {
 				case TAG:
 					return new OpNode_GetTag(parent, filename, line, column, origNode, name);

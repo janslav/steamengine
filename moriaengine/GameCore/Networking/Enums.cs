@@ -25,12 +25,6 @@ using System.IO;
 using System.Net;
 
 namespace SteamEngine.Networking {
-	public enum LoginAttemptResult {
-		Failed_NoSuchAccount,
-		Failed_BadPassword,
-		Failed_Blocked,
-		Failed_AlreadyOnline,
-		Success
-	}
+
 
 }

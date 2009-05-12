@@ -100,8 +100,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<ScriptHolder> fList = (List<ScriptHolder>) args.GetTag(D_Functions.listTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, fList.Count);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
 						break;
@@ -126,7 +126,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, fList.Count, 1)) {//posledni 1 - pocet sloupecku v dialogu				
 				return;
 			} else {
-				int row = ((int) gr.pressedButton - 10);//zjistime si radek
+				int row = ((int) gr.PressedButton - 10);//zjistime si radek
 				ScriptHolder sh = fList[row];
 				//a zobrazime info dialog
 				Gump newGi = D_Display_Text.ShowInfo(sh.Description + ""); //nezobrazovat "null", jen prazdno evt...

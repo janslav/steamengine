@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 	public abstract class AbstractTargetDef : AbstractDef {
 
 		Networking.OnTargon targon;
-		Networking.OnTargon_Cancel targonCancel;
+		Networking.OnTargonCancel targonCancel;
 
 		internal AbstractTargetDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {

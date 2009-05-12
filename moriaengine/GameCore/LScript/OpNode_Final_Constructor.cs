@@ -28,7 +28,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_ConstructorWrapper : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
+	internal class OpNode_ConstructorWrapper : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly OpNode[] args;
 
@@ -48,6 +48,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -69,10 +70,11 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				return ctor.Invoke(results);
@@ -83,7 +85,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -104,7 +106,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_ConstructorWrapper_Params : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
+	internal class OpNode_ConstructorWrapper_Params : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly OpNode[] normalArgs;
 		private readonly OpNode[] paramArgs;
@@ -133,6 +135,7 @@ namespace SteamEngine.LScript {
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -160,10 +163,11 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			int normalArgsLength = this.normalArgs.Length;
 			object[] modifiedResults = new object[normalArgsLength + 1];
@@ -183,7 +187,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -205,7 +209,7 @@ namespace SteamEngine.LScript {
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_ConstructorWrapper_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
+	internal class OpNode_ConstructorWrapper_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly string formatString;
 		private readonly OpNode[] args;
@@ -227,6 +231,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -250,10 +255,11 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
@@ -266,7 +272,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 

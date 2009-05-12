@@ -28,7 +28,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Lazy_RandomExpression : OpNode, IOpNodeHolder {
+	internal class OpNode_Lazy_RandomExpression : OpNode, IOpNodeHolder {
 		bool isSimple;//if true, this is just a random number from a range, i.e. {a b}
 		//otherwise, it is a set of odds-value pairs {ao av bo bv ... }
 
@@ -42,10 +42,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_RandomExpression constructed = new OpNode_Lazy_RandomExpression(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
@@ -57,15 +57,15 @@ namespace SteamEngine.LScript {
 			if (expressions == 2) {
 				constructed.isSimple = true;
 				constructed.values = new OpNode[2];
-				constructed.values[0] = LScript.CompileNode(constructed, code.GetChildAt(1));
-				constructed.values[1] = LScript.CompileNode(constructed, code.GetChildAt(3));
+				constructed.values[0] = LScriptMain.CompileNode(constructed, code.GetChildAt(1));
+				constructed.values[1] = LScriptMain.CompileNode(constructed, code.GetChildAt(3));
 			} else { // {value odds value odds value odds ... }
 				expressions /= 2;
 				constructed.odds = new OpNode[expressions];
 				constructed.values = new OpNode[expressions];
 				for (int i = 0; i < expressions; i++) {
-					constructed.values[i] = LScript.CompileNode(constructed, code.GetChildAt(1 + i * 4));
-					constructed.odds[i] = LScript.CompileNode(constructed, code.GetChildAt(3 + i * 4));
+					constructed.values[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(1 + i * 4));
+					constructed.odds[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(3 + i * 4));
 				}
 				constructed.isSimple = false;
 			}
@@ -102,17 +102,17 @@ namespace SteamEngine.LScript {
 					}
 					if ((values[0] is OpNode_Object) && (values[1] is OpNode_Object)) {
 						if (rVal == lVal) { //no randomness at all... we create an OpNode_Object
-							ReplaceSelf(values[0]);
+							this.ReplaceSelf(values[0]);
 							return rVal;
 						}
-						OpNode newNode = new OpNode_Final_RandomExpression_Simple_Constant(parent, filename,
-							line, column, origNode, min, max + 1);
-						ReplaceSelf(newNode);
+						OpNode newNode = new OpNode_Final_RandomExpression_Simple_Constant(this.parent, this.filename,
+							this.line, this.column, this.OrigNode, min, max + 1);
+						this.ReplaceSelf(newNode);
 						return newNode.Run(vars);
 					} else {
-						OpNode newNode = new OpNode_Final_RandomExpression_Simple_Variable(parent, filename,
-							line, column, origNode, values[0], values[1]);
-						ReplaceSelf(newNode);
+						OpNode newNode = new OpNode_Final_RandomExpression_Simple_Variable(this.parent, this.filename,
+							this.line, this.column, this.OrigNode, values[0], values[1]);
+						this.ReplaceSelf(newNode);
 						return Globals.dice.Next(min, max + 1);
 					}
 				} else {
@@ -129,14 +129,14 @@ namespace SteamEngine.LScript {
 						}
 					}
 					if (areConstant) {
-						OpNode newNode = new OpNode_Final_RandomExpression_Constant(parent, filename,
-							line, column, origNode, pairs, totalOdds);
-						ReplaceSelf(newNode);
+						OpNode newNode = new OpNode_Final_RandomExpression_Constant(this.parent, this.filename,
+							this.line, this.column, this.OrigNode, pairs, totalOdds);
+						this.ReplaceSelf(newNode);
 						return newNode.Run(vars);
 					} else {
-						OpNode newNode = new OpNode_Final_RandomExpression_Variable(parent, filename,
-							line, column, origNode, pairs, odds);
-						ReplaceSelf(newNode);
+						OpNode newNode = new OpNode_Final_RandomExpression_Variable(this.parent, this.filename,
+							this.line, this.column, this.OrigNode, pairs, odds);
+						this.ReplaceSelf(newNode);
 						return ((OpNode) GetRandomValue(pairs, totalOdds)).Run(vars);
 						//no TryRun or such... too lazy I am :)
 					}
@@ -147,7 +147,7 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating random expression",
-					this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName(), e);
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
@@ -177,14 +177,28 @@ namespace SteamEngine.LScript {
 	}
 
 	public class ValueOddsPair {
-		private object value;
+		private object val;
 		private int odds;
 
-		public object Value { get { return this.value; } set { this.value = value; } }
-		public int Odds { get { return odds; } set { this.odds = value; } }
+		public object Value {
+			get {
+				return this.val;
+			}
+			set {
+				this.val = value;
+			}
+		}
+		public int Odds {
+			get {
+				return odds;
+			}
+			set {
+				this.odds = value;
+			}
+		}
 
 		public ValueOddsPair(object value, int odds) {
-			this.value = value;
+			this.val = value;
 			this.odds = odds;
 		}
 
@@ -193,20 +207,20 @@ namespace SteamEngine.LScript {
 			return odds;
 		}
 
-		public bool RolledSuccess(int odds) {
-			return odds < this.odds;
+		public bool RolledSuccess(int oddsToCompare) {
+			return oddsToCompare < this.odds;
 		}
 
 		public override string ToString() {
-			if (value != null) {
-				return (value + " " + odds);
+			if (val != null) {
+				return (val + " " + odds);
 			} else {
 				return "null";
 			}
 		}
 		public LogStr ToLogStr() {
-			if (value != null) {
-				return LogStr.Raw(value) + " " + LogStr.Number(odds);
+			if (val != null) {
+				return LogStr.Raw(val) + " " + LogStr.Number(odds);
 			} else {
 				return (LogStr) "null";
 			}

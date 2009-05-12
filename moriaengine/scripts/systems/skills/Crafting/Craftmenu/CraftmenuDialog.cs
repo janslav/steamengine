@@ -176,7 +176,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			CraftmenuCategory cat = (CraftmenuCategory)args[0];
-			int btnNo = (int)gr.pressedButton;
+			int btnNo = (int)gr.PressedButton;
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
 				switch (btnNo) {
@@ -339,7 +339,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			Gump newGi = null;
-			switch (gr.pressedButton) {
+			switch (gr.PressedButton) {
 				case 0://exit
 					DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 					break;

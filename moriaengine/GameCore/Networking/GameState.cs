@@ -28,7 +28,7 @@ using SteamEngine.Regions;
 namespace SteamEngine.Networking {
 
 	public delegate void OnTargon(GameState state, IPoint3D getback, object parameter);
-	public delegate void OnTargon_Cancel(GameState state, object parameter);
+	public delegate void OnTargonCancel(GameState state, object parameter);
 
 	public class GameState : Poolable, IConnectionState<TcpConnection<GameState>, GameState, IPEndPoint> {
 
@@ -49,10 +49,10 @@ namespace SteamEngine.Networking {
 
 		private ClientVersion clientVersion = ClientVersion.nullValue;
 
-		private bool allShow = false;
+		private bool allShow;
 
 		private OnTargon targonDeleg;
-		private OnTargon_Cancel targonCancelDeleg;
+		private OnTargonCancel targonCancelDeleg;
 		private object targonParameters;
 
 		internal readonly MovementState movementState;
@@ -116,6 +116,7 @@ namespace SteamEngine.Networking {
 			internal set { lastSpellMacroId = value; }
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
 		public void On_Init(TcpConnection<GameState> conn) {
 			GameServer.On_ClientInit(this);
 
@@ -266,8 +267,8 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		internal void InternalSetClientVersion(ClientVersion clientVersion) {
-			this.clientVersion = clientVersion;
+		internal void InternalSetClientVersion(ClientVersion value) {
+			this.clientVersion = value;
 		}
 
 		public int Uid {
@@ -341,14 +342,16 @@ namespace SteamEngine.Networking {
 			this.VisionRange += amount;
 		}
 
-		public void Target(bool ground, OnTargon targonDeleg, OnTargon_Cancel targonCancelDeleg, object targonParameters) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
+		public void Target(bool ground, OnTargon targonDeleg, OnTargonCancel targonCancelDeleg, object targonParameters) {
 			this.targonDeleg = targonDeleg;
 			this.targonCancelDeleg = targonCancelDeleg;
 			this.targonParameters = targonParameters;
 			PreparedPacketGroups.SendTargettingCursor(this.conn, ground);
 		}
 
-		public void TargetForMultis(int model, OnTargon targonDeleg, OnTargon_Cancel targonCancelDeleg, object targonParameters) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
+		public void TargetForMultis(int model, OnTargon targonDeleg, OnTargonCancel targonCancelDeleg, object targonParameters) {
 			this.targonDeleg = targonDeleg;
 			this.targonCancelDeleg = targonCancelDeleg;
 			this.targonParameters = targonParameters;
@@ -379,18 +382,18 @@ namespace SteamEngine.Networking {
 			PacketSequences.SendSystemMessage(this.conn, msg, -1);
 		}
 
-		internal void HandleTarget(bool targGround, uint uid, ushort x, ushort y, sbyte z, ushort model) {
-			Logger.WriteDebug("HandleTarget: TG=" + targGround + " uid=" + uid + " x=" + x + " y=" + y + " z=" + z + " dispId=" + model);
+		internal void HandleTarget(bool targGround, uint targetUid, ushort x, ushort y, sbyte z, ushort model) {
+			Logger.WriteDebug("HandleTarget: TG=" + targGround + " uid=" + targetUid + " x=" + x + " y=" + y + " z=" + z + " dispId=" + model);
 			//figure out what it is
 			object parameter = this.targonParameters;
 			this.targonParameters = null;
-			OnTargon_Cancel targonCancel = this.targonCancelDeleg;
+			OnTargonCancel targonCancel = this.targonCancelDeleg;
 			this.targonCancelDeleg = null;
 			OnTargon targ = this.targonDeleg;
 			this.targonDeleg = null;
 			AbstractCharacter self = this.CharacterNotNull;
 
-			if (x == 0xffff && y == 0xffff && uid == 0 && z == 0 && model == 0) {
+			if (x == 0xffff && y == 0xffff && targetUid == 0 && z == 0 && model == 0) {
 				//cancel
 				if (targonCancel != null) {
 					targonCancel(this, parameter);
@@ -399,7 +402,7 @@ namespace SteamEngine.Networking {
 			} else {
 				if (targ != null) {
 					if (!targGround) {
-						Thing thing = Thing.UidGetThing(uid);
+						Thing thing = Thing.UidGetThing(targetUid);
 						if (thing != null) {
 							if (self.CanSeeForUpdate(thing)) {
 								targ(this, thing, parameter);
@@ -454,10 +457,10 @@ namespace SteamEngine.Networking {
 			return EmptyReadOnlyGenericCollection<Gump>.instance;
 		}
 
-		internal Gump PopGump(int uid) {
+		internal Gump PopGump(int gumpInstanceUid) {
 			Gump gi;
-			if (this.gumpInstancesByUid.TryGetValue(uid, out gi)) {
-				this.gumpInstancesByUid.Remove(uid);
+			if (this.gumpInstancesByUid.TryGetValue(gumpInstanceUid, out gi)) {
+				this.gumpInstancesByUid.Remove(gumpInstanceUid);
 
 				GumpDef gd = gi.Def;
 				LinkedList<Gump> list;

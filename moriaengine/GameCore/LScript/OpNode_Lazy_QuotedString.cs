@@ -27,7 +27,7 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Lazy_QuotedString : OpNode, IOpNodeHolder, IKnownRetType {
+	internal class OpNode_Lazy_QuotedString : OpNode, IOpNodeHolder, IKnownRetType {
 		private OpNode[] evals;
 		//or OpNode_Lazy_EvalExpression (<...>) - these get later replaced, of course.
 		private object[] results;
@@ -46,24 +46,24 @@ namespace SteamEngine.LScript {
 		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, object[] nodes) {
 			//the nodes can be both OpNodes or Nodes (parser nodes), but nothing else
 			bool isConstant = true;
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_QuotedString constructed = new OpNode_Lazy_QuotedString(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			ArrayList nodesList = new ArrayList();
 			for (int i = 0, n = nodes.Length; i < n; i++) {
-				object node = nodes[i];
-				if (node is OpNode) {
-					nodesList.Add(node);
+				object nodeAsObject = nodes[i];
+				if (nodeAsObject is OpNode) {
+					nodesList.Add(nodeAsObject);
 				} else {
-					Node no = (Node) node;
-					if ((IsType(no, StrictConstants.STRONG_EVAL_EXPRESSION))
-							|| (IsType(no, StrictConstants.EVAL_EXPRESSION))) {
-						nodesList.Add(LScript.CompileNode(constructed, (Node) node));
+					Node node = (Node) nodeAsObject;
+					if ((IsType(node, StrictConstants.STRONG_EVAL_EXPRESSION))
+							|| (IsType(node, StrictConstants.EVAL_EXPRESSION))) {
+						nodesList.Add(LScriptMain.CompileNode(constructed, node));
 						isConstant = false;
 					} else {
-						nodesList.Add(node);
+						nodesList.Add(nodeAsObject);
 					}
 				}
 			}
@@ -81,7 +81,7 @@ namespace SteamEngine.LScript {
 						if (nodesList[i] is OpNode) {
 							formatBuf.Append(((OpNode) nodesList[i]).OrigString);
 						} else {
-							formatBuf.Append(LScript.GetString((Node) nodesList[i]));
+							formatBuf.Append(LScriptMain.GetString((Node) nodesList[i]));
 						}
 						i++;
 					}

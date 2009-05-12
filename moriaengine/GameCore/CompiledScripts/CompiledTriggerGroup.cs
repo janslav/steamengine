@@ -65,6 +65,7 @@ namespace SteamEngine.CompiledScripts {
 	internal sealed class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
 		static List<Type> compiledTGs = new List<Type>();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<CompiledTriggerGroup>(AddCompiledTGType);
 		}

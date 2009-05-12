@@ -38,7 +38,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveAttribute))]
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-	public class SaveableClassAttribute : Attribute {
+	public sealed class SaveableClassAttribute : Attribute {
 		private string description;
 
 		public string Description {
@@ -52,8 +52,8 @@ namespace SteamEngine.Persistence {
 		}
 
 		//constructor allowing us to specify the name of the saveableclass displayed in settings dialog
-		public SaveableClassAttribute(string desc) {
-			description = desc;
+		public SaveableClassAttribute(string description) {
+			this.description = description;
 		}
 	}
 
@@ -67,7 +67,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveAttribute))]
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
-	public class LoadingInitializerAttribute : Attribute {
+	public sealed class LoadingInitializerAttribute : Attribute {
 	}
 
 	[Summary("Use to mark the initializer that takes whole saved section as it's parameter.")]
@@ -83,7 +83,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(SaveAttribute))]
 	[SeeAlso(typeof(SaveableClassAttribute))]
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
-	public class LoadSectionAttribute : Attribute {
+	public sealed class LoadSectionAttribute : Attribute {
 		//no params
 	}
 
@@ -97,12 +97,12 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(SaveAttribute))]
 	[SeeAlso(typeof(SaveableClassAttribute))]
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-	public class SaveableDataAttribute : Attribute {
+	public sealed class SaveableDataAttribute : Attribute {
 		private string description;
 
 		public string Description {
 			get {
-				return description;
+				return this.description;
 			}
 		}
 
@@ -111,8 +111,8 @@ namespace SteamEngine.Persistence {
 		}
 
 		//constructor allowing us to specify the displayed name of the attribute
-		public SaveableDataAttribute(string desc) {
-			description = desc;
+		public SaveableDataAttribute(string description) {
+			this.description = description;
 		}
 	}
 
@@ -127,7 +127,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(SaveAttribute))]
 	[SeeAlso(typeof(SaveableClassAttribute))]
 	[AttributeUsage(AttributeTargets.Method)]
-	public class LoadLineAttribute : Attribute {
+	public sealed class LoadLineAttribute : Attribute {
 		//no params
 	}
 
@@ -148,7 +148,7 @@ namespace SteamEngine.Persistence {
 	[SeeAlso(typeof(LoadingInitializerAttribute))]
 	[SeeAlso(typeof(LoadLineAttribute))]
 	[SeeAlso(typeof(SaveableClassAttribute))]
-	public class SaveAttribute : Attribute {
+	public sealed class SaveAttribute : Attribute {
 		//no params
 	}
 
@@ -156,7 +156,7 @@ namespace SteamEngine.Persistence {
 		Type handledType;
 		string headerName;
 
-		public DecoratedClassesSaveImplementor(Type handledType, string headerName) {
+		protected DecoratedClassesSaveImplementor(Type handledType, string headerName) {
 			this.handledType = handledType;
 			this.headerName = headerName;
 		}
@@ -176,10 +176,11 @@ namespace SteamEngine.Persistence {
 		public abstract object LoadSection(PropsSection input);
 		public abstract void Save(object objToSave, SaveStream writer);
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
 		protected void LoadSectionLines(PropsSection ps, object loadedObject) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLower(), p.Value);
+					LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
@@ -188,6 +189,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
 		protected virtual void LoadLineImpl(object loadedObject, string filename, int line, string name, string value) {
 			throw new SEException("This should not happen.");
 		}
@@ -202,6 +204,7 @@ namespace SteamEngine.Persistence {
 			return false;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplyDecoratedClasses<SaveableClassAttribute>(AddDecoratedClass, false);
 		}
@@ -212,6 +215,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
@@ -249,10 +253,10 @@ namespace SteamEngine.Persistence {
 
 		private class GeneratedInstance {
 			Type decoratedClass;
-			MethodBase loadingInitializer = null;
+			MethodBase loadingInitializer;
 			List<FieldInfo> saveableDataFields = new List<FieldInfo>();
 			List<PropertyInfo> saveableDataProperties = new List<PropertyInfo>();
-			MethodBase loadSection = null;
+			MethodBase loadSection;
 			MethodInfo loadLine;
 			MethodInfo saveMethod;
 

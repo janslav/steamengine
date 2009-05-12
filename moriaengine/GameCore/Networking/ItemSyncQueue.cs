@@ -26,6 +26,7 @@ using System.Net;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public sealed class ItemSyncQueue : SyncQueue {
 		internal static ItemSyncQueue instance = new ItemSyncQueue();
 
@@ -67,9 +68,9 @@ namespace SteamEngine.Networking {
 					item.SyncFlags = SyncFlags.None;
 
 					if ((syncFlags & (SyncFlags.Resend | SyncFlags.ItemUpdate)) != SyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
-						this.UpdateItemAndProperties(item);
+						UpdateItemAndProperties(item);
 					} else if (Globals.UseAosToolTips) {//only new properties
-						this.SendItemPropertiesOnly(item);
+						SendItemPropertiesOnly(item);
 					}
 				}
 			}
@@ -94,7 +95,7 @@ namespace SteamEngine.Networking {
 			Property = 0x04 //update properties
 		}
 
-		private void SendItemPropertiesOnly(AbstractItem item) {
+		private static void SendItemPropertiesOnly(AbstractItem item) {
 			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItemProperties " + item);
 			IEnumerable<AbstractCharacter> enumerator;
 			AbstractItem contAsItem = item.Cont as AbstractItem;
@@ -124,7 +125,8 @@ namespace SteamEngine.Networking {
 		}
 
 		//oldMapPoint can be null if checkPreviousVisibility is false
-		private void UpdateItemAndProperties(AbstractItem item) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		private static void UpdateItemAndProperties(AbstractItem item) {
 			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItem " + item);
 
 			bool propertiesExist = true;

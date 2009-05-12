@@ -110,8 +110,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			StaticRegion reg = (StaticRegion) args.GetTag(D_Region_Rectangles.regionTK);
 			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -145,8 +145,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				//zjistime si radek a cudlik v nem
-				int row = ((int) gr.pressedButton - 10) / 2;
-				int buttNo = ((int) gr.pressedButton - 10) % 2;
+				int row = ((int) gr.PressedButton - 10) / 2;
+				int buttNo = ((int) gr.PressedButton - 10) % 2;
 				MutableRectangle rect = rectsList[row];
 				Gump newGi;
 				switch (buttNo) {

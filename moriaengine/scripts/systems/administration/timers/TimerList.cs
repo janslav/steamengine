@@ -114,8 +114,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//seznam timeru bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<KeyValuePair<TimerKey, BoundTimer>> timerList = (List<KeyValuePair<TimerKey, BoundTimer>>) args.GetTag(D_TimerList.timerListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			if (gr.pressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
-				switch (gr.pressedButton) {
+			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
@@ -137,8 +137,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.pressedButton - 10) / 2;
-				int buttNum = (int) (gr.pressedButton - 10) % 2;
+				int row = (int) (gr.PressedButton - 10) / 2;
+				int buttNum = (int) (gr.PressedButton - 10) % 2;
 				KeyValuePair<TimerKey, BoundTimer> de = timerList[row];
 				switch (buttNum) {
 					case 0: //smazat timer

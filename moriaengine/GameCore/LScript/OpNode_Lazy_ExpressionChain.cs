@@ -28,19 +28,15 @@ using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
-	public class OpNode_Lazy_ExpressionChain : OpNode, IOpNodeHolder {
+	internal class OpNode_Lazy_ExpressionChain : OpNode, IOpNodeHolder {
 		//accepts DottedExpressionChain
 		private OpNode[] chain; //expression1.expression2.exp....
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			return Construct(parent, code, true);
-		}
-
-		internal static OpNode Construct(IOpNodeHolder parent, Node code, bool mustEval) {
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 
 			OpNode_Is opnodeIs = null;
 
@@ -55,17 +51,17 @@ namespace SteamEngine.LScript {
 				}
 
 				Node node = code.GetChildAt(i);
-				argsList.Add(LScript.CompileNode(constructed, node, true));//mustEval always true
+				argsList.Add(LScriptMain.CompileNode(constructed, node, true));//mustEval always true
 			}
 			//in case that one of the members of the chain is also ExpressionChain (a new chain of indexers or something like that)...
 			//in fact this wont happen in 99% cases, but we want perfectness :)
 			List<OpNode> finalArgsList = new List<OpNode>();
 			for (int i = 0, n = argsList.Count; i < n; i++) {
 				OpNode node = argsList[i];
-				if (node is OpNode_Lazy_ExpressionChain) {
-					OpNode_Lazy_ExpressionChain chainNode = (OpNode_Lazy_ExpressionChain) node;
-					for (int ii = 0, nn = chainNode.chain.Length; ii < nn; ii++) {
-						finalArgsList.Add(chainNode.chain[ii]);
+				OpNode_Lazy_ExpressionChain nodeAsExpChain = node as OpNode_Lazy_ExpressionChain;
+				if (nodeAsExpChain != null) {					
+					for (int ii = 0, nn = nodeAsExpChain.chain.Length; ii < nn; ii++) {
+						finalArgsList.Add(nodeAsExpChain.chain[ii]);
 					}
 				} else {
 					finalArgsList.Add(argsList[i]);
@@ -87,10 +83,10 @@ namespace SteamEngine.LScript {
 
 		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, OpNode[] chain) {
 			//the chain was already made by Lazy_Expression - chain of indexers
-			int line = code.GetStartLine() + LScript.startLine;
+			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
-				parent, LScript.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
 			constructed.chain = chain;
 			foreach (OpNode opNode in chain) {
 				opNode.parent = constructed;
