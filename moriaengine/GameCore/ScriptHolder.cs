@@ -23,7 +23,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
-using SteamEngine.Packets;
 using SteamEngine.Common;
 using SteamEngine.LScript;
 

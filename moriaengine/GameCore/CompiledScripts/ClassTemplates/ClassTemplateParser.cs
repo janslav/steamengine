@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			codeNamespace.Imports.Add(new CodeNamespaceImport("System.Collections.Generic"));
 			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine"));
 			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Timers"));
-			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Packets"));
+			//codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Packets"));
 			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Persistence"));
 			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Common"));
 			codeCompileUnit.Namespaces.Add(codeNamespace);

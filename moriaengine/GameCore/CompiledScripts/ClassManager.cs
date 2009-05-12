@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//removes all non-core references
-		internal static void UnLoadScripts() {
+		internal static void UnloadScripts() {
 			Type[] types = new Type[allTypesbyName.Count];
 			allTypesbyName.Values.CopyTo(types, 0);
 			allTypesbyName.Clear();

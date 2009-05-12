@@ -77,18 +77,21 @@ namespace SteamEngine.Regions {
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			public int Sx {
 				get {
 					return this.sx;
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			public int Sy {
 				get {
 					return this.sy;
 				}
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			public byte M {
 				get {
 					return this.m;
@@ -96,7 +99,11 @@ namespace SteamEngine.Regions {
 			} 
 
 			public override string ToString() {
-				return string.Format("sector with coords {0}, {1}, mapplane {2}", this.sx, this.sy, this.m);
+				return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+					"sector with coords {0}, {1}, mapplane {2}", 
+					this.sx.ToString(System.Globalization.CultureInfo.InvariantCulture),
+					this.sy.ToString(System.Globalization.CultureInfo.InvariantCulture),
+					this.m.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			}
 
 			#region dynamic stuff
@@ -151,6 +158,7 @@ namespace SteamEngine.Regions {
 				this.AddThing(thing);
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			internal void MadeIntoNonPlayer(AbstractCharacter cre) {
 				Sanity.IfTrueThrow(cre == null, "You can't tell us a NULL character is now a non-player!");
 				Sanity.IfTrueThrow(cre.IsPlayer, "MadeIntoNonPlayer(" + cre + ") was called, but that character is actually still a player!");
@@ -362,20 +370,20 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			[Summary("Used only for one region - we will remove only its rectangles (used e.g. when editing one region through the dialog)")]
-			internal void ClearOneRegionRectangles(Region whichRegion) {
-				List<RegionRectangle> copyRects = new List<RegionRectangle>(this.rectangles);
-				foreach (RegionRectangle regRect in this.rectangles) {
-					if (regRect.region == whichRegion) {
-						copyRects.Remove(regRect); //remove it from the temporary list
-					}
-				}
-				RegionRectangle[] restRects = new RegionRectangle[copyRects.Count];
-				for (int i = 0; i < copyRects.Count; i++) { //those who are left will be set back as a new array
-					restRects[i] = copyRects[i];
-				}
-				this.rectangles = restRects;
-			}
+			//[Summary("Used only for one region - we will remove only its rectangles (used e.g. when editing one region through the dialog)")]
+			//internal void ClearOneRegionRectangles(Region whichRegion) {
+			//    List<RegionRectangle> copyRects = new List<RegionRectangle>(this.rectangles);
+			//    foreach (RegionRectangle regRect in this.rectangles) {
+			//        if (regRect.region == whichRegion) {
+			//            copyRects.Remove(regRect); //remove it from the temporary list
+			//        }
+			//    }
+			//    RegionRectangle[] restRects = new RegionRectangle[copyRects.Count];
+			//    for (int i = 0; i < copyRects.Count; i++) { //those who are left will be set back as a new array
+			//        restRects[i] = copyRects[i];
+			//    }
+			//    this.rectangles = restRects;
+			//}
 
 			//Simple getter
 			internal LinkedList<RegionRectangle> RegionRectangles {

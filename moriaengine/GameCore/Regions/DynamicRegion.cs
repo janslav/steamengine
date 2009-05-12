@@ -44,7 +44,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Summary("Serves to place the region to the map for the first time (after creation)")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Serves to place the region to the map for the first time (after creation)")]
 		public bool Place(Point4D p) {
 			ThrowIfDeleted();
 			if (p != null) { //already placed!
@@ -100,7 +100,6 @@ namespace SteamEngine.Regions {
 				"sure that no confilicts with other dynamic regions occurs when moving!")]
 		private bool Step(Point4D newP) {
 			Point4D oldPos = this.P; //store the old position for case the movement fails!
-			IList<RegionRectangle> oldRects = rectangles;
 
 			bool xyChanged = (oldPos.X != newP.X || oldPos.Y != newP.Y);
 			bool mapChanged = oldPos.M != newP.M;

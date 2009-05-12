@@ -18,7 +18,6 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Packets;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;

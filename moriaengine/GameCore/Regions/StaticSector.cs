@@ -18,14 +18,15 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using SteamEngine.Packets;
 using SteamEngine.Common;
 
 namespace SteamEngine.Regions {
 
 	internal class StaticSector {
-		private ushort[,] tile;
-		private sbyte[,] z;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
+		private ushort[,] tileMatrix;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
+		private sbyte[,] zMatrix;
 		internal StaticItem[] statics;
 
 		private static List<StaticSector[,]> staticMaps = new List<StaticSector[,]>(1);
@@ -35,15 +36,16 @@ namespace SteamEngine.Regions {
 		private static StaticSector emptySector = new StaticSector(new ushort[0, 0], new sbyte[0, 0], new StaticItem[0]);
 
 		private StaticSector(ushort[,] tile, sbyte[,] z, StaticItem[] statics) {
-			this.tile = tile;
-			this.z = z;
+			this.tileMatrix = tile;
+			this.zMatrix = z;
 			this.statics = statics;
 		}
 
-		internal static StaticSector GetStaticSectorFromRealCoords(int x, int y, int m) {
-			return GetStaticSector((x >> Map.sectorFactor), (y >> Map.sectorFactor), m);
-		}
+		//internal static StaticSector GetStaticSectorFromRealCoords(int x, int y, int m) {
+		//    return GetStaticSector((x >> Map.sectorFactor), (y >> Map.sectorFactor), m);
+		//}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static StaticSector GetStaticSector(int sx, int sy, int m) {
 			int facet = Map.GetMap(m).Facet;
 
@@ -77,12 +79,12 @@ namespace SteamEngine.Regions {
 						ushort mulsy = (ushort) ((sy << Map.sectorFactor) >> 3);
 						Logger.WriteDebug("Load sector sx,sy=" + sx + "," + sy + " mulsx,mulsy=" + mulsx + "," + mulsy);
 						uint[,] versions;
-						sbyte[,] z;
 						StaticItem[] statics = LoadStaticsSector(mulsx, mulsy, (ushort) (sx << Map.sectorFactor),
 							(ushort) (sy << Map.sectorFactor), numMulSectors, facet, out versions);
 
-						object[] ret = LoadMapSector(mulsx, mulsy, numMulSectors, facet);
-						ushort[,] tile = (ushort[,]) ret[0]; z = (sbyte[,]) ret[1];
+						ushort[,] tile; 
+						sbyte[,] z;
+						LoadMapSector(mulsx, mulsy, numMulSectors, facet, out tile, out z);
 						sector = new StaticSector(tile, z, statics);
 					} catch (Exception e) {
 						Logger.WriteCritical("Exception while loading map sector " + sx + "," + sy, e + ". Disabling map use.");
@@ -98,42 +100,42 @@ namespace SteamEngine.Regions {
 		}
 
 		//(TODO): Loading other map MULs.
-		private static object[] LoadMapSector(int sx, int sy, int numMulSectors, int facet) {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
+		private static void LoadMapSector(int sx, int sy, int numMulSectors, int facet, out ushort[,] tile, out sbyte[,] z) {
 			string mulFileP = Path.Combine(Globals.MulPath, "map0.mul");
 
 			if (File.Exists(mulFileP)) {
-				FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
-				BinaryReader mulbr = new BinaryReader(mulfs);
-				int numTiles = numMulSectors << 3;
-				ushort[,] tile = new ushort[numTiles, numTiles];
-				sbyte[,] z = new sbyte[numTiles, numTiles];
-				//a single 8x8 block is 196 bytes.
+				using (BinaryReader mulbr = new BinaryReader(new FileStream(mulFileP, FileMode.Open, FileAccess.Read))) {
+					int numTiles = numMulSectors << 3;
+					tile = new ushort[numTiles, numTiles];
+					z = new sbyte[numTiles, numTiles];
+					//a single 8x8 block is 196 bytes.
 
-				for (int xblock = 0; xblock < numMulSectors; xblock++) {
-					long partialFilePos = ((xblock + sx) * Map.GetMulNumYSectors(facet));
-					long xblockamt = xblock << 3;
-					for (int yblock = 0; yblock < numMulSectors; yblock++) {
-						long yblockamt = yblock << 3;
-						long filePos = partialFilePos + yblock + sy;
-						filePos = 4 + (filePos << 2) + (filePos << 6) + (filePos << 7);	//That's filePos*196. The 4 is to skip the header.
-						mulbr.BaseStream.Seek(filePos, SeekOrigin.Begin);
-						for (int y = 0; y < 8; y++) {
-							for (int x = 0; x < 8; x++) {
-								//Console.WriteLine("{0},{1} / {2}",xblockamt+x,yblockamt+y,numTiles);
-								tile[xblockamt + x, yblockamt + y] = mulbr.ReadUInt16();
-								z[xblockamt + x, yblockamt + y] = mulbr.ReadSByte();
+					for (int xblock = 0; xblock < numMulSectors; xblock++) {
+						long partialFilePos = ((xblock + sx) * Map.GetMulNumYSectors(facet));
+						long xblockamt = xblock << 3;
+						for (int yblock = 0; yblock < numMulSectors; yblock++) {
+							long yblockamt = yblock << 3;
+							long filePos = partialFilePos + yblock + sy;
+							filePos = 4 + (filePos << 2) + (filePos << 6) + (filePos << 7);	//That's filePos*196. The 4 is to skip the header.
+							mulbr.BaseStream.Seek(filePos, SeekOrigin.Begin);
+							for (int y = 0; y < 8; y++) {
+								for (int x = 0; x < 8; x++) {
+									//Console.WriteLine("{0},{1} / {2}",xblockamt+x,yblockamt+y,numTiles);
+									tile[xblockamt + x, yblockamt + y] = mulbr.ReadUInt16();
+									z[xblockamt + x, yblockamt + y] = mulbr.ReadSByte();
+								}
 							}
 						}
 					}
 				}
-				mulbr.Close();
-				return (new object[2] { tile, z });
 			} else {
 				throw new SEException("Unable to locate map file.");
 			}
 		}
 
 		//(TODO): Loading other static MULs.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static StaticItem[] LoadStaticsSector(int mulsX, int mulsY, int sx, int sy, int numMulSectors, int facet, out uint[,] versions) {
 			versions = new uint[numMulSectors, numMulSectors];
 			string mulFilePI = Path.Combine(Globals.MulPath, "staidx0.mul");
@@ -210,30 +212,30 @@ namespace SteamEngine.Regions {
 			return null;
 		}
 
-		internal void GetRMS(int x, int y, out int rmsx, out int rmsy) {
-			//basex/basey are the base x/y coordinates of this sector.
-			int basex = x & Map.sectorAnd;
-			int basey = y & Map.sectorAnd;
+		//internal void GetRMS(int x, int y, out int rmsx, out int rmsy) {
+		//    //basex/basey are the base x/y coordinates of this sector.
+		//    int basex = x & Map.sectorAnd;
+		//    int basey = y & Map.sectorAnd;
 
-			//mbasex/mbasey are the base x/y coordinates of this MUL sector.
-			int mbasex = x & Map.mulSectorAnd;
-			int mbasey = y & Map.mulSectorAnd;
+		//    //mbasex/mbasey are the base x/y coordinates of this MUL sector.
+		//    int mbasex = x & Map.mulSectorAnd;
+		//    int mbasey = y & Map.mulSectorAnd;
 
-			//diffbasex/y are the difference between the base x/y coords,
-			//which we need to determine the relative map sector inside this SE sector.
-			int diffbasex = mbasex - basex;
-			int diffbasey = mbasey - basey;
+		//    //diffbasex/y are the difference between the base x/y coords,
+		//    //which we need to determine the relative map sector inside this SE sector.
+		//    int diffbasex = mbasex - basex;
+		//    int diffbasey = mbasey - basey;
 
-			//rmsx/rmsy are the coordinates to Richard M. Stallman's homepage.
-			//Actually, they specify what MUL map sector inside this SE sector we're working on,
-			//their value being relative, from 0 to the maximum number of MUL sectors per SE sector.
-			rmsx = diffbasex >> 3;
-			rmsy = diffbasey >> 3;
-		}
+		//    //rmsx/rmsy are the coordinates to Richard M. Stallman's homepage.
+		//    //Actually, they specify what MUL map sector inside this SE sector we're working on,
+		//    //their value being relative, from 0 to the maximum number of MUL sectors per SE sector.
+		//    rmsx = diffbasex >> 3;
+		//    rmsy = diffbasey >> 3;
+		//}
 
 		internal int GetTileId(int relX, int relY) {
 			if (Globals.useMap) {
-				return this.tile[relX, relY];
+				return this.tileMatrix[relX, relY];
 			} else {
 				return 0;
 			}
@@ -241,7 +243,7 @@ namespace SteamEngine.Regions {
 
 		internal int GetTileZ(int relX, int relY) {
 			if (Globals.useMap) {
-				return this.z[relX, relY];
+				return this.zMatrix[relX, relY];
 			} else {
 				return 0;
 			}

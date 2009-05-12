@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.Timers {
-	public class TimerKey : AbstractKey {
+	public sealed class TimerKey : AbstractKey {
 		private static Dictionary<string, TimerKey> byName = new Dictionary<string, TimerKey>(StringComparer.OrdinalIgnoreCase);
 
 		private TimerKey(string name, int uid)
@@ -52,10 +52,12 @@ namespace SteamEngine.Timers {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public string Save(object objToSave) {
 			return "%" + ((TimerKey) objToSave).Name;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
 			return TimerKey.Get(match.Groups["value"].Value);
 		}

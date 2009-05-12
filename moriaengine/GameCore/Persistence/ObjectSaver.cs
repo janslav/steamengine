@@ -218,7 +218,7 @@ namespace SteamEngine.Persistence {
 			Type t = value.GetType();
 
 			if (t.IsEnum) {
-				return Convert.ToUInt64(value, System.Globalization.CultureInfo.InvariantCulture).ToString();
+				return Convert.ToUInt64(value, System.Globalization.CultureInfo.InvariantCulture).ToString(System.Globalization.CultureInfo.InvariantCulture);
 			} else if (TagMath.IsNumberType(t)) {
 				return ((IConvertible) value).ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 			} else if (t.Equals(typeof(String))) {
@@ -935,6 +935,7 @@ namespace SteamEngine.Persistence {
 				return object.ReferenceEquals(x, y);
 			}
 
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public int GetHashCode(object obj) {
 				return obj.GetHashCode();
 			}

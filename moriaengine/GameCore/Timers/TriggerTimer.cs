@@ -27,12 +27,15 @@ namespace SteamEngine.Timers {
 	[DeepCopyableClass]
 	[SaveableClass]
 	public class TriggerTimer : BoundTimer {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData]
 		[CopyableData]
 		public TriggerKey trigger;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData]
 		[CopyableData]
 		public string formatString;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData]
 		[CopyableData]
 		public object[] args;

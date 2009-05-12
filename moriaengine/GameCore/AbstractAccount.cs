@@ -24,7 +24,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Security.Cryptography;
-using SteamEngine.Packets;
 using SteamEngine.Networking;
 using SteamEngine.Common;
 using SteamEngine.Persistence;

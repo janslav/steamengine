@@ -33,6 +33,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine.Timers {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public class TimerPriorityQueue {
 		private int count;
 		private int capacity;
@@ -93,7 +94,7 @@ namespace SteamEngine.Timers {
 		}
 
 		private void BubbleUp(int index, Timer timer) {
-			int parent = this.GetParent(index);
+			int parent = GetParentIndex(index);
 			// note: (index > 0) means there is a parent
 			while ((index > 0) &&
 					(heap[parent].fireAt > timer.fireAt)) {
@@ -103,17 +104,17 @@ namespace SteamEngine.Timers {
 				parentTimer.index = index;
 				heap[index] = parentTimer;
 				index = parent;
-				parent = this.GetParent(index);
+				parent = GetParentIndex(index);
 			}
 			timer.index = index;
 			this.heap[index] = timer;
 		}
 
-		private int GetLeftChild(int index) {
+		private static int GetLeftChildIndex(int index) {
 			return (index * 2) + 1;
 		}
 
-		private int GetParent(int index) {
+		private static int GetParentIndex(int index) {
 			return (index - 1) / 2;
 		}
 
@@ -125,7 +126,7 @@ namespace SteamEngine.Timers {
 		}
 
 		private void TrickleDown(int index, Timer timer) {
-			int child = this.GetLeftChild(index);
+			int child = GetLeftChildIndex(index);
 			while (child < this.count) {
 				if (((child + 1) < this.count) &&
 						(this.heap[child].fireAt > this.heap[child + 1].fireAt)) {
@@ -137,7 +138,7 @@ namespace SteamEngine.Timers {
 				childTimer.index = index;
 				this.heap[index] = childTimer;
 				index = child;
-				child = this.GetLeftChild(index);
+				child = GetLeftChildIndex(index);
 			}
 			this.BubbleUp(index, timer);
 		}

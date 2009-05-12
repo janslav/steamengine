@@ -32,7 +32,7 @@ namespace SteamEngine.Timers {
 	public abstract class BoundTimer : Timer {
 		internal WeakReference contRef = new WeakReference(null);
 
-		public BoundTimer() {
+		protected BoundTimer() {
 		}
 
 		protected override sealed void OnTimeout() {

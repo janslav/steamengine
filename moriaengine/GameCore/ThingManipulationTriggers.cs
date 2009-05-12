@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using SteamEngine.Packets;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using System.Threading;

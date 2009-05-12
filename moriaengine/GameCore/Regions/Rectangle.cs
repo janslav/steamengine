@@ -40,18 +40,21 @@ namespace SteamEngine.Regions {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(AbstractInternalItem p) {
 			int px = p.X;
 			int py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(Thing p) {
 			int px = p.X;
 			int py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(Point2D p) {
 			int px = p.X;
 			int py = p.Y;
@@ -62,6 +65,7 @@ namespace SteamEngine.Regions {
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(IPoint2D p) {
 			int px = p.X;
 			int py = p.Y;
@@ -69,10 +73,15 @@ namespace SteamEngine.Regions {
 		}
 
 		public override string ToString() {
-			return string.Format("({0}, {1})+({2}, {3})", this.MinX, this.MinY, this.MaxX, this.MaxY);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				"({0}, {1})+({2}, {3})",
+				this.MinX.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				this.MinY.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				this.MaxX.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				this.MaxY.ToString(System.Globalization.CultureInfo.InvariantCulture));
 		}
 
-		[Summary("Does the rectangle contain another rectangle completely?")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Does the rectangle contain another rectangle completely?")]
 		public bool Contains(AbstractRectangle rect) {
 			return Contains(rect.MinX, rect.MinY)//left lower
 					&& Contains(rect.MinX, rect.MaxY) //left upper
@@ -80,6 +89,7 @@ namespace SteamEngine.Regions {
 					&& Contains(rect.MaxX, rect.MinY);//right lower
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool IntersectsWith(AbstractRectangle rect) {
 			return Contains(rect.MinX, rect.MinY)//left lower
 					|| Contains(rect.MinX, rect.MaxY) //left upper
@@ -87,7 +97,7 @@ namespace SteamEngine.Regions {
 					|| Contains(rect.MaxX, rect.MinY);//right lower
 		}
 
-		[Summary("Do the two rectangles have any intersection?")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Do the two rectangles have any intersection?")]
 		public static bool Intersects(AbstractRectangle a, AbstractRectangle b) {
 			return a.IntersectsWith(b) || b.IntersectsWith(a);
 		}
@@ -101,6 +111,8 @@ namespace SteamEngine.Regions {
 	}
 
 	public class ImmutableRectangle : AbstractRectangle {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly ImmutableRectangle voidInstance = new ImmutableRectangle(0, 0, 0, 0);
 
 		private readonly int minX, maxX, minY, maxY;

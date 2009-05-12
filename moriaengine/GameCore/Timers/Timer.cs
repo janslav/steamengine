@@ -35,8 +35,8 @@ namespace SteamEngine.Timers {
 		private static TimerPriorityQueue priorityQueue = new TimerPriorityQueue();
 		private static ManualResetEvent manualResetEvent = new ManualResetEvent(false);
 
-		private bool isDeleted = false;
-		private bool isInChangesQueue = false;
+		private bool isDeleted;
+		private bool isInChangesQueue;
 
 		internal int index = -1; //index in the Priorityqueue. do not touch!
 		internal TimeSpan fireAt = negativeOneSecond;//internal (instead of private) because of the priorityqueue. do not touch!
@@ -87,6 +87,7 @@ namespace SteamEngine.Timers {
 			get { return currentTimer; }
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ProcessTimingOut() {
 			TimeSpan now = Globals.TimeAsSpan;
 			while (priorityQueue.Count > 0) {
@@ -128,7 +129,7 @@ namespace SteamEngine.Timers {
 			changes.Clear();
 		}
 
-		public Timer() {
+		protected Timer() {
 		}
 
 		protected abstract void OnTimeout();
@@ -248,13 +249,14 @@ namespace SteamEngine.Timers {
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly TimeSpan negativeOneSecond = TimeSpan.FromSeconds(-1);
 
 		#region save/load
 		internal static void StartingLoading() {
 		}
 
-		[Save]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public virtual void Save(SaveStream output) {
 			if (fireAt != negativeOneSecond) {
 				output.WriteValue("fireAt", this.fireAt.Ticks);

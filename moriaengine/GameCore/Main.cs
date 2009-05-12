@@ -213,7 +213,7 @@ namespace SteamEngine {
 		//this is used for clearing a failed load attempt.
 		public static void ClearWorld() {
 			//Logger.WriteWarning("Clearing the world.");
-			StaticRegion.ClearAll(); //puvodni vycisteni vsech loadnuthych regionu...
+			
 			Thing.ClearAll();
 			AbstractAccount.ClearAll();
 			Globals.ClearAll();
@@ -252,7 +252,7 @@ namespace SteamEngine {
 						Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
 					}
 					GameServer.BackupLinksToCharacters();
-					UnLoadAll();
+					UnloadAll();
 					if (!LoadAll()) {
 						//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
 						//connections & native commands, though SE doesn't care what they type, and whatever it is,
@@ -289,7 +289,7 @@ namespace SteamEngine {
 		}
 
 		internal static void RetryRecompilingScripts() {
-			UnLoadAll();
+			UnloadAll();
 			if (!LoadAll()) {
 				RunLevelManager.SetAwaitingRetry();
 				PacketSequences.BroadCast("Script recompiling failed, remaining paused.");
@@ -298,17 +298,17 @@ namespace SteamEngine {
 			}
 		}
 
-		private static void UnLoadAll() {
+		private static void UnloadAll() {
 			ClearWorld();
 			Timers.Timer.Clear();
 			//CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
-			ClassManager.UnLoadScripts();//bye-bye to all storec types
-			GeneratedCodeUtil.UnLoadScripts();//bye-bye to scripted code generators
+			ClassManager.UnloadScripts();//bye-bye to all storec types
+			GeneratedCodeUtil.UnloadScripts();//bye-bye to scripted code generators
 			TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
 			ScriptHolder.UnloadAll();//bye-bye to all scripted functions
 			ThingDef.ClearAll();//clear thingdef constructors etc.
 			PluginDef.ClearAll();//clear plugindef constructors etc.
-			GroundTileType.UnLoadScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
+			GroundTileType.UnloadScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
 			AbstractScript.UnloadAll();//all abstractscripts go bye-bye. This includes triggergroups, gumps, etc.
 			Constant.UnloadAll();
 			TestSuite.UnloadAll();
@@ -319,6 +319,7 @@ namespace SteamEngine {
 			AbstractSkillDef.UnloadScripts();
 			//Region.UnloadScripts();
 			//ExportImport.UnloadScripts();
+			Map.UnloadScripts();
 			FieldValue.UnloadScripts();
 
 			Console.WriteLine("Definitions unloaded");

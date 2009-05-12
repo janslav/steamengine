@@ -168,7 +168,7 @@ namespace SteamEngine.Regions {
 
 		#region CheckMovement
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "5#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "4#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "6#")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "5#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "4#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "6#")]
 		public bool CheckMovement(IPoint3D point, IMovementSettings settings, Direction d, bool hackMove, out int xForward, out int yForward, out int newZ) {
 			int xStart = point.X;
 			int yStart = point.Y;
@@ -208,24 +208,24 @@ namespace SteamEngine.Regions {
 				Sector sectorLeft = this.GetSector(xLeft >> sectorFactor, yLeft >> sectorFactor);
 				Sector sectorRight = this.GetSector(xRight >> sectorFactor, yRight >> sectorFactor);
 
-				List<Sector> sectors = sectorsPool;
+				//List<Sector> sectorsPool = sectorsPool;
 
-				sectors.Add(sectorStart);
+				sectorsPool.Add(sectorStart);
 
-				if (!sectors.Contains(sectorForward)) {
-					sectors.Add(sectorForward);
+				if (!sectorsPool.Contains(sectorForward)) {
+					sectorsPool.Add(sectorForward);
 				}
 
-				if (!sectors.Contains(sectorLeft)) {
-					sectors.Add(sectorLeft);
+				if (!sectorsPool.Contains(sectorLeft)) {
+					sectorsPool.Add(sectorLeft);
 				}
 
-				if (!sectors.Contains(sectorRight)) {
-					sectors.Add(sectorRight);
+				if (!sectorsPool.Contains(sectorRight)) {
+					sectorsPool.Add(sectorRight);
 				}
 
-				for (int i = 0; i < sectors.Count; ++i) {
-					Sector sector = sectors[i];
+				for (int i = 0; i < sectorsPool.Count; ++i) {
+					Sector sector = sectorsPool[i];
 
 					foreach (Thing t in sector.Things) {
 						AbstractItem item = t as AbstractItem;
@@ -351,7 +351,7 @@ namespace SteamEngine.Regions {
 			return moveIsOk;
 		}
 
-		private bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<AbstractInternalItem> tiles, List<AbstractItem> items) {
+		private static bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<AbstractInternalItem> tiles, List<AbstractItem> items) {
 			for (int i = 0, n = tiles.Count; i < n; i++) {
 				AbstractInternalItem check = tiles[i];
 				ItemDispidInfo itemData = check.DispidInfo;
@@ -397,6 +397,7 @@ namespace SteamEngine.Regions {
 		private static List<Sector> sectorsPool = new List<Sector>();
 		private static List<AbstractInternalItem> staticsPool = new List<AbstractInternalItem>();
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
 			newZ = 0;
 
@@ -462,7 +463,7 @@ namespace SteamEngine.Regions {
 					int itemZ = staticItem.Z;
 					int itemTop = itemZ;
 					int ourZ = itemZ + idi.CalcHeight;
-					int ourTop = ourZ + PersonHeight;
+					//int ourTop = ourZ + PersonHeight;
 					int testTop = checkTop;
 
 					if (moveIsOk) {
@@ -516,7 +517,7 @@ namespace SteamEngine.Regions {
 					int itemZ = item.Z;
 					int itemTop = itemZ;
 					int ourZ = itemZ + idi.CalcHeight;
-					int ourTop = ourZ + PersonHeight;
+					//int ourTop = ourZ + PersonHeight;
 					int testTop = checkTop;
 
 					if (moveIsOk) {
@@ -553,7 +554,7 @@ namespace SteamEngine.Regions {
 
 			if (considerLand && !landBlocks && stepTop >= landZ) {
 				int ourZ = landCenter;
-				int ourTop = ourZ + PersonHeight;
+				//int ourTop = ourZ + PersonHeight;
 				int testTop = checkTop;
 
 				if (ourZ + PersonHeight > testTop)
@@ -577,6 +578,7 @@ namespace SteamEngine.Regions {
 			return moveIsOk;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private void GetStartZ(IMovementSettings settings, IPoint3D point, List<AbstractItem> itemList, out int zLow, out int zTop) {
 			int xCheck = point.X, yCheck = point.Y;
 
@@ -749,8 +751,9 @@ namespace SteamEngine.Regions {
 		}
 
 		//TODO needs work
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public int GetFixedZ(IPoint3D point) {
-			int oldZ = point.Z;
+			//int oldZ = point.Z;
 			int x = point.X;
 			int y = point.Y;
 			//if (this.IsValidPos(x, y)) {

@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using System.Configuration;
-using SteamEngine.Packets;
 using SteamEngine.Common;
 
 namespace SteamEngine {

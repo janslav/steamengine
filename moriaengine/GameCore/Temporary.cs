@@ -18,7 +18,6 @@
 using System;
 using System.IO;
 using SteamEngine.Common;
-using SteamEngine.Packets;	//for DeleteRequestReturnValue
 
 namespace SteamEngine {
 	//This class has methods which are called when various packets are recieved from clients.

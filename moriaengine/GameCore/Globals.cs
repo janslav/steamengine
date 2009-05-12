@@ -24,7 +24,6 @@ using System.IO;
 using System.Net;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
-using SteamEngine.Packets;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Communication.TCP;
@@ -213,6 +212,12 @@ namespace SteamEngine {
 			get { return Globals.netSyncingTracingOn; }
 		}
 
+		private static bool mapTracingOn;
+		public static bool MapTracingOn {
+			get {
+				return Globals.mapTracingOn;
+			}
+		}
 
 		private static bool writeMulDocsFiles;
 		public static bool WriteMulDocsFiles {
@@ -567,7 +572,7 @@ namespace SteamEngine {
 				fastStartUp = temporary.GetValue<bool>("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
 				sendTileDataSpam = temporary.GetValue<bool>("sendTileDataSpam", false, "Set this to true, and you'll be sent lots of spam when you walk. Yeah, this is temporary. I need it for testing tiledata stuff. -SL");
 				netSyncingTracingOn = temporary.GetValue<bool>("netSyncingTracingOn", false, "Networking.SyncQueue info messages");
-
+				mapTracingOn = temporary.GetValue<bool>("mapTracingOn", false, "Regions.Map info messages");
 
 				temporary.AddComment("");
 				temporary.AddComment("SteamEngine determines if someone is on your LAN by comparing their IP with all of yours. If the first three parts of the IPs match, they're considered to be on your LAN. Note that this will probably not work for people on very big LANs. If you're on one, please post a feature request on our SourceForge site.");

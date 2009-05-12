@@ -24,7 +24,6 @@ using System.Collections;
 using System.Reflection;
 using System.Globalization;
 using SteamEngine;
-using SteamEngine.Packets;
 using SteamEngine.Common;
 using PerCederberg.Grammatica.Parser;
 
