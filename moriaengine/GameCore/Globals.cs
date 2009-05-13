@@ -966,7 +966,7 @@ namespace SteamEngine {
 		//} }
 
 		private static DateTime lastMarkRealTime = DateTime.Now;
-		private static TimeSpan lastMarkServerTime;
+		private static TimeSpan lastMarkServerTime = TimeSpan.Zero;
 		private static int paused;
 
 

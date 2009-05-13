@@ -1,2 +1,2 @@
-GMModeOn            = GM mode on (Plevel {0}).
-GMModeOff           = GM mode off (Plevel 1).
+GMModeOn            = GM mód zapnut (Plevel {0}).
+GMModeOff           = GM mód vypnut (Plevel 1).
