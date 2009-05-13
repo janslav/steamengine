@@ -770,7 +770,7 @@ namespace SteamEngine.Networking {
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractAccount acc = state.Account;
 			if (!acc.HasFreeSlot) {
-				state.WriteLine(ServLoc<IncomingPacketsLoc>.Get(state.Language).MaxAccCharsReached);
+				state.WriteLine(CompiledLoc<IncomingPacketsLoc>.Get(state.Language).MaxAccCharsReached);
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Tried to create more chars than allowed");
 				return;
@@ -779,27 +779,27 @@ namespace SteamEngine.Networking {
 			string charname = this.args.Charname;
 			for (int a = 0; a < charname.Length; a++) {
 				if (!(charname[a] == ' ' || (charname[a] >= 'a' && charname[a] <= 'z') || (charname[a] >= 'A' && charname[a] <= 'Z'))) {
-					state.WriteLine(ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalCharsInName);
+					state.WriteLine(CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalCharsInName);
 					PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 					conn.Close("Illegal name - Contains something other than letters and spaces.");
 					return;
 				}
 			}
 			if (charname[0] == ' ' || charname[charname.Length - 1] == ' ') {
-				state.WriteLine(ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalTrailingSpacesInName);
+				state.WriteLine(CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalTrailingSpacesInName);
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal name - Starts or ends with spaces.");
 				return;
 			}
 			if (charname.IndexOf("  ") > -1) {
-				state.WriteLine(ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalLongSpacesInName);
+				state.WriteLine(CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalLongSpacesInName);
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal name - More than one space in a row.");
 				return;
 			}
 			if (this.args.Gender < 0 || this.args.Gender > 1) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalGender,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalGender,
 					this.args.Gender));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal gender=" + this.args.Gender);
@@ -807,7 +807,7 @@ namespace SteamEngine.Networking {
 			}
 			if (this.args.SkinColor < 0x3ea || this.args.SkinColor > 0x422) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalSkinColor,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalSkinColor,
 					this.args.SkinColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal skinColor=" + this.args.SkinColor);
@@ -817,7 +817,7 @@ namespace SteamEngine.Networking {
 			} else if (this.args.HairStyle < 0x203B || this.args.HairStyle > 0x204A ||
 					   (this.args.HairStyle > 0x203D && this.args.HairStyle < 0x2044)) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalHairStyle,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalHairStyle,
 					this.args.HairStyle));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal hairStyle=" + this.args.HairStyle);
@@ -825,7 +825,7 @@ namespace SteamEngine.Networking {
 			}
 			if (this.args.HairColor < 0x44e || this.args.HairColor > 0x4ad) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalHairColor,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalHairColor,
 					this.args.HairColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal hairColor=" + this.args.HairColor);
@@ -834,7 +834,7 @@ namespace SteamEngine.Networking {
 			if (this.args.FacialHair == 0) {
 			} else if (this.args.FacialHair < 0x203E || this.args.FacialHair > 0x204D || (this.args.FacialHair > 0x2041 && this.args.FacialHair < 0x204B)) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialhair,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialhair,
 					this.args.FacialHair));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal facialHair=" + this.args.FacialHair);
@@ -842,7 +842,7 @@ namespace SteamEngine.Networking {
 			}
 			if (this.args.FacialHairColor < 0x44e || this.args.FacialHairColor > 0x4ad) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialHairColor,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialHairColor,
 					this.args.FacialHairColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal facialHairColor=" + this.args.FacialHairColor);
@@ -850,7 +850,7 @@ namespace SteamEngine.Networking {
 			}
 			if (this.args.ShirtColor < 0x02 || this.args.ShirtColor > 0x3e9) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalShirtColor,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalShirtColor,
 					this.args.ShirtColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal shirtColor=" + this.args.ShirtColor);
@@ -858,7 +858,7 @@ namespace SteamEngine.Networking {
 			}
 			if (this.args.PantsColor < 0x02 || this.args.PantsColor > 0x3e9) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					ServLoc<IncomingPacketsLoc>.Get(state.Language).IllegalPantsColor,
+					CompiledLoc<IncomingPacketsLoc>.Get(state.Language).IllegalPantsColor,
 					this.args.PantsColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("Illegal pantsColor=" + this.args.PantsColor);
@@ -1442,7 +1442,7 @@ namespace SteamEngine.Networking {
 								responseNumbers[i] = new ResponseNumber(rt.Id, number);
 							} else {
 								state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-									ServLoc<IncomingPacketsLoc>.Get(state.Language).NotANumber,
+									CompiledLoc<IncomingPacketsLoc>.Get(state.Language).NotANumber,
 									rt.Text));
 								SendGumpBack(conn, state, gi, responseTexts);
 								return;
@@ -1477,7 +1477,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
-	internal class IncomingPacketsLoc : Loc {
+	internal class IncomingPacketsLoc : AbstractLoc {
 		public string NotANumber = "'{0}' is not a number!";
 		public string MaxAccCharsReached = "You already have the maximum number of characters in your account.";
 		public string IllegalCharsInName = "Illegal name - Contains something other than letters and spaces.";

@@ -55,7 +55,7 @@ namespace SteamEngine.Common {
 		}
 
 		public int Add(object value) {
-			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public void Clear() {
@@ -70,7 +70,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, object value) {
-			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public bool IsFixedSize {
@@ -91,15 +91,15 @@ namespace SteamEngine.Common {
 
 		public object this[int index] {
 			get {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 			set {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 
 		public object Current {
-			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
+			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
 		}
 
 		public bool MoveNext() {
@@ -110,7 +110,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Add(object key, object value) {
-			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		IDictionaryEnumerator IDictionary.GetEnumerator() {
@@ -130,22 +130,22 @@ namespace SteamEngine.Common {
 				return null;
 			}
 			set {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 
 		public DictionaryEntry Entry {
 			get {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 
 		public object Key {
-			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
+			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
 		}
 
 		public object Value {
-			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
+			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
 		}
 	}
 
@@ -153,7 +153,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyGenericCollection<T> instance = new EmptyReadOnlyGenericCollection<T>();
 
 		public void Add(T item) {
-			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public bool Contains(T item) {
@@ -172,7 +172,7 @@ namespace SteamEngine.Common {
 		}
 
 		public new T Current {
-			get { throw new SEException(ServLoc<CommonLoc>.Default.NotSupported); }
+			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
 		}
 
 		public void Dispose() {
@@ -183,15 +183,15 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, T item) {
-			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public new T this[int index] {
 			get {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 			set {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 	}
@@ -200,7 +200,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyDictionary<TKey, TValue> instance = new EmptyReadOnlyDictionary<TKey, TValue>();
 
 		public void Add(TKey key, TValue value) {
-			throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 		}
 
 		public bool ContainsKey(TKey key) {
@@ -226,10 +226,10 @@ namespace SteamEngine.Common {
 
 		public TValue this[TKey key] {
 			get {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 			set {
-				throw new SEException(ServLoc<CommonLoc>.Default.NotSupported);
+				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
 			}
 		}
 	}

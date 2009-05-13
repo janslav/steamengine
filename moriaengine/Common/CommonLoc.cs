@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {
 
-	public class CommonLoc : Loc {
+	public class CommonLoc : AbstractLoc {
 		internal readonly string NotSupported = "Not supported";
 		internal readonly string NotImplemented = "Not implemented";
 	}

@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		static TimerKey animTk = TimerKey.Get("_weaponAnimDelay_");
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = (Character) skillSeqArgs.Self;
+			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 			if (!self.CanInteractWith(target)) {
 				WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 							projectile.Amount = amount - 1;
 						}
 					} else if (self.WeaponProjectileType != ProjectileType.None) {
-						self.SysMessage("Nemáš støelivo.");
+						self.SysMessage(CompiledLoc<WeaponSkillDefLoc>.Get(self.Language).YouHaveNoAmmo);
 						self.AbortSkill();
 						return true;
 					}
@@ -187,5 +187,9 @@ namespace SteamEngine.CompiledScripts {
 				WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
 			}
 		}
+	}
+
+	public class WeaponSkillDefLoc : AbstractLoc {
+		internal string YouHaveNoAmmo = "Nemáš støelivo.";
 	}
 }

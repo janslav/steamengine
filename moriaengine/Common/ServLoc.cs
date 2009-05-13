@@ -13,39 +13,75 @@ namespace SteamEngine.Common {
 		Czech
 	}
 
-	public class Loc {
+	public abstract class ServLoc : IEnumerable<KeyValuePair<string, string>> {
 		const string servLocDir = "Languages";
-		const string defaultText = "<TextStringNotAvailable>";
+		internal const string defaultText = "<LocalisationEntryNotAvailable>";
 
 		//name=value //comment
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly Regex valueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		private readonly Dictionary<string, string> valuesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		private Dictionary<string, string> entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		private Language language;
 
+		protected ServLoc() {
+		}
 
-		public Dictionary<string, string> ValuesByName {
-			get { return valuesByName; }
+		public virtual string GetEntry(string entryName) {
+			string value;
+			if (this.entriesByName.TryGetValue(entryName, out value)) {
+				return value;
+			}
+			return defaultText;
+		}
+
+		protected virtual void SetEntry(string entryName, string entry) {
+			if (this.entriesByName.ContainsKey(entryName)) {
+				this.entriesByName[entryName] = String.Intern(entry); ;
+			}
+		}
+
+		public bool HasEntry(string entryName) {
+			return this.entriesByName.ContainsKey(entryName);
 		}
 
 		public Language Language {
-			get { return this.language; }
+			get {
+				return this.language;
+			}
 		}
 
-		internal void Init(Language lan) {
-			this.language = lan;
+		public abstract string AssemblyName {
+			get;
+		}
 
-			Type languageClass = this.GetType();
+		public abstract string Defname {
+			get;
+		}
 
-			Dictionary<string, FieldInfo> fieldsDict = this.GetFieldInfoDict(languageClass);
+		public IEnumerator<KeyValuePair<string, string>> GetEnumerator() {
+			return this.entriesByName.GetEnumerator();
+		}
 
+		IEnumerator IEnumerable.GetEnumerator() {
+			return this.entriesByName.GetEnumerator();
+		}
+
+		internal protected virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {			
+			this.entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<string, string> helperList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			foreach (KeyValuePair<string, string> pair in entriesByName) {
+				this.entriesByName.Add(pair.Key, pair.Value);
+				helperList.Add(pair.Key, pair.Value);
+			}
+			
+			this.language = language;
 
 			string path = Tools.CombineMultiplePaths(".", servLocDir,
-				Enum.GetName(typeof(Language), lan),
-				GetAssemblyTitle(languageClass.Assembly),
-				String.Concat(languageClass.Name, ".txt"));
+				Enum.GetName(typeof(Language), language),
+				this.AssemblyName,
+				String.Concat(this.Defname, ".txt"));
 
 
 			FileInfo file = new FileInfo(path);
@@ -64,14 +100,15 @@ namespace SteamEngine.Common {
 						if (m.Success) {
 							GroupCollection gc = m.Groups;
 							string name = gc["name"].Value;
-							FieldInfo field;
-							if (fieldsDict.TryGetValue(name, out field)) {
-								string value = String.Intern(gc["value"].Value);
-								field.SetValue(this, value);
-								this.valuesByName[name] = value;
-								fieldsDict.Remove(name);
+							if (this.HasEntry(name)) {
+								if (helperList.ContainsKey(name)) {
+									this.SetEntry(name, gc["value"].Value);
+									helperList.Remove(name);
+								} else {
+									Logger.WriteWarning(path, lineNum, "Duplicate value name '" + name + "'. Ignoring.");
+								}
 							} else {
-								Logger.WriteWarning(path, lineNum, "Unknown or duplicite value name '" + name + "'. Ignoring.");
+								Logger.WriteWarning(path, lineNum, "Unknown value name '" + name + "'. Ignoring.");
 							}
 						} else {
 							Logger.WriteWarning(path, lineNum, "Unknown format of line");
@@ -81,46 +118,70 @@ namespace SteamEngine.Common {
 			}
 
 
-			//lines that are on the class but aren't in the text file
-			if ((fieldsDict.Count > 0)) {
+			//lines that are on the class but aren't in the text file, we append them to the file
+			if ((helperList.Count > 0)) {
 				Tools.EnsureDirectory(Path.GetDirectoryName(path));
 				using (StreamWriter writer = new StreamWriter(file.Open(FileMode.Append, FileAccess.Write))) {
-
-					foreach (KeyValuePair<string, FieldInfo> pair in fieldsDict) {
-						string name = pair.Key;
-						string value = (string) pair.Value.GetValue(this);
-						writer.WriteLine(name.PadRight(20) + "= " + value);
-						this.valuesByName[name] = value;
+					foreach (KeyValuePair<string, string> pair in helperList) {
+						writer.WriteLine(pair.Key.PadRight(32) + "= " + pair.Value);
 					}
 				}
 			}
+
+			LocManager.RegisterLoc(this);
 		}
 
-		private Dictionary<string, FieldInfo> GetFieldInfoDict(Type languageClass) {
-			Dictionary<string, FieldInfo> fieldsDict = new Dictionary<string, FieldInfo>(StringComparer.InvariantCultureIgnoreCase);
+		public override string ToString() {
+			return string.Concat(this.Defname,
+				" (", Enum.GetName(typeof(Language), this.language), ")");
+		}
+	}
 
-			foreach (FieldInfo fi in languageClass.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
-				if (fi.FieldType == typeof(string)) {
-					fieldsDict[fi.Name] = fi;
-					string value = (string) fi.GetValue(this);
-					if (value == null) {
-						value = defaultText;
-					} else {
-						value = string.Intern(value);
-					}
-					fi.SetValue(this, value);
-				}
+	public static class LocManager {
+		private static Dictionary<string, ServLoc>[] loadedLanguages = InitDictArrays();
+
+		private static Dictionary<string, ServLoc>[] InitDictArrays() {
+			int n = Tools.GetEnumLength<Language>();
+			Dictionary<string, ServLoc>[] langs = new Dictionary<string, ServLoc>[n];
+
+			for (int i = 0; i < n; i++) {
+				langs[i] = new Dictionary<string, ServLoc>(StringComparer.InvariantCultureIgnoreCase);
 			}
 
-			return fieldsDict;
+			return langs;
 		}
 
-		private static string GetAssemblyTitle(Assembly assembly) {
-			AssemblyTitleAttribute titleAttr = (AssemblyTitleAttribute) Attribute.GetCustomAttribute(assembly, typeof(AssemblyTitleAttribute));
-			if (titleAttr != null) {
-				return titleAttr.Title;
+		public static void RegisterLoc(ServLoc newLoc) {
+			string className = newLoc.Defname;
+			Language lan = newLoc.Language;
+			if (loadedLanguages[(int) lan].ContainsKey(className)) {
+				throw new SEException("Loc instance '" + className + "' already exists");
 			}
-			return assembly.GetName().Name;
+			loadedLanguages[(int) lan].Add(className, newLoc);
+		}
+
+		public static void UnregisterLoc(ServLoc newLoc) {
+			string className = newLoc.Defname;
+			Language lan = newLoc.Language;
+			loadedLanguages[(int) lan].Remove(className);
+		}
+
+		public static ServLoc GetLoc(string defname, Language language) {
+			ServLoc retVal;
+			loadedLanguages[(int) language].TryGetValue(defname, out retVal);
+			return retVal;
+		}
+
+		public static string GetEntry(string defname, string entryName) {
+			return GetEntry(defname, entryName, Language.Default);
+		}
+
+		public static string GetEntry(string defname, string entryName, Language language) {
+			ServLoc retVal;
+			if (loadedLanguages[(int) language].TryGetValue(defname, out retVal)) {
+				return retVal.GetEntry(entryName);
+			}
+			return ServLoc.defaultText;
 		}
 
 		public static Language TranslateLanguageCode(string languageCode) {
@@ -137,46 +198,6 @@ namespace SteamEngine.Common {
 					return Language.Czech;
 			}
 			return Language.English;
-		}
-	}
-
-	//client has "cliloc", so we have servloc :)
-
-	//T is supposed to be a simple class with lot of public string fields representing the localised messages
-	public static class ServLoc<T> where T : Loc {
-		private static T[] loadedLanguages = LoadLanuages();
-
-		private static T[] LoadLanuages() {
-			int n = Tools.GetEnumLength<Language>();
-			T[] langs = new T[n];
-
-			for (int i = 0; i < n; i++) {
-				T l = Activator.CreateInstance<T>();
-				l.Init((Language) i);
-				langs[i] = l;
-			}
-
-			return langs;
-		}
-
-		//run by ClassManager, does nothing but will cause the class to init, creating the txt files
-		public static void Init() {
-		}
-
-		public static T Get(string languageCode) {
-			Language lan = Loc.TranslateLanguageCode(languageCode);
-
-			return loadedLanguages[(int) lan];
-		}
-
-		public static T Get(Language language) {
-			return loadedLanguages[(int) language];
-		}
-
-		public static T Default {
-			get {
-				return loadedLanguages[(int) Language.Default];
-			}
 		}
 	}
 }

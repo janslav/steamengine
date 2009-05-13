@@ -834,6 +834,7 @@ namespace SteamEngine {
 				Logger.WriteWarning("The Globals section of save is missing the " + LogStr.Ident("Time") + " value or the value is invalid, setting server time to 0");
 				lastMarkServerTime = TimeSpan.Zero;
 			}
+			lastMarkRealTime = DateTime.Now;
 
 			instance.LoadSectionLines(input);
 		}

@@ -62,7 +62,7 @@ namespace SteamEngine {
 			}
 
 			if (AuthorizeCommand(commandSrc, "x")) {
-				state.WriteLine(ServLoc<CommandLoc>.Get(state.Language).XCommandPrompt);
+				state.WriteLine(CompiledLoc<CommandLoc>.Get(state.Language).XCommandPrompt);
 				state.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel,
 					new XCommandParameter(commandSrc, noprefix));
 				LogCommand(commandSrc, command, true, null);
@@ -139,7 +139,7 @@ namespace SteamEngine {
 				}
 				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. ERR: " + errText);
 				commandSrc.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
-					ServLoc<CommandLoc>.Get(commandSrc.Language).CommandFailed,
+					CompiledLoc<CommandLoc>.Get(commandSrc.Language).CommandFailed,
 					command, errText));
 			}
 		}
@@ -301,14 +301,14 @@ namespace SteamEngine {
 						errText = e.Message;
 					}
 				} else if (nameMatched) {
-					errText = ServLoc<CommandLoc>.Get(commandSrc.Language).WrongCommandArgument;
+					errText = CompiledLoc<CommandLoc>.Get(commandSrc.Language).WrongCommandArgument;
 				} else {
 					errText = String.Format(System.Globalization.CultureInfo.InvariantCulture,
-						ServLoc<CommandLoc>.Get(commandSrc.Language).UnknownCommand,
+						CompiledLoc<CommandLoc>.Get(commandSrc.Language).UnknownCommand,
 						name);
 				}
 			} else {
-				errText = ServLoc<CommandLoc>.Get(commandSrc.Language).WrongCommandFormat;
+				errText = CompiledLoc<CommandLoc>.Get(commandSrc.Language).WrongCommandFormat;
 			}
 			return false;
 		}
@@ -340,7 +340,7 @@ namespace SteamEngine {
 		}
 	}
 
-	internal class CommandLoc : Loc {
+	internal class CommandLoc : AbstractLoc {
 		public string XCommandPrompt = "Command who or what?";
 		public string CommandFailed = "Command '{0}' failed - {1}";
 		public string WrongCommandArgument = "Wrong argument for that method";

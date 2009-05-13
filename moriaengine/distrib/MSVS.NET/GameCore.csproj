@@ -570,6 +570,9 @@
       <Link>LScript\ScriptedGumpDef.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\GameCore\LScript\ScriptedLoc.cs">
+      <Link>LScript\ScriptedLoc.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\LScript\ScriptedTriggerGroup.cs">
       <Link>LScript\ScriptedTriggerGroup.cs</Link>
     </Compile>

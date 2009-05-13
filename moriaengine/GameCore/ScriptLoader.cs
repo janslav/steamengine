@@ -172,6 +172,14 @@ namespace SteamEngine {
 										file.Add(constant);
 									}
 									continue;
+
+								case "loc":
+								case "localisation":
+								case "language":
+								case "languages":
+								case "servloc":
+									file.Add(ScriptedLoc.Load(section));
+									continue;
 								//case "template":
 								//	
 								//	//file.Add(ThingDef.LoadFromScripts(input));

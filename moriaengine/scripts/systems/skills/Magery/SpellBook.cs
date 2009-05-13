@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using SteamEngine.Networking;
 using SteamEngine.Communication;
+using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -153,7 +154,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Start(Player self, object parameter) {
-			self.SysMessage("Ze které knihy chceš vysypat svitky?");
+			self.SysMessage(CompiledLoc<SpellBookLoc>.Get(self.Language).TargetBookToEmpty);
 			base.On_Start(self, parameter);
 		}
 
@@ -185,5 +186,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return true;
 		}
+	}
+
+	public class SpellBookLoc : AbstractLoc {
+		internal readonly string TargetBookToEmpty = "Ze které knihy chceš vysypat svitky?";
 	}
 }

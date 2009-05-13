@@ -110,7 +110,7 @@ namespace SteamEngine {
 						}
 						continue;
 					}
-					m = Loc.valueRE.Match(curLine);
+					m = AbstractLoc.valueRE.Match(curLine);
 					if (m.Success) {
 						if (curSection != null) {
 							GroupCollection gc = m.Groups;

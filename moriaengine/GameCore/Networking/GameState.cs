@@ -367,7 +367,7 @@ namespace SteamEngine.Networking {
 			internal set {
 				if (!StringComparer.OrdinalIgnoreCase.Equals(value, this.languageString)) {
 					this.languageString = value;
-					this.language = Loc.TranslateLanguageCode(value);
+					this.language = LocManager.TranslateLanguageCode(value);
 				}
 			}
 		}

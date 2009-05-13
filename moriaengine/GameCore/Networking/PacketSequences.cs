@@ -106,7 +106,7 @@ namespace SteamEngine.Networking {
 
 
 					state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
-						Common.ServLoc<PacketSequencesLoc>.Get(state.Language).WelcomeToShard,
+						Common.CompiledLoc<PacketSequencesLoc>.Get(state.Language).WelcomeToShard,
 						Globals.ServerName));
 				}
 			}
@@ -494,7 +494,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
-	internal class PacketSequencesLoc : Loc {
+	internal class PacketSequencesLoc : AbstractLoc {
 		public string WelcomeToShard = "Welcome to {0}.";
 	}
 }

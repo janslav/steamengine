@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 using SteamEngine.Regions;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
@@ -592,7 +593,10 @@ namespace SteamEngine.CompiledScripts {
 
 			if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
 				if (sea.SpellPower < 1) {
-					sea.Caster.SysMessage("Cíl odolal kouzlu!");
+					GameState casterState = sea.Caster.GameState;
+					if (casterState != null) {
+						casterState.WriteLine(CompiledLoc<SpellDefLoc>.Get(casterState.Language).TargetResistedSpell);
+					}
 					Character targetAsChar = sea.CurrentTarget as Character;
 					if (targetAsChar != null) {
 						targetAsChar.ClilocSysMessage(501783); // You feel yourself resisting magical energy.
@@ -863,5 +867,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+	}
+
+	public class SpellDefLoc : AbstractLoc {
+		internal string TargetResistedSpell = "Cíl odolal kouzlu!";
 	}
 }

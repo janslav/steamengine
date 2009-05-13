@@ -95,6 +95,9 @@
     <Compile Include="..\..\Common\CommonLoc.cs">
       <Link>CommonLoc.cs</Link>
     </Compile>
+    <Compile Include="..\..\Common\CompiledLoc.cs">
+      <Link>CompiledLoc.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common\ConvertTools.cs">
       <Link>ConvertTools.cs</Link>
       <SubType>Code</SubType>
