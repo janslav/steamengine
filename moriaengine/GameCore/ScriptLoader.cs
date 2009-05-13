@@ -178,6 +178,7 @@ namespace SteamEngine {
 								case "language":
 								case "languages":
 								case "servloc":
+								case "scriptloc":
 									file.Add(ScriptedLoc.Load(section));
 									continue;
 								//case "template":
