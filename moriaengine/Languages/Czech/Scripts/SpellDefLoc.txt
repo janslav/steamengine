@@ -1,0 +1,1 @@
+TargetResistedSpell             = Cíl odolal kouzlu!

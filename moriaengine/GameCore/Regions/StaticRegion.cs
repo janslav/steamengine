@@ -26,23 +26,16 @@ using SteamEngine.Persistence;
 namespace SteamEngine.Regions {
 	[Summary("Class implementing saving/loading of regions, controlling unique defnames etc.")]
 	public class StaticRegion : Region {
-		internal static readonly StaticRegion voidRegion = InitVoidRegion();
+		internal static readonly StaticRegion voidRegion = new StaticRegion("", "void");
 		private static StaticRegion worldRegion = voidRegion;
 
-		private static Dictionary<string, StaticRegion> byName;
-		private static Dictionary<string, StaticRegion> byDefname;
+		private static Dictionary<string, StaticRegion> byName = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
+		private static Dictionary<string, StaticRegion> byDefname = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
 		private static int highestHierarchyIndex = -1;
 
 		private string name = ""; //this is typically not unique, containing spaces etc.
 
 		private bool isDeleted;
-
-		private static StaticRegion InitVoidRegion() {
-			StaticRegion retVal = new StaticRegion();
-			retVal.Defname = "";
-			retVal.name = "void";
-			return retVal;
-		}
 
 		[Summary("Clearing of the lists of all regions")]
 		public static void ClearAll() {
@@ -51,9 +44,12 @@ namespace SteamEngine.Regions {
 
 			worldRegion = voidRegion;
 			highestHierarchyIndex = -1;
+		}
 
-			voidRegion.Defname = "";
-			voidRegion.name = "void";
+		//only used by the void region
+		private StaticRegion(string defname, string name) {
+			this.name = name;
+			base.Defname = defname;
 		}
 
 		public StaticRegion()

@@ -1764,11 +1764,11 @@ namespace SteamEngine.CompiledScripts {
 				if (acc.PLevel < acc.MaxPLevel) {
 					acc.PLevel = acc.MaxPLevel;
 					state.WriteLine(String.Format(
-						ServLoc<CharacterLoc>.Get(state.Language).GMModeOn,
+						CompiledLoc<CharacterLoc>.Get(state.Language).GMModeOn,
 						acc.PLevel));
 				} else {
 					acc.PLevel = 1;
-					state.WriteLine(ServLoc<CharacterLoc>.Get(state.Language).GMModeOff);
+					state.WriteLine(CompiledLoc<CharacterLoc>.Get(state.Language).GMModeOff);
 				}
 			}
 		}
@@ -1788,11 +1788,11 @@ namespace SteamEngine.CompiledScripts {
 				if (i > 0) {
 					acc.PLevel = acc.MaxPLevel;
 					state.WriteLine(String.Format(
-						ServLoc<CharacterLoc>.Get(state.Language).GMModeOn,
+						CompiledLoc<CharacterLoc>.Get(state.Language).GMModeOn,
 						acc.PLevel));
 				} else {
 					acc.PLevel = 1;
-					state.WriteLine(ServLoc<CharacterLoc>.Get(state.Language).GMModeOff);
+					state.WriteLine(CompiledLoc<CharacterLoc>.Get(state.Language).GMModeOff);
 				}
 			}
 		}
@@ -2419,7 +2419,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	internal class CharacterLoc : Loc {
+	internal class CharacterLoc : AbstractLoc {
 		public string GMModeOn = "GM mode on (Plevel {0}).";
 		public string GMModeOff = "GM mode off (Plevel 1).";
 	}

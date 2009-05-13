@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine;
+using SteamEngine.Networking;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -70,7 +71,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			skillSeqArgs.Self.SysMessage("Hiding aborted.");
+			GameState state = skillSeqArgs.Self.GameState;
+			if (state != null) {
+				state.WriteLine(CompiledLoc<HidingLoc>.Get(state.Language).HidingAborted);
+			}
 		}
 
 		[SteamFunction]
@@ -88,5 +92,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			self.DeletePlugin(pluginKey);
 		}
+	}
+
+	public class HidingLoc : AbstractLoc {
+		internal readonly string HidingAborted = "Hiding aborted.";
 	}
 }
