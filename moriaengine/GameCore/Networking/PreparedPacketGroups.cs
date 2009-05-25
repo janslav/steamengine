@@ -204,7 +204,7 @@ namespace SteamEngine.Networking {
 
 		private static PacketGroup InitClientVersion() {
 			PacketGroup retVal = PacketGroup.CreateFreePG();
-			clientVersion.AcquirePacket<ClientVersionOutPacket>();
+			retVal.AcquirePacket<ClientVersionOutPacket>();
 			return retVal;
 		}
 
