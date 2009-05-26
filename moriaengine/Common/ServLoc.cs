@@ -199,5 +199,19 @@ namespace SteamEngine.Common {
 			}
 			return Language.English;
 		}
+
+		public static void UnregisterAssembly(Assembly assemblyBeingUnloaded) {
+			Dictionary<string, ServLoc> defaults = loadedLanguages[(int)Language.Default];
+			ServLoc[] allLocs = new ServLoc[defaults.Count];
+			defaults.Values.CopyTo(allLocs, 0); //we copy the list first, because we're going to remove some entries in a foreach loop
+
+			foreach (ServLoc loc in allLocs) {
+				if (loc.GetType().Assembly == assemblyBeingUnloaded) {
+					foreach (Dictionary<string, ServLoc> langDict in loadedLanguages) {
+						langDict.Remove(loc.Defname);
+					}
+				}
+			}
+		}
 	}
 }
