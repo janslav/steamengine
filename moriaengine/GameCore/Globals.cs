@@ -645,12 +645,18 @@ namespace SteamEngine {
 		} 
 		
 		private static string GetVersion() {
-			using (SvnClient client = new SvnClient()) {
-				SvnInfoEventArgs info;
-				client.GetInfo(SvnTarget.FromString(Path.GetFullPath("."), true), out info);
+			try {
+				using (SvnClient client = new SvnClient()) {
+					SvnInfoEventArgs info;
+					client.GetInfo(SvnTarget.FromString(Path.GetFullPath("."), true), out info);
 
-				return "SVN revision " + info.Revision;
+					return "SVN revision " + info.Revision;
+				}
+			} catch (Exception e) {
+				Logger.WriteError("While obtatining SVN revision info", e);
+				return "<SVN revision number unknown>";
 			}
+
 		}
 
 		private static readonly DateTime startedAt = DateTime.Now;

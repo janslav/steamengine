@@ -60,7 +60,7 @@ namespace SteamEngine.Common {
 
 	//client has "cliloc", so we have servloc :)
 
-	//T is supposed to be a simple class with lot of public string fields representing the localised messages
+	//T is supposed to be a simple class with lot of string fields (public or internal, doesn't really matter) representing the localised messages
 	public static class CompiledLoc<T> where T : AbstractLoc {
 		private static T[] loadedLanguages = LoadLanuages();
 
