@@ -238,9 +238,14 @@ algorithm.
 
 </member>
         <member name="M:serf_bucket_headers_do(serf_bucket_t*,=FUNC:System.Int32(System.Void*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*),System.Void*)">
-@param headers_bucket headers to iterate over
-@param func callback routine to invoke for every header in the bucket
-@param baton baton to pass on each invocation to func
+ Iterates over all headers of the message and invokes the callback 
+ function with header key and value. Stop iterating when no more
+ headers are available or when the callback function returned a 
+ non-0 value.
+
+ @param headers_bucket headers to iterate over
+ @param func callback routine to invoke for every header in the bucket
+ @param baton baton to pass on each invocation to func
 
 </member>
         <member name="D:serf_bucket_headers_do_callback_fn_t">
@@ -809,9 +814,24 @@ if there are any unversioned obstructing items
   Looks up a localized string similar to Revision must be &gt;= 0.
 </summary>
         </member>
+        <member name="P:SharpSvn.SharpSvnStrings.PropertyNameIsNotValid">
+            <summary>
+  Looks up a localized string similar to Property name is not valid.
+</summary>
+        </member>
         <member name="P:SharpSvn.SharpSvnStrings.PleaseRestartThisApplicationBeforeContinuing">
             <summary>
   Looks up a localized string similar to Please restart this application before continuing.\n\nStack trace:\n{0}.
+</summary>
+        </member>
+        <member name="P:SharpSvn.SharpSvnStrings.PathXTooLongAndNotRooted">
+            <summary>
+  Looks up a localized string similar to Paths with a length above MAX_PATH (like '{0}') must be rooted..
+</summary>
+        </member>
+        <member name="P:SharpSvn.SharpSvnStrings.PathXContainsInvalidCharacters">
+            <summary>
+  Looks up a localized string similar to Path '{0}' contains invalid characters.
 </summary>
         </member>
         <member name="P:SharpSvn.SharpSvnStrings.PathCountDoesNotMatchRevisions">
@@ -8082,10 +8102,15 @@ Parse the mergeinfo from @a input into @a *mergeinfo.  If no
  * Perform temporary allocations in @a pool.
  *
  * If @a input is not a grammatically correct @c SVN_PROP_MERGEINFO
- * property, contains overlapping or unordered revision ranges, or revision
- * ranges with a start revision greater than or equal to its end revision,
- * or contains paths mapped to empty revision ranges, then return
- * @c SVN_ERR_MERGEINFO_PARSE_ERROR.
+ * property, contains overlapping revision ranges of differing
+ * inheritability, or revision ranges with a start revision greater
+ * than or equal to its end revision, or contains paths mapped to empty
+ * revision ranges, then return  @c SVN_ERR_MERGEINFO_PARSE_ERROR.
+ * Unordered revision ranges are  allowed, but will be sorted when
+ * placed into @a *mergeinfo.  Overlapping revision ranges of the same
+ * inheritability are also allowed, but will be combined into a single
+ * range when placed into @a *mergeinfo.
+ *
  * @since New in 1.5.
 
 </member>
@@ -14188,6 +14213,42 @@ value to this.
         <member name="F:SharpSvn.SvnPropertyNames.SvnPropertyPrefix">
             <summary>All Subversion property names start with this</summary>
         </member>
+        <member name="F:SharpSvn.SvnKeywords.PredefinedKeywords">
+            <summary>Gets a list of TortoiseSvn defined directory properties, which are applied recursively on all directories below the set root</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.Id">
+            <summary>A compressed combination of the other four keywords.</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.URL">
+            <summary>Short version of HeadURL</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.HeadURL">
+            <summary>The URL for the head revision of this file.</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.Author">
+            <summary>Short version of LastChangedBy</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.LastChangedBy">
+            <summary>Who most recently committed to this file.</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.Date">
+            <summary>Short version of LastChangedDate</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.LastChangedDate">
+            <summary>The most recent date (repository time) when this file was changed.</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.Revision">
+            <summary>Medium version of LastChangedRevision, matching the one CVS uses</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.Rev">
+            <summary>Short version of LastChangedRevision</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.LastChangedRevision">
+            <summary>The most recent revision in which this file was changed</summary>
+        </member>
+        <member name="F:SharpSvn.SvnKeywords.MaxLength">
+            <summary>The maximum size of an expanded or un-expanded keyword.</summary>
+        </member>
         <member name="M:svn_config_write_auth_data(apr_hash_t*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,apr_pool_t*)">
 Use @a cred_kind and @a realmstring to create or overwrite a file
  * within the ~/.subversion/auth/ area.  Write the contents of @a hash into
@@ -14530,11 +14591,11 @@ Opaque structure describing a set of configuration options.
         <member name="M:SharpSvn.SvnExternalItem.ToString">
             <summary>Creates a string containing the external in string format. Preferring formats compatible with older clients</summary>
         </member>
-        <member name="P:SharpSvn.SvnExternalItem.Url">
-            <summary>Gets the absolute or relative url of the external</summary>
+        <member name="P:SharpSvn.SvnExternalItem.Reference">
+            <summary>Gets the absolute or relative url of the external (What to insert)</summary>
         </member>
         <member name="P:SharpSvn.SvnExternalItem.Target">
-            <summary>Gets the target path of the external</summary>
+            <summary>Gets the target path of the external (Where to place the external)</summary>
         </member>
         <member name="P:SharpSvn.SvnStatusArgs.ChangeLists">
             <summary>Gets the list of changelist-names</summary>
@@ -14619,6 +14680,11 @@ out of date
             <remarks>When set implements a <see cref="E:SharpSvn.Security.SvnAuthentication.UserNameHandlers" /> and <see cref="E:SharpSvn.Security.SvnAuthentication.UserNamePasswordHandlers" />
 instance over the specified credential instance</remarks>
         </member>
+        <member name="M:SharpSvn.Security.SvnAuthentication.GetCachedItems(SharpSvn.Security.SvnAuthenticationCacheType)">
+            <summary>Gets a list of subversion cached credentials of the specified type</summary>
+            <param name="type">The type of credentials to retrieve</param>
+            <remarks>This list only contains credentials cached by Subversion; not by external authentication stores</remarks>
+        </member>
         <member name="M:SharpSvn.Security.SvnAuthentication.AddConsoleHandlers">
             <summary>Adds all default console handlers</summary>
         </member>
@@ -14684,6 +14750,22 @@ credentials shall be saved if may_save is FALSE. For example, a GUI client
 with a remember password checkbox would grey out the checkbox if may_save
 is false</summary>
         </member>
+        <member name="M:SharpSvn.Security.SvnAuthenticationCacheItem.Delete">
+            <summary>Deletes the externally cached credentials</summary>
+            <remarks>Does /not/ delete in memory credentials. You should call ClearAuthenticationCache() to clear the in memory cache</remarks>
+        </member>
+        <member name="P:SharpSvn.Security.SvnAuthenticationCacheItem.IsDeleted">
+            <summary>Gets a boolean indicating whether the credentials were deleted since creating this instance</summary>
+        </member>
+        <member name="P:SharpSvn.Security.SvnAuthenticationCacheItem.RealmUri">
+            <summary>Gets the Uri part of the Realm string</summary>
+        </member>
+        <member name="P:SharpSvn.Security.SvnAuthenticationCacheItem.Realm">
+            <summary>Gets the realm of the cached item</summary>
+        </member>
+        <member name="P:SharpSvn.Security.SvnAuthenticationCacheItem.CacheType">
+            <summary>Gets the type of the cached item</summary>
+        </member>
         <member name="T:SharpSvn.SvnClientConfigurationException">
             <summary>SharpSvn configuration loader exception</summary>
         </member>
@@ -14703,6 +14785,294 @@ is false</summary>
         </member>
         <member name="P:SharpSvn.SvnException.SubversionErrorCode">
             <summary>Gets the raw subversion error code</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.Write(SharpSvn.SvnLookOrigin,System.String,System.IO.Stream,SharpSvn.SvnLookWriteArgs)">
+            <summary>Writes the content of the specified path to a stream directly from a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.Write(SharpSvn.SvnLookOrigin,System.String,System.IO.Stream)">
+            <overloads>Writes the content of the specified path to a stream directly from a repository</overloads>
+            <summary>Writes the content of the specified path to a stream directly from a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnLookRevisionPropertyArgs,SharpSvn.SvnPropertyValue@)">
+            <summary>Gets the specified revision property directly from the repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnLookRevisionPropertyArgs,System.String@)">
+            <summary>Gets the specified revision property directly from the repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnPropertyValue@)">
+            <summary>Gets the specified revision property directly from the repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,System.String@)">
+            <overloads>Gets a revision property directly from a repository</overloads>
+            <summary>Gets the specified revision property directly from the repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetChanged(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangedArgs,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnChangedEventArgs^}@)">
+            <summary>Equivalent to <c>svnlook changed</c></summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetChanged(SharpSvn.SvnLookOrigin,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnChangedEventArgs^}@)">
+            <overloads>Gets the changed paths directly from a repository</overloads>
+            <summary>Equivalent to <c>svnlook changed</c></summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.Changed(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangedArgs,System.EventHandler`1{SharpSvn.SvnChangedEventArgs^})">
+            <summary>Equivalent to <c>svnlook changed</c></summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.Changed(SharpSvn.SvnLookOrigin,System.EventHandler`1{SharpSvn.SvnChangedEventArgs^})">
+            <overloads>Gets the changed paths directly from a repository</overloads>
+            <summary>Equivalent to <c>svnlook changed</c></summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetChangeInfo(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangeInfoArgs,SharpSvn.SvnChangeInfoEventArgs@)">
+            <summary>Gets the change information (author, date, log, paths, etc.) of a change in a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetChangeInfo(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangeInfoEventArgs@)">
+            <overloads>Gets the change information of a change directly from a repository</overloads>
+            <summary>Gets the change information (author, date, log, paths, etc.) of the last change in a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.ChangeInfo(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangeInfoArgs,System.EventHandler`1{SharpSvn.SvnChangeInfoEventArgs^})">
+            <summary>Gets the change information (author, date, log, paths, etc.) of a change in a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.ChangeInfo(SharpSvn.SvnLookOrigin,System.EventHandler`1{SharpSvn.SvnChangeInfoEventArgs^})">
+            <overloads>Gets the change information of a change directly from a repository</overloads>
+            <summary>Gets the change information (author, date, log, paths, etc.) of the last change in a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.#ctor">
+            <summary>Initializes a new <see cref="T:SharpSvn.SvnLookClient" /> instance with default properties</summary>
+        </member>
+        <member name="T:SharpSvn.SvnLookClient">
+            <summary>
+Managed wrapper of some of the most common svnlook functions
+</summary>
+            <remarks>
+At this time this class is a limited subset of svnlook functionality and
+is experimental
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnLookOrigin.#ctor(System.String,System.String)">
+            <summary>Initializes a new SvnLookOrigin instance for a transaction in repositoryPath</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookOrigin.#ctor(System.String,System.Int64)">
+            <summary>Initializes a new SvnLookOrigin instance for a specific revision of repositoryPath</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookOrigin.#ctor(System.String)">
+            <overloads>Initializes a new SvnLookOrigin</overloads>
+            <summary>Initializes a new SvnLookOrigin instance for the head revision of repositoryPath</summary>
+        </member>
+        <member name="T:SharpSvn.SvnLookOrigin">
+            <summary>Container for the location to use with the <see cref="T:SharpSvn.SvnLookClient" /> commands</summary>
+        </member>
+        <member name="T:SharpSvn.SvnLookClientArgs">
+            <summary>Base Extended Parameter container of <see cref="T:SharpSvn.SvnLookClient" /> commands</summary>
+            <threadsafety static="true" instance="false" />
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.GetVersion(System.String,SharpSvn.SvnGetWorkingCopyVersionArgs,SharpSvn.SvnWorkingCopyVersion@)">
+            <summary>Gets the working copy version (<c>svnversion</c>)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.GetVersion(System.String,SharpSvn.SvnWorkingCopyVersion@)">
+            <summary>Gets the working copy version (<c>svnversion</c>)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.GetEntries(System.String,SharpSvn.SvnWorkingCopyEntriesArgs,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnWorkingCopyEntryEventArgs^}@)">
+            <summary>Gets a list of entries contained in the specified working copy path</summary>
+            <remarks>Helper method used by AnkhSVN to detect nested working copies</remarks>
+            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
+structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
+routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.GetEntries(System.String,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnWorkingCopyEntryEventArgs^}@)">
+            <summary>Gets a list of entries contained in the specified working copy path</summary>
+            <remarks>Helper method used by AnkhSVN to detect nested working copies</remarks>
+            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
+structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
+routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.ListEntries(System.String,SharpSvn.SvnWorkingCopyEntriesArgs,System.EventHandler`1{SharpSvn.SvnWorkingCopyEntryEventArgs^})">
+            <summary>Enumerates through the list of entries contained in the specified working copy path</summary>
+            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
+structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
+routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.ListEntries(System.String,System.EventHandler`1{SharpSvn.SvnWorkingCopyEntryEventArgs^})">
+            <summary>Enumerates through the list of entries contained in the specified working copy path</summary>
+            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
+structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
+routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.GetState(System.String,SharpSvn.SvnWorkingCopyStateArgs,SharpSvn.SvnWorkingCopyState@)">
+            <summary>Gets the text file status of a working copy path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnWorkingCopyClient.GetState(System.String,SharpSvn.SvnWorkingCopyState@)">
+            <summary>Gets the text file status of a working copy path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.UpgradeRepository(System.String,SharpSvn.SvnUpgradeRepositoryArgs)">
+            <summary>In-Place Upgrades a repository to a later version</summary>
+            <remarks>
+ NOTE: This functionality is provided as a convenience for
+administrators wishing to make use of new Subversion functionality
+without a potentially costly full repository dump/load.  As such,
+the operation performs only the minimum amount of work needed to
+accomplish this while maintaining the integrity of the repository.
+It does *not* guarantee the most optimized repository state as a
+dump and subsequent load would.
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.UpgradeRepository(System.String)">
+            <overloads>In-Place Upgrades a repository to a later version</overloads>
+            <summary>In-Place Upgrades a repository to a later version</summary>
+            <remarks>
+ NOTE: This functionality is provided as a convenience for
+administrators wishing to make use of new Subversion functionality
+without a potentially costly full repository dump/load.  As such,
+the operation performs only the minimum amount of work needed to
+accomplish this while maintaining the integrity of the repository.
+It does *not* guarantee the most optimized repository state as a
+dump and subsequent load would.
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.DumpRepository(System.String,System.IO.Stream,SharpSvn.SvnDumpRepositoryArgs)">
+            <summary>Dumps a repository to a file (svnadmin dump)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.DumpRepository(System.String,System.IO.Stream)">
+            <overloads>Dumps a repository to a file (svnadmin dump)</overloads>
+            <summary>Dumps a repository to a file (svnadmin dump)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.LoadRepository(System.String,System.IO.Stream,SharpSvn.SvnLoadRepositoryArgs)">
+            <summary>Loads a repository from a file (svnadmin load)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.LoadRepository(System.String,System.IO.Stream)">
+            <overloads>Loads a repository from a file (svnadmin load)</overloads>
+            <summary>Loads a repository from a file (svnadmin load)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.RecoverRepository(System.String,SharpSvn.SvnRecoverRepositoryArgs)">
+            <summary>Recovers the repository at the specified local path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.RecoverRepository(System.String)">
+            <summary>Recovers the repository at the specified local path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.DeleteRepository(System.String,SharpSvn.SvnDeleteRepositoryArgs)">
+            <summary>Deletes the repository at the specified local path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.DeleteRepository(System.String)">
+            <summary>Deletes the repository at the specified local path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.CreateRepository(System.String,SharpSvn.SvnCreateRepositoryArgs)">
+            <summary>Creates a default repository at the specified local path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.CreateRepository(System.String)">
+            <summary>Creates a default repository at the specified local path</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.FindRepositoryRoot(System.Uri)">
+            <summary>Helper which allows splitting file:/// uri's in the repository root and the file within</summary>
+        </member>
+        <member name="M:SharpSvn.SvnRepositoryClient.#ctor">
+            <summary>Initializes a new <see cref="T:SharpSvn.SvnRepositoryClient" /> instance with default properties</summary>
+        </member>
+        <member name="T:SharpSvn.SvnRepositoryClient">
+            <summary>
+Managed wrapper of some of the most common repository management functions.
+</summary>
+            <remarks>
+At this time this class is just included to enable a standalone test framework
+over the SvnClient api; without depending on external tools)
+</remarks>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgsWithConflict.OnConflict(SharpSvn.SvnConflictEventArgs)">
+            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgsWithConflict.Conflict" /> event</summary>
+        </member>
+        <member name="E:SharpSvn.SvnClientArgsWithConflict.Conflict">
+            <summary>
+Raised on conflict. The event is first
+raised on the <see cref="T:SharpSvn.SvnClientArgsWithConflict" /> object and
+then on the <see cref="T:SharpSvn.SvnClient" /></summary>
+        </member>
+        <member name="T:SharpSvn.SvnClientArgsWithConflict">
+            <summary>Base class of all <see cref="T:SharpSvn.SvnClient" /> arguments which allow handling conflicts</summary>
+            <threadsafety static="true" instance="false" />
+        </member>
+        <member name="P:SharpSvn.SvnClientArgsWithCommit.LogProperties">
+            <summary>Gets a list of 'extra' revision properties to set on commit</summary>
+        </member>
+        <member name="P:SharpSvn.SvnClientArgsWithCommit.LogMessage">
+            <summary>Gets or sets the logmessage applied to the commit</summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgsWithCommit.OnCommitting(SharpSvn.SvnCommittingEventArgs)">
+            <summary>Applies the <see cref="P:SharpSvn.SvnClientArgsWithCommit.LogMessage" /> and raises the <see cref="E:SharpSvn.SvnClientArgsWithCommit.Committing" /> event</summary>
+        </member>
+        <member name="E:SharpSvn.SvnClientArgsWithCommit.Committing">
+            <summary>Raised just before committing to allow modifying the log message</summary>
+        </member>
+        <member name="T:SharpSvn.SvnClientArgsWithCommit">
+            <summary>Base class of all <see cref="T:SharpSvn.SvnClient" /> arguments which allow committing</summary>
+            <threadsafety static="true" instance="false" />
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.AddExpectedError(SharpSvn.SvnErrorCategory[])">
+            <summary>Adds error categories to the list of errors not to throw exceptions for</summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.AddExpectedError(SharpSvn.SvnErrorCategory)">
+            <summary>Adds an error category to the list of errors not to throw exceptions for</summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.AddExpectedError(SharpSvn.SvnErrorCode[])">
+            <summary>Adds error codes to the list of errors not to throw exceptions for</summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.AddExpectedError(SharpSvn.SvnErrorCode)">
+            <summary>Adds an error code to the list of errors not to throw exceptions for</summary>
+        </member>
+        <member name="P:SharpSvn.SvnClientArgs.LastException">
+            <summary>
+Gets the last exception thrown by a Subversion api command to which this argument was provided
+</summary>
+        </member>
+        <member name="P:SharpSvn.SvnClientArgs.ThrowOnCancel">
+            <summary>
+Gets or sets a boolean indicating whether the call must throw an error if the operation is cancelled
+<see cref="P:SharpSvn.SvnClientArgs.IsLastInvocationCanceled" /> is true and the returnvalue <c>false</c> if the operation was canceled.
+(The <see cref="P:SharpSvn.SvnClientArgs.LastException" /> property is set to the cancel exception)
+</summary>
+        </member>
+        <member name="P:SharpSvn.SvnClientArgs.ThrowOnWarning">
+            <summary>
+Gets or sets a boolean indicating whether the call must throw an error if a non fatal error occurs.
+(E.g. locking or updating an external failed)
+</summary>
+        </member>
+        <member name="P:SharpSvn.SvnClientArgs.ThrowOnError">
+            <summary>
+Gets or sets a boolean indicating whether the call must throw an error if an error occurs.
+If an exception would occur, the method returns false and the <see cref="P:SharpSvn.SvnClientArgs.LastException" /> property
+is set to the exception which would have been throw.
+</summary>
+        </member>
+        <member name="P:SharpSvn.SvnClientArgs.CommandType">
+            <summary>Gets the <see cref="T:SharpSvn.SvnCommandType" /> of the command</summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.OnSvnError(SharpSvn.SvnErrorEventArgs)">
+            <summary>Called when handling a <see cref="T:SharpSvn.SvnException" /></summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.OnNotify(SharpSvn.SvnNotifyEventArgs)">
+            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgs.Notify" /> event</summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.OnProgress(SharpSvn.SvnProgressEventArgs)">
+            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgs.Progress" /> event</summary>
+        </member>
+        <member name="M:SharpSvn.SvnClientArgs.OnCancel(SharpSvn.SvnCancelEventArgs)">
+            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgs.Cancel" /> event</summary>
+        </member>
+        <member name="E:SharpSvn.SvnClientArgs.SvnError">
+            <summary>Raised to notify errors from an command</summary>
+        </member>
+        <member name="E:SharpSvn.SvnClientArgs.Notify">
+            <summary>Raised to notify changes by an in-progress command</summary>
+        </member>
+        <member name="E:SharpSvn.SvnClientArgs.Progress">
+            <summary>Raised to notify of progress by an in-progress command</summary>
+        </member>
+        <member name="E:SharpSvn.SvnClientArgs.Cancel">
+            <summary>Raised to allow canceling an in-progress command</summary>
+        </member>
+        <member name="T:SharpSvn.SvnClientArgs">
+            <summary>Base class of all <see cref="T:SharpSvn.SvnClient" /> arguments</summary>
+            <threadsafety static="true" instance="false" />
         </member>
         <member name="T:SharpSvn.SvnErrorCategory">
             <summary>Gets the error category of the SvnException</summary>
@@ -14940,284 +15310,43 @@ Collection of Subversion error code values, located within the
    * necessarily "New in 1.5" just because they come later.
 
 </member>
-        <member name="M:SharpSvn.SvnLookClient.Write(SharpSvn.SvnLookOrigin,System.String,System.IO.Stream,SharpSvn.SvnLookWriteArgs)">
-            <summary>Writes the content of the specified path to a stream directly from a repository</summary>
+        <member name="M:SharpSvn.SvnClient.GetRevisionPropertyList(SharpSvn.SvnUriTarget,SharpSvn.SvnRevisionPropertyListArgs,SharpSvn.SvnPropertyCollection@)">
+            <summary>Gets all revision properties on a a specific revision (<c>svn proplist --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.Write(SharpSvn.SvnLookOrigin,System.String,System.IO.Stream)">
-            <overloads>Writes the content of the specified path to a stream directly from a repository</overloads>
-            <summary>Writes the content of the specified path to a stream directly from a repository</summary>
+        <member name="M:SharpSvn.SvnClient.GetRevisionPropertyList(SharpSvn.SvnUriTarget,SharpSvn.SvnPropertyCollection@)">
+            <overloads>Gets all revision properties on a a specific revision (<c>svn proplist --revision</c>)</overloads>
+            <summary>Gets all revision properties on a a specific revision (<c>svn proplist --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnLookRevisionPropertyArgs,SharpSvn.SvnPropertyValue@)">
-            <summary>Gets the specified revision property directly from the repository</summary>
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnGetRevisionPropertyArgs,SharpSvn.SvnPropertyValue@)">
+            <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnLookRevisionPropertyArgs,System.String@)">
-            <summary>Gets the specified revision property directly from the repository</summary>
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnGetRevisionPropertyArgs,System.String@)">
+            <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnPropertyValue@)">
-            <summary>Gets the specified revision property directly from the repository</summary>
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnPropertyValue@)">
+            <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,System.String@)">
-            <overloads>Gets a revision property directly from a repository</overloads>
-            <summary>Gets the specified revision property directly from the repository</summary>
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,System.String@)">
+            <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetChanged(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangedArgs,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnChangedEventArgs^}@)">
-            <summary>Equivalent to <c>svnlook changed</c></summary>
+        <member name="M:SharpSvn.SvnClient.DeleteRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnSetRevisionPropertyArgs)">
+            <summary>Deletes the value of a revision property on files, dirs in a specific revision(<c>svn propdel --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetChanged(SharpSvn.SvnLookOrigin,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnChangedEventArgs^}@)">
-            <overloads>Gets the changed paths directly from a repository</overloads>
-            <summary>Equivalent to <c>svnlook changed</c></summary>
+        <member name="M:SharpSvn.SvnClient.DeleteRevisionProperty(SharpSvn.SvnUriTarget,System.String)">
+            <summary>Deletes the value of a revision property on files, dirs in a specific revision(<c>svn propdel --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.Changed(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangedArgs,System.EventHandler`1{SharpSvn.SvnChangedEventArgs^})">
-            <summary>Equivalent to <c>svnlook changed</c></summary>
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnSetRevisionPropertyArgs,System.Collections.Generic.ICollection`1{System.Byte})">
+            <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.Changed(SharpSvn.SvnLookOrigin,System.EventHandler`1{SharpSvn.SvnChangedEventArgs^})">
-            <overloads>Gets the changed paths directly from a repository</overloads>
-            <summary>Equivalent to <c>svnlook changed</c></summary>
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnSetRevisionPropertyArgs,System.String)">
+            <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetChangeInfo(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangeInfoArgs,SharpSvn.SvnChangeInfoEventArgs@)">
-            <summary>Gets the change information (author, date, log, paths, etc.) of a change in a repository</summary>
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,System.Collections.Generic.ICollection`1{System.Byte})">
+            <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnLookClient.GetChangeInfo(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangeInfoEventArgs@)">
-            <overloads>Gets the change information of a change directly from a repository</overloads>
-            <summary>Gets the change information (author, date, log, paths, etc.) of the last change in a repository</summary>
-        </member>
-        <member name="M:SharpSvn.SvnLookClient.ChangeInfo(SharpSvn.SvnLookOrigin,SharpSvn.SvnChangeInfoArgs,System.EventHandler`1{SharpSvn.SvnChangeInfoEventArgs^})">
-            <summary>Gets the change information (author, date, log, paths, etc.) of a change in a repository</summary>
-        </member>
-        <member name="M:SharpSvn.SvnLookClient.ChangeInfo(SharpSvn.SvnLookOrigin,System.EventHandler`1{SharpSvn.SvnChangeInfoEventArgs^})">
-            <overloads>Gets the change information of a change directly from a repository</overloads>
-            <summary>Gets the change information (author, date, log, paths, etc.) of the last change in a repository</summary>
-        </member>
-        <member name="M:SharpSvn.SvnLookClient.#ctor">
-            <summary>Initializes a new <see cref="T:SharpSvn.SvnLookClient" /> instance with default properties</summary>
-        </member>
-        <member name="T:SharpSvn.SvnLookClient">
-            <summary>
-Managed wrapper of some of the most common svnlook functions
-</summary>
-            <remarks>
-At this time this class is a limited subset of svnlook functionality and
-is experimental
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnLookOrigin.#ctor(System.String,System.String)">
-            <summary>Initializes a new SvnLookOrigin instance for a transaction in repositoryPath</summary>
-        </member>
-        <member name="M:SharpSvn.SvnLookOrigin.#ctor(System.String,System.Int64)">
-            <summary>Initializes a new SvnLookOrigin instance for a specific revision of repositoryPath</summary>
-        </member>
-        <member name="M:SharpSvn.SvnLookOrigin.#ctor(System.String)">
-            <overloads>Initializes a new SvnLookOrigin</overloads>
-            <summary>Initializes a new SvnLookOrigin instance for the head revision of repositoryPath</summary>
-        </member>
-        <member name="T:SharpSvn.SvnLookOrigin">
-            <summary>Container for the location to use with the <see cref="T:SharpSvn.SvnLookClient" /> commands</summary>
-        </member>
-        <member name="T:SharpSvn.SvnLookClientArgs">
-            <summary>Base Extended Parameter container of <see cref="T:SharpSvn.SvnLookClient" /> commands</summary>
-            <threadsafety static="true" instance="false" />
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.GetVersion(System.String,SharpSvn.SvnGetWorkingCopyVersionArgs,SharpSvn.SvnWorkingCopyVersion@)">
-            <summary>Gets the working copy version (<c>svnversion</c>)</summary>
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.GetVersion(System.String,SharpSvn.SvnWorkingCopyVersion@)">
-            <summary>Gets the working copy version (<c>svnversion</c>)</summary>
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.GetEntries(System.String,SharpSvn.SvnWorkingCopyEntriesArgs,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnWorkingCopyEntryEventArgs^}@)">
-            <summary>Gets a list of entries contained in the specified working copy path</summary>
-            <remarks>Helper method used by AnkhSVN to detect nested working copies</remarks>
-            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
-structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
-routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.GetEntries(System.String,System.Collections.ObjectModel.Collection`1{SharpSvn.SvnWorkingCopyEntryEventArgs^}@)">
-            <summary>Gets a list of entries contained in the specified working copy path</summary>
-            <remarks>Helper method used by AnkhSVN to detect nested working copies</remarks>
-            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
-structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
-routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.ListEntries(System.String,SharpSvn.SvnWorkingCopyEntriesArgs,System.EventHandler`1{SharpSvn.SvnWorkingCopyEntryEventArgs^})">
-            <summary>Enumerates through the list of entries contained in the specified working copy path</summary>
-            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
-structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
-routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.ListEntries(System.String,System.EventHandler`1{SharpSvn.SvnWorkingCopyEntryEventArgs^})">
-            <summary>Enumerates through the list of entries contained in the specified working copy path</summary>
-            <remarks>Only the entry structures representing files and SVN_WC_ENTRY_THIS_DIR contain complete information.  The entry
-structures representing subdirs have only the `kind' and `state' fields filled in. If you want info on a subdir, you must use this
-routine to open its @a path and read the @c SVN_WC_ENTRY_THIS_DIR structure, or call svn_wc_entry() on its @a path.
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.GetState(System.String,SharpSvn.SvnWorkingCopyStateArgs,SharpSvn.SvnWorkingCopyState@)">
-            <summary>Gets the text file status of a working copy path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnWorkingCopyClient.GetState(System.String,SharpSvn.SvnWorkingCopyState@)">
-            <summary>Gets the text file status of a working copy path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.UpgradeRepository(System.String,SharpSvn.SvnUpgradeRepositoryArgs)">
-            <summary>In-Place Upgrades a repository to a later version</summary>
-            <remarks>
- NOTE: This functionality is provided as a convenience for
-administrators wishing to make use of new Subversion functionality
-without a potentially costly full repository dump/load.  As such,
-the operation performs only the minimum amount of work needed to
-accomplish this while maintaining the integrity of the repository.
-It does *not* guarantee the most optimized repository state as a
-dump and subsequent load would.
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.UpgradeRepository(System.String)">
-            <overloads>In-Place Upgrades a repository to a later version</overloads>
-            <summary>In-Place Upgrades a repository to a later version</summary>
-            <remarks>
- NOTE: This functionality is provided as a convenience for
-administrators wishing to make use of new Subversion functionality
-without a potentially costly full repository dump/load.  As such,
-the operation performs only the minimum amount of work needed to
-accomplish this while maintaining the integrity of the repository.
-It does *not* guarantee the most optimized repository state as a
-dump and subsequent load would.
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.DumpRepository(System.String,System.IO.Stream,SharpSvn.SvnDumpRepositoryArgs)">
-            <summary>Dumps a repository to a file (svnadmin dump)</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.DumpRepository(System.String,System.IO.Stream)">
-            <overloads>Dumps a repository to a file (svnadmin dump)</overloads>
-            <summary>Dumps a repository to a file (svnadmin dump)</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.LoadRepository(System.String,System.IO.Stream,SharpSvn.SvnLoadRepositoryArgs)">
-            <summary>Loads a repository from a file (svnadmin load)</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.LoadRepository(System.String,System.IO.Stream)">
-            <overloads>Loads a repository from a file (svnadmin load)</overloads>
-            <summary>Loads a repository from a file (svnadmin load)</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.RecoverRepository(System.String,SharpSvn.SvnRecoverRepositoryArgs)">
-            <summary>Recovers the repository at the specified local path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.RecoverRepository(System.String)">
-            <summary>Recovers the repository at the specified local path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.DeleteRepository(System.String,SharpSvn.SvnDeleteRepositoryArgs)">
-            <summary>Deletes the repository at the specified local path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.DeleteRepository(System.String)">
-            <summary>Deletes the repository at the specified local path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.CreateRepository(System.String,SharpSvn.SvnCreateRepositoryArgs)">
-            <summary>Creates a default repository at the specified local path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.CreateRepository(System.String)">
-            <summary>Creates a default repository at the specified local path</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.FindRepositoryRoot(System.Uri)">
-            <summary>Helper which allows splitting file:/// uri's in the repository root and the file within</summary>
-        </member>
-        <member name="M:SharpSvn.SvnRepositoryClient.#ctor">
-            <summary>Initializes a new <see cref="T:SharpSvn.SvnRepositoryClient" /> instance with default properties</summary>
-        </member>
-        <member name="T:SharpSvn.SvnRepositoryClient">
-            <summary>
-Managed wrapper of some of the most common repository management functions.
-</summary>
-            <remarks>
-At this time this class is just included to enable a standalone test framework
-over the SvnClient api; without depending on external tools)
-</remarks>
-        </member>
-        <member name="M:SharpSvn.SvnClientArgsWithConflict.OnBeforeAutomaticMerge(SharpSvn.SvnBeforeAutomaticMergeEventArgs)">
-            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgsWithConflict.BeforeAutomaticMerge" /> event</summary>
-        </member>
-        <member name="M:SharpSvn.SvnClientArgsWithConflict.OnConflict(SharpSvn.SvnConflictEventArgs)">
-            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgsWithConflict.Conflict" /> event</summary>
-        </member>
-        <member name="E:SharpSvn.SvnClientArgsWithConflict.BeforeAutomaticMerge">
-            <summary>
-Raised before automatically merging changes into a file. The event is
-first raised on the <see cref="T:SharpSvn.SvnClientArgsWithConflict" /> object and
-then on the <see cref="T:SharpSvn.SvnClient" /></summary>
-        </member>
-        <member name="E:SharpSvn.SvnClientArgsWithConflict.Conflict">
-            <summary>
-Raised on conflict. The event is first
-raised on the <see cref="T:SharpSvn.SvnClientArgsWithConflict" /> object and
-then on the <see cref="T:SharpSvn.SvnClient" /></summary>
-        </member>
-        <member name="T:SharpSvn.SvnClientArgsWithConflict">
-            <summary>Base class of all <see cref="T:SharpSvn.SvnClient" /> arguments which allow handling conflicts</summary>
-            <threadsafety static="true" instance="false" />
-        </member>
-        <member name="P:SharpSvn.SvnClientArgsWithCommit.LogProperties">
-            <summary>Gets a list of 'extra' revision properties to set on commit</summary>
-        </member>
-        <member name="P:SharpSvn.SvnClientArgsWithCommit.LogMessage">
-            <summary>Gets or sets the logmessage applied to the commit</summary>
-        </member>
-        <member name="M:SharpSvn.SvnClientArgsWithCommit.OnCommitting(SharpSvn.SvnCommittingEventArgs)">
-            <summary>Applies the <see cref="P:SharpSvn.SvnClientArgsWithCommit.LogMessage" /> and raises the <see cref="E:SharpSvn.SvnClientArgsWithCommit.Committing" /> event</summary>
-        </member>
-        <member name="E:SharpSvn.SvnClientArgsWithCommit.Committing">
-            <summary>Raised just before committing to allow modifying the log message</summary>
-        </member>
-        <member name="T:SharpSvn.SvnClientArgsWithCommit">
-            <summary>Base class of all <see cref="T:SharpSvn.SvnClient" /> arguments which allow committing</summary>
-            <threadsafety static="true" instance="false" />
-        </member>
-        <member name="P:SharpSvn.SvnClientArgs.LastException">
-            <summary>
-Gets the last exception thrown by a Subversion api command to which this argument was provided
-</summary>
-        </member>
-        <member name="P:SharpSvn.SvnClientArgs.ThrowOnCancel">
-            <summary>
-Gets or sets a boolean indicating whether the call must throw an error if the operation is cancelled
-<see cref="P:SharpSvn.SvnClientArgs.IsLastInvocationCanceled" /> is true and the returnvalue <c>false</c> if the operation was canceled.
-(The <see cref="P:SharpSvn.SvnClientArgs.LastException" /> property is set to the cancel exception)
-</summary>
-        </member>
-        <member name="P:SharpSvn.SvnClientArgs.ThrowOnError">
-            <summary>
-Gets or sets a boolean indicating whether the call must throw an error if an exception occurs.
-If an exception would occur, the method returns false and the <see cref="P:SharpSvn.SvnClientArgs.LastException" /> property
-is set to the exception which would have been throw.
-</summary>
-        </member>
-        <member name="P:SharpSvn.SvnClientArgs.CommandType">
-            <summary>Gets the <see cref="T:SharpSvn.SvnCommandType" /> of the command</summary>
-        </member>
-        <member name="M:SharpSvn.SvnClientArgs.OnSvnError(SharpSvn.SvnErrorEventArgs)">
-            <summary>Called when handling a <see cref="T:SharpSvn.SvnException" /></summary>
-        </member>
-        <member name="M:SharpSvn.SvnClientArgs.OnNotify(SharpSvn.SvnNotifyEventArgs)">
-            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgs.Notify" /> event</summary>
-        </member>
-        <member name="M:SharpSvn.SvnClientArgs.OnProgress(SharpSvn.SvnProgressEventArgs)">
-            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgs.Progress" /> event</summary>
-        </member>
-        <member name="M:SharpSvn.SvnClientArgs.OnCancel(SharpSvn.SvnCancelEventArgs)">
-            <summary>Raises the <see cref="E:SharpSvn.SvnClientArgs.Cancel" /> event</summary>
-        </member>
-        <member name="E:SharpSvn.SvnClientArgs.SvnError">
-            <summary>Raised to notify errors from an command</summary>
-        </member>
-        <member name="E:SharpSvn.SvnClientArgs.Notify">
-            <summary>Raised to notify changes by an in-progress command</summary>
-        </member>
-        <member name="E:SharpSvn.SvnClientArgs.Progress">
-            <summary>Raised to notify of progress by an in-progress command</summary>
-        </member>
-        <member name="E:SharpSvn.SvnClientArgs.Cancel">
-            <summary>Raised to allow canceling an in-progress command</summary>
-        </member>
-        <member name="T:SharpSvn.SvnClientArgs">
-            <summary>Base class of all <see cref="T:SharpSvn.SvnClient" /> arguments</summary>
-            <threadsafety static="true" instance="false" />
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,System.String)">
+            <overloads>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</overloads>
+            <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
         <member name="M:SharpSvn.SvnClient.TryGetRepositoryId(System.String,System.Guid@)">
             <summary>Gets the Uuid of a Path, or <see cref="F:System.Guid.Empty" /> if path is not versioned</summary>
@@ -15429,43 +15558,43 @@ Merges the changes from <paramref name="mergeFrom" /> to <paramref name="mergeTo
             <summary>
 Merges the changes from <paramref name="mergeFrom" /> to <paramref name="mergeTo" /> into <paramRef name="targetPath" /></summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.GetRevisionPropertyList(SharpSvn.SvnUriTarget,SharpSvn.SvnRevisionPropertyListArgs,SharpSvn.SvnPropertyCollection@)">
+        <member name="M:SharpSvn.SvnClient.GetRevisionPropertyList(System.Uri,SharpSvn.SvnRevision,SharpSvn.SvnRevisionPropertyListArgs,SharpSvn.SvnPropertyCollection@)">
             <summary>Gets all revision properties on a a specific revision (<c>svn proplist --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.GetRevisionPropertyList(SharpSvn.SvnUriTarget,SharpSvn.SvnPropertyCollection@)">
+        <member name="M:SharpSvn.SvnClient.GetRevisionPropertyList(System.Uri,SharpSvn.SvnRevision,SharpSvn.SvnPropertyCollection@)">
             <overloads>Gets all revision properties on a a specific revision (<c>svn proplist --revision</c>)</overloads>
             <summary>Gets all revision properties on a a specific revision (<c>svn proplist --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnGetRevisionPropertyArgs,SharpSvn.SvnPropertyValue@)">
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,SharpSvn.SvnGetRevisionPropertyArgs,SharpSvn.SvnPropertyValue@)">
             <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnGetRevisionPropertyArgs,System.String@)">
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,SharpSvn.SvnGetRevisionPropertyArgs,System.String@)">
             <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnPropertyValue@)">
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,SharpSvn.SvnPropertyValue@)">
             <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(SharpSvn.SvnUriTarget,System.String,System.String@)">
+        <member name="M:SharpSvn.SvnClient.GetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,System.String@)">
             <overloads>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</overloads>
             <summary>Gets the value of a revision property on files or dirs in a specific revision (<c>svn propget --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.DeleteRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnSetRevisionPropertyArgs)">
+        <member name="M:SharpSvn.SvnClient.DeleteRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,SharpSvn.SvnSetRevisionPropertyArgs)">
             <summary>Deletes the value of a revision property on files, dirs in a specific revision(<c>svn propdel --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.DeleteRevisionProperty(SharpSvn.SvnUriTarget,System.String)">
+        <member name="M:SharpSvn.SvnClient.DeleteRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String)">
             <overloads>Deletes the value of a revision property on files, dirs in a specific revision(<c>svn propdel --revision</c>)</overloads>
             <summary>Deletes the value of a revision property on files, dirs in a specific revision(<c>svn propdel --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnSetRevisionPropertyArgs,System.Collections.Generic.ICollection`1{System.Byte})">
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,System.Collections.Generic.ICollection`1{System.Byte},SharpSvn.SvnSetRevisionPropertyArgs)">
             <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,SharpSvn.SvnSetRevisionPropertyArgs,System.String)">
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,System.String,SharpSvn.SvnSetRevisionPropertyArgs)">
             <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,System.Collections.Generic.ICollection`1{System.Byte})">
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,System.Collections.Generic.ICollection`1{System.Byte})">
             <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(SharpSvn.SvnUriTarget,System.String,System.String)">
+        <member name="M:SharpSvn.SvnClient.SetRevisionProperty(System.Uri,SharpSvn.SvnRevision,System.String,System.String)">
             <overloads>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</overloads>
             <summary>Sets the value of a revision property on files, dirs in a specific revision (<c>svn propset --revision</c>)</summary>
         </member>
@@ -16072,9 +16201,6 @@ They will be added in next commit(<c>svn add</c>)</overloads>
         <member name="M:SharpSvn.SvnClient.OnConflict(SharpSvn.SvnConflictEventArgs)">
             <summary>Raises the <see cref="E:SharpSvn.SvnClient.Conflict" /> event.</summary>
         </member>
-        <member name="M:SharpSvn.SvnClient.OnBeforeAutomaticMerge(SharpSvn.SvnBeforeAutomaticMergeEventArgs)">
-            <summary>Raises the <see cref="E:SharpSvn.SvnClient.BeforeAutomaticMerge" /> event.</summary>
-        </member>
         <member name="M:SharpSvn.SvnClient.OnNotify(SharpSvn.SvnNotifyEventArgs)">
             <summary>Raises the <see cref="E:SharpSvn.SvnClient.Notify" /> event.</summary>
         </member>
@@ -16104,12 +16230,6 @@ throwing the exception
             <summary>
 Raised on conflict. The event is first
 raised on the <see cref="T:SharpSvn.SvnClientArgsWithConflict" /> object and
-then on the <see cref="T:SharpSvn.SvnClient" /></summary>
-        </member>
-        <member name="E:SharpSvn.SvnClient.BeforeAutomaticMerge">
-            <summary>
-Raised before automatically merging changes into a file. The event is
-first raised on the <see cref="T:SharpSvn.SvnClientArgsWithConflict" /> object and
 then on the <see cref="T:SharpSvn.SvnClient" /></summary>
         </member>
         <member name="E:SharpSvn.SvnClient.Committing">
@@ -16174,12 +16294,6 @@ the managed resource handler</remarks>
         <member name="P:SharpSvn.SvnPropertyValue.Target">
             <summary>Gets the <see cref="T:SharpSvn.SvnTarget" /> the <see cref="T:SharpSvn.SvnPropertyValue" /> applies to;
 <c>null</c> if it applies to a revision property</summary>
-        </member>
-        <member name="P:SharpSvn.SvnClientConfiguration.UseSubversionAutomaticMerge">
-            <summary>Gets or sets a boolean indicating whether to use automerging of changes on text files. Disabling
-this makes subversion handle all files as binary when handling content merging</summary>
-            <remarks>The default value of this property is true; Set it to false to disable automerging</remarks>
-            <value>true if subversion must do an attempt to automerge text files, otherwise false</value>
         </member>
         <member name="P:SharpSvn.SvnClientConfiguration.UseSubversionDiff">
             <summary>Gets or sets a boolean indicating whether to always use the subversion integrated diff library
@@ -16490,22 +16604,6 @@ at the specified version</summary>
         <member name="P:SharpSvn.SvnLockInfo.FullPath">
             <summary>The path the notification is about, translated via <see cref="M:SharpSvn.SvnTools.GetNormalizedFullPath(System.String)" /></summary>
             <remarks>The <see cref="P:SharpSvn.SvnLockInfo.FullPath" /> property contains the path in normalized format; while <see cref="P:SharpSvn.SvnLockInfo.Path" /> returns the exact path from the subversion api</remarks>
-        </member>
-        <member name="P:SharpSvn.SvnBeforeAutomaticMergeEventArgs.IsBinary">
-            <summary>Gets or sets a boolean indicating whether Subversion should handle the file as binary</summary>
-            <remarks>You can only change the value of IsBinary when WasBinary is false</remarks>
-        </member>
-        <member name="P:SharpSvn.SvnBeforeAutomaticMergeEventArgs.WasBinary">
-            <summary>Gets a boolean indicating whether the file was originaly threated as binary by Subversion</summary>
-        </member>
-        <member name="P:SharpSvn.SvnBeforeAutomaticMergeEventArgs.DryRun">
-            <summary>Gets a boolean indicating whether the merge will be performed or the merge is just tested</summary>
-        </member>
-        <member name="P:SharpSvn.SvnBeforeAutomaticMergeEventArgs.FullPath">
-            <summary>Gets the full path of the file to merge</summary>
-        </member>
-        <member name="P:SharpSvn.SvnBeforeAutomaticMergeEventArgs.Path">
-            <summary>Gets the path of the file to merge</summary>
         </member>
         <member name="M:svn_compat_wrap_log_receiver(=FUNC:svn_error_t*(System.Void*,svn_log_entry_t*,apr_pool_t*)*,System.Void**,=FUNC:svn_error_t*(System.Void*,apr_hash_t*,System.Int32!System.Runtime.CompilerServices.IsLong,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte!System.Runtime.CompilerServices.IsConst*,apr_pool_t*),System.Void*,apr_pool_t*)">
 Return, in @a *receiver2 and @a *receiver2_baton a function/baton that
@@ -16842,6 +16940,9 @@ files or subdirectories not already present
         <member name="M:SharpSvn.SvnTools.PathCombine(System.String,System.String)">
             <summary>Long path capable version of <see cref="M:System.IO.Path.Combine(System.String,System.String)" /></summary>
         </member>
+        <member name="M:SharpSvn.SvnTools.GetNormalizedDirectoryName(System.String)">
+            <summary>Gets the normalized directory name of path (Long path enabled version of <see cref="M:System.IO.Path.GetDirectoryName(System.String)" />, always returning full paths)</summary>
+        </member>
         <member name="M:SharpSvn.SvnTools.GetFileName(System.Uri)">
             <summary>Gets the filename of the specified target</summary>
         </member>
@@ -16888,7 +16989,7 @@ parent paths or the path (file/directory) itself is a working copy.
 </summary>
         </member>
         <member name="M:SharpSvn.SvnTools.IsManagedPath(System.String)">
-            <summary>Gets a boolean indicating whether the path contains a subversion Working Copy</summary>
+            <summary>Gets a boolean indicating whether the path could contain a Subversion Working Copy</summary>
             <remarks>Assumes path is a directory</remarks>
         </member>
         <member name="M:SharpSvn.SvnTools.GetFullTruePath(System.String)">
