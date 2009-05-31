@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 							projectile.Amount = amount - 1;
 						}
 					} else if (self.WeaponProjectileType != ProjectileType.None) {
-						self.SysMessage(CompiledLoc<WeaponSkillDefLoc>.Get(self.Language).YouHaveNoAmmo);
+						self.SysMessage(Loc<WeaponSkillDefLoc>.Get(self.Language).YouHaveNoAmmo);
 						self.AbortSkill();
 						return true;
 					}
@@ -189,7 +189,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponSkillDefLoc : AbstractLoc {
+	public class WeaponSkillDefLoc : CompiledLocStringCollection {
 		internal string YouHaveNoAmmo = "Nemáš støelivo.";
 	}
 }

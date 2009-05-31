@@ -55,7 +55,7 @@ namespace SteamEngine.Common {
 		}
 
 		public int Add(object value) {
-			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+			throw new NotSupportedSEException();
 		}
 
 		public void Clear() {
@@ -70,7 +70,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, object value) {
-			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+			throw new NotSupportedSEException();
 		}
 
 		public bool IsFixedSize {
@@ -91,15 +91,17 @@ namespace SteamEngine.Common {
 
 		public object this[int index] {
 			get {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 			set {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 		}
 
 		public object Current {
-			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
+			get {
+				throw new NotSupportedSEException();
+			}
 		}
 
 		public bool MoveNext() {
@@ -110,7 +112,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void Add(object key, object value) {
-			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+			throw new NotSupportedSEException();
 		}
 
 		IDictionaryEnumerator IDictionary.GetEnumerator() {
@@ -130,22 +132,26 @@ namespace SteamEngine.Common {
 				return null;
 			}
 			set {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 		}
 
 		public DictionaryEntry Entry {
 			get {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 		}
 
 		public object Key {
-			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
+			get {
+				throw new NotSupportedSEException();
+			}
 		}
 
 		public object Value {
-			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
+			get {
+				throw new NotSupportedSEException();
+			}
 		}
 	}
 
@@ -153,7 +159,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyGenericCollection<T> instance = new EmptyReadOnlyGenericCollection<T>();
 
 		public void Add(T item) {
-			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+			throw new NotSupportedSEException();
 		}
 
 		public bool Contains(T item) {
@@ -172,7 +178,9 @@ namespace SteamEngine.Common {
 		}
 
 		public new T Current {
-			get { throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported); }
+			get {
+				throw new NotSupportedSEException();
+			}
 		}
 
 		public void Dispose() {
@@ -183,15 +191,15 @@ namespace SteamEngine.Common {
 		}
 
 		public void Insert(int index, T item) {
-			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+			throw new NotSupportedSEException();
 		}
 
 		public new T this[int index] {
 			get {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 			set {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 		}
 	}
@@ -200,7 +208,7 @@ namespace SteamEngine.Common {
 		public static new readonly EmptyReadOnlyDictionary<TKey, TValue> instance = new EmptyReadOnlyDictionary<TKey, TValue>();
 
 		public void Add(TKey key, TValue value) {
-			throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+			throw new NotSupportedSEException();
 		}
 
 		public bool ContainsKey(TKey key) {
@@ -226,10 +234,10 @@ namespace SteamEngine.Common {
 
 		public TValue this[TKey key] {
 			get {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 			set {
-				throw new SEException(CompiledLoc<CommonLoc>.Default.NotSupported);
+				throw new NotSupportedSEException();
 			}
 		}
 	}

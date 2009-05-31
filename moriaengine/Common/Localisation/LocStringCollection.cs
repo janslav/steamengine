@@ -8,12 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {
 
-	public enum Language {
-		Default, English = Default,
-		Czech
-	}
-
-	public abstract class ServLoc : IEnumerable<KeyValuePair<string, string>> {
+	public abstract class LocStringCollection : IEnumerable<KeyValuePair<string, string>> {
 		const string servLocDir = "Languages";
 		internal const string defaultText = "<LocalisationEntryNotAvailable>";
 
@@ -25,7 +20,7 @@ namespace SteamEngine.Common {
 		private Dictionary<string, string> entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		private Language language;
 
-		protected ServLoc() {
+		protected LocStringCollection() {
 		}
 
 		public virtual string GetEntry(string entryName) {
@@ -36,7 +31,7 @@ namespace SteamEngine.Common {
 			return defaultText;
 		}
 
-		protected virtual void SetEntry(string entryName, string entry) {
+		internal virtual void InternalSetEntry(string entryName, string entry) {
 			if (this.entriesByName.ContainsKey(entryName)) {
 				this.entriesByName[entryName] = String.Intern(entry); ;
 			}
@@ -60,6 +55,7 @@ namespace SteamEngine.Common {
 			get;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerator<KeyValuePair<string, string>> GetEnumerator() {
 			return this.entriesByName.GetEnumerator();
 		}
@@ -68,6 +64,7 @@ namespace SteamEngine.Common {
 			return this.entriesByName.GetEnumerator();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "entriesByName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "language"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		internal protected virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {			
 			this.entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			Dictionary<string, string> helperList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -102,7 +99,7 @@ namespace SteamEngine.Common {
 							string name = gc["name"].Value;
 							if (this.HasEntry(name)) {
 								if (helperList.ContainsKey(name)) {
-									this.SetEntry(name, gc["value"].Value);
+									this.InternalSetEntry(name, gc["value"].Value);
 									helperList.Remove(name);
 								} else {
 									Logger.WriteWarning(path, lineNum, "Duplicate value name '" + name + "'. Ignoring.");
@@ -134,84 +131,6 @@ namespace SteamEngine.Common {
 		public override string ToString() {
 			return string.Concat(this.Defname,
 				" (", Enum.GetName(typeof(Language), this.language), ")");
-		}
-	}
-
-	public static class LocManager {
-		private static Dictionary<string, ServLoc>[] loadedLanguages = InitDictArrays();
-
-		private static Dictionary<string, ServLoc>[] InitDictArrays() {
-			int n = Tools.GetEnumLength<Language>();
-			Dictionary<string, ServLoc>[] langs = new Dictionary<string, ServLoc>[n];
-
-			for (int i = 0; i < n; i++) {
-				langs[i] = new Dictionary<string, ServLoc>(StringComparer.InvariantCultureIgnoreCase);
-			}
-
-			return langs;
-		}
-
-		public static void RegisterLoc(ServLoc newLoc) {
-			string className = newLoc.Defname;
-			Language lan = newLoc.Language;
-			if (loadedLanguages[(int) lan].ContainsKey(className)) {
-				throw new SEException("Loc instance '" + className + "' already exists");
-			}
-			loadedLanguages[(int) lan].Add(className, newLoc);
-		}
-
-		public static void UnregisterLoc(ServLoc newLoc) {
-			string className = newLoc.Defname;
-			Language lan = newLoc.Language;
-			loadedLanguages[(int) lan].Remove(className);
-		}
-
-		public static ServLoc GetLoc(string defname, Language language) {
-			ServLoc retVal;
-			loadedLanguages[(int) language].TryGetValue(defname, out retVal);
-			return retVal;
-		}
-
-		public static string GetEntry(string defname, string entryName) {
-			return GetEntry(defname, entryName, Language.Default);
-		}
-
-		public static string GetEntry(string defname, string entryName, Language language) {
-			ServLoc retVal;
-			if (loadedLanguages[(int) language].TryGetValue(defname, out retVal)) {
-				return retVal.GetEntry(entryName);
-			}
-			return ServLoc.defaultText;
-		}
-
-		public static Language TranslateLanguageCode(string languageCode) {
-			languageCode = languageCode.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-			switch (languageCode) {
-				case "cz":
-				case "cze":
-				case "czech":
-				case "cs":
-				case "cesky":
-				case "èesky":
-				case "èeština":
-				case "cs-cz":
-					return Language.Czech;
-			}
-			return Language.English;
-		}
-
-		public static void UnregisterAssembly(Assembly assemblyBeingUnloaded) {
-			Dictionary<string, ServLoc> defaults = loadedLanguages[(int)Language.Default];
-			ServLoc[] allLocs = new ServLoc[defaults.Count];
-			defaults.Values.CopyTo(allLocs, 0); //we copy the list first, because we're going to remove some entries in a foreach loop
-
-			foreach (ServLoc loc in allLocs) {
-				if (loc.GetType().Assembly == assemblyBeingUnloaded) {
-					foreach (Dictionary<string, ServLoc> langDict in loadedLanguages) {
-						langDict.Remove(loc.Defname);
-					}
-				}
-			}
 		}
 	}
 }

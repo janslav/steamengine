@@ -642,8 +642,9 @@ namespace SteamEngine {
 		private static readonly string version = GetVersion();
 		public static string Version {
 			get { return Globals.version; }
-		} 
-		
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static string GetVersion() {
 			try {
 				using (SvnClient client = new SvnClient()) {
@@ -656,7 +657,6 @@ namespace SteamEngine {
 				Logger.WriteError("While obtatining SVN revision info", e);
 				return "<SVN revision number unknown>";
 			}
-
 		}
 
 		private static readonly DateTime startedAt = DateTime.Now;

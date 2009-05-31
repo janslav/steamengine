@@ -8,12 +8,16 @@ using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {
 
-	public abstract class AbstractLoc : ServLoc {
-		protected AbstractLoc() {
+	//children are supposed to be simple classes with some string fields (public or internal, doesn't really matter) representing the localised messages.
+	//Then it should be used with the Loc<> class
+
+	//the system will then make sure it's available in all languages and corresponding txt files are created and maintained in the \Language\ subdir
+	public abstract class CompiledLocStringCollection : LocStringCollection {
+		protected CompiledLocStringCollection() {
 		}
 
-		protected override void SetEntry(string entryName, string entry) {
-			base.SetEntry(entryName, entry);
+		internal override void InternalSetEntry(string entryName, string entry) {
+			base.InternalSetEntry(entryName, entry);
 			FieldInfo field = this.GetType().GetField(entryName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
 			if ((field != null) || (field.DeclaringType.IsAbstract)) {
 				field.SetValue(this, String.Intern(entry));
@@ -58,10 +62,7 @@ namespace SteamEngine.Common {
 		}
 	}
 
-	//client has "cliloc", so we have servloc :)
-
-	//T is supposed to be a simple class with lot of string fields (public or internal, doesn't really matter) representing the localised messages
-	public static class CompiledLoc<T> where T : AbstractLoc {
+	public static class Loc<T> where T : CompiledLocStringCollection {
 		private static T[] loadedLanguages = LoadLanuages();
 
 		private static T[] LoadLanuages() {
@@ -77,7 +78,7 @@ namespace SteamEngine.Common {
 			return langs;
 		}
 
-		//called by ClassManager (reflectively), does nothing but will cause the class to init, creating the txt files
+		//called by ClassManager (reflectively), does nothing but will cause the class to init, creating/reading the txt files
 		public static void Init() {
 		}
 

@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Start(Player self, object parameter) {
-			self.SysMessage(CompiledLoc<SpellBookLoc>.Get(self.Language).TargetBookToEmpty);
+			self.SysMessage(Loc<SpellBookLoc>.Get(self.Language).TargetBookToEmpty);
 			base.On_Start(self, parameter);
 		}
 
@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class SpellBookLoc : AbstractLoc {
+	public class SpellBookLoc : CompiledLocStringCollection {
 		internal readonly string TargetBookToEmpty = "Ze které knihy chceš vysypat svitky?";
 	}
 }

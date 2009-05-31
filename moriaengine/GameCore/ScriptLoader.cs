@@ -168,6 +168,7 @@ namespace SteamEngine {
 								case "defname":
 								case "defnames":
 								case "constants":
+								case "constant":
 									foreach (Constant constant in Constant.Load(section)) {
 										file.Add(constant);
 									}
@@ -179,7 +180,12 @@ namespace SteamEngine {
 								case "languages":
 								case "servloc":
 								case "scriptloc":
-									file.Add(ScriptedLoc.Load(section));
+								case "scriptedloc":
+								case "scriptedloccollection":
+								case "scriptedlocstringcollection":
+								case "locstringcollection":
+								case "locstrings":
+									file.Add(ScriptedLocStringCollection.Load(section));
 									continue;
 								//case "template":
 								//	
