@@ -94,12 +94,6 @@
     <Compile Include="..\..\Common\Collections\SimpleQueue.cs">
       <Link>Collections\SimpleQueue.cs</Link>
     </Compile>
-    <Compile Include="..\..\Common\CommonLoc.cs">
-      <Link>CommonLoc.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Common\CompiledLoc.cs">
-      <Link>CompiledLoc.cs</Link>
-    </Compile>
     <Compile Include="..\..\Common\ConvertTools.cs">
       <Link>ConvertTools.cs</Link>
       <SubType>Code</SubType>
@@ -117,6 +111,18 @@
     </Compile>
     <Compile Include="..\..\Common\IniFile.cs">
       <Link>IniFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Localisation\CommonLoc.cs">
+      <Link>Localisation\CommonLoc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Localisation\CompiledLocStringCollection.cs">
+      <Link>Localisation\CompiledLocStringCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Localisation\LocManager.cs">
+      <Link>Localisation\LocManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Localisation\LocStringCollection.cs">
+      <Link>Localisation\LocStringCollection.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\Logging\Logger.cs">
       <Link>Logging\Logger.cs</Link>
@@ -142,9 +148,6 @@
     <Compile Include="..\..\Common\Sanity.cs">
       <Link>Sanity.cs</Link>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\Common\ServLoc.cs">
-      <Link>ServLoc.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\TestSuite.cs">
       <Link>TestSuite.cs</Link>

@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
 			GameState state = skillSeqArgs.Self.GameState;
 			if (state != null) {
-				state.WriteLine(CompiledLoc<HidingLoc>.Get(state.Language).HidingAborted);
+				state.WriteLine(Loc<HidingLoc>.Get(state.Language).HidingAborted);
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class HidingLoc : AbstractLoc {
+	public class HidingLoc : CompiledLocStringCollection {
 		internal readonly string HidingAborted = "Hiding aborted.";
 	}
 }

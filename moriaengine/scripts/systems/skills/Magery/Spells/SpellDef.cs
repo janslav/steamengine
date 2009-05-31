@@ -595,7 +595,7 @@ namespace SteamEngine.CompiledScripts {
 				if (sea.SpellPower < 1) {
 					GameState casterState = sea.Caster.GameState;
 					if (casterState != null) {
-						casterState.WriteLine(CompiledLoc<SpellDefLoc>.Get(casterState.Language).TargetResistedSpell);
+						casterState.WriteLine(Loc<SpellDefLoc>.Get(casterState.Language).TargetResistedSpell);
 					}
 					Character targetAsChar = sea.CurrentTarget as Character;
 					if (targetAsChar != null) {
@@ -869,7 +869,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class SpellDefLoc : AbstractLoc {
+	public class SpellDefLoc : CompiledLocStringCollection {
 		internal string TargetResistedSpell = "Cíl odolal kouzlu!";
 	}
 }

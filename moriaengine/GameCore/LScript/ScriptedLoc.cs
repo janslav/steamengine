@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using SteamEngine.Common;
 
-namespace SteamEngine.Common {
+namespace SteamEngine.LScript {
 
-
-	public class ScriptedLoc : ServLoc, IUnloadable {
+	public class ScriptedLocStringCollection : LocStringCollection, IUnloadable {
 		private string defname;
 		private bool unloaded;
 
-		private ScriptedLoc(string defname) {
+		private ScriptedLocStringCollection(string defname) {
 			this.defname = defname;
 		}
 
@@ -43,7 +43,7 @@ namespace SteamEngine.Common {
 		internal static IUnloadable Load(PropsSection section) {
 			string defname = section.HeaderName;
 
-			ServLoc oldLoc = LocManager.GetLoc(defname, Language.Default);
+			LocStringCollection oldLoc = LocManager.GetLoc(defname, Language.Default);
 			if (oldLoc != null) {
 				Logger.WriteError(section.Filename, section.HeaderLine, "ScriptedLoc " + LogStr.Ident(defname) + " defined multiple times. Ignoring");
 				return null;
@@ -53,7 +53,7 @@ namespace SteamEngine.Common {
 			IUnloadable[] langs = new IUnloadable[n];
 
 			for (int i = 0; i < n; i++) {
-				ScriptedLoc newLoc = new ScriptedLoc(defname);
+				ScriptedLocStringCollection newLoc = new ScriptedLocStringCollection(defname);
 				newLoc.Init(GetEntriesFromSection(section), (Language)i);
 				langs[i] = newLoc;
 			}

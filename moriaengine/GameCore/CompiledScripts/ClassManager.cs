@@ -294,8 +294,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//initialise all language classes
-			if (type.IsSubclassOf(typeof(AbstractLoc))) {
-				MethodInfo locInitMethod = typeof(CompiledLoc<>).MakeGenericType(type).GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+			if (type.IsSubclassOf(typeof(CompiledLocStringCollection))) {
+				MethodInfo locInitMethod = typeof(Loc<>).MakeGenericType(type).GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
 				locInitMethod.Invoke(null, null);
 			}
 

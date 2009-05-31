@@ -115,7 +115,7 @@ namespace SteamEngine.CompiledScripts {
 						continue;
 					}
 
-					Match m = AbstractLoc.valueRE.Match(line);
+					Match m = CompiledLocStringCollection.valueRE.Match(line);
 					if (m.Success) {
 						GroupCollection gc = m.Groups;
 						string name = gc["name"].Value;
