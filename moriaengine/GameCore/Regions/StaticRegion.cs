@@ -523,8 +523,10 @@ namespace SteamEngine.Regions {
 				return base.Defname;
 			}
 			protected set {
-				//toto se bude volat jen pri skriptovem zakladani noveho regionu
-				//tam bude osetreno ze podobny defname neexistuje atd...
+				//zkontrolujeme, jestli stejny defname uz neexistuje... (pro jistotu)
+				if (byDefname.ContainsKey(value)) {
+					throw new OverrideNotAllowedException("Region with defname " + LogStr.Ident(value) + " already exists.");
+				} 
 				this.ThrowIfDeleted();
 				value = String.Intern(value);
 				base.Defname = value;

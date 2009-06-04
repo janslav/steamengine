@@ -1,3 +1,35 @@
+/*
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
+ */
+using System;
+using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using SteamEngine;
+using SteamEngine.Common;
+
+namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
+	public class TinkeringSkillDef : CraftingSkillDef {
+
+		public TinkeringSkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+		}
+	}
+}
 //502924	Which gem will you use to make the jewelry?
 //502925	You don't have the resources required to make that item.
 //502926	That is not proper material for tinkering items.
@@ -33,67 +65,3 @@
 //1044634	You haven't learned glassblowing.  Perhaps studying a book would help!
 //1044635	Requires masonry (carpentry specialization)
 //1044636	Requires glassblowing (alchemy specialization)
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-
-namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
-	public class TinkeringSkillDef : SkillDef {
-
-		public TinkeringSkillDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {
-		}
-
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-
-			//todo: paralyzed state etc.
-			return !CheckPrerequisities(skillSeqArgs); //F = continue to @start, T = stop
-		}
-
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false; //continue to delay, then @stroke
-		}
-
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-
-			if (!CheckPrerequisities(skillSeqArgs)) {
-				return true;//stop
-			}
-			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-
-			return false; //continue to @success or @fail
-		}
-
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-			return false;
-		}
-
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-			return false;
-		}
-
-		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			skillSeqArgs.Self.SysMessage("Výroba pøerušena");
-		}
-
-		[Remark("Check if we are alive, have enough stats etc.... Return false if the trigger above" +
-				" should be cancelled or true if we can continue")]
-		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			if (!self.CheckAliveWithMessage()) {
-				return false;//no message needed, it's been already sent in the called method
-			}
-			if (self.Stam <= self.MaxStam / 10) {
-				self.ClilocSysMessage(501991);//You are too fatigued to even lift a finger.
-				return false; //stop
-			}
-			return true;
-		}
-	}
-}

@@ -132,6 +132,20 @@ namespace SteamEngine.CompiledScripts {
 			return availableOnly;
 		}
 
+		[Summary("Consume some resources from the resource list from the character " +
+				"the resource is consumed only if present, the amount consumed will vary between 0 and the amount available (but not more than desired amount in the list)")]
+		public void ConsumeSomeResources(Character chr, ResourcesLocality where) {
+			
+			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
+			//now for each counter consume 0-available items
+			foreach (ResourceCounter ctr in resourceCounters) {
+				ctr.ConsumeSomeItems();
+			}
+
+			//dispose counters
+			DisposeAll(resourceCounters);
+		}
+
 		private static void DisposeAll<T>(List<T> disposables) where T : IDisposable {
 			foreach (IDisposable disposable in disposables) {
 				disposable.Dispose();

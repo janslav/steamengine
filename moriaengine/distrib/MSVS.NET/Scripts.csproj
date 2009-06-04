@@ -617,6 +617,9 @@
     <Compile Include="..\..\scripts\systems\skills\Crafting\Cooking.cs">
       <Link>systems\skills\Crafting\Cooking.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\CraftingSkillDef.cs">
+      <Link>systems\skills\Crafting\CraftingSkillDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\Craftmenu.cs">
       <Link>systems\skills\Crafting\Craftmenu\Craftmenu.cs</Link>
     </Compile>

@@ -19,4 +19,5 @@ Def:	//vars on the def
 	public ResourcesList resources2 = null
 	public ResourcesList skillMake = null
 	public ResourcesList skillmake2 = null
+	public Int32[] strokes = new Int32[] {5,2}
 Vars:	//vars defined in the class, so they basically do what tags do, but better
