@@ -219,7 +219,7 @@ namespace SteamEngine.Networking {
 
 		private static PacketGroup InitClientFeatures() {
 			PacketGroup retVal = PacketGroup.CreateFreePG();
-			clientFeatures.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.FeaturesFlags);
+			retVal.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.FeaturesFlags);
 			return retVal;
 		}
 

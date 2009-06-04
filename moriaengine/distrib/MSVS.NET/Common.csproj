@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -53,9 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
-    <Reference Include="SharpSvn, Version=1.5005.984.35067, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
+    <Reference Include="SharpSvn, Version=1.5006.1231.36280, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86" />
     <Reference Include="SteamDoc">
       <Name>SteamDoc</Name>
       <HintPath>..\..\bin\SteamDoc.dll</HintPath>

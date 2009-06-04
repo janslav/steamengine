@@ -58,8 +58,6 @@ namespace SteamEngine.Regions {
 				return this.parent;
 			}
 			protected set {
-				//toto se bude volat jen pri skriptovem zakladani noveho regionu
-				//tam bude osetreno ze podobny defname neexistuje atd...
 				this.parent = value; 
 			}
 		}

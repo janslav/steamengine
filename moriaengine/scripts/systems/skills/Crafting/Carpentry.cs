@@ -14,6 +14,22 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
+using System;
+using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using SteamEngine;
+using SteamEngine.Common;
+
+namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
+	public class CarpentrySkillDef : CraftingSkillDef {
+
+		public CarpentrySkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+		}
+	}
+}
 
 //500624	You do not have enough staves to construct the keg.
 //500625	You do not have enough hoops to construct the keg.
@@ -45,84 +61,4 @@
 //1044043	You failed to create the item, and some of your materials are lost.
 //1044284	You need a carpentry tool to make that.
 
-//1044351	You do not have sufficient wood to make that. 
-
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-
-namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
-	public class CarpentrySkillDef : SkillDef {
-
-		public CarpentrySkillDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {
-		}
-
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-
-			//todo: paralyzed state etc.
-			return !CheckPrerequisities(skillSeqArgs); //F = continue to @start, T = stop
-		}
-
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false; //continue to delay, then @stroke
-		}
-
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-
-			if (!CheckPrerequisities(skillSeqArgs)) {
-				return true;//stop
-			}
-			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-
-			return false; //continue to @success or @fail
-		}
-
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-
-			self.ClilocSysMessage(501851);//You enter a meditative trance.
-			MeditationPlugin mpl = (MeditationPlugin) MeditationPlugin.defInstance.Create();
-			mpl.additionalManaRegenSpeed = this.GetEffectForChar(self);
-			self.AddPlugin(MeditationPlugin.meditationPluginKey, mpl);
-			return false;
-		}
-
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-			//500629	You fail the project horribly, losing most of your materials in the process.
-			//1044043	You failed to create the item, and some of your materials are lost.
-
-			skillSeqArgs.Self.ClilocSysMessage(501848);//You cannot focus your concentration
-			return false;
-		}
-
-		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			skillSeqArgs.Self.SysMessage("Výroba pøerušena");
-		}
-
-		[Remark("Check if we are alive, have enough stats etc.... Return false if the trigger above" +
-				" should be cancelled or true if we can continue")]
-		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			if (!self.CheckAliveWithMessage()) {
-				return false;//no message needed, it's been already sent in the called method
-			}
-			if (self.Stam <= self.MaxStam / 10) {
-				self.ClilocSysMessage(501991);//You are too fatigued to even lift a finger.
-				return false; //stop
-			}
-			return true;
-		}
-
-		[SteamFunction]
-		public static void Carpenter(Character self) {
-			self.SelectSkill(SkillName.Carpentry);
-		}
-	}
-}
+//1044351	You do not have sufficient wood to make that.

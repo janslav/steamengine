@@ -26,6 +26,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Craftmenu for the specified crafting skill")]
 	public class D_Craftmenu : CompiledGumpDef {
 		public static readonly TagKey tkCraftmenuLastpos = TagKey.Get("_cm_lastPosition_");
+		private static TagKey tkInputIds = TagKey.Get("_cm_input_ids_");
 		private static int width = 600;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -90,6 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int maxIndex = cat.Contents.Count - 1; //maximal index to access (in case of omitting...)
 			CraftmenuItem oneItm = null;
 			CraftmenuCategory oneCat = null;
+			List<int> inputIds = new List<int>(); //list for storing indexes to input fields with items count
 			for (int i = firstiVal; i < imax; i++) {
 				ICraftmenuElement elem = cat.Contents[i];
 				if (elem.IsCategory) {
@@ -107,6 +109,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 					dlg.LastTable[rowCntr, 0] = GUTACheckBox.Builder.Id(6 * i + 10).Build();
 					dlg.LastTable[rowCntr, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id(6 * i + 15).Valign(DialogAlignment.Valign_Center).Text("0").Build(); //how many to make of this item (if any)
+					inputIds.Add(6 * i + 15);//store the index to the list
 					dlg.LastTable[rowCntr, 2] = GUTAImage.Builder.Gump(oneItm.itemDef.Model).Color(oneItm.itemDef.Color).Build();
 					dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(6 * i + 13).Valign(DialogAlignment.Valign_Center).Build();//display info
 					
@@ -151,13 +154,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 				rowCntr++;
 			}
-			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
-
 			if (dlg.LastTable.RowCount > rowCntr) {//there were less rows displayed than was prepared to display
 				dlg.LastTable.RowCount = rowCntr; //(this can occur when displaying the last page of the dialog and not all items are to be shown)
 			}
 
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
+
+			args.SetTag(D_Craftmenu.tkInputIds, inputIds);//store the id info
 
 			//ted paging
 			dlg.CreatePaging(cat.Contents.Count, firstiVal, 1);
@@ -204,9 +207,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ClearDialogStack(gi.Cont); //dont show any dialogs now
 						break;
 					case 4: //start making
+						//first we will prepare the list of Item-Count pairs to be made
+						List<int> inputIds = (List<int>)args.GetTag(D_Craftmenu.tkInputIds);//get the ids info
+						SimpleQueue<CraftingSelection> craftingOrder = new SimpleQueue<CraftingSelection>();
+						foreach (int id in inputIds) {
+							int requestedCount = (int)gr.GetNumberResponse(id);//always integer number
+							if (requestedCount > 0) {//non zero request for making, parse the line number
+								int line = (int)((id - 15) / 6); //input fields have IDs as 6*i + 15
+								CraftmenuItem cmItm = (CraftmenuItem)cat.Contents[line];
+								craftingOrder.Enqueue(new CraftingSelection(cmItm.itemDef, requestedCount));
+							}
+						}
+						if (craftingOrder.Count > 0) {
+							SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character) gi.Cont, cat.CategorySkill);
+							ssa.Param1 = craftingOrder; //add the prepared 'order' queue for crafting
+							ssa.PhaseStart(); //start making...
+						}
 						break;
 					case 5: //openhere
-						gi.Cont.SetTag(tkCraftmenuLastpos, cat.FullName);
+						gi.Cont.SetTag(tkCraftmenuLastpos, cat);
 						gi.Cont.SysMessage("Pozice výrobního menu nastavena na kategorii " + cat.FullName);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
@@ -264,15 +283,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Craftmenu(Character self, ScriptArgs args) {
 			if (args == null || args.Argv == null || args.Argv.Length == 0) {
 				//check the possibly stored last displayed category
-				string prevCat = TagMath.SGetTag(self, D_Craftmenu.tkCraftmenuLastpos);
+				CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(D_Craftmenu.tkCraftmenuLastpos);
 				if (prevCat != null) {
-					CraftmenuCategory oldCat = CraftmenuContents.GetCategoryByPath(prevCat);
-					if (oldCat != null) {
-						self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(oldCat));
-					} else {
-						self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
-					}
+					//not null means that the categroy was not deleted and can be accessed again
+					self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
 				} else {
+					//null means that it either not existed (the tag) or the categroy was deleted from the menu
 					self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
 				}
 			} else {

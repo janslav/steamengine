@@ -77,6 +77,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Summary("Check how many items we have available for consuming and prepare a random number to consume "+
+				"(but do not take more than the desired count in the resource list). Then consume it")]
+		internal void ConsumeSomeItems() {
+			int available = (int)Math.Min(foundCount, desiredCount); //we can consume at most the really desired count (but no more)
+			long toConsume = (long)Math.Round((new Random().NextDouble()) * available);
+			foreach (Item itm in foundItems) {
+				//try consume as much as possible of this item
+				long wasConsumed = itm.Consume(toConsume);
+				toConsume -= wasConsumed;
+				if (toConsume == 0) {
+					break; //desired amount has been already consumed, stop iterating
+				}
+			}
+		}
+
 		//clear the desired count, the found count information and clear the 
 		//list of found items
 		protected override void On_Reset() {

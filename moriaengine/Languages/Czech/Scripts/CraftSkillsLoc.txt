@@ -1,0 +1,5 @@
+ResourcesLackingButContinue = Nedostatek zdrojù k vyrobení {0}, pokraèuji dalšími pøedmìty.
+ResourcesLackingAndFinish = Nedostatek zdrojù k vyrobení {0}, výroba je ukonèena.
+FinishCrafting = Výroba je ukonèena
+CraftingAborted = Výroba byla pøerušena
+ItemMadeAndPutInRecCont = Vyrobil jsi {0} a umístil do {1}

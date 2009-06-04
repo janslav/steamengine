@@ -234,92 +234,28 @@ namespace SteamEngine.CompiledScripts {
 		[SavedMember]
 		private static readonly Dictionary<SkillName, CraftmenuCategory> mainCategories = new Dictionary<SkillName, CraftmenuCategory>();
 		
-		//[SavedMember]
-		//public static CraftmenuCategory categoryAlchemy = new CraftmenuCategory("Alchemy", null);
-		//[SavedMember]
-		//public static CraftmenuCategory categoryBlacksmithing = new CraftmenuCategory("Blacksmithing", null);
-		//[SavedMember]
-		//public static CraftmenuCategory categoryBowcraft = new CraftmenuCategory("Bowcraft", null);
-		//[SavedMember]
-		//public static CraftmenuCategory categoryCarpentry = new CraftmenuCategory("Carpentry", null);
-		//[SavedMember]
-		//public static CraftmenuCategory categoryCooking = new CraftmenuCategory("Cooking", null);
-		//[SavedMember]
-		//public static CraftmenuCategory categoryInscription = new CraftmenuCategory("Inscription", null);
-		//[SavedMember]
-		//public static CraftmenuCategory categoryTailoring = new CraftmenuCategory("Tailoring", null);
-		//[SavedMember]
-		//public static CraftmenuCategory categoryTinkering = new CraftmenuCategory("Tinkering", null);
-
 		public static Dictionary<SkillName, CraftmenuCategory> MainCategories {
 			get {
 				if (mainCategories.Count == 0) {//yet empty - first access, initialize it
-					//every other access will return an unempty dictionary as it will be initialized at least with te main categories
-					//initialize the dictionary with categories
-					mainCategories[SkillName.Alchemy] = new CraftmenuCategory("Alchemy");
-					mainCategories[SkillName.Blacksmith] = new CraftmenuCategory("Blacksmithing");
-					mainCategories[SkillName.Fletching] = new CraftmenuCategory("Bowcraft");
-					mainCategories[SkillName.Carpentry] = new CraftmenuCategory("Carpentry");
-					mainCategories[SkillName.Cooking] = new CraftmenuCategory("Cooking");
-					mainCategories[SkillName.Inscribe] = new CraftmenuCategory("Inscription");
-					mainCategories[SkillName.Tailoring] = new CraftmenuCategory("Tailoring");
-					mainCategories[SkillName.Tinkering] = new CraftmenuCategory("Tinkering");
-				}
-				return mainCategories;
-			}
-		}
-
-		[Summary("Get the category path ('cat1->cat2->cat3') and try to find and return the category specified")]
-		public static CraftmenuCategory GetCategoryByPath(string path) {
-			string[] catChain = path.Split(new string[] { "->" }, StringSplitOptions.None);
-			CraftmenuCategory candidateCat = null;
-			switch (catChain[0]) {
-				case "Alchemy":
-					candidateCat = MainCategories[SkillName.Alchemy];
-					break;
-				case "Blacksmithing":
-					candidateCat = MainCategories[SkillName.Blacksmith];
-					break;
-				case "Bowcraft":
-					candidateCat = MainCategories[SkillName.Fletching];
-					break;
-				case "Carpentry":
-					candidateCat = MainCategories[SkillName.Carpentry];
-					break;
-				case "Cooking":
-					candidateCat = MainCategories[SkillName.Cooking];
-					break;
-				case "Inscription":
-					candidateCat = MainCategories[SkillName.Inscribe];
-					break;
-				case "Tailoring":
-					candidateCat = MainCategories[SkillName.Tailoring];
-					break;
-				case "Tinkering":
-					candidateCat = MainCategories[SkillName.Tinkering];
-					break;
-			}
-			if (candidateCat != null) {
-				if (catChain.Length == 1) {
-					return candidateCat;
-				}
-				for (int i = 1; i < catChain.Length; i++) {
-					foreach (ICraftmenuElement elem in candidateCat.contents) {
-						if (elem.IsCategory && elem.Name.Equals(catChain[i], StringComparison.InvariantCultureIgnoreCase)) {
-							candidateCat = (CraftmenuCategory) elem; //found the correct category in the chain
-							break; //continue with another identifier string
+					for (int i = 0, n = AbstractSkillDef.SkillsCount; i < n; i++) {
+						CraftingSkillDef csk = AbstractSkillDef.GetById(i) as CraftingSkillDef;
+						if (csk != null) {
+							//add only Crafting skills...
+							mainCategories[(SkillName)i] = new CraftmenuCategory(csk);
 						}
 					}
 				}
-				return candidateCat; //last Category found
+				return mainCategories;
 			}
-			return null;//nothing was found which will not occur
-		}
+		}		
 
 		//method for lazy loading the ICraftmenuElement parental info, used only when accessing some element's parent which is yet null
 		internal static void TryLoadParents() {
 			foreach (CraftmenuCategory mainCat in mainCategories.Values) { //these dont have Parents...
 				ResolveChildParent(mainCat);
+				mainCat.Parent = mainCat; //main categories will have themselves as parents...
+				mainCat.categorySkill = (CraftingSkillDef)AbstractSkillDef.GetByKey(mainCat.Name); //main categories have the skill Key as their name
+				mainCat.isLoaded = true; //loaded, now if the parental reference is null then the category should be taken as deleted
 			}
 		}
 
@@ -330,6 +266,7 @@ namespace SteamEngine.CompiledScripts {
 				CraftmenuCategory elemCat = elem as CraftmenuCategory;
 				if (elemCat != null) {//we have the subcategory - resolve parents inside
 					elemCat.Parent = ofWhat; //set the subcategory's parent
+					elemCat.isLoaded = true; //loaded, now if the parental reference is null then the category should be taken as deleted
 					ResolveChildParent(elemCat); //and recurse into children
 				} else {//we have the item
 					((CraftmenuItem) elem).Parent = ofWhat;
@@ -361,7 +298,12 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Craftmenu category class. This is the entity where all Items from the menu are stored as well " +
 			"as it is a container for another subcategories")]
 	[ViewableClass]
-	public class CraftmenuCategory : ICraftmenuElement {
+	public class CraftmenuCategory : ICraftmenuElement, IDeletable {
+		internal bool isLoaded = false;
+
+		//lazily loaded reference to the crafting skill connected to this category (main categories only)
+		internal CraftingSkillDef categorySkill;
+		
 		[SaveableData]
 		public string name; //name of the category
 		[SaveableData]
@@ -376,10 +318,16 @@ namespace SteamEngine.CompiledScripts {
 			this.name = name;
 		}
 
+		//constructor used for main categories only
+		internal CraftmenuCategory(CraftingSkillDef csd) : this(csd.Key) {
+			this.categorySkill = csd;
+		}
+
 		[Summary("Get name compound also from the possible parent's name (if any)")]
 		public string FullName {
 			get {
-				if (this.Parent == null) {
+				ThrowIfDeleted();
+				if (this.Parent == this) {//main Categories have Parental reference on themselves
 					return name;
 				} else {
 					return this.Parent.FullName + "->" + name;
@@ -390,6 +338,30 @@ namespace SteamEngine.CompiledScripts {
 		public List<ICraftmenuElement> Contents {
 			get {
 				return contents;
+			}
+		}
+
+		public bool IsLoaded {
+			get {
+				return isLoaded;
+			}
+		}
+
+		[Summary("Return the (grand)parent from this category that lies on the first hierarchy level")]
+		public CraftmenuCategory MainParent {
+			get {
+				if (this.Parent == this) {
+					return this;
+				} else {
+					return this.Parent.MainParent;
+				}
+			}
+		}
+
+		[Summary("Return the category's skill which is used for crafting items from it")]
+		public CraftingSkillDef CategorySkill {
+			get {
+				return this.MainParent.categorySkill;
 			}
 		}
 
@@ -408,7 +380,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public CraftmenuCategory Parent {
 			get {
-				if (parent == null && !CraftmenuContents.MainCategories.ContainsValue(this)) {
+				if (!isLoaded) {
 					//if the parent is null and we aren't working with one of the main categories, try load all craftmenu elements' parental hierarchy
 					CraftmenuContents.TryLoadParents();
 				}
@@ -422,10 +394,12 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Category cleaning method - clear the contents and remove from the parent")]
 		public void Remove() {
 			if (this.Parent != null) {
-				this.Parent.Contents.Remove(this);
-				this.parent = null;
+				this.Parent.Contents.Remove(this); //remove from the parent's hierarchy list
 			}
-			Contents.Clear();
+			foreach(ICraftmenuElement subElem in contents) {
+				subElem.Remove();//remove every element in the removed category (incl. subcategories)
+			}
+			Delete(); //will clear the reference to the parent and disable the overall usage as favourite category etc.
 		}
 
 		[Summary("After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it")]
@@ -437,6 +411,30 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		#endregion
+	
+		#region IDeletable Members
+
+		public bool IsDeleted {
+			get { 
+				return (isLoaded == true && parent == null);//has been loaded but the parent is null? (this can happen only if the category was deleted)
+			}
+		}
+
+		public void Delete() {
+			//method is called when the category is removed from the categories hierarchy
+			//but there can exist references on it (favourite categroy etc...) so we need to mark it somehow
+			//in order to disable its usage anymore
+			isLoaded = true; //consider it as loaded (but in time of deleting it should be loaded anyways)
+ 			parent = null;
+		}
+		#endregion
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		public void ThrowIfDeleted() {
+			if (this.IsDeleted) {
+				throw new DeletedException("Invalid usage of deleted Craftmenu Category (" + this + ")");
+			}
+		} 
 	}
 
 	[SaveableClass]
@@ -535,18 +533,41 @@ namespace SteamEngine.CompiledScripts {
 
 			//reopen the dialog on the stored position
 			//check the stored last displayed category
-			string prevCat = TagMath.SGetTag(self, D_Craftmenu.tkCraftmenuLastpos);
+			CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(D_Craftmenu.tkCraftmenuLastpos);
 			if (prevCat != null) {
-				CraftmenuCategory oldCat = CraftmenuContents.GetCategoryByPath(prevCat);
-				if (oldCat != null) {
-					self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(oldCat));
-				} else {
-					self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
-				}
+				//not null means that the categroy was not deleted and can be accessed again
+				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
 			} else {
+				//null means that it either not existed (the tag) or the categroy was deleted from the menu
 				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
 			}
 			return false;
+		}
+	}
+
+	[Summary("Struct for describing one of the selected items and its count to be crafted")]
+	public struct CraftingSelection {
+		private readonly ItemDef itemDef;
+		private int count;
+
+		public CraftingSelection(ItemDef itemDef, int count) {
+			this.itemDef = itemDef;
+			this.count = count;
+		}
+
+		public ItemDef ItemDef {
+			get {
+				return this.itemDef;
+			}
+		}
+
+		public int Count {
+			get {
+				return this.count;
+			}
+			set {
+				this.count = value;
+			}
 		}
 	}
 }
