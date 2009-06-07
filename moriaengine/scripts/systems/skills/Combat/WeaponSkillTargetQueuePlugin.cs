@@ -32,13 +32,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
-		public static void AddTarget(Character self, Character target) {
-			AcquireCombatPlugin(self).AddTarget(target);
+		public static void AddTarget(Character attacker, Character target) {
+			AcquireCombatPlugin(attacker).AddTarget(target);
 		}
 
 		[SteamFunction]
-		public static void RemoveTarget(Character self, Character target) {
-			WeaponSkillTargetQueuePlugin p = self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
+		public static void RemoveTarget(Character attacker, Character target) {
+			WeaponSkillTargetQueuePlugin p = attacker.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
 			if (p != null) {
 				p.RemoveTarget(target);
 			}

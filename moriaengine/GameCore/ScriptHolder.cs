@@ -76,13 +76,13 @@ namespace SteamEngine {
 			functionsByName.Clear();
 		}
 
-		[Summary("Return enumerable containing all functions (copying the values from the main dictionary)")]
+		[Summary("Return enumerable containing all functions")]
 		public static IEnumerable<ScriptHolder> AllFunctions {
 			get {
 				if (functionsByName != null) {
 					return functionsByName.Values;
 				} else {
-					return null;
+					return EmptyReadOnlyGenericCollection<ScriptHolder>.instance;
 				}
 			}
 		}

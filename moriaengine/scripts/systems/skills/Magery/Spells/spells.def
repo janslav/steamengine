@@ -14,21 +14,21 @@ DURATION=0.0
 MANAUSE=4
 Requirements=1.0 Magery
 
-[SpellDef 2]
-DEFNAME=s_create_food
-NAME=Create Food
-SOUND=snd_SPELL_CREATE_FOOD
-RUNES=IMY
-CASTTIME=4
-//RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_mandrake_root
-RUNEITEM=i_rune_CREATE_FOOD
-SCROLLITEM=i_scroll_CREATE_FOOD
-FLAGS=SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=5
-Requirements=500.0 Magery
+//[SpellDef 2]
+//DEFNAME=s_create_food
+//NAME=Create Food
+//SOUND=snd_SPELL_CREATE_FOOD
+//RUNES=IMY
+//CASTTIME=4
+////RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_mandrake_root
+//RUNEITEM=i_rune_CREATE_FOOD
+//SCROLLITEM=i_scroll_CREATE_FOOD
+//FLAGS=SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=5
+//Requirements=500.0 Magery
 
 [HealingSpellDef 4]
 DEFNAME=s_heal

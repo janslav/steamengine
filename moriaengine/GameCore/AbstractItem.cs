@@ -55,7 +55,7 @@ namespace SteamEngine {
 		//and coords of an item inside a container should only be changed through MoveInsideContainer
 
 		private enum InternalFlag : byte {
-			SyncMask = (ItemSyncQueue.SyncFlags.Resend | ItemSyncQueue.SyncFlags.ItemUpdate | ItemSyncQueue.SyncFlags.Property),
+			SyncMask = (ItemSyncQueue.ItemSyncFlags.Resend | ItemSyncQueue.ItemSyncFlags.ItemUpdate | ItemSyncQueue.ItemSyncFlags.Property),
 			ItemFlag1 = 0x08, 
 			ItemFlag2 = 0x10,
 			ItemFlag3 = 0x20,
@@ -93,9 +93,9 @@ namespace SteamEngine {
 		}
 		#endregion Constructors
 
-		internal ItemSyncQueue.SyncFlags SyncFlags {
+		internal ItemSyncQueue.ItemSyncFlags SyncFlags {
 			get {
-				return (ItemSyncQueue.SyncFlags) (this.flags & InternalFlag.SyncMask);
+				return (ItemSyncQueue.ItemSyncFlags) (this.flags & InternalFlag.SyncMask);
 			}
 			set {
 				this.flags = ((this.flags & ~InternalFlag.SyncMask) | ((InternalFlag) value & InternalFlag.SyncMask));
