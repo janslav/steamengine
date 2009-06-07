@@ -38,10 +38,10 @@ namespace SteamEngine.Timers {
 		protected override sealed void OnTimeout() {
 			TagHolder cont = this.Cont;
 			if (cont != null) {
-				this.OnTimeout(cont);
 				if ((this.PeriodInSeconds < 0) && (this.DueInSeconds < 0)) {
-					this.Delete();
+					this.DeleteFrom(cont);
 				}
+				this.OnTimeout(cont);
 			} else {
 				this.Delete();
 			}
@@ -61,6 +61,10 @@ namespace SteamEngine.Timers {
 
 		public override void Delete() {
 			TagHolder c = this.Cont;
+			this.DeleteFrom(c);
+		}
+
+		private void DeleteFrom(TagHolder c) {
 			if (c != null) {
 				c.RemoveTimer(this);
 			}

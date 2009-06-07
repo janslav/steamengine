@@ -275,7 +275,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout(TagHolder cont) {
-				Logger.WriteDebug("CharLingeringTimer OnTimeout on " + this.Cont);
+				Logger.WriteDebug("CharLingeringTimer OnTimeout on " + cont);
 				Character self = cont as Character;
 				if (self != null) {
 					if (self.IsLingering) {

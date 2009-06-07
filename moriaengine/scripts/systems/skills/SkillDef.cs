@@ -623,7 +623,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout(TagHolder cont) {
-				Logger.WriteDebug("SkillStrokeTimer OnTimeout on " + this.Cont);
+				Logger.WriteDebug("SkillStrokeTimer OnTimeout on " + cont);
 				this.skillSeqArgs.PhaseStroke();
 			}
 		}

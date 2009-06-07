@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected override void OnTimeout(TagHolder cont) {
-				this.Cont.Delete();
+				cont.Delete();
 			}
 		}
 

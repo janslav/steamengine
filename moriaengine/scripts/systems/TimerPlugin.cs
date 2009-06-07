@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 			static TriggerKey timer = TriggerKey.Get("timer");
 
 			protected override void OnTimeout(TagHolder cont) {
-				((TimerPlugin) this.Cont).TryRun(timer, null);
+				((TimerPlugin) cont).TryRun(timer, null);
 			}
 		}
 	}
