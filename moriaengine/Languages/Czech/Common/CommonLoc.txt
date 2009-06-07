@@ -1,2 +1,0 @@
-NotSupported        = Nepodporováno
-NotImplemented      = Neimplementováno

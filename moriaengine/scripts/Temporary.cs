@@ -10,20 +10,6 @@ using SteamEngine.Timers;
 namespace SteamEngine.CompiledScripts {
 	public static class SomeScript {
 
-		private static void GetClient(out GameState state, out TcpConnection<GameState> conn, out AbstractCharacter ch) {
-			if (GameServer.AllClients.Count > 0) {
-				state = null;
-				foreach (GameState gs in GameServer.AllClients) {
-					state = gs;
-					break;
-				}
-				conn = state.Conn;
-				ch = state.Character;
-			} else {
-				throw new SEException("No client");
-			}
-		}
-
 		[SteamFunction]
 		public static void S0x1B() {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
@@ -126,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void SR() {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
-			Regions.Map map = ch.GetMap();
+			//Regions.Map map = ch.GetMap();
 
 			ch.Resync();
 		}
@@ -135,7 +121,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void S0xC8() {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
-			Regions.Map map = ch.GetMap();
+			//Regions.Map map = ch.GetMap();
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<ClientViewRangeOutPacket>().Prepare(state.UpdateRange); //0x55
@@ -148,6 +134,42 @@ namespace SteamEngine.CompiledScripts {
 			GetClient(out state, out conn, out ch);
 
 			PacketSequences.SendCharInfoWithPropertiesTo(ch, state, conn, ch);
+		}
+
+		//[SteamFunction]
+		//public static void PLight(object ignoredSelf, int lightLevel) {
+		//    GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
+		//    GetClient(out state, out conn, out ch);
+		//    //Regions.Map map = ch.GetMap();
+
+		//    PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+		//    pg.AcquirePacket<PersonalLightLevelOutPacket>().Prepare(ch.FlaggedUid, lightLevel); //0x4e
+		//    conn.SendPacketGroup(pg);
+		//}
+
+		//[SteamFunction]
+		//public static void GLight(object ignoredSelf, int lightLevel) {
+		//    GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
+		//    GetClient(out state, out conn, out ch);
+		//    //Regions.Map map = ch.GetMap();
+
+		//    PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+		//    pg.AcquirePacket<OverallLightLevelOutPacket>().Prepare(lightLevel); //0x4f
+		//    conn.SendPacketGroup(pg);
+		//}
+
+		private static void GetClient(out GameState state, out TcpConnection<GameState> conn, out AbstractCharacter ch) {
+			if (GameServer.AllClients.Count > 0) {
+				state = null;
+				foreach (GameState gs in GameServer.AllClients) {
+					state = gs;
+					break;
+				}
+				conn = state.Conn;
+				ch = state.Character;
+			} else {
+				throw new SEException("No client");
+			}
 		}
 	}
 }

@@ -36,7 +36,7 @@ namespace SteamEngine.Networking {
 		public static void Resend(AbstractItem item) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "Resend(" + item + ") called");
-				instance.SetFlagsOnItem(item, SyncFlags.Resend);
+				instance.SetFlagsOnItem(item, ItemSyncFlags.Resend);
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace SteamEngine.Networking {
 			ItemOnGroundUpdater.RemoveFromCache(item);
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ItemAboutToChange(" + item + ") called");
-				instance.SetFlagsOnItem(item, SyncFlags.ItemUpdate);
+				instance.SetFlagsOnItem(item, ItemSyncFlags.ItemUpdate);
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace SteamEngine.Networking {
 		public static void PropertiesChanged(AbstractItem item) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ItemPropertiesChanged(" + item + ") called");
-				instance.SetFlagsOnItem(item, SyncFlags.Property);
+				instance.SetFlagsOnItem(item, ItemSyncFlags.Property);
 			}
 		}
 
@@ -64,10 +64,10 @@ namespace SteamEngine.Networking {
 			while (this.queue.Count > 0) {
 				AbstractItem item = this.queue.Dequeue();
 				if ((item != null) && (!item.IsDeleted)) {
-					SyncFlags syncFlags = item.SyncFlags;
-					item.SyncFlags = SyncFlags.None;
+					ItemSyncFlags syncFlags = item.SyncFlags;
+					item.SyncFlags = ItemSyncFlags.None;
 
-					if ((syncFlags & (SyncFlags.Resend | SyncFlags.ItemUpdate)) != SyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
+					if ((syncFlags & (ItemSyncFlags.Resend | ItemSyncFlags.ItemUpdate)) != ItemSyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
 						UpdateItemAndProperties(item);
 					} else if (Globals.UseAosToolTips) {//only new properties
 						SendItemPropertiesOnly(item);
@@ -76,11 +76,11 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		private void SetFlagsOnItem(AbstractItem item, SyncFlags flags) {
-			Sanity.IfTrueThrow(flags == SyncFlags.None, "flags == SyncFlags.None");
+		private void SetFlagsOnItem(AbstractItem item, ItemSyncFlags flags) {
+			Sanity.IfTrueThrow(flags == ItemSyncFlags.None, "flags == SyncFlags.None");
 
-			SyncFlags itemSyncFlags = item.SyncFlags;
-			if (itemSyncFlags == SyncFlags.None) {
+			ItemSyncFlags itemSyncFlags = item.SyncFlags;
+			if (itemSyncFlags == ItemSyncFlags.None) {
 				this.queue.Enqueue(item);
 				this.autoResetEvent.Set();
 			}
@@ -88,7 +88,7 @@ namespace SteamEngine.Networking {
 		}
 
 		[Flags]
-		internal enum SyncFlags : byte {
+		internal enum ItemSyncFlags : byte {
 			None = 0x00,
 			Resend = 0x01,	//complete update - after creation, or on demand
 			ItemUpdate = 0x02,

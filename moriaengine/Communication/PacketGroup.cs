@@ -142,12 +142,6 @@ namespace SteamEngine.Communication {
 
 			bytes = this.compressed.bytes;
 
-			//#if DEBUG 
-			//            foreach (OutgoingPacket packet in packets) {
-			//                Logger.WriteDebug("Sending "+packet.FullName);
-			//            }
-			//#endif
-
 			return compressedLen;
 		}
 

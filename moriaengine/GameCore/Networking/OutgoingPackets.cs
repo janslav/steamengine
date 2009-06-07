@@ -2144,9 +2144,9 @@ namespace SteamEngine.Networking {
 		byte lightLevel;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "lightLevel"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "charUid"), CLSCompliant(false)]
-		public void Prepare(uint charUid, byte lightLevel) {
+		public void Prepare(uint charUid, int lightLevel) {
 			this.charUid = charUid;
-			this.lightLevel = lightLevel;
+			this.lightLevel = (byte) lightLevel;
 		}
 
 		public override byte Id {
@@ -2163,8 +2163,8 @@ namespace SteamEngine.Networking {
 		byte lightLevel;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "lightLevel")]
-		public void Prepare(byte lightLevel) {
-			this.lightLevel = lightLevel;
+		public void Prepare(int lightLevel) {
+			this.lightLevel = (byte) lightLevel;
 		}
 
 		public override byte Id {

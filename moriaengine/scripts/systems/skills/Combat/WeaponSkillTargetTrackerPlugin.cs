@@ -26,10 +26,10 @@ namespace SteamEngine.CompiledScripts {
 
 		private static PluginKey weaponSkillTargetPK = PluginKey.Get("_weaponSkillTarget_");
 
-		public static void InstallTargetTracker(Character self, Character attacker) {
-			WeaponSkillTargetTrackerPlugin p = self.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;
+		public static void InstallTargetTracker(Character defender, Character attacker) {
+			WeaponSkillTargetTrackerPlugin p = defender.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;
 			if (p == null) {
-				p = (WeaponSkillTargetTrackerPlugin) self.AddNewPlugin(weaponSkillTargetPK, WeaponSkillTargetTrackerPluginDef.instance);
+				p = (WeaponSkillTargetTrackerPlugin) defender.AddNewPlugin(weaponSkillTargetPK, WeaponSkillTargetTrackerPluginDef.instance);
 			}
 			p.attackers.Add(attacker);
 		}
@@ -68,15 +68,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Step() {
-			CheckAttackers();
+			this.CheckAttackers();
 		}
 
 		public void On_VisibilityChange() {
-			CheckAttackers();
+			this.CheckAttackers();
 		}
 
 		public void On_NewPosition() {
-			CheckAttackers();
+			this.CheckAttackers();
 		}
 
 		public void On_Death() {
