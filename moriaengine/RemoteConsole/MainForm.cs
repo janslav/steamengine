@@ -5,12 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using System.Net;
 using SteamEngine.Communication;
 
 namespace SteamEngine.RemoteConsole {
 	public partial class MainForm : Form {
-		Dictionary<int, CommandLineDisplay> displays = new Dictionary<int, CommandLineDisplay>();
+		private Dictionary<int, CommandLineDisplay> displays = new Dictionary<int, CommandLineDisplay>();
+
+		private EndPointSetting epsBeingReconnected;
 
 		EventHandler txtDisplay_TitleChanged;
 
@@ -79,6 +81,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void menuConnect_Click(object sender, EventArgs e) {
+			this.reconnectingTimer.Stop();
 			ConnectionForm cf = new ConnectionForm();
 			cf.ShowDialog();
 		}
@@ -126,6 +129,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void menuDisconnect_Click(object sender, EventArgs e) {
+			this.reconnectingTimer.Stop();
 			ConsoleClient.Disconnect("Disconnect menu item used.");
 		}
 
@@ -158,12 +162,35 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
+		private void menuRestartAuxServer_Click(object sender, EventArgs e) {
+			ConsoleClient.SendCommand(0, "restart");
+		}
+
 		private void systemTabPage_Load(object sender, EventArgs e) {
 
 		}
 
 		private void MainForm_Load(object sender, EventArgs e) {
 
+		}
+
+		internal void DelayReconnect(EndPointSetting eps) {
+			this.Invoke(new Action<EndPointSetting>(this.InvokedDelayReconnect), eps);
+		}
+
+		private void InvokedDelayReconnect(EndPointSetting ipe) {
+			this.epsBeingReconnected = ipe;
+			//this.reconnectingTimer.Stop();
+			this.reconnectingTimer.Start();
+		}
+
+		private void reconnectingTimer_Tick(object sender, EventArgs e) {
+			this.reconnectingTimer.Stop();
+
+			Console.WriteLine(String.Concat("Reconnecting to ", 
+				this.epsBeingReconnected.UserName,  "@", this.epsBeingReconnected.Address, ":" ,
+				this.epsBeingReconnected.Port.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+			ConsoleClient.Connect(this.epsBeingReconnected);
 		}
 	}
 }

@@ -141,4 +141,20 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			}
 		}
 	}
+
+	public class LoginFailedPacket : OutgoingPacket {
+		string reason;
+
+		public void Prepare(string reason) {
+			this.reason = reason;
+		}
+
+		public override byte Id {
+			get { return 7; }
+		}
+
+		protected override void Write() {
+			this.EncodeUTF8String(this.reason);
+		}
+	}
 }

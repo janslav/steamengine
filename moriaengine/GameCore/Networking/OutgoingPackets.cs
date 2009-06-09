@@ -373,7 +373,7 @@ namespace SteamEngine.Networking {
 			this.highlight = (byte) highlight;
 
 			items.Clear();
-			foreach (AbstractItem i in ch.visibleLayers) {
+			foreach (AbstractItem i in ch.VisibleEquip) {
 				items.Add(new ItemInfo(i.FlaggedUid, i.ShortColor, i.ShortModel, i.Layer));
 			}
 

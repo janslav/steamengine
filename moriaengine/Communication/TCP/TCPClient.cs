@@ -40,7 +40,7 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		public TcpConnection<TState> Connect(IPEndPoint endpoint) {
-			Socket socket = TcpServer<TState>.CreateSocket();
+			Socket socket = TcpServer<TState>.CreateSocket(endpoint.AddressFamily);
 			socket.Connect(endpoint);
 
 			TcpConnection<TState> newConn = Pool<TcpConnection<TState>>.Acquire();
@@ -49,5 +49,7 @@ namespace SteamEngine.Communication.TCP {
 
 			return newConn;
 		}
+
+		//public static void AcquireEndpoint(
 	}
 }

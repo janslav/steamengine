@@ -158,5 +158,16 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			packet.Prepare(serverUid, str);
 			this.Conn.SendSinglePacket(packet);
 		}
+
+		public void SendLoginFailedAndClose(string reason) {
+			TcpConnection<ConsoleClient> conn = this.Conn;
+
+			LoginFailedPacket packet = Pool<LoginFailedPacket>.Acquire();
+			packet.Prepare(reason);			
+			conn.SendSinglePacket(packet);
+
+			conn.Core.WaitForAllSent();
+			conn.Close(reason);
+		}
 	}
 }

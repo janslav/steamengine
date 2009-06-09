@@ -42,8 +42,8 @@ namespace SteamEngine.Communication.TCP {
 
 		}
 
-		internal static Socket CreateSocket() {
-			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		internal static Socket CreateSocket(AddressFamily addressFamily) {
+			return new Socket(addressFamily, SocketType.Stream, ProtocolType.Tcp);
 		}
 
 		public void Bind(IPEndPoint ipep) {
@@ -51,7 +51,7 @@ namespace SteamEngine.Communication.TCP {
 				throw new SEException("Already bound");
 			}
 
-			listener = CreateSocket();
+			listener = CreateSocket(ipep.AddressFamily);
 
 			try {
 				listener.LingerState.Enabled = false;
@@ -64,10 +64,9 @@ namespace SteamEngine.Communication.TCP {
 
 				Console.WriteLine("Listening on port " + ipep.Port);
 
-				listener.BeginAccept(CreateSocket(), 0, onAccept, listener);
+				listener.BeginAccept(CreateSocket(ipep.AddressFamily), 0, onAccept, listener);
 			} catch (Exception e) {
 				throw new FatalException("Server socket bind failed.", e);
-
 			}
 		}
 
@@ -108,7 +107,7 @@ namespace SteamEngine.Communication.TCP {
 
 			//continue in accepting
 			try {
-				listener.BeginAccept(CreateSocket(), 0, onAccept, listener);
+				listener.BeginAccept(CreateSocket(this.listener.AddressFamily), 0, onAccept, listener);
 			} catch (ObjectDisposedException) {
 				return;
 			} catch (Exception e) {

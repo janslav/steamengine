@@ -105,10 +105,7 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 					ICollection<GameServerClient> serversLoggedIn = LoggedInConsoles.AllServersWhereLoggedIn(console);
 					if (serversLoggedIn.Count == 0) {
 						Settings.ForgetUser(console.AccountName);
-
-						string msg = "Failed to identify as " + this.accName;
-						console.WriteLine(0, msg);
-						console.Conn.Close(msg);
+						console.SendLoginFailedAndClose("GameServer '" + state.Name + "' rejected username '" + this.accName + "' and/or it's password.");
 					}
 				}
 			}
