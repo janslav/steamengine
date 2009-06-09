@@ -39,5 +39,21 @@ namespace SteamEngine.RemoteConsole {
 				e.Handled = true;
 			}
 		}
+
+		public void RemoveGameServerButtons() {
+			this.pnlGameServerButtons.Dispose();
+		}
+
+		private void btnResync_Click(object sender, EventArgs e) {
+			ConsoleClient.SendCommand(this.id, "resync");
+		}
+
+		private void btnRecompile_Click(object sender, EventArgs e) {
+			ConsoleClient.SendCommand(this.id, "recompile");
+		}
+
+		private void btnExit_Click(object sender, EventArgs e) {
+			ConsoleClient.SendCommand(this.id, "exit");
+		}
 	}
 }

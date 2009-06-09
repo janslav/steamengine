@@ -65,7 +65,7 @@ namespace SteamEngine.RemoteConsole {
 			this.btnCancel.Location = new System.Drawing.Point(196, 169);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Size = new System.Drawing.Size(80, 23);
-			this.btnCancel.TabIndex = 19;
+			this.btnCancel.TabIndex = 21;
 			this.btnCancel.Text = "Cancel";
 			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 			// 
@@ -173,7 +173,7 @@ namespace SteamEngine.RemoteConsole {
 			this.btnConnect.Location = new System.Drawing.Point(108, 169);
 			this.btnConnect.Name = "btnConnect";
 			this.btnConnect.Size = new System.Drawing.Size(80, 23);
-			this.btnConnect.TabIndex = 18;
+			this.btnConnect.TabIndex = 20;
 			this.btnConnect.Text = "Connect";
 			this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
 			// 
@@ -246,7 +246,7 @@ namespace SteamEngine.RemoteConsole {
 			this.label8.Location = new System.Drawing.Point(205, 146);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(100, 13);
-			this.label8.TabIndex = 20;
+			this.label8.TabIndex = 18;
 			this.label8.Text = "Keep reconnecting:";
 			// 
 			// chkKeepReconnecting
@@ -256,7 +256,7 @@ namespace SteamEngine.RemoteConsole {
 			this.chkKeepReconnecting.Location = new System.Drawing.Point(311, 146);
 			this.chkKeepReconnecting.Name = "chkKeepReconnecting";
 			this.chkKeepReconnecting.Size = new System.Drawing.Size(15, 14);
-			this.chkKeepReconnecting.TabIndex = 21;
+			this.chkKeepReconnecting.TabIndex = 19;
 			// 
 			// ConnectionForm
 			// 

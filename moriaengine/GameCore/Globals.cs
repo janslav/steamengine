@@ -639,9 +639,14 @@ namespace SteamEngine {
 		}
 
 		//public static readonly string version="1.0.0"; 
-		private static readonly string version = GetVersion();
+		private static string version;
 		public static string Version {
-			get { return Globals.version; }
+			get {
+				if (version == null) {
+					version = GetVersion();
+				}
+				return version; 
+			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
@@ -772,7 +777,7 @@ namespace SteamEngine {
 		public static void Information() {
 			Globals.Src.WriteLine(string.Format(System.Globalization.CultureInfo.InvariantCulture, 
 				@"Steamengine ver. {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
-				version, serverName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
+				Version, serverName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false) / 1024, Environment.NewLine));
 		}
 
