@@ -35,6 +35,9 @@ namespace SteamEngine.RemoteConsole {
 			if (!this.displays.ContainsKey(id)) {
 				TabPage tab = new TabPage(name);
 				CommandLineDisplay cld = new CommandLineDisplay(name, id);
+				if (id < 1) {
+					cld.RemoveGameServerButtons();
+				}
 				cld.txtDisplay.TitleChanged += txtDisplay_TitleChanged;
 				tab.Controls.Add(cld);
 				cld.Dock = DockStyle.Fill;
