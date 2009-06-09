@@ -57,7 +57,6 @@ namespace SteamEngine.LScript {
 
 			if (IsType(code, StrictConstants.STRING)) {
 				string identifier = ((Token) code).GetImage();
-				Commands.AuthorizeCommandThrow(Globals.Src, identifier);
 				//some "keywords"
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "args")) { //true for case insensitive
 					/*args*/
@@ -186,6 +185,8 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			//Console.WriteLine("OpNode_Lazy_Expression.Run on "+vars.self);
 			//Console.WriteLine("Running as lazyexpression: "+LScript.GetString(origNode));
+
+			Commands.AuthorizeCommandThrow(Globals.Src, this.name);
 
 			bool memberNameMatched = false;
 			bool skillKeyMatched = false;

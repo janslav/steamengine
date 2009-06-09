@@ -123,5 +123,11 @@ namespace SteamEngine {
 				return this.contTriggerGroup.Defname + ": @" + this.name;
 			}
 		}
+
+		public virtual bool IsUnloaded {
+			get {
+				return false;
+			}
+		}
 	}
 }

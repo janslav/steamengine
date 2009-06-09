@@ -55,5 +55,13 @@ namespace SteamEngine.RemoteConsole {
 		private void btnExit_Click(object sender, EventArgs e) {
 			ConsoleClient.SendCommand(this.id, "exit");
 		}
+
+		private void btnSave_Click(object sender, EventArgs e) {
+			ConsoleClient.SendCommand(this.id, "save");
+		}
+
+		private void btnInfo_Click(object sender, EventArgs e) {
+			ConsoleClient.SendCommand(this.id, "information");
+		}
 	}
 }

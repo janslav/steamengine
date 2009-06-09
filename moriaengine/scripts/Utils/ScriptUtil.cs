@@ -154,5 +154,33 @@ namespace SteamEngine.CompiledScripts {
 		public static void ListScriptsSF(object ignored, ScriptArgs sa) {
 			ListScripts(sa.Args);
 		}
+
+		private static ScriptHolder periodicSaveInformationFunction;
+		private static ScriptHolder PeriodicSaveInformationFunction {
+			get {
+				if (periodicSaveInformationFunction == null) {
+					periodicSaveInformationFunction = ScriptHolder.GetFunction("periodicSaveInformation");
+				}
+				if (periodicSaveInformationFunction != null) {
+					if (!periodicSaveInformationFunction.IsUnloaded) {
+						return periodicSaveInformationFunction;
+					}
+				}
+				return null;
+			}
+		}
+
+		[SteamFunction]
+		public static void Information() {
+			Globals.Src.WriteLine(string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				@"Steamengine ver. {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
+				Globals.Version, Globals.ServerName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
+				GC.GetTotalMemory(false) / 1024, Environment.NewLine));
+			
+			ScriptHolder saveInfoFunc = PeriodicSaveInformationFunction;
+			if (saveInfoFunc != null) {
+				ConvertTools.ToString(saveInfoFunc.Run(Globals.Instance, (object[]) null));
+			}
+		}
 	}
 }
