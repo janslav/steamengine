@@ -39,6 +39,7 @@ namespace SteamEngine.Communication {
 		//Queue<IncomingMessage> incomingPacketsWorking;
 
 		private AutoResetEvent outgoingPacketsWaitingEvent = new AutoResetEvent(false);
+		private ManualResetEvent outgoingPacketsSentEvent = new ManualResetEvent(true);
 
 		private ManualResetEvent workersNeedStopping = new ManualResetEvent(false);
 
@@ -144,6 +145,7 @@ namespace SteamEngine.Communication {
 				this.outgoingPackets.Enqueue(new OutgoingMessage(conn, group));
 			}
 			outgoingPacketsWaitingEvent.Set();
+			this.outgoingPacketsSentEvent.Reset();
 		}
 
 		//from async background thread
@@ -155,6 +157,10 @@ namespace SteamEngine.Communication {
 				packet.Handle(conn, state);
 			}
 			packet.Dispose();
+		}
+
+		public void WaitForAllSent() {
+			this.outgoingPacketsSentEvent.WaitOne();
 		}
 
 		//outgoing packets
@@ -176,6 +182,8 @@ namespace SteamEngine.Communication {
 				if (this.workersNeedStopping.WaitOne(0, false)) {
 					return;
 				}
+				
+				this.outgoingPacketsSentEvent.Set();
 			}
 		}
 	}

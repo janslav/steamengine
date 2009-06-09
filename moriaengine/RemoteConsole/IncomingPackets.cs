@@ -27,6 +27,8 @@ namespace SteamEngine.RemoteConsole {
 					return Pool<WriteLinePacket>.Acquire();
 				case 6:
 					return Pool<SendServersToStartPacket>.Acquire();
+				case 7:
+					return Pool<LoginFailedPacket>.Acquire();
 			}
 
 			return null;
@@ -228,6 +230,19 @@ namespace SteamEngine.RemoteConsole {
 					return this.running;
 				}
 			}
+		}
+	}
+
+	public class LoginFailedPacket : ConsoleIncomingPacket {
+		string reason;
+
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			ConsoleClient.Disconnect("Login failed: " + this.reason);
+		}
+
+		protected override ReadPacketResult Read() {
+			this.reason = this.DecodeUTF8String();
+			return ReadPacketResult.Success;
 		}
 	}
 }

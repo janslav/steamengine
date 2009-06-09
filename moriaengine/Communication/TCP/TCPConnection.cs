@@ -73,30 +73,34 @@ namespace SteamEngine.Communication.TCP {
 
 		private void OnReceieve(IAsyncResult asyncResult) {
 			try {
-				int length = this.socket.EndReceive(asyncResult);
+				if ((this.socket != null) && (this.socket.Handle != null)) {
+					int length = this.socket.EndReceive(asyncResult);
 
-				if (length > 0) {
-					//we have new data, but still possibly have some old data.
-					base.ProcessReceievedData(length);
-				} else {
-					this.Close("Connection lost");
+					if (length > 0) {
+						//we have new data, but still possibly have some old data.
+						base.ProcessReceievedData(length);
+					} else {
+						this.Close("Connection lost");
+					}
+
+					if (this.IsConnected) {
+						this.BeginReceive();
+					}
 				}
-
 			} catch (Exception e) {
 				Logger.WriteDebug(e);
 				this.Close(e.Message);
-			}
-
-			if (this.IsConnected) {
-				this.BeginReceive();
 			}
 		}
 
 		protected override void On_DisposeUnmanagedResources() {
 			try {
-				socket.Close();
+				this.socket.Shutdown(SocketShutdown.Both);
 			} catch { }
-			socket = null;
+			try {
+				this.socket.Close();
+			} catch { }
+			this.socket = null;
 
 			base.On_DisposeUnmanagedResources();
 		}

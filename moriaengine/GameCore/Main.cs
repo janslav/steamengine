@@ -283,7 +283,7 @@ namespace SteamEngine {
 			CollectGarbage();
 			//RunLevelManager.SetPaused();	//Switch to paused until relinking & garbage collection have completed.
 			GameServer.RemoveBackupLinks();
-			//Globals.UnPauseServerTime();
+			Globals.UnPauseServerTime();
 			//RunLevelManager.SetRunning();
 			PacketSequences.BroadCast("Script recompiling finished.");
 		}

@@ -60,13 +60,7 @@ namespace SteamEngine.RemoteConsole {
 		private void btnConnect_Click(object sender, EventArgs e) {
 			EndPointSetting eps = (EndPointSetting) this.endPointSettingBindingSource.Current;
 			if (eps != null) {
-				TcpConnection<ConsoleClient> conn = ConsoleClient.Connect(eps);
-
-				if (conn != null) {
-					RequestLoginPacket packet = Pool<RequestLoginPacket>.Acquire();
-					packet.Prepare(this.txtUserName.Text, this.txtPassword.Text);
-					conn.SendSinglePacket(packet);
-				}
+				ConsoleClient.Connect(new EndPointSetting(eps));
 
 				this.DialogResult = DialogResult.OK;
 			}

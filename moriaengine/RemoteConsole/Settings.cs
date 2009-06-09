@@ -81,6 +81,7 @@ namespace SteamEngine.RemoteConsole {
 				section.RemoveValue("Password");
 			}
 			section.SetValue<int>("Port", eps.Port, null);
+			section.SetValue<bool>("KeepReconnecting", eps.KeepReconnecting, null);
 		}
 
 		private static EndPointSetting LoadEPSFromIni(IniFileSection section) {
@@ -93,6 +94,7 @@ namespace SteamEngine.RemoteConsole {
 				section.RemoveValue("Password");
 			}
 			eps.Port = section.GetValue<int>("Port", eps.Port, null);
+			eps.KeepReconnecting = section.GetValue<bool>("KeepReconnecting", eps.KeepReconnecting, null);
 			return eps;
 		}
 
@@ -116,27 +118,51 @@ namespace SteamEngine.RemoteConsole {
 	}
 
 	public class EndPointSetting {
-		private int port = 2594;
-		private string name = "New endpoint";
-		private string address = "localhost";
-		private string userName = "";
-		private string password = "";
+		private int port;
+		private string name;
+		private string address;
+		private string userName;
+		private string password;
+		private bool keepReconnecting;
+
+		public EndPointSetting() {
+			this.port = 2594;
+			this.name = "New endpoint";
+			this.address = "localhost";
+			this.userName = "";
+			this.password = "";
+			this.keepReconnecting = true;
+		}
+
+		public EndPointSetting(EndPointSetting eps) {
+			this.port = eps.port;
+			this.name = eps.name;
+			this.address = eps.address;
+			this.userName = eps.userName;
+			this.password = eps.password;
+			this.keepReconnecting = eps.keepReconnecting;
+		}
 
 		public string Name {
-			set { name = value; }
-			get { return name; }
+			set { this.name = value; }
+			get { return this.name; }
 		}
 		public string Address {
-			set { address = value; }
-			get { return address; }
+			set { this.address = value; }
+			get { return this.address; }
 		}
 		public string UserName {
-			set { userName = value; }
-			get { return userName; }
+			set { this.userName = value; }
+			get { return this.userName; }
 		}
 		public string Password {
-			set { password = value; }
-			get { return password; }
+			set { this.password = value; }
+			get { return this.password; }
+		}
+
+		public bool KeepReconnecting {
+			set { this.keepReconnecting = value; }
+			get { return this.keepReconnecting; }
 		}
 
 		public int Port {

@@ -51,6 +51,12 @@ namespace SteamEngine.Communication {
 			}
 		}
 
+		public AsyncCore<TConnection, TState, TEndPoint> Core {
+			get {
+				return this.core;
+			}
+		}
+
 		protected override void On_Reset() {
 			this.receivingBuffer = Pool<Buffer>.Acquire();
 			this.decryptBuffer = Pool<Buffer>.Acquire();

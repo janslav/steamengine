@@ -15,6 +15,8 @@ namespace SteamEngine.RemoteConsole {
 		private static ConsoleClient connectedInstance;
 		private TcpConnection<ConsoleClient> conn;
 
+		internal EndPointSetting endPointSetting;
+
 		protected override void On_Reset() {
 			this.conn = null;
 
@@ -24,6 +26,12 @@ namespace SteamEngine.RemoteConsole {
 		public static ConsoleClient ConnectedInstance {
 			get {
 				return connectedInstance;
+			}
+		}
+
+		public static bool IsConnected {
+			get {
+				return ((connectedInstance != null) && (connectedInstance.Conn.IsConnected));					
 			}
 		}
 
@@ -59,11 +67,16 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void NoParamDeleg();
 
 		public void On_Close(string reason) {
-			Console.WriteLine("Disconnected from " + conn.EndPoint + ": " + reason);
+			IPEndPoint ep = conn.EndPoint;
+			Console.WriteLine("Disconnected from " + ep + ": " + reason);
 
 			connectedInstance = null;
 			MainClass.mainForm.Invoke(new NoParamDeleg(MainClass.mainForm.SetConnectedFalse));
 			MainClass.mainForm.Invoke(new NoParamDeleg(MainClass.mainForm.ClearCmdLineDisplays));
+
+			if (this.endPointSetting.KeepReconnecting) {
+				MainClass.mainForm.DelayReconnect(this.endPointSetting);
+			}
 		}
 
 		public static void SendCommand(int id, string command) {
@@ -74,22 +87,43 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public static TcpConnection<ConsoleClient> Connect(EndPointSetting connectTo) {
+		public static void Connect(EndPointSetting eps) {
+			if (IsConnected) {
+				return;
+			}
 			try {
-				TcpConnection<ConsoleClient> conn = factory.Connect(new IPEndPoint(
-					Dns.GetHostAddresses(connectTo.Address)[0], connectTo.Port));
+				IPAddress[] ips = Dns.GetHostAddresses(eps.Address);
 
-				Settings.Save();
-				return conn;
+				bool compatibleAddressPresent = false;
+				foreach (IPAddress ip in ips) {
+					if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+						compatibleAddressPresent = true;
+						TcpConnection<ConsoleClient> createdConn = factory.Connect(new IPEndPoint(ip, eps.Port));
+
+						Settings.Save();
+						createdConn.State.endPointSetting = eps;
+						RequestLoginPacket packet = Pool<RequestLoginPacket>.Acquire();
+						packet.Prepare(eps.UserName, eps.Password);
+						createdConn.SendSinglePacket(packet);
+						return;
+					}
+				}
+				if (!compatibleAddressPresent) {
+					Logger.WriteError("Incompatible Address: '" + eps.Address + "'. Only IPv4 addresses supported");
+					return;
+				}
 			} catch (Exception e) {
 				Logger.WriteError(e);
 			}
 
-			return null;
+			if (eps.KeepReconnecting) {
+				MainClass.mainForm.DelayReconnect(eps);
+			}
 		}
 
 		public static void Disconnect(string reason) {
 			if (connectedInstance != null) {
+				connectedInstance.endPointSetting.KeepReconnecting = false;
 				connectedInstance.conn.Close(reason);
 			}
 		}

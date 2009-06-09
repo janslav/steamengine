@@ -61,7 +61,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 					state.TryLoginToGameServer(gameServer);
 				}
 			} else if (failed) {
-				conn.Close("Failed to identify as " + this.accName);
+				state.SendLoginFailedAndClose("The username '"+this.accName+"' either isn't cached in the AuxServer or the password is wrong.");
 			}
 		}
 	}
