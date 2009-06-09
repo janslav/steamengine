@@ -39,8 +39,6 @@ namespace SteamEngine.LScript {
 		private object[] results;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			Commands.AuthorizeCommandThrow(Globals.Src, "addtimer");
-
 			int line = code.GetStartLine() + LScriptMain.startLine;
 			int column = code.GetStartColumn();
 			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
@@ -52,7 +50,6 @@ namespace SteamEngine.LScript {
 			if (IsType(triggerOrName, StrictConstants.STRING)) {
 				constructed = new OpNode_Lazy_AddTimer(parent, filename, line, column, code);
 				constructed.funcName = ((Token) triggerOrName).GetImage();
-				Commands.AuthorizeCommandThrow(Globals.Src, constructed.funcName);
 			} else {//it is Triggerkey
 				string tkName = ((Token) triggerOrName.GetChildAt(triggerOrName.GetChildCount() - 1)).GetImage();
 				TriggerKey tk = TriggerKey.Get(tkName);
@@ -77,6 +74,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
+
+			Commands.AuthorizeCommandThrow(Globals.Src, "addtimer");
+			Commands.AuthorizeCommandThrow(Globals.Src, this.funcName);
+
 			if (vars.self is PluginHolder) {
 				bool memberNameMatched = false;
 

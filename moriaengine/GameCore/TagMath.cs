@@ -89,5 +89,14 @@ namespace SteamEngine {
 			}
 			return false;
 		}
+		
+		public static string TimeSpanToString(TimeSpan ts, string format) {
+			DateTime dt = DateTime.MinValue.Add(ts);
+			return dt.ToString(format);
+		}
+
+		public static string TimeSpanToSimpleString(TimeSpan ts) {
+			return TimeSpanToString(ts, "H:mm:ss");
+		}
 	}
 }

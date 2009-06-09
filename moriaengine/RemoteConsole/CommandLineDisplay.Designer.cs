@@ -25,10 +25,12 @@ namespace SteamEngine.RemoteConsole {
 		private void InitializeComponent() {
 			this.txtCommandLine = new System.Windows.Forms.ComboBox();
 			this.pnlGameServerButtons = new System.Windows.Forms.Panel();
-			this.btnResync = new System.Windows.Forms.Button();
-			this.btnRecompile = new System.Windows.Forms.Button();
 			this.btnExit = new System.Windows.Forms.Button();
+			this.btnRecompile = new System.Windows.Forms.Button();
+			this.btnResync = new System.Windows.Forms.Button();
+			this.btnSave = new System.Windows.Forms.Button();
 			this.txtDisplay = new SteamEngine.RemoteConsole.LogStrDisplay();
+			this.btnInfo = new System.Windows.Forms.Button();
 			this.pnlGameServerButtons.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -44,6 +46,8 @@ namespace SteamEngine.RemoteConsole {
 			// 
 			// pnlGameServerButtons
 			// 
+			this.pnlGameServerButtons.Controls.Add(this.btnInfo);
+			this.pnlGameServerButtons.Controls.Add(this.btnSave);
 			this.pnlGameServerButtons.Controls.Add(this.btnExit);
 			this.pnlGameServerButtons.Controls.Add(this.btnRecompile);
 			this.pnlGameServerButtons.Controls.Add(this.btnResync);
@@ -52,26 +56,6 @@ namespace SteamEngine.RemoteConsole {
 			this.pnlGameServerButtons.Name = "pnlGameServerButtons";
 			this.pnlGameServerButtons.Size = new System.Drawing.Size(400, 29);
 			this.pnlGameServerButtons.TabIndex = 1;
-			// 
-			// btnResync
-			// 
-			this.btnResync.Location = new System.Drawing.Point(3, 3);
-			this.btnResync.Name = "btnResync";
-			this.btnResync.Size = new System.Drawing.Size(75, 23);
-			this.btnResync.TabIndex = 0;
-			this.btnResync.Text = "&Resync";
-			this.btnResync.UseVisualStyleBackColor = true;
-			this.btnResync.Click += new System.EventHandler(this.btnResync_Click);
-			// 
-			// btnRecompile
-			// 
-			this.btnRecompile.Location = new System.Drawing.Point(84, 3);
-			this.btnRecompile.Name = "btnRecompile";
-			this.btnRecompile.Size = new System.Drawing.Size(75, 23);
-			this.btnRecompile.TabIndex = 1;
-			this.btnRecompile.Text = "Re&compile";
-			this.btnRecompile.UseVisualStyleBackColor = true;
-			this.btnRecompile.Click += new System.EventHandler(this.btnRecompile_Click);
 			// 
 			// btnExit
 			// 
@@ -83,6 +67,36 @@ namespace SteamEngine.RemoteConsole {
 			this.btnExit.UseVisualStyleBackColor = true;
 			this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
 			// 
+			// btnRecompile
+			// 
+			this.btnRecompile.Location = new System.Drawing.Point(84, 3);
+			this.btnRecompile.Name = "btnRecompile";
+			this.btnRecompile.Size = new System.Drawing.Size(75, 23);
+			this.btnRecompile.TabIndex = 1;
+			this.btnRecompile.Text = "Re&compile";
+			this.btnRecompile.UseVisualStyleBackColor = true;
+			this.btnRecompile.Click += new System.EventHandler(this.btnRecompile_Click);
+			// 
+			// btnResync
+			// 
+			this.btnResync.Location = new System.Drawing.Point(3, 3);
+			this.btnResync.Name = "btnResync";
+			this.btnResync.Size = new System.Drawing.Size(75, 23);
+			this.btnResync.TabIndex = 0;
+			this.btnResync.Text = "&Resync";
+			this.btnResync.UseVisualStyleBackColor = true;
+			this.btnResync.Click += new System.EventHandler(this.btnResync_Click);
+			// 
+			// btnSave
+			// 
+			this.btnSave.Location = new System.Drawing.Point(246, 3);
+			this.btnSave.Name = "btnSave";
+			this.btnSave.Size = new System.Drawing.Size(75, 23);
+			this.btnSave.TabIndex = 3;
+			this.btnSave.Text = "&Save";
+			this.btnSave.UseVisualStyleBackColor = true;
+			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			// 
 			// txtDisplay
 			// 
 			this.txtDisplay.DefaultTitle = null;
@@ -91,6 +105,16 @@ namespace SteamEngine.RemoteConsole {
 			this.txtDisplay.Name = "txtDisplay";
 			this.txtDisplay.Size = new System.Drawing.Size(400, 350);
 			this.txtDisplay.TabIndex = 0;
+			// 
+			// btnInfo
+			// 
+			this.btnInfo.Location = new System.Drawing.Point(327, 3);
+			this.btnInfo.Name = "btnInfo";
+			this.btnInfo.Size = new System.Drawing.Size(75, 23);
+			this.btnInfo.TabIndex = 4;
+			this.btnInfo.Text = "&Info";
+			this.btnInfo.UseVisualStyleBackColor = true;
+			this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
 			// 
 			// CommandLineDisplay
 			// 
@@ -114,5 +138,7 @@ namespace SteamEngine.RemoteConsole {
 		private System.Windows.Forms.Button btnResync;
 		private System.Windows.Forms.Button btnExit;
 		private System.Windows.Forms.Button btnRecompile;
+		private System.Windows.Forms.Button btnSave;
+		private System.Windows.Forms.Button btnInfo;
 	}
 }

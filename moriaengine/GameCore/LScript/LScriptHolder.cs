@@ -122,13 +122,13 @@ namespace SteamEngine.LScript {
 			this.unloaded = true;
 		}
 
-		public bool IsUnloaded {
+		public sealed override bool IsUnloaded {
 			get {
 				return this.unloaded;
 			}
 		}
 
-		public override string Description {
+		public sealed override string Description {
 			get {
 				return filename + "(L" + line + ")";
 			}
