@@ -40,6 +40,11 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 			if (consoles.Count == 0) {
 				GameServers.GameServerServer.StopSendingLogStr();
+
+				//memory cleanup
+				PoolBase.ClearAll();
+				GC.Collect();
+
 			}
 		}
 

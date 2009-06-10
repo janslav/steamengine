@@ -421,9 +421,9 @@ namespace SteamEngine.Regions {
 
 		public static void CheckAllRegions() {
 			int i = 0, n = byDefname.Count;
-
+			int countPerCent = n / 200;
 			foreach (StaticRegion region in byDefname.Values) {
-				if ((i % 20) == 0) {
+				if ((i % countPerCent) == 0) {
 					Logger.SetTitle("Checking regions: " + ((i * 100) / n) + " %");
 				}
 				region.CheckConflictsAndWarn();

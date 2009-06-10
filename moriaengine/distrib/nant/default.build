@@ -95,7 +95,7 @@
 		</delete>
 	</target>
 	
-	<target name="clean" depends="cleanCommon, cleanCommunication, cleanGameCore, cleanScripts, cleanConverter, cleanAuxiliaryServer, cleanRemoteConsole">
+	<target name="clean" depends="cleanCommon, cleanCommunication, cleanGameCore, cleanScripts, cleanConverter, cleanAuxiliaryServer, cleanRemoteConsole, cleanProcessRestarter">
 	</target>
 	
 	<target name="buildCommon">

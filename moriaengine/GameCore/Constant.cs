@@ -222,8 +222,9 @@ namespace SteamEngine {
 			Logger.WriteDebug("Resolving " + count + " constants");
 			DateTime before = DateTime.Now;
 			int a = 0;
+			int countPerCent = count / 200;
 			foreach (Constant c in allConstantsByName.Values) {
-				if ((a % 20) == 0) {
+				if ((a % countPerCent) == 0) {
 					Logger.SetTitle("Resolving Constants: " + ((a * 100) / count) + " %");
 				}
 				if (!c.unloaded) {//those should have already stated what's the problem :)

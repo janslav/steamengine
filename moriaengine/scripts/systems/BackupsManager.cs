@@ -148,7 +148,7 @@ namespace SteamEngine.CompiledScripts {
 			void FinishSaving();
 
 			void StartLoading(string path);
-			TextReader GetLoadStream(string name);
+			StreamReader GetLoadStream(string name);
 			void FinishLoading();
 		}
 
@@ -473,7 +473,7 @@ namespace SteamEngine.CompiledScripts {
 				this.path = path;
 			}
 
-			public TextReader GetLoadStream(string name) {
+			public StreamReader GetLoadStream(string name) {
 				string fileName = Path.Combine(path, name + ".sav");
 				Console.WriteLine("Loading " + LogStr.File(fileName));
 				//throw new Exception("test exc from GetLoadStream");
@@ -533,7 +533,7 @@ namespace SteamEngine.CompiledScripts {
 				zipReader = new ICSharpCode.SharpZipLib.Zip.ZipInputStream(File.OpenRead(zipFileName));
 			}
 
-			public TextReader GetLoadStream(string name) {
+			public StreamReader GetLoadStream(string name) {
 				zipReader.GetNextEntry();
 				return new StreamReader(zipReader);
 			}
@@ -584,7 +584,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			public TextReader GetLoadStream(string name) {
+			public StreamReader GetLoadStream(string name) {
 				zipReader.MoveNext();
 				return new StreamReader(new OBStream(zipReader));
 			}
