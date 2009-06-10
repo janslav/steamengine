@@ -143,7 +143,7 @@ namespace SteamEngine {
 
 				using (StreamReader stream = file.OpenText()) {
 					foreach (PropsSection section in PropsFileParser.Load(
-							file.FullName, stream, new CanStartAsScript(StartsAsScript))) {
+							file.FullName, stream, new CanStartAsScript(StartsAsScript), false)) {
 
 						try {
 							string type = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);

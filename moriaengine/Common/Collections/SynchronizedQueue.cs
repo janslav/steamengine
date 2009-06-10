@@ -18,7 +18,7 @@
 using System;
 using System.Threading;
 
-namespace SteamEngine.Timers {
+namespace SteamEngine {
 
 	//a thread-safe queue class, which uses sort of "circular" algorhitm, 
 	[System.Diagnostics.DebuggerDisplay("Count = {Count}")]

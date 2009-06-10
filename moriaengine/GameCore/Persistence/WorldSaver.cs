@@ -172,7 +172,7 @@ namespace SteamEngine.Persistence {
 					}
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
-					TextReader loadStream = GetLoadStream(path, sa.Argv[1]);
+					StreamReader loadStream = GetLoadStream(path, sa.Argv[1]);
 					InvokeLoad(loadStream, Path.Combine(path, name + ".sav"));
 					try {
 						loadStream.Close();
@@ -212,11 +212,11 @@ namespace SteamEngine.Persistence {
 			return true;
 		}
 
-		private static void InvokeLoad(TextReader stream, string filename) {
+		private static void InvokeLoad(StreamReader stream, string filename) {
 			//currentfile = filename;
 			EOFMarked = false;
 			foreach (PropsSection section in PropsFileParser.Load(
-					filename, stream, new CanStartAsScript(StartsAsScript))) {
+					filename, stream, new CanStartAsScript(StartsAsScript), true)) {
 
 				string type = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 				string name = section.HeaderName;
@@ -256,11 +256,11 @@ namespace SteamEngine.Persistence {
 
 		private static bool EOFMarked;
 
-		static TextReader GetLoadStream(string path, object file) {
+		static StreamReader GetLoadStream(string path, object file) {
 			//object file is either string or Stream or TextWriter
-			TextReader tr = file as TextReader;
-			if (tr != null) {
-				return tr;
+			StreamReader sr = file as StreamReader;
+			if (sr != null) {
+				return sr;
 			}
 			Stream s = file as Stream;
 			if (s != null) {
@@ -271,7 +271,7 @@ namespace SteamEngine.Persistence {
 			return new StreamReader(File.OpenRead(filepath));
 		}
 
-		private static TextReader globalsLoader;
+		private static StreamReader globalsLoader;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		static void CloseLoadStreams() {

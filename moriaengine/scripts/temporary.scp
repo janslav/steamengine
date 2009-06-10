@@ -411,7 +411,8 @@ return 0
 
 
 [function f]
-local message = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-PacketSequences.SendUnicodeMessage(Globals.SrcTCPConnection, Globals.Src, <local message>, Globals.Src.Name, SpeechType.Speech, argv[0], -1, "CSY")
-PacketSequences.SendAsciiMessage(Globals.SrcTCPConnection, Globals.Src, <local message>, Globals.Src.Name, SpeechType.Speech, argv[0], -1, "CSY")
+for i 1 1000
+	Logger.SetTitle(i)
+	src.WriteLine(i)
+endfor
+Logger.SetTitle("")

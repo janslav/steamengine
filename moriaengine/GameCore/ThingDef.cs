@@ -525,8 +525,9 @@ namespace SteamEngine {
 			int count = AllScriptsByDefname.Count;
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
 				int a = 0;
+				int countPerCent = count / 200;
 				foreach (AbstractScript td in AllScriptsByDefname.Values) {
-					if ((a % 100) == 0) {
+					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
 					}
 					AbstractItemDef idef = td as AbstractItemDef;

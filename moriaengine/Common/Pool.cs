@@ -25,8 +25,20 @@ using System.Collections.Generic;
 
 namespace SteamEngine.Common {
 	public abstract class PoolBase {
+		private static List<PoolBase> allPools = new List<PoolBase>();
+
+		protected PoolBase() {
+			allPools.Add(this);
+		}
 
 		internal abstract void Release(Poolable p);
+		internal abstract void Clear();
+
+		public static void ClearAll() {
+			foreach (PoolBase pool in allPools) {
+				pool.Clear();
+			}
+		}
 	}
 
 	public class Pool<T> : PoolBase where T : Poolable, new() {
@@ -64,6 +76,16 @@ namespace SteamEngine.Common {
 					instance.myPool = pool;
 					return instance;
 				}
+			}
+		}
+
+		internal override void Clear() {
+			lock (pool) {
+				int count = queue.Count;
+				if (count > 0) {
+					Logger.WriteDebug("Memory Cleanup: " + Tools.TypeToString(typeof(T)) + " x" + count.ToString());
+				}
+				queue = new SimpleQueue<T>();
 			}
 		}
 	}

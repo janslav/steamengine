@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -845,9 +845,6 @@
     <Compile Include="..\..\GameCore\Timers\MethodTimer.cs">
       <Link>Timers\MethodTimer.cs</Link>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Timers\SynchronizedQueue.cs">
-      <Link>Timers\SynchronizedQueue.cs</Link>
     </Compile>
     <Compile Include="..\..\GameCore\Timers\Timer.cs">
       <Link>Timers\Timer.cs</Link>

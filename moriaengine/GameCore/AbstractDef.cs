@@ -309,10 +309,11 @@ namespace SteamEngine {
 
 			DateTime before = DateTime.Now;
 			int a = 0;
+			int countPerCent = count / 100;
 			foreach (AbstractScript script in AllScriptsByDefname.Values) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
-					if ((a % 50) == 0) {
+					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
 					}
 					if (!def.IsUnloaded) {//those should have already stated what's the problem :)
@@ -346,10 +347,11 @@ namespace SteamEngine {
 			}
 			int count = AllScriptsByDefname.Count;
 			int a = 0;
+			int countPerCent = count / 200;
 			foreach (AbstractScript script in AllScriptsByDefname.Values) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
-					if ((a % 50) == 0) {
+					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Saving defs: " + ((a * 100) / count) + " %");
 					}
 					if ((!def.IsUnloaded) && (!def.alreadySaved)) {

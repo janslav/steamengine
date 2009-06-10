@@ -53,15 +53,27 @@ namespace SteamEngine {
 		//	Logger.WriteError(WorldSaver.CurrentFile,line,s);
 		//}
 
-		public static IEnumerable<PropsSection> Load(string filename, TextReader stream, CanStartAsScript isScript) {
+		public static IEnumerable<PropsSection> Load(string filename, StreamReader stream, CanStartAsScript isScript, bool displayPercentage) {
 			int line = 0;
 			PropsSection curSection = null;
 			TriggerSection curTrigger = null; //these are also added to curSection...
+
+			long streamLen = stream.BaseStream.Length;
+			long lastSentPercentage = -1;
+			string fileNameToDisplay = System.IO.Path.GetFileName(filename);
 
 			while (true) {
 				string curLine = stream.ReadLine();
 				line++;
 				if (curLine != null) {
+					if (displayPercentage) {
+						long currentPercentage = (stream.BaseStream.Position * 100) / streamLen;
+						if (currentPercentage > lastSentPercentage) {
+							Logger.SetTitle(String.Concat("Loading ", fileNameToDisplay, ": ", currentPercentage.ToString(System.Globalization.CultureInfo.InvariantCulture), "%"));
+							lastSentPercentage = currentPercentage;
+						}
+					}
+
 					curLine = curLine.Trim();
 					if ((curLine.Length == 0) || (curLine.StartsWith("//"))) {
 						//it is a comment or a blank line
@@ -130,6 +142,10 @@ namespace SteamEngine {
 					break;
 				}
 			} //end of (while (true)) - for each line of the file
+
+			if (displayPercentage) {
+				Logger.SetTitle("");
+			}
 		}
 	}
 

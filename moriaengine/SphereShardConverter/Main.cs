@@ -169,7 +169,7 @@ namespace SteamEngine.Converter {
 
 			using (StreamReader stream = File.OpenText(f.origPath)) {
 				foreach (PropsSection input in
-						PropsFileParser.Load(f.origPath, stream, StartsAsScript)) {
+						PropsFileParser.Load(f.origPath, stream, StartsAsScript, false)) {
 
 					ConvertedDef cd = null;
 					try {

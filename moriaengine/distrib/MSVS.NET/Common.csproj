@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -91,6 +91,9 @@
     </Compile>
     <Compile Include="..\..\Common\Collections\SimpleQueue.cs">
       <Link>Collections\SimpleQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\Collections\SynchronizedQueue.cs">
+      <Link>Collections\SynchronizedQueue.cs</Link>
     </Compile>
     <Compile Include="..\..\Common\ConvertTools.cs">
       <Link>ConvertTools.cs</Link>
