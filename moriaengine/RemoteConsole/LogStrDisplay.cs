@@ -17,8 +17,8 @@ namespace SteamEngine.RemoteConsole {
 
 		LogStrParser parser;
 
-		delegate void WriteDeferredDelegate(string str);
-		WriteDeferredDelegate writeDeferred;
+		delegate void InternalWriteDelegate(string str);
+		InternalWriteDelegate internalWriteDeleg;
 
 		private const string contractedSign = "[+]";
 
@@ -26,7 +26,7 @@ namespace SteamEngine.RemoteConsole {
 
 		public LogStrDisplay() {
 			InitializeComponent();
-			writeDeferred = this.WriteDeferred;
+			this.internalWriteDeleg = this.InternalWriteInUIThread;
 			this.parser = new LogStrParser(this);
 			this.txtBox.LinkClicked += new LinkClickedEventHandler(txtBox_LinkClicked);
 		}
@@ -54,21 +54,33 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
+		public void WriteThreadSafe(string logStrEncoded) {
+			this.Invoke(this.internalWriteDeleg, logStrEncoded);
+		}
+
+		public void WriteLineThreadSafe(string logStrEncoded) {
+			this.Invoke(this.internalWriteDeleg, logStrEncoded + Environment.NewLine);
+		}
+
+		public void WriteThreadSafe(SteamEngine.Common.LogStr data) {
+			this.Invoke(this.internalWriteDeleg, data.RawString);
+		}
+
 		public void Write(string logStrEncoded) {
-			this.Invoke(this.writeDeferred, logStrEncoded);
+			this.InternalWriteInUIThread(logStrEncoded);
 		}
 
 		public void WriteLine(string logStrEncoded) {
-			this.Invoke(this.writeDeferred, logStrEncoded + Environment.NewLine);
+			this.InternalWriteInUIThread(logStrEncoded + Environment.NewLine);
 		}
 
 		public void Write(SteamEngine.Common.LogStr data) {
-			this.Invoke(this.writeDeferred, data.RawString);
+			this.InternalWriteInUIThread(data.RawString);
 		}
 
-		private void WriteDeferred(string str) {
+		private void InternalWriteInUIThread(string str) {
 			//this.txtBox.BeginUpdate();
-			int prevLen = this.txtBox.Text.Length;
+			int prevLen = this.txtBox.TextLength;
 			this.parser.ProcessLogStr(str);
 
 			if (this.chckAutoScroll.Checked) {
@@ -82,22 +94,12 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void TryContract(int prevLen) {
-			string data = this.txtBox.Text.Substring(prevLen);
-			int firstNextLine;
-			int firstN = data.IndexOf('\n');
-			int firstR = data.IndexOf('\r');
-			if (firstN == -1) {
-				firstNextLine = firstR;
-			} else if (firstR == -1) {
-				firstNextLine = firstN;
-			} else {
-				firstNextLine = Math.Min(firstN, firstR);
-			}
-
-			if (firstNextLine > -1) { //data is multiline. We want to contract it
-				int start = prevLen + firstNextLine;
-				int len = data.Length - firstNextLine;
-				this.txtBox.Select(start, len);
+			int textLength = this.txtBox.TextLength;
+			int currentLine = this.txtBox.GetLineFromCharIndex(prevLen);
+			int firstNextLine = this.txtBox.GetFirstCharIndexFromLine(currentLine + 1);
+			if (firstNextLine > -1) {
+				int len = textLength - firstNextLine;
+				this.txtBox.Select(firstNextLine - 1, len + 1);
 				if (this.txtBox.SelectedText.Trim().Length > 0) {
 					string rtf = this.txtBox.SelectedRtf;
 					this.contractedTexts.Add(rtf);

@@ -9,8 +9,8 @@ namespace SteamEngine.RemoteConsole {
 		public static void Init(LogStrDisplay display) {
 			new Logger();
 
-			Logger.OnConsoleWrite += display.Write;
-			Logger.OnConsoleWriteLine += display.WriteLine;
+			Logger.OnConsoleWrite += display.WriteThreadSafe;
+			Logger.OnConsoleWriteLine += display.WriteLineThreadSafe;
 
 			//SteamEngine.Common.Logger.OpenFile();
 

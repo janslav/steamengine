@@ -195,5 +195,9 @@ namespace SteamEngine.RemoteConsole {
 				this.epsBeingReconnected.Port.ToString(System.Globalization.CultureInfo.InvariantCulture)));
 			ConsoleClient.Connect(this.epsBeingReconnected);
 		}
+
+		private void packetHandlingTimer_Tick(object sender, EventArgs e) {
+			ConsoleIncomingPacket.HandleQueuedPackets();
+		}
 	}
 }
