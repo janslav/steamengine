@@ -76,6 +76,8 @@ namespace SteamEngine.Communication {
 		void On_Init(TConnection conn);
 
 		void On_Close(string reason);
+
+		bool PacketGroupsJoiningAllowed { get; }
 	}
 
 	public interface IEncryption {

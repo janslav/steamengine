@@ -49,6 +49,8 @@ namespace SteamEngine.Communication {
 			if (this.GetType() != typeof(TConnection)) {
 				throw new SEException("The type must be the same as the TConnection generic parameter");
 			}
+
+			this.joinedPGTimer = new Timer(JoinedPGTimerMethod, null, joinedPGintervalInMS, Timeout.Infinite);
 		}
 
 		public AsyncCore<TConnection, TState, TEndPoint> Core {
@@ -264,15 +266,52 @@ namespace SteamEngine.Communication {
 		#endregion Receiving data
 
 		#region Sending data
+
+		const int joinedPGintervalInMS = 333;
+		//TimeSpan maxJoinedPGInterval = TimeSpan.FromMilliseconds(intervalInMS);
+		PacketGroup joinedPG;
+
+		Timer joinedPGTimer;
+
 		//called from main loop
 		public void SendPacketGroup(PacketGroup group) {
 			ThrowIfDisposed();
 
 			if (!group.IsEmpty) {
-				this.core.EnqueueOutgoing((TConnection) this, group);
+				if (!this.state.PacketGroupsJoiningAllowed) {
+					this.core.EnqueueOutgoing((TConnection) this, group);
+				} else {
+					lock (this.joinedPGTimer) {
+						if (this.joinedPG == null) {//no last PG. This one will be the first
+							this.joinedPG = group;
+						} else if (!this.joinedPG.SafeAddGroup(group)) {//last PG too big already. We send it and mark the new one
+							this.SendJoinedPG();
+							this.joinedPG = group;
+						}
+					}
+				}
 			} else {
 				Logger.WriteWarning("Sending an empty PacketGroup? Ignoring."); //display stack trace?
 			}
+		}
+
+		private void JoinedPGTimerMethod(object ignored) {
+			if (this.state.PacketGroupsJoiningAllowed) {
+				lock (this.joinedPGTimer) {
+					if (this.joinedPG != null) {
+						this.SendJoinedPG();
+					}
+				}
+				this.joinedPGTimer.Change(joinedPGintervalInMS, Timeout.Infinite);
+			} else {
+				this.joinedPGTimer.Dispose();
+			}
+		}
+
+		private void SendJoinedPG() {
+			PacketGroup group = this.joinedPG;
+			this.joinedPG = null;
+			this.core.EnqueueOutgoing((TConnection) this, group);
 		}
 
 		public void SendSinglePacket(OutgoingPacket packet) {

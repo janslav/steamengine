@@ -169,5 +169,11 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			conn.Core.WaitForAllSent();
 			conn.Close(reason);
 		}
+
+		public bool PacketGroupsJoiningAllowed {
+			get {
+				return true;
+			}
+		}
 	}
 }

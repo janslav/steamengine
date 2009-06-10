@@ -134,7 +134,11 @@ namespace SteamEngine.AuxServerPipe {
 				return this.pipe;
 			}
 		}
+
+		public bool PacketGroupsJoiningAllowed {
+			get {
+				return true;
+			}
+		}
 	}
-
-
 }

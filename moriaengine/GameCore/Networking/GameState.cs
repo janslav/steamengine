@@ -504,5 +504,11 @@ namespace SteamEngine.Networking {
 		internal void RemoveBackupLinks() {
 			this.charBackupUid = -1;
 		}
+
+		public bool PacketGroupsJoiningAllowed {
+			get {
+				return false;
+			}
+		}
 	}
 }

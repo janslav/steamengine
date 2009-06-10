@@ -129,5 +129,11 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			packet.Prepare(state);
 			this.conn.SendSinglePacket(packet);
 		}
+
+		public bool PacketGroupsJoiningAllowed {
+			get {
+				return false;
+			}
+		}
 	}
 }
