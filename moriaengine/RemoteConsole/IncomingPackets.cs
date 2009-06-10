@@ -37,22 +37,60 @@ namespace SteamEngine.RemoteConsole {
 
 
 	public abstract class ConsoleIncomingPacket : IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+		private static Queue<PacketQueuedForInvoking> primaryQueue = new Queue<PacketQueuedForInvoking>();
+		private static Queue<PacketQueuedForInvoking> secondaryQueue = new Queue<PacketQueuedForInvoking>();
 
+		public override void Dispose() {//called by AsyncCore
+		}
+
+		private void RealDispose() {
+			base.Dispose();
+		}
+
+		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			PacketQueuedForInvoking helper = new PacketQueuedForInvoking(this, conn);
+			lock (primaryQueue) {
+				primaryQueue.Enqueue(helper);
+			}
+		}
+
+		class PacketQueuedForInvoking {
+			internal readonly ConsoleIncomingPacket packet;
+			internal readonly TcpConnection<ConsoleClient> conn;
+
+			internal PacketQueuedForInvoking(ConsoleIncomingPacket packet, TcpConnection<ConsoleClient> conn) {
+				this.packet = packet;
+				this.conn = conn;
+			}
+		}
+
+		//called by Windows.Forms.Timer on the MainForm, so we need no Invoke (which would get called for every single packet otherwise), but we still are in the UI thread
+		internal static void HandleQueuedPackets() {
+			lock (primaryQueue) { //we switch the primary and secondary
+				Queue<PacketQueuedForInvoking> tempQueue = primaryQueue;
+				primaryQueue = secondaryQueue;
+				secondaryQueue = tempQueue;
+			}
+
+			while (secondaryQueue.Count > 0) {
+				PacketQueuedForInvoking helper = secondaryQueue.Dequeue();
+				if (helper.conn.IsConnected) {
+					helper.packet.HandleInUIThread(helper.conn, helper.conn.State);
+					helper.packet.RealDispose();
+				}
+			}
+		}
+
+		protected virtual void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+		}
 	}
 
-	public class RequestOpenGameServerWindowPacket : ConsoleIncomingPacket {
+	public sealed class RequestOpenGameServerWindowPacket : ConsoleIncomingPacket {
 		int uid;
 		string name;
 
-		private delegate void IntAndStrDeleg(int i, string s);
-		private static IntAndStrDeleg deleg = AddCmdLineDisplay;
-
-		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.Invoke(deleg, this.uid, this.name);
-		}
-
-		private static void AddCmdLineDisplay(int uid, string name) {
-			MainClass.mainForm.AddCmdLineDisplay(uid, name);
+		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.AddCmdLineDisplay(this.uid, this.name);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -62,18 +100,11 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
-	public class RequestCloseGameServerWindowPacket : ConsoleIncomingPacket {
+	public sealed class RequestCloseGameServerWindowPacket : ConsoleIncomingPacket {
 		int uid;
 
-		private delegate void IntDeleg(int i);
-		private static IntDeleg deleg = CloseGameServerWindow;
-
-		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.Invoke(deleg, this.uid);
-		}
-
-		private static void CloseGameServerWindow(int uid) {
-			MainClass.mainForm.RemoveCmdLineDisplay(uid);
+		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.RemoveCmdLineDisplay(this.uid);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -82,17 +113,11 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
-	public class RequestEnableCommandLinePacket : ConsoleIncomingPacket {
+	public sealed class RequestEnableCommandLinePacket : ConsoleIncomingPacket {
 		int uid;
 
-		private static Action<int> deleg = EnableCommandLine;
-
-		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.Invoke(deleg, this.uid);
-		}
-
-		private static void EnableCommandLine(int uid) {
-			MainClass.mainForm.EnableCommandLineOnDisplay(uid);
+		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.EnableCommandLineOnDisplay(this.uid);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -101,19 +126,12 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
-	public class WriteStringPacket : ConsoleIncomingPacket {
+	public sealed class WriteStringPacket : ConsoleIncomingPacket {
 		int uid;
 		string str;
 
-		private delegate void IntAndStrDeleg(int i, string s);
-		private static IntAndStrDeleg deleg = Write;
-
-		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.Invoke(deleg, this.uid, this.str);
-		}
-
-		private static void Write(int uid, string str) {
-			MainClass.mainForm.Write(uid, str);
+		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.Write(this.uid, this.str);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -123,19 +141,12 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
-	public class WriteLinePacket : ConsoleIncomingPacket {
+	public sealed class WriteLinePacket : ConsoleIncomingPacket {
 		int uid;
 		string str;
 
-		private delegate void IntAndStrDeleg(int i, string s);
-		private static IntAndStrDeleg deleg = WriteLine;
-
-		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.Invoke(deleg, this.uid, this.str);
-		}
-
-		private static void WriteLine(int uid, string str) {
-			MainClass.mainForm.WriteLine(uid, str);
+		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			MainClass.mainForm.WriteLine(this.uid, this.str);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -145,18 +156,11 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
-	public class SendServersToStartPacket : ConsoleIncomingPacket {
+	public sealed class SendServersToStartPacket : ConsoleIncomingPacket {
 		GameServerEntry[] entries;
 
-		private delegate void EntriesArrayDeleg(GameServerEntry[] entries);
-		private static EntriesArrayDeleg deleg = OpenStartGameForm;
-
-		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.Invoke(deleg, new object[] { this.entries });
-		}
-
-		private static void OpenStartGameForm(GameServerEntry[] entries) {
-			new StartGameForm(entries).ShowDialog();
+		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
+			new StartGameForm(this.entries).ShowDialog();
 		}
 
 		protected override ReadPacketResult Read() {
@@ -233,11 +237,12 @@ namespace SteamEngine.RemoteConsole {
 		}
 	}
 
-	public class LoginFailedPacket : ConsoleIncomingPacket {
+	public sealed class LoginFailedPacket : ConsoleIncomingPacket {
 		string reason;
 
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			ConsoleClient.Disconnect("Login failed: " + this.reason);
+			base.Dispose();
 		}
 
 		protected override ReadPacketResult Read() {

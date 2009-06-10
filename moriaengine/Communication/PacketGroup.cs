@@ -33,7 +33,7 @@ namespace SteamEngine.Communication {
 		Free
 	}
 
-	public sealed class PacketGroup : Poolable {
+	public sealed class PacketGroup : Disposable {
 		Buffer uncompressed;
 		Buffer compressed;
 
@@ -50,6 +50,18 @@ namespace SteamEngine.Communication {
 		int compressedLen;
 
 		internal PacketGroupType type;
+
+		private PacketGroup() {
+			this.isWritten = false;
+			this.compressionDone = false;
+			this.isQueued = 0;
+			this.type = PacketGroupType.SingleUse;
+			this.isMadeFree = false;
+			this.isEmpty = true;
+
+			this.uncompressed = Pool<Buffer>.Acquire();
+			this.compressed = Pool<Buffer>.Acquire();
+		}
 
 		public void SetType(PacketGroupType type) {
 			if (this.isMadeFree) {
@@ -68,20 +80,6 @@ namespace SteamEngine.Communication {
 			T packet = Pool<T>.Acquire();
 			this.AddPacket(packet);
 			return packet;
-		}
-
-		protected override void On_Reset() {
-			this.isWritten = false;
-			this.compressionDone = false;
-			this.isQueued = 0;
-			this.type = PacketGroupType.SingleUse;
-			this.isMadeFree = false;
-			this.isEmpty = true;
-
-			this.uncompressed = Pool<Buffer>.Acquire();
-			this.compressed = Pool<Buffer>.Acquire();
-
-			base.On_Reset();
 		}
 
 		private void WritePackets() {
@@ -119,8 +117,6 @@ namespace SteamEngine.Communication {
 			if (this.type == PacketGroupType.Free) {
 				Buffer newCompressed = new Buffer(this.compressedLen);
 				System.Buffer.BlockCopy(this.compressed.bytes, 0, newCompressed.bytes, 0, this.compressedLen);
-
-				this.MyPool = null;
 
 				this.compressed.Dispose();
 				this.compressed = null;
@@ -179,7 +175,7 @@ namespace SteamEngine.Communication {
 			foreach (OutgoingPacket packet in this.packets) {
 				packet.Dispose();
 			}
-			this.packets.Clear();
+			//this.packets.Clear();
 
 			base.On_DisposeManagedResources();
 		}
@@ -191,13 +187,13 @@ namespace SteamEngine.Communication {
 		}
 
 		public static PacketGroup AcquireMultiUsePG() {
-			PacketGroup pg = Pool<PacketGroup>.Acquire();
+			PacketGroup pg = new PacketGroup();
 			pg.SetType(PacketGroupType.MultiUse);
 			return pg;
 		}
 
 		public static PacketGroup AcquireSingleUsePG() {
-			PacketGroup pg = Pool<PacketGroup>.Acquire();
+			PacketGroup pg = new PacketGroup();
 			pg.SetType(PacketGroupType.SingleUse);
 			return pg;
 		}

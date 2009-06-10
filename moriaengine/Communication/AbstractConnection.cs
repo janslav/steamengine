@@ -318,11 +318,12 @@ namespace SteamEngine.Communication {
 					System.Buffer.BlockCopy(unencrypted, 0, encryptedBuffer.bytes, 0, unencryptedLen);
 					encryptedLen = unencryptedLen;
 				}
+				group.Dequeued();
 
 				BufferToSend toSend = new BufferToSend(encryptedBuffer, 0, encryptedLen);
 				this.BeginSend(toSend);
 
-				group.Dequeued();
+				
 			} catch (Exception e) {
 				Logger.WriteError("Exception while sending", e);
 				this.Close(e.Message);

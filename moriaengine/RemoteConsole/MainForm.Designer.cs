@@ -35,8 +35,9 @@ namespace SteamEngine.RemoteConsole {
 			this.menuRestartAuxServer = new System.Windows.Forms.MenuItem();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.systemTab = new System.Windows.Forms.TabPage();
-			this.reconnectingTimer = new System.Windows.Forms.Timer(this.components);
 			this.systemTabPage = new SteamEngine.RemoteConsole.LogStrDisplay();
+			this.reconnectingTimer = new System.Windows.Forms.Timer(this.components);
+			this.packetHandlingTimer = new System.Windows.Forms.Timer(this.components);
 			this.tabControl.SuspendLayout();
 			this.systemTab.SuspendLayout();
 			this.SuspendLayout();
@@ -123,11 +124,6 @@ namespace SteamEngine.RemoteConsole {
 			this.systemTab.Text = "System";
 			this.systemTab.UseVisualStyleBackColor = true;
 			// 
-			// reconnectingTimer
-			// 
-			this.reconnectingTimer.Interval = 1000;
-			this.reconnectingTimer.Tick += new System.EventHandler(this.reconnectingTimer_Tick);
-			// 
 			// systemTabPage
 			// 
 			this.systemTabPage.DefaultTitle = null;
@@ -137,6 +133,17 @@ namespace SteamEngine.RemoteConsole {
 			this.systemTabPage.Size = new System.Drawing.Size(618, 281);
 			this.systemTabPage.TabIndex = 0;
 			this.systemTabPage.Load += new System.EventHandler(this.systemTabPage_Load);
+			// 
+			// reconnectingTimer
+			// 
+			this.reconnectingTimer.Interval = 1000;
+			this.reconnectingTimer.Tick += new System.EventHandler(this.reconnectingTimer_Tick);
+			// 
+			// packetHandlingTimer
+			// 
+			this.packetHandlingTimer.Enabled = true;
+			this.packetHandlingTimer.Interval = 500;
+			this.packetHandlingTimer.Tick += new System.EventHandler(this.packetHandlingTimer_Tick);
 			// 
 			// MainForm
 			// 
@@ -169,6 +176,7 @@ namespace SteamEngine.RemoteConsole {
 		private System.Windows.Forms.MenuItem menuStartGameServer;
 		private System.Windows.Forms.MenuItem menuRestartAuxServer;
 		private System.Windows.Forms.Timer reconnectingTimer;
+		private System.Windows.Forms.Timer packetHandlingTimer;
 	}
 }
 
