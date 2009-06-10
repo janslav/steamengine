@@ -142,7 +142,7 @@ namespace SteamEngine.RemoteConsole {
 			// packetHandlingTimer
 			// 
 			this.packetHandlingTimer.Enabled = true;
-			this.packetHandlingTimer.Interval = 500;
+			this.packetHandlingTimer.Interval = 333;
 			this.packetHandlingTimer.Tick += new System.EventHandler(this.packetHandlingTimer_Tick);
 			// 
 			// MainForm

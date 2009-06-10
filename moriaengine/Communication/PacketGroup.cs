@@ -59,8 +59,8 @@ namespace SteamEngine.Communication {
 			this.isMadeFree = false;
 			this.isEmpty = true;
 
-			this.uncompressed = Pool<Buffer>.Acquire();
-			this.compressed = Pool<Buffer>.Acquire();
+			//this.uncompressed = Pool<Buffer>.Acquire();
+			//this.compressed = Pool<Buffer>.Acquire();
 		}
 
 		public void SetType(PacketGroupType type) {
@@ -82,8 +82,30 @@ namespace SteamEngine.Communication {
 			return packet;
 		}
 
+
+		public bool SafeAddGroup(PacketGroup addedGroup) {
+			Sanity.IfTrueThrow(addedGroup.isWritten, "addedGroup.isWritten");
+			Sanity.IfTrueThrow(addedGroup.isQueued > 0, "addedGroup.isQueued = " + addedGroup.isQueued);
+			Sanity.IfTrueThrow(addedGroup.isMadeFree, "addedGroup.isMadeFree");
+
+			this.WritePackets();
+			if (this.uncompressedLen < Buffer.bufferLen / 2) {
+
+				//write the other group's packet to our buffer
+				foreach (OutgoingPacket packet in addedGroup.packets) {
+					this.packets.Add(packet);
+					this.uncompressedLen += packet.Write(this.uncompressed.bytes, this.uncompressedLen);
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 		private void WritePackets() {
 			if (!this.isWritten) {
+				this.uncompressed = Pool<Buffer>.Acquire();
+
 				int position = 0;
 				foreach (OutgoingPacket packet in packets) {
 					position += packet.Write(this.uncompressed.bytes, position);
@@ -102,10 +124,14 @@ namespace SteamEngine.Communication {
 
 			if (!this.compressionDone) {
 				if (compression != null) {
+					this.compressed = Pool<Buffer>.Acquire();
+
 					this.compressedLen = compression.Compress(
 						this.uncompressed.bytes, 0, this.compressed.bytes, 0, this.uncompressedLen);
+
+					this.uncompressed.Dispose();
+					this.uncompressed = null;
 				} else {
-					this.compressed.Dispose();
 					this.compressed = this.uncompressed;
 					this.compressedLen = this.uncompressedLen;
 
@@ -120,10 +146,7 @@ namespace SteamEngine.Communication {
 
 				this.compressed.Dispose();
 				this.compressed = null;
-				if (this.uncompressed != null) {
-					this.uncompressed.Dispose();
-					this.uncompressed = null;
-				}
+
 				foreach (OutgoingPacket packet in this.packets) {
 					packet.Dispose();
 				}

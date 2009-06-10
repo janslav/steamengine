@@ -204,6 +204,7 @@ namespace SteamEngine {
 		}
 
 		public static void CollectGarbage() {
+			PoolBase.ClearAll();
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 			WeakRefDictionaryUtils.PurgeAll();

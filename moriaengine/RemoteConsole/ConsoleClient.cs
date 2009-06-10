@@ -127,6 +127,12 @@ namespace SteamEngine.RemoteConsole {
 				connectedInstance.conn.Close(reason);
 			}
 		}
+
+		public bool PacketGroupsJoiningAllowed {
+			get {
+				return false;
+			}
+		}
 	}
 }
 

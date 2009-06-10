@@ -411,7 +411,7 @@ return 0
 
 
 [function f]
-for i 1 1000
+for i 1 10000
 	Logger.SetTitle(i)
 	src.WriteLine(i)
 endfor

@@ -55,5 +55,11 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		//    //MainClass.server.SendPacketGroup(this, pg);
 		//}
+
+		public bool PacketGroupsJoiningAllowed {
+			get {
+				return false;
+			}
+		}
 	}
 }
