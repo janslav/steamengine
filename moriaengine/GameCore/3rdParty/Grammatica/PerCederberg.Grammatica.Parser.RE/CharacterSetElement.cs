@@ -47,6 +47,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 	 * @author   Per Cederberg, <per at percederberg dot net>
 	 * @version  1.0
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	internal class CharacterSetElement : Element {
 
 		/**
@@ -406,6 +407,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 		/**
 		 * A character range class.
 		 */
+		[EQATEC.Profiler.SkipInstrumentation]
 		private class Range {
 
 			/**

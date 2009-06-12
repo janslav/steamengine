@@ -25,7 +25,7 @@ using System.Reflection;
 using System.Globalization;
 using SteamEngine;
 using SteamEngine.Common;
-using PerCederberg.Grammatica.Parser;
+//using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	public class LScriptHolder : ScriptHolder, IOpNodeHolder, IUnloadable {

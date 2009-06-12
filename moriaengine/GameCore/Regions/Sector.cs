@@ -356,9 +356,13 @@ namespace SteamEngine.Regions {
 					} else if (a.region.HierarchyIndex > b.region.HierarchyIndex) {
 						return 1;
 					} else {
-						ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(sectorRectangle, a);
-						ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(sectorRectangle, b);
-						return intersectA.TilesNumber.CompareTo(intersectB.TilesNumber);
+						if (Globals.FastStartUp) {
+							return 0;
+						} else {
+							ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(sectorRectangle, a);
+							ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(sectorRectangle, b);
+							return intersectA.TilesNumber.CompareTo(intersectB.TilesNumber);
+						}
 					}
 				}
 			}

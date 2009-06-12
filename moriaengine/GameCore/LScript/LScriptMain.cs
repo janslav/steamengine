@@ -188,6 +188,7 @@ namespace SteamEngine.LScript {
 			return finishedNode;
 		}
 
+		[EQATEC.Profiler.SkipInstrumentation]
 		internal static OpNode CompileNode(IOpNodeHolder parent, Node code, bool mustEval) {
 			switch ((StrictConstants) code.GetId()) {
 				case StrictConstants.STRONG_EVAL_EXPRESSION:

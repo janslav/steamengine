@@ -44,6 +44,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * @author   Per Cederberg, <per at percederberg dot net>
 	 * @version  1.4
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	public class Token : Node {
 
 		/**

@@ -15,6 +15,7 @@ namespace SteamEngine.LScript {
     /**
      * <remarks>A token stream parser.</remarks>
      */
+	[EQATEC.Profiler.SkipInstrumentation]
     internal class StrictParser : RecursiveDescentParser {
 
         /**
