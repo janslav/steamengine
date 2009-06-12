@@ -290,6 +290,7 @@ namespace SteamEngine {
 			return false;
 		}
 
+		[EQATEC.Profiler.SkipInstrumentation]
 		private FieldValueImpl GetFittingValueImpl() {
 			switch (this.fvType) {
 				case FieldValueType.Typeless:
@@ -374,6 +375,7 @@ namespace SteamEngine {
 			//}
 		}
 
+		[EQATEC.Profiler.SkipInstrumentation]
 		private abstract class FieldValueImpl {
 			internal abstract object Value { get; set; }
 			internal abstract FieldValueImpl Clone();
@@ -421,14 +423,17 @@ namespace SteamEngine {
 			int model;
 
 			//resolving constructor
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal ModelValueImpl() {
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			private ModelValueImpl(ModelValueImpl copyFrom) {
 				this.thingDef = copyFrom.thingDef;
 				this.model = copyFrom.model;
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new ModelValueImpl(this);
 			}
@@ -462,15 +467,18 @@ namespace SteamEngine {
 			object val;
 
 			//resolving constructor
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal TypedValueImpl(Type type) {
 				this.type = type;
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			protected TypedValueImpl(TypedValueImpl copyFrom) {
 				this.type = copyFrom.type;
 				this.val = copyFrom.val;
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new TypedValueImpl(this);
 			}
@@ -545,13 +553,16 @@ namespace SteamEngine {
 			object obj;
 
 			//resolving constructor
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal TypelessValueImpl() {
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			private TypelessValueImpl(TypelessValueImpl copyFrom) {
 				this.obj = copyFrom.obj;
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new TypelessValueImpl(this);
 			}
@@ -573,14 +584,17 @@ namespace SteamEngine {
 
 		private class ThingDefValueImpl : TypedValueImpl {
 			//resolving constructor
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal ThingDefValueImpl(Type type)
 				: base(type) {
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			protected ThingDefValueImpl(ThingDefValueImpl copyFrom)
 				: base(copyFrom) {
 			}
 
+			[EQATEC.Profiler.SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new ThingDefValueImpl(this);
 			}

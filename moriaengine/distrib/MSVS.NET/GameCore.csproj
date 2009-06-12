@@ -49,6 +49,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EQATECProfilerRuntime, Version=2.0.122.0, Culture=neutral, PublicKeyToken=f1beac79aa82eef6, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.JScript">
       <Name>Microsoft.JScript</Name>
     </Reference>

@@ -48,6 +48,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * @author   Per Cederberg, <per at percederberg dot net>
 	 * @version  1.4
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	public class Tokenizer {
 
 		/**
@@ -445,6 +446,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * checks for matches with the tokenizer buffer, and maintains the
 	 * state of the last match.
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	internal abstract class TokenMatcher {
 
 		/**
@@ -479,6 +481,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * to match a single regular expression with the tokenizer 
 	 * buffer. This class also maintains the state of the last match. 
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	internal class RegExpTokenMatcher : TokenMatcher {
 
 		/**
@@ -602,6 +605,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * internally uses a DFA for maximum performance. It also 
 	 * maintains the state of the last match. 
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	internal class StringTokenMatcher : TokenMatcher {
 
 		/**
@@ -752,6 +756,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * for character sequences. It cannot handle character set state
 	 * transitions, but only supports single character transitions.
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	internal class Automaton {
 
 		/**
@@ -834,6 +839,7 @@ namespace PerCederberg.Grammatica.Parser {
 	 * state to another. All transitions are linked to a single 
 	 * character.
 	 */
+	[EQATEC.Profiler.SkipInstrumentation]
 	internal class AutomatonTree {
 
 		/**

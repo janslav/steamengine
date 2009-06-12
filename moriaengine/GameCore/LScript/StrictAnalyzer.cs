@@ -14,6 +14,7 @@ namespace SteamEngine.LScript {
      * <remarks>A class providing callback methods for the
      * parser.</remarks>
      */
+	[EQATEC.Profiler.SkipInstrumentation]
     internal abstract class StrictAnalyzer : Analyzer {
 
         /**

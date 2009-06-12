@@ -224,6 +224,8 @@ namespace SteamEngine {
 			Commands.ClearGMCommandsCache();
 			AosToolTips.ClearCache();
 			Networking.ItemOnGroundUpdater.ClearCache();
+
+			Console.WriteLine("World cleared");
 		}
 
 		//returns false if nothing was changing, otherwise true
@@ -324,7 +326,7 @@ namespace SteamEngine {
 			Map.UnloadScripts();
 			FieldValue.UnloadScripts();
 
-			Console.WriteLine("Definitions unloaded");
+			Console.WriteLine("Scripts unloaded");
 		}
 
 		//reload everything, including recompile

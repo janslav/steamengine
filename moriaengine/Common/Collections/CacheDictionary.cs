@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine {
-	[Summary("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxQueueCount' usages of the dictionary. "
-		+ "The maxQueueLength number should typically be pretty big, in thousands or more.")]
+	[Summary("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxCacheItems' usages of the dictionary. "
+	  + "The maxCacheItems number should typically be pretty big, in thousands or more.")]
 	public class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
 		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;
 		private LinkedList<TKey> linkedList = new LinkedList<TKey>();
@@ -13,7 +13,7 @@ namespace SteamEngine {
 
 		public CacheDictionary(int maxCacheItems, bool disposeOnRemove) {
 			if (maxCacheItems < 1) {
-				throw new SEException("maxQueueCount must be higher than 0");
+				throw new SEException("maxCacheItems must be higher than 0");
 			}
 			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>();
 			this.maxCacheItems = maxCacheItems;
@@ -22,7 +22,7 @@ namespace SteamEngine {
 
 		public CacheDictionary(int maxCacheItems, bool disposeOnRemove, IEqualityComparer<TKey> comparer) {
 			if (maxCacheItems < 1) {
-				throw new SEException("maxQueueCount must be higher than 0");
+				throw new SEException("maxCacheItems must be higher than 0");
 			}
 			this.dict = new Dictionary<TKey, CacheDictionaryKeyEntry>(comparer);
 			this.maxCacheItems = maxCacheItems;
@@ -52,7 +52,7 @@ namespace SteamEngine {
 				throw new SEException("Adding duplicate");
 			} else {
 				this.linkedList.AddFirst(key);
-				dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
+				dict[key] = new CacheDictionaryKeyEntry(value, this.linkedList.First);
 				this.PurgeLastIfNeeded();
 			}
 		}

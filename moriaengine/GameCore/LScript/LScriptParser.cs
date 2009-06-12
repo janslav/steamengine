@@ -26,6 +26,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
+	[EQATEC.Profiler.SkipInstrumentation]
 	internal class LScriptParser : StrictParser {
 		//ScriptCode code = null;
 
