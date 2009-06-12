@@ -204,12 +204,20 @@ namespace SteamEngine {
 							break;
 						case TypeCode.String:
 							string str = value.Trim().Trim('"');
-							if (!str.Contains("<") || !str.Contains(">")) {
+							if (!str.Contains("<") && !str.Contains(">")) {
 								retVal = str;
 								return true;
 							}
 							break;
 						default: //it's a number
+							if (type.IsEnum) {
+								try {
+									string enumStr = value.Replace(type.Name + ".", "") // "FieldValueType.Typed | FieldValueType.Typeless" -> "Typed , Typeles"
+										.Replace("|", ",").Replace("+", ","); //hopefully the actual value won't change by this optimisation ;)
+									retVal = Enum.Parse(type, enumStr, true);
+									return true;
+								} catch { }
+							}
 							if (ConvertTools.TryParseSpecificNumber(code, value, out retVal)) {
 								return true;
 							}
