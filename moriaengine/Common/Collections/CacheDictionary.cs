@@ -5,7 +5,7 @@ using SteamEngine.Common;
 namespace SteamEngine {
 	[Summary("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxCacheItems' usages of the dictionary. "
 	  + "The maxCacheItems number should typically be pretty big, in thousands or more.")]
-	public class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
+	public sealed class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
 		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;
 		private LinkedList<TKey> linkedList = new LinkedList<TKey>();
 		private readonly int maxCacheItems;
@@ -30,11 +30,15 @@ namespace SteamEngine {
 		}
 
 		public int MaxCacheItems {
-			get { return maxCacheItems; }
+			get {
+				return this.maxCacheItems;
+			}
 		}
 
 		public bool DisposeOnRemove {
-			get { return disposeOnRemove; }
+			get {
+				return this.disposeOnRemove;
+			}
 		} 
 
 		private struct CacheDictionaryKeyEntry {
@@ -52,7 +56,7 @@ namespace SteamEngine {
 				throw new SEException("Adding duplicate");
 			} else {
 				this.linkedList.AddFirst(key);
-				dict[key] = new CacheDictionaryKeyEntry(value, this.linkedList.First);
+				this.dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
 				this.PurgeLastIfNeeded();
 			}
 		}
@@ -73,7 +77,7 @@ namespace SteamEngine {
 
 		public bool ContainsKey(TKey key) {
 			CacheDictionaryKeyEntry valueEntry;
-			if (dict.TryGetValue(key, out valueEntry)) {
+			if (this.dict.TryGetValue(key, out valueEntry)) {
 				this.linkedList.Remove(valueEntry.node);
 				this.linkedList.AddFirst(valueEntry.node);//put our node on the first place
 				return true;
@@ -83,9 +87,9 @@ namespace SteamEngine {
 
 		public bool Remove(TKey key) {
 			CacheDictionaryKeyEntry valueEntry;
-			if (dict.TryGetValue(key, out valueEntry)) {
+			if (this.dict.TryGetValue(key, out valueEntry)) {
 				this.linkedList.Remove(valueEntry.node);
-				dict.Remove(key);
+				this.dict.Remove(key);
 				if (this.disposeOnRemove) {
 					IDisposable disposable = valueEntry.value as IDisposable;
 					if (disposable != null) {
@@ -99,7 +103,7 @@ namespace SteamEngine {
 
 		public bool TryGetValue(TKey key, out TValue value) {
 			CacheDictionaryKeyEntry valueEntry;
-			if (dict.TryGetValue(key, out valueEntry)) {
+			if (this.dict.TryGetValue(key, out valueEntry)) {
 				this.linkedList.Remove(valueEntry.node);
 				this.linkedList.AddFirst(valueEntry.node);//put our node on the first place
 				value = valueEntry.value;
@@ -111,17 +115,17 @@ namespace SteamEngine {
 
 		public TValue this[TKey key] {
 			get {
-				return dict[key].value;
+				return this.dict[key].value;
 			}
 			set {
 				CacheDictionaryKeyEntry valueEntry;
-				if (dict.TryGetValue(key, out valueEntry)) {
+				if (this.dict.TryGetValue(key, out valueEntry)) {
 					this.linkedList.Remove(valueEntry.node);
 					this.linkedList.AddFirst(valueEntry.node);//put our node on the first place
-					dict[key] = new CacheDictionaryKeyEntry(value, valueEntry.node);
+					this.dict[key] = new CacheDictionaryKeyEntry(value, valueEntry.node);
 				} else {
 					this.linkedList.AddFirst(key);
-					dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
+					this.dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
 					this.PurgeLastIfNeeded();
 				}
 			}
@@ -129,7 +133,7 @@ namespace SteamEngine {
 
 		public ICollection<TKey> Keys {
 			get {
-				return dict.Keys;
+				return this.dict.Keys;
 			}
 		}
 
@@ -147,8 +151,8 @@ namespace SteamEngine {
 		}
 
 		public void Clear() {
-			dict.Clear();
-			linkedList.Clear();
+			this.dict.Clear();
+			this.linkedList.Clear();
 		}
 
 		public bool Contains(KeyValuePair<TKey, TValue> item) {
@@ -161,7 +165,7 @@ namespace SteamEngine {
 
 		public int Count {
 			get {
-				return dict.Count;
+				return this.dict.Count;
 			}
 		}
 

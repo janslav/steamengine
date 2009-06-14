@@ -86,13 +86,13 @@ namespace SteamEngine.Communication.NamedPipes {
 				} else {
 					this.Close("Other side closed the pipe.");
 				}
+
+				if (this.IsConnected) {
+					this.BeginReceive();
+				}
 			} catch (Exception e) {
 				Logger.WriteError(e);
 				this.Close(e.Message);
-			}
-
-			if (this.IsConnected) {
-				this.BeginReceive();
 			}
 		}
 
