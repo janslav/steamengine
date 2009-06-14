@@ -46,6 +46,9 @@ namespace SteamEngine.ProcessRestarter {
 		}
 
 		private static void RunProcess(string path) {
+			Console.WriteLine("Pouštím 'clean.bat'.");
+			Process.Start("clean.bat").WaitForExit();
+
 			Console.WriteLine("Pouštím '" + path + "'.");
 			Process.Start(path);
 			setForExit.Set();

@@ -311,7 +311,9 @@ namespace SteamEngine.Communication {
 		private void SendJoinedPG() {
 			PacketGroup group = this.joinedPG;
 			this.joinedPG = null;
-			this.core.EnqueueOutgoing((TConnection) this, group);
+			if (this.IsConnected) {
+				this.core.EnqueueOutgoing((TConnection) this, group);
+			}
 		}
 
 		public void SendSinglePacket(OutgoingPacket packet) {

@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 		private static bool CompileUsingNAnt() {
 			NantLauncher nant = new NantLauncher();
 			nant.SetLogger(new CompilerInvoker.CoreNantLogger());
-			nant.SetPropertiesAsSelf();
+			nant.SetPropertiesAndSymbolsAsSelf();
 #if SANE
 			nant.SetProperty("cmdLineParams", "/debug+"); //in sane builds, scripts should still have debug info
 #endif

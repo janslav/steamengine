@@ -79,6 +79,6 @@ namespace SteamEngine.Common {
 	public enum SEBuild {
 		Debug,
 		Sane,
-		Optimised
+		Optimized
 	}
 }

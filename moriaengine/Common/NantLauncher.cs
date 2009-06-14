@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Text;
 using NAnt.Core;
 
 
@@ -46,23 +47,23 @@ namespace SteamEngine.Common {
 		}
 
 		public NantLauncher(string buildFilename) {
-			nantProject = new NAnt.Core.Project(buildFilename, Level.Info, 0);
+			this.nantProject = new NAnt.Core.Project(buildFilename, Level.Info, 0);
 		}
 
 		public void SetOutputFilePrefix(string prefix) {
-			nantProject.Properties["outputFilePrefix"] = prefix;
+			this.nantProject.Properties["outputFilePrefix"] = prefix;
 		}
 
 		public void SetDebugMode(bool debug) {
-			nantProject.Properties["debug"] = debug.ToString();
+			this.nantProject.Properties["debug"] = debug.ToString();
 		}
 
 		public void SetOptimizeMode(bool optimize) {
-			nantProject.Properties["optimize"] = optimize.ToString();
+			this.nantProject.Properties["optimize"] = optimize.ToString();
 		}
 
 		public void SetDefineSymbols(string symbols) {
-			nantProject.Properties["defineSymbols"] = symbols;
+			this.nantProject.Properties["defineSymbols"] = symbols;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "logger"), 
@@ -79,45 +80,66 @@ namespace SteamEngine.Common {
 		}
 
 		public void SetProperty(string name, string value) {
-			nantProject.Properties[name] = value;
+			this.nantProject.Properties[name] = value;
 		}
 
-		public void SetPropertiesAsSelf() {
+		public void SetPropertiesAndSymbols(SEBuild build) {
+			StringBuilder symbols;
+			switch (build) {
+				case SEBuild.Debug:
+					this.SetDebugMode(true);
+					this.SetOptimizeMode(false);
+					symbols = new StringBuilder("TRACE,DEBUG");
+					break;
+				case SEBuild.Sane:
+					this.SetDebugMode(false);
+					this.SetOptimizeMode(false);
+					symbols = new StringBuilder("TRACE,SANE");
+					this.SetProperty("cmdLineParams", "/debug+");
+					break;
+				case SEBuild.Optimized:
+					this.SetDebugMode(false);
+					this.SetOptimizeMode(true);
+					symbols = new StringBuilder("OPTIMIZED");
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("build");
+			}
+
+			AddNonbuildSymbolsAsSelf(symbols);
+			SetDefineSymbols(symbols.ToString());
+		}
+
+		public void SetPropertiesAndSymbolsAsSelf() {
 #if DEBUG
-			SetDebugMode(true);
-			SetOptimizeMode(false);
-			string symbols = "DEBUG";
+			this.SetPropertiesAndSymbols(SEBuild.Debug);
 #elif SANE
-			SetDebugMode(false);
-			SetOptimizeMode(false);
-			string symbols = "SANE";
+			this.SetPropertiesAndSymbols(SEBuild.Sane);
 
 #elif OPTIMIZED
-			SetDebugMode(false);
-			SetOptimizeMode(true);
-			string symbols = "OPTIMIZED";
+			this.SetPropertiesAndSymbols(SEBuild.Optimized);
+#else
+#error DEBUG, SANE or OPTIMIZED must be defined
 #endif
+		}
 
+		private static void AddNonbuildSymbolsAsSelf(StringBuilder symbols) {
 			//not all of these are used. Maybe. Anyway, thay can't harm.
-#if TRACE
-			symbols = symbols + ",TRACE";
-#endif
 #if MSWIN
-			symbols = symbols + ",MSWIN";
+			symbols.Append(",MSWIN");
 #endif
 #if TESTRUNUO
-			symbols = symbols+",TESTRUNUO";
+			symbols.Append(",TESTRUNUO");
 #endif
 #if MSVS
-			symbols = symbols + ",MSVS";
+			symbols.Append(",MSVS");
 #endif
 #if USEFASTDLL
-			symbols = symbols+",USEFASTDLL";
+			symbols.Append(",USEFASTDLL");
 #endif
 #if MONO
-			symbols = symbols+",MONO";
+			symbols.Append(",MONO");
 #endif
-			SetDefineSymbols(symbols);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "target"), 
@@ -127,21 +149,21 @@ namespace SteamEngine.Common {
 		}
 
 		private void OnBuildFinished(object sender, BuildEventArgs e) {
-			exception = e.Exception;
+			this.exception = e.Exception;
 		}
 		
 		public void Execute() {
 			FileInfo fileListFile = null;
-			if (sourceFileNames != null) {
-				fileListFile = new FileInfo(sourceFileNamesFile);
+			if (this.sourceFileNames != null) {
+				fileListFile = new FileInfo(this.sourceFileNamesFile);
 				if (fileListFile.Exists) {
 					fileListFile.Delete();
 				}
 				using (TextWriter writer = new StreamWriter(fileListFile.Create(), System.Text.Encoding.UTF8)) {
-					foreach (string sourcefile in sourceFileNames) {
+					foreach (string sourcefile in this.sourceFileNames) {
 						writer.WriteLine(sourcefile);
 					}
-					nantProject.Properties["sourcesListPath"] = fileListFile.FullName;
+					this.nantProject.Properties["sourcesListPath"] = fileListFile.FullName;
 					writer.Flush();
 				}
 			}
@@ -150,17 +172,17 @@ namespace SteamEngine.Common {
 			IBuildLogger lBuildLogger = this.logger;
 			lBuildLogger.Threshold = Level.Info;
 			lListeners.Add(lBuildLogger);
-			nantProject.AttachBuildListeners(lListeners);
+			this.nantProject.AttachBuildListeners(lListeners);
 
-			nantProject.BuildFinished += new BuildEventHandler(OnBuildFinished);
+			this.nantProject.BuildFinished += new BuildEventHandler(OnBuildFinished);
 
-			nantProject.BuildTargets.Add(target);
+			this.nantProject.BuildTargets.Add(this.target);
 
-			nantProject.Run();
+			this.nantProject.Run();
 		}
 
 		public bool WasSuccess() {
-			return exception == null;
+			return this.exception == null;
 		}
 
 
@@ -169,12 +191,12 @@ namespace SteamEngine.Common {
 		}
 
 		public string GetCompiledAssemblyName(string filenameproperty) {
-			return System.IO.Path.GetFullPath(nantProject.Properties[filenameproperty]);
+			return System.IO.Path.GetFullPath(this.nantProject.Properties[filenameproperty]);
 		}
 
 		public Exception Exception {
 			get {
-				return exception;
+				return this.exception;
 			}
 		}
 

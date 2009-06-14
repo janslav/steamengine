@@ -102,19 +102,25 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public virtual void CompileAndStart() {
-			NantLauncher nant = new NantLauncher(this.nantPath);
-			nant.SetLogger(this);
-			nant.SetPropertiesAsSelf();
-			nant.SetDebugMode(this.build == SEBuild.Debug);
-			nant.SetOptimizeMode(this.build == SEBuild.Optimised);
+			try {
+				NantLauncher nant = new NantLauncher(this.nantPath);
+				nant.SetLogger(this);
+				nant.SetPropertiesAndSymbols(this.build);
+				//nant.SetDebugMode(this.build == SEBuild.Debug);
+				//nant.SetOptimizeMode(this.build == SEBuild.Optimised);
 
-			nant.SetTarget(this.targetTask);
-			nant.Execute();
+				nant.SetTarget(this.targetTask);
+				nant.Execute();
 
-			string file = nant.GetCompiledAssemblyName(filenameProperty);
+				if (nant.WasSuccess()) {
+					string file = nant.GetCompiledAssemblyName(filenameProperty);
 
-			Console.WriteLine("Starting " + file);
-			StartProcess(file);
+					Console.WriteLine("Starting " + file);
+					StartProcess(file);
+				}
+			} catch (Exception e) {
+				Logger.WriteError(e);
+			}
 		}
 
 		public virtual void StartProcess(string file) {

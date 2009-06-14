@@ -154,7 +154,13 @@ namespace SteamEngine.Communication {
 			//    this.incomingPackets.Enqueue(new IncomingMessage(conn, packet));
 			//}
 			lock (this.lockObject) {
-				packet.Handle(conn, state);
+				try {
+					packet.Handle(conn, state);
+				} catch (FatalException) {
+					throw;
+				} catch (Exception e) {
+					Logger.WriteCritical("Exception while handling packet " + packet, e);
+				}
 			}
 			packet.Dispose();
 		}
