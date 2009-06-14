@@ -117,6 +117,7 @@ namespace SteamEngine {
 			get {
 				return this.dict[key].value;
 			}
+
 			set {
 				CacheDictionaryKeyEntry valueEntry;
 				if (this.dict.TryGetValue(key, out valueEntry)) {
@@ -125,7 +126,7 @@ namespace SteamEngine {
 					this.dict[key] = new CacheDictionaryKeyEntry(value, valueEntry.node);
 				} else {
 					this.linkedList.AddFirst(key);
-					this.dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
+					this.dict[key] = new CacheDictionaryKeyEntry(value, this.linkedList.First); //should be Add(,) here, but it reveals some hideous .NET 2.0 bug in optimized build
 					this.PurgeLastIfNeeded();
 				}
 			}
