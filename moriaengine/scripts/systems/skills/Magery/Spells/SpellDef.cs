@@ -264,7 +264,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.runeItem.CurrentValue = value;
-				this.runeWords = null;
 			}
 		}
 
@@ -355,6 +354,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.runes.CurrentValue = value;
+				this.runeWords = null;
 			}
 		}
 
