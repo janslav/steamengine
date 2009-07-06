@@ -373,7 +373,7 @@ namespace SteamEngine.Regions {
 		public virtual bool On_Enter(AbstractCharacter ch, bool forced) {//if forced is true, the return value is irrelevant
 			Logger.WriteDebug(ch + " entered " + this);
 			ch.SysMessage("You have just entered " + this);
-			return false;//maybe we could just return false or whatever...
+			return false;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]

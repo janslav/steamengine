@@ -21,16 +21,24 @@ using SteamEngine.Common;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using SteamEngine;
+using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.Regions {
 
+	[Flags]
+	public enum RegionFlags {
+		Zero = 0, None = 0,
+
+		Underground = 0x0800, Dungeon = Underground,
+	}
+
 	//todo: make some members virtual?
 	[SaveableClass]
 	[ViewableClass]
 	public class FlaggedRegion : StaticRegion {
-		int flags;
+		private RegionFlags flags;
 
 		[LoadSection]
 		public FlaggedRegion(PropsSection input)
@@ -48,29 +56,65 @@ namespace SteamEngine.Regions {
 		}
 
 		[NoShow]
-		public int Flags {
+		public RegionFlags Flags {
 			get {
-				return flags;
+				return this.flags;
 			}
 			set {
-				ThrowIfDeleted();
-				flags = value;
+				this.flags = value;
 			}
 		}
 
-		//public override bool On_Enter(AbstractCharacter ch) {
-		//	return unloaded;//maybe we could just return false or whatever...
-		//}
-		//
-		//public override bool On_Exit(AbstractCharacter ch) {
-		//	return false;
-		//}
+		public bool Flag_Underground {
+			get {//positive value isinherited from parent - underground stays underground
+				if ((this.flags & RegionFlags.Underground) == RegionFlags.Underground) {
+					return true;
+				} else {
+					FlaggedRegion parentAsFlagged = this.Parent as FlaggedRegion;
+					if (parentAsFlagged != null) {
+						return parentAsFlagged.Flag_Underground;
+					}
+				}
+				return false;
+			}
+			set {
+				if (value) {
+					this.flags |= RegionFlags.Underground;
+				} else {
+					this.flags &= ~RegionFlags.Underground;
+				}
+				//todo? refresh light and stuff of present players?
+			}
+		}
 
+		public override bool On_Enter(AbstractCharacter ch, bool forced) {
+			Player asPlayer = ch as Player;
+			if (asPlayer != null) {
+				asPlayer.SendGlobalLightLevel(LightAndWeather.GetLightIn(this));
+			}
+
+			return false;//if forced is true, the return value is irrelevant
+		}
+
+		public override bool On_Exit(AbstractCharacter ch, bool forced) {
+			Player asPlayer = ch as Player;
+			if (asPlayer != null) {
+				//we're exiting this one, hence "re-entering" the parent
+				FlaggedRegion parentAsFlagged = this.Parent as FlaggedRegion;
+				if (parentAsFlagged != null) {
+					asPlayer.SendGlobalLightLevel(LightAndWeather.GetLightIn(parentAsFlagged));
+				}
+			}
+
+			return false;//if forced is true, the return value is irrelevant
+		}
+
+		#region Persistence
 		public override void Save(SteamEngine.Persistence.SaveStream output) {
 			ThrowIfDeleted();
 			base.Save(output);//Region save
 
-			if (flags != 0) {
+			if (this.flags != RegionFlags.Zero) {
 				output.WriteValue("flags", flags);
 			}
 		}
@@ -127,7 +171,8 @@ namespace SteamEngine.Regions {
 					LoadSpecificFlag(filename, line, 0x00040, valueString);
 					break;
 				case "flag_underground":
-					LoadSpecificFlag(filename, line, 0x00800, valueString);
+				case "flag_dungeon":
+					LoadSpecificFlag(RegionFlags.Underground, valueString);
 					break;
 				//case "flag_unused":
 				//	LoadSpecificFlag(0x00100, args); 
@@ -135,7 +180,7 @@ namespace SteamEngine.Regions {
 
 				case "flag":
 				case "flags":
-					flags = TagMath.ParseInt32(valueString);
+					this.flags = (RegionFlags) TagMath.ParseInt32(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);//the Region Loadline
@@ -145,8 +190,15 @@ namespace SteamEngine.Regions {
 
 		private void LoadSpecificFlag(string filename, int line, int mask, string args) {
 			if (TagMath.ParseBoolean(args)) {//args is 1 or true or something like that
-				flags |= mask;
+				this.flags |= (RegionFlags) mask;
 			}
 		}
+
+		private void LoadSpecificFlag(RegionFlags mask, string args) {
+			if (TagMath.ParseBoolean(args)) {//args is 1 or true or something like that
+				this.flags |= mask;
+			}
+		}
+		#endregion Persistence
 	}
 }

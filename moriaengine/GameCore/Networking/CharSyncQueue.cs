@@ -645,7 +645,7 @@ namespace SteamEngine.Networking {
 						if (posChanged) {
 							Map oldMap = this.point.GetMap();
 							bool mapChanged = oldMap != chMap;
-							byte updateRange = ch.UpdateRange;
+							int updateRange = ch.UpdateRange;
 
 							if (mapChanged) {//other map. We must clear the view, and possibly change client's facet
 								int newFacet = chMap.Facet;

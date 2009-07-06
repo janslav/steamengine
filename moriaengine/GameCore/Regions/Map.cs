@@ -1066,8 +1066,17 @@ namespace SteamEngine.Regions {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		public Region GetRegionFor(IPoint2D point) {
+			int x = point.X;
+			int y = point.Y;
+			return this.GetSector(x >> sectorFactor, y >> sectorFactor).GetRegionFor(x, y);
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Region GetRegionFor(Point2D point) {
-			return this.GetSector(point.X >> sectorFactor, point.Y >> sectorFactor).GetRegionFor(point);
+			int x = point.X;
+			int y = point.Y;
+			return this.GetSector(x >> sectorFactor, y >> sectorFactor).GetRegionFor(x, y);
 		}
 
 		public Region GetRegionFor(int x, int y) {

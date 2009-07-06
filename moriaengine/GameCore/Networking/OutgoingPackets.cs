@@ -316,8 +316,8 @@ namespace SteamEngine.Networking {
 		byte range;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "range")]
-		public void Prepare(byte range) {
-			this.range = range;
+		public void Prepare(int range) {
+			this.range = (byte) range;
 		}
 
 		public override byte Id {
@@ -1000,7 +1000,9 @@ namespace SteamEngine.Networking {
 			this.EncodeShort(this.armor);
 			this.EncodeUShort(this.weight);
 
-			this.EncodeByte(0); //unknown
+			//If (flag 5 or higher)
+			//* BYTE[2] Max Weight
+			//* BYTE[1] Race
 
 			this.EncodeShort(this.statCap);
 			this.EncodeByte(this.currentPets);
@@ -1015,6 +1017,30 @@ namespace SteamEngine.Networking {
 			this.EncodeShort(this.maxDamage);
 			this.EncodeInt(this.tithingPoints);
 
+			//If (flag 6 or higher)
+			//* BYTE[2] Hit Chance Increase
+			//* BYTE[2] Swing Speed Increase
+			//* BYTE[2] Damage Chance Increase
+			//* BYTE[2] Lower Reagent Cost
+			//* BYTE[2] Hit Points Regeneration
+			//* BYTE[2] Stamina Regeneration
+			//* BYTE[2] Mana Regeneration
+			//* BYTE[2] Reflect Physical Damage
+			//* BYTE[2] Enhance Potions
+			//* BYTE[2] Defense Chance Increase
+			//* BYTE[2] Spell Damage Increase
+			//* BYTE[2] Faster Cast Recovery
+			//* BYTE[2] Faster Casting
+			//* BYTE[2] Lower Mana Cost
+			//* BYTE[2] Strength Increase
+			//* BYTE[2] Dexterity Increase
+			//* BYTE[2] Intelligence Increase
+			//* BYTE[2] Hit Points Increase
+			//* BYTE[2] Stamina Increase
+			//* BYTE[2] Mana Increase
+			//* BYTE[2] Maximum Hit Points Increase
+			//* BYTE[2] Maximum Stamina Increase
+			//* BYTE[2] Maximum Mana Increase
 		}
 	}
 
