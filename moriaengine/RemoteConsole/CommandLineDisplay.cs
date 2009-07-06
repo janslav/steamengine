@@ -18,6 +18,7 @@ namespace SteamEngine.RemoteConsole {
 
 		public void EnableComandLine() {
 			this.txtCommandLine.Enabled = true;
+			this.pnlGameServerButtons.Enabled = true;
 		}
 
 		private void txtCommandLine_KeyPress(object sender, KeyPressEventArgs e) {
