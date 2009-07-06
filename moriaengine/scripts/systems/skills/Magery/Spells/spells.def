@@ -49,22 +49,6 @@ Requirements=10.0 Magery
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x376A, 9, 32)
 
-[SpellDef 6]
-DEFNAME=s_night_sight
-NAME=Night Sight
-SOUND=snd_SPELL_NIGHT_SIGHT
-RUNES=IL
-CASTTIME=1.5
-//RESOURCES=i_reag_spider_silk,i_reag_sulfur_ash
-RUNEITEM=i_rune_NIGHT_SIGHT
-SCROLLITEM=i_scroll_NIGHT_SIGHT
-FLAGS=SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_HEAL_EFFECT
-EFFECT=0
-DURATION=15*60.0,40*60.0
-MANAUSE=6
-Requirements=10.0 Magery
-
 [SpellDef 7]
 DEFNAME=s_reactive_armor
 NAME=Reactive Armor
