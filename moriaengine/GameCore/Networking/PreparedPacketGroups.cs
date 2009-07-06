@@ -228,5 +228,20 @@ namespace SteamEngine.Networking {
 			conn.SendPacketGroup(clientFeatures);
 		}
 		#endregion EnableLockedClientFeatures
+
+		#region OverallLightLevel
+		private static PacketGroup[] overallLightLevel = new PacketGroup[0x100];
+
+		public static void SendOverallLightLevel(TcpConnection<GameState> conn, int lightLevel) {
+			PacketGroup pg = overallLightLevel[lightLevel];
+			if (pg == null) {
+				pg = PacketGroup.CreateFreePG();
+				pg.AcquirePacket<OverallLightLevelOutPacket>().Prepare(lightLevel);
+				overallLightLevel[lightLevel] = pg;
+			}	
+			
+			conn.SendPacketGroup(pg);
+		}
+		#endregion OverallLightLevel
 	}
 }

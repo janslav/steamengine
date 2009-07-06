@@ -39,7 +39,7 @@ namespace SteamEngine {
 			
 			For NPCs, this calls NPCUpdateRange.
 		*/
-		public byte UpdateRange {
+		public int UpdateRange {
 			get {
 				GameState state = this.GameState;
 				if (state != null) {
@@ -61,33 +61,33 @@ namespace SteamEngine {
 			}
 		}
 
+		static TagKey visionRangeTK = TagKey.Get("_visionRange_");
 		/**
-			Increases or decreases the vision range of this character. For NPCs, this calls NPCIncreaseVisionRangeBy.
+			Increases or decreases the vision range of this character.
 			
-			For PCs, you don't need to worry about whether this will go below 0 or above MaxUpdateRange,
-			those are checked. UpdateRange will never actually be <0 or >MaxUpdateRange, and will also always
-			be RequestedUpdateRange if VisionRange is higher, so if a player has their updaterange set
-			low, you can't actually increase their update range above what they've requested by playing with VisionRange.
-		*/
-		public int VisionRange {
+			It also changes the char's UpdateRange, but only within allowed limits (Globals.Max/MinUpdateRange)		  
+		
+			The value is stored in a tag, but in the override it's expected to be stored in a field.
+		 */
+		public virtual int VisionRange {
 			get {
-				GameState state = this.GameState;
-				if (state != null) {
-					return state.VisionRange;
-				} else {
+				object value = this.GetTag(visionRangeTK);
+				if (value == null) {
 					return Globals.MaxUpdateRange;
+				} else {
+					return TagMath.ToInt32(value);
 				}
 			}
 			set {
+				if (value != Globals.MaxUpdateRange) {
+					this.SetTag(visionRangeTK, value);
+				} else {
+					this.RemoveTag(visionRangeTK);
+				}
+
 				GameState state = this.GameState;
 				if (state != null) {
-					int oldValue = state.VisionRange;
-					state.VisionRange = value;
-					if (value > oldValue) {
-						this.SendNearbyStuff();//could be optimalized but... how often do you change vision range anyway ;)
-					}
-				} else {
-					throw new SanityCheckException("You can't set NPC's update range.");
+					state.SyncUpdateRange();
 				}
 			}
 		}

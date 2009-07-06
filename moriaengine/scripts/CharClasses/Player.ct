@@ -24,3 +24,6 @@ Vars:	//vars defined in the class, so they basically do what tags do, but better
 	private Container receivingContainer = null	
 	
 	private short vitality = 100
+	
+	private byte visionRange = Globals.MaxUpdateRange
+	private byte personalLightLevel = 0

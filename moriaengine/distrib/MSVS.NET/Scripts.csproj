@@ -407,6 +407,9 @@
     <Compile Include="..\..\scripts\systems\GumpIDs.cs">
       <Link>systems\GumpIDs.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\LightAndWeather.cs">
+      <Link>systems\LightAndWeather.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\mailingsystem\MailingSystem.cs">
       <Link>systems\mailingsystem\MailingSystem.cs</Link>
     </Compile>

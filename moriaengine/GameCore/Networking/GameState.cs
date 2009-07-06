@@ -42,12 +42,10 @@ namespace SteamEngine.Networking {
 		private IPEndPoint ip;
 		private TcpConnection<GameState> conn;
 
-		private byte updateRange = 18;
-		private int visionRange = 18;	//for scripts to fiddle with
-		private byte requestedUpdateRange = 18;
-		//internal bool restoringUpdateRange = false;	//The client, if sent an update range packet on login, apparently then requests 18 again, but does it after sending some other packets - this sure makes it hard for the client to not have to set the update range every time they login... So we block the next update range packet if we get this, but the block is removed if we get a 0x73 (ping) first. We can't remove it for any incoming packets becaues the client sends other stuff before it gets around to sending this.
+		private int lastSentUpdateRange;
+		private byte requestedUpdateRange;
 
-		private ClientVersion clientVersion = ClientVersion.nullValue;
+		private ClientVersion clientVersion;
 
 		private bool allShow;
 
@@ -61,8 +59,10 @@ namespace SteamEngine.Networking {
 		private Language language = Language.English;
 
 		private int lastSkillMacroId;
-
 		private int lastSpellMacroId;
+
+		private int lastSentGlobalLightLevel;
+		private int lastSentPersonalLightLevel;
 
 		private Dictionary<int, Gump> gumpInstancesByUid = new Dictionary<int, Gump>();
 		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
@@ -80,6 +80,17 @@ namespace SteamEngine.Networking {
 			this.ip = null;
 			this.account = null;
 			this.conn = null;
+
+			this.lastSkillMacroId = 0;
+			this.lastSpellMacroId = 0;
+
+			this.lastSentGlobalLightLevel = 0;
+			this.lastSentPersonalLightLevel = 0;
+
+			this.clientVersion = ClientVersion.nullValue;
+
+			this.lastSentUpdateRange = Globals.MaxUpdateRange;
+			this.requestedUpdateRange = Globals.MaxUpdateRange;
 
 			if (this.movementState != null) {
 				this.movementState.On_Reset();
@@ -282,65 +293,51 @@ namespace SteamEngine.Networking {
 				return this.requestedUpdateRange;
 			}
 			set {
-				//if (this.restoringUpdateRange) {
-				//    this.restoringUpdateRange = false;
-				//    return;
-				//}
 				this.requestedUpdateRange = value;
-				byte oldUpdateRange = updateRange;
-				this.RecalcUpdateRange();
-				if (this.character != null && oldUpdateRange != this.updateRange) {
-					ClientViewRangeOutPacket packet = Pool<ClientViewRangeOutPacket>.Acquire();
-					packet.Prepare(this.updateRange);
-					this.conn.SendSinglePacket(packet);
-				}
+				this.SyncUpdateRange();
 			}
 		}
 
-		internal int VisionRange {
+		public int UpdateRange {
 			get {
-				return this.visionRange;
-			}
-			set {
-				this.visionRange = value;
-				byte oldUpdateRange = this.updateRange;
-				this.RecalcUpdateRange();
-				if (this.character != null && oldUpdateRange != this.updateRange) {
-					ClientViewRangeOutPacket packet = Pool<ClientViewRangeOutPacket>.Acquire();
-					packet.Prepare(this.updateRange);
-					this.conn.SendSinglePacket(packet);
-				}
+				return this.lastSentUpdateRange;
 			}
 		}
 
-		public byte UpdateRange {
-			get {
-				return this.updateRange;
+		public void SyncUpdateRange() {
+			if (this.character != null) {
+				int oldUpdateRange = this.lastSentUpdateRange;
+				this.RecalcUpdateRange();
+				if (oldUpdateRange != this.lastSentUpdateRange) {
+					ClientViewRangeOutPacket packet = Pool<ClientViewRangeOutPacket>.Acquire();
+					packet.Prepare(this.lastSentUpdateRange);
+					this.conn.SendSinglePacket(packet);
+
+					//if new > old, we send the stuff previously invisible
+					if (this.lastSentUpdateRange > oldUpdateRange) {
+						this.character.SendNearbyStuff();
+						//could be optimalized but... how often do you change vision range anyway ;)
+					}
+				}
 			}
 		}
 
 		private void RecalcUpdateRange() {
-			if (this.visionRange <= this.requestedUpdateRange) {
-				if (this.visionRange < 0) {
-					this.updateRange = 0;
-				} else if (this.visionRange > Globals.MaxUpdateRange) {
-					this.updateRange = Globals.MaxUpdateRange;
-				} else if (this.visionRange < Globals.MinUpdateRange) {
-					this.updateRange = Globals.MinUpdateRange;
+			int visionRange = this.character.VisionRange;
+			if (visionRange <= this.requestedUpdateRange) {
+				if (visionRange < 0) {
+					this.lastSentUpdateRange = 0;
+				} else if (visionRange > Globals.MaxUpdateRange) {
+					this.lastSentUpdateRange = Globals.MaxUpdateRange;
+				} else if (visionRange < Globals.MinUpdateRange) {
+					this.lastSentUpdateRange = Globals.MinUpdateRange;
 				} else {
-					this.updateRange = (byte) this.visionRange;
+					this.lastSentUpdateRange = visionRange;
 				}
 			} else {
-				this.updateRange = this.requestedUpdateRange;
+				this.lastSentUpdateRange = this.requestedUpdateRange;
 			}
-		}
-
-		public void DecreaseVisionRangeBy(int amount) {
-			this.VisionRange -= amount;
-		}
-		public void IncreaseVisionRangeBy(int amount) {
-			this.VisionRange += amount;
-		}
+		}		
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
 		public void Target(bool ground, OnTargon targonDeleg, OnTargonCancel targonCancelDeleg, object targonParameters) {
@@ -508,6 +505,22 @@ namespace SteamEngine.Networking {
 		public bool PacketGroupsJoiningAllowed {
 			get {
 				return false;
+			}
+		}
+
+		public void SendPersonalLightLevel(int personalLight) {
+			if (personalLight != this.lastSentPersonalLightLevel) {
+				PersonalLightLevelOutPacket packet = Pool<PersonalLightLevelOutPacket>.Acquire();
+				packet.Prepare(this.CharacterNotNull.FlaggedUid, personalLight);
+				this.conn.SendSinglePacket(packet);
+				this.lastSentPersonalLightLevel = personalLight;
+			}
+		}
+
+		public void SendGlobalLightLevel(int globalLight) {
+			if (globalLight != this.lastSentGlobalLightLevel) {
+				PreparedPacketGroups.SendOverallLightLevel(this.conn, globalLight);
+				this.lastSentGlobalLightLevel = globalLight;
 			}
 		}
 	}

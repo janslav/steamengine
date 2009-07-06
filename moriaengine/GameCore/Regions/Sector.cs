@@ -302,23 +302,6 @@ namespace SteamEngine.Regions {
 				return StaticRegion.WorldRegion;
 			}
 
-			public Region GetRegionFor(Point2D point) {
-				if (this.dynamicRegionRects != null) {
-					foreach (RegionRectangle dynamicRect in this.dynamicRegionRects) {
-						if (dynamicRect.Contains(point)) {
-							return dynamicRect.region;
-						}
-					}
-				}
-				for (int i = this.rectangles.Length - 1; i >= 0; i--) {
-					RegionRectangle rect = this.rectangles[i];
-					if (rect.Contains(point)) {
-						return rect.region;
-					}
-				}
-				return StaticRegion.WorldRegion;
-			}
-
 			internal void SetRegionRectangles(List<RegionRectangle> list) {
 				if (list == null) {
 					this.rectangles = RegionRectangle.emptyArray;

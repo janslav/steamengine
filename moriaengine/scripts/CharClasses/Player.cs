@@ -205,6 +205,10 @@ namespace SteamEngine.CompiledScripts {
 				//} else {
 				//    Console.WriteLine(ScriptUtil.GetLogString(this.Conn, "Logged in"));
 				//}
+				GameState state = this.GameState;
+				state.SyncUpdateRange();
+				state.SendPersonalLightLevel(this.personalLightLevel);
+				state.SendGlobalLightLevel(LightAndWeather.GetLightAt(this));
 			}
 			return stopLogin;
 		}
@@ -444,6 +448,41 @@ namespace SteamEngine.CompiledScripts {
 
 			set {
 				receivingContainer = value;
+			}
+		}
+
+
+		public override int VisionRange {
+			get {
+				return this.visionRange;
+			}
+			set {
+				this.visionRange = (byte) value;
+
+				GameState state = this.GameState;
+				if (state != null) {
+					state.SyncUpdateRange();
+				}
+			}
+		}
+
+		public int PersonalLightLevel {
+			get {
+				return this.personalLightLevel;
+			}
+			set {
+				this.personalLightLevel = (byte) value;
+				GameState state = this.GameState;
+				if (state != null) {
+					state.SendPersonalLightLevel(value);
+				}
+			}
+		}
+
+		public void SendGlobalLightLevel(int globalLight) {
+			GameState state = this.GameState;
+			if (state != null) {
+				state.SendGlobalLightLevel(globalLight);
 			}
 		}
 	}

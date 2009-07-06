@@ -347,13 +347,14 @@ namespace SteamEngine.Regions {
 			return region;
 		}
 
-		public static IEnumerable<StaticRegion> AllRegions {
+		public static ICollection<StaticRegion> AllRegions {
 			get {
 				return byDefname.Values;
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists"), Summary("Searches through all regions and returns the list of StaticRegions thats name contains the " +
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists"), 
+		Summary("Searches through all regions and returns the list of StaticRegions thats name contains the " +
 				"criteria string")]
 		public static List<StaticRegion> FindByString(string criteria) {
 			List<StaticRegion> regList = new List<StaticRegion>();
