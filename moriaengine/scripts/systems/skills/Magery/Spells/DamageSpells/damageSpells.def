@@ -52,23 +52,6 @@ EFFECT=0,15
 MANAUSE=10
 Requirements=30.0 Magerys
 
-[SpellDef 20]//utocne
-// NOTE: Does poison need a duration or are they stuck with it until cured ??
-DEFNAME=s_poison
-NAME=Poison
-SOUND=snd_SPELL_POISON
-RUNES=IN
-CASTTIME=2.0
-//RESOURCES=i_reag_nightshade
-RUNEITEM=i_rune_POISON
-SCROLLITEM=i_scroll_POISON
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_harm//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_curse
-EFFECT=0,100
-//DURATION=0.3,0.5
-MANAUSE=10
-Requirements=30.0 Magery
-
 [DamageSpellDef 30]//utocne
 DEFNAME=s_lightning
 NAME=Lightning

@@ -115,12 +115,24 @@ namespace SteamEngine.CompiledScripts {
 		public override sealed byte FlagsToSend {
 			get {
 				int ret = 0;
+
+				if (this.Flag_GreenHealthBar) {
+					ret |= 0x04;
+				}
 				if (this.IsNotVisible) {
 					ret |= 0x80;
 				}
 				if (this.Flag_WarMode) {
 					ret |= 0x41; //both 0x40 (for aos clients) and 0x01 (for older clients?) hope it won't break much
 				}
+
+				//if Female
+				//	|= 0x02;
+
+				//if Blessed || YellowHealthbar
+				//	|= 0x08;
+				
+
 				return (byte) ret;
 			}
 		}
@@ -179,6 +191,18 @@ namespace SteamEngine.CompiledScripts {
 					CharSyncQueue.AboutToChangeFlags(this);
 					this.ProtectedFlag5 = value;
 					this.Trigger_WarModeChange();
+				}
+			}
+		}
+
+		public bool Flag_GreenHealthBar {
+			get {
+				return this.ProtectedFlag7;
+			}
+			set {
+				if (this.ProtectedFlag7 != value) {
+					CharSyncQueue.AboutToChangeFlags(this);
+					this.ProtectedFlag7 = value;
 				}
 			}
 		}
