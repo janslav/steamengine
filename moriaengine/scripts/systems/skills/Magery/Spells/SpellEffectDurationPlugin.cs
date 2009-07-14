@@ -50,6 +50,9 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return this.effect;
 			}
+			protected set {
+				this.effect = value;
+			}
 		}
 
 		public bool Dispellable {

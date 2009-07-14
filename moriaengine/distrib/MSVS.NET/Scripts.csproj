@@ -692,6 +692,15 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpellDef.cs">
       <Link>systems\skills\Magery\Spells\HealingSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
       <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
     </Compile>
