@@ -25,7 +25,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Hitpoints Regeneration")]
+	[Summary("Overall regeneration ancestor (hits, mana, stamina etc...). Allows specifying the regeneration speed coefficient.")]
 	[ViewableClass]
 	public class RegenerationDef : PassiveAbilityDef {
 		private FieldValue regenSpeed;//how many points do we need to have to regenerate 1stat/1sec

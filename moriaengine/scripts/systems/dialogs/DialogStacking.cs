@@ -19,18 +19,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine;
-using SteamEngine.LScript;
+using SteamEngine.Networking;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
-using SteamEngine.Persistence;
-
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Class encapsulating stacking an recalling dialogs")]
 	public static class DialogStacking {
+		private static readonly Dictionary<GameState, Dictionary<int, Stack<Gump>>> globalDialogStacksCache = new Dictionary<GameState, Dictionary<int, Stack<Gump>>>();
+
 		[Summary("Tag used for stacking information about clients dialogs to be called back")]
-		private static readonly TagKey dialogStackTK = TagKey.Get("_guta_dialogStackTree_");
+		private static readonly TagKey dialogStackTKa = TagKey.Get("_guta_dialogStackTree_");
 
 		[Summary("LSCript used method for setting the specified argument's value")]
 		public static void SetArgValue(Gump gi, int index, object value) {
@@ -42,6 +42,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return gi.InputArgs[index];
 		}
 
+		//get the DialogStack for the given gamestate from the global dialog stacks cache
+		private static Dictionary<int, Stack<Gump>> AcquireDialogsDictionary(GameState forWho) {
+			Dictionary<int, Stack<Gump>> dlgStack;
+			if(globalDialogStacksCache.TryGetValue(forWho, out dlgStack)) {
+				return dlgStack;
+			} else {
+				dlgStack = new Dictionary<int, Stack<Gump>>();
+				globalDialogStacksCache[forWho] = dlgStack;
+				return dlgStack;
+			}
+		}
+
 		[Summary("Store the info about the dialog to the dialog stack. Used for " +
 			"storing info about the last used dialog whjich can be used to reopen the dialog " +
 			"when exiting from the following dialog for instance." +
@@ -50,11 +62,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			"UPDATED - using Gump as a parameter only (it contains everything necessary)" +
 			"UPDATED2 - oldGi - dialog being enstacked; newGi - newly opened dialog for storing stacking info")]
 		public static void EnstackDialog(Gump oldGi, Gump newGi) {
-			Dictionary<int, Stack<Gump>> dialogsMultiStack = oldGi.Cont.GetTag(dialogStackTK) as Dictionary<int, Stack<Gump>>;
+			/*Dictionary<int, Stack<Gump>> dialogsMultiStack = oldGi.Cont.GetTag(dialogStackTK) as Dictionary<int, Stack<Gump>>;
 			if (dialogsMultiStack == null) { //zatim nemame ani stack
 				dialogsMultiStack = new Dictionary<int, Stack<Gump>>();
 				oldGi.Cont.SetTag(dialogStackTK, dialogsMultiStack);
-			}
+			}*/
+			Dictionary<int, Stack<Gump>> dialogsMultiStack = AcquireDialogsDictionary(oldGi.Cont.GameState);
 			Stack<Gump> actualStack;
 			if (!dialogsMultiStack.TryGetValue(oldGi.Uid, out actualStack)) {
 				actualStack = new Stack<Gump>(); //vytvortit a ulozit
@@ -68,9 +81,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"Find it according to the given actual Gump in the dialogs multistack." +
 				"Handles also emptying and clearing unused (empty) stacks and the multistack too.")]
 		public static Gump PopStackedDialog(Gump actualGi) {
-			Dictionary<int, Stack<Gump>> dialogsMultiStack = actualGi.Cont.GetTag(dialogStackTK) as Dictionary<int, Stack<Gump>>;
+			//Dictionary<int, Stack<Gump>> dialogsMultiStack = actualGi.Cont.GetTag(dialogStackTK) as Dictionary<int, Stack<Gump>>;
+			Dictionary<int, Stack<Gump>> dialogsMultiStack;
 			Gump sgi = null;
-			if (dialogsMultiStack != null) { //something was stored
+			//if (dialogsMultiStack != null) {
+			if (globalDialogStacksCache.TryGetValue(actualGi.Cont.GameState, out dialogsMultiStack)) { //something was stored
 				Stack<Gump> actualsOwnStack;
 				if (dialogsMultiStack.TryGetValue(actualGi.Uid, out actualsOwnStack)) {
 					if (actualsOwnStack.Count != 0) {
@@ -81,7 +96,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					if (actualsOwnStack.Count == 0) {//stack je uz prazdnej (nebo byl prazdnej i predtim), odstranit stack
 						dialogsMultiStack.Remove(actualGi.Uid);
 						if (dialogsMultiStack.Count == 0) {
-							actualGi.Cont.RemoveTag(dialogStackTK);//multistack je prazdnej, uvolnit
+							globalDialogStacksCache.Remove(actualGi.Cont.GameState); //multistack je prazdnej, uvolnit
+							//actualGi.Cont.RemoveTag(dialogStackTK);
 						}
 					}
 				}
@@ -103,8 +119,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Summary("After resending the gump to the player, we have a new instance with a new UID - we need to" +
 				"update the stacked information in the multistack - assign the stack info to the new UID")]
 		private static void RenewStackedDialog(Gump oldInstance, Gump resentInstance) {
-			Dictionary<int, Stack<Gump>> dialogsMultiStack = oldInstance.Cont.GetTag(dialogStackTK) as Dictionary<int, Stack<Gump>>;
-			if (dialogsMultiStack != null) { //something was stored
+			//Dictionary<int, Stack<Gump>> dialogsMultiStack = oldInstance.Cont.GetTag(dialogStackTK) as Dictionary<int, Stack<Gump>>;
+			Dictionary<int, Stack<Gump>> dialogsMultiStack;
+			//if (dialogsMultiStack != null) {
+			if (globalDialogStacksCache.TryGetValue(oldInstance.Cont.GameState, out dialogsMultiStack)) { //something was stored
 				Stack<Gump> storedStack;
 				if (dialogsMultiStack.TryGetValue(oldInstance.Uid, out storedStack)) {
 					//store the stack back to the multistack but now under the new UID!
@@ -116,7 +134,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("For possible clearing of the stacked dialogs (if needed)")]
 		public static void ClearDialogStack(AbstractCharacter fromWho) {
-			fromWho.RemoveTag(dialogStackTK);
+			//fromWho.RemoveTag(dialogStackTK);
+			globalDialogStacksCache.Remove(fromWho.GameState);
+							
 		}
 
 		[Summary("For displaying the previously stored dialog (if any)")]
