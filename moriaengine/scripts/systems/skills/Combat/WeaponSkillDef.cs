@@ -180,6 +180,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+			//skillSeqArgs.Self.SysMessage("Aborting skill:" + skillSeqArgs.SkillDef.Key);
 			Character target = (Character) skillSeqArgs.Target1;
 			if (target != null) {
 				Character self = (Character) skillSeqArgs.Self;

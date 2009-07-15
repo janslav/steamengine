@@ -66,7 +66,8 @@ namespace SteamEngine.CompiledScripts {
 			int stamChange = CheckStatChange(stamRegenSpeed, stam, maxStam, timeElapsed, ref residuumStam);
 			int manaChange = CheckStatChange(manaRegenSpeed, mana, maxMana, timeElapsed, ref residuumMana);
 
-			if ((hitsChange == 0) && (stamChange == 0) && (manaChange == 0)) {
+			if ((hitsChange == 0) && (stamChange == 0) && (manaChange == 0) && //nothing regenerated now
+				(residuumHits == 0) && (residuumStam == 0) && (residuumMana == 0)) {//nothing is left to the next round
 				//delete the plugin for now. nothing is modified. it will be renewed when hits/mana/stamina lowers
 				//or when the regenerations get some point...
 				Delete();
@@ -150,7 +151,7 @@ namespace SteamEngine.CompiledScripts {
 			//the number of regenerated points (x) is as follows: 
 			//x = (lastResiduum) + (regenSpeed * timer);
 			double absoluteChange = lastResiduum + (regenSpeed * timeElapsed);
-			int retVal = (int) absoluteChange; //the stat value added - truncated
+			int retVal = (int) Math.Round(absoluteChange); //the stat value added - truncated
 			lastResiduum = absoluteChange - retVal; //this is the new residuum for the next round
 
 			return retVal;
