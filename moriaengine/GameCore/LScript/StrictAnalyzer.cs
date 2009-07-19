@@ -14,7 +14,6 @@ namespace SteamEngine.LScript {
      * <remarks>A class providing callback methods for the
      * parser.</remarks>
      */
-	[EQATEC.Profiler.SkipInstrumentation]
     internal abstract class StrictAnalyzer : Analyzer {
 
         /**
@@ -25,8 +24,7 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-		public override void Enter(Node node) {
+        public override void Enter(Node node) {
             switch (node.GetId()) {
             case (int) StrictConstants.IF:
                 EnterIf((Token) node);
@@ -417,8 +415,7 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-		public override Node Exit(Node node) {
+        public override Node Exit(Node node) {
             switch (node.GetId()) {
             case (int) StrictConstants.IF:
                 return ExitIf((Token) node);
@@ -684,8 +681,7 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public override void Child(Production node, Node child) {
+        public override void Child(Production node, Node child) {
             switch (node.GetId()) {
             case (int) StrictConstants.SCRIPT:
                 ChildScript(node, child);

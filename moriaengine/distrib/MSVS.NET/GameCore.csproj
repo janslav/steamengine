@@ -54,7 +54,9 @@
       <Name>Microsoft.JScript</Name>
     </Reference>
     <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
-    <Reference Include="SharpSvn, Version=1.5006.1231.36280, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86" />
+    <Reference Include="SharpSvn, Version=1.5006.1231.36280, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="SteamDoc">
       <Name>SteamDoc</Name>
       <HintPath>..\..\bin\SteamDoc.dll</HintPath>
@@ -111,99 +113,75 @@
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs">
       <Link>3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\AbstractAccount.cs">
       <Link>AbstractAccount.cs</Link>
