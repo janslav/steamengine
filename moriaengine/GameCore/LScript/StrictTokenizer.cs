@@ -15,7 +15,6 @@ namespace SteamEngine.LScript {
     /**
      * <remarks>A character stream tokenizer.</remarks>
      */
-	[EQATEC.Profiler.SkipInstrumentation]
     internal class StrictTokenizer : Tokenizer {
 
         /**
