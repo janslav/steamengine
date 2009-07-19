@@ -59,7 +59,7 @@ namespace SteamEngine.Timers {
 			}
 		}
 
-		public override void Delete() {
+		public sealed override void Delete() {
 			TagHolder c = this.Cont;
 			this.DeleteFrom(c);
 		}

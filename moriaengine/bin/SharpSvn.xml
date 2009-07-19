@@ -24,6 +24,13 @@
             <summary>Extended Parameter container of <see cref="T:SharpSvn.SvnRepositoryClient" />'s CreateRepository method</summary>
             <threadsafety static="true" instance="false" />
         </member>
+        <member name="P:SharpSvn.SvnRemoveFromChangeListArgs.ChangeLists">
+            <summary>Gets the list of changelist-names</summary>
+        </member>
+        <member name="T:SharpSvn.SvnRemoveFromChangeListArgs">
+            <summary>Extended Parameter container of <see cref="M:SharpSvn.SvnClient.RemoveFromChangeList(System.String,SharpSvn.SvnRemoveFromChangeListArgs)" /></summary>
+            <threadsafety static="true" instance="false" />
+        </member>
         <member name="P:SharpSvn.SvnDeleteArgs.Force">
             <summary>If Force is not set then this operation will fail if any path contains locally modified
 and/or unversioned items. If Force is set such items will be deleted.</summary>
@@ -147,11 +154,8 @@ target's properties).</para>
             <summary>Extended Parameter container of <see cref="T:SharpSvn.SvnRepositoryClient" />'s RecoverRepository method</summary>
             <threadsafety static="true" instance="false" />
         </member>
-        <member name="P:SharpSvn.SvnRemoveFromChangeListArgs.ChangeLists">
-            <summary>Gets the list of changelist-names</summary>
-        </member>
-        <member name="T:SharpSvn.SvnRemoveFromChangeListArgs">
-            <summary>Extended Parameter container of <see cref="M:SharpSvn.SvnClient.RemoveFromChangeList(System.String,SharpSvn.SvnRemoveFromChangeListArgs)" /></summary>
+        <member name="T:SharpSvn.SvnLookPropertyListArgs">
+            <summary>Extended Parameter container of <see cref="T:SharpSvn.SvnLookClient" />'s Changed method</summary>
             <threadsafety static="true" instance="false" />
         </member>
         <member name="P:SharpSvn.SvnAddToChangeListArgs.ChangeLists">
@@ -14114,6 +14118,25 @@ based on this version</summary>
             <summary>Extended Parameter container of <see cref="T:SharpSvn.SvnRepositoryClient" />'s CreateRepository method</summary>
             <threadsafety static="true" instance="false" />
         </member>
+        <member name="T:SharpSvn.SvnLookGetPropertyArgs">
+            <summary>Extended Parameter container of <see cref="T:SharpSvn.SvnLookClient" />'s Changed method</summary>
+            <threadsafety static="true" instance="false" />
+        </member>
+        <member name="T:SharpSvn.SvnRelocateArgs">
+            <summary>Extended Parameter container of <see cref="M:SharpSvn.SvnClient.Relocate(System.String,System.Uri,System.Uri,SharpSvn.SvnRelocateArgs)" /></summary>
+            <threadsafety static="true" instance="false" />
+        </member>
+        <member name="T:SharpSvn.SvnCreateDirectoryArgs">
+            <summary>Extended Parameter container of <see cref="M:SharpSvn.SvnClient.CreateDirectory(System.String,SharpSvn.SvnCreateDirectoryArgs)" /> and <see cref="M:SharpSvn.SvnClient.RemoteCreateDirectory(System.Uri,SharpSvn.SvnCreateDirectoryArgs)" /></summary>
+            <threadsafety static="true" instance="false" />
+        </member>
+        <member name="P:SharpSvn.SvnListChangeListArgs.ChangeLists">
+            <summary>Gets the list of changelist-names</summary>
+        </member>
+        <member name="T:SharpSvn.SvnListChangeListArgs">
+            <summary>Extended Parameter container for SvnClient.ListChangeList</summary>
+            <threadsafety static="true" instance="false" />
+        </member>
         <member name="M:SharpSvn.Delta.SvnDeltaEditor.CreateFileNode(SharpSvn.Delta.SvnDeltaNode,System.String)">
             <summary>Factory function to create a new SvnDeltaNode instance for the specified file</summary>
         </member>
@@ -14172,21 +14195,6 @@ based on this version</summary>
             <summary>The SvnDeltaEditor is a generic receiver of Subversion changes. 
 Hook events on this class or override methods on descendants of this class to
 receive changes</summary>
-        </member>
-        <member name="T:SharpSvn.SvnRelocateArgs">
-            <summary>Extended Parameter container of <see cref="M:SharpSvn.SvnClient.Relocate(System.String,System.Uri,System.Uri,SharpSvn.SvnRelocateArgs)" /></summary>
-            <threadsafety static="true" instance="false" />
-        </member>
-        <member name="T:SharpSvn.SvnCreateDirectoryArgs">
-            <summary>Extended Parameter container of <see cref="M:SharpSvn.SvnClient.CreateDirectory(System.String,SharpSvn.SvnCreateDirectoryArgs)" /> and <see cref="M:SharpSvn.SvnClient.RemoteCreateDirectory(System.Uri,SharpSvn.SvnCreateDirectoryArgs)" /></summary>
-            <threadsafety static="true" instance="false" />
-        </member>
-        <member name="P:SharpSvn.SvnListChangeListArgs.ChangeLists">
-            <summary>Gets the list of changelist-names</summary>
-        </member>
-        <member name="T:SharpSvn.SvnListChangeListArgs">
-            <summary>Extended Parameter container for SvnClient.ListChangeList</summary>
-            <threadsafety static="true" instance="false" />
         </member>
         <member name="P:SharpSvn.SvnWorkingCopyEntriesArgs.CommandType">
             <summary>Gets the <see cref="T:SharpSvn.SvnCommandType" /> of the command</summary>
@@ -14792,6 +14800,26 @@ is false</summary>
         <member name="M:SharpSvn.SvnLookClient.Write(SharpSvn.SvnLookOrigin,System.String,System.IO.Stream)">
             <overloads>Writes the content of the specified path to a stream directly from a repository</overloads>
             <summary>Writes the content of the specified path to a stream directly from a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetPropertyList(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnLookPropertyListArgs,SharpSvn.SvnPropertyCollection@)">
+            <summary>Gets all properties on files or dirs (<c>svn proplist</c>)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetPropertyList(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnPropertyCollection@)">
+            <overloads>Gets all properties on files or dirs (<c>svn proplist</c>)</overloads>
+            <summary>Gets all properties on files or dirs (<c>svn proplist</c>)</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetProperty(SharpSvn.SvnLookOrigin,System.String,System.String,SharpSvn.SvnLookGetPropertyArgs,SharpSvn.SvnPropertyValue@)">
+            <summary>Gets the property value of the specified path directly from a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetProperty(SharpSvn.SvnLookOrigin,System.String,System.String,SharpSvn.SvnLookGetPropertyArgs,System.String@)">
+            <summary>Gets the property value of the specified path directly from a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetProperty(SharpSvn.SvnLookOrigin,System.String,System.String,SharpSvn.SvnPropertyValue@)">
+            <summary>Gets the property value of the specified path directly from a repository</summary>
+        </member>
+        <member name="M:SharpSvn.SvnLookClient.GetProperty(SharpSvn.SvnLookOrigin,System.String,System.String,System.String@)">
+            <overloads>Gets the property value of the specified path directly from a repository</overloads>
+            <summary>Gets the property value of the specified path directly from a repository</summary>
         </member>
         <member name="M:SharpSvn.SvnLookClient.GetRevisionProperty(SharpSvn.SvnLookOrigin,System.String,SharpSvn.SvnLookRevisionPropertyArgs,SharpSvn.SvnPropertyValue@)">
             <summary>Gets the specified revision property directly from the repository</summary>
