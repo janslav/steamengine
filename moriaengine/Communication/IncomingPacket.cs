@@ -36,7 +36,7 @@ namespace SteamEngine.Communication {
 
 	public abstract class IncomingPacket<TConnection, TState, TEndPoint> : Poolable
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		private byte[] buffer;
 		private int offset;

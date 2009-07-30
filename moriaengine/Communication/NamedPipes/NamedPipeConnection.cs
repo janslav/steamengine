@@ -30,7 +30,7 @@ using SteamEngine.Communication;
 namespace SteamEngine.Communication.NamedPipes {
 	public sealed class NamedPipeConnection<TState> :
 		AbstractConnection<NamedPipeConnection<TState>, TState, string>
-		where TState : Poolable, IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
+		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
 		private string pipename;
 		private SafeFileHandle handle;

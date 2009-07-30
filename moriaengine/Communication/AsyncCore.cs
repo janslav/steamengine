@@ -31,7 +31,7 @@ namespace SteamEngine.Communication {
 	public abstract class AsyncCore<TConnection, TState, TEndPoint> : Disposable//,
 		//IAsyncCore<TConnection, TState, TEndPoint>
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 
 
