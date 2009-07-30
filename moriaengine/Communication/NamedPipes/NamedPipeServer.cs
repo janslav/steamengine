@@ -31,7 +31,7 @@ namespace SteamEngine.Communication.NamedPipes {
 	public class NamedPipeServer<TState> :
 		AsyncCore<NamedPipeConnection<TState>, TState, string>,
 		IServer<NamedPipeConnection<TState>, TState, string>
-		where TState : Poolable, IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
+		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
 		bool running = false;
 		string pipename;

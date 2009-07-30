@@ -28,7 +28,7 @@ using SteamEngine.Common;
 namespace SteamEngine.Communication {
 	public abstract class AbstractConnection<TConnection, TState, TEndPoint> : Poolable
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-		where TState : Poolable, IConnectionState<TConnection, TState, TEndPoint>, new() {
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
 		private AsyncCore<TConnection, TState, TEndPoint> core;
 
@@ -124,7 +124,7 @@ namespace SteamEngine.Communication {
 		}
 
 		protected virtual void On_Init() {
-			this.state = Pool<TState>.Acquire();
+			this.state = new TState();
 			this.state.On_Init((TConnection) this);
 		}
 
