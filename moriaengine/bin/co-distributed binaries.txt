@@ -28,3 +28,7 @@ Additional Nant libraries
 log4net.dll
 Used by Nant. It's a logging library of some sort, 
 I might as well look into it later to see if we couldn't use it for steamengine itself as well.
+
+
+SharpSvn*dll
+SharpSvn libraries, obviusly for working with svn, particularly finding out release number and updating.
