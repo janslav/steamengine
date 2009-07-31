@@ -29,5 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		public CookingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
+
+		//TODO - some sounds?
 	}
 }

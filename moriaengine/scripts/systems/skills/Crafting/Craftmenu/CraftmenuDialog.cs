@@ -219,9 +219,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							}
 						}
 						if (craftingOrder.Count > 0) {
-							SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character) gi.Cont, cat.CategorySkill);
-							ssa.Param1 = craftingOrder; //add the prepared 'order' queue for crafting
-							ssa.PhaseStart(); //start making...
+							CraftingProcessPlugin.InstallCraftingPlugin((Character) gi.Cont, craftingOrder, cat.CategorySkill);
+							CraftingProcessPlugin.StartCrafting((Character) gi.Cont);
 						}
 						break;
 					case 5: //openhere

@@ -28,6 +28,10 @@ namespace SteamEngine.CompiledScripts {
 		public CarpentrySkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
+
+		protected override void DoStroke(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.Sound(0x23d); //hammer and saw sound
+		}
 	}
 }
 

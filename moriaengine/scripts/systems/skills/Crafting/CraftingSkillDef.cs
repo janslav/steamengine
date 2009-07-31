@@ -35,16 +35,15 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("This trigger is used only when clicked the skill-list blue radio button for some crafting skill."+
 				"opens the craftmenu for the given skill")]
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
-			if (!CheckPrerequisities(skillSeqArgs)) {
+			//some special requirements will be also checked (if present)
+			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return true;//something wrong, finish now
 			}
-			if (!DoCheckSpecials(skillSeqArgs)) {//some special requirements will be also checked (if present)
-				return false;//stop, no message needed, it's been already sent in the called method
-			}
-
+			
 			//otherwise, open the craftmenu for this skill
-			Character self = skillSeqArgs.Self;
 			self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName)this.Id]));
 
 			//do not continue, the rest will be solved from the craftmenu
@@ -54,16 +53,15 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("This trigger is called when OK button is clicked from the craftmenu. One item from the queue is picked and its making process "+
 			"begins here (i.e. the making success and the number of strokes is pre-computed here")]
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
-			if (!CheckPrerequisities(skillSeqArgs)) {
+			//some special requirements will be also checked (if present)
+			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return true;//something wrong, finish now
 			}
-			if (!DoCheckSpecials(skillSeqArgs)) {//some special requirements will be also checked (if present)
-				return false;//stop, no message needed, it's been already sent in the called method
-			}
 
-			Character self = skillSeqArgs.Self;
-			SimpleQueue<CraftingSelection> orderQueue = (SimpleQueue<CraftingSelection>) skillSeqArgs.Param1;
+			SimpleQueue<CraftingSelection> orderQueue = CraftingProcessPlugin.GetCraftingQueue(self);
 			ItemDef iDefToMake = orderQueue.Peek().ItemDef;//the on_start trigger runs only if there is something to be made so we can immediately Peek for it without worries...
 				//get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
 			int[] itemStrokes = iDefToMake.Strokes; //always 2-item array
@@ -82,18 +80,16 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("This trigger is run a pre-computed number of times before the item is either created or failed."+
 				"The item-making animations and sounds are run from here")]
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			if (!CheckPrerequisities(skillSeqArgs)) {
-				return true;//stop
+			//todo: paralyzed state etc.
+			//some special requirements will be also checked (if present)
+			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+				CraftingProcessPlugin.UnInstallCraftingPlugin(skillSeqArgs.Self);
+				return true;//something wrong, finish now
 			}
-			if (!DoCheckSpecials(skillSeqArgs)) {//some special requirements will be also checked (if present)
-				return false;//stop, no message needed, it's been already sent in the called method
-			}
-			
+
 			if ((int)skillSeqArgs.Param2 > 1) {
 				//do the animation, sound and repeat the stroke
-				DoAnim(skillSeqArgs);
-				DoSound(skillSeqArgs);
+				DoStroke(skillSeqArgs);
 				skillSeqArgs.Param2 = (int) skillSeqArgs.Param2 - 1;
 				skillSeqArgs.DelayStroke();
 				return true; //stop here for now (we are waiting for the next stroke round...)
@@ -105,46 +101,49 @@ namespace SteamEngine.CompiledScripts {
 				"creates the item instance and checks if there are any other items to be created ino the queue. If so, it "+
 				"re-runs the @start trigger")]
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-			Player self = (Player)skillSeqArgs.Self;
-			if (!CheckPrerequisities(skillSeqArgs)) {
-				return true;//stop
+			Player self = (Player) skillSeqArgs.Self;
+			//todo: paralyzed state etc.
+			//some special requirements will be also checked (if present)
+			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
+				return true;//something wrong, finish now
 			}
-			if (!DoCheckSpecials(skillSeqArgs)) {//some special requirements will be also checked (if present)
-				return false;//stop, no message needed, it's been already sent in the called method
-			}
-
+			
 			//retreive the item to be made
-			SimpleQueue<CraftingSelection> orderQueue = (SimpleQueue<CraftingSelection>) skillSeqArgs.Param1;
+			SimpleQueue<CraftingSelection> orderQueue = CraftingProcessPlugin.GetCraftingQueue(self);
 			CraftingSelection oneItemSel = orderQueue.Peek();
 			ItemDef iDefToMake = oneItemSel.ItemDef;
 
 			IResourceListItem missingResource;
 			bool canMake = true;
-			//first check the necessary resources to have (GM needn't have anything)
-			if (!self.IsGM && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
+			//first check the necessary resources to have (GM needn't have anything) (if any resources are needed)
+			if (!self.IsGM && iDefToMake.SkillMake != null && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
 				ResourcesList.SendResourceMissingMsg(self, missingResource);
 				canMake = false;
 			}
 
-			if (canMake) {//if still OK try to consume the consumable resources otherwise step over this block
-				if (!self.IsGM && !iDefToMake.Resources.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingResource)) {
+			if (canMake) {//if still OK try to consume the consumable resources (if any) otherwise step over this block
+				if (!self.IsGM && iDefToMake.Resources != null && !iDefToMake.Resources.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingResource)) {
 					ResourcesList.SendResourceMissingMsg(self, missingResource);
 					canMake = false;
-				} else {//resources consumed or we are GM, create the item and place it to the pre-defined (or default) location
+				} else {//resources consumed or we are GM or no resources needed, create the item and place it to the pre-defined (or default) location
 					Item newItem = (Item) iDefToMake.Create(self.ReceivingContainer);
 					//self.ClilocSysMessage(500638);//You create the item and put it in your backpack.
 					self.SysMessage(String.Format(
 								Loc<CraftSkillsLoc>.Get(self.Language).ItemMadeAndPutInRecCont,
 								iDefToMake.Name, self.ReceivingContainer.Name));
+					DoSuccess(skillSeqArgs, newItem);
+
 					oneItemSel.Count -= 1;//lower the amount of items to be made
 					if (oneItemSel.Count <= 0) {
 						orderQueue.Dequeue(); //remove from the queue
 					}
 					if (orderQueue.Count > 0) { //still something to be made
-						skillSeqArgs.PhaseStart();//start making again
+						CraftingProcessPlugin.StartCrafting(self); //start again
 						return true; //stop the trigger
 					} else {//nothing left, finish
 						self.SysMessage(Loc<CraftSkillsLoc>.Get(self.Language).FinishCrafting);
+						CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 						return false;
 					}
 				}
@@ -157,12 +156,13 @@ namespace SteamEngine.CompiledScripts {
 					self.SysMessage(String.Format(
 						Loc<CraftSkillsLoc>.Get(self.Language).ResourcesLackingButContinue,
 						iDefToMake.Name));
-					skillSeqArgs.PhaseStart();//start making again
+					CraftingProcessPlugin.StartCrafting(self); //start with next item(s)
 					return true; //stop the trigger
 				} else {
 					self.SysMessage(String.Format(
 						Loc<CraftSkillsLoc>.Get(self.Language).ResourcesLackingAndFinish,
 						iDefToMake.Name));
+					CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 					return false;
 				}
 			}
@@ -176,34 +176,40 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) { //checking alive will be enough
-				return false;//no message needed, it's been already sent in the called method
+				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
+				return true;//no message needed, it's been already sent in the called method
 			}
 
 			//retreive the item to be made
-			SimpleQueue<CraftingSelection> orderQueue = (SimpleQueue<CraftingSelection>) skillSeqArgs.Param1;
+			SimpleQueue<CraftingSelection> orderQueue = CraftingProcessPlugin.GetCraftingQueue(self);
 			CraftingSelection oneItemSel = orderQueue.Peek();
 			ItemDef iDefToMake = oneItemSel.ItemDef;
 
 			iDefToMake.Resources.ConsumeSomeResources(self, ResourcesLocality.Backpack);
-
-			skillSeqArgs.PhaseStart();//start making (of the same item in the same amount) again 
+			self.SysMessage(String.Format(
+						Loc<CraftSkillsLoc>.Get(self.Language).ItemMakingFailed,
+						iDefToMake.Name));
+			CraftingProcessPlugin.StartCrafting(self);//start making (of the same item in the same amount) again 
 			return true; //stop the trigger
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			self.SysMessage(Loc<CraftSkillsLoc>.Get(self.Language).CraftingAborted);
-		}
-
-		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. "+
-				"Its purpose is to perform some character animation related to the usage of the particular skill")]
-		protected virtual void DoAnim(SkillSequenceArgs skillSeqArgs) {
+			CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 		}
 
 		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
-				"Its purpose is to make some sound related to the usage of the particular skill")]
-		protected virtual void DoSound(SkillSequenceArgs skillSeqArgs) {
+				"Its purpose is to make something related to the stroke of the particular skill (such as playing some sound...)")]
+		protected virtual void DoStroke(SkillSequenceArgs skillSeqArgs) {
 		}
+
+		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
+				"Its purpose is to make something related to the success of the particular skill (such as playing sound,"+
+				"computing some special item characteristics etc.)")]
+		protected virtual void DoSuccess(SkillSequenceArgs skillSeqArgs, Item newItem) {
+			//TODO pocitat nejake ty "exceptional" vlastnosti, podepisovani predmetu atp.
+		}		
 
 		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
 				"Its purpose is to check any additional pre-requisities for succesfull skill usage "+
@@ -231,6 +237,7 @@ namespace SteamEngine.CompiledScripts {
 	internal class CraftSkillsLoc : CompiledLocStringCollection {
 		public string ResourcesLackingButContinue = "Not enough resources to make {0}, continuing with other items.";
 		public string ResourcesLackingAndFinish = "Not enough resources to make {0}, crafting is finished.";
+		public string ItemMakingFailed = "You have failed to make {0} and lost some of the resources";
 		public string FinishCrafting = "Crafting is finished";
 		public string CraftingAborted = "Crafting aborted";
 		//500638 - You create the item and put it in your backpack.

@@ -28,5 +28,9 @@ namespace SteamEngine.CompiledScripts {
 		public InscriptionSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
+
+		protected override void DoStroke(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.Sound(0x249); //inscribing the scroll
+		}
 	}
 }
