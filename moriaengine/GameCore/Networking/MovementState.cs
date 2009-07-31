@@ -112,15 +112,6 @@ namespace SteamEngine.Networking {
 			this.gameState = gameState;
 		}
 
-		internal void On_Reset() {
-			this.lastStepReserve = 0;
-			this.secondLastStepReserve = 0;
-			this.thirdLastStepReserve = 0;
-			//this.lastMovementTime = 0;
-			this.nextMovementTime = 0;
-			this.moveRequests.Clear();
-		}
-
 		//called from incomingpacket.Handle, so we're also under lock(globallock)
 		internal void MovementRequest(Direction direction, bool running, byte sequence) {
 			lock (queue) {

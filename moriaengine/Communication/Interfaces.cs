@@ -64,7 +64,7 @@ namespace SteamEngine.Communication {
 		IncomingPacket<TConnection, TState, TEndPoint> GetPacketImplementation(byte id, TConnection conn, TState state, out bool discardAfterReading);
 	}
 
-	public interface IConnectionState<TConnection, TState, TEndPoint>
+	public interface IConnectionState<TConnection, TState, TEndPoint> : IDisposable
 		//where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()
 		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
 		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {

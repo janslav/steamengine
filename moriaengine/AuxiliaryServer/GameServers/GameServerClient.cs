@@ -8,14 +8,14 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.GameServers {
-	public class GameServerClient : Poolable,
+	public class GameServerClient : Disposable,
 		IConnectionState<NamedPipeConnection<GameServerClient>, GameServerClient, string> {
 
 		NamedPipeConnection<GameServerClient> conn;
 
 		static int uids = 1;
 
-		int uid;
+		int uid = uids++;
 
 		GameServerInstanceSettings settings;
 
@@ -53,15 +53,6 @@ namespace SteamEngine.AuxiliaryServer.GameServers {
 			get {
 				return this.uid;
 			}
-		}
-
-		protected override void On_Reset() {
-			uid = uids++;
-
-			this.settings = null;
-			this.startupFinished = false;
-
-			base.On_Reset();
 		}
 
 		public IEncryption Encryption {

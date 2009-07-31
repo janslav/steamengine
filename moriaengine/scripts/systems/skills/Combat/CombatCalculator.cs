@@ -225,7 +225,7 @@ namespace SteamEngine.CompiledScripts {
 					(mindDefVsMLegs * 0.2) +
 					(mindDefVsMFeet * 0.05));
 			}
-			CombatArmorValues retVal = Pool<CombatArmorValues>.Acquire();
+			CombatArmorValues retVal = new CombatArmorValues();
 			retVal.armorVsP = armorClassVsP;
 			retVal.armorVsM = armorClassVsM;
 			retVal.mindDefenseVsP = mindDefenseVsP;
@@ -264,14 +264,14 @@ namespace SteamEngine.CompiledScripts {
 			throw new SEException("weapType out of range");
 		}
 
-		internal class CombatArmorValues : Poolable {
+		internal class CombatArmorValues {
 			internal int armorVsP;
 			internal int mindDefenseVsP;
 			internal int armorVsM;
 			internal int mindDefenseVsM;
 		}
 
-		internal class CombatWeaponValues : Poolable {
+		internal class CombatWeaponValues {
 			internal Weapon weapon;
 			internal WeaponType weaponType;
 			internal DamageType damageType;
@@ -318,7 +318,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static CombatWeaponValues CalculateCombatWeaponValues(Character self) {
-			CombatWeaponValues retVal = Pool<CombatWeaponValues>.Acquire();
+			CombatWeaponValues retVal = new CombatWeaponValues();
 
 			Weapon weapon = self.FindLayer(LayerNames.Hand1) as Weapon;
 			if (weapon == null) {
