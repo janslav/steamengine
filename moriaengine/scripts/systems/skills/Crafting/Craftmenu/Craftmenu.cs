@@ -545,8 +545,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Struct for describing one of the selected items and its count to be crafted")]
-	public struct CraftingSelection {
+	[Summary("Class for describing one of the selected items and its count to be crafted")]
+	public class CraftingSelection {
 		private readonly ItemDef itemDef;
 		private int count;
 

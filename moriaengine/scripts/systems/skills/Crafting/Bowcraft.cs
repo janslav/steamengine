@@ -28,6 +28,10 @@ namespace SteamEngine.CompiledScripts {
 		public BowcraftSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
+
+		protected override void DoStroke(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.Sound(0x55);
+		}
 	}
 }
 //501778	You make an arrow and put it in your backpack.

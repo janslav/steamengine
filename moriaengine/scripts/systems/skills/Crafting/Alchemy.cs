@@ -28,6 +28,17 @@ namespace SteamEngine.CompiledScripts {
 
 		public AlchemySkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-		}		
+		}
+
+		//do the "mixing" sound
+		protected override void DoStroke(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.Sound(0x242);
+		}
+
+		//do the pouring into the flask sound in additional to the standard functionality
+		protected override void DoSuccess(SkillSequenceArgs skillSeqArgs, Item newItem) {
+			skillSeqArgs.Self.Sound(0x240);
+			base.DoSuccess(skillSeqArgs, newItem);
+		}
 	}
 }

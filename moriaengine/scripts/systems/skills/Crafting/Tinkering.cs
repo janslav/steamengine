@@ -28,6 +28,10 @@ namespace SteamEngine.CompiledScripts {
 		public TinkeringSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
+
+		protected override void DoStroke(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.Sound(0x241); //lockpicking sound
+		}
 	}
 }
 //502924	Which gem will you use to make the jewelry?

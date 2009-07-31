@@ -28,6 +28,11 @@ namespace SteamEngine.CompiledScripts {
 		public BlacksmithySkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
+
+		//do the "hammer on anvil" sound
+		protected override void DoStroke(SkillSequenceArgs skillSeqArgs) {
+			skillSeqArgs.Self.Sound(0x2a);
+		}
 	}
 }
 //500418	This item is of imported material, probably bought at a store, and does not yield much metal.
