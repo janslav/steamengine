@@ -8,13 +8,13 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
-	public class ConsoleClient : Poolable,
+	public class ConsoleClient : Disposable,
 		IConnectionState<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 
 		TcpConnection<ConsoleClient> conn;
 
 		static int uids;
-		int uid;
+		int uid = uids++;
 
 		string accName;
 		string password;
@@ -37,16 +37,6 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			get {
 				return uid;
 			}
-		}
-
-		protected override void On_Reset() {
-			this.uid = uids++;
-
-			this.isLoggedInAux = false;
-			this.accName = null;
-			this.password = null;
-
-			base.On_Reset();
 		}
 
 		public IEncryption Encryption {

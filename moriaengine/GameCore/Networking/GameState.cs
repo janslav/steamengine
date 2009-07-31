@@ -30,10 +30,13 @@ namespace SteamEngine.Networking {
 	public delegate void OnTargon(GameState state, IPoint3D getback, object parameter);
 	public delegate void OnTargonCancel(GameState state, object parameter);
 
-	public class GameState : Poolable, IConnectionState<TcpConnection<GameState>, GameState, IPEndPoint> {
+	public class GameState : TagHolder, IDisposable, 
+		IConnectionState<TcpConnection<GameState>, GameState, IPEndPoint> {
 
 		private static int uids;
 		private int uid;
+
+		private bool isDeleted;
 
 		private IEncryption encryption;
 
@@ -42,10 +45,10 @@ namespace SteamEngine.Networking {
 		private IPEndPoint ip;
 		private TcpConnection<GameState> conn;
 
-		private int lastSentUpdateRange;
-		private byte requestedUpdateRange;
+		private int lastSentUpdateRange = Globals.MaxUpdateRange;
+		private byte requestedUpdateRange = Globals.MaxUpdateRange;
 
-		private ClientVersion clientVersion;
+		private ClientVersion clientVersion = ClientVersion.nullValue;
 
 		private bool allShow;
 
@@ -71,32 +74,9 @@ namespace SteamEngine.Networking {
 
 		public GameState() {
 			this.movementState = new MovementState(this);
-			this.movementState.On_Reset();
-		}
 
-		protected override void On_Reset() {
 			this.encryption = new GameEncryption();
 			this.uid = uids++;
-			this.ip = null;
-			this.account = null;
-			this.conn = null;
-
-			this.lastSkillMacroId = 0;
-			this.lastSpellMacroId = 0;
-
-			this.lastSentGlobalLightLevel = 0;
-			this.lastSentPersonalLightLevel = 0;
-
-			this.clientVersion = ClientVersion.nullValue;
-
-			this.lastSentUpdateRange = Globals.MaxUpdateRange;
-			this.requestedUpdateRange = Globals.MaxUpdateRange;
-
-			if (this.movementState != null) {
-				this.movementState.On_Reset();
-			}
-
-			base.On_Reset();
 		}
 
 		public IEncryption Encryption {
@@ -522,6 +502,29 @@ namespace SteamEngine.Networking {
 				PreparedPacketGroups.SendOverallLightLevel(this.conn, globalLight);
 				this.lastSentGlobalLightLevel = globalLight;
 			}
+		}
+
+		public override string Name {
+			get {
+				return this.ToString();
+			}
+			set {
+			}
+		}
+
+		public sealed override void Delete() {
+			this.isDeleted = true;
+			base.Delete();
+		}
+
+		public override sealed bool IsDeleted {
+			get {
+				return this.isDeleted;
+			}
+		}
+
+		void IDisposable.Dispose() {
+			this.Delete();
 		}
 	}
 }

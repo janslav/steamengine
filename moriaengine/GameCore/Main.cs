@@ -90,7 +90,7 @@ namespace SteamEngine {
 
 			signalExit.Reset();
 			try {
-				Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+				//Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 
 				HighPerformanceTimer.Init();
 				Common.Tools.ExitBinDirectory();

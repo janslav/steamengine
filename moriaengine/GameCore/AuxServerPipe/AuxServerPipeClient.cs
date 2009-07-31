@@ -9,7 +9,7 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
-	public class AuxServerPipeClient : Poolable,
+	public class AuxServerPipeClient : Disposable,
 		IConnectionState<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
 
 		private static NamedPipeClientFactory<AuxServerPipeClient> clientFactory;
@@ -25,13 +25,6 @@ namespace SteamEngine.AuxServerPipe {
 		public AuxServerPipeClient() {
 			this.onConsoleWrite = Logger_OnConsoleWrite;
 			this.onConsoleWriteLine = Logger_OnConsoleWriteLine;
-		}
-
-		protected override void On_Reset() {
-			this.pipe = null;
-			this.sendLogStrings = false;
-
-			base.On_Reset();
 		}
 
 		internal static void Init() {

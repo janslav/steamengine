@@ -7,7 +7,9 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.RemoteConsole {
-	public class ConsoleClient : IConnectionState<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+	public class ConsoleClient : Disposable,
+		IConnectionState<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
+
 		static TcpClientFactory<ConsoleClient> factory = new TcpClientFactory<ConsoleClient>(
 			ConsoleProtocol.instance, MainClass.globalLock);
 
@@ -16,12 +18,6 @@ namespace SteamEngine.RemoteConsole {
 		private TcpConnection<ConsoleClient> conn;
 
 		internal EndPointSetting endPointSetting;
-
-		protected override void On_Reset() {
-			this.conn = null;
-
-			base.On_Reset();
-		}
 
 		public static ConsoleClient ConnectedInstance {
 			get {

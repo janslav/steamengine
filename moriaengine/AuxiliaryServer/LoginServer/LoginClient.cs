@@ -8,21 +8,14 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginClient : Poolable,
+	public class LoginClient : Disposable,
 		IConnectionState<TcpConnection<LoginClient>, LoginClient, IPEndPoint> {
 
 		static int uids;
 
-		int uid;
+		int uid = uids++;
 
-		IEncryption encryption;
-
-		protected override void On_Reset() {
-			this.encryption = new LoginEncryption();
-			uid = uids++;
-
-			base.On_Reset();
-		}
+		IEncryption encryption = new LoginEncryption();
 
 		public IEncryption Encryption {
 			get {

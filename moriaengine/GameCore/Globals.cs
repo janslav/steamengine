@@ -643,24 +643,24 @@ namespace SteamEngine {
 		public static string Version {
 			get {
 				if (version == null) {
-					version = GetVersion();
+					try {
+						version = GetVersion();
+					} catch (Exception e) {
+						Logger.WriteError("While obtaining SVN revision info", e);
+						version = "<SVN revision number unknown>";
+					}
 				}
-				return version; 
+				return version;
 			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static string GetVersion() {
-			try {
-				using (SvnClient client = new SvnClient()) {
-					SvnInfoEventArgs info;
-					client.GetInfo(SvnTarget.FromString(Path.GetFullPath("."), true), out info);
+			using (SvnClient client = new SvnClient()) {
+				SvnInfoEventArgs info;
+				client.GetInfo(SvnTarget.FromString(Path.GetFullPath("."), true), out info);
 
-					return "SVN revision " + info.Revision;
-				}
-			} catch (Exception e) {
-				Logger.WriteError("While obtatining SVN revision info", e);
-				return "<SVN revision number unknown>";
+				return "SVN revision " + info.Revision;
 			}
 		}
 
