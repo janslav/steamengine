@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (nant.WasSuccess()) {
 				Console.WriteLine("Done compiling C# scripts.");
-				fileCollection.assembly = nant.GetCompiledAssembly("scriptsFileName");
+				fileCollection.assembly = nant.GetCompiledAssembly(".", "scriptsFileName");
 				//Logger.scriptsAssembly = fileCollection.assembly;
 				compiledScripts = fileCollection;
 				return true;

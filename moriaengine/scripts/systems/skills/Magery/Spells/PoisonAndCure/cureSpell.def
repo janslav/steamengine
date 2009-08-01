@@ -34,7 +34,7 @@ Requirements=40.0 Magery
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x373A, 10, 15)
-	this.CureEffect(s_cure.GetEffectForValue(argo.SpellPower))
+	this.CureEffect(s_archcure.GetEffectForValue(argo.SpellPower))
 
 
 [function CureEffect] //find the poison plugin and lower it's effect

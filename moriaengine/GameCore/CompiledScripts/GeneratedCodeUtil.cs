@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (nant.WasSuccess()) {
 				Console.WriteLine("Done compiling generated C# code.");
-				generatedAssembly = nant.GetCompiledAssembly("generatedCodeFileName");
+				generatedAssembly = nant.GetCompiledAssembly(".", "generatedCodeFileName");
 				return true;
 			} else {
 				return false;
