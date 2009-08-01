@@ -695,8 +695,8 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DurableSpellDef.cs">
       <Link>systems\skills\Magery\Spells\DurableSpellDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpellDef.cs">
-      <Link>systems\skills\Magery\Spells\HealingSpellDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs</Link>
@@ -1008,6 +1008,23 @@
     <None Include="..\..\remoteconsole\properties\datasources\endpointsetting.datasource">
       <Link>DataSources\endpointsetting.datasource</Link>
     </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
+      <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct">
+      <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\healingSpells.def">
+      <Link>systems\skills\Magery\Spells\HealingSpells\healingSpells.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\protection.def">
+      <Link>systems\skills\Magery\Spells\protection.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\unimplementedSpells.def">
+      <Link>systems\skills\Magery\Spells\unimplementedSpells.def</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

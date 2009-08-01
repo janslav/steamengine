@@ -57,10 +57,12 @@ namespace SteamEngine {
 				AbstractSkillDef.StartingLoading();
 
 				foreach (ScriptFile f in files) {
-					Logger.SetTitle("Loading scripts: " + ((alreadyloaded * 100) / lengthSum) + " %");
-					Logger.WriteDebug("Loading " + f.Name);
-					LoadFile(f);
-					alreadyloaded += f.Length;
+					if (f.Exists) {
+						Logger.SetTitle("Loading scripts: " + ((alreadyloaded * 100) / lengthSum) + " %");
+						Logger.WriteDebug("Loading " + f.Name);
+						LoadFile(f);
+						alreadyloaded += f.Length;
+					}
 				}
 				Logger.WriteDebug("Script files loaded.");
 				Logger.SetTitle("");//reset title of the console
@@ -105,6 +107,8 @@ namespace SteamEngine {
 						} catch (IOException e) {
 							Logger.WriteWarning(e);
 						}
+					} else {
+						f.Unload();
 					}
 				}
 

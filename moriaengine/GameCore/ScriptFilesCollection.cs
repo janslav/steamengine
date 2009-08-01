@@ -243,7 +243,7 @@ namespace SteamEngine {
 					time = file.LastWriteTime;
 					length = file.Length;
 				}
-				Unload(); //a little hack :) it makes this a not-only -classical-property, but who cares, its internal -tar
+				Unload();
 				return true;
 			}
 		}

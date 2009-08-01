@@ -69,7 +69,7 @@ Requirements=40.0 Magery
 
 on=@effectChar
 	EffectFactory.LightningEffect(this)
-s
+
 [SpellDef 37]//utocne
 DEFNAME=s_mind_blast
 NAME=Mind Blast

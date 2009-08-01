@@ -10,7 +10,7 @@ SCROLLITEM=i_scroll_HEAL
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.IsBeneficial
 //EFFECTID=i_fx_HEAL_EFFECT
 EFFECT=0,15
-DURATION=0.0
+//DURATION=0.0
 MANAUSE=8
 Requirements=10.0 Magery
 
@@ -29,7 +29,7 @@ SCROLLITEM=i_scroll_GREATER_HEAL
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.IsBeneficial
 //EFFECTID=i_fx_HEAL_EFFECT
 EFFECT=0,50
-DURATION=0.0
+//DURATION=0.0
 MANAUSE=15
 Requirements=40.0 Magery
 

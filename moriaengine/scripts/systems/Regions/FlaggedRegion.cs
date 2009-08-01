@@ -30,6 +30,16 @@ namespace SteamEngine.Regions {
 	[Flags]
 	public enum RegionFlags {
 		Zero = 0, None = 0,
+		NoMagicIn = 0x0001,
+		NoMagicOut = 0x0002,
+		NoHarmfulMagicIn = 0x0004,
+		NoHarmfulMagicOut = 0x0008,
+		NoBeneficialMagicIn = 0x0010,
+		NoBeneficialMagicOut = 0x0020,
+		NoTeleportingIn = 0x0040,
+		NoTeleportingOut = 0x0080,
+		NoEnemyTeleportingIn = 0x0100,
+		NoEnemyTeleportingOut = 0x0200,
 
 		Underground = 0x0800, Dungeon = Underground,
 	}
@@ -55,7 +65,6 @@ namespace SteamEngine.Regions {
 			this.Parent = parent;
 		}
 
-		[NoShow]
 		public RegionFlags Flags {
 			get {
 				return this.flags;
