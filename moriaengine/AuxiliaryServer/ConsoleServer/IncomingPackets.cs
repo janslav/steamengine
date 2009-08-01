@@ -103,10 +103,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			} else {
 				GameServerInstanceSettings sett = Settings.KnownGameServersList[this.serverNum];
 				Sanity.IfTrueThrow((this.serverNum != sett.Number), "Server setting number is different from it's index in list");
-				string nantPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(sett.IniPath, NantLauncher.defaultPathInProject));
 				Console.WriteLine("Compiling " + this.build + " build of server at " + sett.IniPath);
 
-				new AuxServNantProjectStarter(this.build, nantPath, "buildCore", "gameCoreFileName");
+				new AuxServNantProjectStarter(this.build, sett.IniPath, "buildCore", "gameCoreFileName");
 			}
 		}
 	}

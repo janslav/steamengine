@@ -1011,6 +1011,9 @@
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
       <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct</Link>
+    </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct">
       <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct</Link>
     </None>
@@ -1018,6 +1021,12 @@
   <ItemGroup>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\healingSpells.def">
       <Link>systems\skills\Magery\Spells\HealingSpells\healingSpells.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\cureSpell.def">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\cureSpell.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\poisonSpell.def">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\poisonSpell.def</Link>
     </Content>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\protection.def">
       <Link>systems\skills\Magery\Spells\protection.def</Link>

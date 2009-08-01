@@ -50,7 +50,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		private class NantProjectReStarter : AuxServNantProjectStarter {
 			internal NantProjectReStarter ()
-				: base (SEBuild.Sane, NantLauncher.defaultPathInProject, "buildRestarter", "restarterFileName") {
+				: base (SEBuild.Sane, ".", "buildRestarter", "restarterFileName") {
 			}
 
 			public override void StartProcess(string file) {
@@ -72,13 +72,13 @@ namespace SteamEngine.AuxiliaryServer {
 	//Nant logger class and a helper threading class combined
 	internal class AuxServNantProjectStarter : DefaultLogger {
 		private SEBuild build;
-		private string nantPath;
+		private string seRootPath;
 		private string targetTask;
 		private string filenameProperty;
 
-		internal AuxServNantProjectStarter(SEBuild build, string nantPath, string targetTask, string filenameProperty) {
+		internal AuxServNantProjectStarter(SEBuild build, string seRootPath, string targetTask, string filenameProperty) {
 			this.build = build;
-			this.nantPath = nantPath;
+			this.seRootPath = seRootPath;
 			this.targetTask = targetTask;
 			this.filenameProperty = filenameProperty;
 
@@ -103,7 +103,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		public virtual void CompileAndStart() {
 			try {
-				NantLauncher nant = new NantLauncher(this.nantPath);
+				NantLauncher nant = new NantLauncher(Path.Combine(this.seRootPath, NantLauncher.defaultPathInProject));
 				nant.SetLogger(this);
 				nant.SetPropertiesAndSymbols(this.build);
 				//nant.SetDebugMode(this.build == SEBuild.Debug);
@@ -113,7 +113,7 @@ namespace SteamEngine.AuxiliaryServer {
 				nant.Execute();
 
 				if (nant.WasSuccess()) {
-					string file = nant.GetCompiledAssemblyName(filenameProperty);
+					string file = nant.GetCompiledAssemblyName(this.seRootPath, filenameProperty);
 
 					Console.WriteLine("Starting " + file);
 					StartProcess(file);

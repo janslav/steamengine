@@ -186,12 +186,13 @@ namespace SteamEngine.Common {
 		}
 
 
-		public Assembly GetCompiledAssembly(string filenameproperty) {
-			return Assembly.LoadFile(GetCompiledAssemblyName(filenameproperty));
+		public Assembly GetCompiledAssembly(string seRootPath, string filenameproperty) {
+			return Assembly.LoadFile(GetCompiledAssemblyName(seRootPath, filenameproperty));
 		}
 
-		public string GetCompiledAssemblyName(string filenameproperty) {
-			return System.IO.Path.GetFullPath(this.nantProject.Properties[filenameproperty]);
+		public string GetCompiledAssemblyName(string seRootPath, string filenameproperty) {
+			return System.IO.Path.GetFullPath(System.IO.Path.Combine(
+				seRootPath, this.nantProject.Properties[filenameproperty]));
 		}
 
 		public Exception Exception {
