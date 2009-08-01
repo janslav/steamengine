@@ -341,6 +341,11 @@ namespace SteamEngine {
 	public sealed class Point4D : Point3D, IPoint4D {
 		private readonly byte m;
 
+		public Point4D(IPoint3D point3d, byte m)
+			: base(point3d) {
+			this.m = m;
+		}
+
 		public Point4D(int x, int y, int z, byte m)
 			: base(x, y, z) {
 			this.m = m;

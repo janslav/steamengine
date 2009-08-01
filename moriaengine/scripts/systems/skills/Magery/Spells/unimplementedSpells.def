@@ -48,22 +48,6 @@ Requirements=1.0 Magery
 
 ///////////////////////////////////////////// 2 kruh
 
-[SpellDef 11]
-DEFNAME=s_cure
-NAME=Cure
-SOUND=snd_SPELL_CURE
-RUNES=AN
-CASTTIME=1.5
-//RESOURCES=i_reag_garlic,i_reag_ginseng
-RUNEITEM=i_rune_CURE
-SCROLLITEM=i_scroll_CURE
-FLAGS=SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_HEAL_EFFECT
-EFFECT=0
-DURATION=0.0
-MANAUSE=8
-Requirements=20.0 Magery
-
 [SpellDef 13]
 DEFNAME=s_magic_trap
 NAME=Magic Trap
@@ -94,22 +78,6 @@ FLAGS=//SPELLFLAG_TARG_OBJ
 EFFECT=0
 DURATION=0.0
 MANAUSE=6
-Requirements=20.0 Magery
-
-[SpellDef 15]
-DEFNAME=s_protection
-NAME=Protection
-SOUND=snd_SPELL_PROTECTION
-RUNES=US
-CASTTIME=1.5
-//RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_sulfur_ash
-RUNEITEM=i_rune_PROTECTION
-SCROLLITEM=i_scroll_PROTECTION
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_BLESS_EFFECT
-EFFECT=0,30
-DURATION=3*60.0,8*60.0
-MANAUSE=7
 Requirements=20.0 Magery
 
 /////////////////////////////////////////////////////////// 3 kruh
@@ -179,38 +147,6 @@ MANAUSE=9
 Requirements=30.0 Magery
 
 ////////////////////////////////////////////// 4 kruh
-
-[SpellDef 25]
-DEFNAME=s_archcure
-NAME=Arch Cure
-SOUND=snd_SPELL_ARCHCURE
-RUNES=VAN
-CASTTIME=2.3
-//RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_mandrake_root
-RUNEITEM=i_rune_ARCHCURE
-SCROLLITEM=i_scroll_ARCHCURE
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD
-//EFFECTID=i_fx_HEAL_EFFECT
-EFFECT=0,0
-DURATION=0.0
-MANAUSE=11
-Requirements=40.0 Magery
-
-[SpellDef 26]
-DEFNAME=s_archprotection
-NAME=Arch Protection
-SOUND=snd_SPELL_ARCHPROTECTION
-RUNES=VUS
-CASTTIME=2.3
-//RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_mandrake_root,i_reag_sulfur_ash
-RUNEITEM=i_rune_ARCHPROTECTION
-SCROLLITEM=i_scroll_ARCHPROTECTION
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|SPELLFLAG_GOOD
-//EFFECTID=i_fx_BLESS_EFFECT
-EFFECT=0,30
-DURATION=3*60.0,8*60.0
-MANAUSE=11
-Requirements=40.0 Magery
 
 [SpellDef 31]
 DEFNAME=s_mana_drain

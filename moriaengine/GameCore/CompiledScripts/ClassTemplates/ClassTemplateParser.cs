@@ -62,7 +62,11 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		public static void Resync() {
 			foreach (ScriptFile file in allFiles.GetChangedFiles()) {
-				ProcessFile(file);
+				if (file.Exists) {
+					ProcessFile(file);
+				} else {
+					file.Unload();
+				}
 			}
 		}
 

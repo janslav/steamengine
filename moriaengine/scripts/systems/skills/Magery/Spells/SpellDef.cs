@@ -31,24 +31,25 @@ namespace SteamEngine.CompiledScripts {
 	[Flags]
 	public enum SpellFlag : int {
 		None = 0,
-		CanTargetStatic = 0x0001,
-		CanTargetGround = 0x0002,
-		CanTargetItem = 0x0004,
-		CanTargetChar = 0x0008,
+		CanTargetStatic =	0x000001,
+		CanTargetGround =	0x000002,
+		CanTargetItem =		0x000004,
+		CanTargetChar =		0x000008,
 		CanTargetAnything = CanTargetStatic | CanTargetGround | CanTargetItem | CanTargetChar,
-		AlwaysTargetSelf = 0x0010,
-		CanEffectDeadChar = 0x0020,
-		CanEffectStatic = 0x0040,
-		CanEffectGround = 0x0080,
-		CanEffectItem = 0x0100,
-		CanEffectChar = 0x0200,
+		AlwaysTargetSelf =	0x000010,
+		CanEffectDeadChar = 0x000020,
+		CanEffectStatic =	0x000040,
+		CanEffectGround =	0x000080,
+		CanEffectItem =		0x000100,
+		CanEffectChar =		0x000200,
 		CanEffectAnything = CanEffectStatic | CanEffectGround | CanEffectItem | CanEffectChar,
-		EffectNeedsLOS = 0x0400,
-		IsAreaSpell = 0x0800,
-		TargetCanMove = 0x1000,
-		UseMindPower = 0x2000, //otherwise, magery value is used
-		IsHarmful = 0x4000,
-		IsBeneficial = 0x8000
+		EffectNeedsLOS =	0x000400,
+		IsAreaSpell =		0x000800,
+		TargetCanMove =		0x001000,
+		UseMindPower =		0x002000, //otherwise, magery value is used
+		IsHarmful =			0x004000,
+		IsBeneficial =		0x008000,
+		IsTeleporting =		0x010000,
 	}
 
 	[ViewableClass]
@@ -441,10 +442,16 @@ namespace SteamEngine.CompiledScripts {
 			//if (req != null) {
 			//    if (!req.HasResourcesPresent(
 			//}
+			if (!this.CheckPermissionOutgoing(caster)) {
+				return;
+			}
 
 
 			SpellFlag flags = this.Flags;
 			if ((flags & SpellFlag.AlwaysTargetSelf) == SpellFlag.AlwaysTargetSelf) {
+				if (!this.CheckPermissionIncoming(caster, caster)) {
+					return;
+				}
 				mageryArgs.Target1 = caster;
 				mageryArgs.PhaseStart();
 				return;
@@ -477,6 +484,10 @@ namespace SteamEngine.CompiledScripts {
 			//target visibility/distance/LOS and self being alive checked in magery stroke
 			Character caster = mageryArgs.Self;
 
+			if (!this.CheckPermissionOutgoing(caster)) {
+				return;
+			}
+
 			bool cancel = this.TryCancellableTrigger(caster, tkSuccess, mageryArgs.scriptArgs);
 			if (!cancel) {
 				cancel = this.On_Success(mageryArgs);
@@ -500,12 +511,13 @@ namespace SteamEngine.CompiledScripts {
 			bool singleEffectDone = false;
 			Character targetAsChar = target as Character;
 			if (targetAsChar != null) {
-				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {
+				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {					
 					singleEffectDone = true;
 					this.GetSpellPowerAgainstChar(caster, target, targetAsChar, sourceType, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectChar(targetAsChar, sea);
 					}
+					this.MakeSound(targetAsChar);
 				}
 			} else {
 				Item targetAsItem = target as Item;
@@ -516,6 +528,7 @@ namespace SteamEngine.CompiledScripts {
 						if (this.CheckSpellPowerWithMessage(sea)) {
 							this.Trigger_EffectItem(targetAsItem, sea);
 						}
+						this.MakeSound(targetAsItem);
 					}
 				}
 			}
@@ -529,12 +542,13 @@ namespace SteamEngine.CompiledScripts {
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectGround(targetTop, sea);
 					}
+					this.MakeSound(new Point4D(targetTop, caster.M));
 				}
 			}
 
 			if (!singleEffectDone && !isArea) {
 				throw new SEException(this + ": Invalid target and/or spell flag?!");
-			}
+			}			
 
 			if (isArea) {
 				bool canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
@@ -560,6 +574,10 @@ namespace SteamEngine.CompiledScripts {
 									}
 
 									this.Trigger_EffectChar(ch, sea);
+									if (!singleEffectDone) {
+										singleEffectDone = true;
+										this.MakeSound(ch);
+									}
 								}
 							}
 						} else if (canEffectItem) {
@@ -568,6 +586,10 @@ namespace SteamEngine.CompiledScripts {
 								this.GetSpellPowerAgainstNonChar(caster, target, i, sourceType, ref sea);
 								if (this.CheckSpellPowerWithMessage(sea)) {
 									this.Trigger_EffectItem(i, sea);
+									if (!singleEffectDone) {
+										singleEffectDone = true;
+										this.MakeSound(i);
+									}
 								}
 							}
 						}
@@ -652,6 +674,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Trigger_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+			if (!this.CheckPermissionIncoming(spellEffectArgs.Caster, target)) {
+				return;
+			}
 			bool cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
 			if (!cancel) {
 				try {
@@ -669,6 +694,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Trigger_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
+			if (!this.CheckPermissionIncoming(spellEffectArgs.Caster, target)) {
+				return;
+			}
 			bool cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
 			if (!cancel) {
 				try {
@@ -686,12 +714,82 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Trigger_EffectGround(IPoint3D target, SpellEffectArgs spellEffectArgs) {
+			if (!this.CheckPermissionIncoming(spellEffectArgs.Caster, target)) {
+				return;
+			}
 			bool cancel = this.TryCancellableTrigger(target, tkEffectGround, spellEffectArgs.scriptArgs);
 			if (!cancel) {
 				try {
 					this.On_EffectGround(target, spellEffectArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			}
+		}
+
+		const RegionFlags anyAntiMagicOut = RegionFlags.NoBeneficialMagicOut | RegionFlags.NoEnemyTeleportingOut |
+			RegionFlags.NoHarmfulMagicOut | RegionFlags.NoMagicOut | RegionFlags.NoTeleportingOut;
+		const RegionFlags anyAntiMagicIn = RegionFlags.NoBeneficialMagicIn | RegionFlags.NoEnemyTeleportingIn |
+			RegionFlags.NoHarmfulMagicIn | RegionFlags.NoMagicIn | RegionFlags.NoTeleportingIn;
+
+		internal bool CheckPermissionOutgoing(Character caster) {
+			FlaggedRegion region = caster.Region as FlaggedRegion;
+			if (region != null) {
+				RegionFlags regionFlags = region.Flags;
+				if ((regionFlags & anyAntiMagicOut) != RegionFlags.Zero) { //there are some antimagic flags, let's check them out
+					SpellFlag spellFlag = this.Flags;
+					if ((regionFlags & RegionFlags.NoMagicOut) == RegionFlags.NoMagicOut) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenMagicOut);
+						return false;
+					}
+					if (((regionFlags & RegionFlags.NoBeneficialMagicOut) == RegionFlags.NoBeneficialMagicOut) &&
+							((spellFlag & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial)) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenBeneficialMagicOut);
+						return false;
+					}
+					if (((regionFlags & RegionFlags.NoHarmfulMagicOut) == RegionFlags.NoHarmfulMagicOut) &&
+							((spellFlag & SpellFlag.IsHarmful) == SpellFlag.IsHarmful)) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenHarmfulMagicOut);
+						return false;
+					}
+					if (((regionFlags & RegionFlags.NoTeleportingOut) == RegionFlags.NoTeleportingOut) &&
+							((spellFlag & SpellFlag.IsTeleporting) == SpellFlag.IsTeleporting)) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenTeleportingOut);
+						return false;
+					}
+					//TODO enemyteleporting - check realm friendliness
+				}
+			}
+			return true;
+		}
+
+		internal bool CheckPermissionIncoming(Character caster, IPoint3D target) {
+			FlaggedRegion targetRegion = caster.GetMap().GetRegionFor(target) as FlaggedRegion;
+			if (targetRegion != null) {
+				RegionFlags regionFlags = targetRegion.Flags;
+				if ((regionFlags & anyAntiMagicIn) != RegionFlags.Zero) { //there are some antimagic flags, let's check them out
+					SpellFlag spellFlag = this.Flags;
+					if ((regionFlags & RegionFlags.NoMagicIn) == RegionFlags.NoMagicIn) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenMagicIn);
+						return false;
+					}
+					if (((regionFlags & RegionFlags.NoBeneficialMagicIn) == RegionFlags.NoBeneficialMagicIn) &&
+							((spellFlag & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial)) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenBeneficialMagicIn);
+						return false;
+					}
+					if (((regionFlags & RegionFlags.NoHarmfulMagicIn) == RegionFlags.NoHarmfulMagicIn) &&
+							((spellFlag & SpellFlag.IsHarmful) == SpellFlag.IsHarmful)) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenHarmfulMagicIn);
+						return false;
+					}
+					if (((regionFlags & RegionFlags.NoTeleportingIn) == RegionFlags.NoTeleportingIn) &&
+							((spellFlag & SpellFlag.IsTeleporting) == SpellFlag.IsTeleporting)) {
+						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenTeleportingIn);
+						return false;
+					}
+					//TODO enemyteleporting - check realm friendliness
+				}
+			}
+			return true;
 		}
 
 		protected virtual bool On_Success(SkillSequenceArgs mageryArgs) {
@@ -836,6 +934,9 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					mageryArgs.Target1 = targetted;
 				}
+				if (!spell.CheckPermissionIncoming(caster, mageryArgs.Target1)) {
+					return false;
+				}
 				mageryArgs.PhaseStart();
 			} else {
 				return true; //repeat targetting
@@ -860,6 +961,9 @@ namespace SteamEngine.CompiledScripts {
 			SpellDef spell = (SpellDef) mageryArgs.Param1;
 
 			if ((spell.Flags & targetSF) == targetSF) {
+				if (!spell.CheckPermissionIncoming(caster, targetted)) {
+					return false;
+				}
 				mageryArgs.Target1 = targetted;
 				mageryArgs.PhaseStart();
 			} else {
@@ -871,5 +975,17 @@ namespace SteamEngine.CompiledScripts {
 
 	public class SpellDefLoc : CompiledLocStringCollection {
 		internal string TargetResistedSpell = "Cíl odolal kouzlu!";
+		internal string ForbiddenMagicIn = "Zde je zakázáno kouzlit";
+		internal string ForbiddenMagicOut  = "Odtud je zakázáno kouzlit";
+		internal string ForbiddenHarmfulMagicIn = "Zde je zakázáno kouzlit škodlivá kouzla";
+		internal string	ForbiddenHarmfulMagicOut = "Odtud je zakázáno kouzlit škodlivá kouzla";
+		internal string ForbiddenBeneficialMagicIn = "Zde je zakázáno kouzlit pøínosná kouzla";
+		internal string ForbiddenBeneficialMagicOut = "Odtud je zakázáno kouzlit pøínosná kouzla";
+		internal string ForbiddenTeleportingIn = "Zde je zakázáno kouzlit teleportovací kouzla";
+		internal string ForbiddenTeleportingOut = "Odtud je zakázáno kouzlit teleportovací kouzla";
+		internal string ForbiddenEnemyTeleportingIn = "Zde je nepøátelùm zakázáno kouzlit teleportovací kouzla";
+		internal string ForbiddenEnemyTeleportingOut = "Odtud je nepøátelùm zakázáno kouzlit teleportovací kouzla";		
 	}
 }
+
+		
