@@ -20,3 +20,5 @@ Vars:
 	private double residuumHits = 0.0
 	private double residuumStam = 0.0
 	private double residuumMana = 0.0
+	//server time of the last on@timer trigger run (used for computing the regenerated amounts)
+	private double lastServerTime = 0.0

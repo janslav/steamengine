@@ -34,8 +34,6 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly RegenerationPluginDef defInstance = new RegenerationPluginDef("p_regenerations", "C#scripts", -1);
 		internal static PluginKey regenerationsPluginKey = PluginKey.Get("_regenerations_");
 
-		private double lastServerTime; //last time the holder obtained some stats by regen
-
 		internal const double MIN_TIMER = 1.0d; //minimal timer usable
 		private const double ALLOWED_TIMER_DIFF = 1.5d; //allowed difference between the ideal and counted mean timer
 		private const double MAX_TIMER = 1.0d; //maximal timer usable
@@ -78,10 +76,10 @@ namespace SteamEngine.CompiledScripts {
 			//immediately without any residuum next round)
 			double usedTimer;
 			if ((hitsChange == 0) || (stamChange == 0) || (manaChange == 0)) { // some stat is unmodified, use the fastest regeneration
-				double fastestRegen = Math.Max(hitsRegenSpeed, Math.Max(stamRegenSpeed, manaRegenSpeed));
-				double fastestStatsResiduum = ((fastestRegen == hitsRegenSpeed) ? residuumHits : //fastest are hits - use them
-												((fastestRegen == stamRegenSpeed) ? residuumStam : //fastest is stamina - use it
-													manaRegenSpeed)); //use mana
+				double fastestRegen = Math.Max(Math.Abs(hitsRegenSpeed), Math.Max(Math.Abs(stamRegenSpeed), Math.Abs(manaRegenSpeed)));
+				double fastestStatsResiduum = ((fastestRegen == Math.Abs(hitsRegenSpeed)) ? residuumHits : //fastest are hits - use them
+												((fastestRegen == Math.Abs(stamRegenSpeed)) ? residuumStam : //fastest is stamina - use it
+													Math.Abs(manaRegenSpeed))); //use mana
 				//count the timer for the stat with the fastest regen speed
 				usedTimer = CountIdealTimer(fastestRegen, fastestStatsResiduum);
 			} else { //count the ideal timer for the next round
