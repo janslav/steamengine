@@ -151,16 +151,23 @@ namespace SteamEngine.CompiledScripts {
 			base.AdjustWeight(adjust);
 		}
 
-		public override void BuildAosToolTips(AosToolTips toolTips) {
+		public override void BuildAosToolTips(AosToolTips toolTips, Language language) {
 			toolTips.AddLine(1050044, this.Count.ToString(), this.Weight.ToString());
 			//~1_COUNT~ items, ~2_WEIGHT~ stones
 		}
 
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			base.On_Click(clicker, clickerState, clickerConn);
+			Language language = clickerState.Language;
 			Networking.PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
-				String.Concat(this.Count.ToString(), " items, ", this.Weight.ToString(), " stones"),
+				String.Concat(this.Count.ToString(), " ", Loc<ContainerLoc>.Get(language).itemsGenitiv, ", ",
+				this.Weight.ToString(), " ", Loc<ContainerLoc>.Get(language).stonesGenitiv),
 				0);
 		}
+	}
+
+	internal class ContainerLoc : CompiledLocStringCollection {
+		internal string itemsGenitiv = "items";
+		internal string stonesGenitiv = "stones";
 	}
 }

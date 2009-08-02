@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//TODO notoriety hue stuff
-			AosToolTips toolTips = this.GetAosToolTips();
+			AosToolTips toolTips = this.GetAosToolTips(clicker.Language);
 			PacketSequences.SendClilocNameFrom(clickerConn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}

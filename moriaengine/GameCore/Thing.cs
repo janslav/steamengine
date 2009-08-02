@@ -1007,7 +1007,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
-			AosToolTips toolTips = this.GetAosToolTips();
+			AosToolTips toolTips = this.GetAosToolTips(clicker.Language);
 			PacketSequences.SendClilocNameFrom(clicker.GameState.Conn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
@@ -1191,20 +1191,21 @@ namespace SteamEngine {
 		public abstract void Resend();
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-		public AosToolTips GetAosToolTips() {
-			AosToolTips toolTips = AosToolTips.GetFromCache(this);
+		public AosToolTips GetAosToolTips(Language language) {
+			AosToolTips toolTips = AosToolTips.GetFromCache(this, language);
 			if (toolTips != null) {
 				return toolTips;
 			}
 
 			toolTips = Pool<AosToolTips>.Acquire();
+			toolTips.Language = language;
 
 			int id;
 			string argument;
 			this.GetNameCliloc(out id, out argument);
 			toolTips.AddLine(id, argument);
 
-			this.BuildAosToolTips(toolTips);
+			this.BuildAosToolTips(toolTips, language);
 			toolTips.InitDone(this);
 
 			return toolTips;//new or changed
@@ -1216,7 +1217,7 @@ namespace SteamEngine {
 			argument = this.Name;
 		}
 
-		public virtual void BuildAosToolTips(AosToolTips opc) {
+		public virtual void BuildAosToolTips(AosToolTips opc, Language language) {
 		}
 
 		public virtual void InvalidateProperties() {

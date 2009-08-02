@@ -504,7 +504,7 @@ namespace SteamEngine.Networking {
 				foreach (int uid in this.uids) {
 					Thing t = Thing.UidGetThing(uid);
 					if ((t != null) && (!t.IsDeleted)) {
-						AosToolTips toolTips = t.GetAosToolTips();
+						AosToolTips toolTips = t.GetAosToolTips(state.Language);
 						if (toolTips != null) {
 							if (curChar.CanSeeForUpdate(t)) {
 								toolTips.SendDataPacket(conn);

@@ -30,37 +30,6 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	public partial class WallSpellItem {
 
-		static TimerKey timerKey = TimerKey.Get("_spellEffectTimer_");
-
-		public int SpellPower {
-			get {
-				return this.spellPower;
-			}
-		}
-
-		internal void Init(int spellPower, TimeSpan duration, WallDirection wallDir) {
-			this.spellPower = spellPower;
-
-			this.DeleteTimer(timerKey);
-
-			BoundTimer timer = new SpellEffectTimer();
-			this.AddTimer(timerKey, timer);
-			timer.DueInSpan = duration;
-		}
-
-		[SaveableClass]
-		[DeepCopyableClass]
-		public class SpellEffectTimer : BoundTimer {
-			[DeepCopyImplementation]
-			[LoadingInitializer]
-			public SpellEffectTimer() {
-			}
-
-			protected override void OnTimeout(TagHolder cont) {
-				cont.Delete();
-			}
-		}
-
 		public override bool BlocksFit {
 			get {
 				return true;

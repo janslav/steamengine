@@ -142,6 +142,10 @@ namespace SteamEngine.CompiledScripts {
 						skillSeqArgs.Tool.Consume(1);
 					}
 
+					if (!spell.Trigger_Start(skillSeqArgs)) {
+						return true;
+					}
+
 					self.Mana = (short) (mana - manaUse);
 					AnimCalculator.PerformAnim(self, GenericAnim.Cast);
 
@@ -152,6 +156,7 @@ namespace SteamEngine.CompiledScripts {
 					if (!string.IsNullOrEmpty(runeWords)) {
 						self.Speech(runeWords, 0, SpeechType.Spell, -1, ClientFont.Unified, null, null);
 					}
+					
 					return true; //default = set delay by magery skilldef, which we don't want					
 				} else {
 					self.ClilocSysMessage(502625); // Insufficient mana for this spell.

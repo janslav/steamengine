@@ -341,7 +341,7 @@ namespace SteamEngine.Networking {
 			get {
 				return this.languageString;
 			}
-			internal set {
+			set {
 				if (!StringComparer.OrdinalIgnoreCase.Equals(value, this.languageString)) {
 					this.languageString = value;
 					this.language = LocManager.TranslateLanguageCode(value);

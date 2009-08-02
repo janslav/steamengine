@@ -44,8 +44,8 @@ on=@effectChar
 	endif
 	
 	if (s_poison.EffectPluginKey_Spell != s_poison.EffectPluginKey_Potion) //if potion slot for poison is different from that of spell
-		pluginFromSpell = this.GetPlugin(s_poison.EffectPluginKey_Potion)
-		if (pluginFromSpell != null)
-			pluginFromSpell.ModifyEffect(-argv[0])
+		local.pluginFromPotion = this.GetPlugin(s_poison.EffectPluginKey_Potion)
+		if (pluginFromPotion != null)
+			pluginFromPotion.ModifyEffect(-argv[0])
 		endif
 	endif

@@ -174,5 +174,23 @@ namespace SteamEngine {
 			charsByContainer.Clear();
 			containersByChar.Clear();
 		}
+
+		//info about opened containers is cleared, clients should know.
+		internal static void SendRemoveAllOpenedContainersFromView() {
+			foreach (Networking.GameState state in Networking.GameServer.AllClients) {
+				AbstractCharacter onlineChar = state.Character;
+				if (onlineChar != null) {
+					HashSet<AbstractItem> conts;
+					if (containersByChar.TryGetValue(onlineChar, out conts)) {
+						foreach (AbstractItem cont in conts) {
+							Networking.PacketSequences.SendRemoveFromView(state.Conn, cont.FlaggedUid);
+							Networking.WornItemOutPacket packet = Pool<Networking.WornItemOutPacket>.Acquire();
+							packet.PrepareItem(onlineChar.FlaggedUid, cont);
+							state.Conn.SendSinglePacket(packet);
+						}
+					}
+				}
+			}
+		}
 	}
 }

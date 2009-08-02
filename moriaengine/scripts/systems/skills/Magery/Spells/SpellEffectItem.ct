@@ -13,9 +13,9 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ThingTemplate WallSpellItem : SpellEffectItem]
+[ThingTemplate SpellEffectItem : Item]
 Def:
-	ushort northSouthModel = 0
-	ushort eastWestModel = 0
 
 Vars:
+	bool dispellable = false
+	int spellPower = 0

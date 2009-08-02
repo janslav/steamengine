@@ -580,7 +580,7 @@ NAME = "Stone of the Beginning"
 type = t_script
 model = i_grave_stone_4
 
-[ItemDef i_rune_base]
+[RecallRuneDef i_rune_base]
 name = "Newbie rune"
 model = i_rune_marker
 type = t_rune //guessed from base def by Converter 

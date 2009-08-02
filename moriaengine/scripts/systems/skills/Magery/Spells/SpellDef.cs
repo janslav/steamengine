@@ -49,7 +49,6 @@ namespace SteamEngine.CompiledScripts {
 		UseMindPower =		0x002000, //otherwise, magery value is used
 		IsHarmful =			0x004000,
 		IsBeneficial =		0x008000,
-		IsTeleporting =		0x010000,
 	}
 
 	[ViewableClass]
@@ -434,6 +433,13 @@ namespace SteamEngine.CompiledScripts {
 			throw new SEException("Wrong spell rune " + ch);
 		}
 
+		private static TriggerKey tkSuccess = TriggerKey.Get("success");
+		private static TriggerKey tkStart = TriggerKey.Get("start");
+		private static TriggerKey tkSpellEffect = TriggerKey.Get("spelleffect");
+		private static TriggerKey tkEffectChar = TriggerKey.Get("effectchar");
+		private static TriggerKey tkEffectItem = TriggerKey.Get("effectitem");
+		private static TriggerKey tkEffectGround = TriggerKey.Get("effectground");
+
 		internal void Trigger_Select(SkillSequenceArgs mageryArgs) {
 			//Checked so far: death, book on self
 			//TODO: Check zones, frozen?, hypnoform?, cooldown?
@@ -474,11 +480,18 @@ namespace SteamEngine.CompiledScripts {
 			throw new SEException("SpellDef.Trigger_Select - unfinished");
 		}
 
-		private static TriggerKey tkSuccess = TriggerKey.Get("success");
-		private static TriggerKey tkSpellEffect = TriggerKey.Get("spelleffect");
-		private static TriggerKey tkEffectChar = TriggerKey.Get("effectchar");
-		private static TriggerKey tkEffectItem = TriggerKey.Get("effectitem");
-		private static TriggerKey tkEffectGround = TriggerKey.Get("effectground");
+		//return false = aborting
+		internal bool Trigger_Start(SkillSequenceArgs mageryArgs) {
+			bool cancel = this.TryCancellableTrigger(mageryArgs.Self, tkStart, mageryArgs.scriptArgs);
+			if (!cancel) {
+				cancel = this.On_Start(mageryArgs);
+			}
+			return !cancel;
+		}
+
+		public virtual bool On_Start(SkillSequenceArgs mageryArgs) {
+			return false; //don't cancel
+		}
 
 		internal void Trigger_Success(SkillSequenceArgs mageryArgs) {
 			//target visibility/distance/LOS and self being alive checked in magery stroke
@@ -750,12 +763,6 @@ namespace SteamEngine.CompiledScripts {
 						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenHarmfulMagicOut);
 						return false;
 					}
-					if (((regionFlags & RegionFlags.NoTeleportingOut) == RegionFlags.NoTeleportingOut) &&
-							((spellFlag & SpellFlag.IsTeleporting) == SpellFlag.IsTeleporting)) {
-						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenTeleportingOut);
-						return false;
-					}
-					//TODO enemyteleporting - check realm friendliness
 				}
 			}
 			return true;
@@ -781,12 +788,6 @@ namespace SteamEngine.CompiledScripts {
 						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenHarmfulMagicIn);
 						return false;
 					}
-					if (((regionFlags & RegionFlags.NoTeleportingIn) == RegionFlags.NoTeleportingIn) &&
-							((spellFlag & SpellFlag.IsTeleporting) == SpellFlag.IsTeleporting)) {
-						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenTeleportingIn);
-						return false;
-					}
-					//TODO enemyteleporting - check realm friendliness
 				}
 			}
 			return true;
@@ -981,10 +982,6 @@ namespace SteamEngine.CompiledScripts {
 		internal string	ForbiddenHarmfulMagicOut = "Odtud je zakázáno kouzlit škodlivá kouzla";
 		internal string ForbiddenBeneficialMagicIn = "Zde je zakázáno kouzlit pøínosná kouzla";
 		internal string ForbiddenBeneficialMagicOut = "Odtud je zakázáno kouzlit pøínosná kouzla";
-		internal string ForbiddenTeleportingIn = "Zde je zakázáno kouzlit teleportovací kouzla";
-		internal string ForbiddenTeleportingOut = "Odtud je zakázáno kouzlit teleportovací kouzla";
-		internal string ForbiddenEnemyTeleportingIn = "Zde je nepøátelùm zakázáno kouzlit teleportovací kouzla";
-		internal string ForbiddenEnemyTeleportingOut = "Odtud je nepøátelùm zakázáno kouzlit teleportovací kouzla";		
 	}
 }
 
