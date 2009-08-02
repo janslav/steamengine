@@ -263,8 +263,10 @@ namespace SteamEngine.CompiledScripts {
 		private void CheckSkillMaximums() {
 			//check all skills and fix any possible overlaps
 			short skillMaxValue;
+			int basicMaxSkill;
 			foreach (ISkill skl in this.Skills) {
-				skillMaxValue = (short) (profession.ProfessionDef.MaxSkill(skl.Id) + GetSkillMaxModifier(((Skill) skl).Name));
+				basicMaxSkill = (profession == null) ? 1000 : profession.ProfessionDef.MaxSkill(skl.Id); //profession can be missing (GM's etc.)
+				skillMaxValue = (short) (basicMaxSkill + GetSkillMaxModifier(((Skill) skl).Name));
 				if (skl.RealValue > skillMaxValue) {
 					skl.RealValue = (ushort) Math.Min((ushort) 0, skillMaxValue); //don't allow to go over maximum or under 0
 				}
