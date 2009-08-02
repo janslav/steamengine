@@ -338,7 +338,8 @@ namespace SteamEngine.Networking {
 					retVal = true;
 					if ((this.changeFlags & CharSyncFlags.Running) == CharSyncFlags.Running) {
 						running = true;
-					} else if ((this.changeFlags & CharSyncFlags.Teleport) == CharSyncFlags.Teleport) {
+					} 
+					if ((this.changeFlags & CharSyncFlags.Teleport) == CharSyncFlags.Teleport) {
 						teleported = true;
 					}
 				}
@@ -483,7 +484,7 @@ namespace SteamEngine.Networking {
 				}
 
 				bool propertiesExist = true;
-				AosToolTips toolTips = null;
+				AosToolTips[] toolTipsArray = null;
 
 				foreach (AbstractCharacter viewer in ch.GetMap().GetPlayersInRange(ch.X, ch.Y, Globals.MaxUpdateRange)) {
 					if (viewer != ch) {
@@ -502,7 +503,7 @@ namespace SteamEngine.Networking {
 								viewerConn.SendPacketGroup(pg);
 								if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
 									if (propertiesExist) {
-										propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
+										propertiesExist = ProcessCharProperties(ch, ref toolTipsArray, viewerState, viewerConn);
 									}
 								}
 							}
@@ -519,9 +520,15 @@ namespace SteamEngine.Networking {
 				}
 			}
 
-			private static bool ProcessCharProperties(AbstractCharacter target, ref AosToolTips toolTips, GameState viewerState, TcpConnection<GameState> viewerConn) {
+			private static bool ProcessCharProperties(AbstractCharacter target, ref AosToolTips[] toolTipsArray, GameState viewerState, TcpConnection<GameState> viewerConn) {
+				if (toolTipsArray == null) {
+					toolTipsArray = new AosToolTips[Tools.GetEnumLength<Language>()];
+				}
+				Language language = viewerState.Language;
+				AosToolTips toolTips = toolTipsArray[(int) language];
 				if (toolTips == null) {
-					toolTips = target.GetAosToolTips();
+					toolTips = target.GetAosToolTips(language);
+					toolTipsArray[(int) language] = toolTips;
 					if (toolTips != null) {
 						toolTips.SendIdPacket(viewerState, viewerConn);
 						return true;
@@ -554,7 +561,7 @@ namespace SteamEngine.Networking {
 				bool basePropsChanged = this.GetBasePropsChanged();
 				bool propertiesChanged = (this.changeFlags & CharSyncFlags.Property) == CharSyncFlags.Property;
 				bool propertiesExist = propertiesChanged;
-				AosToolTips toolTips = null;
+				AosToolTips[] toolTipsArray = null;
 				ICollection<AbstractCharacter> partyMembers = ch.PartyMembers;
 				bool hasParty = (partyMembers != null && partyMembers.Count > 1);
 
@@ -572,7 +579,7 @@ namespace SteamEngine.Networking {
 
 						if (propertiesChanged) {
 							if (Globals.UseAosToolTips && myState.Version.AosToolTips) {
-								propertiesExist = ProcessCharProperties(ch, ref toolTips, myState, myConn);
+								propertiesExist = ProcessCharProperties(ch, ref toolTipsArray, myState, myConn);
 							}
 						}
 						if (this.GetStatsChanged() || nameChanged) {
@@ -627,7 +634,7 @@ namespace SteamEngine.Networking {
 								}
 							}
 						}
-						if (flagsChanged || basePropsChanged || ((directionChanged || posChanged) && (!requestedStep))) {
+						if (flagsChanged || basePropsChanged || ((directionChanged || posChanged) && (!requestedStep || teleported))) {
 							Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending char info to self");
 							DrawGamePlayerOutPacket dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
 							dgpot.Prepare(myState, ch); //0x20
@@ -762,7 +769,7 @@ namespace SteamEngine.Networking {
 											viewerConn.SendPacketGroup(myCharInfo);
 											newCharSent = true;
 											if (propertiesExist && Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
-												propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
+												propertiesExist = ProcessCharProperties(ch, ref toolTipsArray, viewerState, viewerConn);
 											}
 
 											if (!hasParty || !partyMembers.Contains(viewer)) { //new char, send hitpoints
@@ -774,7 +781,7 @@ namespace SteamEngine.Networking {
 									if (!newCharSent) {
 										if (propertiesChanged && propertiesExist) {
 											if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
-												propertiesExist = ProcessCharProperties(ch, ref toolTips, viewerState, viewerConn);
+												propertiesExist = ProcessCharProperties(ch, ref toolTipsArray, viewerState, viewerConn);
 											}
 										}
 										if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged || basePropsChanged) {

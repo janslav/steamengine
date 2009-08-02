@@ -505,25 +505,25 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public void Trigger_Step(AbstractCharacter steppingChar, bool repeated) {
+		internal void Trigger_Step(AbstractCharacter steppingChar, bool repeated, MovementType movementType) {
 			ThrowIfDeleted();
 			bool cancel = false;
-			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated);
+			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated, movementType);
 			cancel = steppingChar.TryCancellableTrigger(TriggerKey.itemStep, sa);
 			if (!cancel) {
 				//@item/charStep on src did not return 1
-				cancel = steppingChar.On_ItemStep(this, repeated);//sends true if repeated=1
+				cancel = steppingChar.On_ItemStep(this, repeated, movementType);//sends true if repeated=1
 				if (!cancel) {
 					cancel = this.TryCancellableTrigger(TriggerKey.step, sa);
 					if (!cancel) {
-						this.On_Step(steppingChar, repeated);
+						this.On_Step(steppingChar, repeated, movementType);
 					}
 				}
 			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_Step(AbstractCharacter stepping, bool repeated) {
+		public virtual void On_Step(AbstractCharacter stepping, bool repeated, MovementType movementType) {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]

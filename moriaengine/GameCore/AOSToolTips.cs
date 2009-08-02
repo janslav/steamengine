@@ -17,6 +17,7 @@ namespace SteamEngine {
 		private List<int> ids = new List<int>(3);
 		private List<string> arguments = new List<string>(3);
 		private bool initDone;
+		private Language language;
 
 		//SteamEngine.Packets.FreedPacketGroup oldIdGroup;
 		//SteamEngine.Packets.FreedPacketGroup newIdGroup;
@@ -26,21 +27,38 @@ namespace SteamEngine {
 		PacketGroup newIdNGroup;
 		PacketGroup dataNGroup;
 
-		private static CacheDictionary<Thing, AosToolTips> cache =
-			new CacheDictionary<Thing, AosToolTips>(50000, true);//znate nekdo nejaky lepsi cislo? :)
+		private int nameValueClilocsUsed;
+
+		static CacheDictionary<Thing, AosToolTips>[] cachesByLanguage = InitCachesArray();
+
+		private static CacheDictionary<Thing, AosToolTips>[] InitCachesArray() {
+			int n = Tools.GetEnumLength<Language>();
+			CacheDictionary<Thing, AosToolTips>[] cachesArray = new CacheDictionary<Thing, AosToolTips>[n];
+			for (int i = 0; i < n; i++) {
+				cachesArray[i] = new CacheDictionary<Thing, AosToolTips>(50000, true);//znate nekdo nejaky lepsi cislo? :)
+			}
+			return cachesArray;
+		}
+
 		private static int uids;
 
 		public AosToolTips() {
 		}
 
-		public static AosToolTips GetFromCache(Thing thing) {
+		public static AosToolTips GetFromCache(Thing thing, Language language) {
 			AosToolTips toolTips;
-			cache.TryGetValue(thing, out toolTips);
+			cachesByLanguage[(int) language].TryGetValue(thing, out toolTips);
 			return toolTips;
 		}
 
+		public static void RemoveFromCache(Thing thing, Language language) {
+			cachesByLanguage[(int) language].Remove(thing);
+		}
+
 		public static void RemoveFromCache(Thing thing) {
-			cache.Remove(thing);
+			foreach (CacheDictionary<Thing, AosToolTips> cache in cachesByLanguage) {
+				cache.Remove(thing);
+			}
 		}
 
 		protected override sealed void On_Reset() {
@@ -54,11 +72,12 @@ namespace SteamEngine {
 			this.dataNGroup = null;
 			this.initDone = false;
 			this.thing = null;
+			this.nameValueClilocsUsed = 0;
 		}
 
 		public override sealed void Dispose() {
 			if (this.initDone) {
-				cache.Remove(this.thing);
+				cachesByLanguage[(int) this.language].Remove(this.thing);
 				this.initDone = false;
 			}
 
@@ -68,13 +87,23 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "thing")]
 		public void InitDone(Thing thing) {
 			this.thing = thing;
-			cache[thing] = this;
+			cachesByLanguage[(int) this.language][thing] = this;
 			this.initDone = true;
 		}
 
 		public bool IsInitDone {
 			get {
 				return this.initDone;
+			}
+		}
+
+		public Language Language {
+			get {
+				return this.language;
+			}
+			set {
+				Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
+				this.language = value;
 			}
 		}
 
@@ -108,25 +137,22 @@ namespace SteamEngine {
 			this.arguments.Add(string.Join("\t", args));
 		}
 
-		////0xbf 0x10 or 0xdc
-		//[Obsolete("Use the alternative from Networking namespace", false)]
-		//public void SendIdPacket(GameConn c) {
-		//    if (c.Version.oldAosToolTips) {
-		//        if (oldIdGroup == null) {
-		//            SteamEngine.Packets.BoundPacketGroup bpg = SteamEngine.Packets.PacketSender.NewBoundGroup();
-		//            SteamEngine.Packets.PacketSender.PrepareOldPropertiesRefresh(thing, uid);
-		//            oldIdGroup = bpg.Free();
-		//        }
-		//        oldIdGroup.SendTo(c);
-		//    } else {
-		//        if (newIdGroup == null) {
-		//            SteamEngine.Packets.BoundPacketGroup bpg = SteamEngine.Packets.PacketSender.NewBoundGroup();
-		//            SteamEngine.Packets.PacketSender.PreparePropertiesRefresh(thing, uid);
-		//            newIdGroup = bpg.Free();
-		//        }
-		//        newIdGroup.SendTo(c);
-		//    }
-		//}
+		//name: value clilocs
+		public void AddNameColonValue(string name, string value) {
+			if (this.nameValueClilocsUsed < 6) {
+				this.ids.Add(1060658 + this.nameValueClilocsUsed);
+				this.arguments.Add(string.Concat(name, "\t", value));
+				this.nameValueClilocsUsed++;
+			} else {
+				throw new SEException("Out of name:value cliloc ids");
+			}
+		}
+		//1060658	~1_val~: ~2_val~
+		//1060659	~1_val~: ~2_val~
+		//1060660	~1_val~: ~2_val~
+		//1060661	~1_val~: ~2_val~
+		//1060662	~1_val~: ~2_val~
+		//1060663	~1_val~: ~2_val~
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void SendIdPacket(GameState state, TcpConnection<GameState> conn) {
@@ -157,16 +183,6 @@ namespace SteamEngine {
 			}
 		}
 
-		//0xd6 - megacliloc
-		//public void SendDataPacket(GameConn c) {
-		//    if (dataGroup == null) {
-		//        SteamEngine.Packets.BoundPacketGroup bpg = SteamEngine.Packets.PacketSender.NewBoundGroup();
-		//        SteamEngine.Packets.PacketSender.PrepareMegaCliloc(thing, uid, ids, arguments);
-		//        dataGroup = bpg.Free();
-		//    }
-		//    dataGroup.SendTo(c);
-		//}
-
 		internal void SendDataPacket(TcpConnection<GameState> conn) {
 			if (this.dataNGroup == null) {
 				this.dataNGroup = PacketGroup.CreateFreePG();
@@ -176,17 +192,12 @@ namespace SteamEngine {
 		}
 
 		public static void ClearCache() {
-			cache.Clear();
+			foreach (CacheDictionary<Thing, AosToolTips> cache in cachesByLanguage) {
+				cache.Clear();
+			}
 		}
 	}
 }
-
-//1060658	~1_val~: ~2_val~
-//1060659	~1_val~: ~2_val~
-//1060660	~1_val~: ~2_val~
-//1060661	~1_val~: ~2_val~
-//1060662	~1_val~: ~2_val~
-//1060663	~1_val~: ~2_val~
 
 //1050044	~1_COUNT~ items, ~2_WEIGHT~ stones
 //1050045	~1_PREFIX~~2_NAME~~3_SUFFIX~

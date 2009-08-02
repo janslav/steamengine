@@ -334,5 +334,20 @@ namespace SteamEngine.CompiledScripts {
 		public virtual bool On_SpellEffect(SpellEffectArgs spellEffectArgs) {
 			return false;
 		}
+
+		private static TagKey morepTK = TagKey.Get("_morep_");
+
+		public virtual Point4D MoreP {
+			get {
+				return (Point4D) this.GetTag(morepTK);
+			}
+			set {
+				if (value == null) {
+					this.RemoveTag(morepTK);
+				} else {
+					this.SetTag(morepTK, value);
+				}
+			}
+		}
 	}
 }

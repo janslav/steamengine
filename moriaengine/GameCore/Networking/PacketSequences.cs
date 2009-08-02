@@ -133,7 +133,7 @@ namespace SteamEngine.Networking {
 						viewerConn.SendSinglePacket(iicp);
 						if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
 							foreach (AbstractItem contained in listBuffer.list) {
-								AosToolTips toolTips = contained.GetAosToolTips();
+								AosToolTips toolTips = contained.GetAosToolTips(viewer.Language);
 								if (toolTips != null) {
 									toolTips.SendIdPacket(viewerState, viewerConn);
 								}
@@ -148,7 +148,7 @@ namespace SteamEngine.Networking {
 
 		public static void TrySendPropertiesTo(GameState viewerState, TcpConnection<GameState> viewerConn, Thing target) {
 			if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
-				AosToolTips toolTips = target.GetAosToolTips();
+				AosToolTips toolTips = target.GetAosToolTips(viewerState.Language);
 				if (toolTips != null) {
 					toolTips.SendIdPacket(viewerState, viewerConn);
 				}

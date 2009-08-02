@@ -722,7 +722,7 @@ namespace SteamEngine {
 				CharSyncQueue.AboutToChangePosition(this, mt);
 
 				this.point4d.SetP(newX, newY, newZ);
-				ChangedP(oldPoint);
+				ChangedP(oldPoint, mt);
 			} else { //just changing direction, no steps
 				CharSyncQueue.AboutToChangeDirection(this, requested);
 				this.Direction = dir;
@@ -745,17 +745,17 @@ namespace SteamEngine {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
 				}
 				this.point4d.SetP(x, y, z, m);
-				ChangedP(oldP);
+				ChangedP(oldP, MovementType.Teleporting);
 			} else {
 				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
 			}
 		}
 
-		private void ChangedP(Point4D oldP) {
+		private void ChangedP(Point4D oldP, MovementType movementType) {
 			Map.ChangedP(this, oldP);
 			AbstractCharacter self = this as AbstractCharacter;
 			if (self != null) {
-				self.Trigger_NewPosition(oldP);
+				self.Trigger_NewPosition(oldP, movementType);
 			}
 		}
 
@@ -777,7 +777,7 @@ namespace SteamEngine {
 		//}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public void Trigger_NewPosition(Point4D oldP) {
+		internal void Trigger_NewPosition(Point4D oldP, MovementType movementType) {
 			this.TryTrigger(TriggerKey.newPosition, new ScriptArgs(oldP));
 			try {
 				this.On_NewPosition();
@@ -785,7 +785,7 @@ namespace SteamEngine {
 
 			foreach (AbstractItem itm in this.GetMap().GetItemsInRange(this.X, this.Y, 0)) {
 				if (IsStandingOn(itm)) {
-					itm.Trigger_Step(this, false);
+					itm.Trigger_Step(this, false, movementType);
 				}
 			}
 		}
@@ -795,7 +795,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_ItemStep(AbstractItem i, bool repeated) {
+		public virtual bool On_ItemStep(AbstractItem i, bool repeated, MovementType movementType) {
 			return false;
 		}
 
@@ -992,8 +992,9 @@ namespace SteamEngine {
 			viewerConn.SendSinglePacket(packet);
 
 			if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
+				Language language = viewerState.Language;
 				foreach (AbstractItem equipped in this.VisibleEquip) {
-					AosToolTips toolTips = equipped.GetAosToolTips();
+					AosToolTips toolTips = equipped.GetAosToolTips(language);
 					if (toolTips != null) {
 						toolTips.SendIdPacket(viewerState, viewerConn);
 					}

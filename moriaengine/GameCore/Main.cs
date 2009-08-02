@@ -254,6 +254,7 @@ namespace SteamEngine {
 					if (Globals.Instance != null) { //is null when first run (and writing steamengine.ini)
 						Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
 					}
+					OpenedContainers.SendRemoveAllOpenedContainersFromView();
 					GameServer.BackupLinksToCharacters();
 					UnloadAll();
 					if (!LoadAll()) {
@@ -288,7 +289,7 @@ namespace SteamEngine {
 			GameServer.RemoveBackupLinks();
 			Globals.UnPauseServerTime();
 			//RunLevelManager.SetRunning();
-			PacketSequences.BroadCast("Script recompiling finished.");
+			PacketSequences.BroadCast("Script recompiling finished.");		
 		}
 
 		internal static void RetryRecompilingScripts() {

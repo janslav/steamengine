@@ -716,11 +716,23 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs">
       <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.cs">
+      <Link>systems\skills\Magery\Spells\SpellEffectItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.Generated.cs">
+      <Link>systems\skills\Magery\Spells\SpellEffectItem.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.cs">
       <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.Generated.cs">
       <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\RecallRune.cs">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\RecallRune.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\RecallRune.Generated.cs">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\RecallRune.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellDef.cs">
       <Link>systems\skills\Magery\Spells\WallSpells\WallSpellDef.cs</Link>
@@ -1017,6 +1029,15 @@
     <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct">
       <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.ct">
+      <Link>systems\skills\Magery\Spells\SpellEffectItem.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\RecallRune.ct">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\RecallRune.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct">
+      <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\healingSpells.def">
@@ -1031,8 +1052,14 @@
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\protection.def">
       <Link>systems\skills\Magery\Spells\protection.def</Link>
     </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def</Link>
+    </Content>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\unimplementedSpells.def">
       <Link>systems\skills\Magery\Spells\unimplementedSpells.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\wallSpells.def">
+      <Link>systems\skills\Magery\Spells\WallSpells\wallSpells.def</Link>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

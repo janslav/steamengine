@@ -25,6 +25,20 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_telepad : CompiledTriggerGroup {	//Our script must extend 'CompiledTriggerGroup'
+
+		public void On_Step(Item self, Character steppingChar, Item selfAgain, bool repeated, MovementType movementType) {
+			//only tries once after walking on
+			if ((movementType & MovementType.Teleporting) != MovementType.Teleporting) {
+				if (!repeated) {
+					//todo some checks? effects? sounds?
+					Point4D point = self.MoreP;
+					if (point != null) {
+						steppingChar.Go(point);
+					}
+				}
+			}
+		}
+
 		//static TagKey morexTag = TagKey.Get("morex");
 		//static TagKey moreyTag = TagKey.Get("morey");
 		//static TagKey morezTag = TagKey.Get("morez");

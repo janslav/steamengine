@@ -72,5 +72,9 @@ namespace SteamEngine.CompiledScripts {
 				return this.sourceType;
 			}
 		}
+
+		public void On_Death() {
+			this.Delete();
+		}
 	}
 }

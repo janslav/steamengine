@@ -106,17 +106,27 @@ namespace SteamEngine.Networking {
 				enumerator = top.GetMap().GetPlayersInRange(top.X, top.Y, Globals.MaxUpdateRange);
 			}
 
-			AosToolTips toolTips = null;
+			AosToolTips[] toolTipsArray = null;
 			foreach (AbstractCharacter player in enumerator) {
 				GameState state = player.GameState;
 				if (state != null) {
 					TcpConnection<GameState> conn = state.Conn;
 					if (state.Version.AosToolTips) {
+						Language language = state.Language;
+						AosToolTips toolTips = null;
+						if (toolTipsArray != null) {
+							toolTips = toolTipsArray[(int) language];
+						}
+
 						if (toolTips == null) {
-							toolTips = item.GetAosToolTips();
+							toolTips = item.GetAosToolTips(language);
 							if (toolTips == null) {
 								break;
 							}
+							if (toolTipsArray == null) {
+								toolTipsArray = new AosToolTips[Tools.GetEnumLength<Language>()];
+							}
+							toolTipsArray[(int) language] = toolTips;
 						}
 						toolTips.SendIdPacket(state, conn);
 					}
@@ -147,7 +157,7 @@ namespace SteamEngine.Networking {
 			if (isOnGround || isEquippedAndVisible || isInContainer) {
 				PacketGroup pg = null;//iteminfo or paperdollinfo or itemincontainer
 				PacketGroup allmoveItemInfo = null;
-				AosToolTips toolTips = null;
+				AosToolTips[] toolTipsArray = null;
 
 				IEnumerable<AbstractCharacter> enumerator;
 				AbstractItem contAsItem = item.Cont as AbstractItem;
@@ -196,12 +206,22 @@ namespace SteamEngine.Networking {
 
 							if (propertiesExist) {
 								if (Globals.UseAosToolTips && state.Version.AosToolTips) {
+									Language language = state.Language;
+									AosToolTips toolTips = null;
+									if (toolTipsArray != null) {
+										toolTips = toolTipsArray[(int) language];
+									}
+
 									if (toolTips == null) {
-										toolTips = item.GetAosToolTips();
+										toolTips = item.GetAosToolTips(language);
 										if (toolTips == null) {
 											propertiesExist = false;
 											continue;
 										}
+										if (toolTipsArray == null) {
+											toolTipsArray = new AosToolTips[Tools.GetEnumLength<Language>()];
+										}
+										toolTipsArray[(int) language] = toolTips;
 									}
 									toolTips.SendIdPacket(state, conn);
 								}

@@ -1,18 +1,18 @@
-[SpellDef 0]   // No effect.
-DEFNAME=s_Water
-NAME=Water
-SOUND=0
-RUNES=
-CASTTIME=12
-//RESOURCES=
-//RUNEITEM=0
-//SCROLLITEM=0
-FLAGS=0
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=4
-Requirements=1.0 Magery
+//[SpellDef 0]   // No effect.
+//DEFNAME=s_Water
+//NAME=Water
+//SOUND=0
+//RUNES=
+//CASTTIME=12
+////RESOURCES=
+////RUNEITEM=0
+////SCROLLITEM=0
+//FLAGS=0
+////EFFECTID=0
+//EFFECT=0
+////DURATION=0.0
+//MANAUSE=4
+//Requirements=1.0 Magery
 
 //[SpellDef 2]
 //DEFNAME=s_create_food
@@ -48,490 +48,425 @@ Requirements=1.0 Magery
 
 ///////////////////////////////////////////// 2 kruh
 
-[SpellDef 13]
-DEFNAME=s_magic_trap
-NAME=Magic Trap
-SOUND=snd_SPELL_MAGIC_TRAP
-RUNES=IJ
-CASTTIME=1.5
-//RESOURCES=i_reag_garlic,i_reag_spider_silk,i_reag_sulfur_ash
-RUNEITEM=i_rune_MAGIC_TRAP
-SCROLLITEM=i_scroll_MAGIC_TRAP
-FLAGS=//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=6
-Requirements=20.0 Magery
-
-[SpellDef 14]
-DEFNAME=s_magic_untrap
-NAME=Magic Untrap
-SOUND=snd_SPELL_MAGIC_UNTRAP
-RUNES=AJ
-CASTTIME=1.5
-//RESOURCES=i_reag_blood_moss,i_reag_sulfur_ash
-RUNEITEM=i_rune_MAGIC_UNTRAP
-SCROLLITEM=i_scroll_MAGIC_UNTRAP
-FLAGS=//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=6
-Requirements=20.0 Magery
-
-/////////////////////////////////////////////////////////// 3 kruh
-
-[SpellDef 19]
-DEFNAME=s_magic_lock
-NAME=Magic Lock
-SOUND=snd_SPELL_MAGIC_LOCK
-RUNES=AP
-CASTTIME=2.0
-//RESOURCES=i_reag_blood_moss,i_reag_garlic,i_reag_sulfur_ash
-RUNEITEM=i_rune_MAGIC_LOCK
-SCROLLITEM=i_scroll_MAGIC_LOCK
-FLAGS=0//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=9
-Requirements=30.0 Magery
-
-[SpellDef 21]
-DEFNAME=s_telekinesis
-NAME=Telekinesis
-SOUND=snd_SPELL_telekinesis
-RUNES=OPY
-CASTTIME=2.0
-//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root
-RUNEITEM=i_rune_telekinesis
-SCROLLITEM=i_scroll_telekinesis
-FLAGS=0//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=9
-Requirements=30.0 Magery
-
-[SpellDef 22]
-DEFNAME=s_teleport
-NAME=Teleport
-SOUND=snd_SPELL_TELEPORT
-RUNES=RP
-CASTTIME=2.0
-//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root
-RUNEITEM=i_rune_TELEPORT
-SCROLLITEM=i_scroll_TELEPORT
-FLAGS=SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=9
-Requirements=30.0 Magery
-
-[SpellDef 23]
-DEFNAME=s_unlock
-NAME=Unlock
-SOUND=snd_SPELL_UNLOCK
-RUNES=EP
-CASTTIME=2.0
-//RESOURCES=i_reag_blood_moss,i_reag_sulfur_ash
-RUNEITEM=i_rune_UNLOCK
-SCROLLITEM=i_scroll_UNLOCK
-FLAGS=//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=9
-Requirements=30.0 Magery
-
-////////////////////////////////////////////// 4 kruh
-
-[SpellDef 31]
-DEFNAME=s_mana_drain
-NAME=Mana Drain
-SOUND=snd_SPELL_MANA_DRAIN
-RUNES=OR
-CASTTIME=2.0
-//RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_MANA_DRAIN
-SCROLLITEM=i_scroll_MANA_DRAIN
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_curse
-EFFECT=0,10
-DURATION=0.0
-MANAUSE=11
-Requirements=40.0 Magery
-
-[SpellDef 32]
-DEFNAME=s_recall
-NAME=Recall
-SOUND=snd_SPELL_RECALL
-RUNES=KOP
-CASTTIME=6.0
-//RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root
-RUNEITEM=i_rune_RECALL
-SCROLLITEM=i_scroll_RECALL
-FLAGS=//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=40
-Requirements=20.0 Magery
-
-///////////////////////////////////////////////// 5kruh
-
-[SpellDef 33]
-// NOTE: Blade Spirits is a popular kill-all, basically a loot gatherer with little to no reprecusions to the player, keep summon time a bit low to counter that a bit.
-DEFNAME=s_blade_spirits
-NAME=Blade Spirit
-SOUND=snd_SPELL_BLADE_SPIRITS
-RUNES=IHJY
-CASTTIME=2.5
-RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_nightshade
-RUNEITEM=i_rune_BLADE_SPIRITS
-SCROLLITEM=i_scroll_BLADE_SPIRITS
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=1*60.0,3*60.0
-MANAUSE=14
-Requirements=50.0 Magery
-
-[SpellDef 34]
-DEFNAME=s_dispel_field
-NAME=Dispel Field
-SOUND=snd_SPELL_DISPEL_FIELD
-RUNES=AG
-CASTTIME=2.5
-//RESOURCES=i_reag_black_pearl,i_reag_garlic,i_reag_spider_silk,i_reag_sulfur_ash
-RUNEITEM=i_rune_DISPEL_FIELD
-SCROLLITEM=i_scroll_DISPEL_FIELD
-FLAGS=//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=10
-Requirements=50.0 Magery
-
-[SpellDef 35]
-// NOTE: This spell is used primarily for roleplaying purposes or for avoiding being killed if red. The longer duration would not unbalance gameplay in any way I could see.
-DEFNAME=s_incognito
-NAME=Incognito
-SOUND=snd_SPELL_INCOGNITO
-RUNES=KIE
-CASTTIME=2.5
-//RESOURCES=i_reag_blood_moss,i_reag_garlic,i_reag_nightshade
-RUNEITEM=i_rune_INCOGNITO
-SCROLLITEM=i_scroll_INCOGNITO
-FLAGS=0
-//EFFECTID=0
-EFFECT=0
-DURATION=2*60.0,8*60.0
-MANAUSE=20
-Requirements=50.0 Magery
-
-[SpellDef 36]
-// NOTE: This is a proactive type of protection that no one wants to see run out. Because of it's level and the amount of reagents I would think this spell last a bit longer in light of it only being a one time reflect as opposed to Reactive and protection. Should it have a duration at all or remain until dispel'ed or hit ???
-DEFNAME=s_magic_reflection
-NAME=Magic Reflect
-SOUND=snd_SPELL_MAGIC_REFLECTION
-RUNES=IJS
-CASTTIME=2.5
-//RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_MAGIC_REFLECTION
-SCROLLITEM=i_scroll_MAGIC_REFLECTION
-FLAGS=SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_BLESS_EFFECT
-EFFECT=0
-DURATION=6*60.0,10*60.0
-MANAUSE=15
-Requirements=50.0 Magery
-
-[SpellDef 38]
-// keep min duration a bit low here, paralyze is a killer in the hands of PK's. A powerful PK only needs a sec to kill you anyways.
-DEFNAME=s_paralyze
-NAME=Paralyze
-SOUND=snd_SPELL_PARALYZE
-RUNES=AEP
-CASTTIME=2.5
-//RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_PARALYZE
-SCROLLITEM=i_scroll_PARALYZE
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_harm//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_curse
-EFFECT=0,0
-DURATION=10.0,60.0
-MANAUSE=12
-Requirements=50.0 Magery
-
-[SpellDef 40]
-// NOTE: This spell is the mages first true form of combat at low levels. One of the main uses is summoning a horse to travel. Don't set to low.
-DEFNAME=s_summon_creature
-NAME=Summon
-SOUND=snd_SPELL_SUMMON_CREATURE
-RUNES=KX
-CASTTIME=2.5
-RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_SUMMON_CREATURE
-SCROLLITEM=i_scroll_SUMMON_CREATURE
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=2*60.0,5*60.0
-MANAUSE=16
-Requirements=50.0 Magery
-
-////////////////////////////////////////////// 6 kruh
-[SpellDef 41]
-DEFNAME=s_dispel
-NAME=Dispel
-SOUND=snd_SPELL_DISPEL
-RUNES=AO
-CASTTIME=2.5
-//RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_sulfur_ash
-RUNEITEM=i_rune_DISPEL
-SCROLLITEM=i_scroll_DISPEL
-FLAGS=0//SPELLFLAG_TARG_CHAR
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=18
-Requirements=60.0 Magery
-
-[SpellDef 44]
-// NOTE: Used primarily to regain mana while fighting or cast helpful spells without incurring attack. Duration should reflect the non-offensive use of this spell
-DEFNAME=s_invisibility
-NAME=Invisibility
-SOUND=snd_SPELL_INVISIBILITY
-RUNES=ALX
-CASTTIME=3.0
-//RESOURCES=i_reag_blood_moss,i_reag_nightshade
-RUNEITEM=i_rune_INVISIBILITY
-SCROLLITEM=i_scroll_INVISIBILITY
-FLAGS=SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=0
-EFFECT=0
-DURATION=1*60.0,5*60.0
-MANAUSE=20
-Requirements=60.0 Magery
-
-[SpellDef 45]
-DEFNAME=s_mark
-NAME=Mark
-SOUND=snd_SPELL_MARK
-RUNES=KPY
-CASTTIME=3.0
-//RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root
-RUNEITEM=i_rune_MARK
-SCROLLITEM=i_scroll_MARK
-FLAGS=//SPELLFLAG_TARG_OBJ
-//EFFECTID=0
-EFFECT=20,40
-DURATION=0.0
-MANAUSE=50
-Requirements=30.0 Magery
-
-[SpellDef 48]
-DEFNAME=s_reveal
-NAME=Reveal
-SOUND=snd_SPELL_REVEAL
-RUNES=WQ
-CASTTIME=3.0
-//RESOURCES=i_reag_blood_moss,i_reag_sulfur_ash
-RUNEITEM=i_rune_REVEAL
-SCROLLITEM=i_scroll_REVEAL
-FLAGS=SPELLFLAG_DIR_ANIM//|spellflag_evil//|spellflag_harm
-//EFFECTID=0
-EFFECT=0,0
-DURATION=0.0
-MANAUSE=20
-Requirements=60.0 Magery
-
-/////////////////////////////////////////// 7 kruh
-
-[SpellDef 52]
-// NOTE: should be set to less then a minute?? Gate has been known to be the downfall of innocent travellers. Down-side would be for large groups. With that in mind, one minute should suffice.
-DEFNAME=s_gate_travel
-NAME=Gate Travel
-SOUND=snd_SPELL_GATE_TRAVEL
-RUNES=VRP
-CASTTIME=8.0
-//RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_sulfur_ash
-RUNEITEM=i_rune_GATE_TRAVEL
-SCROLLITEM=i_scroll_GATE_TRAVEL
-FLAGS=//SPELLFLAG_TARG_OBJ
-//EFFECTID=i_moongate_blue
-EFFECT=0
-DURATION=60.0
-MANAUSE=80
-Requirements=70.0 Magery
-
-[SpellDef 53]
-DEFNAME=s_mana_vampire
-NAME=Mana Vampire
-SOUND=snd_SPELL_MANA_VAMPIRE
-RUNES=OS
-CASTTIME=3.0
-//RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_MANA_VAMPIRE
-SCROLLITEM=i_scroll_MANA_VAMPIRE
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
-//EFFECTID=i_fx_curse
-EFFECT=0,10
-DURATION=0.0
-MANAUSE=20
-Requirements=70.0 Magery
-
-[SpellDef 54]
-DEFNAME=s_mass_dispel
-NAME=Mass Dispel
-SOUND=snd_SPELL_MASS_DISPEL
-RUNES=VAO
-CASTTIME=3.5
-//RESOURCES=i_reag_black_pearl,i_reag_garlic,i_reag_mandrake_root,i_reag_sulfur_ash
-RUNEITEM=i_rune_MASS_DISPEL
-SCROLLITEM=i_scroll_MASS_DISPEL
-FLAGS=0
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=40
-Requirements=70.0 Magery
-
-[SpellDef 56]
-DEFNAME=s_polymorph
-NAME=Polymorph
-SOUND=snd_SPELL_POLYMORPH
-RUNES=VYR
-CASTTIME=3.5
+//[SpellDef 13]
+//DEFNAME=s_magic_trap
+//NAME=Magic Trap
+//SOUND=snd_SPELL_MAGIC_TRAP
+//RUNES=IJ
+//CASTTIME=1.5
+////RESOURCES=i_reag_garlic,i_reag_spider_silk,i_reag_sulfur_ash
+//RUNEITEM=i_rune_MAGIC_TRAP
+//SCROLLITEM=i_scroll_MAGIC_TRAP
+//FLAGS=//SPELLFLAG_TARG_OBJ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=6
+//Requirements=20.0 Magery
+//
+//[SpellDef 14]
+//DEFNAME=s_magic_untrap
+//NAME=Magic Untrap
+//SOUND=snd_SPELL_MAGIC_UNTRAP
+//RUNES=AJ
+//CASTTIME=1.5
+////RESOURCES=i_reag_blood_moss,i_reag_sulfur_ash
+//RUNEITEM=i_rune_MAGIC_UNTRAP
+//SCROLLITEM=i_scroll_MAGIC_UNTRAP
+//FLAGS=//SPELLFLAG_TARG_OBJ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=6
+//Requirements=20.0 Magery
+//
+///////////////////////////////////////////////////////////// 3 kruh
+//
+//[SpellDef 19]
+//DEFNAME=s_magic_lock
+//NAME=Magic Lock
+//SOUND=snd_SPELL_MAGIC_LOCK
+//RUNES=AP
+//CASTTIME=2.0
+////RESOURCES=i_reag_blood_moss,i_reag_garlic,i_reag_sulfur_ash
+//RUNEITEM=i_rune_MAGIC_LOCK
+//SCROLLITEM=i_scroll_MAGIC_LOCK
+//FLAGS=0//SPELLFLAG_TARG_OBJ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=9
+//Requirements=30.0 Magery
+//
+//[SpellDef 21]
+//DEFNAME=s_telekinesis
+//NAME=Telekinesis
+//SOUND=snd_SPELL_telekinesis
+//RUNES=OPY
+//CASTTIME=2.0
+////RESOURCES=i_reag_blood_moss,i_reag_mandrake_root
+//RUNEITEM=i_rune_telekinesis
+//SCROLLITEM=i_scroll_telekinesis
+//FLAGS=0//SPELLFLAG_TARG_OBJ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=9
+//Requirements=30.0 Magery
+//
+//[SpellDef 23]
+//DEFNAME=s_unlock
+//NAME=Unlock
+//SOUND=snd_SPELL_UNLOCK
+//RUNES=EP
+//CASTTIME=2.0
+////RESOURCES=i_reag_blood_moss,i_reag_sulfur_ash
+//RUNEITEM=i_rune_UNLOCK
+//SCROLLITEM=i_scroll_UNLOCK
+//FLAGS=//SPELLFLAG_TARG_OBJ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=9
+//Requirements=30.0 Magery
+//
+//////////////////////////////////////////////// 4 kruh
+//
+//[SpellDef 31]
+//DEFNAME=s_mana_drain
+//NAME=Mana Drain
+//SOUND=snd_SPELL_MANA_DRAIN
+//RUNES=OR
+//CASTTIME=2.0
+////RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_MANA_DRAIN
+//SCROLLITEM=i_scroll_MANA_DRAIN
+//FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
+////EFFECTID=i_fx_curse
+//EFFECT=0,10
+//DURATION=0.0
+//MANAUSE=11
+//Requirements=40.0 Magery
+//
+/////////////////////////////////////////////////// 5kruh
+//
+//[SpellDef 33]
+//// NOTE: Blade Spirits is a popular kill-all, basically a loot gatherer with little to no reprecusions to the player, keep summon time a bit low to counter that a bit.
+//DEFNAME=s_blade_spirits
+//NAME=Blade Spirit
+//SOUND=snd_SPELL_BLADE_SPIRITS
+//RUNES=IHJY
+//CASTTIME=2.5
+//RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_nightshade
+//RUNEITEM=i_rune_BLADE_SPIRITS
+//SCROLLITEM=i_scroll_BLADE_SPIRITS
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=1*60.0,3*60.0
+//MANAUSE=14
+//Requirements=50.0 Magery
+//
+//[SpellDef 34]
+//DEFNAME=s_dispel_field
+//NAME=Dispel Field
+//SOUND=snd_SPELL_DISPEL_FIELD
+//RUNES=AG
+//CASTTIME=2.5
+////RESOURCES=i_reag_black_pearl,i_reag_garlic,i_reag_spider_silk,i_reag_sulfur_ash
+//RUNEITEM=i_rune_DISPEL_FIELD
+//SCROLLITEM=i_scroll_DISPEL_FIELD
+//FLAGS=//SPELLFLAG_TARG_OBJ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=10
+//Requirements=50.0 Magery
+//
+//[SpellDef 35]
+//// NOTE: This spell is used primarily for roleplaying purposes or for avoiding being killed if red. The longer duration would not unbalance gameplay in any way I could see.
+//DEFNAME=s_incognito
+//NAME=Incognito
+//SOUND=snd_SPELL_INCOGNITO
+//RUNES=KIE
+//CASTTIME=2.5
+////RESOURCES=i_reag_blood_moss,i_reag_garlic,i_reag_nightshade
+//RUNEITEM=i_rune_INCOGNITO
+//SCROLLITEM=i_scroll_INCOGNITO
+//FLAGS=0
+////EFFECTID=0
+//EFFECT=0
+//DURATION=2*60.0,8*60.0
+//MANAUSE=20
+//Requirements=50.0 Magery
+//
+//[SpellDef 36]
+//// NOTE: This is a proactive type of protection that no one wants to see run out. Because of it's level and the amount of reagents I would think this spell last a bit longer in light of it only being a one time reflect as opposed to Reactive and protection. Should it have a duration at all or remain until dispel'ed or hit ???
+//DEFNAME=s_magic_reflection
+//NAME=Magic Reflect
+//SOUND=snd_SPELL_MAGIC_REFLECTION
+//RUNES=IJS
+//CASTTIME=2.5
+////RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_MAGIC_REFLECTION
+//SCROLLITEM=i_scroll_MAGIC_REFLECTION
+//FLAGS=SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
+////EFFECTID=i_fx_BLESS_EFFECT
+//EFFECT=0
+//DURATION=6*60.0,10*60.0
+//MANAUSE=15
+//Requirements=50.0 Magery
+//
+//[SpellDef 38]
+//// keep min duration a bit low here, paralyze is a killer in the hands of PK's. A powerful PK only needs a sec to kill you anyways.
+//DEFNAME=s_paralyze
+//NAME=Paralyze
+//SOUND=snd_SPELL_PARALYZE
+//RUNES=AEP
+//CASTTIME=2.5
+////RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_PARALYZE
+//SCROLLITEM=i_scroll_PARALYZE
+//FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_harm//SPELLFLAG_TARG_CHAR
+////EFFECTID=i_fx_curse
+//EFFECT=0,0
+//DURATION=10.0,60.0
+//MANAUSE=12
+//Requirements=50.0 Magery
+//
+//[SpellDef 40]
+//// NOTE: This spell is the mages first true form of combat at low levels. One of the main uses is summoning a horse to travel. Don't set to low.
+//DEFNAME=s_summon_creature
+//NAME=Summon
+//SOUND=snd_SPELL_SUMMON_CREATURE
+//RUNES=KX
+//CASTTIME=2.5
 //RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_POLYMORPH
-SCROLLITEM=i_scroll_POLYMORPH
-FLAGS=
-//EFFECTID=0
-EFFECT=0
-DURATION=5*60.0,8*60.0
-MANAUSE=40
-Requirements=70.0 Magery
-// NOTE: This is a Mages true form of attack/defence at higher levels. Due to the level I would suggest having decent levels to the duration. Have incognito and polymorph match in duration as they are often used in conjunction
-
-
-//////////////////////////////////////////////////////////////////// 8 kruh
-
-[SpellDef 58]
-DEFNAME=s_energy_vortex
-NAME=Energy Vortex
-SOUND=snd_SPELL_ENERGY_VORTEX
-RUNES=VCP
-CASTTIME=4.0
-RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root,i_reag_nightshade
-RUNEITEM=i_rune_ENERGY_VORTEX
-SCROLLITEM=i_scroll_ENERGY_VORTEX
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=1*60.0,3*60.0
-MANAUSE=50
-Requirements=80.0 Magery
-
-[SpellDef 59]
-DEFNAME=s_resurrection
-NAME=Resurrection
-SOUND=snd_SPELL_RESURRECTION
-RUNES=AC
-CASTTIME=4.0
-//RESOURCES=i_reag_blood_moss,i_reag_garlic,i_reag_ginseng
-RUNEITEM=i_rune_RESURRECTION
-SCROLLITEM=i_scroll_RESURRECTION
-FLAGS=SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-//EFFECTID=0
-EFFECT=0
-DURATION=0.0
-MANAUSE=100
-Requirements=99.0 Magery
-
-[SpellDef 60]
-DEFNAME=s_summon_elem_air
-NAME=Air Elemental
-SOUND=snd_SPELL_SUMMON_elem_air
-RUNES=KVXH
-CASTTIME=4.0
-RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_SUMMON_elem_air
-SCROLLITEM=i_scroll_SUMMON_elem_air
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=2*60.0,4*60.0
-MANAUSE=50
-Requirements=80.0 Magery
-
-[SpellDef 61]
-DEFNAME=s_summon_daemon
-NAME=Daemon
-SOUND=snd_SPELL_SUMMON_DAEMON
-RUNES=KVXC
-CASTTIME=4.0
-RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk,i_reag_sulfur_ash
-RUNEITEM=i_rune_SUMMON_DAEMON
-SCROLLITEM=i_scroll_SUMMON_DAEMON
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=2*60.0,4*60.0
-MANAUSE=50
-Requirements=80.0 Magery
-
-[SpellDef 62]
-DEFNAME=s_summon_elem_earth
-NAME=Earth Elemental
-SOUND=snd_SPELL_SUMMON_elem_earth
-RUNES=KVXY
-CASTTIME=4.0
-RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_SUMMON_elem_earth
-SCROLLITEM=i_scroll_SUMMON_elem_earth
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=2*60.0,4*60.0
-MANAUSE=50
-Requirements=80.0 Magery
-
-[SpellDef 63]
-DEFNAME=s_summon_elem_fire
-NAME=Fire Elemental
-SOUND=snd_SPELL_SUMMON_elem_fire
-RUNES=KVXF
-CASTTIME=4.0
-RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk,i_reag_sulfur_ash
-RUNEITEM=i_rune_SUMMON_elem_fire
-SCROLLITEM=i_scroll_SUMMON_elem_fire
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=2*60.0,4*60.0
-MANAUSE=50
-Requirements=80.0 Magery
-
-[SpellDef 64]
-DEFNAME=s_summon_elem_water
-NAME=Water Elemental
-SOUND=snd_SPELL_SUMMON_elem_water
-RUNES=KVXAF
-CASTTIME=4.0
-RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
-RUNEITEM=i_rune_SUMMON_elem_water
-SCROLLITEM=i_scroll_SUMMON_elem_water
-FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
-//EFFECTID=0
-EFFECT=0
-DURATION=2*60.0,4*60.0
-MANAUSE=50
-Requirements=80.0 Magery
-
+//RUNEITEM=i_rune_SUMMON_CREATURE
+//SCROLLITEM=i_scroll_SUMMON_CREATURE
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=2*60.0,5*60.0
+//MANAUSE=16
+//Requirements=50.0 Magery
+//
+//////////////////////////////////////////////// 6 kruh
+//[SpellDef 41]
+//DEFNAME=s_dispel
+//NAME=Dispel
+//SOUND=snd_SPELL_DISPEL
+//RUNES=AO
+//CASTTIME=2.5
+////RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_sulfur_ash
+//RUNEITEM=i_rune_DISPEL
+//SCROLLITEM=i_scroll_DISPEL
+//FLAGS=0//SPELLFLAG_TARG_CHAR
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=18
+//Requirements=60.0 Magery
+//
+//[SpellDef 44]
+//// NOTE: Used primarily to regain mana while fighting or cast helpful spells without incurring attack. Duration should reflect the non-offensive use of this spell
+//DEFNAME=s_invisibility
+//NAME=Invisibility
+//SOUND=snd_SPELL_INVISIBILITY
+//RUNES=ALX
+//CASTTIME=3.0
+////RESOURCES=i_reag_blood_moss,i_reag_nightshade
+//RUNEITEM=i_rune_INVISIBILITY
+//SCROLLITEM=i_scroll_INVISIBILITY
+//FLAGS=SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
+////EFFECTID=0
+//EFFECT=0
+//DURATION=1*60.0,5*60.0
+//MANAUSE=20
+//Requirements=60.0 Magery
+//
+//[SpellDef 48]
+//DEFNAME=s_reveal
+//NAME=Reveal
+//SOUND=snd_SPELL_REVEAL
+//RUNES=WQ
+//CASTTIME=3.0
+////RESOURCES=i_reag_blood_moss,i_reag_sulfur_ash
+//RUNEITEM=i_rune_REVEAL
+//SCROLLITEM=i_scroll_REVEAL
+//FLAGS=SPELLFLAG_DIR_ANIM//|spellflag_evil//|spellflag_harm
+////EFFECTID=0
+//EFFECT=0,0
+//DURATION=0.0
+//MANAUSE=20
+//Requirements=60.0 Magery
+//
+///////////////////////////////////////////// 7 kruh
+//
+//[SpellDef 53]
+//DEFNAME=s_mana_vampire
+//NAME=Mana Vampire
+//SOUND=snd_SPELL_MANA_VAMPIRE
+//RUNES=OS
+//CASTTIME=3.0
+////RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_MANA_VAMPIRE
+//SCROLLITEM=i_scroll_MANA_VAMPIRE
+//FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
+////EFFECTID=i_fx_curse
+//EFFECT=0,10
+//DURATION=0.0
+//MANAUSE=20
+//Requirements=70.0 Magery
+//
+//[SpellDef 54]
+//DEFNAME=s_mass_dispel
+//NAME=Mass Dispel
+//SOUND=snd_SPELL_MASS_DISPEL
+//RUNES=VAO
+//CASTTIME=3.5
+////RESOURCES=i_reag_black_pearl,i_reag_garlic,i_reag_mandrake_root,i_reag_sulfur_ash
+//RUNEITEM=i_rune_MASS_DISPEL
+//SCROLLITEM=i_scroll_MASS_DISPEL
+//FLAGS=0
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=40
+//Requirements=70.0 Magery
+//
+//[SpellDef 56]
+//DEFNAME=s_polymorph
+//NAME=Polymorph
+//SOUND=snd_SPELL_POLYMORPH
+//RUNES=VYR
+//CASTTIME=3.5
+////RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_POLYMORPH
+//SCROLLITEM=i_scroll_POLYMORPH
+//FLAGS=
+////EFFECTID=0
+//EFFECT=0
+//DURATION=5*60.0,8*60.0
+//MANAUSE=40
+//Requirements=70.0 Magery
+//// NOTE: This is a Mages true form of attack/defence at higher levels. Due to the level I would suggest having decent levels to the duration. Have incognito and polymorph match in duration as they are often used in conjunction
+//
+//
+////////////////////////////////////////////////////////////////////// 8 kruh
+//
+//[SpellDef 58]
+//DEFNAME=s_energy_vortex
+//NAME=Energy Vortex
+//SOUND=snd_SPELL_ENERGY_VORTEX
+//RUNES=VCP
+//CASTTIME=4.0
+//RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root,i_reag_nightshade
+//RUNEITEM=i_rune_ENERGY_VORTEX
+//SCROLLITEM=i_scroll_ENERGY_VORTEX
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=1*60.0,3*60.0
+//MANAUSE=50
+//Requirements=80.0 Magery
+//
+//[SpellDef 59]
+//DEFNAME=s_resurrection
+//NAME=Resurrection
+//SOUND=snd_SPELL_RESURRECTION
+//RUNES=AC
+//CASTTIME=4.0
+////RESOURCES=i_reag_blood_moss,i_reag_garlic,i_reag_ginseng
+//RUNEITEM=i_rune_RESURRECTION
+//SCROLLITEM=i_scroll_RESURRECTION
+//FLAGS=SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
+////EFFECTID=0
+//EFFECT=0
+//DURATION=0.0
+//MANAUSE=100
+//Requirements=99.0 Magery
+//
+//[SpellDef 60]
+//DEFNAME=s_summon_elem_air
+//NAME=Air Elemental
+//SOUND=snd_SPELL_SUMMON_elem_air
+//RUNES=KVXH
+//CASTTIME=4.0
+//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_SUMMON_elem_air
+//SCROLLITEM=i_scroll_SUMMON_elem_air
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=2*60.0,4*60.0
+//MANAUSE=50
+//Requirements=80.0 Magery
+//
+//[SpellDef 61]
+//DEFNAME=s_summon_daemon
+//NAME=Daemon
+//SOUND=snd_SPELL_SUMMON_DAEMON
+//RUNES=KVXC
+//CASTTIME=4.0
+//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk,i_reag_sulfur_ash
+//RUNEITEM=i_rune_SUMMON_DAEMON
+//SCROLLITEM=i_scroll_SUMMON_DAEMON
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=2*60.0,4*60.0
+//MANAUSE=50
+//Requirements=80.0 Magery
+//
+//[SpellDef 62]
+//DEFNAME=s_summon_elem_earth
+//NAME=Earth Elemental
+//SOUND=snd_SPELL_SUMMON_elem_earth
+//RUNES=KVXY
+//CASTTIME=4.0
+//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_SUMMON_elem_earth
+//SCROLLITEM=i_scroll_SUMMON_elem_earth
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=2*60.0,4*60.0
+//MANAUSE=50
+//Requirements=80.0 Magery
+//
+//[SpellDef 63]
+//DEFNAME=s_summon_elem_fire
+//NAME=Fire Elemental
+//SOUND=snd_SPELL_SUMMON_elem_fire
+//RUNES=KVXF
+//CASTTIME=4.0
+//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk,i_reag_sulfur_ash
+//RUNEITEM=i_rune_SUMMON_elem_fire
+//SCROLLITEM=i_scroll_SUMMON_elem_fire
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=2*60.0,4*60.0
+//MANAUSE=50
+//Requirements=80.0 Magery
+//
+//[SpellDef 64]
+//DEFNAME=s_summon_elem_water
+//NAME=Water Elemental
+//SOUND=snd_SPELL_SUMMON_elem_water
+//RUNES=KVXAF
+//CASTTIME=4.0
+//RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk
+//RUNEITEM=i_rune_SUMMON_elem_water
+//SCROLLITEM=i_scroll_SUMMON_elem_water
+//FLAGS=SPELLFLAG_SUMMON|SPELLFLAG_TARG_XYZ
+////EFFECTID=0
+//EFFECT=0
+//DURATION=2*60.0,4*60.0
+//MANAUSE=50
+//Requirements=80.0 Magery
+//
 //necrospells  - necrobook.scp...
 //s_animate_dead
 //s_light

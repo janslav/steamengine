@@ -88,25 +88,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void InitWallItem(SpellEffectArgs spellEffectArgs, ItemDef wallDef, int spellPower, TimeSpan duration, int x, int y, int z, Map map, WallDirection wallDir) {
-			if (AdjustField(x, y, ref z, map, wallDef.Height, true)) {
+			if (SpellEffectItem.CheckPositionForItem(x, y, ref z, map, wallDef.Height, true)) {
 				Thing t = wallDef.Create((ushort) x, (ushort) y, (sbyte) z, map.M);
-				WallSpellItem asWallitem = t as WallSpellItem;
+				SpellEffectItem asWallitem = t as SpellEffectItem;
 				if (asWallitem != null) {
-					asWallitem.Init(spellPower, duration, wallDir);
+					asWallitem.Init(spellPower, duration, true);
 				}
 			}
-		}
-
-		public static bool AdjustField(int x, int y, ref int z, Map map, int height, bool checkCharacters) {
-			for (int offset = 0; offset < 10; offset++) {
-				int offsetZ = z - offset;
-				if (map.CanFit(x, y, offsetZ, height, true, checkCharacters)) {
-					z = offsetZ;
-					return true;
-				}
-			}
-
-			return false;
 		}
 	}
 }
