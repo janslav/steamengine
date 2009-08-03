@@ -173,7 +173,7 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static void Information() {
 			Globals.Src.WriteLine(string.Format(System.Globalization.CultureInfo.InvariantCulture,
-				@"Steamengine ver. {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
+				@"Steamengine - {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
 				Globals.Version, Globals.ServerName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false) / 1024, Environment.NewLine));
 			
