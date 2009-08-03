@@ -66,9 +66,17 @@ namespace SteamEngine.LScript {
 			Console.WriteLine(str);
 		}
 
+		public static void Echo(string str) {
+			Globals.SrcWriteLine(str);
+		}
+
 		public static void Show(object o) {
-			//Console.WriteLine("str.GetType(): "+str.GetType());
-			Globals.SrcWriteLine(Tools.ObjToString(o));
+			string asString = Tools.ObjToString(o);
+			if (o == null) {
+			} else {
+				Globals.SrcWriteLine(string.Concat(asString,
+					"(", Tools.TypeToString(o.GetType()), ")"));
+			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]

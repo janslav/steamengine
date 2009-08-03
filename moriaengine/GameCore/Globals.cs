@@ -778,24 +778,6 @@ namespace SteamEngine {
 			PacketSequences.BroadCast(msg);
 		}
 
-		//public static void Echo(ParsedCommandsList commandlist) {
-		//	if (Commands.InvokeCommand(typeof(GlobalCommands),null, BindingFlags.Static, commandlist)) {
-		//		Globals.srcConn.WriteLine(Tools.ObjToString(Commands.result));
-		//	} else {
-		//		throw new Exception(Commands.reason);
-		//	}
-		//}
-		//
-		//public static void Show(ParsedCommandsList commandlist) {
-		//	int tempindex=commandlist.index;
-		//	if (Commands.InvokeCommand(typeof(GlobalCommands),null, BindingFlags.Static, commandlist)) {
-		//		commandlist.index=tempindex;
-		//		Globals.srcConn.WriteLine("'"+commandlist.ToString()+"' for '"+Globals.serverName+"' is "+Tools.ObjToString(Commands.result)+".");
-		//	} else {
-		//		throw new Exception(Commands.reason);
-		//	}
-		//}
-
 		public static void SysMessage(object o) {
 			Console.WriteLine(Tools.ObjToString(o));
 		}

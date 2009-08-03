@@ -341,10 +341,6 @@
       <Link>FieldValue.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\..\GameCore\GameConn.cs">
-      <Link>GameConn.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\GameCore\Globals.cs">
       <Link>Globals.cs</Link>
       <SubType>Code</SubType>
@@ -631,54 +627,6 @@
     <Compile Include="..\..\GameCore\OpenedContainers.cs">
       <Link>OpenedContainers.cs</Link>
     </Compile>
-    <Compile Include="..\..\GameCore\Packets\Compression.cs">
-      <Link>Packets\Compression.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\HighLevelOut.cs">
-      <Link>Packets\HighLevelOut.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\InPackets.cs">
-      <Link>Packets\InPackets.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\LowLevelOut.cs">
-      <Link>Packets\LowLevelOut.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\MediumLevelOut.cs">
-      <Link>Packets\MediumLevelOut.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\NetState.cs">
-      <Link>Packets\NetState.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\PacketBase.cs">
-      <Link>Packets\PacketBase.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\PacketGroup.cs">
-      <Link>Packets\PacketGroup.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\PacketHandler.cs">
-      <Link>Packets\PacketHandler.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\PacketSender.cs">
-      <Link>Packets\PacketSender.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\PacketStats.cs">
-      <Link>Packets\PacketStats.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Packets\Prepared.cs">
-      <Link>Packets\Prepared.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="..\..\GameCore\Persistence\DecoratedClassesSaveImplementor.cs">
       <Link>Persistence\DecoratedClassesSaveImplementor.cs</Link>
     </Compile>
@@ -755,10 +703,6 @@
     </Compile>
     <Compile Include="..\..\GameCore\ScriptLoader.cs">
       <Link>ScriptLoader.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="..\..\GameCore\Server.cs">
-      <Link>Server.cs</Link>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\..\GameCore\SimulConn.cs">
