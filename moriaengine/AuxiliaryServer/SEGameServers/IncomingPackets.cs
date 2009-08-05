@@ -59,7 +59,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 			if (ConsoleServer.ConsoleServer.AllConsolesCount > 0) {
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					//console.TryLoginToGameServer(this);
-					console.OpenCmdWindow(state.Setup.Name, state.serverUid);
+					console.OpenCmdWindow(state.Setup.Name, state.ServerUid);
 					console.TryLoginToGameServer(state);
 				}
 				state.RequestSendingLogStr(true);
@@ -101,7 +101,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 				if (this.loginSuccessful) {
 					console.SetLoggedInTo(state);
 				} else {
-					console.CloseCmdWindow(state.serverUid);
+					console.CloseCmdWindow(state.ServerUid);
 
 					ICollection<GameServer> serversLoggedIn = GameServersManager.AllServersWhereLoggedIn(console);
 					if (serversLoggedIn.Count == 0) {
@@ -138,7 +138,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
 			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid((ConsoleServer.ConsoleId) this.consoleId);
 			if (console != null) {
-				console.WriteLine(state.serverUid, this.line);
+				console.WriteLine(state.ServerUid, this.line);
 			}
 		}
 	}

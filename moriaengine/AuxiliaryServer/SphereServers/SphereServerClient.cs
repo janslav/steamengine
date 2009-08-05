@@ -13,12 +13,15 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SphereServers {
 	public class SphereServerClient : GameServer {
+		static GameUID uids = GameUID.LastSphereServer;
+
 		private readonly SphereServerConnection conn;
 		private SphereServerSetup setup;
 
 		private bool loggedIn;
 
-		static GameUID uids = GameUID.LastSphereServer;
+		private Timer consoleAuthTimeout;
+
 
 		internal SphereServerClient(SphereServerConnection sphereServerConnection, SphereServerSetup setup) {
 			this.uid = uids--;
@@ -29,14 +32,15 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			Console.WriteLine(this + " connected.");
 
-			this.conn.BeginSend(" ");
-			this.conn.EnqueueParser(new CallbackParser<object>(usernameRE, this.EnterUsername, null));
+			this.conn.StartLoginSequence(this.setup);
 		}
 
 		internal void On_Close(string reason) {
+			Console.WriteLine(this + " closed: " + reason);
+
 			GameServersManager.RemoveGameServer(this);
 
-			Console.WriteLine(this + " closed: " + reason);
+			this.DisposeTimeoutTimer();
 
 			SphereServerClientFactory.Connect(this.setup); //start connecting again
 		}
@@ -60,56 +64,28 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			}
 		}
 
-		public override string ToString() {
-			return "SphereServerClient '" + this.setup.RamdiscIniPath + "'";
-		}
-
-		#region loginSequence
-		static Regex usernameRE = new Regex(@"Username\?:", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-		static Regex passwordRE = new Regex(@"Password\?:", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-		static Regex loggedinRE = new Regex(@"(Login '(?<username>.+?)')|(?<badPass>Bad password for this account\.)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-		
-		private bool EnterUsername(Match m, object state) {
-			this.conn.BeginSend(this.setup.AdminAccount);
-			this.conn.EnqueueParser(new CallbackParser<object>(passwordRE, this.EnterPassword, null));
-			return true;
-		}
-
-		private bool EnterPassword(Match m, object state) {
-			this.conn.BeginSend(this.setup.AdminPassword);
-			this.conn.EnqueueParser(new CallbackParser<object>(loggedinRE, this.OnLoggedIn, null));
-			return true;
-		}
-
-		private bool OnLoggedIn(Match m, object state) {
-			if (m.Groups["badPass"].Value.Length == 0) {
-				if (m.Groups["username"].Value.Equals(this.setup.AdminAccount, StringComparison.OrdinalIgnoreCase)) {
-					Console.WriteLine(this + " logged in.");
-					this.loggedIn = true;
-
-					foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-						console.OpenCmdWindow(this.Setup.Name, this.serverUid);
-						console.TryLoginToGameServer(this);
-					}
-
-					return true;
-				} else { //someone else? wtf
-					return false;
-				}
-			} else {
-				this.conn.Close("Bad admin password set in steamaux.ini");
-				return true;
-			}
-		}
-
 		public bool IsLoggedIn {
 			get {
 				return this.loggedIn;
 			}
 		}
 
+		public override string ToString() {
+			return "SphereServerClient '" + this.setup.RamdiscIniPath + "'";
+		}
 
-		#endregion loginSequence
+		internal void On_LoginSequenceEnded(bool success) {
+			if (success) {
+				Console.WriteLine(this + " logged in.");
+				this.loggedIn = true;
+				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+					console.OpenCmdWindow(this.Setup.Name, this.ServerUid);
+					console.TryLoginToGameServer(this);
+				}
+			} else {
+				this.conn.Close("Bad admin password set in steamaux.ini");
+			}
+		}
 
 		#region authentising console
 		public override void SendConsoleLogin(ConsoleServer.ConsoleId consoleId, string accName, string accPassword) {
@@ -120,9 +96,17 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				return;
 			}
 
-			this.conn.BeginSend("show findaccount(" + accName + ").password");
-			this.conn.EnqueueParser(new CallbackParser<ConsoleCredentials>(passwordQueryRE, 
-				this.OnAccountQueryResponse, state));
+			this.conn.SendCommand("show findaccount(" + accName + ").password", 
+				new CallbackCommandResponse<ConsoleCredentials>(
+					this.OnAccountQueryResponse, state));
+
+			consoleAuthTimeout = new Timer(ConsoleAuthTimeout, state, 5000, Timeout.Infinite);
+		}
+
+		private void ConsoleAuthTimeout(object o) {
+			ConsoleCredentials state = (ConsoleCredentials) o;
+
+			this.Conn.Close("user auth sequence with sphere timed out.");
 		}
 
 		private class ConsoleCredentials {
@@ -140,18 +124,24 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			@"findaccount\((?<username>.+?)\).password' for '(.+?)' is '(?<password>.*?)'",
 			RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-		private bool OnAccountQueryResponse(Match m, ConsoleCredentials state) {
-			if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
-				if (!m.Groups["password"].Value.Equals(state.accPassword)) {
-					DenyConsole(state, "and/or it's password.");
-				} else {
-					this.conn.BeginSend("show findaccount(" + state.accName + ").priv");
-					this.conn.EnqueueParser(new CallbackParser<ConsoleCredentials>(privQueryRE,
-						this.OnPrivQueryResponse, state));
+		private void OnAccountQueryResponse(IList<string> lines, ConsoleCredentials state) {
+			try {
+				foreach (string line in lines) {
+					Match m = passwordQueryRE.Match(line);
+					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
+						if (!m.Groups["password"].Value.Equals(state.accPassword)) {
+							DenyConsole(state, "and/or it's password.");
+						} else {
+							this.conn.SendCommand("show findaccount(" + state.accName + ").priv",
+								new CallbackCommandResponse<ConsoleCredentials>(
+									this.OnPrivQueryResponse, state));
+						}
+						return;
+					}
 				}
-				return true;
-			} else {
-				return false;
+			} catch (Exception e) {
+				this.DenyConsole(state, "Exception while auth sequence: " + e.Message);
+				Logger.WriteDebug(e);
 			}
 		}
 
@@ -159,19 +149,25 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			@"findaccount\((?<username>.+?)\).priv' for '(.+?)' is '(?<priv>.*?)'",
 			RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-		private bool OnPrivQueryResponse(Match m, ConsoleCredentials state) {
-			if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
-				int priv = ConvertTools.ParseInt32(m.Groups["priv"].Value.Trim());
-				if ((priv & 0x0200) == 0x0200) {
-					DenyConsole(state, "- the acc is blocked.");
-				} else {
-					this.conn.BeginSend("show findaccount(" + state.accName + ").plevel");
-					this.conn.EnqueueParser(new CallbackParser<ConsoleCredentials>(plevelQueryRE,
-						this.OnPlevelQueryResponse, state));
+		private void OnPrivQueryResponse(IList<string> lines, ConsoleCredentials state) {
+			try {
+				foreach (string line in lines) {
+					Match m = privQueryRE.Match(line);
+					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
+						int priv = ConvertTools.ParseInt32(m.Groups["priv"].Value.Trim());
+						if ((priv & 0x0200) == 0x0200) {
+							DenyConsole(state, "- the acc is blocked.");
+						} else {
+							this.conn.SendCommand("show findaccount(" + state.accName + ").plevel",
+								new CallbackCommandResponse<ConsoleCredentials>(
+									this.OnPlevelQueryResponse, state));
+						}
+						return;
+					}
 				}
-				return true;
-			} else {
-				return false;
+			} catch (Exception e) {
+				this.DenyConsole(state, "Exception while auth sequence: " + e.Message);
+				Logger.WriteDebug(e);
 			}
 		}
 
@@ -179,28 +175,35 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			@"findaccount\((?<username>.+?)\).plevel' for '(.+?)' is '(?<plevel>.*?)'",
 			RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-		private bool OnPlevelQueryResponse(Match m, ConsoleCredentials state) {
-			if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
-				int plevel = ConvertTools.ParseInt32(m.Groups["plevel"].Value.Trim());
-				if (plevel < 4) {
-					DenyConsole(state, "- low plevel.");
-				} else {
-					ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
-					if (console != null) {
-						console.SetLoggedInTo(this);
+		private void OnPlevelQueryResponse(IList<string> lines, ConsoleCredentials state) {
+			try {
+				foreach (string line in lines) {
+					Match m = plevelQueryRE.Match(line);
+					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
+						int plevel = ConvertTools.ParseInt32(m.Groups["plevel"].Value.Trim());
+						if (plevel < 4) {
+							DenyConsole(state, "- low plevel.");
+						} else {
+							ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
+							if (console != null) {
+								console.SetLoggedInTo(this);
+							}
+							this.SendCommand(state.consoleUid, null, null, "i");
+						}
+						this.DisposeTimeoutTimer();
+						return;
 					}
-					this.SendCommand(state.consoleUid, null, null, "i");
 				}
-				return true;
-			} else {
-				return false;
+			} catch (Exception e) {
+				this.DenyConsole(state, "Exception while auth sequence: " + e.Message);
+				Logger.WriteDebug(e);
 			}
 		}
 
 		private void DenyConsole(ConsoleCredentials state, string reason) {
 			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
 			if (console != null) {
-				console.CloseCmdWindow(this.serverUid);
+				console.CloseCmdWindow(this.ServerUid);
 
 				ICollection<GameServer> serversLoggedIn = GameServersManager.AllServersWhereLoggedIn(console);
 				if (serversLoggedIn.Count == 0) {
@@ -208,7 +211,17 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					console.SendLoginFailedAndClose("GameServer '" + this.Setup.Name + "' rejected username '" + state.accName + "' " + reason);
 				}
 			}
+
+			this.DisposeTimeoutTimer();
 		}
+
+		private void DisposeTimeoutTimer() {
+			if (this.consoleAuthTimeout != null) {
+				this.consoleAuthTimeout.Dispose();
+				this.consoleAuthTimeout = null;
+			}
+		}
+
 		#endregion authentising console
 
 		internal void ExitLater(TimeSpan timeSpan) {
@@ -216,34 +229,30 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		internal void On_ReceievedLine(string line) {
-			if (this.loggedIn) {
-				foreach (ConsoleServer.ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
-					console.WriteLine(this.serverUid, line);
+			line = line.Trim();
+			if (!string.IsNullOrEmpty(line)) {
+				if (this.loggedIn) {
+					foreach (ConsoleServer.ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
+						console.WriteLine(this.ServerUid, line);
+					}
 				}
 			}
 		}
 
 		public override void SendCommand(ConsoleServer.ConsoleId consoleId, string accName, string accPassword, string cmd) {
-			this.conn.BeginSend(cmd);
-			this.conn.EnqueueParser(new CallbackParser<ConsoleServer.ConsoleId>(commandReplyRE,
-						this.OnCommandReply, consoleId));
+			this.conn.SendCommand(cmd, new CallbackCommandResponse<ConsoleServer.ConsoleId>(
+				this.OnCommandReply, consoleId));
 		}
 
-		static Regex commandReplyRE = new Regex(
-			@"(?<unwanted>[\d][\d]:[\d][\d]:[0-9a-f]{3})?(?<reply>.*)",
-			RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
-		private bool OnCommandReply(Match m, ConsoleServer.ConsoleId consoleId) {
-			if (string.IsNullOrEmpty(m.Groups["unwanted"].Value)) {
-
-				ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(consoleId);
-				if (console != null) {
-					console.WriteLine(this.serverUid, m.Groups["reply"].Value);
+		private void OnCommandReply(IList<string> lines, ConsoleServer.ConsoleId consoleId) {
+			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(consoleId);
+			if (console != null) {
+				foreach (string line in lines) {
+					string l = line.Trim();
+					if (!string.IsNullOrEmpty(l)) {
+						console.WriteLine(this.ServerUid, l);
+					}
 				}
-					
-				return true;
-			} else {
-				return false;
 			}
 		}
 	}

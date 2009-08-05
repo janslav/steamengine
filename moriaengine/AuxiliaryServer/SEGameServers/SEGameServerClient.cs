@@ -65,23 +65,11 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		public void On_Close(string reason) {
 			Console.WriteLine(this + " closed: " + reason);
 
-			foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-				console.CloseCmdWindow(this.serverUid);
-			}
-
 			GameServersManager.RemoveGameServer(this);
-
-			if (GameServersManager.AllIdentifiedGameServers.Count == 0) { //it was the last server, we kick nonlogged consoles
-				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-					if (!console.IsLoggedInAux) {
-						console.Conn.Close("Failed to identify");
-					}
-				}
-			}
 		}
 
 		public override string ToString() {
-			return "SEGameServerClient " + this.serverUid;
+			return "SEGameServerClient " + this.ServerUid;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "settings")]
@@ -92,11 +80,11 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		internal void WriteToMyConsoles(string str) {
 			if (this.startupFinished) {
 				foreach (ConsoleServer.ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
-					console.Write(this.serverUid, str);
+					console.Write(this.ServerUid, str);
 				}
 			} else {
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-					console.Write(this.serverUid, str);
+					console.Write(this.ServerUid, str);
 				}
 			}
 		}

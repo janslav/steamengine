@@ -130,8 +130,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 			Settings.RememberUser(this.accName, this.password);
 
-			OpenCmdWindow(gameServer.Setup.Name, gameServer.serverUid);
-			EnableCommandLine(gameServer.serverUid);
+			OpenCmdWindow(gameServer.Setup.Name, gameServer.ServerUid);
+			EnableCommandLine(gameServer.ServerUid);
 
 			GameServersManager.AddLoggedIn(this, gameServer);
 		}

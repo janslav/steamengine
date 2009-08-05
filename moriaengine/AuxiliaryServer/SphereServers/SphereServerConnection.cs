@@ -21,7 +21,16 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private AsyncCallback beginSendCallback;
 		private AsyncCallback beginReceiveCallback;
 
-		private SynchronizedQueue<SphereOutputParser> parsersQueue = new SynchronizedQueue<SphereOutputParser>();
+		private SynchronizedQueue<CommandResponse> commandResponders = new SynchronizedQueue<CommandResponse>();
+
+		delegate void ReceievingMode(TextReader reader);
+
+		private ReceievingMode nonLoggedMode;
+		private ReceievingMode loggedInMode;
+		private ReceievingMode commandReplyMode;
+		private ReceievingMode ignoreMode;
+
+		private ReceievingMode receivingMode;
 
 		internal SphereServerConnection(Socket socket, SphereServerSetup setup) {
 			this.beginSendCallback = this.BeginSendCallback;
@@ -32,7 +41,12 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			this.state = new SphereServerClient(this, setup);
 
-			
+			this.nonLoggedMode = this.ModeNotLoggedIn;
+			this.loggedInMode = this.ModeLoggedIn;
+			this.commandReplyMode = this.ModeCommandReply;
+			this.ignoreMode = this.ModeIgnore;
+
+			this.receivingMode = this.nonLoggedMode;
 		}
 
 		public SphereServerClient State {
@@ -45,6 +59,12 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			get {
 				return this.socket.Connected;
 			}
+		}
+
+		internal void StartLoginSequence(SphereServerSetup sphereServerSetup) {
+			this.BeginSend(" ");
+			this.BeginSend(sphereServerSetup.AdminAccount);
+			this.BeginSend(sphereServerSetup.AdminPassword);
 		}
 
 		#region Receieve
@@ -78,35 +98,77 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			}
 		}
 
+		static Regex loggedinRE = new Regex(@"(Login '(?<username>.+?)')|(?<badPass>Bad password for this account\.)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
 		private void ProcessReceievedData(int length) {
 			StreamReader reader = new StreamReader(new MemoryStream(this.receivingBuffer.bytes, 0, length), Encoding.Default);
+
+			this.receivingMode(reader);
+		}
+
+		private void ModeNotLoggedIn(TextReader reader) {
 			string line;
 			while ((line = reader.ReadLine()) != null) {
-				line = line.Trim();
-				if (!string.IsNullOrEmpty(line)) {
-					this.ProcessReceievedLine(line);
+				Match m = loggedinRE.Match(line);
+				if (m.Success) {
+					if (m.Groups["badPass"].Value.Length == 0) {
+						if (m.Groups["username"].Value.Equals(((SphereServerSetup) this.state.Setup).AdminAccount,
+							StringComparison.OrdinalIgnoreCase)) {
+
+							this.receivingMode = this.loggedInMode;
+							this.receivingMode(reader); //continue if there's anything
+
+							this.state.On_LoginSequenceEnded(true);
+						} else {
+							this.Close("unexpected username in login sequence, wtf?");
+						}
+					} else {
+						this.receivingMode = this.ignoreMode;
+						this.state.On_LoginSequenceEnded(false);						
+					}
 				}
 			}
 		}
 
-		private void ProcessReceievedLine(string line) {
-			if (this.parsersQueue.Count > 0) {
-				SphereOutputParser parser = this.parsersQueue.Peek();
-				if (parser.Match(line)) {
-					this.parsersQueue.Dequeue();
-					return;
-				}
-			}
+		static Regex timeStampedLineRE = new Regex(
+			@"^(?<time>[\d][\d]:[\d][\d]).*$",
+			RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-			this.state.On_ReceievedLine(line);			
+		private void ModeLoggedIn(TextReader reader) {
+			string line;
+			while ((line = reader.ReadLine()) != null) {
+				this.state.On_ReceievedLine(line);
+			}
 		}
 
-		public void EnqueueParser(SphereOutputParser parser) {
-			this.parsersQueue.Enqueue(parser);
+		private void ModeCommandReply(TextReader reader) {
+			if (this.commandResponders.Count > 0) {
+				List<string> list = new List<string>();
+				string line;
+				while ((line = reader.ReadLine()) != null) { //timestamped lines are not part of the command response
+					if (timeStampedLineRE.IsMatch(line)) {
+						this.state.On_ReceievedLine(line);
+					} else {
+						list.Add(line);
+					}
+				}
+				this.commandResponders.Dequeue().OnRespond(list); ;
+			} else {
+				this.receivingMode = this.loggedInMode;
+				this.receivingMode(reader);
+			}
+		}
+
+		private void ModeIgnore(TextReader reader) {
 		}
 
 		#endregion Receieve
 
+		public void SendCommand(string command, CommandResponse responder) {
+			this.BeginSend(command);
+			this.commandResponders.Enqueue(responder);
+			this.receivingMode = this.commandReplyMode;
+		}
 
 		#region Send
 		public void BeginSend(string message) {
@@ -169,38 +231,24 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		#endregion Close
 	}
 
-	public abstract class SphereOutputParser {
-		Regex re;
+	public abstract class CommandResponse {
 
-		protected SphereOutputParser(Regex re) {
-			this.re = re;
-		}
-
-		internal bool Match(string line) {
-			Match m = this.re.Match(line);
-
-			if (m.Success) {
-				return this.OnMatch(m);
-			}
-			return false;
-		}
-
-		protected abstract bool OnMatch(Match m);
+		internal abstract void OnRespond(IList<string> lines);
 	}
 
-	public delegate bool ParserCallback<T>(Match m, T state);
+	public delegate void ParserCallback<T>(IList<string> lines, T state);
 
-	public class CallbackParser<T> : SphereOutputParser {
+	public class CallbackCommandResponse<T> : CommandResponse {
 		ParserCallback<T> callback;
 		T state;
 
-		public CallbackParser(Regex re, ParserCallback<T> callback, T state) : base(re) {
+		public CallbackCommandResponse(ParserCallback<T> callback, T state) {
 			this.callback = callback;
 			this.state = state;
 		}
 
-		protected override bool OnMatch(Match m) {
-			return this.callback(m, state);
+		internal override void OnRespond(IList<string> lines) {
+			this.callback(lines, state);
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace SteamEngine.AuxiliaryServer {
 		protected GameUID uid;
 
 
-		public GameUID serverUid {
+		public GameUID ServerUid {
 			get {
 				return this.uid;
 			}
