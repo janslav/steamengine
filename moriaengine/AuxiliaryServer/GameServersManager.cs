@@ -45,7 +45,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal static void AddGameServer(GameServer gameServer) {
-			gameServersByUid.Add(gameServer.serverUid, gameServer);
+			gameServersByUid.Add(gameServer.ServerUid, gameServer);
 			if (gameServer.Setup != null) {
 				gameServersByIniID.Add(gameServer.Setup.IniID, gameServer);
 			}
@@ -86,8 +86,12 @@ namespace SteamEngine.AuxiliaryServer {
 		internal static void RemoveGameServer(GameServer gameServer) {
 			LinkedList<ConsoleServer.ConsoleClient> consoleList;
 			if (consoles.TryGetValue(gameServer, out consoleList)) {
+				
+
 				foreach (ConsoleServer.ConsoleClient console in consoleList) {
 					gameServers[console].Remove(gameServer);
+
+					console.CloseCmdWindow(gameServer.ServerUid);
 				}
 
 				consoles.Remove(gameServer);
@@ -96,7 +100,16 @@ namespace SteamEngine.AuxiliaryServer {
 			if (gameServer.Setup != null) {
 				gameServersByIniID.Remove(gameServer.Setup.IniID);
 			}
-			gameServersByUid.Remove(gameServer.serverUid);
+			gameServersByUid.Remove(gameServer.ServerUid);
+
+
+			if (AllIdentifiedGameServers.Count == 0) { //it was the last server, we kick nonlogged consoles
+				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+					if (!console.IsLoggedInAux) {
+						console.Conn.Close("Failed to identify");
+					}
+				}
+			}
 		}
 
 		public static bool IsLoggedIn(ConsoleServer.ConsoleClient console, GameServer gameServer) {
