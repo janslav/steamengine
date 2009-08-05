@@ -30,7 +30,7 @@ namespace SteamEngine.Networking {
 	public delegate void OnTargon(GameState state, IPoint3D getback, object parameter);
 	public delegate void OnTargonCancel(GameState state, object parameter);
 
-	public class GameState : TagHolder, IDisposable, 
+	public class GameState : TagHolder, //IDisposable, 
 		IConnectionState<TcpConnection<GameState>, GameState, IPEndPoint> {
 
 		private static int uids;
@@ -521,10 +521,6 @@ namespace SteamEngine.Networking {
 			get {
 				return this.isDeleted;
 			}
-		}
-
-		void IDisposable.Dispose() {
-			this.Delete();
 		}
 	}
 }

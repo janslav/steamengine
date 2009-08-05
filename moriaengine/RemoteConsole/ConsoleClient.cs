@@ -7,7 +7,7 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.RemoteConsole {
-	public class ConsoleClient : Disposable,
+	public class ConsoleClient : //Disposable,
 		IConnectionState<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 
 		static TcpClientFactory<ConsoleClient> factory = new TcpClientFactory<ConsoleClient>(

@@ -232,6 +232,7 @@ namespace SteamEngine.Networking {
 		#region OverallLightLevel
 		private static PacketGroup[] overallLightLevel = new PacketGroup[0x100];
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendOverallLightLevel(TcpConnection<GameState> conn, int lightLevel) {
 			PacketGroup pg = overallLightLevel[lightLevel];
 			if (pg == null) {

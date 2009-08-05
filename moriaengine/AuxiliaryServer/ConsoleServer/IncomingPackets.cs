@@ -56,10 +56,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				failed = true;
 			}
 
-			if (GameServers.GameServerServer.GameServersCount > 0) {
-				foreach (GameServers.GameServerClient gameServer in GameServers.GameServerServer.AllGameServers) {
-					state.TryLoginToGameServer(gameServer);
-				}
+			if (GameServersManager.AllIdentifiedGameServers.Count > 0) {
+				state.TryLoginToGameServers();
 			} else if (failed) {
 				state.SendLoginFailedAndClose("The username '"+this.accName+"' either isn't cached in the AuxServer or the password is wrong.");
 			}
@@ -72,23 +70,23 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			List<int> runningServerNumbers = new List<int>();
-			foreach (GameServers.GameServerClient gsc in GameServers.GameServerServer.AllGameServers) {
-				runningServerNumbers.Add(gsc.Setting.Number);
+			List<int> runningServerIniIDs = new List<int>();
+			foreach (GameServer gsc in GameServersManager.AllIdentifiedGameServers) {
+				runningServerIniIDs.Add(gsc.Setup.IniID);
 			}
 
 			SendServersToStartPacket packet = Pool<SendServersToStartPacket>.Acquire();
-			packet.Prepare(Settings.KnownGameServersList, runningServerNumbers);
+			packet.Prepare(Settings.KnownGameServersList, runningServerIniIDs);
 			conn.SendSinglePacket(packet);
 		}
 	}
 
 	public class RequestStartGameServer : ConsoleIncomingPacket {
-		private byte serverNum;
+		private byte iniID;
 		private SEBuild build;
 
 		protected override ReadPacketResult Read() {
-			this.serverNum = this.DecodeByte();
+			this.iniID = this.DecodeByte();
 			this.build = (SEBuild) this.DecodeByte();
 
 			return ReadPacketResult.Success;
@@ -96,16 +94,15 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.AuxServNantProjectStarter")]
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			GameServers.GameServerClient cli = GameServers.GameServerServer.GetInstanceByNumber(this.serverNum);
+			GameServer cli = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (cli != null) {
-				state.WriteLine(0, "Server already online, ignoring start command.");
+				state.WriteLine(GameUID.AuxServer, "Server already online, ignoring start command.");
 				//server online, we do nothing
 			} else {
-				GameServerInstanceSettings sett = Settings.KnownGameServersList[this.serverNum];
-				Sanity.IfTrueThrow((this.serverNum != sett.Number), "Server setting number is different from it's index in list");
-				Console.WriteLine("Compiling " + this.build + " build of server at " + sett.IniPath);
+				IGameServerSetup sett = Settings.KnownGameServersList[this.iniID];
+				Sanity.IfTrueThrow((iniID != sett.IniID), "Server ini ID number is different from it's index in list");
 
-				new AuxServNantProjectStarter(this.build, sett.IniPath, "buildCore", "gameCoreFileName");
+				sett.StartGameServerProcess(this.build);
 			}
 		}
 	}
@@ -128,18 +125,16 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 					return;
 				}
 			} else {
-				GameServers.GameServerClient cli = GameServers.GameServerServer.GetInstanceByUid(this.id);
-				if (cli != null) {
-					if (LoggedInConsoles.IsLoggedIn(state, cli)) {
-						GameServers.ConsoleCommandLinePacket p = Pool<GameServers.ConsoleCommandLinePacket>.Acquire();
-						p.Prepare(state.Uid, state.AccountName, state.Password, this.command);
-						cli.Conn.SendSinglePacket(p);
+				GameServer cli = GameServersManager.GetInstanceByUid((GameUID) this.id);
+				if (cli != null) {					
+					if (GameServersManager.IsLoggedIn(state, cli)) {
+						cli.SendCommand(state.ConsoleId, state.AccountName, state.Password, this.command);
 						return;
 					}
 				}
 			}
 
-			state.WriteLine(0, "Invalid (not implemented/not logged in) id to command: " + this.id);
+			state.WriteLine(GameUID.AuxServer, "Invalid (not implemented/not logged in) id to command: " + this.id);
 		}
 	}
 }

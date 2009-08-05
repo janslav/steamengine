@@ -227,7 +227,8 @@ namespace SteamEngine.Common {
 		internal void SetParsedValue(IniFileValueLine valueLine) {
 			string valueName = valueLine.name;
 			if (props.ContainsKey(valueName)) {
-				throw new SEException("One section can't have more values of the same name (section [" + this.name + "], value name '" + valueName + "'");
+				Logger.WriteWarning("One section can't have more values of the same name (section [" + this.name + "], value name '" + valueName + "'. Ignoring.");
+				return;
 			}
 			props[valueName] = valueLine;
 			parts.Add(valueLine);

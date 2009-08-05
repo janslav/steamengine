@@ -103,7 +103,7 @@ namespace SteamEngine.Communication {
 				lock (this.core.LockObject) {
 					this.state.On_Close(reason);
 				}
-				this.state.Dispose();
+				//this.state.Dispose();
 			}
 			//On_Close(reason);
 			base.Dispose();

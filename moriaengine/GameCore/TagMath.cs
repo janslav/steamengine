@@ -92,7 +92,7 @@ namespace SteamEngine {
 		
 		public static string TimeSpanToString(TimeSpan ts, string format) {
 			DateTime dt = DateTime.MinValue.Add(ts);
-			return dt.ToString(format);
+			return dt.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
 		}
 
 		public static string TimeSpanToSimpleString(TimeSpan ts) {

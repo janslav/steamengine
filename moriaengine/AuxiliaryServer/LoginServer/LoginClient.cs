@@ -8,7 +8,7 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
-	public class LoginClient : Disposable,
+	public class LoginClient : //Disposable,
 		IConnectionState<TcpConnection<LoginClient>, LoginClient, IPEndPoint> {
 
 		static int uids;

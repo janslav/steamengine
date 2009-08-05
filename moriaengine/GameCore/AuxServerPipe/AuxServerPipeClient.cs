@@ -9,7 +9,7 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
-	public class AuxServerPipeClient : Disposable,
+	public class AuxServerPipeClient : //Disposable,
 		IConnectionState<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
 
 		private static NamedPipeClientFactory<AuxServerPipeClient> clientFactory;
