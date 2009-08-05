@@ -76,12 +76,14 @@ namespace SteamEngine {
 		}
 
 		public override sealed void Dispose() {
-			if (this.initDone) {
-				cachesByLanguage[(int) this.language].Remove(this.thing);
-				this.initDone = false;
+			try {
+				if (this.initDone) {
+					cachesByLanguage[(int) this.language].Remove(this.thing);
+					this.initDone = false;
+				}
+			} finally {
+				base.Dispose();
 			}
-
-			base.Dispose();
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "thing")]

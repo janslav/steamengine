@@ -54,13 +54,14 @@ namespace SteamEngine.AuxiliaryServer {
 
 			LoginServer.LoginServer.Init();
 			ConsoleServer.ConsoleServer.Init();
-			GameServers.GameServerServer.Init();
+			SEGameServers.SEGameServerServer.Init();
+			SphereServers.SphereServerClientFactory.Init();
 		}
 
 		private static void Exit() {
 			LoginServer.LoginServer.Exit();
 			ConsoleServer.ConsoleServer.Exit();
-			GameServers.GameServerServer.Exit();
+			SEGameServers.SEGameServerServer.Exit();
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		private static ConsoleServer instance = new ConsoleServer();
 
-		private static Dictionary<int, ConsoleClient> consoles = new Dictionary<int, ConsoleClient>();
+		private static Dictionary<ConsoleId, ConsoleClient> consoles = new Dictionary<ConsoleId, ConsoleClient>();
 
 
 		internal static void Init() {
@@ -28,18 +28,18 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		internal static void AddConnection(ConsoleClient client) {
-			consoles.Add(client.Uid, client);
+			consoles.Add(client.ConsoleId, client);
 
 			if (consoles.Count == 1) {
-				GameServers.GameServerServer.StartSendingLogStr();
+				SEGameServers.SEGameServerServer.StartSendingLogStr();
 			}
 		}
 
 		internal static void RemoveConnection(ConsoleClient client) {
-			consoles.Remove(client.Uid);
+			consoles.Remove(client.ConsoleId);
 
 			if (consoles.Count == 0) {
-				GameServers.GameServerServer.StopSendingLogStr();
+				SEGameServers.SEGameServerServer.StopSendingLogStr();
 
 				//memory cleanup
 				PoolBase.ClearAll();
@@ -48,9 +48,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			}
 		}
 
-		public static ConsoleClient GetClientByUid(int uid) {
+		public static ConsoleClient GetClientByUid(ConsoleId consoleId) {
 			ConsoleClient retVal;
-			if (consoles.TryGetValue(uid, out retVal)) {
+			if (consoles.TryGetValue(consoleId, out retVal)) {
 				return retVal;
 			}
 			return null;
@@ -59,7 +59,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		public static void WriteLineAsAux(string msg) {
 			foreach (ConsoleClient cc in consoles.Values) {
 				if (cc.IsLoggedInAux) {
-					cc.WriteLine(0, msg);
+					cc.WriteLine(GameUID.AuxServer, msg);
 				}
 			}
 		}
@@ -67,7 +67,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		public static void WriteAsAux(string msg) {
 			foreach (ConsoleClient cc in consoles.Values) {
 				if (cc.IsLoggedInAux) {
-					cc.Write(0, msg);
+					cc.Write(GameUID.AuxServer, msg);
 				}
 			}
 		}

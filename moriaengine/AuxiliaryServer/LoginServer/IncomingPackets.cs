@@ -50,9 +50,6 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 	}
 
-
-
-
 	public class GameLoginPacket : LoginIncomingPacket {
 		string accname;
 

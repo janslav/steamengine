@@ -640,6 +640,7 @@ namespace SteamEngine {
 
 		//public static readonly string version="1.0.0"; 
 		private static string version;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static string Version {
 			get {
 				if (version == null) {
@@ -740,11 +741,11 @@ namespace SteamEngine {
 		}
 
 		public static void SvnUpdate() {
-			VersionControl.SvnUpdateProject();
+			VersionControl.SvnUpdateProject(Path.GetFullPath("."));
 		}
 
 		public static void SvnCleanUp() {
-			VersionControl.SvnCleanUpProject();
+			VersionControl.SvnCleanUpProject(Path.GetFullPath("."));
 		}
 
 		public static Type Type(string typename) {

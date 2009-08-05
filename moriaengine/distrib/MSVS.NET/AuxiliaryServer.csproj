@@ -54,20 +54,11 @@
     <Compile Include="..\..\AuxiliaryServer\ConsoleServer\OutgoingPackets.cs">
       <Link>ConsoleServer\OutgoingPackets.cs</Link>
     </Compile>
-    <Compile Include="..\..\auxiliaryserver\gameservers\GameServerClient.cs">
-      <Link>GameServers\GameServerClient.cs</Link>
+    <Compile Include="..\..\AuxiliaryServer\GameServer.cs">
+      <Link>GameServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\auxiliaryserver\gameservers\GameServerServer.cs">
-      <Link>GameServers\GameServerServer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\auxiliaryserver\gameservers\IncomingPackets.cs">
-      <Link>GameServers\IncomingPackets.cs</Link>
-    </Compile>
-    <Compile Include="..\..\auxiliaryserver\gameservers\OutgoingPackets.cs">
-      <Link>GameServers\OutgoingPackets.cs</Link>
-    </Compile>
-    <Compile Include="..\..\AuxiliaryServer\LoggedInConsoles.cs">
-      <Link>LoggedInConsoles.cs</Link>
+    <Compile Include="..\..\AuxiliaryServer\GameServersManager.cs">
+      <Link>GameServersManager.cs</Link>
     </Compile>
     <Compile Include="..\..\AuxiliaryServer\Logger.cs">
       <Link>Logger.cs</Link>
@@ -96,8 +87,35 @@
     <Compile Include="..\..\AuxiliaryServer\MainClass.cs">
       <Link>MainClass.cs</Link>
     </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SEGameServerSetup.cs">
+      <Link>SEGameServerSetup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SEGameServers\IncomingPackets.cs">
+      <Link>SEGameServers\IncomingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SEGameServers\OutgoingPackets.cs">
+      <Link>SEGameServers\OutgoingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SEGameServers\SEGameServerClient.cs">
+      <Link>SEGameServers\SEGameServerClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SEGameServers\SEGameServerServer.cs">
+      <Link>SEGameServers\SEGameServerServer.cs</Link>
+    </Compile>
     <Compile Include="..\..\AuxiliaryServer\Settings.cs">
       <Link>Settings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SphereServerSetup.cs">
+      <Link>SphereServerSetup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SphereServers\SphereServerClient.cs">
+      <Link>SphereServers\SphereServerClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SphereServers\SphereServerClientFactory.cs">
+      <Link>SphereServers\SphereServerClientFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SphereServers\SphereServerConnection.cs">
+      <Link>SphereServers\SphereServerConnection.cs</Link>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
   </ItemGroup>

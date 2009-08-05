@@ -22,25 +22,54 @@ namespace SteamEngine.AuxiliaryServer {
 					CmdRestart();
 					return;
 				case "svnupdate":
-					VersionControl.SvnUpdateProject();
+					VersionControl.SvnUpdateProject(".");
+					foreach (IGameServerSetup game in Settings.KnownGameServersList) {
+						game.SvnUpdate();
+					}
 					return;
 				case "svncleanup":
-					VersionControl.SvnCleanUpProject();
+					VersionControl.SvnCleanUpProject(".");
+					foreach (IGameServerSetup game in Settings.KnownGameServersList) {
+						game.SvnCleanup();
+					}
 					return;
 				case "help":
 					DisplayHelp(state);
 					return;
+				case "processes":
+					DisplayProcesses(state);
+					return;
 			}
 
-			state.WriteLine(0, "Unknown command '" + cmd + "'.");
+			state.WriteLine(GameUID.AuxServer, "Unknown command '" + cmd + "'.");
 		}
 
 		private static void DisplayHelp(ConsoleServer.ConsoleClient state) {
-			state.WriteLine(0, "Available commands:"
+			state.WriteLine(GameUID.AuxServer, "Available commands:"
 				+ "restart" + Environment.NewLine
 				+ "svnupdate" + Environment.NewLine
 				+ "svncleanup" + Environment.NewLine
+				+ "processes" + Environment.NewLine
 				+ "help");
+		}
+
+		private static void DisplayProcesses(SteamEngine.AuxiliaryServer.ConsoleServer.ConsoleClient state) {
+			StringBuilder message = new StringBuilder("Relevant running processes on ").AppendLine(Environment.MachineName);
+			foreach (Process prc in Process.GetProcesses()) {
+				try {
+					string file = prc.MainModule.FileName;
+
+					if (file.Contains(SphereServerSetup.sphereExeName) || 
+							file.ToLower(System.Globalization.CultureInfo.InvariantCulture).Contains("steamengine")) {
+						message.Append(file).Append(" - running since ").
+							Append(prc.StartTime.ToString(System.Globalization.CultureInfo.InvariantCulture)).
+							Append(file).Append(", PID ").
+							AppendLine(prc.Id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+					}
+				} catch { }
+			}
+
+			state.WriteLine(GameUID.AuxServer, message.ToString());
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.Commands+NantProjectReStarter")]
@@ -101,6 +130,7 @@ namespace SteamEngine.AuxiliaryServer {
 			//Console.WriteLine(pMessage);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public virtual void CompileAndStart() {
 			try {
 				NantLauncher nant = new NantLauncher(Path.Combine(this.seRootPath, NantLauncher.defaultPathInProject));

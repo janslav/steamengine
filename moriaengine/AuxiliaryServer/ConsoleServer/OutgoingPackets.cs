@@ -11,9 +11,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		int cmdWinUid;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cmdWinUid")]
-		public void Prepare(string name, int cmdWinUid) {
+		public void Prepare(string name, GameUID cmdWinUid) {
 			this.name = name;
-			this.cmdWinUid = cmdWinUid;
+			this.cmdWinUid = (int) cmdWinUid;
 		}
 
 		public override byte Id {
@@ -30,8 +30,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		int uid;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
-		public void Prepare(int uid) {
-			this.uid = uid;
+		public void Prepare(GameUID uid) {
+			this.uid = (int) uid;
 		}
 
 		public override byte Id {
@@ -47,8 +47,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		int uid;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
-		public void Prepare(int uid) {
-			this.uid = uid;
+		public void Prepare(GameUID uid) {
+			this.uid = (int) uid;
 		}
 
 		public override byte Id {
@@ -65,8 +65,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		int uid;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
-		public void Prepare(int uid, string str) {
-			this.uid = uid;
+		public void Prepare(GameUID uid, string str) {
+			this.uid = (int) uid;
 			this.str = str;
 		}
 
@@ -86,8 +86,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid"), 
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str")]
-		public void Prepare(int uid, string str) {
-			this.uid = uid;
+		public void Prepare(GameUID uid, string str) {
+			this.uid = (int) uid;
 			this.str = str;
 		}
 
@@ -103,26 +103,26 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 	public class SendServersToStartPacket : OutgoingPacket {
 		private int count;
-		private List<int> numbers = new List<int>();
+		private List<int> iniIDs = new List<int>();
 		private List<string> iniPaths = new List<string>();
 		private List<string> names = new List<string>();
 		private List<ushort> ports = new List<ushort>();
 		private List<bool> runnings = new List<bool>();
 
-		public void Prepare(IList<GameServerInstanceSettings> servers, IList<int> runningServerNumbers) {
-			this.numbers.Clear();
+		public void Prepare(IList<IGameServerSetup> servers, IList<int> runningServerIniIDs) {
+			this.iniIDs.Clear();
 			this.iniPaths.Clear();
 			this.names.Clear();
 			this.ports.Clear();
 			this.runnings.Clear();
 
 			this.count = servers.Count;
-			foreach (GameServerInstanceSettings gsis in servers) {
-				this.numbers.Add(gsis.Number);
+			foreach (IGameServerSetup gsis in servers) {
+				this.iniIDs.Add(gsis.IniID);
 				this.iniPaths.Add(gsis.IniPath);
 				this.names.Add(gsis.Name);
 				this.ports.Add((ushort) gsis.Port);
-				this.runnings.Add(runningServerNumbers.Contains(gsis.Number));
+				this.runnings.Add(runningServerIniIDs.Contains(gsis.IniID));
 			}
 		}
 
@@ -133,7 +133,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Write() {
 			this.EncodeInt(this.count);
 			for (int i = 0; i < this.count; i++) {
-				this.EncodeInt(this.numbers[i]);
+				this.EncodeInt(this.iniIDs[i]);
 				this.EncodeUTF8String(this.iniPaths[i]);
 				this.EncodeUTF8String(this.names[i]);
 				this.EncodeUShort(this.ports[i]);
@@ -145,6 +145,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class LoginFailedPacket : OutgoingPacket {
 		string reason;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "reason")]
 		public void Prepare(string reason) {
 			this.reason = reason;
 		}

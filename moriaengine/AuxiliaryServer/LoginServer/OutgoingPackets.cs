@@ -19,9 +19,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip")]
 		public void Prepare(byte[] ip) {
 			this.names.Clear();
-			foreach (GameServers.GameServerClient server in GameServers.GameServerServer.AllGameServers) {
+			foreach (GameServer server in GameServersManager.AllIdentifiedGameServers) {
 				if (server.StartupFinished) {
-					this.names.Add(server.Setting.Name);
+					this.names.Add(server.Setup.Name);
 				}
 			}
 			this.ip = ip;
@@ -29,14 +29,14 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		protected override void Write() {
-			int serverNumber = this.names.Count;
-			EncodeUShort((ushort) ((serverNumber * 40) + 6)); //length
+			int serverCount = this.names.Count;
+			EncodeUShort((ushort) ((serverCount * 40) + 6)); //length
 
 			EncodeByte(0x5d);	//0x13; //unknown //0x5d on RunUo
 
-			EncodeUShort((ushort) serverNumber);
+			EncodeUShort((ushort) serverCount);
 
-			for (int i = 0; i < serverNumber; i++) {
+			for (int i = 0; i < serverCount; i++) {
 				EncodeUShort((ushort) i);
 				EncodeASCIIString(this.names[i], 32);
 				EncodeByte(0);
