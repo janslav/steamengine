@@ -64,7 +64,12 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		internal void StartLoginSequence(SphereServerSetup sphereServerSetup) {
 			this.BeginSend(" ");
 			this.BeginSend(sphereServerSetup.AdminAccount);
-			this.BeginSend(sphereServerSetup.AdminPassword);
+
+			new Timer(SendPassword, sphereServerSetup.AdminPassword, 500, Timeout.Infinite);
+			
+		}
+		private void SendPassword(object o) {
+			this.BeginSend((string) o);
 		}
 
 		#region Receieve
@@ -135,9 +140,11 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
 		private void ModeLoggedIn(TextReader reader) {
-			string line;
-			while ((line = reader.ReadLine()) != null) {
-				this.state.On_ReceievedLine(line);
+			if (ConsoleServer.ConsoleServer.AllConsolesCount > 0) { //no consoles = no point processing any text
+				string line;
+				while ((line = reader.ReadLine()) != null) {
+					this.state.On_ReceievedLine(line);
+				}
 			}
 		}
 
@@ -146,13 +153,18 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				List<string> list = new List<string>();
 				string line;
 				while ((line = reader.ReadLine()) != null) { //timestamped lines are not part of the command response
-					if (timeStampedLineRE.IsMatch(line)) {
-						this.state.On_ReceievedLine(line);
-					} else {
-						list.Add(line);
+					line = line.Trim();
+					if (!string.IsNullOrEmpty(line)) {
+						if (timeStampedLineRE.IsMatch(line)) {
+							this.state.On_ReceievedLine(line);
+						} else {
+							list.Add(line);
+						}
 					}
 				}
-				this.commandResponders.Dequeue().OnRespond(list); ;
+				if (list.Count > 0) {
+					this.commandResponders.Dequeue().OnRespond(list);
+				}
 			} else {
 				this.receivingMode = this.loggedInMode;
 				this.receivingMode(reader);
@@ -172,12 +184,19 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		#region Send
 		public void BeginSend(string message) {
-			SteamEngine.Communication.Buffer buffer = Pool<SteamEngine.Communication.Buffer>.Acquire();
+			try {
+				if (this.IsConnected) {
+					SteamEngine.Communication.Buffer buffer = Pool<SteamEngine.Communication.Buffer>.Acquire();
 
-			message = message + "\n";
-			int len = Encoding.Default.GetBytes(message, 0, message.Length, buffer.bytes, 0);
+					message = message + "\n";
+					int len = Encoding.Default.GetBytes(message, 0, message.Length, buffer.bytes, 0);
 
-			this.socket.BeginSend(buffer.bytes, 0, len, SocketFlags.None, this.beginSendCallback, buffer);
+					this.socket.BeginSend(buffer.bytes, 0, len, SocketFlags.None, this.beginSendCallback, buffer);
+				}
+			} catch (Exception e) {
+				this.Close("Exception while BeginSend: " + e.Message);
+				Logger.WriteDebug(e);
+			}
 		}
 
 		private void BeginSendCallback(IAsyncResult asyncResult) {
@@ -191,7 +210,8 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					this.Close(err.ToString());
 				}
 			} catch (Exception e) {
-				this.Close(e.Message);
+				this.Close("Exception while BeginSendCallback: " + e.Message);
+				Logger.WriteDebug(e);
 			} finally {
 				toDispose.Dispose();
 			}

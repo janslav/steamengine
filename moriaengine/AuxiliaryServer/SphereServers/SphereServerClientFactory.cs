@@ -24,7 +24,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		public static void Connect(SphereServerSetup setup) {
-			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, setup.Port);
+			IPEndPoint endpoint = new IPEndPoint(
+				Dns.GetHostAddresses("server.moria.cz")[0], 2593
+				//IPAddress.Loopback, setup.Port
+				);
 
 			Socket socket = new Socket(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
