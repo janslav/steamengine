@@ -22,6 +22,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		private bool isLoggedInAux;
 
+		public readonly HashSet<GameUID> filteredGameServers = new HashSet<GameUID>();
+
 		public bool IsLoggedInAux {
 			get {
 				return this.isLoggedInAux;
@@ -172,5 +174,6 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 	//just a renamed int
 	public enum ConsoleId {
+		FakeConsole = -1
 	}
 }

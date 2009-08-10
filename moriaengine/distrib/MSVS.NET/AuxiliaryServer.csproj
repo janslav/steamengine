@@ -108,6 +108,9 @@
     <Compile Include="..\..\AuxiliaryServer\SphereServerSetup.cs">
       <Link>SphereServerSetup.cs</Link>
     </Compile>
+    <Compile Include="..\..\AuxiliaryServer\SphereServers\SphereCommands.cs">
+      <Link>SphereServers\SphereCommands.cs</Link>
+    </Compile>
     <Compile Include="..\..\AuxiliaryServer\SphereServers\SphereServerClient.cs">
       <Link>SphereServers\SphereServerClient.cs</Link>
     </Compile>
