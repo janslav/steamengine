@@ -104,10 +104,14 @@ namespace SteamEngine.AuxiliaryServer {
 
 
 			if (AllIdentifiedGameServers.Count == 0) { //it was the last server, we kick nonlogged consoles
+				List<ConsoleServer.ConsoleClient> toKick = new List<SteamEngine.AuxiliaryServer.ConsoleServer.ConsoleClient>();
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					if (!console.IsLoggedInAux) {
-						console.Conn.Close("Failed to identify");
+						toKick.Add(console);
 					}
+				}
+				foreach (ConsoleServer.ConsoleClient console in toKick) {
+					console.Conn.Close("Failed to identify");
 				}
 			}
 		}

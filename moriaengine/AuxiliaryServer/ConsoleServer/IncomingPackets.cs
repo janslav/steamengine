@@ -128,7 +128,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				GameServer cli = GameServersManager.GetInstanceByUid((GameUID) this.id);
 				if (cli != null) {					
 					if (GameServersManager.IsLoggedIn(state, cli)) {
-						cli.SendCommand(state.ConsoleId, state.AccountName, state.Password, this.command);
+						cli.SendCommand(state, this.command);
 						return;
 					}
 				}

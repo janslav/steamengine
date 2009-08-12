@@ -18,7 +18,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		ConsoleId uid = uids++;
 
 		string accName;
-		string password;
+		string accPass;
 
 		private bool isLoggedInAux;
 
@@ -70,9 +70,9 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password")]
-		internal void SetLoginData(string accName, string password) {
+		internal void SetLoginData(string accName, string accPass) {
 			this.accName = accName;
-			this.password = password;
+			this.accPass = accPass;
 		}
 
 		public string AccountName {
@@ -81,20 +81,20 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			}
 		}
 
-		internal string Password {
+		internal string AccountPassword {
 			get {
-				return this.password;
+				return this.accPass;
 			}
 		}
 
 		public void TryLoginToGameServers() {
 			foreach (GameServer gameServer in GameServersManager.AllIdentifiedGameServers) {
-				gameServer.SendConsoleLogin(this.uid, this.accName, this.password);
+				gameServer.SendConsoleLogin(this.uid, this.accName, this.accPass);
 			}			
 		}
 
 		public void TryLoginToGameServer(GameServer gameServer) {
-			gameServer.SendConsoleLogin(this.uid, this.accName, this.password);
+			gameServer.SendConsoleLogin(this.uid, this.accName, this.accPass);
 		}
 
 		internal void SetLoggedInToAux(bool announce) {
@@ -121,6 +121,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			RequestCloseCommandWindowPacket packet = Pool<RequestCloseCommandWindowPacket>.Acquire();
 			packet.Prepare(serverUid);
 			this.Conn.SendSinglePacket(packet);
+			this.filteredGameServers.Remove(serverUid);
 		}
 
 		internal void SetLoggedInTo(GameServer gameServer) {
@@ -130,7 +131,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 			Console.WriteLine(this + " identified as " + this.accName + " with " + gameServer.Setup.Name);
 
-			Settings.RememberUser(this.accName, this.password);
+			Settings.RememberUser(this.accName, this.accPass);
 
 			OpenCmdWindow(gameServer.Setup.Name, gameServer.ServerUid);
 			EnableCommandLine(gameServer.ServerUid);
@@ -139,6 +140,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		internal void OpenCmdWindow(string name, GameUID serverUid) {
+			this.filteredGameServers.Add(serverUid); //filtered by default
 			RequestOpenCommandWindowPacket packet = Pool<RequestOpenCommandWindowPacket>.Acquire();
 			packet.Prepare(name, serverUid);
 			this.Conn.SendSinglePacket(packet);

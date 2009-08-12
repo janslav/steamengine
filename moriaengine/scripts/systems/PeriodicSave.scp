@@ -13,8 +13,8 @@ on=@afterSave
 AddTimer(%PeriodicSave, periodicSave_Interval, Save)
 
 //shows info to src
-[function periodicSaveInformation] //this = globals.instance
-local t = this.GetTimer(%PeriodicSave)
+[function periodicSaveInformation]
+local t = serv.GetTimer(%PeriodicSave)
 if (t != null)
-	src.WriteLine("Next save in <TagMath.TimeSpanToSimpleString(t.DueInSpan)>, interval is <System.TimeSpan.FromSeconds(periodicSave_Interval)>")
+	echo("Next save in <TagMath.TimeSpanToSimpleString(t.DueInSpan)>, interval is <System.TimeSpan.FromSeconds(periodicSave_Interval)>")
 endif

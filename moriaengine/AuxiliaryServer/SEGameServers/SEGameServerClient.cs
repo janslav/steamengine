@@ -101,9 +101,9 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 			}
 		}
 
-		public override void SendCommand(ConsoleServer.ConsoleId consoleId, string accName, string accPassword, string cmd) {
+		public override void SendCommand(ConsoleServer.ConsoleClient console, string cmd) {
 			ConsoleCommandLinePacket p = Pool<ConsoleCommandLinePacket>.Acquire();
-			p.Prepare(consoleId, accName, accPassword, cmd);
+			p.Prepare(console.ConsoleId, console.AccountName, console.AccountPassword, cmd);
 			this.Conn.SendSinglePacket(p);
 		}
 

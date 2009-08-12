@@ -26,7 +26,7 @@ namespace SteamEngine.AuxiliaryServer {
 			get;
 		}
 
-		public abstract void SendCommand(ConsoleServer.ConsoleId consoleId, string accName, string accPassword, string cmd);
+		public abstract void SendCommand(ConsoleServer.ConsoleClient console, string cmd);
 
 		public abstract void SendConsoleLogin(ConsoleServer.ConsoleId consoleId, string accName, string accPassword);
 	}

@@ -103,7 +103,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			}
 		}
 
-		static Regex loggedinRE = new Regex(@"(Login '(?<username>.+?)')|(?<badPass>Bad password for this account\.)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+		static Regex loggedinRE = new Regex(@"(Login '(?<username>.+?)')|(?<badPass>Bad password for this account\.)|(?<inuse>Account already in use\.)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
 		private void ProcessReceievedData(int length) {
 			StreamReader reader = new StreamReader(new MemoryStream(this.receivingBuffer.bytes, 0, length), Encoding.Default);
@@ -116,20 +116,21 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			while ((line = reader.ReadLine()) != null) {
 				Match m = loggedinRE.Match(line);
 				if (m.Success) {
-					if (m.Groups["badPass"].Value.Length == 0) {
+					if (m.Groups["badPass"].Value.Length > 0) {
+						this.state.On_LoginSequenceFinished(LoginResult.BadPassword);
+					} else if (m.Groups["inuse"].Value.Length > 0) {
+						this.state.On_LoginSequenceFinished(LoginResult.AccountInUse);
+					} else {
 						if (m.Groups["username"].Value.Equals(((SphereServerSetup) this.state.Setup).AdminAccount,
 							StringComparison.OrdinalIgnoreCase)) {
 
 							this.receivingMode = this.loggedInMode;
 							this.receivingMode(reader); //continue if there's anything
 
-							this.state.On_LoginSequenceEnded(true);
+							this.state.On_LoginSequenceFinished(LoginResult.Success);
 						} else {
 							this.Close("unexpected username in login sequence, wtf?");
 						}
-					} else {
-						this.receivingMode = this.ignoreMode;
-						this.state.On_LoginSequenceEnded(false);						
 					}
 				}
 			}
@@ -244,7 +245,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		public void Close(string reason) {
 			if (!this.IsDisposed) {
-				this.state.On_Close(reason);
+				if (this.state != null) {
+					this.state.On_Close(reason);
+				}
+				this.receivingMode = this.ignoreMode;
 			}
 			base.Dispose();
 		}
@@ -270,5 +274,11 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		internal override void OnRespond(IList<string> lines) {
 			this.callback(lines, state);
 		}
+	}
+
+	public enum LoginResult {
+		Success,
+		BadPassword,
+		AccountInUse
 	}
 }
