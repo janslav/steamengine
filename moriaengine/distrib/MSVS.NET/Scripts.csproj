@@ -1020,6 +1020,15 @@
     <None Include="..\..\remoteconsole\properties\datasources\endpointsetting.datasource">
       <Link>DataSources\endpointsetting.datasource</Link>
     </None>
+    <None Include="..\..\scripts\systems\defs.scp">
+      <Link>systems\defs.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\PeriodicSave.scp">
+      <Link>systems\PeriodicSave.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\PlayerCreation.scp">
+      <Link>systems\PlayerCreation.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
       <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
     </None>

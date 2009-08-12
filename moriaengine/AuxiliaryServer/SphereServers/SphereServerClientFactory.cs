@@ -18,12 +18,12 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			foreach (IGameServerSetup setup in Settings.KnownGameServersList) {
 				SphereServerSetup sphereSetup = setup as SphereServerSetup;
 				if (sphereSetup != null) {
-					Connect(sphereSetup);
+					Connect(sphereSetup, 0);
 				}
 			}
 		}
 
-		public static void Connect(SphereServerSetup setup) {
+		public static void Connect(SphereServerSetup setup, int ms) {
 			IPEndPoint endpoint = new IPEndPoint(
 				Dns.GetHostAddresses("server.moria.cz")[0], 2593
 				//IPAddress.Loopback, setup.Port
@@ -31,7 +31,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			Socket socket = new Socket(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-			ScheduleConnect(new object[] { socket, endpoint, setup }, 0);			
+			ScheduleConnect(new object[] { socket, endpoint, setup }, ms);			
 		}
 
 		private static void ScheduleConnect(object state, int ms) {
@@ -54,7 +54,9 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			try {
 				socket.EndConnect(result);
-			} catch {
+			} catch (Exception e) {
+				Console.WriteLine("Connecting to sphere at '" + setup.RamdiscIniPath + "' failed:" + e.Message);
+				Logger.WriteDebug(e);
 				ScheduleConnect(arr, 2000);
 				return;
 			}

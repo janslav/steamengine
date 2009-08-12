@@ -190,7 +190,7 @@ namespace SteamEngine.AuxiliaryServer {
 		public void SvnUpdate() {
 			GameServer sphere = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (sphere != null) {
-				sphere.SendCommand(ConsoleServer.ConsoleId.FakeConsole, null, null, "r");
+				sphere.SendCommand(null, "r");
 			}
 
 			VersionControl.SvnUpdateProject(this.HardDiscScriptsPath);
@@ -199,7 +199,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			if (sphere != null) {
-				sphere.SendCommand(ConsoleServer.ConsoleId.FakeConsole, null, null, "r");
+				sphere.SendCommand(null, "r");
 			}
 		}
 

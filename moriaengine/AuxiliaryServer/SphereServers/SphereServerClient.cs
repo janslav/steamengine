@@ -42,7 +42,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			this.DisposeTimeoutTimer();
 
-			SphereServerClientFactory.Connect(this.setup); //start connecting again
+			SphereServerClientFactory.Connect(this.setup, 2000); //start connecting again
 		}
 
 
@@ -71,19 +71,27 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		public override string ToString() {
-			return "SphereServerClient '" + this.setup.RamdiscIniPath + "'";
+			return "SphereServerClient '" + this.setup.Name + "'";
 		}
 
-		internal void On_LoginSequenceEnded(bool success) {
-			if (success) {
-				Console.WriteLine(this + " logged in.");
-				this.loggedIn = true;
-				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-					console.OpenCmdWindow(this.Setup.Name, this.ServerUid);
-					console.TryLoginToGameServer(this);
-				}
-			} else {
-				this.conn.Close("Bad admin password set in steamaux.ini");
+		internal void On_LoginSequenceFinished(LoginResult result) {
+			switch (result) {
+				case LoginResult.Success:
+					Console.WriteLine(this + " logged in.");
+					this.loggedIn = true;
+					foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+						console.OpenCmdWindow(this.Setup.Name, this.ServerUid);
+						console.TryLoginToGameServer(this);
+					}
+					break;
+				case LoginResult.BadPassword:
+
+					this.conn.Close("Bad admin password set in steamaux.ini");
+					break;
+					break;
+				case LoginResult.AccountInUse:
+					this.conn.Close("Account '" + this.setup.AdminAccount + "' already in use.");
+					break;
 			}
 		}
 
@@ -188,7 +196,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 							if (console != null) {
 								console.SetLoggedInTo(this);
 							}
-							this.SendCommand(state.consoleUid, null, null, "i");
+							this.SendCommand(console, "i");
 						}
 						this.DisposeTimeoutTimer();
 						return;
@@ -233,15 +241,25 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			if (!string.IsNullOrEmpty(line)) {
 				if (this.loggedIn) {
 					foreach (ConsoleServer.ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
-						console.WriteLine(this.ServerUid, line);
+						if (!console.filteredGameServers.Contains(this.ServerUid)) {
+							console.WriteLine(this.ServerUid, line);
+						}
 					}
 				}
 			}
 		}
 
-		public override void SendCommand(ConsoleServer.ConsoleId consoleId, string accName, string accPassword, string cmd) {
-			this.conn.SendCommand(cmd, new CallbackCommandResponse<ConsoleServer.ConsoleId>(
-				this.OnCommandReply, consoleId));
+		public override void SendCommand(ConsoleServer.ConsoleClient console, string cmd) {
+			if (cmd.StartsWith("[")) {
+				SphereCommands.HandleCommand(console, this, cmd.Substring(1));
+			} else {
+				ConsoleServer.ConsoleId consoleId = ConsoleServer.ConsoleId.FakeConsole;
+				if (console != null) {
+					consoleId = console.ConsoleId;
+				}
+				this.conn.SendCommand(cmd, new CallbackCommandResponse<ConsoleServer.ConsoleId>(
+					this.OnCommandReply, consoleId));
+			}
 		}
 
 		private void OnCommandReply(IList<string> lines, ConsoleServer.ConsoleId consoleId) {
