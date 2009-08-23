@@ -85,9 +85,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					}
 					break;
 				case LoginResult.BadPassword:
-
 					this.conn.Close("Bad admin password set in steamaux.ini");
-					break;
 					break;
 				case LoginResult.AccountInUse:
 					this.conn.Close("Account '" + this.setup.AdminAccount + "' already in use.");

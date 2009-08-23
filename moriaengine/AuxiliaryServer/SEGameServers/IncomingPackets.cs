@@ -53,12 +53,12 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
 			Console.WriteLine(state + " identified (steamengine.ini at '" + this.steamengineIniPath + "')");
-			SEGameServerSetup game = Settings.RememberGameServer(this.steamengineIniPath);
-			state.SetIdentificationData(game);
+			SEGameServerSetup setup = Settings.RememberGameServer(this.steamengineIniPath);
+			state.SetIdentificationData(setup);
+			GameServersManager.AddGameServer(state);
 
 			if (ConsoleServer.ConsoleServer.AllConsolesCount > 0) {
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
-					//console.TryLoginToGameServer(this);
 					console.OpenCmdWindow(state.Setup.Name, state.ServerUid);
 					console.TryLoginToGameServer(state);
 				}
