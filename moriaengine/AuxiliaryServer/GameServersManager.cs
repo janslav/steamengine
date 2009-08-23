@@ -45,9 +45,9 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal static void AddGameServer(GameServer gameServer) {
-			gameServersByUid.Add(gameServer.ServerUid, gameServer);
+			gameServersByUid[gameServer.ServerUid] = gameServer;
 			if (gameServer.Setup != null) {
-				gameServersByIniID.Add(gameServer.Setup.IniID, gameServer);
+				gameServersByIniID[gameServer.Setup.IniID] = gameServer;
 			}
 		}
 
