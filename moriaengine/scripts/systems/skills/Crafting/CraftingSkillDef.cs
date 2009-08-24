@@ -96,6 +96,7 @@ namespace SteamEngine.CompiledScripts {
 				skillSeqArgs.DelayStroke();
 				return true; //stop here for now (we are waiting for the next stroke round...)
 			}
+			DoStroke(skillSeqArgs);//do the animation, sound and finish
 			return false; //continue to @success or @fail (the result is already prepared from the "@start" phase
 		}
 

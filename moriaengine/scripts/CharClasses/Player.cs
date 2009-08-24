@@ -393,51 +393,28 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("The crafting main method. Tries to create the given Item(Def) in a requested quantity")]
 		public void Make(ItemDef what, int howMuch) {
+			SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
+			selectionQueue.Enqueue(new CraftingSelection(what, howMuch));
+			//to bychom meli, ted skill
 			ResourcesList skillMake = what.SkillMake;
-			ResourcesList resources = what.Resources;
-
-			IResourceListItem missingRes;
-			int cntr = 0;
-			bool finishedOK = true;
-			for (; cntr < howMuch; cntr++) {
-				//check the requirements first
-				if (!skillMake.HasResourcesPresent(this, ResourcesLocality.BackpackAndLayers, out missingRes)) {
-					ResourcesList.SendResourceMissingMsg(this, missingRes);
-					finishedOK = false;
-					break;
+			double highestSkillVal = 0;
+			CraftingSkillDef highestCsd = (CraftingSkillDef)SkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
+			if(skillMake != null) {
+				foreach(IResourceListItemNonMultiplicable itm in skillMake.NonMultiplicablesSublist) {
+					SkillResource sklr = itm as SkillResource;
+					if(sklr != null) {
+						CraftingSkillDef neededCraftingSkill = sklr.SkillDef as CraftingSkillDef;
+						if(neededCraftingSkill != null) {//je to skutecne crafting skill?
+							if(highestSkillVal < sklr.DesiredCount) {//je nejvyssi?
+								highestSkillVal = sklr.DesiredCount;
+								highestCsd = neededCraftingSkill;
+							}
+						}
+					}
 				}
-
-				//check the itemd making probability, count the success etc
-
-				//now the resources
-				if (!resources.ConsumeResourcesOnce(this, ResourcesLocality.BackpackAndLayers, out missingRes)) {
-					ResourcesList.SendResourceMissingMsg(this, missingRes);
-					finishedOK = false;
-					break;
-				}
-
-				//get the greatest necessary skill to make this item
-				SkillResource greatestSkill = ResourcesList.GetResource<SkillResource,IResourceListItemNonMultiplicable>(skillMake.NonMultiplicablesSublist, null);
-				//vsechno tohleto musim vrazit samozrejme do skillu (carpentry, tinkering, tailoring, blacksmithy, bowcraft!!!!)
-				//a zde podle vyse nejvyssiho skillu pak vybirat co hodlam prave vyrabet...
-				//=>neni potreba ten sorting podle skillu bo vyroba pujde logicky z craftmenu prislusne sekce odkud se bude 
-				//spoustet prislusny skill (pak se vybere opravdu ten GetResourceTyped toho ktereho skillu a podle nej se rozhodneme co dal)
-
-				//finally create the item
-				//zjistit vzdalenost od receiving containeru (a jestli je to ten samy mapplan) a podle toho to dat 
-				//bud do nej nebo do backpacku
-				Container targetCont = this.ReceivingContainer;
-				if ((targetCont != this.Backpack) && (Point2D.GetSimpleDistance(this, targetCont) > Globals.ReachRange || this.M != targetCont.M)) {
-					//the receivingContainer is not our backpack and we are too far or in another mapplane
-					targetCont = this.Backpack;
-				}
-
 			}
-			if(finishedOK) {
-				this.SysMessage("Výroba ukonèena, vyrobeno " + cntr + " " + ((cntr > 1) ? what.PluralName : what.Name));
-			} else {
-				this.RedMessage("Výroba ukonèena pøedèasnì, vyrobeno " + cntr + " z požadovaného poètu " + howMuch + " " + ((cntr > 1) ? what.PluralName : what.Name));
-			}
+			//a muze se zacit vyrabet v pozadovanem mnozstvi
+			CraftingProcessPlugin.StartCrafting(this, new CraftingOrder(highestCsd, selectionQueue));
 		}
 
 		public Container ReceivingContainer {
