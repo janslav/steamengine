@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//dlg.MakeLastTableTransparent();
 
 			dlg.AddTable(new GUTATable(1, 0));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vlastnosti lze mìnit pomocí ikon v levé èásti dialogu").Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vlastnosti lze mìnit pomocí ikony v levé èásti dialogu").Build();
 			dlg.MakeLastTableTransparent();
 
 			dlg.WriteOut();

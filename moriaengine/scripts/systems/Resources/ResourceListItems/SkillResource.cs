@@ -32,6 +32,12 @@ namespace SteamEngine.CompiledScripts {
 			this.definition = definition;
 		}
 
+		public SkillDef SkillDef {
+			get {
+				return skillDef; //muze se hodit mit referenci na skill
+			}
+		}
+
 		#region IResourceListItem Members
 		public double DesiredCount {
 			get {
