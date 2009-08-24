@@ -137,6 +137,9 @@ namespace SteamEngine.CompiledScripts {
 		public void ConsumeSomeResources(Character chr, ResourcesLocality where) {
 			
 			List<ResourceCounter> resourceCounters = PrepareResourceCounters();
+			//find the resources references
+			ResourceItemFinder.LocalizeItems(chr, where, resourceCounters);
+
 			//now for each counter consume 0-available items
 			foreach (ResourceCounter ctr in resourceCounters) {
 				ctr.ConsumeSomeItems();

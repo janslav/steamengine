@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckSuccess(Character ch, int difficulty) {
-			//GM is always immediate
+			//GM is always successfull
 			if (ch.IsGM) {
 				return true;
 			} else {
