@@ -202,25 +202,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //new items to add (target)
-						gi.Cont.SetTag(tkCraftmenuLastpos, cat.FullName);//remember the category
+						gi.Cont.SetTag(tkCraftmenuLastpos, cat);//remember the category
 						((Player)gi.Cont).Target(SingletonScript<Targ_Craftmenu>.Instance, cat);
 						DialogStacking.ClearDialogStack(gi.Cont); //dont show any dialogs now
 						break;
 					case 4: //start making
 						//first we will prepare the list of Item-Count pairs to be made
 						List<int> inputIds = (List<int>)args.GetTag(D_Craftmenu.tkInputIds);//get the ids info
-						SimpleQueue<CraftingSelection> craftingOrder = new SimpleQueue<CraftingSelection>();
+						SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
 						foreach (int id in inputIds) {
 							int requestedCount = (int)gr.GetNumberResponse(id);//always integer number
 							if (requestedCount > 0) {//non zero request for making, parse the line number
 								int line = (int)((id - 15) / 6); //input fields have IDs as 6*i + 15
 								CraftmenuItem cmItm = (CraftmenuItem)cat.Contents[line];
-								craftingOrder.Enqueue(new CraftingSelection(cmItm.itemDef, requestedCount));
+								selectionQueue.Enqueue(new CraftingSelection(cmItm.itemDef, requestedCount));
 							}
 						}
-						if (craftingOrder.Count > 0) {
-							CraftingProcessPlugin.InstallCraftingPlugin((Character) gi.Cont, craftingOrder, cat.CategorySkill);
-							CraftingProcessPlugin.StartCrafting((Character) gi.Cont);
+						if (selectionQueue.Count > 0) {
+							CraftingProcessPlugin.StartCrafting((Character) gi.Cont, new CraftingOrder(cat.CategorySkill, selectionQueue));
 						}
 						break;
 					case 5: //openhere

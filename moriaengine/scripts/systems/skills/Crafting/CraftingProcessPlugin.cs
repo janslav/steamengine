@@ -24,15 +24,6 @@ namespace SteamEngine.CompiledScripts {
 	partial class CraftingProcessPlugin {
 		private static PluginKey craftingProcessPK = PluginKey.Get("_craftingProcess_");
 
-		public static void InstallCraftingPlugin(Character self, SimpleQueue<CraftingSelection> craftingOrder, CraftingSkillDef craftingSkill) {
-			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
-			if (p == null) {
-				p = (CraftingProcessPlugin) self.AddNewPlugin(craftingProcessPK, CraftingProcessPluginDef.instance);
-			}
-			p.craftingOrder = craftingOrder;
-			p.craftingSkill = craftingSkill;
-		}
-
 		public static void UnInstallCraftingPlugin(Character self) {
 			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
 			if (p != null) {
@@ -43,21 +34,76 @@ namespace SteamEngine.CompiledScripts {
 		public static SimpleQueue<CraftingSelection> GetCraftingQueue(Character self) {
 			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
 			if (p != null) {
-				return p.craftingOrder;
+				return p.craftingOrder.SelectionQueue;
 			}
 			return null;
 		}
 
-		public static void StartCrafting(Character self) {
-			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
-			if (p != null) {
-				p.StartCrafting();
-			}
+		public static void StartCrafting(Character self, CraftingOrder crOrd) {
+			CraftingProcessPlugin p = InstallCraftingPlugin(self, crOrd);
+			p.StartCrafting();
 		}
 
 		private void StartCrafting() {
-			SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character)Cont, craftingSkill);
-			ssa.PhaseStart(); //start making...
+			SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character)Cont, craftingOrder.CraftingSkill);
+
+			CraftingSelection csl = this.craftingOrder.SelectionQueue.Peek();
+			ssa.Param1 = (csl != null ? csl.ItemDef : null);  //either selected ItemDef or null (both is acceptable)
+			
+			ssa.PhaseSelect();
+		}
+
+		[Summary("Static method called after finishing with one item crafting - either successfull or failed. "+
+				"If success - lower the amount of items to be made and (if anything is yet to be made) start again. "+
+				"If failed - start the craftmaking again immediatelly")]
+		internal static void MakeFinished(SkillSequenceArgs skillSeqArgs) {
+			Character cont = skillSeqArgs.Self;
+			CraftingProcessPlugin pl = (CraftingProcessPlugin)cont.GetPlugin(craftingProcessPK);
+
+			if (skillSeqArgs.Success) {
+				CraftingSelection crSel = pl.craftingOrder.SelectionQueue.Peek(); //actual crafted item and its to-make count
+				crSel.Count -= 1;//lower the amount of items to be made
+				if (crSel.Count <= 0) {
+					pl.craftingOrder.SelectionQueue.Dequeue(); //remove from the queue
+				}
+				if (pl.craftingOrder.SelectionQueue.Count > 0) { //still something to be made
+					pl.StartCrafting(); //start again with next item
+				} else {//nothing left, finish crafting
+					cont.SysMessage(Loc<CraftSkillsLoc>.Get(cont.Language).FinishCrafting);
+					pl.Delete(); //same as calling "uninstall plugin"
+				}
+			} else {//failed, start again now
+				pl.StartCrafting();
+			}
+		}
+
+		internal static void MakeImpossible(SkillSequenceArgs skillSeqArgs) {
+			Character cont = skillSeqArgs.Self;
+			CraftingProcessPlugin pl = (CraftingProcessPlugin) cont.GetPlugin(craftingProcessPK);
+			
+			ItemDef iDefToMake = (ItemDef)skillSeqArgs.Param1;
+
+			pl.craftingOrder.SelectionQueue.Dequeue(); //remove the item from the queue
+			if (pl.craftingOrder.SelectionQueue.Count > 0) { //still something to be made
+				cont.SysMessage(String.Format(
+					Loc<CraftSkillsLoc>.Get(cont.Language).ResourcesLackingButContinue,
+					iDefToMake.Name));
+				pl.StartCrafting(); //start again with next item(s)
+			} else {
+				cont.SysMessage(String.Format(
+					Loc<CraftSkillsLoc>.Get(cont.Language).ResourcesLackingAndFinish,
+					iDefToMake.Name));
+				pl.Delete(); //same as calling "uninstall plugin"
+			}
+		}
+
+		private static CraftingProcessPlugin InstallCraftingPlugin(Character self, CraftingOrder craftingOrder) {
+			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
+			if (p == null) {
+				p = (CraftingProcessPlugin) self.AddNewPlugin(craftingProcessPK, CraftingProcessPluginDef.instance);
+			}
+			p.craftingOrder = craftingOrder;
+			return p;
 		}
 	}
 

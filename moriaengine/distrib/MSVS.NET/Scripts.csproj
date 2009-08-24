@@ -623,6 +623,9 @@
     <Compile Include="..\..\scripts\systems\skills\Crafting\CraftingProcessPlugin.cs">
       <Link>systems\skills\Crafting\CraftingProcessPlugin.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\CraftingProcessPlugin.Generated.cs">
+      <Link>systems\skills\Crafting\CraftingProcessPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Crafting\CraftingSkillDef.cs">
       <Link>systems\skills\Crafting\CraftingSkillDef.cs</Link>
     </Compile>
@@ -640,9 +643,6 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Crafting\Inscription.cs">
       <Link>systems\skills\Crafting\Inscription.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Crafting\Plugin.Generated.cs">
-      <Link>systems\skills\Crafting\Plugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Crafting\Tailoring.cs">
       <Link>systems\skills\Crafting\Tailoring.cs</Link>

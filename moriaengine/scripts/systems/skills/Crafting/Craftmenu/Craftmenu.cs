@@ -570,4 +570,28 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 	}
+
+	[Summary("Class encapsulating one instance of the crafting 'order list' - the queue of the CraftingSelections "+
+			"and the required used skill.")]
+	public class CraftingOrder {
+		private readonly CraftingSkillDef craftingSkill;
+		private SimpleQueue<CraftingSelection> selectionQueue;
+
+		public CraftingOrder(CraftingSkillDef craftingSkill, SimpleQueue<CraftingSelection> selectionQueue) {
+			this.craftingSkill = craftingSkill;
+			this.selectionQueue = selectionQueue;
+		}
+
+		public CraftingSkillDef CraftingSkill {
+			get {
+				return this.craftingSkill;
+			}
+		}
+
+		public SimpleQueue<CraftingSelection> SelectionQueue {
+			get {
+				return this.selectionQueue;
+			}
+		}
+	}
 }

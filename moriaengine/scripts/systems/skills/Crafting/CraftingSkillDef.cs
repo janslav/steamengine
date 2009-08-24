@@ -42,12 +42,14 @@ namespace SteamEngine.CompiledScripts {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return true;//something wrong, finish now
 			}
-			
-			//otherwise, open the craftmenu for this skill
-			self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName)this.Id]));
 
-			//do not continue, the rest will be solved from the craftmenu
-			return true; //F = continue to @start, T = stop
+			if (skillSeqArgs.Param1 != null) {
+				return false; //do not stop, we have some item here, we can start crafting now
+			} else {//no item pre-selected, open the craftmenu
+				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName) this.Id]));
+				//do not continue, the rest will be solved from the craftmenu
+				return true; //F = continue to @start, T = stop
+			}
 		}
 
 		[Summary("This trigger is called when OK button is clicked from the craftmenu. One item from the queue is picked and its making process "+
@@ -61,14 +63,13 @@ namespace SteamEngine.CompiledScripts {
 				return true;//something wrong, finish now
 			}
 
-			SimpleQueue<CraftingSelection> orderQueue = CraftingProcessPlugin.GetCraftingQueue(self);
-			ItemDef iDefToMake = orderQueue.Peek().ItemDef;//the on_start trigger runs only if there is something to be made so we can immediately Peek for it without worries...
+			ItemDef iDefToMake = (ItemDef)skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
 				//get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
-			int[] itemStrokes = iDefToMake.Strokes; //always 2-item array
+			double[] itemStrokes = iDefToMake.Strokes; //always 2-item array
 				//compute the actual strokes count to make the selected item for "self" char
-			int strokes = (int)ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes[0], itemStrokes[1]);
-			//check the Success now
-			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
+			int strokes = (int)Math.Round(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes));
+			//check the Success now / TODO> item difficulty
+			skillSeqArgs.Success = this.CheckSuccess(self, iDefToMake.Difficulty);
 			if (!skillSeqArgs.Success) {//the item making will fail
 				skillSeqArgs.Param2 = (int)Math.Round(ScriptUtil.GetRandInRange(1, strokes));//fail will occur after a few strokes (not necessary immediatelly)
 			} else {//item will be created, with pre-computed number of strokes
@@ -87,10 +88,11 @@ namespace SteamEngine.CompiledScripts {
 				return true;//something wrong, finish now
 			}
 
-			if ((int)skillSeqArgs.Param2 > 1) {
+			int strokesCnt = Convert.ToInt32(skillSeqArgs.Param2);
+			if (strokesCnt > 1) {
 				//do the animation, sound and repeat the stroke
 				DoStroke(skillSeqArgs);
-				skillSeqArgs.Param2 = (int) skillSeqArgs.Param2 - 1;
+				skillSeqArgs.Param2 = strokesCnt - 1;
 				skillSeqArgs.DelayStroke();
 				return true; //stop here for now (we are waiting for the next stroke round...)
 			}
@@ -108,11 +110,8 @@ namespace SteamEngine.CompiledScripts {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return true;//something wrong, finish now
 			}
-			
-			//retreive the item to be made
-			SimpleQueue<CraftingSelection> orderQueue = CraftingProcessPlugin.GetCraftingQueue(self);
-			CraftingSelection oneItemSel = orderQueue.Peek();
-			ItemDef iDefToMake = oneItemSel.ItemDef;
+
+			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
 			IResourceListItem missingResource;
 			bool canMake = true;
@@ -134,37 +133,14 @@ namespace SteamEngine.CompiledScripts {
 								iDefToMake.Name, self.ReceivingContainer.Name));
 					DoSuccess(skillSeqArgs, newItem);
 
-					oneItemSel.Count -= 1;//lower the amount of items to be made
-					if (oneItemSel.Count <= 0) {
-						orderQueue.Dequeue(); //remove from the queue
-					}
-					if (orderQueue.Count > 0) { //still something to be made
-						CraftingProcessPlugin.StartCrafting(self); //start again
-						return true; //stop the trigger
-					} else {//nothing left, finish
-						self.SysMessage(Loc<CraftSkillsLoc>.Get(self.Language).FinishCrafting);
-						CraftingProcessPlugin.UnInstallCraftingPlugin(self);
-						return false;
-					}
+					CraftingProcessPlugin.MakeFinished(skillSeqArgs);
 				}
 			}
 
 			//deal with failure - not enough resources 
 			if (!canMake) {
-				orderQueue.Dequeue(); //remove this item from the queue
-				if (orderQueue.Count > 0) { //still something to be made
-					self.SysMessage(String.Format(
-						Loc<CraftSkillsLoc>.Get(self.Language).ResourcesLackingButContinue,
-						iDefToMake.Name));
-					CraftingProcessPlugin.StartCrafting(self); //start with next item(s)
-					return true; //stop the trigger
-				} else {
-					self.SysMessage(String.Format(
-						Loc<CraftSkillsLoc>.Get(self.Language).ResourcesLackingAndFinish,
-						iDefToMake.Name));
-					CraftingProcessPlugin.UnInstallCraftingPlugin(self);
-					return false;
-				}
+				CraftingProcessPlugin.MakeImpossible(skillSeqArgs);
+				return true; //stop the trigger, the rest will be decided by the CraftingProcessPlugin
 			}
 
 			return false;
@@ -180,17 +156,14 @@ namespace SteamEngine.CompiledScripts {
 				return true;//no message needed, it's been already sent in the called method
 			}
 
-			//retreive the item to be made
-			SimpleQueue<CraftingSelection> orderQueue = CraftingProcessPlugin.GetCraftingQueue(self);
-			CraftingSelection oneItemSel = orderQueue.Peek();
-			ItemDef iDefToMake = oneItemSel.ItemDef;
+			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
 			iDefToMake.Resources.ConsumeSomeResources(self, ResourcesLocality.Backpack);
 			self.SysMessage(String.Format(
 						Loc<CraftSkillsLoc>.Get(self.Language).ItemMakingFailed,
 						iDefToMake.Name));
-			CraftingProcessPlugin.StartCrafting(self);//start making (of the same item in the same amount) again 
-			return true; //stop the trigger
+			CraftingProcessPlugin.MakeFinished(skillSeqArgs);
+			return true; //stop the trigger, the rest will be decided by the CraftingProcessPlugin
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
@@ -202,6 +175,8 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
 				"Its purpose is to make something related to the stroke of the particular skill (such as playing some sound...)")]
 		protected virtual void DoStroke(SkillSequenceArgs skillSeqArgs) {
+			Character self = skillSeqArgs.Self;
+			self.SysMessage(skillSeqArgs.SkillDef.Defname + " stroke");
 		}
 
 		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
@@ -209,6 +184,8 @@ namespace SteamEngine.CompiledScripts {
 				"computing some special item characteristics etc.)")]
 		protected virtual void DoSuccess(SkillSequenceArgs skillSeqArgs, Item newItem) {
 			//TODO pocitat nejake ty "exceptional" vlastnosti, podepisovani predmetu atp.
+			Character self = skillSeqArgs.Self;
+			self.SysMessage(skillSeqArgs.SkillDef.Defname + " success");
 		}		
 
 		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +

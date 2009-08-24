@@ -15,5 +15,4 @@
 
 [PluginTemplate CraftingProcessPlugin : TimerPlugin]
 Vars:
-  public CraftingSkillDef craftingSkill = null
-  public SimpleQueue<CraftingSelection> craftingOrder = null
+  public CraftingOrder craftingOrder = null
