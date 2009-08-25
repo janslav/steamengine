@@ -398,14 +398,14 @@ namespace SteamEngine.CompiledScripts {
 			//to bychom meli, ted skill
 			ResourcesList skillMake = what.SkillMake;
 			double highestSkillVal = 0;
-			CraftingSkillDef highestCsd = (CraftingSkillDef)SkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
-			if(skillMake != null) {
-				foreach(IResourceListItemNonMultiplicable itm in skillMake.NonMultiplicablesSublist) {
+			CraftingSkillDef highestCsd = (CraftingSkillDef) SkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
+			if (skillMake != null) {
+				foreach (IResourceListItemNonMultiplicable itm in skillMake.NonMultiplicablesSublist) {
 					SkillResource sklr = itm as SkillResource;
-					if(sklr != null) {
+					if (sklr != null) {
 						CraftingSkillDef neededCraftingSkill = sklr.SkillDef as CraftingSkillDef;
-						if(neededCraftingSkill != null) {//je to skutecne crafting skill?
-							if(highestSkillVal < sklr.DesiredCount) {//je nejvyssi?
+						if (neededCraftingSkill != null) {//je to skutecne crafting skill?
+							if (highestSkillVal < sklr.DesiredCount) {//je nejvyssi?
 								highestSkillVal = sklr.DesiredCount;
 								highestCsd = neededCraftingSkill;
 							}
@@ -419,17 +419,19 @@ namespace SteamEngine.CompiledScripts {
 
 		public Container ReceivingContainer {
 			get {
-				if (receivingContainer == null) {//set the default
-					receivingContainer = this.Backpack;
+				if (this.receivingContainer == null) {//set the default
+				} else if (this.receivingContainer.IsDeleted) {
+					this.receivingContainer = null;
+				} else if (this.CanOpenContainer(this.receivingContainer) == DenyResult.Allow) {
+					return this.receivingContainer;
 				}
-				return receivingContainer;
+				return this.Backpack;
 			}
 
 			set {
-				receivingContainer = value;
+				this.receivingContainer = value;
 			}
 		}
-
 
 		public override int VisionRange {
 			get {
