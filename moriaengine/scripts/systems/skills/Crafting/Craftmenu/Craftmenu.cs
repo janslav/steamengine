@@ -365,6 +365,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public override string ToString() {
+			return "CraftmenuCategory " + this.Name;
+		}
+
 		#region ICraftmenuElement Members
 		public string Name {
 			get {

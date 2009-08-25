@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("This trigger is run in case the item making succeeds. It consumes the desired number of resources, "+
-				"creates the item instance and checks if there are any other items to be created ino the queue. If so, it "+
+				"creates the item instance and checks if there are any other items to be created in the queue. If so, it "+
 				"re-runs the @start trigger")]
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Player self = (Player) skillSeqArgs.Self;
