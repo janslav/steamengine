@@ -2398,18 +2398,23 @@ namespace SteamEngine.CompiledScripts {
 			if (c != null) {
 				Item contAsItem = c as Item;
 				if (contAsItem != null) {
-					result = OpenedContainers.HasContainerOpen(this, contAsItem);
+					return OpenedContainers.HasContainerOpen(this, contAsItem);
 				} else if (c != this) {
 					result = this.CanReach(c);
 					if (result == DenyResult.Allow) {
 						Character contAsChar = (Character) c;
 						if (!contAsChar.IsPetOf(this)) {//not my pet or myself
-							result = DenyResult.Deny_ThatDoesNotBelongToYou;
+							return DenyResult.Deny_ThatDoesNotBelongToYou;
 						}
 					}
 				}
 			} else {
-				result = this.CanReachCoordinates(targetContainer);
+				return this.CanReachCoordinates(targetContainer);
+			}
+
+			//equipped in visible layer?
+			if (targetContainer.Z > (int) LayerNames.Mount) {
+				return DenyResult.Deny_RemoveFromView;
 			}
 
 			return result;
