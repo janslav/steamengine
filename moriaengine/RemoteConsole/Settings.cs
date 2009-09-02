@@ -25,6 +25,8 @@ namespace SteamEngine.RemoteConsole {
 		
 			IniFileSection generalSec = ini.GetNewOrParsedSection(generalSectionName);
 			saveEndpointPasswords = generalSec.GetValue<bool>("saveEndpointPasswords", true, "true: Save passwords, false: Don't.");
+
+			ini.WriteToFile();
 		}
 
 		internal static void Init() {
