@@ -96,7 +96,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			GameServer cli = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (cli != null) {
-				state.WriteLine(GameUID.AuxServer, "Server already online, ignoring start command.");
+				state.WriteLine(GameUid.AuxServer, "Server already online, ignoring start command.");
 				//server online, we do nothing
 			} else {
 				IGameServerSetup sett = Settings.KnownGameServersList[this.iniID];
@@ -125,7 +125,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 					return;
 				}
 			} else {
-				GameServer cli = GameServersManager.GetInstanceByUid((GameUID) this.id);
+				GameServer cli = GameServersManager.GetInstanceByUid((GameUid) this.id);
 				if (cli != null) {					
 					if (GameServersManager.IsLoggedIn(state, cli)) {
 						cli.SendCommand(state, this.command);
@@ -134,7 +134,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				}
 			}
 
-			state.WriteLine(GameUID.AuxServer, "Invalid (not implemented/not logged in) id to command: " + this.id);
+			state.WriteLine(GameUid.AuxServer, "Invalid (not implemented/not logged in) id to command: " + this.id);
 		}
 	}
 }

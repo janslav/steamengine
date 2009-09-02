@@ -7,10 +7,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net;
 using SteamEngine.Communication;
+using SteamEngine.Common;
 
 namespace SteamEngine.RemoteConsole {
 	public partial class MainForm : Form {
-		private Dictionary<int, CommandLineDisplay> displays = new Dictionary<int, CommandLineDisplay>();
+		private Dictionary<GameUid, CommandLineDisplay> displays = new Dictionary<GameUid, CommandLineDisplay>();
 
 		private EndPointSetting epsBeingReconnected;
 
@@ -31,13 +32,11 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public void AddCmdLineDisplay(int id, string name) {
+		public void AddCmdLineDisplay(GameUid id, string name) {
 			if (!this.displays.ContainsKey(id)) {
 				TabPage tab = new TabPage(name);
 				CommandLineDisplay cld = new CommandLineDisplay(name, id);
-				if (id < 1) {
-					cld.RemoveGameServerButtons();
-				}
+				
 				cld.txtDisplay.TitleChanged += txtDisplay_TitleChanged;
 				tab.Controls.Add(cld);
 				cld.Dock = DockStyle.Fill;
@@ -48,7 +47,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public void RemoveCmdLineDisplay(int id) {
+		public void RemoveCmdLineDisplay(GameUid id) {
 			CommandLineDisplay cld;
 			if (this.displays.TryGetValue(id, out cld)) {
 				cld.Parent.Dispose();
@@ -57,7 +56,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public void EnableCommandLineOnDisplay(int id) {
+		public void EnableCommandLineOnDisplay(GameUid id) {
 			CommandLineDisplay cld;
 			if (this.displays.TryGetValue(id, out cld)) {
 				cld.EnableComandLine();
@@ -136,7 +135,7 @@ namespace SteamEngine.RemoteConsole {
 			ConsoleClient.Disconnect("Disconnect menu item used.");
 		}
 
-		internal void WriteLine(int uid, string str) {
+		internal void WriteLine(GameUid uid, string str) {
 			if (uid >= 0) {
 				CommandLineDisplay cld;
 				if (this.displays.TryGetValue(uid, out cld)) {
@@ -147,7 +146,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		internal void Write(int uid, string str) {
+		internal void Write(GameUid uid, string str) {
 			if (uid >= 0) {
 				CommandLineDisplay cld;
 				if (this.displays.TryGetValue(uid, out cld)) {

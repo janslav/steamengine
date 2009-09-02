@@ -9,10 +9,10 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
 	public abstract class GameServer {
-		protected GameUID uid;
+		protected GameUid uid;
 
 
-		public GameUID ServerUid {
+		public GameUid ServerUid {
 			get {
 				return this.uid;
 			}
@@ -29,14 +29,5 @@ namespace SteamEngine.AuxiliaryServer {
 		public abstract void SendCommand(ConsoleServer.ConsoleClient console, string cmd);
 
 		public abstract void SendConsoleLogin(ConsoleServer.ConsoleId consoleId, string accName, string accPassword);
-	}
-
-	//used more or less just like a renamed int. A new struct might be better but this works too :)
-	//just wanted to make clear what's what
-	public enum GameUID {
-		AuxServer = 0,
-		FirstSEGameServer = 1,
-		LastSphereServer = int.MaxValue,
-		//...
 	}
 }

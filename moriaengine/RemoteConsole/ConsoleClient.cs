@@ -75,7 +75,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public static void SendCommand(int id, string command) {
+		public static void SendCommand(GameUid id, string command) {
 			if (connectedInstance != null) {
 				CommandLinePacket p = Pool<CommandLinePacket>.Acquire();
 				p.Prepare(id, command);

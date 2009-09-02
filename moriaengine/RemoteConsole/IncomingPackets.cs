@@ -90,7 +90,7 @@ namespace SteamEngine.RemoteConsole {
 		string name;
 
 		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.AddCmdLineDisplay(this.uid, this.name);
+			MainClass.mainForm.AddCmdLineDisplay((GameUid) this.uid, this.name);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -104,7 +104,7 @@ namespace SteamEngine.RemoteConsole {
 		int uid;
 
 		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.RemoveCmdLineDisplay(this.uid);
+			MainClass.mainForm.RemoveCmdLineDisplay((GameUid) this.uid);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -117,7 +117,7 @@ namespace SteamEngine.RemoteConsole {
 		int uid;
 
 		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.EnableCommandLineOnDisplay(this.uid);
+			MainClass.mainForm.EnableCommandLineOnDisplay((GameUid) this.uid);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -131,7 +131,7 @@ namespace SteamEngine.RemoteConsole {
 		string str;
 
 		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.Write(this.uid, this.str);
+			MainClass.mainForm.Write((GameUid) this.uid, this.str);
 		}
 
 		protected override ReadPacketResult Read() {
@@ -146,7 +146,7 @@ namespace SteamEngine.RemoteConsole {
 		string str;
 
 		protected override void HandleInUIThread(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			MainClass.mainForm.WriteLine(this.uid, this.str);
+			MainClass.mainForm.WriteLine((GameUid) this.uid, this.str);
 		}
 
 		protected override ReadPacketResult Read() {

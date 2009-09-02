@@ -99,7 +99,7 @@ namespace SteamEngine.LScript {
 				using (StringReader reader = new StringReader(script)) {
 					snippetRunner.code = LScriptMain.Compile(snippetRunner, reader, line);
 				}
-				object retVal = snippetRunner.code.Run(new ScriptVars(null, self, snippetRunner.registerNames.Count));
+				object retVal = snippetRunner.code.Run(new ScriptVars(null, self, snippetRunner.LocalVarsCount));
 				snippetRunner.lastRunSuccesful = true;
 				return retVal;
 			} catch (ParserLogException ple) {

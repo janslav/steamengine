@@ -186,7 +186,6 @@ namespace SteamEngine.AuxiliaryServer {
 			System.Diagnostics.Process.Start(path);
 		}
 
-
 		public void SvnUpdate() {
 			GameServer sphere = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (sphere != null) {
@@ -209,7 +208,6 @@ namespace SteamEngine.AuxiliaryServer {
 				VersionControl.SvnCleanUpProject(this.RamdiscScriptsPath);
 			}
 		}
-
 
 		private void StartExitlaterScheduler() {
 			if (this.exitLaterParam >= 0) {

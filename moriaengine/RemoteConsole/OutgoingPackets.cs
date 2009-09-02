@@ -68,8 +68,8 @@ namespace SteamEngine.RemoteConsole {
 		private int id;
 		private string command;
 
-		public void Prepare(int id, string command) {
-			this.id = id;
+		public void Prepare(GameUid id, string command) {
+			this.id = (int) id;
 			this.command = command;
 		}
 

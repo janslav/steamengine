@@ -17,7 +17,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 
 		private bool startupFinished;
 
-		static GameUID uids = GameUID.FirstSEGameServer;
+		static GameUid uids = GameUid.FirstSEGameServer;
 
 		public NamedPipeConnection<SEGameServerClient> Conn {
 			get {
@@ -69,7 +69,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		public override string ToString() {
-			return "SEGameServerClient " + this.ServerUid;
+			return "SEGame 0x" + ((int) this.ServerUid).ToString("X");
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "settings")]

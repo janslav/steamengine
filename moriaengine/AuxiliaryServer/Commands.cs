@@ -41,11 +41,11 @@ namespace SteamEngine.AuxiliaryServer {
 					return;
 			}
 
-			state.WriteLine(GameUID.AuxServer, "Unknown command '" + cmd + "'.");
+			state.WriteLine(GameUid.AuxServer, "Unknown command '" + cmd + "'.");
 		}
 
 		private static void DisplayHelp(ConsoleServer.ConsoleClient state) {
-			state.WriteLine(GameUID.AuxServer, "Available commands:"
+			state.WriteLine(GameUid.AuxServer, "Available commands:"
 				+ "restart" + Environment.NewLine
 				+ "svnupdate" + Environment.NewLine
 				+ "svncleanup" + Environment.NewLine
@@ -69,7 +69,7 @@ namespace SteamEngine.AuxiliaryServer {
 				} catch { }
 			}
 
-			state.WriteLine(GameUID.AuxServer, message.ToString());
+			state.WriteLine(GameUid.AuxServer, message.ToString());
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.Commands+NantProjectReStarter")]

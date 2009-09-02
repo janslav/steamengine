@@ -20,7 +20,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using SteamEngine;
@@ -32,7 +32,7 @@ namespace SteamEngine.LScript {
 		internal string filename = "<default>";
 		internal int line;
 		internal OpNode code;
-		internal Hashtable registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
+		private Dictionary<string, int> localsNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 		
 		//internal OpNode nodeToReturn;
 
@@ -56,20 +56,31 @@ namespace SteamEngine.LScript {
 		}
 
 		void IOpNodeHolder.Replace(OpNode oldNode, OpNode newNode) {
-			if (code == oldNode) {
-				code = newNode;
+			if (this.code == oldNode) {
+				this.code = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
-		internal int GetRegisterIndex(string name) {
-			if (!registerNames.ContainsKey(name)) {
-				registerNames[name] = registerNames.Count;
+		internal int GetLocalVarIndex(string name) {
+			int index;
+			if (!this.localsNames.TryGetValue(name, out index)) {
+				index = localsNames.Count;
+				this.localsNames[name] = index;
 			}
-			return (int) registerNames[name];
+			return index;
 		}
 
+		internal bool ContainsLocalVarName(string name) {
+			return this.localsNames.ContainsKey(name);
+		}
+
+		internal int LocalVarsCount {
+			get {
+				return this.localsNames.Count;
+			}
+		}
 
 		internal bool containsRandom;
 		public bool ContainsRandomExpression {
@@ -79,16 +90,16 @@ namespace SteamEngine.LScript {
 		}
 
 		internal void Compile(TriggerSection input) {
-			filename = input.Filename;
-			line = input.StartLine;
+			this.filename = input.Filename;
+			this.line = input.StartLine;
 			//if (registerNames == null) {//else it got already created by the constructor
 			//	registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
 			//}
 			//Console.WriteLine("compiling text "+input.code);
 			using (StringReader reader = new StringReader(input.Code.ToString())) {
-				code = LScriptMain.TryCompile(this, reader, input.StartLine);
+				this.code = LScriptMain.TryCompile(this, reader, input.StartLine);
 			}
-			this.unloaded = (code == null);
+			this.unloaded = (this.code == null);
 			//Logger.WriteDebug("the code is: "+code);
 		}
 
@@ -98,8 +109,8 @@ namespace SteamEngine.LScript {
 			}
 			this.lastRunSuccesful = false;
 			try {
-				ScriptVars sv = new ScriptVars(sa, self, registerNames.Count);
-				object retVal = code.Run(sv);
+				ScriptVars sv = new ScriptVars(sa, self, this.localsNames.Count);
+				object retVal = this.code.Run(sv);
 				this.lastRunSuccesful = true;
 				if (sv.returned) {
 					return retVal;
@@ -113,12 +124,12 @@ namespace SteamEngine.LScript {
 		}
 
 		protected sealed override void Error(Exception e) {
-			Logger.WriteError(filename, line, e);
+			Logger.WriteError(this.filename, this.line, e);
 		}
 
 		public void Unload() {
-			code = null;
-			registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
+			this.code = null;
+			this.localsNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 			this.unloaded = true;
 		}
 
@@ -130,7 +141,7 @@ namespace SteamEngine.LScript {
 
 		public sealed override string Description {
 			get {
-				return filename + "(L" + line + ")";
+				return this.filename + "(L" + this.line + ")";
 			}
 		}
 
