@@ -13,7 +13,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SphereServers {
 	public class SphereServerClient : GameServer {
-		static GameUID uids = GameUID.LastSphereServer;
+		static GameUid uids = GameUid.LastSphereServer;
 
 		private readonly SphereServerConnection conn;
 		private SphereServerSetup setup;
@@ -71,7 +71,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		public override string ToString() {
-			return "SphereServerClient '" + this.setup.Name + "'";
+			return "Sphere 0x" + ((int) this.ServerUid).ToString("X");
 		}
 
 		internal void On_LoginSequenceFinished(LoginResult result) {
@@ -230,10 +230,6 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		#endregion authentising console
 
-		internal void ExitLater(TimeSpan timeSpan) {
-			throw new Exception("The method or operation is not implemented.");
-		}
-
 		internal void On_ReceievedLine(string line) {
 			line = line.Trim();
 			if (!string.IsNullOrEmpty(line)) {
@@ -270,6 +266,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					}
 				}
 			}
+		}
+
+		internal void ExitLater(TimeSpan timeSpan) {
+			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 }

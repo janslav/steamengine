@@ -60,7 +60,7 @@ namespace SteamEngine.Common {
 
 		public void WriteToFile() {
 			using (StreamWriter writer = new StreamWriter(this.filename)) {
-				foreach (IniFileSection section in allSections) {
+				foreach (IIniFilePart section in allSections) {
 					section.WriteOut(writer);
 				}
 			}
@@ -217,11 +217,16 @@ namespace SteamEngine.Common {
 
 		public IniFileSection(string name, string comment)
 			: base(comment, true, null) {
+
 			this.name = name;
 		}
 
 		public string Name {
-			get { return name; }
+			get { return this.name; }
+		}
+
+		public ICollection<IniFileValueLine> Lines {
+			get { return this.props.Values; }
 		}
 
 		internal void SetParsedValue(IniFileValueLine valueLine) {
@@ -292,7 +297,7 @@ namespace SteamEngine.Common {
 			this.props.Remove(valueName);
 		}
 
-		public void WriteOut(TextWriter stream) {
+		void IIniFilePart.WriteOut(TextWriter stream) {
 			this.commentAbove.WriteOut(stream);
 			stream.Write("[");
 			stream.Write(this.name);
@@ -305,7 +310,7 @@ namespace SteamEngine.Common {
 		}
 	}
 
-	internal class IniFileValueLine : CommentedIniFilePart, IIniFilePart {
+	public class IniFileValueLine : CommentedIniFilePart, IIniFilePart {
 		internal string name;
 		internal string valueString;//name=value
 
@@ -321,6 +326,10 @@ namespace SteamEngine.Common {
 			this.name = name;
 			this.valueString = valueString;
 			//this.valueSet = false;
+		}
+
+		public string Name {
+			get { return this.name; }
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "valueString")]
@@ -341,7 +350,7 @@ namespace SteamEngine.Common {
 			return ConvertTools.ConvertTo<T>(value);
 		}
 
-		public void WriteOut(TextWriter stream) {
+		void IIniFilePart.WriteOut(TextWriter stream) {
 			this.commentAbove.WriteOut(stream);
 			stream.Write(this.name);
 			stream.Write(" = ");

@@ -46,7 +46,7 @@ namespace SteamEngine.LScript {
 			Production headProd = GetHeaderCode(mainProd.GetChildAt(1));//FOREACH_HEADER_CODE or FOREACH_HEADER_IN_PARENS
 			string localName = GetLocalName(headProd.GetChildAt(0));
 			constructed.localName = localName;
-			constructed.localIndex = constructed.ParentScriptHolder.GetRegisterIndex(localName);
+			constructed.localIndex = constructed.ParentScriptHolder.GetLocalVarIndex(localName);
 			constructed.enumerableNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2), true);
 			if (mainProd.GetChildCount() == 6) {//has the Script node inside?
 				constructed.blockNode = LScriptMain.CompileNode(constructed, mainProd.GetChildAt(3), true);

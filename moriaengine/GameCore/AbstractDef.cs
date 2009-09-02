@@ -33,7 +33,7 @@ namespace SteamEngine {
 		private static Dictionary<string, Type> defTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		//string-Type pairs  ("ItemDef" - class ItemDef)
 
-		internal readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase);
+		internal readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase); //not dictionary because keys are both strings and tagkeys
 		private readonly string filename;
 		private readonly int headerLine;
 		private string altdefname;
@@ -116,12 +116,12 @@ namespace SteamEngine {
 			FieldValue fieldValue;
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
-				TagKey td = TagKey.Get(tagName);
-				fieldValue = (FieldValue) fieldValues[td];
+				TagKey tk = TagKey.Get(tagName);
+				fieldValue = (FieldValue) fieldValues[tk];
 				if (fieldValue == null) {
 					tagName = "tag." + tagName;
 					fieldValue = new FieldValue(tagName, FieldValueType.Typeless, null, filename, line, args);
-					fieldValues[td] = fieldValue;
+					fieldValues[tk] = fieldValue;
 					fieldValues[tagName] = fieldValue;
 				} else {
 					fieldValue.SetFromScripts(filename, line, args);
@@ -202,10 +202,10 @@ namespace SteamEngine {
 				Match m = TagHolder.tagRE.Match(fieldName);
 				if (m.Success) {	//If the name begins with 'tag.'
 					string tagName = m.Groups["name"].Value;
-					TagKey td = TagKey.Get(tagName);
+					TagKey tk = TagKey.Get(tagName);
 					tagName = "tag." + tagName;
 					fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
-					fieldValues[td] = fv;
+					fieldValues[tk] = fv;
 					fieldValues[tagName] = fv;
 				}
 			}
@@ -416,8 +416,8 @@ namespace SteamEngine {
 		//	getterDelegates.Add(deleg);
 		//}
 
-		public object GetTag(TagKey td) {
-			FieldValue fv = (FieldValue) fieldValues[td];
+		public object GetTag(TagKey tk) {
+			FieldValue fv = (FieldValue) fieldValues[tk];
 			if (fv != null) {
 				return fv.CurrentValue;
 			} else {
@@ -436,12 +436,12 @@ namespace SteamEngine {
 			fv.CurrentValue = value;
 		}
 
-		public bool HasTag(TagKey td) {
-			return (fieldValues.ContainsKey(td));
+		public bool HasTag(TagKey tk) {
+			return (fieldValues.ContainsKey(tk));
 		}
 
-		public void RemoveTag(TagKey td) {
-			FieldValue fv = (FieldValue) fieldValues[td];
+		public void RemoveTag(TagKey tk) {
+			FieldValue fv = (FieldValue) fieldValues[tk];
 			if (fv != null) {
 				fv.CurrentValue = null;
 			}

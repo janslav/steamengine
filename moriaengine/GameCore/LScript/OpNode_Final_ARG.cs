@@ -30,7 +30,7 @@ namespace SteamEngine.LScript {
 			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
 			this.name = name;
-			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetLocalVarIndex(name);
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
@@ -70,7 +70,7 @@ namespace SteamEngine.LScript {
 		internal OpNode_GetArg(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetLocalVarIndex(name);
 			this.name = name;
 		}
 
@@ -95,7 +95,7 @@ namespace SteamEngine.LScript {
 		internal OpNode_ArgExists(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetLocalVarIndex(name);
 			this.name = name;
 		}
 
@@ -120,7 +120,7 @@ namespace SteamEngine.LScript {
 		internal OpNode_RemoveArg(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.registerIndex = this.ParentScriptHolder.GetRegisterIndex(name);
+			this.registerIndex = this.ParentScriptHolder.GetLocalVarIndex(name);
 			this.name = name;
 		}
 

@@ -292,14 +292,14 @@ namespace SteamEngine.LScript {
 				//this exception being thrown doesnt really mean something is wrong. 
 				//It may be also harmlessly caught by superior ExpressionChain. but if there is no such present, it becomes really an error
 			}
+
 			//arg/local
 			if (this.args.Length == 0) {
-				if (this.ParentScriptHolder.registerNames.ContainsKey(this.name)) {
+				if (this.ParentScriptHolder.ContainsLocalVarName(this.name)) {
 					finalOpNode = new OpNode_GetArg(this.parent, this.filename, this.line, this.column, this.OrigNode, this.name);
 					goto runit;
 				}
 			}
-
 
 			resolver = MemberResolver.GetInstance(
 				vars, this.parent, this.name, this.args, this.line, this.column, this.filename);

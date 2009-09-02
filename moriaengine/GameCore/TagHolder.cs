@@ -36,10 +36,10 @@ namespace SteamEngine {
 	}
 
 	public interface ITagHolder {
-		object GetTag(TagKey td);
+		object GetTag(TagKey tk);
 		void SetTag(TagKey tk, object value);
-		bool HasTag(TagKey td);
-		void RemoveTag(TagKey td);
+		bool HasTag(TagKey tk);
+		void RemoveTag(TagKey tk);
 		void ClearTags();
 	}
 
@@ -226,23 +226,23 @@ namespace SteamEngine {
 			tags[tk] = value;
 		}
 
-		public object GetTag(TagKey td) {
+		public object GetTag(TagKey tk) {
 			if (tags == null) {
 				return null;
 			}
-			return tags[td];
+			return tags[tk];
 		}
 
-		public bool HasTag(TagKey td) {
+		public bool HasTag(TagKey tk) {
 			if (tags == null) {
 				return false;
 			}
-			return (tags.ContainsKey(td));
+			return (tags.ContainsKey(tk));
 		}
 
-		public void RemoveTag(TagKey td) {
+		public void RemoveTag(TagKey tk) {
 			if (tags == null) return;
-			tags.Remove(td);
+			tags.Remove(tk);
 		}
 
 		public void ClearTags() {
@@ -379,8 +379,8 @@ namespace SteamEngine {
 			Match m = tagRE.Match(valueName);
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
-				TagKey td = TagKey.Get(tagName);
-				ObjectSaver.Load(valueString, DelayedLoad_Tag, filename, line, td);
+				TagKey tk = TagKey.Get(tagName);
+				ObjectSaver.Load(valueString, DelayedLoad_Tag, filename, line, tk);
 				return;
 			}
 			m = timerKeyRE.Match(valueName);

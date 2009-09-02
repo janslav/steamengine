@@ -17,7 +17,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 
 		static SortedList<int, GameServer> gameServersByIniID = new SortedList<int, GameServer>();
-		static SortedList<GameUID, GameServer> gameServersByUid = new SortedList<GameUID, GameServer>();
+		static SortedList<GameUid, GameServer> gameServersByUid = new SortedList<GameUid, GameServer>();
 
 
 		public static ICollection<GameServer> AllRunningGameServers {
@@ -38,7 +38,7 @@ namespace SteamEngine.AuxiliaryServer {
 			return gsc;
 		}
 
-		public static GameServer GetInstanceByUid(GameUID uid) {
+		public static GameServer GetInstanceByUid(GameUid uid) {
 			GameServer gsc;
 			gameServersByUid.TryGetValue(uid, out gsc);
 			return gsc;

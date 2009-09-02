@@ -5,15 +5,17 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using SteamEngine.Common;
 
 namespace SteamEngine.RemoteConsole {
 	public partial class CommandLineDisplay : UserControl {
-		int id;
+		GameUid id;
 
-		public CommandLineDisplay(string name, int id) {
+		public CommandLineDisplay(string name, GameUid id) {
 			this.id = id;
 			InitializeComponent();
 			this.txtDisplay.DefaultTitle = name;
+			this.InitButtons();
 		}
 
 		public void EnableComandLine() {
@@ -41,28 +43,39 @@ namespace SteamEngine.RemoteConsole {
 			}
 		}
 
-		public void RemoveGameServerButtons() {
-			this.pnlGameServerButtons.Dispose();
+		private const GameUid uidSplit = (GameUid) ((GameUid.LastSphereServer - GameUid.FirstSEGameServer) / 2);
+
+		private void InitButtons() {
+			if (this.id == GameUid.AuxServer) {
+				this.AddButtonsFromIni("AuxButtons");
+			} else  if ((this.id >= GameUid.FirstSEGameServer) && (this.id < uidSplit)) {
+				this.AddButtonsFromIni("SEButtons");
+			} else if ((this.id <= GameUid.LastSphereServer) && (this.id > uidSplit)) {
+				this.AddButtonsFromIni("SphereButtons");
+			} else {
+				this.pnlGameServerButtons.Dispose();
+			}
 		}
 
-		private void btnResync_Click(object sender, EventArgs e) {
-			ConsoleClient.SendCommand(this.id, "resync");
+		private void AddButtonsFromIni(string iniSectionName) {
+			IniFile ini = new IniFile(Settings.iniFileName);
+			IniFileSection section = ini.GetNewOrParsedSection(iniSectionName);
+			foreach (IniFileValueLine line in section.Lines) {
+				Button button = new Button();
+				button.Text = line.Name;
+				button.Tag = line.GetValue<string>();
+				button.Click += new EventHandler(this.btnCommand_Click);
+				this.pnlGameServerButtons.Controls.Add(button);
+			}
+			ini.WriteToFile();
 		}
 
-		private void btnRecompile_Click(object sender, EventArgs e) {
-			ConsoleClient.SendCommand(this.id, "recompile");
-		}
 
-		private void btnExit_Click(object sender, EventArgs e) {
-			ConsoleClient.SendCommand(this.id, "exit");
-		}
+		private void btnCommand_Click(object sender, EventArgs e) {
+			Button button = (Button) sender;
+			string cmd = (string) button.Tag;
 
-		private void btnSave_Click(object sender, EventArgs e) {
-			ConsoleClient.SendCommand(this.id, "save");
-		}
-
-		private void btnInfo_Click(object sender, EventArgs e) {
-			ConsoleClient.SendCommand(this.id, "information");
+			ConsoleClient.SendCommand(this.id, cmd);
 		}
 	}
 }

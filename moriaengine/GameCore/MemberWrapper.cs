@@ -20,7 +20,7 @@ using System.Text;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace SteamEngine {
@@ -33,13 +33,13 @@ namespace SteamEngine {
 
 	public static class MemberWrapper {
 		internal static ModuleBuilder module = AcquireModule(); //this is needed by the typebuilders
-		private static Hashtable methodWrappers = new Hashtable();
-		private static Hashtable constructorWrappers = new Hashtable();
-		private static Hashtable fieldWrappers = new Hashtable();
+		private static Dictionary<MethodInfo, MethodWrapper> methodWrappers = new Dictionary<MethodInfo, MethodWrapper>();
+		private static Dictionary<ConstructorInfo, ConstructorWrapper> constructorWrappers = new Dictionary<ConstructorInfo, ConstructorWrapper>();
+		private static Dictionary<FieldInfo, FieldWrapper> fieldWrappers = new Dictionary<FieldInfo, FieldWrapper>();
 		//private static Hashtable propertyWrappers;
 
 		private static Type[] singleObjTypeArr = new Type[] { typeof(object) };
-		private static Hashtable convertMethods = new Hashtable();
+		private static Dictionary<Type, MethodInfo> convertMethods = new Dictionary<Type, MethodInfo>();
 		private static int count;
 
 		static ModuleBuilder AcquireModule() {			
@@ -57,8 +57,8 @@ namespace SteamEngine {
 			//			return method;
 			//#else
 			method = GetMIBaseDefinition(method);//!! keeping the "virtuality"
-			MethodWrapper wrapper = methodWrappers[method] as MethodWrapper;
-			if (wrapper != null) {
+			MethodWrapper wrapper;
+			if (methodWrappers.TryGetValue(method, out wrapper)) {
 				return wrapper;
 			}
 			wrapper = MethodWrapper.SpitAndInstantiateWrapperFor(method);
@@ -88,8 +88,8 @@ namespace SteamEngine {
 			//#if !OPTIMIZED
 			//			return constructor;
 			//#else
-			ConstructorWrapper wrapper = constructorWrappers[constructor] as ConstructorWrapper;
-			if (wrapper != null) {
+			ConstructorWrapper wrapper;
+			if (constructorWrappers.TryGetValue(constructor, out wrapper)) {
 				return wrapper;
 			}
 			wrapper = ConstructorWrapper.SpitAndInstantiateWrapperFor(constructor);
@@ -104,8 +104,10 @@ namespace SteamEngine {
 			//#if !OPTIMIZED
 			//			return field;
 			//#else
-			FieldWrapper wrapper = fieldWrappers[field] as FieldWrapper;
-			if (wrapper != null) {
+
+
+			FieldWrapper wrapper;
+			if (fieldWrappers.TryGetValue(field, out wrapper)) {
 				return wrapper;
 			}
 			wrapper = FieldWrapper.SpitAndInstantiateWrapperFor(field);
@@ -115,8 +117,8 @@ namespace SteamEngine {
 		}
 
 		internal static MethodInfo GetConvertMethod(Type t) {
-			MethodInfo mi = (MethodInfo) convertMethods[t];
-			if (mi == null) {
+			MethodInfo mi;
+			if (!convertMethods.TryGetValue(t, out mi)) {
 				string methodName = "To" + t.Name;
 				mi = typeof(Convert).GetMethod(methodName, singleObjTypeArr);
 				if (mi != null) {
