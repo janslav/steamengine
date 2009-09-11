@@ -511,6 +511,12 @@ namespace SteamEngine.CompiledScripts {
 
 			SpellFlag flags = this.Flags;
 			IPoint3D target = mageryArgs.Target1;
+
+			IPoint3D targetTopPoint = target.TopPoint;
+			Point4D targetTop = targetTopPoint as Point4D; //sound is done after the effect, whereas the object could be already deleted. So we use this to preserve the position
+			if (targetTop == null) {
+				targetTop = new Point4D(targetTopPoint, caster.M);
+			}
 			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
 			SpellEffectArgs sea = null;
 
@@ -530,7 +536,7 @@ namespace SteamEngine.CompiledScripts {
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectChar(targetAsChar, sea);
 					}
-					this.MakeSound(targetAsChar);
+					this.MakeSound(targetTop);
 				}
 			} else {
 				Item targetAsItem = target as Item;
@@ -541,7 +547,7 @@ namespace SteamEngine.CompiledScripts {
 						if (this.CheckSpellPowerWithMessage(sea)) {
 							this.Trigger_EffectItem(targetAsItem, sea);
 						}
-						this.MakeSound(targetAsItem);
+						this.MakeSound(targetTop);
 					}
 				}
 			}
@@ -550,12 +556,11 @@ namespace SteamEngine.CompiledScripts {
 					(((flags & SpellFlag.CanEffectStatic) == SpellFlag.CanEffectStatic) && (target is AbstractInternalItem))) {
 					singleEffectDone = true;
 
-					IPoint3D targetTop = target.TopPoint;
 					this.GetSpellPowerAgainstNonChar(caster, target, targetTop, sourceType, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
 						this.Trigger_EffectGround(targetTop, sea);
 					}
-					this.MakeSound(new Point4D(targetTop, caster.M));
+					this.MakeSound(targetTop);
 				}
 			}
 
@@ -568,9 +573,10 @@ namespace SteamEngine.CompiledScripts {
 				bool canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
 				if (canEffectItem || canEffectChar) {
 					foreach (Thing t in caster.GetMap().GetThingsInRange(target.X, target.Y, this.EffectRange)) {
-						if (t == target) {
+						if (t == target) { //already done
 							continue;
 						}
+						targetTop = new Point4D(t.TopPoint);
 						Character ch = t as Character;
 						if (ch != null) {
 							if (canEffectChar) {
@@ -589,7 +595,7 @@ namespace SteamEngine.CompiledScripts {
 									this.Trigger_EffectChar(ch, sea);
 									if (!singleEffectDone) {
 										singleEffectDone = true;
-										this.MakeSound(ch);
+										this.MakeSound(targetTop);
 									}
 								}
 							}
@@ -601,7 +607,7 @@ namespace SteamEngine.CompiledScripts {
 									this.Trigger_EffectItem(i, sea);
 									if (!singleEffectDone) {
 										singleEffectDone = true;
-										this.MakeSound(i);
+										this.MakeSound(targetTop);
 									}
 								}
 							}
@@ -809,7 +815,7 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
 		}
 
-		public void MakeSound(IPoint4D place) {
+		public void MakeSound(Point4D place) {
 			int sound = (int) this.Sound;
 			if (sound != -1) {
 				Networking.PacketSequences.SendSound(place, sound, Globals.MaxUpdateRange);
