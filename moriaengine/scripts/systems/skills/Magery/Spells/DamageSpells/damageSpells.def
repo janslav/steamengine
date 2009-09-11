@@ -177,7 +177,7 @@ SCROLLITEM=i_scroll_EARTHQUAKE
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell | SpellFlag.AlwaysTargetSelf
 //EFFECTID=0
 EFFECT=0,50
-DURATION=30
+//DURATION=30
 MANAUSE=50
 Requirements=80.0 Magery
 // NOTE: does Earthquake use a duration?? IF so, no more then 30secs. This spell is more like an irradiating wave thus should have a set distance/time it can be effective
