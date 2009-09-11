@@ -707,6 +707,9 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\RessurectionSpells\ResurrectionSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\RessurectionSpells\ResurrectionSpellDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
       <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
     </Compile>
@@ -1047,6 +1050,7 @@
     <None Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct">
       <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct</Link>
     </None>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\healingSpells.def">
