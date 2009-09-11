@@ -708,7 +708,7 @@
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpellDef.cs">
-      <Link>systems\skills\Magery\Spells\RessurrectionSpell\ResurrectionSpellDef.cs</Link>
+      <Link>systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpellDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
       <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
@@ -1069,7 +1069,7 @@
       <Link>systems\skills\Magery\Spells\protection.def</Link>
     </Content>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpell.def">
-      <Link>systems\skills\Magery\Spells\RessurrectionSpell\ResurrectionSpell.def</Link>
+      <Link>systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpell.def</Link>
     </Content>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def">
       <Link>systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def</Link>
