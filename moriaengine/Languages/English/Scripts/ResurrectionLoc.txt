@@ -1,0 +1,4 @@
+ResurrectionNotBody             = Toto není tělo!
+ResurrectionNotPlayersBody      = Toto není tělo hráče.
+ResurrectionPlayerIsntDead      = Hráč toho těla není mrtvý.
+ResurrectionPlayerCantReachTheBody= Duch nedosáhne na své tělo.
