@@ -707,8 +707,8 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\RessurectionSpells\ResurrectionSpellDef.cs">
-      <Link>systems\skills\Magery\Spells\RessurectionSpells\ResurrectionSpellDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\RessurectionSpell\ResurrectionSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\RessurectionSpell\ResurrectionSpellDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
       <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
@@ -1033,7 +1033,7 @@
       <Link>systems\PlayerCreation.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
-      <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
+      <Link>systems\skills\Magery\nightSight.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct</Link>
@@ -1053,6 +1053,9 @@
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpells\damageSpells.def">
+      <Link>systems\skills\Magery\Spells\DamageSpells\damageSpells.def</Link>
+    </Content>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\healingSpells.def">
       <Link>systems\skills\Magery\Spells\HealingSpells\healingSpells.def</Link>
     </Content>
@@ -1064,6 +1067,9 @@
     </Content>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\protection.def">
       <Link>systems\skills\Magery\Spells\protection.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\RessurectionSpell\ResurrectionSpell.def">
+      <Link>systems\skills\Magery\Spells\RessurectionSpell\ResurrectionSpell.def</Link>
     </Content>
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def">
       <Link>systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def</Link>

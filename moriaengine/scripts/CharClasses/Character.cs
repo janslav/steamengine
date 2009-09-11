@@ -1071,36 +1071,51 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void Resurrect() {
+        [Summary("Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo")]
+        public void Resurrect() {
 			if (this.Flag_Dead) {
-				CharSyncQueue.AboutToChangeHitpoints(this);
-				this.Hits = 1;
-				this.Model = this.OModel;
-				this.ReleaseOModelTag();
-				this.Color = this.OColor;
-				this.ReleaseOColorTag();
-				this.Flag_Insubst = false;
-				this.Flag_Dead = false;
-
 				Corpse c = null;
 				foreach (Thing nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
 					c = nearbyThing as Corpse;
-					if (c.Owner == this) {
-						break;
-					} else {
-						c = null;
-					}
+                    if (c != null) {
+                        if (c.Owner == this) {
+                            break;
+                        } else {
+                            c = null;
+                        }
+                    }
 				}
 				if (c != null) {
 					c.ReturnStuffToChar(this);
 				}
-
-				GameState state = this.GameState;
-				if (state != null) {
-					PreparedPacketGroups.SendResurrectMessage(state.Conn);
-				}
+                this.ResurrectSettings();
 			}
 		}
+
+        [Summary("Resne a pokud je telo tak i lootne telo.")]
+        [Remark("Vzajemna pozice mezi telem a mrtve postavy neni kontrolovana")]
+        [Param(0, "Telo jehoz majitel je this. Muze byt null.")]
+        public void Resurrect(Corpse c) {
+            if (c != null && !c.IsDeleted) {
+                c.ReturnStuffToChar(this);
+            }
+            this.ResurrectSettings();
+        }
+
+        private void ResurrectSettings() {
+            this.Hits = 1;
+            this.Model = this.OModel;
+            this.ReleaseOModelTag();
+            this.Color = this.OColor;
+            this.ReleaseOColorTag();
+            this.Flag_Insubst = false;
+            this.Flag_Dead = false;
+
+            GameState state = this.GameState;
+            if (state != null) {
+                PreparedPacketGroups.SendResurrectMessage(state.Conn);
+            }
+        }
 
 		private static TagKey oColorTK = TagKey.Get("_ocolor_");
 		public int OColor {
