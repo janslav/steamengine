@@ -1032,6 +1032,9 @@
     <None Include="..\..\scripts\systems\PlayerCreation.scp">
       <Link>systems\PlayerCreation.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\skills\Healing\healing.scp">
+      <Link>systems\skills\Healing\healing.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
       <Link>systems\skills\Magery\nightSight.scp</Link>
     </None>
