@@ -356,42 +356,63 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Messaging
 
+        #region Add
 		public void Add(int model) {
-			this.Add(ThingDef.Get(model));
+			this.Add(ThingDef.Get(model),1);
 		}
 
 		public void Add(ThingDef addedDef) {
-			GameState state = this.GameState;
-			if (state != null) {
-				if (addedDef != null) {
-					string name = addedDef.Name;
-					this.SysMessage("Kam chceš umístit '" + name + "' ?");
-
-					ItemDef idef = addedDef as ItemDef;
-					if ((idef != null) && (idef.MultiData != null)) {
-						state.TargetForMultis(idef.Model, this.Add_OnTargon, null, addedDef);
-					} else {
-						state.Target(true, this.Add_OnTargon, null, addedDef);
-					}
-				} else {
-					this.SysMessage("Nenalezen odpovidajici ThingDef.");
-				}
-			}
+            this.Add(addedDef, 1);
 		}
 
+        public void Add(int model, int amount) {
+            this.Add(ThingDef.Get(model),amount);
+        }
+
+        public void Add(ThingDef addedDef, int amount) {
+            GameState state = this.GameState;
+            if (state != null) {
+                if (addedDef != null) {
+                    string name = addedDef.Name;
+                    this.SysMessage("Kam chceš umístit '" + name + "' ?");
+
+                    ItemDef idef = addedDef as ItemDef;
+                    AddHelper addedH = new AddHelper(addedDef, amount);
+                    if ((idef != null) && (idef.MultiData != null)) {
+                        state.TargetForMultis(idef.Model, this.Add_OnTargon, null, addedH);
+                    } else {
+                        state.Target(true, this.Add_OnTargon, null, addedH);
+                    }
+                } else {
+                    this.SysMessage("Nenalezen odpovidajici ThingDef.");
+                }
+            }
+        }
+
+        private class AddHelper {
+            internal ThingDef thing;
+            internal int amount;
+            public AddHelper(ThingDef thing, int amount) {
+                this.thing = thing;
+                this.amount = amount;
+            }
+        }
+
 		private void Add_OnTargon(GameState state, IPoint3D getback, object parameter) {
-			ThingDef addedDef = parameter as ThingDef;
-			if (addedDef == null) {
-				return;
-			}
+
+            AddHelper addedH = (AddHelper)parameter;
 			Item targettedItem = getback as Item;
 			if (targettedItem != null) {
 				getback = targettedItem.TopObj();
 			}
-			addedDef.Create(getback.X, getback.Y, getback.Z, this.M);
-		}
-
-		[Summary("The crafting main method. Tries to create the given Item(Def) in a requested quantity")]
+			Thing t = addedH.thing.Create(getback.X, getback.Y, getback.Z, this.M);
+            Item i = t as Item;
+            if (i != null) {
+                i.Amount = addedH.amount;
+            }
+        }
+        #endregion Add
+        [Summary("The crafting main method. Tries to create the given Item(Def) in a requested quantity")]
 		public void Make(ItemDef what, int howMuch) {
 			SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
 			selectionQueue.Enqueue(new CraftingSelection(what, howMuch));
