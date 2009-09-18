@@ -17,6 +17,8 @@
 
 using System;
 using SteamEngine;
+using SteamEngine.CompiledScripts;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -131,7 +133,16 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_sewing_kit : CompiledTriggerGroup {
-
+		public bool On_Dclick(Item self, Character dclicker) {
+			//try to open the craftmenu for tailoring - check possible bookmarked category
+			CraftmenuCategory lastCat = dclicker.GetTag(D_Craftmenu.tkCraftmenuLastposPrefix + (SkillDef.GetByDefname("Skill_Tailoring").Key));
+			if (lastCat != null) {
+				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(lastCat));
+			} else {
+				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
+			}
+			return false;
+		}
 	}
 
 	public class t_thread : CompiledTriggerGroup {

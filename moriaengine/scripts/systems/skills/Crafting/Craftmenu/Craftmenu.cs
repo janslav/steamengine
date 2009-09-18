@@ -509,21 +509,15 @@ namespace SteamEngine.CompiledScripts {
 		//put the given item into the category. if the item is a non-empty container, make it a subcategory
 		//and add its contents recursively
 		private void Encategorize(Item oneItm, CraftmenuCategory whereto) {
-			if (oneItm.IsContainer) {
-				if (oneItm.Count > 0) {//make it a subcategory
-						//use the container's name for the category name - it is up to user to name all containers properly..
-					CraftmenuCategory newSubcat = new CraftmenuCategory(oneItm.Name);
-					newSubcat.Parent = whereto;
-					whereto.Contents.Add(newSubcat);
-					foreach (Item inner in oneItm) {
-						Encategorize(inner, newSubcat);//proceed with every found item
-					}
-				} else {//empty container - it will be a single item...
-					CraftmenuItem newItem = new CraftmenuItem((ItemDef) oneItm.Def);//add the contained items
-					newItem.Parent = whereto;
-					whereto.Contents.Add(newItem);
+			if (oneItm.IsContainer && oneItm.Count > 0) {//make it a subcategory
+				//use the container's name for the category name - it is up to user to name all containers properly..
+				CraftmenuCategory newSubcat = new CraftmenuCategory(oneItm.Name);
+				newSubcat.Parent = whereto;
+				whereto.Contents.Add(newSubcat);
+				foreach (Item inner in oneItm) {
+					Encategorize(inner, newSubcat);//proceed with every found item
 				}
-			} else {//normal item
+			} else {//normal item or an empty container
 				CraftmenuItem newItem = new CraftmenuItem((ItemDef) oneItm.Def);//add the contained items
 				newItem.Parent = whereto;
 				whereto.Contents.Add(newItem);
@@ -536,13 +530,11 @@ namespace SteamEngine.CompiledScripts {
 			Encategorize(targetted, catToPut);
 
 			//reopen the dialog on the stored position
-			//check the stored last displayed category
-			CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(D_Craftmenu.tkCraftmenuLastpos);
-			if (prevCat != null) {
-				//not null means that the categroy was not deleted and can be accessed again
+			TagKey tgKey = TagKey.Get(D_Craftmenu.tkCraftmenuLastposPrefix + catToPut.CategorySkill.Key);
+			CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(tgKey);
+			if (prevCat != null) {//not null means that the categroy was not deleted and can be accessed again
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
-			} else {
-				//null means that it either not existed (the tag) or the categroy was deleted from the menu
+			} else {//null means that it either not existed (the tag) or the categroy was deleted from the menu
 				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
 			}
 			return false;

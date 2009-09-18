@@ -25,11 +25,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Craftmenu for the specified crafting skill")]
 	public class D_Craftmenu : CompiledGumpDef {
-		public static readonly TagKey tkCraftmenuLastpos = TagKey.Get("_cm_lastPosition_");
+		//public static readonly TagKey tkCraftmenuLastpos = TagKey.Get("_cm_lastPosition_");
+		public static readonly string tkCraftmenuLastposPrefix = "_cm_lastPosition_";
 		private static TagKey tkInputIds = TagKey.Get("_cm_input_ids_");
 		private static int width = 600;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			sendTo.SysMessage("Co chceš vyrobit?");
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
 
@@ -182,6 +184,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int btnNo = (int)gr.PressedButton;
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
+				TagKey tkKey;
 				switch (btnNo) {
 					case 0: //exit
 						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
@@ -202,7 +205,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //new items to add (target)
-						gi.Cont.SetTag(tkCraftmenuLastpos, cat);//remember the category
+						tkKey = TagKey.Get(tkCraftmenuLastposPrefix + cat.CategorySkill.Key);
+						gi.Cont.SetTag(tkKey, cat);//remember the category (one for every crafting skill)
 						((Player)gi.Cont).Target(SingletonScript<Targ_Craftmenu>.Instance, cat);
 						DialogStacking.ClearDialogStack(gi.Cont); //dont show any dialogs now
 						break;
@@ -223,13 +227,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 						break;
 					case 5: //openhere
-						gi.Cont.SetTag(tkCraftmenuLastpos, cat);
-						gi.Cont.SysMessage("Pozice výrobního menu nastavena na kategorii " + cat.FullName);
+						tkKey = TagKey.Get(tkCraftmenuLastposPrefix + cat.CategorySkill.Key);
+						gi.Cont.SetTag(tkKey, cat);
+						gi.Cont.SysMessage("Pozice výrobního menu pro skill " + cat.CategorySkill.Key + " nastavena na kategorii " + cat.FullName);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //stop opening here
-						gi.Cont.RemoveTag(tkCraftmenuLastpos);
-						gi.Cont.SysMessage("Nastavení poslední pozice výrobního menu zrušeno");
+						tkKey = TagKey.Get(tkCraftmenuLastposPrefix + cat.CategorySkill.Key);
+						gi.Cont.RemoveTag(tkKey);
+						gi.Cont.SysMessage("Nastavení poslední pozice výrobního menu pro skill "+cat.CategorySkill.Key+" zrušeno");
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 7: //go to settings page with this category
@@ -279,14 +285,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				"a parameter to display directly the particular skill Craftmenu")]
 		[SteamFunction]
 		public static void Craftmenu(Character self, ScriptArgs args) {
+			SkillDef sklDef;
 			if (args == null || args.Argv == null || args.Argv.Length == 0) {
-				//check the possibly stored last displayed category
-				CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(D_Craftmenu.tkCraftmenuLastpos);
-				if (prevCat != null) {
-					//not null means that the categroy was not deleted and can be accessed again
+				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
+			} else if ((sklDef = (SkillDef)SkillDef.GetByKey(args.Argv[0].ToString())) != null) { //check if the parameter was a skill name
+				TagKey tkKey = TagKey.Get(tkCraftmenuLastposPrefix + sklDef.Key);
+				CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(tkKey);
+				if (prevCat != null) {//some bookmark for this skill exist... use it
 					self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
-				} else {
-					//null means that it either not existed (the tag) or the categroy was deleted from the menu
+				} else {//default craftmenu opening
 					self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
 				}
 			} else {
