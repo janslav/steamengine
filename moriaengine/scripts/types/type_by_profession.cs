@@ -133,9 +133,22 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_sewing_kit : CompiledTriggerGroup {
+
+		private static TagKey tkLastCat;
+		public TagKey TkLastCat {
+			get {
+				if (tkLastCat == null) {
+					tkLastCat = TagKey.Get(D_Craftmenu.tkCraftmenuLastposPrefix + (SkillDef.GetByDefname("Skill_Tailoring").Key));
+				}
+				return tkLastCat;
+			}
+		}
+		
+
 		public bool On_Dclick(Item self, Character dclicker) {
 			//try to open the craftmenu for tailoring - check possible bookmarked category
-			CraftmenuCategory lastCat = dclicker.GetTag(D_Craftmenu.tkCraftmenuLastposPrefix + (SkillDef.GetByDefname("Skill_Tailoring").Key));
+			
+			CraftmenuCategory lastCat = (CraftmenuCategory) dclicker.GetTag(TkLastCat);
 			if (lastCat != null) {
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(lastCat));
 			} else {
