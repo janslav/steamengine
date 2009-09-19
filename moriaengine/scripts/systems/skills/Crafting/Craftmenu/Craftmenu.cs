@@ -530,11 +530,14 @@ namespace SteamEngine.CompiledScripts {
 			Encategorize(targetted, catToPut);
 
 			//reopen the dialog on the stored position
-			TagKey tgKey = TagKey.Get(D_Craftmenu.tkCraftmenuLastposPrefix + catToPut.CategorySkill.Key);
-			CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(tgKey);
-			if (prevCat != null) {//not null means that the categroy was not deleted and can be accessed again
+			Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(D_Craftmenu.TkLastCat);
+            CraftmenuCategory prevCat = null;
+            if (lastPosDict != null) {
+                prevCat = lastPosDict[catToPut.CategorySkill];
+            }
+			if (prevCat != null) {//not null means that the category was not deleted and can be accessed again
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
-			} else {//null means that it either not existed (the tag) or the categroy was deleted from the menu
+			} else {//null means that it either not existed (the tag) or the category was deleted from the menu
 				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
 			}
 			return false;
