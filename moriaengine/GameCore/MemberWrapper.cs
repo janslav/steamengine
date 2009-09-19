@@ -68,7 +68,7 @@ namespace SteamEngine {
 		}
 
 		//returns basedefinition beyond class hierarchy - it goes as far as interfaces
-		private static MethodInfo GetMIBaseDefinition(MethodInfo mi) {
+		public static MethodInfo GetMIBaseDefinition(MethodInfo mi) {
 			mi = mi.GetBaseDefinition();
 			Type declaringType = mi.DeclaringType;
 			Type[] ifaces = declaringType.GetInterfaces();
