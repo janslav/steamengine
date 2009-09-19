@@ -26,9 +26,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Craftmenu for the specified crafting skill")]
 	public class D_Craftmenu : CompiledGumpDef {
 		//public static readonly TagKey tkCraftmenuLastpos = TagKey.Get("_cm_lastPosition_");
-		public static readonly string tkCraftmenuLastposPrefix = "_cm_lastPosition_";
+		private const string tkCraftmenuLastposPrefix = "_cm_lastPosition_";
 		private static TagKey tkInputIds = TagKey.Get("_cm_input_ids_");
 		private static int width = 600;
+
+        private static TagKey tkLastCat;
+        public static TagKey TkLastCat {
+            get {
+                if (tkLastCat == null) {
+                    tkLastCat = TagKey.Get(D_Craftmenu.tkCraftmenuLastposPrefix);
+                }
+                return tkLastCat;
+            }
+        }
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			sendTo.SysMessage("Co chceš vyrobit?");
@@ -184,7 +194,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int btnNo = (int)gr.PressedButton;
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
-				TagKey tkKey;
+				Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict;
 				switch (btnNo) {
 					case 0: //exit
 						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
@@ -205,8 +215,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //new items to add (target)
-						tkKey = TagKey.Get(tkCraftmenuLastposPrefix + cat.CategorySkill.Key);
-						gi.Cont.SetTag(tkKey, cat);//remember the category (one for every crafting skill)
+                        lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
+                        if (lastPosDict == null) {
+                            lastPosDict = new Dictionary<CraftingSkillDef, CraftmenuCategory>();
+                            gi.Cont.SetTag(TkLastCat, lastPosDict);
+                        }
+                        lastPosDict[cat.CategorySkill] = cat; //store the category associated to this crafting skill
 						((Player)gi.Cont).Target(SingletonScript<Targ_Craftmenu>.Instance, cat);
 						DialogStacking.ClearDialogStack(gi.Cont); //dont show any dialogs now
 						break;
@@ -227,14 +241,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 						break;
 					case 5: //openhere
-						tkKey = TagKey.Get(tkCraftmenuLastposPrefix + cat.CategorySkill.Key);
-						gi.Cont.SetTag(tkKey, cat);
+						lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
+                        if (lastPosDict == null) {
+                            lastPosDict = new Dictionary<CraftingSkillDef, CraftmenuCategory>();
+                            gi.Cont.SetTag(TkLastCat, lastPosDict);						
+                        }
+                        lastPosDict[cat.CategorySkill] = cat; //store the category associated to one crafting skill
 						gi.Cont.SysMessage("Pozice výrobního menu pro skill " + cat.CategorySkill.Key + " nastavena na kategorii " + cat.FullName);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //stop opening here
-						tkKey = TagKey.Get(tkCraftmenuLastposPrefix + cat.CategorySkill.Key);
-						gi.Cont.RemoveTag(tkKey);
+                        lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
+                        if (lastPosDict != null) {
+                            lastPosDict.Remove(cat.CategorySkill);
+                            if (lastPosDict.Count == 0) {
+                                gi.Cont.RemoveTag(TkLastCat); //no more last positions left
+                            }
+                        }
 						gi.Cont.SysMessage("Nastavení poslední pozice výrobního menu pro skill "+cat.CategorySkill.Key+" zrušeno");
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
@@ -281,26 +304,51 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display the craftmenu categories dialog. You can use some of the crafting skills SkillName as " +
-				"a parameter to display directly the particular skill Craftmenu")]
-		[SteamFunction]
-		public static void Craftmenu(Character self, ScriptArgs args) {
-			SkillDef sklDef;
-			if (args == null || args.Argv == null || args.Argv.Length == 0) {
-				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
-			} else if ((sklDef = (SkillDef)SkillDef.GetByKey(args.Argv[0].ToString())) != null) { //check if the parameter was a skill name
-				TagKey tkKey = TagKey.Get(tkCraftmenuLastposPrefix + sklDef.Key);
-				CraftmenuCategory prevCat = (CraftmenuCategory) self.GetTag(tkKey);
-				if (prevCat != null) {//some bookmark for this skill exist... use it
-					self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
-				} else {//default craftmenu opening
-					self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
-				}
-			} else {
-				DialogArgs newArgs = new DialogArgs((CraftmenuCategory) args.Argv[0]);
-				self.Dialog(SingletonScript<D_Craftmenu>.Instance, newArgs);
-			}
-		}
+        [Summary("Display the craftmenu categories dialog. You can use some of the crafting skills SkillName as " +
+                "a parameter to display directly the particular skill Craftmenu")]
+        [SteamFunction]
+        public static void Craftmenu(Character self, ScriptArgs args) {
+            CraftingSkillDef sklDef;
+            string skillName;
+            int skillId;
+            if (args == null || args.Argv == null || args.Argv.Length == 0) {
+                Craftmenu(self);
+            } else if ((sklDef = args.Argv[0] as CraftingSkillDef) != null) { //check if the parameter was a skill name
+                Craftmenu(self, sklDef);
+            } else if ((skillName = args.Argv[0] as String) != null) {
+                Craftmenu(self, skillName);
+            } else if (ConvertTools.TryConvertToInt32(args.Argv[0], out skillId)) {
+                Craftmenu(self, (SkillName)skillId);
+            } 
+        }
+
+        public static void Craftmenu(Character self, CraftingSkillDef skill) {
+            TagKey tkKey = TagKey.Get(tkCraftmenuLastposPrefix);
+            Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(tkKey);
+            CraftmenuCategory prevCat = null;
+            if (lastPosDict != null && skill != null) {
+                prevCat = lastPosDict[skill];
+            }
+            if (prevCat != null) {//some bookmark for this skill exist... use it
+                self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
+            } else {//default craftmenu opening
+                self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
+            }
+        }
+
+        public static void Craftmenu(Character self, string skillName) {
+            CraftingSkillDef sklDef = (CraftingSkillDef)CraftingSkillDef.GetByKey(skillName);
+            Craftmenu(self, sklDef);
+        }
+
+        public static void Craftmenu(Character self, SkillName skillName) {
+            CraftingSkillDef sklDef = (CraftingSkillDef)CraftingSkillDef.GetById((int)skillName);
+            Craftmenu(self, sklDef);
+        }
+
+        public static void Craftmenu(Character self) {
+            Craftmenu(self, (CraftingSkillDef) null);
+        }
 	}
 
 	[Summary("Dialog listing all available craftmenu categories (one for every crafting skill)")]
