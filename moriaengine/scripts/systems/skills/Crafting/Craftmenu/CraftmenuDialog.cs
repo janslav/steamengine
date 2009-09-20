@@ -331,7 +331,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             }
             if (prevCat != null) {//some bookmark for this skill exist... use it
                 self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
-            } else {//default craftmenu opening
+            } else if(skill != null) {//no bookmark, open the main skill category
+				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName)skill.Id]));
+			} else { //default craftmenu opening (selection of skills)
                 self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
             }
         }

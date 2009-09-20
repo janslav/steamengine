@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts {
 								iDefToMake.Name, self.ReceivingContainer.Name));
 					DoSuccess(skillSeqArgs, newItem);
 
-					CraftingProcessPlugin.MakeFinished(skillSeqArgs);
+					CraftingProcessPlugin.MakeFinished(skillSeqArgs, true);
 				}
 			}
 
@@ -159,11 +159,29 @@ namespace SteamEngine.CompiledScripts {
 
 			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
-			iDefToMake.Resources.ConsumeSomeResources(self, ResourcesLocality.Backpack);
-			self.SysMessage(String.Format(
+			//check if we can even make it (i.e. we have necessary resources) otherwise we can attempt to make something without resources and in case 
+			//we failed the next attempt will begin afterwards (which makes no sense since we do not even have the resources...)
+			IResourceListItem missingResource;
+			bool canMake = true;
+			//first check the necessary resources to have (GM needn't have anything) (if any resources are needed)
+			if (!self.IsGM && iDefToMake.SkillMake != null && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
+				canMake = false;
+			}
+
+			bool hasMaterial = true;
+			//then check if the necessary material is present
+			if (!self.IsGM && iDefToMake.Resources != null && !iDefToMake.Resources.HasResourcesPresent(self, ResourcesLocality.Backpack, out missingResource)) {
+				hasMaterial = false;
+			}
+
+			if (canMake && hasMaterial) {
+				//lost some resources. if some of resources/material was missing then nothing happened...
+				iDefToMake.Resources.ConsumeSomeResources(self, ResourcesLocality.Backpack);
+				self.SysMessage(String.Format(
 						Loc<CraftSkillsLoc>.Get(self.Language).ItemMakingFailed,
 						iDefToMake.Name));
-			CraftingProcessPlugin.MakeFinished(skillSeqArgs);
+			}
+			CraftingProcessPlugin.MakeFinished(skillSeqArgs, canMake && hasMaterial);
 			return true; //stop the trigger, the rest will be decided by the CraftingProcessPlugin
 		}
 
