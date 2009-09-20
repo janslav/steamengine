@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Static method called after finishing with one item crafting - either successfull or failed. "+
 				"If success - lower the amount of items to be made and (if anything is yet to be made) start again. "+
 				"If failed - start the craftmaking again immediatelly")]
-		internal static void MakeFinished(SkillSequenceArgs skillSeqArgs) {
+		internal static void MakeFinished(SkillSequenceArgs skillSeqArgs, bool canMakeAndHasMaterial) {
 			Character cont = skillSeqArgs.Self;
 			CraftingProcessPlugin pl = (CraftingProcessPlugin)cont.GetPlugin(craftingProcessPK);
 
@@ -73,7 +73,17 @@ namespace SteamEngine.CompiledScripts {
 					pl.Delete(); //same as calling "uninstall plugin"
 				}
 			} else {//failed, start again now
-				pl.StartCrafting();
+				if (!canMakeAndHasMaterial) {//missing necessary resources or material - remove this item from the queue and try another one (if any)
+					pl.craftingOrder.SelectionQueue.Dequeue(); //remove from the queue
+					if (pl.craftingOrder.SelectionQueue.Count > 0) { //still something to be made
+						pl.StartCrafting(); //start again with next item
+					} else {//nothing left, finish crafting
+						cont.SysMessage(Loc<CraftSkillsLoc>.Get(cont.Language).FinishCrafting);
+						pl.Delete(); //same as calling "uninstall plugin"
+					}
+				} else {//just failed and lost some material - next attempt
+					pl.StartCrafting();
+				}
 			}
 		}
 
