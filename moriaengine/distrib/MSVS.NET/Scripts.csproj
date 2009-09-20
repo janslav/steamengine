@@ -671,8 +671,11 @@
     <Compile Include="..\..\scripts\systems\skills\ItemID.cs">
       <Link>systems\skills\ItemID.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Lockpicking\LockedItemPlugin.Generated.cs">
-      <Link>systems\skills\Lockpicking\LockedItemPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\skills\Lockpicking\ItemLockPlugin.cs">
+      <Link>systems\skills\Lockpicking\ItemLockPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Lockpicking\ItemLockPlugin.Generated.cs">
+      <Link>systems\skills\Lockpicking\ItemLockPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Lockpicking\Lockpicking.cs">
       <Link>systems\skills\Lockpicking\Lockpicking.cs</Link>
@@ -1040,6 +1043,9 @@
     </None>
     <None Include="..\..\scripts\systems\skills\Healing\healing.scp">
       <Link>systems\skills\Healing\healing.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Lockpicking\ItemLockPlugin .ct">
+      <Link>systems\skills\Lockpicking\ItemLockPlugin .ct</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Lockpicking\lockpicking.scp">
       <Link>systems\skills\Lockpicking\lockpicking.scp</Link>

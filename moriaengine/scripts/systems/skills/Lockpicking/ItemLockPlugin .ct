@@ -16,4 +16,10 @@
 
 [PluginTemplate ItemLockPlugin : Plugin]
 Vars:
-	public bool isLocked=true
+	public bool isLocked = true
+	public bool canPick = true
+	public bool canMagicUnlock = false
+	public bool canBreak = false
+	public ushort lockpickNeeded = 0
+	public ushort mageryNeeded = 0
+	public ushort strengthToBreak = 0
