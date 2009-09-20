@@ -165,12 +165,12 @@ ADVRATE=2.5,50.0,200.0
 ON=@Fail
 	src.message "Your music fails to incite enough anger."
 
-[SCRIPTEDSKILLDEF 24]
+[LOCKPICKSKILLDEF 24]
 DEFNAME=Skill_LockPick
 KEY="LockPicking"
 //TITLE="Locksmith"
 //PROMPTMSG="What do you want to pick?"
-//DELAY=3.0
+DELAY=3.0
 //STAT_STR=20
 //STAT_INT=60
 //STAT_DEX=90

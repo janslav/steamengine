@@ -227,10 +227,6 @@ namespace SteamEngine.CompiledScripts {
 
 	}
 
-	public class t_lockpick : CompiledTriggerGroup {
-
-	}
-
 	public class t_chair : CompiledTriggerGroup {
 
 	}

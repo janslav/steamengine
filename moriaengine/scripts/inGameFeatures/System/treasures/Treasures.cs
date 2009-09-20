@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		public CharacterDef DefaultTreasureSpawn {
 			get {
 				if (defaultTreasureSpawn == null) {
-					defaultTreasureSpawn = (CharacterDef) CharacterDef.Get("c_ostard_zostrich");
+					defaultTreasureSpawn = (CharacterDef) ThingDef.Get("c_ostard_zostrich");
 				}
 				return defaultTreasureSpawn;
 			}

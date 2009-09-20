@@ -840,7 +840,8 @@ namespace SteamEngine.Networking {
 				conn.Close("Illegal facialHair=" + this.args.FacialHair);
 				return;
 			}
-			if (this.args.FacialHairColor < 0x44e || this.args.FacialHairColor > 0x4ad) {
+			if (this.args.FacialHairColor == 0) {
+			} else if (this.args.FacialHairColor < 0x44e || this.args.FacialHairColor > 0x4ad) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialHairColor,
 					this.args.FacialHairColor));
