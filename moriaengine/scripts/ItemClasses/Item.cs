@@ -25,17 +25,7 @@ using SteamEngine.Communication.TCP;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class ItemDef {
-		
-		public override bool On_DenyDClick(DenyClickArgs args) {
-			DenyResult dr = args.ClickingChar.CanReach(this);
-			if (dr == DenyResult.Allow) {
-				return false;
-			} else {
-				args.Result = dr;
-				return true;
-			}
-		}
-
+	
 		[Summary("Check the resources and skillmake if the given character can craft this item")]
 		public bool CanBeMade(Character chr) {
 			if (chr.IsGM) {//GM can everything
@@ -109,6 +99,17 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class Item : AbstractItem {
+		
+		public override bool On_DenyDClick(DenyClickArgs args) {
+			DenyResult dr = args.ClickingChar.CanReach(this);
+			if (dr == DenyResult.Allow) {
+				return false;
+			} else {
+				args.Result = dr;
+				return true;
+			}
+		}
+
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
 				" then the item will be deleted. Method returns the actually consumed amount.")]
 		public long Consume(long howMany) {
