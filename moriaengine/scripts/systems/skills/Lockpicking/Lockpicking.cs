@@ -94,10 +94,10 @@ namespace SteamEngine.CompiledScripts {
 			
 			//nevidi na cil
 			if (self.CanReachWithMessage(targetted)) {
-				//if (targetted.IsFuckingLocked) {
+				if (!ItemLockPlugin.IsLocked(targetted)) {
 					skillSeq.Target1 = targetted;
 					skillSeq.PhaseStart();
-				//}
+				}
 			}
 			return false;
 		}
