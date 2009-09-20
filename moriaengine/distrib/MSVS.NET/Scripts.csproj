@@ -671,6 +671,12 @@
     <Compile Include="..\..\scripts\systems\skills\ItemID.cs">
       <Link>systems\skills\ItemID.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Lockpicking\LockedItemPlugin.Generated.cs">
+      <Link>systems\skills\Lockpicking\LockedItemPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Lockpicking\Lockpicking.cs">
+      <Link>systems\skills\Lockpicking\Lockpicking.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Magery.cs">
       <Link>systems\skills\Magery\Magery.cs</Link>
     </Compile>
@@ -1034,6 +1040,9 @@
     </None>
     <None Include="..\..\scripts\systems\skills\Healing\healing.scp">
       <Link>systems\skills\Healing\healing.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Lockpicking\lockpicking.scp">
+      <Link>systems\skills\Lockpicking\lockpicking.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
       <Link>systems\skills\Magery\nightSight.scp</Link>
