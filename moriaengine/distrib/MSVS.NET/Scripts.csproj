@@ -887,6 +887,9 @@
     <Compile Include="..\..\scripts\types\type_clothes.cs">
       <Link>types\type_clothes.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\types\type_crafting.cs">
+      <Link>types\type_crafting.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\types\type_decoration_banners_tapestries.cs">
       <Link>types\type_decoration_banners_tapestries.cs</Link>
     </Compile>
@@ -910,9 +913,6 @@
     </Compile>
     <Compile Include="..\..\scripts\types\type_hair.cs">
       <Link>types\type_hair.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\types\type_lbr.cs">
-      <Link>types\type_lbr.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\types\type_levers_switches.cs">
       <Link>types\type_levers_switches.cs</Link>
