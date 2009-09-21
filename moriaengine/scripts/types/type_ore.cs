@@ -29,5 +29,11 @@ namespace SteamEngine.CompiledScripts {
 			self.SoundTo((ushort) SoundNames.DroppingSomethingWhichBouncesSlightly, droppingChar);
 			return true;
 		}
+
+		//ingor is for blacksmithing too...
+		public bool On_Dclick(Item self, Character dclicker) {
+			D_Craftmenu.Craftmenu(dclicker, SkillName.Blacksmith);
+			return false;
+		}
 	}
 }

@@ -130,14 +130,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public class t_cloth_bolt : CompiledTriggerGroup {
 
-	}
-
-	public class t_sewing_kit : CompiledTriggerGroup {
-		public bool On_Dclick(Item self, Character dclicker) {
-            D_Craftmenu.Craftmenu(dclicker, SkillName.Tailoring);
-			return false;
-		}
-	}
+	}	
 
 	public class t_thread : CompiledTriggerGroup {
 
@@ -150,19 +143,7 @@ namespace SteamEngine.CompiledScripts {
 	public class t_dye_vat : CompiledTriggerGroup {
 
 	}
-
-	public class t_anvil : CompiledTriggerGroup {
-
-	}
-
-	public class t_forge : CompiledTriggerGroup {
-
-	}
-
-	public class t_weapon_mace_smith : CompiledTriggerGroup {
-
-	}
-
+		
 	public class t_book : CompiledTriggerGroup {
 
 	}
@@ -177,15 +158,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public class t_feather : CompiledTriggerGroup {
 
-	}
-
-	public class t_shaft : CompiledTriggerGroup {
-
-	}
-
-	public class t_carpentry : CompiledTriggerGroup {
-
-	}
+	}		
 
 	public class t_clock : CompiledTriggerGroup {
 
@@ -252,10 +225,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_train_pickpocket : CompiledTriggerGroup {
-
-	}
-
-	public class t_tinker_tools : CompiledTriggerGroup {
 
 	}
 
