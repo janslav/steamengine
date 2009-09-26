@@ -35,8 +35,4 @@ namespace SteamEngine.CompiledScripts {
 	public class t_rune : CompiledTriggerGroup {
 
 	}
-
-	public class t_spellicon : CompiledTriggerGroup {
-
-	}
 }
