@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//ingor is for blacksmithing too...
 		public bool On_Dclick(Item self, Character dclicker) {
-			D_Craftmenu.Craftmenu(dclicker, SkillName.Blacksmith);
+			//D_Craftmenu.Craftmenu(dclicker, SkillName.Blacksmith);
 			return false;
 		}
 	}
