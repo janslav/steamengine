@@ -71,13 +71,12 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			IniFileSection sphereSection = gameIni.GetSection("SPHERE");
-			name = sphereSection.GetValue<string>("name");
-			port = sphereSection.GetValue<int>("ServPort");
+			name = sphereSection.GetValue<string>("SERVNAME");
+			port = sphereSection.GetValue<int>("SERVPORT");
 		}
 
 		private static string ReadScriptsPathFromSphereIni(string iniPath) {
-			iniPath = Path.Combine(iniPath, "sphere.ini");
-			IniFile gameIni = new IniFile(iniPath);
+			IniFile gameIni = new IniFile(Path.Combine(iniPath, "sphere.ini"));
 
 			string scriptsPath = gameIni.GetSection("SPHERE").GetValue<string>("ScpFiles");
 
@@ -186,10 +185,10 @@ namespace SteamEngine.AuxiliaryServer {
 			System.Diagnostics.Process.Start(path);
 		}
 
-		public void SvnUpdate() {
+		public void SvnUpdate(ConsoleServer.ConsoleClient console) {
 			GameServer sphere = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (sphere != null) {
-				sphere.SendCommand(null, "r");
+				sphere.SendCommand(console, "r");
 			}
 
 			VersionControl.SvnUpdateProject(this.HardDiscScriptsPath);
@@ -198,11 +197,11 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			if (sphere != null) {
-				sphere.SendCommand(null, "r");
+				sphere.SendCommand(console, "r");
 			}
 		}
 
-		public void SvnCleanup() {
+		public void SvnCleanup(ConsoleServer.ConsoleClient console) {
 			VersionControl.SvnCleanUpProject(this.HardDiscScriptsPath);
 			if (!StringComparer.OrdinalIgnoreCase.Equals(this.HardDiscIniPath, this.RamdiscIniPath)) {
 				VersionControl.SvnCleanUpProject(this.RamdiscScriptsPath);
@@ -223,28 +222,32 @@ namespace SteamEngine.AuxiliaryServer {
 					this.exitLaterDailySchedule.ToShortTimeString(),
 					" which is in "+span.ToString()));
 
-				Timer t = new Timer(this.ScheduledExitLater, null, (int) (span.TotalMilliseconds + 1), //+1 ms so it won't need to reschedule normally
-					System.Threading.Timeout.Infinite);
+				Timer t = new Timer(this.ScheduledExitLater, "", (int) (span.TotalMilliseconds + 1), //+1 ms so it should't need to reschedule, just a failsafe
+					Timeout.Infinite);
 			}
 		}
 
 		private void ScheduledExitLater(object ignored) {
-			DateTime now = DateTime.Now;
-			DateTime schedule = now.Date + this.exitLaterDailySchedule.TimeOfDay;
-			if (now > schedule) { //so it doesn't happen too early today, reschedules if needed
-				Console.WriteLine(string.Concat(
-					"Invoking exitlater ", this.exitLaterParam.ToString(), " for sphereserver at ", this.HardDiscIniPath));
-
-				SphereServers.SphereServerClient sphere = GameServersManager.GetInstanceByIniID(this.iniID) as SphereServers.SphereServerClient;
-				if (sphere != null) {
-					sphere.ExitLater(TimeSpan.FromMinutes(this.exitLaterParam));
-				} else {
+			try {
+				DateTime now = DateTime.Now;
+				DateTime schedule = now.Date + this.exitLaterDailySchedule.TimeOfDay;
+				if (now > schedule) { //so it doesn't happen too early today, reschedules if needed
 					Console.WriteLine(string.Concat(
-						"Sphereserver at ", this.HardDiscIniPath, " offline, exitlater not invoked."));
-				}
-			}
+						"Invoking exitlater ", this.exitLaterParam.ToString(), " for sphereserver at ", this.HardDiscIniPath));
 
-			this.StartExitlaterScheduler();
+					SphereServers.SphereServerClient sphere = GameServersManager.GetInstanceByIniID(this.iniID) as SphereServers.SphereServerClient;
+					if (sphere != null) {
+						sphere.ExitLater(null, TimeSpan.FromMinutes(this.exitLaterParam));
+					} else {
+						Console.WriteLine(string.Concat(
+							"Sphereserver at ", this.HardDiscIniPath, " offline, exitlater not invoked."));
+					}
+				}
+
+				this.StartExitlaterScheduler();
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
+			}
 		}
 	}
 }

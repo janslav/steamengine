@@ -189,6 +189,10 @@ namespace SteamEngine.Common {
 				}
 			} //end of (while (true)) - for each line of the file
 		}
+
+		public override string ToString() {
+			return "IniFile " + this.filename;
+		}
 	}
 
 	internal interface IIniFilePart {
@@ -308,6 +312,10 @@ namespace SteamEngine.Common {
 				part.WriteOut(stream);
 			}
 		}
+
+		public override string ToString() {
+			return String.Concat("[", this.name, "]");
+		}
 	}
 
 	public class IniFileValueLine : CommentedIniFilePart, IIniFilePart {
@@ -357,6 +365,10 @@ namespace SteamEngine.Common {
 			stream.WriteLine(this.valueString);
 			this.commentNext.WriteOut(stream);
 		}
+
+		public override string ToString() {
+			return String.Concat(this.name, " = ", this.valueString);
+		}
 	}
 
 	internal class IniFileComment : IIniFilePart {
@@ -404,7 +416,10 @@ namespace SteamEngine.Common {
 				}
 				stream.WriteLine(strOut);
 			}
+		}
 
+		public override string ToString() {
+			return "#" + this.comment;
 		}
 	}
 }

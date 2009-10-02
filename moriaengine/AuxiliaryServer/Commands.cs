@@ -24,13 +24,13 @@ namespace SteamEngine.AuxiliaryServer {
 				case "svnupdate":
 					VersionControl.SvnUpdateProject(".");
 					foreach (IGameServerSetup game in Settings.KnownGameServersList) {
-						game.SvnUpdate();
+						game.SvnUpdate(state);
 					}
 					return;
 				case "svncleanup":
 					VersionControl.SvnCleanUpProject(".");
 					foreach (IGameServerSetup game in Settings.KnownGameServersList) {
-						game.SvnCleanup();
+						game.SvnCleanup(state);
 					}
 					return;
 				case "help":
@@ -61,10 +61,10 @@ namespace SteamEngine.AuxiliaryServer {
 
 					if (file.Contains(SphereServerSetup.sphereExeName) || 
 							file.ToLower(System.Globalization.CultureInfo.InvariantCulture).Contains("steamengine")) {
-						message.Append(file).Append(" - running since ").
-							Append(prc.StartTime.ToString(System.Globalization.CultureInfo.InvariantCulture)).
-							Append(file).Append(", PID ").
-							AppendLine(prc.Id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+						message.Append(file)
+							.Append(" - running since ").Append(prc.StartTime.ToString(System.Globalization.CultureInfo.InvariantCulture))
+							.Append(", PID ").AppendLine(prc.Id.ToString(System.Globalization.CultureInfo.InvariantCulture));
 					}
 				} catch { }
 			}

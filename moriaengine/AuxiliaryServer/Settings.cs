@@ -25,9 +25,9 @@ namespace SteamEngine.AuxiliaryServer {
 
 		void StartGameServerProcess(SEBuild build);
 
-		void SvnUpdate();
+		void SvnUpdate(ConsoleServer.ConsoleClient console);
 
-		void SvnCleanup();
+		void SvnCleanup(ConsoleServer.ConsoleClient console);
 	}
 
 	public static class Settings {

@@ -25,10 +25,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		delegate void ReceievingMode(TextReader reader);
 
-		private ReceievingMode nonLoggedMode;
-		private ReceievingMode loggedInMode;
-		private ReceievingMode commandReplyMode;
-		private ReceievingMode ignoreMode;
+		private readonly ReceievingMode nonLoggedMode;
+		private readonly ReceievingMode loggedInMode;
+		private readonly ReceievingMode commandReplyMode;
+		private readonly ReceievingMode ignoreMode;
 
 		private ReceievingMode receivingMode;
 
@@ -36,17 +36,17 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			this.beginSendCallback = this.BeginSendCallback;
 			this.beginReceiveCallback = this.BeginReceieveCallback;
 
-			this.socket = socket;
-			this.BeginReceive();
-
-			this.state = new SphereServerClient(this, setup);
-
 			this.nonLoggedMode = this.ModeNotLoggedIn;
 			this.loggedInMode = this.ModeLoggedIn;
 			this.commandReplyMode = this.ModeCommandReply;
 			this.ignoreMode = this.ModeIgnore;
 
 			this.receivingMode = this.nonLoggedMode;
+
+			this.socket = socket;
+			this.BeginReceive();
+
+			this.state = new SphereServerClient(this, setup);
 		}
 
 		public SphereServerClient State {
@@ -65,7 +65,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			this.BeginSend(" ");
 			this.BeginSend(sphereServerSetup.AdminAccount);
 
-			new Timer(SendPassword, sphereServerSetup.AdminPassword, 500, Timeout.Infinite);
+			new Timer(SendPassword, sphereServerSetup.AdminPassword, 100, Timeout.Infinite);
 			
 		}
 		private void SendPassword(object o) {
@@ -192,7 +192,11 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					message = message + "\n";
 					int len = Encoding.Default.GetBytes(message, 0, message.Length, buffer.bytes, 0);
 
-					this.socket.BeginSend(buffer.bytes, 0, len, SocketFlags.None, this.beginSendCallback, buffer);
+					SocketError err;
+					this.socket.BeginSend(buffer.bytes, 0, len, SocketFlags.None, out err, this.beginSendCallback, buffer);
+					if (err != SocketError.Success) {
+						this.Close(err.ToString());
+					}
 				}
 			} catch (Exception e) {
 				this.Close("Exception while BeginSend: " + e.Message);
@@ -244,13 +248,15 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		public void Close(string reason) {
-			if (!this.IsDisposed) {
-				if (this.state != null) {
-					this.state.On_Close(reason);
+			lock (this) {
+				if (!this.IsDisposed) {
+					if (this.state != null) {
+						this.state.On_Close(reason);
+					}
+					this.receivingMode = this.ignoreMode;
 				}
-				this.receivingMode = this.ignoreMode;
+				base.Dispose();
 			}
-			base.Dispose();
 		}
 		#endregion Close
 	}

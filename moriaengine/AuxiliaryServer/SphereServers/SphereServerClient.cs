@@ -20,7 +20,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private bool loggedIn;
 
+		private Timer loginTimeout;
 		private Timer consoleAuthTimeout;
+
+		private Timer exitlaterTimer;
 
 
 		internal SphereServerClient(SphereServerConnection sphereServerConnection, SphereServerSetup setup) {
@@ -33,6 +36,16 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			Console.WriteLine(this + " connected.");
 
 			this.conn.StartLoginSequence(this.setup);
+
+			this.loginTimeout = new Timer(LoginTimeout, null, 100, Timeout.Infinite);
+		}
+
+		private void LoginTimeout(object o) {
+			try {
+				this.Conn.Close("Login timed out.");
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
+			}
 		}
 
 		internal void On_Close(string reason) {
@@ -40,9 +53,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			GameServersManager.RemoveGameServer(this);
 
-			this.DisposeTimeoutTimer();
+			this.DisposeConsoleAuthTimeoutTimer();
+			this.DisposeLoginTimeoutTimer();
 
-			SphereServerClientFactory.Connect(this.setup, 2000); //start connecting again
+			SphereServerClientFactory.Connect(this.setup, 100); //start connecting again
 		}
 
 
@@ -64,17 +78,18 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			}
 		}
 
+		public override string ToString() {
+			return "Sphere 0x" + ((int) this.ServerUid).ToString("X");
+		}
+
 		public bool IsLoggedIn {
 			get {
 				return this.loggedIn;
 			}
 		}
 
-		public override string ToString() {
-			return "Sphere 0x" + ((int) this.ServerUid).ToString("X");
-		}
-
 		internal void On_LoginSequenceFinished(LoginResult result) {
+			this.DisposeLoginTimeoutTimer();
 			switch (result) {
 				case LoginResult.Success:
 					Console.WriteLine(this + " logged in.");
@@ -90,6 +105,13 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				case LoginResult.AccountInUse:
 					this.conn.Close("Account '" + this.setup.AdminAccount + "' already in use.");
 					break;
+			}
+		}
+
+		private void DisposeLoginTimeoutTimer() {
+			if (this.loginTimeout != null) {
+				this.loginTimeout.Dispose();
+				this.loginTimeout = null;
 			}
 		}
 
@@ -110,9 +132,12 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void ConsoleAuthTimeout(object o) {
-			ConsoleCredentials state = (ConsoleCredentials) o;
-
-			this.Conn.Close("user auth sequence with sphere timed out.");
+			try {
+				ConsoleCredentials state = (ConsoleCredentials) o;
+				this.Conn.Close("Console user auth sequence timed out.");
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
+			}
 		}
 
 		private class ConsoleCredentials {
@@ -196,7 +221,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 							}
 							this.SendCommand(console, "i");
 						}
-						this.DisposeTimeoutTimer();
+						this.DisposeConsoleAuthTimeoutTimer();
 						return;
 					}
 				}
@@ -218,10 +243,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				}
 			}
 
-			this.DisposeTimeoutTimer();
+			this.DisposeConsoleAuthTimeoutTimer();
 		}
 
-		private void DisposeTimeoutTimer() {
+		private void DisposeConsoleAuthTimeoutTimer() {
 			if (this.consoleAuthTimeout != null) {
 				this.consoleAuthTimeout.Dispose();
 				this.consoleAuthTimeout = null;
@@ -268,8 +293,57 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			}
 		}
 
-		internal void ExitLater(TimeSpan timeSpan) {
-			throw new Exception("The method or operation is not implemented.");
+		private void PrivateSendCommand(object o) {
+			try {
+				object[] arr = (object[]) o;
+				this.SendCommand((ConsoleServer.ConsoleClient) arr[0], (string) arr[1]);
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
+			}
+		}
+
+		public void ExitLater(ConsoleServer.ConsoleClient console, TimeSpan timeSpan) {
+			this.PrivateExitLater(new object[] { console, timeSpan } );
+		}
+
+		private void PrivateExitLater(object o) {
+			try {
+				object[] arr = (object[]) o;
+				ConsoleServer.ConsoleClient console = (ConsoleServer.ConsoleClient) arr[0];
+				TimeSpan timeSpan = (TimeSpan) arr[1];
+
+				if (timeSpan == TimeSpan.Zero) {
+					this.SendCommand(console, "B Shutdown after save");
+					this.ExitSave(console);
+				} else if (timeSpan > TimeSpan.Zero) {
+					this.SendCommand(console, "B Shutdown in " + timeSpan);
+					TimeSpan newSpan = timeSpan.Subtract(TimeSpan.FromMinutes(1));
+					if (newSpan < TimeSpan.Zero) {
+						newSpan = TimeSpan.Zero;
+					}
+					arr[1] = newSpan;
+					this.exitlaterTimer = new Timer(this.PrivateExitLater, arr, (int) timeSpan.TotalMilliseconds, Timeout.Infinite);
+				} else if (this.exitlaterTimer != null) { //timespan negative and countdown on
+					this.exitlaterTimer.Dispose();
+					this.exitlaterTimer = null;
+					this.SendCommand(console, "B Shutdown countdown aborted");
+				}
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
+			}
+		}
+
+		public void ExitSave(ConsoleServer.ConsoleClient console) {
+			this.Save(console);
+			new Timer(this.PrivateSendCommand, new object[] { console, "S"}, 1000, Timeout.Infinite);
+			new Timer(this.PrivateSendCommand, new object[] { console, "X" }, 2000, Timeout.Infinite);
+		}
+
+		public void Save(ConsoleServer.ConsoleClient console) {
+			this.SendCommand(console, "b Save imminent!");
+			this.SendCommand(console, "var.wassave=1");
+			this.SendCommand(console, "save 1");
+			new Timer(this.PrivateSendCommand, new object[] { console, "var.wassave=0" }, 120 * 1000, Timeout.Infinite);
 		}
 	}
 }

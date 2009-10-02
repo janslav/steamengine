@@ -42,7 +42,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				SEGameServers.SEGameServerServer.StopSendingLogStr();
 
 				//memory cleanup
-				PoolBase.ClearAll();
+				//PoolBase.ClearAll();
 				GC.Collect();
 
 			}
