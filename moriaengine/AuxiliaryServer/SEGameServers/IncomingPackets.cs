@@ -95,6 +95,8 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
+			state.SetStartupFinished(true);
+
 			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(
 				(ConsoleServer.ConsoleId) this.consoleId);
 			if (console != null) {

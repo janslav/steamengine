@@ -35,7 +35,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			if (split.Length > 1) {
 				minutes = ConvertTools.ParseDouble(split[1]);
 			}
-			sphere.ExitLater(TimeSpan.FromMinutes(minutes));
+			sphere.ExitLater(console, TimeSpan.FromMinutes(minutes));
 		}
 
 		private static void DisplayHelp(ConsoleServer.ConsoleClient console, SphereServerClient sphere) {

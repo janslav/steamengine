@@ -210,7 +210,7 @@
     		tofile="${auxiliaryServerFileName+'.config'}"	/>
 	</target>
 	
-	<target name="buildScripts" depends="buildCommon, buildCommunication, buildCore">
+	<target name="buildScripts" > <!-- depends="buildCommon, buildCommunication, buildCore" -->
 		<csc 
 			target="library" 
 			output="${scriptsFileName}" 
@@ -227,6 +227,7 @@
 				<include name="${communicationFileName}" />
 				<include name="bin/SteamDoc.dll" />
 				<include name="bin/NAnt.Core.dll" />
+				<include name="bin/EQATECProfilerRuntime.dll" />
 				<includesfile name="${scriptsReferencesListPath}" />
 			</references>
 			<arg line="${cmdLineParams}" />
@@ -250,6 +251,7 @@
 				<include name="${communicationFileName}" />
 				<include name="${scriptsFileName}" />
 				<include name="bin/SteamDoc.dll" />
+				<include name="bin/EQATECProfilerRuntime.dll" />
 				<includesfile name="${scriptsReferencesListPath}" />
 			</references>
 			<arg line="${cmdLineParams}" />

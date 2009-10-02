@@ -25,8 +25,8 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		public static void Connect(SphereServerSetup setup, int ms) {
 			IPEndPoint endpoint = new IPEndPoint(
-				Dns.GetHostAddresses("server.moria.cz")[0], 2593
-				//IPAddress.Loopback, setup.Port
+				//Dns.GetHostAddresses("server.moria.cz")[0], 2593
+				IPAddress.Loopback, setup.Port
 				);
 
 			Socket socket = new Socket(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -39,11 +39,15 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private static void ScheduledBeginConnect(object state) {
-			object[] arr = (object[]) state;
-			Socket socket = (Socket) arr[0];
-			IPEndPoint endpoint = (IPEndPoint) arr[1];
+			try {
+				object[] arr = (object[]) state;
+				Socket socket = (Socket) arr[0];
+				IPEndPoint endpoint = (IPEndPoint) arr[1];
 
-			socket.BeginConnect(endpoint, BeginConnectCallBack, state);
+				socket.BeginConnect(endpoint, BeginConnectCallBack, state);
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
+			}
 		}
 
 		private static void BeginConnectCallBack(IAsyncResult result) {
@@ -57,7 +61,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			} catch (Exception e) {
 				Console.WriteLine("Connecting to sphere at '" + setup.RamdiscIniPath + "' failed:" + e.Message);
 				Logger.WriteDebug(e);
-				ScheduleConnect(arr, 2000);
+				ScheduleConnect(arr, 100);
 				return;
 			}
 
