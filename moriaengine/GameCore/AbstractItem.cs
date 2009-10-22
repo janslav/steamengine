@@ -89,6 +89,7 @@ namespace SteamEngine {
 			this.name = copyFrom.name;
 			this.flags = copyFrom.flags;
 			this.amount = copyFrom.amount;
+			this.type = copyFrom.type;
 			Globals.LastNewItem = this;
 		}
 		#endregion Constructors
@@ -543,7 +544,7 @@ namespace SteamEngine {
 			if (this.flags != 0) {
 				output.WriteValue("flags", this.flags);
 			}
-			if ((this.type != null) && (this.type != def.Type)) {
+			if (this.type != def.Type) {
 				output.WriteLine("type=" + this.type.Defname);
 			}
 		}

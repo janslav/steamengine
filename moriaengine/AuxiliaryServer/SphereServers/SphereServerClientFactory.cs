@@ -39,6 +39,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private static void ScheduledBeginConnect(object state) {
+			Console.WriteLine("ScheduledBeginConnect in");
 			try {
 				object[] arr = (object[]) state;
 				Socket socket = (Socket) arr[0];
@@ -48,6 +49,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			} catch (Exception e) {
 				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
+			Console.WriteLine("ScheduledBeginConnect out");
 		}
 
 		private static void BeginConnectCallBack(IAsyncResult result) {
@@ -61,7 +63,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			} catch (Exception e) {
 				Console.WriteLine("Connecting to sphere at '" + setup.RamdiscIniPath + "' failed:" + e.Message);
 				Logger.WriteDebug(e);
-				ScheduleConnect(arr, 100);
+				ScheduleConnect(arr, 5000);
 				return;
 			}
 

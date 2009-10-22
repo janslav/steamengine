@@ -37,15 +37,17 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			this.conn.StartLoginSequence(this.setup);
 
-			this.loginTimeout = new Timer(LoginTimeout, null, 100, Timeout.Infinite);
+			this.loginTimeout = new Timer(LoginTimeout, null, 5000, Timeout.Infinite);
 		}
 
 		private void LoginTimeout(object o) {
+			Console.WriteLine("LoginTimeout in");
 			try {
 				this.Conn.Close("Login timed out.");
 			} catch (Exception e) {
 				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
+			Console.WriteLine("LoginTimeout out");
 		}
 
 		internal void On_Close(string reason) {
@@ -56,7 +58,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			this.DisposeConsoleAuthTimeoutTimer();
 			this.DisposeLoginTimeoutTimer();
 
-			SphereServerClientFactory.Connect(this.setup, 100); //start connecting again
+			SphereServerClientFactory.Connect(this.setup, 5000); //start connecting again
 		}
 
 
@@ -132,12 +134,14 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void ConsoleAuthTimeout(object o) {
+			Console.WriteLine("ConsoleAuthTimeout in");
 			try {
 				ConsoleCredentials state = (ConsoleCredentials) o;
 				this.Conn.Close("Console user auth sequence timed out.");
 			} catch (Exception e) {
 				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
+			Console.WriteLine("ConsoleAuthTimeout out");
 		}
 
 		private class ConsoleCredentials {
@@ -294,12 +298,14 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void PrivateSendCommand(object o) {
+			Console.WriteLine("PrivateSendCommand in");
 			try {
 				object[] arr = (object[]) o;
 				this.SendCommand((ConsoleServer.ConsoleClient) arr[0], (string) arr[1]);
 			} catch (Exception e) {
 				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
+			Console.WriteLine("PrivateSendCommand out");
 		}
 
 		public void ExitLater(ConsoleServer.ConsoleClient console, TimeSpan timeSpan) {
@@ -307,6 +313,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void PrivateExitLater(object o) {
+			Console.WriteLine("PrivateExitLater in");
 			try {
 				object[] arr = (object[]) o;
 				ConsoleServer.ConsoleClient console = (ConsoleServer.ConsoleClient) arr[0];
@@ -331,6 +338,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			} catch (Exception e) {
 				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
+			Console.WriteLine("PrivateExitLater out");
 		}
 
 		public void ExitSave(ConsoleServer.ConsoleClient console) {

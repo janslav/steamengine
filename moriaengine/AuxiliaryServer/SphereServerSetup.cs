@@ -222,12 +222,15 @@ namespace SteamEngine.AuxiliaryServer {
 					this.exitLaterDailySchedule.ToShortTimeString(),
 					" which is in "+span.ToString()));
 
-				Timer t = new Timer(this.ScheduledExitLater, "", (int) (span.TotalMilliseconds + 1), //+1 ms so it should't need to reschedule, just a failsafe
-					Timeout.Infinite);
+				new Timer(this.ScheduledExitLater, "", 1000, //(int) (span.TotalMilliseconds + 1), //+1 ms so it should't need to reschedule, just a failsafe
+					Timeout.Infinite
+					//1000
+					);
 			}
 		}
 
 		private void ScheduledExitLater(object ignored) {
+			Console.WriteLine("ScheduledExitLater in");
 			try {
 				DateTime now = DateTime.Now;
 				DateTime schedule = now.Date + this.exitLaterDailySchedule.TimeOfDay;
@@ -248,6 +251,7 @@ namespace SteamEngine.AuxiliaryServer {
 			} catch (Exception e) {
 				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
+			Console.WriteLine("ScheduledExitLater out");
 		}
 	}
 }
