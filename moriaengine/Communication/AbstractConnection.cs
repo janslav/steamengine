@@ -296,15 +296,19 @@ namespace SteamEngine.Communication {
 		}
 
 		private void JoinedPGTimerMethod(object ignored) {
-			if (this.state.PacketGroupsJoiningAllowed) {
-				lock (this.joinedPGTimer) {
-					if (this.joinedPG != null) {
-						this.SendJoinedPG();
+			try {
+				if ((this.state == null) || (this.state.PacketGroupsJoiningAllowed)) {
+					lock (this.joinedPGTimer) {
+						if (this.joinedPG != null) {
+							this.SendJoinedPG();
+						}
 					}
+					this.joinedPGTimer.Change(joinedPGintervalInMS, Timeout.Infinite);
+				} else {
+					this.joinedPGTimer.Dispose();
 				}
-				this.joinedPGTimer.Change(joinedPGintervalInMS, Timeout.Infinite);
-			} else {
-				this.joinedPGTimer.Dispose();
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 		}
 

@@ -43,11 +43,15 @@ namespace SteamEngine.AuxServerPipe {
 		}
 
 		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {
-			NamedPipeConnection<AuxServerPipeClient> c =
-				clientFactory.Connect(Common.Tools.commonPipeName);
+			try {
+				NamedPipeConnection<AuxServerPipeClient> c =
+					clientFactory.Connect(Common.Tools.commonPipeName);
 
-			if (c == null) {
-				StartTryingToConnect();
+				if (c == null) {
+					StartTryingToConnect();
+				}
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 		}));
 

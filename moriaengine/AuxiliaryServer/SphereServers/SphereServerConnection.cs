@@ -32,6 +32,8 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private ReceievingMode receivingMode;
 
+		private string closingReason = null;
+
 		internal SphereServerConnection(Socket socket, SphereServerSetup setup) {
 			this.beginSendCallback = this.BeginSendCallback;
 			this.beginReceiveCallback = this.BeginReceieveCallback;
@@ -55,6 +57,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			}
 		}
 
+		public override string ToString() {
+			return "SphereConn '" + this.state + "'";
+		}
+
 		public bool IsConnected {
 			get {
 				return this.socket.Connected;
@@ -65,11 +71,17 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			this.BeginSend(" ");
 			this.BeginSend(sphereServerSetup.AdminAccount);
 
-			new Timer(SendPassword, sphereServerSetup.AdminPassword, 100, Timeout.Infinite);
+			new Timer(SendPassword, sphereServerSetup.AdminPassword, 1000, Timeout.Infinite);
 			
 		}
 		private void SendPassword(object o) {
-			this.BeginSend((string) o);
+			Console.WriteLine("SendPassword in");
+			try {
+				this.BeginSend((string) o);
+			} catch (Exception e) {
+				Logger.WriteError("Unexpected error in timer callback method", e);
+			}
+			Console.WriteLine("SendPassword out");
 		}
 
 		#region Receieve
@@ -235,6 +247,11 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		protected override void On_DisposeUnmanagedResources() {
+			if (this.state != null) {
+				this.state.On_Close(this.closingReason);
+			}
+			this.receivingMode = this.ignoreMode;
+
 			try {
 				this.socket.Shutdown(SocketShutdown.Both);
 			} catch {
@@ -248,16 +265,17 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		public void Close(string reason) {
-			lock (this) {
-				if (!this.IsDisposed) {
-					if (this.state != null) {
-						this.state.On_Close(reason);
+			this.receivingMode = this.ignoreMode;
+			if (this.closingReason == null) {
+				lock (this) {
+					if (this.closingReason == null) {
+						this.closingReason = reason;
 					}
-					this.receivingMode = this.ignoreMode;
+					base.Dispose();
 				}
-				base.Dispose();
 			}
 		}
+
 		#endregion Close
 	}
 
