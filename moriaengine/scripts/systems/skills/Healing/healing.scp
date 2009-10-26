@@ -3,6 +3,7 @@ TYPE = t_bandage
 NAME = "bandage"
 WEIGHT = 1
 DEFNAME = i_bandage
+STACKABLE = true
 
 [ItemDef 0xee9]
 DUPEITEM = 0xe21
@@ -12,6 +13,7 @@ TYPE = t_bandage_blood
 NAME = "bloody bandage"
 WEIGHT = 1
 DEFNAME = i_bandage_bloody
+STACKABLE = true
 
 [ItemDef 0xe22]
 DUPEITEM = 0x20

@@ -2,236 +2,290 @@ using System;
 using SteamEngine;
 using SteamEngine.Timers;
 using SteamEngine.Persistence;
+using SteamEngine.Common;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
-	public class t_bandage_blood : CompiledTriggerGroup {
-
-	}
-
-	public class t_bandage : CompiledTriggerGroup {
-		public void On_DClick(Item self, Character clicker) {
-			//TODO? use resource system for consuming bandages
-
-			if (self.TopObj() == clicker) {
-				StartHealing(clicker, self);
-			} else {
-				Item otherBandage = null;
-				foreach (Item i in clicker.Backpack) {
-					if (i.Type == this) {
-						otherBandage = i;
-						break;
-					}
-				}
-
-				if (otherBandage != null) {
-					StartHealing(clicker, otherBandage);
-				}
-			}
-		}
-
-		[SteamFunction]
-		public static void StartHealing(Character self, Item bandage) {
-			((Player) self).Target(SingletonScript<Targ_Healing>.Instance);
-		}
-	}
 
 
-	public class Targ_Healing : CompiledTargetDef {
+    public class t_bandage_blood : CompiledTriggerGroup {
 
-		protected override void On_Start(Player self, object parameter) {
-			self.SysMessage("Koho se chceš pokusit léèit?");
-			base.On_Start(self, parameter);
-		}
+    }
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
-			//if (self.currentSkill != null) {
-			//    self.ClilocSysMessage(500118);//You must wait a few moments to use another skill.
-			//    return false;
-			//}
+    public class t_bandage : CompiledTriggerGroup {
 
-			//TODO: kontrola jestli neni zmrzlej nebo tak neco
+        public void On_DClick(Item self, Character clicker) {
+            //TODO? use resource system for consuming bandages
+            SkillSequenceArgs skillSeq = SkillSequenceArgs.Acquire(clicker, SkillName.Healing);
+            
+            GameState state = clicker.GameState;
 
-			//nevidi na cil
-			if (targetted != self) {
-				if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLosFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
-					self.SysMessage(targetted.Name + " je od tebe pøíliš daleko!");
-					return false;
-				}
-			}
-			//pokud ma cil stejne nebo vic zivotu
-			if (targetted.Hits >= targetted.MaxHits) {
-				if (targetted == self)
-					self.SysMessage("Jsi zcela zdráv!");
-				else
-					self.SysMessage(targetted.Name + " je zcela zdráv!");
-				return false;
-			}
+            if (self.TopObj() == self) {
+                skillSeq.Tool = self;
+                StartHealing(clicker, skillSeq);
+            } else {
+                Item otherBandage = null;
+                foreach (Item i in clicker.Backpack) {
+                    if (i.Type == BandageDef.Type) {
+                        otherBandage = i;
+                        break;
+                    }
+                }
 
-			//jestlize je to GM vylecime ihned bez otazek
-			//  if (self.IsGM()) {
-			//     targetted.Hits = targetted.MaxHits;
-			//     return false;
-			//  }
+                if (otherBandage != null) {
+                    skillSeq.Tool = otherBandage;
+                    StartHealing(clicker,skillSeq);
+                } else if (otherBandage == null) {
+                    if (state != null) {
+                        state.WriteLine(Loc<HealingLoc>.Get(state.Language).NoBands);
+                    }
+                }
+            }
+        }
 
+        private static ItemDef bandageDef;
+        public static ItemDef BandageDef {
+            get {
+                if (bandageDef == null) {
+                    bandageDef = (ItemDef)ThingDef.Get("i_bandage");
+                }
+                return bandageDef;
+            }
+        }
 
-			HealingTimer timer = null;//new HealingTimer(targetted);
-
-			//pokud jiz nekoho leci
-			if (self.HasTimer(healingTimerKey)) {
-
-				HealingTimer oldHealing = (HealingTimer) self.GetTimer(healingTimerKey);
-
-				if (oldHealing == null) //nikdy by nemel byt null
-					return false;
-
-				Character oldTarget = (Character) oldHealing.targetted;
-
-				if (targetted == self) {
-					self.SysMessage("Pøerušil si léèení!");
-				} else {
-					self.SysMessage("Pøerušil si léèení " + oldTarget.Name + "!");
-					oldTarget.SysMessage(self.Name + " pøerušil tvoji léèbu!");
-				}
-
-				timer = oldHealing;
-			}
-
-			if (timer == null)
-				timer = new HealingTimer(targetted);
-
-			timer.DueInSeconds = SingletonScript<HealingSkillDef>.Instance.GetDelayForChar(self);
-
-			//pokud se leci sam nebo jinyho
-			if (self == targetted)
-				self.SysMessage("Pokousis se lecit.");
-			else {
-				self.SysMessage("Pokousis se lecit " + targetted.Name + ".");
-				targetted.SysMessage(self.Name + " se te pokousi lecit.");
-			}
-
-			//vyhodime mu z ruky zbran
-			self.DisArm();
+        [SteamFunction]
+        public static void StartHealing(Character self, object parametr) {
+            ((Player)self).Target(SingletonScript<Targ_Healing>.Instance,parametr);
+        }
+        
+}
 
 
-			self.AddTimer(healingTimerKey, timer);
-			return false;
-		}
+    public class Targ_Healing : CompiledTargetDef {
+        SkillSequenceArgs skillSeq = null;
+        protected override void On_Start(Player self, object parameter) {
+            self.SysMessage("Koho se chceš pokusit léèit?");
+            skillSeq = (SkillSequenceArgs)parameter;
+            base.On_Start(self, parameter);
+        }
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-			self.SysMessage("Pøedmìty nelze léèit.");
-			return false;
-		}
+        protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+            //TODO: kontrola jestli neni zmrzlej nebo tak neco
 
-		private TimerKey healingTimerKey = TimerKey.Get("_healingTimer_");
-	}
+            //SkillSequenceArgs skillSeq = (SkillSequenceArgs)parameter;
+            if (targetted != null) {
+                skillSeq.Target1 = targetted;
+                skillSeq.PhaseSelect();
+            }
+            return false;
+        }
 
-	[DeepCopyableClass]
-	[SaveableClass]
-	public class HealingTimer : BoundTimer {
+        protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+            self.SysMessage("Pøedmìty nelze léèit.");
+            return false;
+        }
 
-		[SaveableData]
-		[CopyableData]
-		public Character targetted;
+        private TimerKey healingTimerKey = TimerKey.Get("_healingTimer_");
+    }
 
-		[LoadingInitializer]
-		[DeepCopyImplementation]
-		public HealingTimer() {
-		}
+    // jen kvuli staticky promeny, tartar urcite vymysli jak to udelat lip :o)
+    //ano. pomoci singletonscriptu. Ale bylo potreba zmenit typ ty sekce v healing.scp -tar
+    [Dialogs.ViewableClass]
+    public class HealingSkillDef : SkillDef {
 
-		public HealingTimer(Character target) {
-			this.targetted = target;
-		}
+        public HealingSkillDef(string defname, string filename, int line)
+            : base(defname, filename, line) {
+        }
+
+        //public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
+
+        protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+            Character self = skillSeqArgs.Self;
+            Character target = skillSeqArgs.Target1 as Character;
+            Item tool = skillSeqArgs.Tool;
+            GameState stateSelf = self.GameState;
+            
+            if (tool == null) {
+                Item otherBandage = null;
+                foreach (Item i in self.Backpack) {
+                    if (i.Type == BandageDef.Type) {
+                        otherBandage = i;
+                        break;
+                    }
+                }
+
+                if (otherBandage != null) {
+                    skillSeqArgs.Tool = otherBandage;
+                } else if (otherBandage == null) {
+                    if (stateSelf != null) {
+                        stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).NoBands);
+                    }
+                    return true;
+                }
+            }
+
+            //není cíl
+            if (target == null) {
+                return true;
+            }
+            GameState stateTarget = target.GameState;
+
+            //nevidi na cil
+            if (target != self) {
+                if (self.GetMap() != target.GetMap() || !self.GetMap().CanSeeLosFromTo(self, target) || Point2D.GetSimpleDistance(self, target) > 6) {
+                    if (stateSelf != null) {
+                        stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).TargetOut);
+                    }
+                    return true;
+                }
+            }
+
+            //pokud ma cil stejne nebo vic zivotu
+            if (target.Hits >= target.MaxHits) {
+                if (target == self) {
+                    if (stateSelf != null) {
+                        stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).SelfFull);
+                    }
+                } else {
+                    if (stateTarget != null) {
+                        stateTarget.WriteLine(target.Name + Loc<HealingLoc>.Get(stateTarget.Language).TargetFull);
+                    }
+                }
+                return true;
+            }
+
+            //cilem je gm, provede success okamzite
+            //if (target.IsGM) {
+            //    skillSeqArgs.PhaseSuccess();
+            //}
+
+            //TODO ? Dodelat podminku, kdyz je hrac frozen
+ 
+            return false;
+        }
+        
+
+        protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+            Character self = skillSeqArgs.Self;
+
+            skillSeqArgs.DelayInSeconds = 3;//this.GetDelayForChar(self);
+            
+            if (skillSeqArgs.DelaySpan < TimeSpan.Zero) {
+                skillSeqArgs.PhaseStroke();
+            } else {
+                skillSeqArgs.Self.AddTimer(TimerKey.Get("_skillTimer_"), new SkillSequenceArgs.SkillStrokeTimer(skillSeqArgs)).DueInSpan = skillSeqArgs.DelaySpan;
+            }
+            return true;
+        }
+
+        protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+            Character self = skillSeqArgs.Self;
+            Character target = skillSeqArgs.Target1 as Character;
+            Item tool = skillSeqArgs.Tool;
+            GameState stateSelf = self.GameState;
+
+            if (skillSeqArgs.Tool.IsDeleted || skillSeqArgs.Tool.TopObj() != self) {
+                if (stateSelf != null) {
+                    stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).NoBands);
+                }
+                return true;
+            }
+
+            skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(200));
+
+            return false;
+        }
+
+        protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+
+            Character targetted = skillSeqArgs.Target1 as Character;
+            Character self = skillSeqArgs.Self;
+
+            // TODO? Vytvorit vzorec pro maximum a minimum pridanych HP
+            int max = 10;
+            int min = 5;
+            targetted.Hits += (short)ScriptUtil.EvalRangePermille(self.GetSkill(SkillName.Healing) + self.GetSkill(SkillName.Anatomy), min, max);
+
+            if (targetted.Hits > targetted.MaxHits) {
+                targetted.Hits = targetted.MaxHits;
+            }
+            GameState state = skillSeqArgs.Self.GameState;
+            if (state != null) {
+                state.WriteLine(Loc<HealingLoc>.Get(state.Language).Success);
+            }
+            skillSeqArgs.Tool.Amount -= 1;
+            BloodyBandageAdder(self);
+            return false;
+        }
+
+        protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+            skillSeqArgs.Tool.Amount -= 1;
+            GameState state = skillSeqArgs.Self.GameState;
+            if (state != null) {
+                state.WriteLine(Loc<HealingLoc>.Get(state.Language).Fail);
+            }
+            Character targetted = skillSeqArgs.Target1 as Character;
+            if (targetted != skillSeqArgs.Self) {
+                if (state != null) {
+                    state.WriteLine(skillSeqArgs.Self.Name + Loc<HealingLoc>.Get(state.Language).TargetFailed);
+                }
+            }
+            return false;
+        }
 
 
-		protected override void OnTimeout(TagHolder cont) {
-
-			if (targetted == null || targetted.IsDeleted)
-				return;
-
-			Character self = (Character) cont;
-
-			//nevidi na cil
-			if (targetted != self) {
-				if (self.GetMap() != targetted.GetMap() || !self.GetMap().CanSeeLosFromTo(self, targetted) || Point2D.GetSimpleDistance(self, targetted) > 6) {
-					self.SysMessage(targetted.Name + " je od tebe pøíliš daleko!");
-					return;
-				}
-			}
-
-			//pokud ma cil stejne nebo vic zivotu
-			if (targetted.Hits >= targetted.MaxHits) {
-
-				if (targetted == self)
-					self.SysMessage("Jsi zcela zdráv!");
-				else
-					self.SysMessage(targetted.Name + " je zcela zdráv!");
-
-				return;
-			}
-
-			int selfHealing = self.GetSkill(SkillName.Healing);
-
-			//pokud se leceni zdarilo
-			if (SingletonScript<HealingSkillDef>.Instance.CheckSuccess(self, Globals.dice.Next(200))) {
-
-				targetted.Hits += (short) ScriptUtil.EvalRangePermille(self.GetSkill(SkillName.Healing) + self.GetSkill(SkillName.Anatomy), SingletonScript<HealingSkillDef>.Instance.Effect);
-
-				if (targetted.Hits > targetted.MaxHits)
-					targetted.Hits = targetted.MaxHits;
+        protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
+            throw new SEException("The method or operation is not implemented.");
+        }
 
 
+        private static ItemDef bloodyBandageDef;
+        public static ItemDef BloodyBandageDef {
+            get {
+                if (bloodyBandageDef == null) {
+                    bloodyBandageDef = (ItemDef)ThingDef.Get("i_bandage_bloody");
+                }
+                return bloodyBandageDef;
+            }
+        }
 
-				self.SysMessage("Léèení se ti povedlo!");
+        private static ItemDef bandageDef;
+        public static ItemDef BandageDef {
+            get {
+                if (bandageDef == null) {
+                    bandageDef = (ItemDef)ThingDef.Get("i_bandage");
+                }
+                return bandageDef;
+            }
+        }
 
-				//jestlize je cil jinej nez healer rekneme hlasku
-				if (targetted != self)
-					targetted.SysMessage(self.Name + " tì ošetøil!");
+        private static void BloodyBandageAdder(Character self) {
+            Item bloodybandage = null;
+            foreach (Item i in self.Backpack) {
+                if (i.Type == BloodyBandageDef.Type) {
+                    bloodybandage = i;
+                    break;
+                }
+            }
+            if (bloodybandage == null) {
+                BloodyBandageDef.Create(self.Backpack);
+            } else {
+                bloodybandage.Amount += 1;
+            }
+        }
+    }
+    public class HealingLoc : CompiledLocStringCollection {
+        internal readonly string Success = "Léèení se ti povedlo!";
+        internal readonly string Fail = "Léèení se ti nezdaøilo!";
+        internal readonly string NoBands = "Nemáš u sebe bandáže!";
+        internal readonly string TargetOut = " je od tebe pøíliš daleko!";
+        internal readonly string SelfFull = "Jsi zcela zdráv!";
+        internal readonly string TargetFull = " je zcela zdráv!";
+        //internal readonly string SelfCancelHeal = "Pøerušil si léèení!";
+        //internal readonly string SelfCancelHealTarget = "Pøerušil si léèení ";
+        //internal readonly string TargetCancelHeal = " pøerušil tvoji léèbu!";
+        internal readonly string TargetFailed = " selhal pøi pokusu tì ošetøit!";
 
-			} else {
-				self.SysMessage("Léèení se ti nezdaøilo!");
-
-				if (targetted != self)
-					targetted.SysMessage(self.Name + " selhal pøi pokusu tì ošetøit!");
-
-			}
-		}
-	}
-
-	// jen kvuli staticky promeny, tartar urcite vymysli jak to udelat lip :o)
-
-	//ano. pomoci singletonscriptu. Ale bylo potreba zmenit typ ty sekce v healing.scp -tar
-	public class HealingSkillDef : SkillDef {
-
-		public HealingSkillDef(string defname, string filename, int line)
-			: base(defname, filename, line) {
-		}
-
-		//public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
-
-
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
-			throw new SEException("The method or operation is not implemented.");
-		}
-
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			throw new SEException("The method or operation is not implemented.");
-		}
-
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-			throw new SEException("The method or operation is not implemented.");
-		}
-
-		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			throw new SEException("The method or operation is not implemented.");
-		}
-
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			throw new SEException("The method or operation is not implemented.");
-		}
-
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-			throw new SEException("The method or operation is not implemented.");
-		}
-	}
+    }
 }
