@@ -122,6 +122,9 @@
     <Compile Include="..\..\scripts\inGameFeatures\System\treasures\treasures.Generated.cs">
       <Link>inGameFeatures\System\treasures\treasures.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\TargetMemory.cs">
+      <Link>inGameFeatures\TargetMemory.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\GemBox.cs">
       <Link>inGameFeatures\World\storageBoxes\GemBox.cs</Link>
     </Compile>

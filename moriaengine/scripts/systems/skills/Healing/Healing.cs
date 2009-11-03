@@ -64,16 +64,20 @@ namespace SteamEngine.CompiledScripts {
 
     public class Targ_Healing : CompiledTargetDef {
         SkillSequenceArgs skillSeq = null;
+        
+
         protected override void On_Start(Player self, object parameter) {
-            self.SysMessage("Koho se chceš pokusit léèit?");
             skillSeq = (SkillSequenceArgs)parameter;
+            GameState stateSelf = self.GameState;
+            if (stateSelf != null) {
+                stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).TargetWho);
+            }
             base.On_Start(self, parameter);
         }
 
         protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
             //TODO: kontrola jestli neni zmrzlej nebo tak neco
 
-            //SkillSequenceArgs skillSeq = (SkillSequenceArgs)parameter;
             if (targetted != null) {
                 skillSeq.Target1 = targetted;
                 skillSeq.PhaseSelect();
@@ -82,7 +86,10 @@ namespace SteamEngine.CompiledScripts {
         }
 
         protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-            self.SysMessage("Pøedmìty nelze léèit.");
+            GameState stateSelf = self.GameState;
+            if (stateSelf != null) {
+                stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).TargetItem);
+            }
             return false;
         }
 
@@ -155,10 +162,11 @@ namespace SteamEngine.CompiledScripts {
                 return true;
             }
 
-            //cilem je gm, provede success okamzite
-            //if (target.IsGM) {
-            //    skillSeqArgs.PhaseSuccess();
-            //}
+            //cilem je gm, provede okamzite vyhealovani 
+            if (self.IsGM) {
+                target.Hits = target.MaxHits;
+                return true;
+            }
 
             //TODO ? Dodelat podminku, kdyz je hrac frozen
  
@@ -168,9 +176,19 @@ namespace SteamEngine.CompiledScripts {
 
         protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
             Character self = skillSeqArgs.Self;
+            GameState stateSelf = self.GameState;
 
-            skillSeqArgs.DelayInSeconds = 3;//this.GetDelayForChar(self);
-            
+            skillSeqArgs.DelayInSeconds = this.GetDelayForChar(self);
+
+            if (skillSeqArgs.Target1 == self) {
+                if (stateSelf != null) {
+                    stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).SelfStartHeal);
+                }
+            } else {
+                if (stateSelf != null) {
+                    stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).TargetStartHeal + self.Name + ".");
+                }
+            }
             if (skillSeqArgs.DelaySpan < TimeSpan.Zero) {
                 skillSeqArgs.PhaseStroke();
             } else {
@@ -203,9 +221,8 @@ namespace SteamEngine.CompiledScripts {
             Character self = skillSeqArgs.Self;
 
             // TODO? Vytvorit vzorec pro maximum a minimum pridanych HP
-            int max = 10;
-            int min = 5;
-            targetted.Hits += (short)ScriptUtil.EvalRangePermille(self.GetSkill(SkillName.Healing) + self.GetSkill(SkillName.Anatomy), min, max);
+
+            targetted.Hits += (short)ScriptUtil.EvalRangePermille(self.GetSkill(SkillName.Healing) + self.GetSkill(SkillName.Anatomy),this.Effect);
 
             if (targetted.Hits > targetted.MaxHits) {
                 targetted.Hits = targetted.MaxHits;
@@ -282,10 +299,11 @@ namespace SteamEngine.CompiledScripts {
         internal readonly string TargetOut = " je od tebe pøíliš daleko!";
         internal readonly string SelfFull = "Jsi zcela zdráv!";
         internal readonly string TargetFull = " je zcela zdráv!";
-        //internal readonly string SelfCancelHeal = "Pøerušil si léèení!";
-        //internal readonly string SelfCancelHealTarget = "Pøerušil si léèení ";
-        //internal readonly string TargetCancelHeal = " pøerušil tvoji léèbu!";
         internal readonly string TargetFailed = " selhal pøi pokusu tì ošetøit!";
+        internal readonly string TargetWho = "Koho chceš léèit?";
+        internal readonly string TargetItem = "Pøedmìty nelze léèit.";
+        internal readonly string TargetStartHeal = "Zaèínáš léèit ";
+        internal readonly string SelfStartHeal = "Zaèínáš se léèit.";
 
     }
 }
