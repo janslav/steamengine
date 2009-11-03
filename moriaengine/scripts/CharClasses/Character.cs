@@ -664,7 +664,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion status properties
 
-		public void Heal(int howManyHits) {
+		public void AddHits(int howManyHits) {
 			int hits = this.Hits;
 			int maxHits = this.MaxHits;
 			if (hits < maxHits) {

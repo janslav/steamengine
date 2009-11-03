@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectChar(target, spellEffectArgs);
 
-			target.Heal((int) this.GetEffectForValue(spellEffectArgs.SpellPower));
+			target.AddHits((int) this.GetEffectForValue(spellEffectArgs.SpellPower));
 		}
 	}
 }
