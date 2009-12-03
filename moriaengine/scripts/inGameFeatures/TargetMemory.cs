@@ -129,6 +129,129 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
             Heal(self, 10);
         }
         #endregion
+
+        #region UseEquip
+        [SteamFunction]
+        public static void UseEquip(Player self, int n) {
+            if (n <= 10) {
+            //TODO: Kontrola, jestli lze item pouzit.
+                self.targMem[n].Use();
+            } else {
+                self.SysMessage("Moc velky index!");
+            }
+        }
+
+        [SteamFunction]
+        public static void UseEquip1(Player self) {
+            UseEquip(self, 1);
+        }
+
+        [SteamFunction]
+        public static void UseEquip2(Player self) {
+            UseEquip(self, 2);
+        }
+
+        [SteamFunction]
+        public static void UseEquip3(Player self) {
+            UseEquip(self, 3);
+        }
+
+        [SteamFunction]
+        public static void UseEquip4(Player self) {
+            UseEquip(self, 4);
+        }
+
+        [SteamFunction]
+        public static void UseEquip5(Player self) {
+            UseEquip(self, 5);
+        }
+
+        [SteamFunction]
+        public static void UseEquip6(Player self) {
+            UseEquip(self, 6);
+        }
+
+        [SteamFunction]
+        public static void UseEquip7(Player self) {
+            UseEquip(self, 7);
+        }
+
+        [SteamFunction]
+        public static void UseEquip8(Player self) {
+            UseEquip(self, 8);
+        }
+
+        [SteamFunction]
+        public static void UseEquip9(Player self) {
+            UseEquip(self, 9);
+        }
+
+        [SteamFunction]
+        public static void UseEquip10(Player self) {
+            UseEquip(self, 10);
+        }
+        #endregion
+
+        //#region SetLast
+        //[SteamFunction]
+        //public static void SetLast(Player self, int n) {
+        //    if (n <= 10) {
+                
+        //    } else {
+        //        self.SysMessage("Moc velky index!");
+        //    }
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast1(Player self) {
+        //    SetLast(self, 1);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast2(Player self) {
+        //    SetLast(self, 2);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast3(Player self) {
+        //    SetLast(self, 3);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast4(Player self) {
+        //    SetLast(self, 4);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast5(Player self) {
+        //    SetLast(self, 5);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast6(Player self) {
+        //    SetLast(self, 6);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast7(Player self) {
+        //    SetLast(self, 7);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast8(Player self) {
+        //    SetLast(self, 8);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast9(Player self) {
+        //    SetLast(self, 9);
+        //}
+
+        //[SteamFunction]
+        //public static void SetLast10(Player self) {
+        //    SetLast(self, 10);
+        //}
+        //#endregion
     }
 
     public class Targ_TargetMemory : CompiledTargetDef {
