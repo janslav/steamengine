@@ -117,3 +117,37 @@ FirstSpellId = 601
 
 on=@create
 this.Contents = 0xffffffffffffff
+
+
+//for testing purposes
+[TemplateDef tm_reagbag]
+CATEGORY=Item Templates
+SUBSECTION=Miscellaneous
+DESCRIPTION=Bag of Reagents
+CONTAINER=i_bag
+ITEM=i_reag_batwing,500
+ITEM=i_reag_blackmoor,500
+ITEM=i_reag_blood_moss,500
+ITEM=i_reag_blood_spawn,500
+ITEM=i_reag_blood_vial,500
+ITEM=i_reag_bone,500
+ITEM=i_reag_brimstone,500
+ITEM=i_reag_daemon_bone,500
+ITEM=i_reag_fertile_dirt,500
+ITEM=i_reag_dragon_blood,500
+ITEM=i_reag_executioners_cap,500
+ITEM=i_reag_garlic,500
+ITEM=i_reag_ginseng,500
+ITEM=i_reag_mandrake_root,500
+ITEM=i_reag_eye_of_newt,500
+ITEM=i_reag_nightshade,500
+ITEM=i_reag_obsidian,500
+ITEM=i_reag_pig_iron,500
+ITEM=i_reag_pumice,500
+ITEM=i_reag_sulfur_ash,500
+ITEM=i_reag_spider_silk,500
+ITEM=i_reag_serpent_scale,500
+ITEM=i_reag_volcanic_ash,500
+ITEM=i_reag_dead_wood,500
+ITEM=i_reag_worm_heart,500
+ITEM=i_reag_black_pearl,500

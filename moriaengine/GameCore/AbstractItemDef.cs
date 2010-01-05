@@ -271,10 +271,7 @@ namespace SteamEngine {
 				case "dupelist": //Do nothing (for now?)
 					break;
 				case "name":
-					System.Text.RegularExpressions.Match m = TagMath.stringRE.Match(args);
-					if (m.Success) {
-						args = m.Groups["value"].Value;
-					}
+					args = ConvertTools.LoadSimpleQuotedString(args);
 
 					string singular, plural;
 					if (ItemDispidInfo.ParseName(args, out singular, out plural)) {

@@ -23,7 +23,7 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 
 	//this is the class to be overriden in C# scripts
-	//its subclasses (in scripts) are instantiated by TypeInfo class
+	//its subclasses (in scripts) are instantiated by ClassManager class
 
 	public enum GumpButtonType {
 		Page = 0,
@@ -50,8 +50,9 @@ namespace SteamEngine.CompiledScripts {
 			return this.GetType().Name;
 		}
 
-		public override void Unload() {
-		}
+		//not sure why this was here... let's find out
+		//public override void Unload() {
+		//}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -83,6 +84,7 @@ namespace SteamEngine.CompiledScripts {
 		public abstract void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args);
 		public abstract void OnResponse(Gump gi, GumpResponse gr, DialogArgs args);
 
+		#region drawing interface
 		//RunUO interface
 		public void AddAlphaRegion(int x, int y, int width, int height) {
 			GumpInstance.AddCheckerTrans(x, y, width, height);
@@ -343,9 +345,10 @@ namespace SteamEngine.CompiledScripts {
 				GumpInstance.movable = value;
 			}
 		}
+		#endregion drawing interface
 
 		public override string ToString() {
-			return "compiled gump " + Defname;
+			return "CompiledGumpDef " + Defname;
 		}
 	}
 

@@ -159,27 +159,18 @@ namespace SteamEngine {
 			//}
 			switch (valueName) {
 				case "password":
-					Match m = TagMath.stringRE.Match(valueString);
-					if (m.Success) {
-						if (Globals.HashPasswords) {
-							this.passwordHash = Tools.HashPassword(m.Groups["value"].Value);
-							this.password = null;
-						} else {
-							this.password = m.Groups["value"].Value;
-							this.passwordHash = null;
-						}
+					string str = ConvertTools.LoadSimpleQuotedString(valueString);
+
+					if (Globals.HashPasswords) {
+						this.passwordHash = Tools.HashPassword(str);
+						this.password = null;
 					} else {
-						if (Globals.HashPasswords) {
-							this.passwordHash = Tools.HashPassword(valueString);
-							this.password = null;
-						} else {
-							this.password = valueString;
-							this.passwordHash = null;
-						}
+						this.password = str;
+						this.passwordHash = null;
 					}
 					break;
 				case "passwordHash":
-					m = TagMath.stringRE.Match(valueString);
+					Match m = TagMath.stringRE.Match(valueString);
 					if (m.Success) {
 						if (Globals.HashPasswords) {
 							if (this.passwordHash == null) {	//Allows admins to set password=xxx without erasing passwordHash, and the password=xxx will override the passwordHash.

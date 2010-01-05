@@ -31,6 +31,8 @@ namespace SteamEngine.Converter {
 
 		public ConvertedTemplateDef(PropsSection input)
 			: base(input) {
+
+			headerType = "TemplateDef";
 		}
 
 		public override void FirstStage() {

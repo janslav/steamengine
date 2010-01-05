@@ -277,12 +277,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void UnloadAll() {
-			foreach (Constant c in allConstantsByName.Values) {
-				if (c != null) {
-					c.Unload();
-				}
-			}
+		internal static void ForgetAll() {
 			allConstantsByName.Clear();
 		}
 

@@ -36,10 +36,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Summary("Static 'factory' method for getting the instance of an existing input def.")]
 		public static new AbstractInputDef Get(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-
-			return script as AbstractInputDef;
+			return AbstractScript.Get(defname) as AbstractInputDef;
 		}
 
 		[Summary("Label of the input dialog")]
@@ -113,17 +110,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			: base(defname) {
 		}
 
-		public override void Unload() {
-			//we need to override this method since ScriptedInputDialogDef inherits from the CompiledGumpDef which does not unload iself...
-			IsUnloaded = true;
-		}
+		//public override void Unload() {
+		//    //we need to override this method since ScriptedInputDialogDef inherits from the CompiledGumpDef which does not unload iself... why? dunno. Let's see :)
+		//    IsUnloaded = true;
+		//}
 
 		internal static IUnloadable Load(PropsSection input) {
 			string typeName = input.HeaderType.ToLower();
 			string defname = input.HeaderName.ToLower();
 
-			AbstractScript def;
-			AllScriptsByDefname.TryGetValue(defname, out def);
+			AbstractScript def = AbstractScript.Get(defname);
 
 			ScriptedInputDialogDef id = def as ScriptedInputDialogDef;
 			if (id == null) {
@@ -133,8 +129,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					id = new ScriptedInputDialogDef(defname);
 				}
 			} else if (id.IsUnloaded) {
-				id.IsUnloaded = false;
-				UnRegisterInputDialogDef(id);//will be re-registered again
+				id.UnUnload();
 			} else {
 				throw new OverrideNotAllowedException("ScriptedInputDialogDef " + LogStr.Ident(defname) + " defined multiple times.");
 			}
@@ -145,30 +140,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				Logger.WriteWarning(input.Filename, input.HeaderLine, "InputDialogDef " + LogStr.Ident(input) + " has not a trigger submit defined.");
 			}
-			RegisterInputDialogDef(id);
 
 			//cteni dvou radku ze scriptu - nadpis dialogu a defaultni hodnota v inputu
 			PropsLine pl = input.TryPopPropsLine("label");
 			if (pl == null) {
 				throw new SEException(input.Filename, input.HeaderLine, "input dialog label is missing");
 			}
-			System.Text.RegularExpressions.Match m = ConvertTools.stringRE.Match(pl.Value);
-			if (m.Success) {
-				id.label = m.Groups["value"].Value;
-			} else {
-				id.label = pl.Value;
-			}
+
+			id.label = ConvertTools.LoadSimpleQuotedString(pl.Value);
 
 			pl = input.TryPopPropsLine("default");
 			if (pl == null) {
 				throw new SEException(input.Filename, input.HeaderLine, "input dialog default value is missing");
 			}
-			m = ConvertTools.stringRE.Match(pl.Value);
-			if (m.Success) {
-				id.defaultInput = m.Groups["value"].Value;
-			} else {
-				id.defaultInput = pl.Value;
-			}
+
+			id.defaultInput = ConvertTools.LoadSimpleQuotedString(pl.Value);
 
 			return id;
 		}
@@ -184,16 +170,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			on_response.Run(focus, newPars); //pass the filled text value
 		}
 
+		//[Summary("Unregister the input dialog def from the other defs")]
+		//private static void UnRegisterInputDialogDef(ScriptedInputDialogDef id) {
+		//    AllScriptsByDefname.Remove(id.Defname);
+		//}
 
-		[Summary("Unregister the input dialog def from the other defs")]
-		private static void UnRegisterInputDialogDef(ScriptedInputDialogDef id) {
-			AllScriptsByDefname.Remove(id.Defname);
-		}
-
-		[Summary("Register the input dialog def among the other defs")]
-		private static void RegisterInputDialogDef(ScriptedInputDialogDef id) {
-			AllScriptsByDefname[id.Defname] = id;
-		}
+		//[Summary("Register the input dialog def among the other defs")]
+		//private static void RegisterInputDialogDef(ScriptedInputDialogDef id) {
+		//    AllScriptsByDefname[id.Defname] = id;
+		//}
 
 		public static new void Bootstrap() {
 			ScriptLoader.RegisterScriptType(new string[] { "InputDef" },

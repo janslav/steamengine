@@ -1038,6 +1038,9 @@
     <None Include="..\..\scripts\systems\defs.scp">
       <Link>systems\defs.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\mailingsystem\mailsending.scp">
+      <Link>systems\mailingsystem\mailsending.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\PeriodicSave.scp">
       <Link>systems\PeriodicSave.scp</Link>
     </None>

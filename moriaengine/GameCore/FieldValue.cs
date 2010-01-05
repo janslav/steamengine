@@ -85,7 +85,7 @@ namespace SteamEngine {
 			return null;
 		}
 
-		internal static void UnloadScripts() {
+		internal static void ForgetScripts() {
 			parsers.Clear();
 		}
 

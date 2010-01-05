@@ -361,7 +361,7 @@ namespace SteamEngine.CompiledScripts {
 			this.Add(ThingDef.Get(model),1);
 		}
 
-		public void Add(ThingDef addedDef) {
+		public void Add(IThingFactory addedDef) {
             this.Add(addedDef, 1);
 		}
 
@@ -369,11 +369,11 @@ namespace SteamEngine.CompiledScripts {
             this.Add(ThingDef.Get(model),amount);
         }
 
-        public void Add(ThingDef addedDef, int amount) {
+		public void Add(IThingFactory addedDef, int amount) {
             GameState state = this.GameState;
             if (state != null) {
                 if (addedDef != null) {
-                    string name = addedDef.Name;
+					string name = addedDef is ThingDef ? ((ThingDef) addedDef).Name : addedDef.ToString();
                     this.SysMessage("Kam chceš umístit '" + name + "' ?");
 
                     ItemDef idef = addedDef as ItemDef;
@@ -384,16 +384,16 @@ namespace SteamEngine.CompiledScripts {
                         state.Target(true, this.Add_OnTargon, null, addedH);
                     }
                 } else {
-                    this.SysMessage("Nenalezen odpovidajici ThingDef.");
+					this.SysMessage("Nenalezen odpovidajici ItemDef/TemplateDef.");
                 }
             }
         }
 
         private class AddHelper {
-            internal ThingDef thing;
+			internal IThingFactory def;
             internal int amount;
-            public AddHelper(ThingDef thing, int amount) {
-                this.thing = thing;
+			public AddHelper(IThingFactory def, int amount) {
+                this.def = def;
                 this.amount = amount;
             }
         }
@@ -405,7 +405,7 @@ namespace SteamEngine.CompiledScripts {
 			if (targettedItem != null) {
 				getback = targettedItem.TopObj();
 			}
-			Thing t = addedH.thing.Create(getback.X, getback.Y, getback.Z, this.M);
+			Thing t = addedH.def.Create(getback.X, getback.Y, getback.Z, this.M);
             Item i = t as Item;
             if (i != null) {
                 i.Amount = addedH.amount;

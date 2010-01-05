@@ -30,23 +30,13 @@ namespace SteamEngine {
 		static int uids;
 		private int uid;
 
-		private static Dictionary<string, Type> defTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-		//string-Type pairs  ("ItemDef" - class ItemDef)
-
 		internal readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase); //not dictionary because keys are both strings and tagkeys
 		private readonly string filename;
 		private readonly int headerLine;
 		private string altdefname;
 		private bool alreadySaved;
 
-		protected AbstractDef(string defname, string filename, int headerLine)
-			: base(defname) {
-			this.filename = filename;
-			this.headerLine = headerLine;
-			this.IsUnloaded = false;
-			this.uid = uids++;
-		}
-
+		#region Accessors
 		public string Filename {
 			get { 
 				return this.filename; 
@@ -69,18 +59,14 @@ namespace SteamEngine {
 			}
 		}
 
-		public static new AbstractDef Get(string name) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(name, out script);
-			return script as AbstractDef;
-		}
-
 		public string Altdefname {
 			get {
 				return this.altdefname;
 			}
 			protected set {
+				this.Unregister();
 				this.altdefname = value;
+				this.Register();
 			}
 		}
 
@@ -96,76 +82,22 @@ namespace SteamEngine {
 			}
 		}
 
-		//used by loaders (Thing, GameAccount, Thingdefs)
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public void LoadScriptLines(PropsSection ps) {
-			foreach (PropsLine p in ps.PropsLines) {
-				try {
-					LoadScriptLine(ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
-				} catch (FatalException) {
-					throw;
-				} catch (Exception ex) {
-					Logger.WriteWarning(ps.Filename, p.Line, ex);
-				}
-			}
+		public override bool Equals(object obj) {
+			return obj == this;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename")]
-		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
-			Match m = TagHolder.tagRE.Match(param);
-			FieldValue fieldValue;
-			if (m.Success) {	//If the name begins with 'tag.'
-				string tagName = m.Groups["name"].Value;
-				TagKey tk = TagKey.Get(tagName);
-				fieldValue = (FieldValue) fieldValues[tk];
-				if (fieldValue == null) {
-					tagName = "tag." + tagName;
-					fieldValue = new FieldValue(tagName, FieldValueType.Typeless, null, filename, line, args);
-					fieldValues[tk] = fieldValue;
-					fieldValues[tagName] = fieldValue;
-				} else {
-					fieldValue.SetFromScripts(filename, line, args);
-				}
-				return;
-			}
-
-			switch (param) {
-				case "category":
-				case "subsection":
-				case "description":
-					return;
-				//axis props are ignored. Or shouldnt they? :)
-				case "defname":
-					Match ma = TagMath.stringRE.Match(args);
-					if (ma.Success) {
-						args = String.Intern(ma.Groups["value"].Value);
-					} else {
-						args = String.Intern(args);
-					}
-
-					AbstractScript def;
-					AllScriptsByDefname.TryGetValue(args, out def);
-
-					if (def == null) {
-						this.altdefname = args;
-						AllScriptsByDefname[this.altdefname] = this;
-					} else if (def == this) {
-						throw new ScriptException("Defname redundantly specified for Def " + LogStr.Ident(args) + ".");
-					} else {
-						throw new ScriptException("Def " + LogStr.Ident(args) + " defined multiple times.");
-					}
-					break;
-
-				default:
-					fieldValue = (FieldValue) fieldValues[param];
-					if (fieldValue != null) {
-						fieldValue.SetFromScripts(filename, line, args);
-						return;
-					}
-					throw new ScriptException("Invalid data '" + LogStr.Ident(param) + "' = '" + LogStr.Number(args) + "'.");
-			}
+		public override int GetHashCode() {
+			return uid;
 		}
 
+		public static new AbstractDef Get(string name) {
+			AbstractScript script;
+			AllScriptsByDefname.TryGetValue(name, out script);
+			return script as AbstractDef;
+		}
+		#endregion Accessors
+
+		#region Loading from saves
 		internal static void LoadSectionFromSaves(PropsSection input) {
 			//todo: a way to load new defs (or just regions)
 
@@ -220,7 +152,9 @@ namespace SteamEngine {
 				}
 			}
 		}
+		#endregion Loading from saves
 
+		#region FieldValue methods
 		protected FieldValue InitTypedField(string name, object value, Type type) {
 			if (typeof(ThingDef).IsAssignableFrom(type)) {
 				return InitThingDefField(name, value, type);
@@ -287,54 +221,9 @@ namespace SteamEngine {
 			}
 			return null;
 		}
+		#endregion FieldValue methods
 
-		public override void Unload() {
-
-			//ClearTags();
-
-			foreach (FieldValue fv in this.fieldValues.Values) {
-				fv.Unload();
-			}
-
-			base.Unload();
-
-			//todo: clear the other various properties...
-			//todo: not clear those tags/tgs/timers/whatever that were set dynamically (ie not in scripted defs)
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
-		public static void ResolveAll() {
-			int count = AllScriptsByDefname.Count;
-			Logger.WriteDebug("Resolving " + count + " defs");
-
-			DateTime before = DateTime.Now;
-			int a = 0;
-			int countPerCent = count / 100;
-			foreach (AbstractScript script in AllScriptsByDefname.Values) {
-				AbstractDef def = script as AbstractDef;
-				if (def != null) {
-					if ((a % countPerCent) == 0) {
-						Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
-					}
-					if (!def.IsUnloaded) {//those should have already stated what's the problem :)
-						foreach (FieldValue fv in def.fieldValues.Values) {
-							try {
-								fv.ResolveTemporaryState();
-							} catch (FatalException) {
-								throw;
-							} catch (Exception e) {
-								Logger.WriteWarning(e);
-							}
-						}
-					}
-					a++;
-				}
-			}
-			DateTime after = DateTime.Now;
-			Logger.WriteDebug("...took " + (after - before));
-			Logger.SetTitle("");
-		}
-
+		#region Saving
 		internal static void SaveAll(SaveStream output) {
 			Logger.WriteDebug("Saving defs.");
 			output.WriteComment("Defs");
@@ -393,29 +282,323 @@ namespace SteamEngine {
 				ObjectSaver.FlushCache(output);
 			}
 		}
+		#endregion Saving
+
+		#region Loading from scripts
+		private static readonly Type[] ConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+
+		private static Dictionary<string, ConstructorInfo> constructorsByTypeName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
+
+		public delegate void DefnameParser(PropsSection section, out string defname, out string altdefname);
+
+		private static Dictionary<Type, DefnameParser> defnameParsersByType_Registered = new Dictionary<Type, DefnameParser>();
+		private static Dictionary<Type, DefnameParser> defnameParsersByType_Inferred = new Dictionary<Type, DefnameParser>();
+
+		public static Type GetDefTypeByName(string name) {
+			ConstructorInfo ctor;
+			if (constructorsByTypeName.TryGetValue(name, out ctor)) {
+				return ctor.DeclaringType;
+			}
+			return null;
+		}
+
+		public static void RegisterDefnameParser<T>(DefnameParser parserMethod) where T : AbstractDef {
+			defnameParsersByType_Registered.Add(typeof(T), parserMethod); //throws in case of duplicity
+			defnameParsersByType_Inferred.Clear();
+		}
+
+		private static DefnameParser GetDefnameParser(Type defType) {
+			DefnameParser parserMethod;
+
+			if (defnameParsersByType_Inferred.TryGetValue(defType, out parserMethod)) {
+				return parserMethod;
+			}
+
+			//lazy initialisation. We're looking for our 
+			Type type = defType;
+			while (type != typeof(AbstractDef)) {
+				if (defnameParsersByType_Registered.TryGetValue(type, out parserMethod)) {
+					defnameParsersByType_Inferred.Add(defType, parserMethod);
+					return parserMethod;
+				}
+				type = type.BaseType;
+			}
+
+			parserMethod = DefaultDefnameParser;
+			defnameParsersByType_Inferred.Add(defType, parserMethod);
+			return parserMethod;
+		}
 
 		public static new void Bootstrap() {
+			//all AbstractDef descendants will be registered so that they get loaded by our LoadFromScripts method
 			CompiledScripts.ClassManager.RegisterSupplySubclasses<AbstractDef>(RegisterSubtype);
 		}
 
-		public static bool RegisterSubtype(Type type) {
-			string typeName = type.Name;
-			Type o;
-			if (defTypesByName.TryGetValue(typeName, out o)) { //we have already a ThingDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(o) + " in the register of AbstractDef classes.");
+		public static bool RegisterSubtype(Type defType) {
+			if (!defType.IsAbstract) {
+				ConstructorInfo ci;
+				if (constructorsByTypeName.TryGetValue(defType.Name, out ci)) { //we have already a SpellDef type named like that
+					throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of AbstractDef classes.");
+				}
+				ci = defType.GetConstructor(ConstructorParamTypes);
+				if (ci != null) {
+					constructorsByTypeName[defType.Name] = MemberWrapper.GetWrapperFor(ci);
+
+					ScriptLoader.RegisterScriptType(defType.Name, LoadFromScripts, false);
+				}
 			}
-			defTypesByName[typeName] = type;
 			return false;
 		}
 
+		//called by WorldSaver Load
 		public static bool ExistsDefType(string name) {
-			return defTypesByName.ContainsKey(name);
+			return constructorsByTypeName.ContainsKey(name);
+		}
+		
+		protected AbstractDef(string defname, string filename, int headerLine)
+			: base(defname) {
+			this.filename = filename;
+			this.headerLine = headerLine;
+			this.uid = uids++;
 		}
 
-		//public static void RegisterGetter(DefGetter deleg) {
-		//	getterDelegates.Add(deleg);
-		//}
+		public static IUnloadable LoadFromScripts(PropsSection input) {
+			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
+			string typeName = input.HeaderType;
+			ConstructorInfo constructor = constructorsByTypeName[typeName];
+			Type type = constructor.DeclaringType;
 
+			string defname, altdefname;
+			GetDefnameParser(type)(input, out defname, out altdefname);
+			defname = string.Intern(string.Concat(defname));
+			altdefname = string.Intern(string.Concat(altdefname));
+
+			AbstractScript def = AbstractScript.Get(defname);
+			if (!string.IsNullOrEmpty(altdefname)) {
+				AbstractScript defByAltdefname = AbstractScript.Get(altdefname);
+				if (defByAltdefname != null) {
+					if (def == null) {
+						def = defByAltdefname;
+						defByAltdefname = null;
+					} else if (defByAltdefname != def) {
+						throw new OverrideNotAllowedException("Header defname '" + defname + "' and alternate defname '" + altdefname + "' identify two different objects: "
+							+ "'" + def.ToString() + "' and '" + defByAltdefname.ToString() + "'. Ignoring.");
+					}
+				}
+			}
+
+			//check if it isn't another type or duplicity			
+			if (def != null) {
+				if (def.GetType() != type) {
+					throw new OverrideNotAllowedException("You can not change the class of a Def while resync. You have to recompile or restart to achieve that. Ignoring.");
+				} else if (!def.IsUnloaded) {
+					throw new OverrideNotAllowedException(def.ToString() + " defined multiple times.");
+				}
+			}
+
+			//construct new or resync
+			AbstractDef constructed = (AbstractDef) def;
+			if (def == null) {
+				object[] cargs = new object[] { defname, input.Filename, input.HeaderLine };
+				constructed = (AbstractDef) constructor.Invoke(cargs);
+			} else {
+				//?call some kind of "OnResync" virtual method?
+				constructed.UnUnload();
+				constructed.Unregister();
+			}
+
+			constructed.InternalSetDefname(defname);
+			constructed.altdefname = altdefname;
+
+			constructed.LoadScriptLines(input);
+
+			constructed.Register();
+
+			return constructed;
+		}
+
+		private static void DefaultDefnameParser(PropsSection section, out string defname, out string altdefname) {
+			string typeName = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			defname = section.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+
+			bool defnameIsNum;
+			defname = DeNumerizeDefname(typeName, defname, out defnameIsNum);
+
+			altdefname = null;
+			PropsLine defnameLine = section.TryPopPropsLine("defname");
+			if (defnameLine != null) {
+				altdefname = defnameLine.Value;
+				bool altdefnameIsNum;
+				altdefname = DeNumerizeDefname(typeName, altdefname, out altdefnameIsNum);
+
+				if (string.Equals(defname, altdefname, StringComparison.OrdinalIgnoreCase)) {
+					Logger.WriteWarning("Defname redundantly specified for " + section.HeaderType + " " + LogStr.Ident(defname) + ".");
+					altdefname = null;
+				}
+
+				//if header name is a number, we put it as alt
+				if (defnameIsNum && !altdefnameIsNum) {
+					string t = altdefname;
+					altdefname = defname;
+					defname = t;
+				}
+			}
+		}
+
+		private static string DeNumerizeDefname(string typeName, string defname, out bool isNumeric) {
+			int defnum;
+			isNumeric = false;
+			if (ConvertTools.TryParseInt32(defname, out defnum)) {
+				defname = defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+				defname = string.Concat("_", typeName, "_0x", defname, "_");
+				isNumeric = true;
+			}
+			return defname;
+		}
+
+
+		//register with static dictionaries and lists. 
+		//Can be called multiple times without harm
+		override protected internal void Register() {
+			try {
+				if (!string.IsNullOrEmpty(this.altdefname)) {
+					AbstractScript previous;
+					if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+						Sanity.IfTrueThrow(previous != this, "previous != this when registering AbstractDef '" + this.altdefname + "'");
+					}
+					AllScriptsByDefname[this.altdefname] = this;
+				}
+			} finally {
+				base.Register();
+			}
+		}
+
+		//unregister from static dictionaries and lists. 
+		//Can be called multiple times without harm
+		override protected void Unregister() {
+			try {
+				if (!string.IsNullOrEmpty(this.altdefname)) {
+					AbstractScript previous;
+					if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+						Sanity.IfTrueThrow(previous != this, "previous != this when unregistering AbstractDef '" + this.altdefname + "'");
+					}
+					AllScriptsByDefname.Remove(this.altdefname);
+				}
+			} finally {
+				base.Unregister();
+			}
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		public virtual void LoadScriptLines(PropsSection ps) {
+			foreach (PropsLine p in ps.PropsLines) {
+				try {
+					LoadScriptLine(ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
+				} catch (FatalException) {
+					throw;
+				} catch (Exception ex) {
+					Logger.WriteWarning(ps.Filename, p.Line, ex);
+				}
+			}
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename")]
+		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
+			Match m = TagHolder.tagRE.Match(param);
+			FieldValue fieldValue;
+			if (m.Success) {	//If the name begins with 'tag.'
+				string tagName = m.Groups["name"].Value;
+				TagKey tk = TagKey.Get(tagName);
+				fieldValue = (FieldValue) fieldValues[tk];
+				if (fieldValue == null) {
+					tagName = "tag." + tagName;
+					fieldValue = new FieldValue(tagName, FieldValueType.Typeless, null, filename, line, args);
+					fieldValues[tk] = fieldValue;
+					fieldValues[tagName] = fieldValue;
+				} else {
+					fieldValue.SetFromScripts(filename, line, args);
+				}
+				return;
+			}
+
+			switch (param) {
+				case "category":
+				case "subsection":
+				case "description":
+					return;
+					//axis props are ignored. Or shouldnt they? :)
+				default:
+					fieldValue = (FieldValue) fieldValues[param];
+					if (fieldValue != null) {
+						fieldValue.SetFromScripts(filename, line, args);
+						return;
+					}
+					throw new ScriptException("Invalid data '" + LogStr.Ident(param) + "' = '" + LogStr.Number(args) + "'.");
+			}
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
+		public static void ResolveAll() {
+			int count = AllScriptsByDefname.Count;
+			Logger.WriteDebug("Resolving " + count + " defs");
+
+			DateTime before = DateTime.Now;
+			int a = 0;
+			int countPerCent = count / 100;
+			foreach (AbstractScript script in AllScriptsByDefname.Values) {
+				AbstractDef def = script as AbstractDef;
+				if (def != null) {
+					if ((a % countPerCent) == 0) {
+						Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
+					}
+					if (!def.IsUnloaded) {//those should have already stated what's the problem :)
+						foreach (FieldValue fv in def.fieldValues.Values) {
+							try {
+								fv.ResolveTemporaryState();
+							} catch (FatalException) {
+								throw;
+							} catch (Exception e) {
+								Logger.WriteWarning(e);
+							}
+						}
+					}
+					a++;
+				}
+			}
+			DateTime after = DateTime.Now;
+			Logger.WriteDebug("...took " + (after - before));
+			Logger.SetTitle("");
+		}
+
+		public override void Unload() {
+			foreach (FieldValue fv in this.fieldValues.Values) {
+				fv.Unload();
+			}
+
+			base.Unload();
+
+			//todo: clear the other various properties...
+			//todo: not clear those tags/tgs/timers/whatever that were set dynamically (ie not in scripted defs)
+		}
+
+		//unloads instances that come from scripts.
+		internal static void ForgetScripts() {
+			AbstractScript.ForgetAll(); //just to be sure - unregister everything. Should be called by Main anyway
+
+			constructorsByTypeName.Clear();//we assume that inside core there are no non-abstract defs
+
+			//only leave the defnameParsers defined in core (like AbstractSkillDef and ThingDef probably? :)
+			defnameParsersByType_Inferred.Clear();
+
+			foreach (Type t in new List<Type>(defnameParsersByType_Registered.Keys)) {
+				if (t.Assembly != CompiledScripts.ClassManager.CoreAssembly) { //not in core
+					defnameParsersByType_Registered.Remove(t);
+				}
+			}
+		}
+		#endregion Loading from scripts
+
+		#region ITagHolder methods
 		public object GetTag(TagKey tk) {
 			FieldValue fv = (FieldValue) fieldValues[tk];
 			if (fv != null) {
@@ -455,19 +638,6 @@ namespace SteamEngine {
 				}
 			}
 		}
-
-		//unloads instances that come from scripts.
-		internal static void UnloadScripts() {
-			defTypesByName.Clear();//we assume that inside core there are no non-abstract defs
-			AllScriptsByDefname.Clear();
-		}
-
-		public override bool Equals(object obj) {
-			return obj == this;
-		}
-
-		public override int GetHashCode() {
-			return uid;
-		}
+		#endregion ITagHolder methods
 	}
 }

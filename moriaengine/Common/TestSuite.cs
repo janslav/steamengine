@@ -95,7 +95,7 @@ namespace SteamEngine.Common {
 		}
 
 		//when recompiling, we need to get rid of non-core methods. in fact we can only leave the scripted ones, because the core hasnt changed...
-		public static void UnloadAll() {
+		public static void ForgetAll() {
 			tests.Clear();
 		}
 

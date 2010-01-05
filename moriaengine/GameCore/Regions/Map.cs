@@ -57,7 +57,7 @@ namespace SteamEngine.Regions {
 		private static GroundTileType t_lava;
 		private static GroundTileType t_dirt;
 
-		internal static void UnloadScripts() {
+		internal static void ForgetScripts() {
 			t_rock = null;
 			t_grass = null;
 			t_lava = null;

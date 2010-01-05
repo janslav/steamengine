@@ -1,5 +1,5 @@
 //Zamìøovátko pro zacílení pro odeslání zprávy
-[TargetDef targ_delayed_message] //argv(1) mùže být rovnou text zprávy anebo null!
+[ScriptedTargetDef targ_delayed_message] //argv(1) mùže být rovnou text zprávy anebo null!
 message="Komu chceš poslat delayed message?"
 
 on=@start

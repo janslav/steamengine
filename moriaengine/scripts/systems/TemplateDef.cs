@@ -35,17 +35,11 @@ namespace SteamEngine.CompiledScripts {
 		private LScriptHolder holder;
 		private static ItemDef defaultContainer;
 
+		#region Accessors
 		public static new TemplateDef Get(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-			return script as TemplateDef;
+			return AbstractScript.Get(defname) as TemplateDef;
 		}
 
-		internal TemplateDef(string defname, string filename, int headerLine)
-			:
-				base(defname, filename, headerLine) {
-			container = InitThingDefField("container", null, typeof(ItemDef));
-		}
 
 		public ItemDef Container {
 			get {
@@ -55,49 +49,88 @@ namespace SteamEngine.CompiledScripts {
 				container.CurrentValue = value;
 			}
 		}
-
-		private static void UnRegisterTemplateDef(TemplateDef td) {
-			AllScriptsByDefname.Remove(td.Defname);
-			if (td.Altdefname != null) {
-				AllScriptsByDefname.Remove(td.Altdefname);
-			}
-		}
-
-		private static void RegisterTemplateDef(TemplateDef td) {
-			AllScriptsByDefname[td.Defname] = td;
-			if (td.Altdefname != null) {
-				AllScriptsByDefname[td.Altdefname] = td;
-			}
-		}
-
-		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			string typeName = input.HeaderType.ToLower();
-			string defname = input.HeaderName.ToLower();
-			//Console.WriteLine("loading section "+input.HeadToString());
-			//[typeName defname]
-
-			//Attempt to convert defname to a uint, so that we can "normalize" it
-			int defnum;
-			if (TagMath.TryParseInt32(defname, out defnum)) {
-				defname = "td_0x" + defnum.ToString("x");
-			}
-
-			AbstractScript def;
-			AllScriptsByDefname.TryGetValue(defname, out def);
-			TemplateDef td = def as TemplateDef;
-			if (td == null) {
-				if (def != null) {//it isnt TemplateDef
-					throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
-				} else {
-					td = new TemplateDef(defname, input.Filename, input.HeaderLine);
+		
+		public ItemDef DefaultContainer {
+			get {
+				if (defaultContainer == null) {
+					defaultContainer = (ItemDef) ThingDef.Get("i_bag");
+					if (defaultContainer == null) {
+						throw new ScriptException("Missing TemplateDef's default container itemdef (i_bag)");
+					}
 				}
-			} else if (td.IsUnloaded) {
-				td.IsUnloaded = false;
-				UnRegisterTemplateDef(td);//will be re-registered again
-			} else {
-				throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");
+				return defaultContainer;
 			}
+		}
+		#endregion Accessors
 
+		#region Loading from scripts
+		public TemplateDef(string defname, string filename, int headerLine)
+			:
+				base(defname, filename, headerLine) {
+			container = InitThingDefField("container", null, typeof(ItemDef));
+		}
+
+		//private static void UnRegisterTemplateDef(TemplateDef td) {
+		//    AllScriptsByDefname.Remove(td.Defname);
+		//    if (td.Altdefname != null) {
+		//        AllScriptsByDefname.Remove(td.Altdefname);
+		//    }
+		//}
+
+		//private static void RegisterTemplateDef(TemplateDef td) {
+		//    AllScriptsByDefname[td.Defname] = td;
+		//    if (td.Altdefname != null) {
+		//        AllScriptsByDefname[td.Altdefname] = td;
+		//    }
+		//}
+
+		public static new void Bootstrap() {
+			ScriptLoader.RegisterScriptType("TemplateDef",
+				new LoadSection(AbstractDef.LoadFromScripts), true);
+		}
+		public override void LoadScriptLines(PropsSection ps) {
+			ParseText(ps, this); //is static because it was that way before a little overhaul, and there's no reason for rewriting really
+
+			base.LoadFromSaves(ps); //would try to load the lines as fieldvalues... we already did that
+		}
+
+		//internal static IUnloadable LoadFromScripts(PropsSection input) {
+		//    string typeName = input.HeaderType.ToLower();
+		//    string defname = input.HeaderName.ToLower();
+		//    //Console.WriteLine("loading section "+input.HeadToString());
+		//    //[typeName defname]
+
+		//    //Attempt to convert defname to a uint, so that we can "normalize" it
+		//    int defnum;
+		//    if (TagMath.TryParseInt32(defname, out defnum)) {
+		//        defname = "td_0x" + defnum.ToString("x");
+		//    }
+
+		//    AbstractScript def;
+		//    AllScriptsByDefname.TryGetValue(defname, out def);
+		//    TemplateDef td = def as TemplateDef;
+		//    if (td == null) {
+		//        if (def != null) {//it isnt TemplateDef
+		//            throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
+		//        } else {
+		//            td = new TemplateDef(defname, input.Filename, input.HeaderLine);
+		//        }
+		//    } else if (td.IsUnloaded) {
+		//        td.IsUnloaded = false;
+		//        UnRegisterTemplateDef(td);//will be re-registered again
+		//    } else {
+		//        throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");
+		//    }
+
+		//    def = ParseText(input, defname, td);
+
+		//    //that's all, we're done ;)
+		//    RegisterTemplateDef(td);
+
+		//    return td;
+		//}
+
+		private static void ParseText(PropsSection input, TemplateDef td) {
 			TriggerSection trigger = input.GetTrigger(0);
 			//try to read container and/or second defname from the start of the text
 			bool altdefnamedefined = false;
@@ -125,24 +158,25 @@ namespace SteamEngine.CompiledScripts {
 							} else {
 								string altdefname = gc["value"].Value;
 								Match ma = TagMath.stringRE.Match(altdefname);
-								if (ma.Success) {
-									altdefname = String.Intern(ma.Groups["value"].Value);
-								} else {
-									altdefname = String.Intern(altdefname);
-								}
-								def = Get(altdefname);
+								altdefname = String.Intern(ConvertTools.LoadSimpleQuotedString(altdefname));
+								AbstractScript def = Get(altdefname);
 								TemplateDef t = def as TemplateDef;
-								if (t == null) {
+								if (t == null) { //is null or isnt TeplateDef
 									if (def != null) {//it isnt TemplateDef
+										td.Unload();
+										td.Unregister();
 										throw new OverrideNotAllowedException(
-											"TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
+											"TemplateDef " + LogStr.Ident(td.Defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 									} else {
 										td.Altdefname = altdefname;
+										td.Unregister(); //will be reregistred later by AbstractDef
 									}
 								} else if (t == td) {
 									Logger.WriteWarning(input.Filename, linenumber,
 										"Defname redundantly specified for TemplateDef " + LogStr.Ident(altdefname) + ".");
 								} else {
+									td.Unload();
+									td.Unregister();
 									throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(altdefname) + " defined multiple times.");
 								}
 								altdefnamedefined = true;
@@ -176,30 +210,10 @@ namespace SteamEngine.CompiledScripts {
 			if (input.TriggerCount > 1) {
 				Logger.WriteWarning(input.Filename, input.HeaderLine, "Triggers in a template are nonsensual (and ignored).");
 			}
-
-			//that's all, we're done ;)
-			RegisterTemplateDef(td);
-
-			return td;
 		}
+		#endregion Loading from scripts
 
-		public static new void Bootstrap() {
-			ScriptLoader.RegisterScriptType(new string[] { "templatedef", "template" },
-				new LoadSection(LoadFromScripts), true);
-		}
-
-		public ItemDef DefaultContainer {
-			get {
-				if (defaultContainer == null) {
-					defaultContainer = (ItemDef) ThingDef.Get("i_bag");
-					if (defaultContainer == null) {
-						throw new ScriptException("Missing TemplateDef's default container itemdef (i_bag)");
-					}
-				}
-				return defaultContainer;
-			}
-		}
-
+		#region factory methods
 		public Thing Create(IPoint4D p) {
 			return Create(p.X, p.Y, p.Z, p.M);
 		}
@@ -227,5 +241,6 @@ namespace SteamEngine.CompiledScripts {
 			holder.Run(cont, (ScriptArgs) null);
 			return cont;//we return the container even in case we didn't create it
 		}
+		#endregion factory methods
 	}
 }

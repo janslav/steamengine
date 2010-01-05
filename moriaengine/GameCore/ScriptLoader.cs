@@ -207,21 +207,21 @@ namespace SteamEngine {
 								//	return null;
 								default:
 									//"itemdef", "characterdef", etc.
-									if (StringComparer.OrdinalIgnoreCase.Equals(type, "chardef")) {
-										type = "CharacterDef";
-									}
-									if (ThingDef.ExistsDefType(type)) {
-										file.Add(ThingDef.LoadFromScripts(section));
-										continue;
-									}
-									if (PluginDef.ExistsDefType(type)) {
-										file.Add(PluginDef.LoadFromScripts(section));
-										continue;
-									}
-									if (AbstractSkillDef.ExistsDefType(type)) {
-										file.Add(AbstractSkillDef.LoadFromScripts(section));
-										continue;
-									}
+									//if (StringComparer.OrdinalIgnoreCase.Equals(type, "chardef")) {
+									//    type = "CharacterDef";
+									//}
+									//if (ThingDef.ExistsDefType(type)) {
+									//    file.Add(ThingDef.LoadFromScripts(section));
+									//    continue;
+									//}
+									//if (PluginDef.ExistsDefType(type)) {
+									//    file.Add(PluginDef.LoadFromScripts(section));
+									//    continue;
+									//}
+									//if (AbstractSkillDef.ExistsDefType(type)) {
+									//    file.Add(AbstractSkillDef.LoadFromScripts(section));
+									//    continue;
+									//}
 									RegisteredScript rs;
 									if (scriptTypesByName.TryGetValue(type, out rs)) {
 										file.Add(rs.deleg(section));
@@ -294,7 +294,12 @@ namespace SteamEngine {
 		public static void RegisterScriptType(string name, LoadSection deleg, bool startAsScript) {
 			RegisteredScript rs;
 			if (scriptTypesByName.TryGetValue(name, out rs)) {
-				throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(rs) + ") registered for handling the section name " + LogStr.Ident(name));
+				if (rs.deleg.Method != deleg.Method) {
+					throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(rs) + ") registered for handling the section name " + LogStr.Ident(name));
+				} else {
+					rs.startAsScript = rs.startAsScript || startAsScript; //if any wants true, it stays true. This is here because of AbstractDef and TemplateDef... yeah not exactly clean
+					return;
+				}
 			}
 			scriptTypesByName[name] = new RegisteredScript(deleg, startAsScript);
 		}
@@ -316,7 +321,7 @@ namespace SteamEngine {
 		}
 
 		//unloads instances that come from scripts.
-		internal static void UnloadScripts() {
+		internal static void ForgetScripts() {
 			Assembly coreAssembly = CompiledScripts.ClassManager.CoreAssembly;
 
 			Dictionary<string, RegisteredScript> origScripts = scriptTypesByName;

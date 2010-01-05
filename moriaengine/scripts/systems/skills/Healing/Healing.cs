@@ -142,7 +142,8 @@ namespace SteamEngine.CompiledScripts {
             if (target != self) {
                 if (self.GetMap() != target.GetMap() || !self.GetMap().CanSeeLosFromTo(self, target) || Point2D.GetSimpleDistance(self, target) > 6) {
                     if (stateSelf != null) {
-                        stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).TargetOut);
+                        stateSelf.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+							Loc<HealingLoc>.Get(stateSelf.Language).TargetOut, target.Name));
                     }
                     return true;
                 }
@@ -156,7 +157,8 @@ namespace SteamEngine.CompiledScripts {
                     }
                 } else {
                     if (stateTarget != null) {
-                        stateTarget.WriteLine(target.Name + Loc<HealingLoc>.Get(stateTarget.Language).TargetFull);
+                        stateTarget.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+							Loc<HealingLoc>.Get(stateTarget.Language).TargetFull, target.Name));
                     }
                 }
                 return true;
@@ -186,7 +188,8 @@ namespace SteamEngine.CompiledScripts {
                 }
             } else {
                 if (stateSelf != null) {
-                    stateSelf.WriteLine(Loc<HealingLoc>.Get(stateSelf.Language).TargetStartHeal + self.Name + ".");
+                    stateSelf.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						Loc<HealingLoc>.Get(stateSelf.Language).TargetStartHeal, ((Character) skillSeqArgs.Target1).Name));
                 }
             }
             if (skillSeqArgs.DelaySpan < TimeSpan.Zero) {
@@ -245,7 +248,8 @@ namespace SteamEngine.CompiledScripts {
             Character targetted = skillSeqArgs.Target1 as Character;
             if (targetted != skillSeqArgs.Self) {
                 if (state != null) {
-                    state.WriteLine(skillSeqArgs.Self.Name + Loc<HealingLoc>.Get(state.Language).TargetFailed);
+                    state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						Loc<HealingLoc>.Get(state.Language).TargetFailed, targetted.Name));
                 }
             }
             return false;
@@ -292,18 +296,18 @@ namespace SteamEngine.CompiledScripts {
             }
         }
     }
+
     public class HealingLoc : CompiledLocStringCollection {
         internal readonly string Success = "Léèení se ti povedlo!";
         internal readonly string Fail = "Léèení se ti nezdaøilo!";
         internal readonly string NoBands = "Nemáš u sebe bandáže!";
-        internal readonly string TargetOut = " je od tebe pøíliš daleko!";
+        internal readonly string TargetOut = "{0} je od tebe pøíliš daleko!";
         internal readonly string SelfFull = "Jsi zcela zdráv!";
-        internal readonly string TargetFull = " je zcela zdráv!";
-        internal readonly string TargetFailed = " selhal pøi pokusu tì ošetøit!";
+		internal readonly string TargetFull = "{0} je zcela zdráv!";
+		internal readonly string TargetFailed = "{0} selhal pøi pokusu tì ošetøit!";
         internal readonly string TargetWho = "Koho chceš léèit?";
         internal readonly string TargetItem = "Pøedmìty nelze léèit.";
-        internal readonly string TargetStartHeal = "Zaèínáš léèit ";
+        internal readonly string TargetStartHeal = "Zaèínáš léèit {0}.";
         internal readonly string SelfStartHeal = "Zaèínáš se léèit.";
-
     }
 }
