@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//removes all non-core references
-		internal static void UnloadScripts() {
+		internal static void ForgetScripts() {
 			Type[] types = new Type[allTypesbyName.Count];
 			allTypesbyName.Values.CopyTo(types, 0);
 			allTypesbyName.Clear();
@@ -176,7 +176,7 @@ namespace SteamEngine.CompiledScripts {
 				this.type = type;
 			}
 
-			internal abstract void InvokeDeleg(object instance);
+			internal abstract bool InvokeDeleg(object instance);
 			internal abstract Type TargetClass { get; }
 		}
 
@@ -188,10 +188,12 @@ namespace SteamEngine.CompiledScripts {
 				this.deleg = deleg;
 			}
 
-			internal override void InvokeDeleg(object instance) {
+			internal override bool InvokeDeleg(object instance) {
 				if (deleg != null) {
 					deleg((T) instance);
+					return true;
 				}
+				return false;
 			}
 
 			internal override Type TargetClass {
@@ -333,7 +335,14 @@ namespace SteamEngine.CompiledScripts {
 							}
 						}
 						if (instance != null) {
-							entry.InvokeDeleg(instance);
+							if (!entry.InvokeDeleg(instance)) {//if there's no loading method, just the constructor, 
+								//and if it's an abstractscript, it needs to be registered. Can't be done in AbstractScript constructor itself cos that's too soon.
+								//Or it would need some tweaks which I'm not in the mood to do :)
+								AbstractScript script = instance as AbstractScript;
+								if (script != null) {
+									script.Register(); //can't be run inside of the constructor...
+								}
+							}
 						}
 					}
 				}

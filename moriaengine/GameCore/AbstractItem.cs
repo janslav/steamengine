@@ -562,12 +562,7 @@ namespace SteamEngine {
 					break;
 
 				case "name":
-					Match ma = TagMath.stringRE.Match(valueString);
-					if (ma.Success) {
-						this.name = String.Intern(ma.Groups["value"].Value);
-					} else {
-						this.name = String.Intern(valueString);
-					}
+					this.name = String.Intern(ConvertTools.LoadSimpleQuotedString(valueString));
 					break;
 				case "amount":
 					this.amount = TagMath.ParseInt32(valueString);

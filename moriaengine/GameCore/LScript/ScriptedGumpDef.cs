@@ -48,6 +48,7 @@ namespace SteamEngine.LScript {
 				}
 			} else {
 				sgd = new ScriptedGumpDef(name);
+				sgd.Register();
 			}
 			if (headers.Length == 1) {//layout section
 				if ((sgd.layoutScript != null) && (!sgd.IsUnloaded)) {//already loaded
@@ -55,11 +56,11 @@ namespace SteamEngine.LScript {
 				}
 				LScriptHolder sc = new LScriptHolder(input.GetTrigger(0));
 				if (sc.unloaded) {//in case the compilation failed (syntax error)
-					sgd.IsUnloaded = true;
+					sgd.Unload(); //IsUnloaded = true;
 					return null;
 				}
 				sgd.layoutScript = sc;
-				sgd.IsUnloaded = false;
+				sgd.UnUnload();
 				return sgd;
 			} else if (headers.Length == 2) {//buttons or texts section
 				string type = headers[1].ToLower(System.Globalization.CultureInfo.InvariantCulture);
@@ -91,7 +92,7 @@ namespace SteamEngine.LScript {
 						trigger.Code = modifiedCode;
 						LScriptHolder sc = new LScriptHolder(trigger);
 						if (sc.unloaded) {//in case the compilation failed (syntax error)
-							sgd.IsUnloaded = true;
+							sgd.Unload(); //IsUnloaded = true;
 							return null;
 						}
 						sgd.textsScript = sc;
@@ -148,10 +149,10 @@ namespace SteamEngine.LScript {
 		private void CheckValidity() {//check method, used as delayed
 			if (layoutScript == null) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " missing the main (layout) section?");
-				IsUnloaded = true;
+				this.Unload();
 				return;
 			}
-			if (IsUnloaded && (layoutScript != null)) {
+			if (this.IsUnloaded && (layoutScript != null)) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " resynced incompletely?");
 				return;
 			}
@@ -161,6 +162,8 @@ namespace SteamEngine.LScript {
 			layoutScript = null;
 			responseTriggers = null;
 			textsScript = null;
+
+			base.Unload();
 		}
 
 		internal sealed override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {

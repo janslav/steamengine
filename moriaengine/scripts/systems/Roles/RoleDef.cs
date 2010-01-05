@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//private static Dictionary<string, RoleDef> byName = new Dictionary<string, RoleDef>(StringComparer.OrdinalIgnoreCase);
 
-		private static Dictionary<string, ConstructorInfo> roleDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
+		//private static Dictionary<string, ConstructorInfo> roleDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 
 		private TriggerGroup scriptedTriggers;
 
@@ -66,9 +66,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static RoleDef ByDefname(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-			return script as RoleDef;
+			return AbstractScript.Get(defname) as RoleDef;
 		}
 
 		//public static RoleDef ByName(string key) {
@@ -85,100 +83,121 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Loading from scripts
 
-		private static void RegisterRoleDef(RoleDef rd) {
-			AllScriptsByDefname[rd.Defname] = rd;
-			//byName[rd.Name] = rd;
+		public RoleDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+			//name = InitField_Typed("name", "", typeof(string));
 		}
 
-		private static void UnRegisterRoleDef(RoleDef rd) {
-			AllScriptsByDefname.Remove(rd.Defname);
-			//byName.Remove(rd.Name);
-		}
+		public override void LoadScriptLines(PropsSection ps) {
+			base.LoadScriptLines(ps);
 
-		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<RoleDef>(RegisterRoleDefType);
-		}
-
-		//for loading of roledefs from .scp scripts
-		public static new bool ExistsDefType(string name) {
-			return roleDefCtorsByName.ContainsKey(name);
-		}
-
-		private static Type[] roleDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		//called by ClassManager
-		internal static bool RegisterRoleDefType(Type roleDefType) {
-			ConstructorInfo ci;
-			if (roleDefCtorsByName.TryGetValue(roleDefType.Name, out ci)) { //we have already a RoleDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of RoleDef classes.");
+			//now do load the trigger code. 
+			if (ps.TriggerCount > 0) {
+				ps.HeaderName = "t__" + this.Defname + "__";
+				this.scriptedTriggers = ScriptedTriggerGroup.Load(ps);
 			}
-			ci = roleDefType.GetConstructor(roleDefConstructorParamTypes);
-			if (ci == null) {
-				throw new SEException("Proper constructor not found.");
-			}
-			roleDefCtorsByName[roleDefType.Name] = MemberWrapper.GetWrapperFor(ci);
-
-			ScriptLoader.RegisterScriptType(roleDefType.Name, LoadFromScripts, false);
-
-			return false;
 		}
 
+		public override void Unload() {
+			if (this.scriptedTriggers != null) {
+				this.scriptedTriggers.Unload();
+			}
+			base.Unload();
+		}
+
+		//private static void RegisterRoleDef(RoleDef rd) {
+		//    AllScriptsByDefname[rd.Defname] = rd;
+		//    //byName[rd.Name] = rd;
+		//}
+
+		//private static void UnRegisterRoleDef(RoleDef rd) {
+		//    AllScriptsByDefname.Remove(rd.Defname);
+		//    //byName.Remove(rd.Name);
+		//}
+
+		//public static new void Bootstrap() {
+		//    ClassManager.RegisterSupplySubclasses<RoleDef>(RegisterRoleDefType);
+		//}
+
+		////for loading of roledefs from .scp scripts
+		//public static new bool ExistsDefType(string name) {
+		//    return roleDefCtorsByName.ContainsKey(name);
+		//}
+
+		//private static Type[] roleDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+
+		////called by ClassManager
+		//internal static bool RegisterRoleDefType(Type roleDefType) {
+		//    ConstructorInfo ci;
+		//    if (roleDefCtorsByName.TryGetValue(roleDefType.Name, out ci)) { //we have already a RoleDef type named like that
+		//        throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of RoleDef classes.");
+		//    }
+		//    ci = roleDefType.GetConstructor(roleDefConstructorParamTypes);
+		//    if (ci == null) {
+		//        throw new SEException("Proper constructor not found.");
+		//    }
+		//    roleDefCtorsByName[roleDefType.Name] = MemberWrapper.GetWrapperFor(ci);
+
+		//    ScriptLoader.RegisterScriptType(roleDefType.Name, LoadFromScripts, false);
+
+		//    return false;
+		//}
 
 		internal static void StartingLoading() {
 		}
 
-		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			//it is something like this in the .scp file: [headerType headerName] = [RoleDef ro_starosta] etc.
-			string typeName = input.HeaderType.ToLower();
-			string roleDefName = input.HeaderName.ToLower();
+		//internal new static IUnloadable LoadFromScripts(PropsSection input) {
+		//    //it is something like this in the .scp file: [headerType headerName] = [RoleDef ro_starosta] etc.
+		//    string typeName = input.HeaderType.ToLower();
+		//    string roleDefName = input.HeaderName.ToLower();
 
-			AbstractScript def;
-			AllScriptsByDefname.TryGetValue(roleDefName, out def);
-			RoleDef roleDef = def as RoleDef;
+		//    AbstractScript def;
+		//    AllScriptsByDefname.TryGetValue(roleDefName, out def);
+		//    RoleDef roleDef = def as RoleDef;
 
-			ConstructorInfo constructor = roleDefCtorsByName[typeName];
+		//    ConstructorInfo constructor = roleDefCtorsByName[typeName];
 
-			if (roleDef == null) {
-				if (def != null) {//it isnt roleDef
-					throw new ScriptException("RoleDef " + LogStr.Ident(roleDefName) + " has the same name as " + LogStr.Ident(def));
-				} else {
-					object[] cargs = new object[] { roleDefName, input.Filename, input.HeaderLine };
-					roleDef = (RoleDef) constructor.Invoke(cargs);
-				}
-			} else if (roleDef.IsUnloaded) {
-				if (roleDef.GetType() != constructor.DeclaringType) {
-					throw new OverrideNotAllowedException("You can not change the class of a RoleDef while resync. You have to recompile or restart to achieve that. Ignoring.");
-				}
-				roleDef.IsUnloaded = false;
-				//we have to load the name first, so that it may be unloaded by it...
+		//    if (roleDef == null) {
+		//        if (def != null) {//it isnt roleDef
+		//            throw new ScriptException("RoleDef " + LogStr.Ident(roleDefName) + " has the same name as " + LogStr.Ident(def));
+		//        } else {
+		//            object[] cargs = new object[] { roleDefName, input.Filename, input.HeaderLine };
+		//            roleDef = (RoleDef) constructor.Invoke(cargs);
+		//        }
+		//    } else if (roleDef.IsUnloaded) {
+		//        if (roleDef.GetType() != constructor.DeclaringType) {
+		//            throw new OverrideNotAllowedException("You can not change the class of a RoleDef while resync. You have to recompile or restart to achieve that. Ignoring.");
+		//        }
+		//        roleDef.IsUnloaded = false;
+		//        //we have to load the name first, so that it may be unloaded by it...
 
-				PropsLine p = input.PopPropsLine("name");
-				roleDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
+		//        PropsLine p = input.PopPropsLine("name");
+		//        roleDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
 
-				UnRegisterRoleDef(roleDef);//will be re-registered again
-			} else {
-				throw new OverrideNotAllowedException("RoleDef " + LogStr.Ident(roleDefName) + " defined multiple times.");
-			}
+		//        UnRegisterRoleDef(roleDef);//will be re-registered again
+		//    } else {
+		//        throw new OverrideNotAllowedException("RoleDef " + LogStr.Ident(roleDefName) + " defined multiple times.");
+		//    }
 
-			//now do load the trigger code. 
-			//possibly will not be used until we decide to widen the roledef's functionality
-			if (input.TriggerCount > 0) {
-				input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @assign, unassign etc. triggers
-				roleDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-			} else {
-				roleDef.scriptedTriggers = null;
-			}
+		//    //now do load the trigger code. 
+		//    //possibly will not be used until we decide to widen the roledef's functionality
+		//    if (input.TriggerCount > 0) {
+		//        input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @assign, unassign etc. triggers
+		//        roleDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
+		//    } else {
+		//        roleDef.scriptedTriggers = null;
+		//    }
 
-			roleDef.LoadScriptLines(input);
+		//    roleDef.LoadScriptLines(input);
 
-			RegisterRoleDef(roleDef);
+		//    RegisterRoleDef(roleDef);
 
-			if (roleDef.scriptedTriggers == null) {
-				return roleDef;
-			} else {
-				return new UnloadableGroup(roleDef, roleDef.scriptedTriggers);
-			}
-		}
+		//    if (roleDef.scriptedTriggers == null) {
+		//        return roleDef;
+		//    } else {
+		//        return new UnloadableGroup(roleDef, roleDef.scriptedTriggers);
+		//    }
+		//}
 
 		internal static void LoadingFinished() {
 
@@ -186,11 +205,6 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Loading from scripts
 
 		//private FieldValue name; //logical name of the ability
-
-		public RoleDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {
-			//name = InitField_Typed("name", "", typeof(string));
-		}
 
 		//public string Name {
 		//    get {

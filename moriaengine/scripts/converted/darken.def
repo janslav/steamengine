@@ -112,132 +112,132 @@ model = i_moongate_blue
 
 //[function datdlazku] //(commented out by Converter) 
 
-[template tm_dlazka_barva_1]
+[TemplateDef tm_dlazka_barva_1]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_2]
+[TemplateDef tm_dlazka_barva_2]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_3]
+[TemplateDef tm_dlazka_barva_3]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_4]
+[TemplateDef tm_dlazka_barva_4]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_5]
+[TemplateDef tm_dlazka_barva_5]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_6]
+[TemplateDef tm_dlazka_barva_6]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_7]
+[TemplateDef tm_dlazka_barva_7]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_8]
+[TemplateDef tm_dlazka_barva_8]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_9]
+[TemplateDef tm_dlazka_barva_9]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_10]
+[TemplateDef tm_dlazka_barva_10]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_11]
+[TemplateDef tm_dlazka_barva_11]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_12]
+[TemplateDef tm_dlazka_barva_12]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_13]
+[TemplateDef tm_dlazka_barva_13]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_14]
+[TemplateDef tm_dlazka_barva_14]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_15]
+[TemplateDef tm_dlazka_barva_15]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_16]
+[TemplateDef tm_dlazka_barva_16]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_17]
+[TemplateDef tm_dlazka_barva_17]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_18]
+[TemplateDef tm_dlazka_barva_18]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_19]
+[TemplateDef tm_dlazka_barva_19]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_20]
+[TemplateDef tm_dlazka_barva_20]
 ITEM = i_zavodni_branka
 
-[template tm_dlazka_barva_21]
+[TemplateDef tm_dlazka_barva_21]
 ITEM = i_zavodni_branka
 
 //[function datsvitek] //(commented out by Converter) 
 
-[template tm_svitek_barva_1]
+[TemplateDef tm_svitek_barva_1]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_2]
+[TemplateDef tm_svitek_barva_2]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_3]
+[TemplateDef tm_svitek_barva_3]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_4]
+[TemplateDef tm_svitek_barva_4]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_5]
+[TemplateDef tm_svitek_barva_5]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_6]
+[TemplateDef tm_svitek_barva_6]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_7]
+[TemplateDef tm_svitek_barva_7]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_8]
+[TemplateDef tm_svitek_barva_8]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_9]
+[TemplateDef tm_svitek_barva_9]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_10]
+[TemplateDef tm_svitek_barva_10]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_11]
+[TemplateDef tm_svitek_barva_11]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_12]
+[TemplateDef tm_svitek_barva_12]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_13]
+[TemplateDef tm_svitek_barva_13]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_14]
+[TemplateDef tm_svitek_barva_14]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_15]
+[TemplateDef tm_svitek_barva_15]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_16]
+[TemplateDef tm_svitek_barva_16]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_17]
+[TemplateDef tm_svitek_barva_17]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_18]
+[TemplateDef tm_svitek_barva_18]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_19]
+[TemplateDef tm_svitek_barva_19]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_20]
+[TemplateDef tm_svitek_barva_20]
 ITEM = i_svitek_brany
 
-[template tm_svitek_barva_21]
+[TemplateDef tm_svitek_barva_21]
 ITEM = i_svitek_brany
 
 //[dialog d_hulka_na_zavody] //(commented out by Converter) 

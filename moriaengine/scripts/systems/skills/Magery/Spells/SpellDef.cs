@@ -52,155 +52,15 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[ViewableClass]
-	public class SpellDef : AbstractDef {
+	public class SpellDef : AbstractIndexedDef<SpellDef, int> {
 		private static Dictionary<string, ConstructorInfo> spellDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 
-		private static Dictionary<int, SpellDef> byId = new Dictionary<int, SpellDef>();
+		//private static Dictionary<int, SpellDef> byId = new Dictionary<int, SpellDef>();
 
 		private TriggerGroup scriptedTriggers;
 
-		private int id;
-
-		public static SpellDef ByDefname(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-			return script as SpellDef;
-		}
-
-		public static SpellDef ById(int key) {
-			SpellDef retVal;
-			byId.TryGetValue(key, out retVal);
-			return retVal;
-		}
-
-		private static void RegisterSpellDef(SpellDef sd) {
-			AllScriptsByDefname[sd.Defname] = sd;
-			byId[sd.id] = sd;
-		}
-
-		private static void UnRegisterSpellDef(SpellDef sd) {
-			AllScriptsByDefname.Remove(sd.Defname);
-			byId.Remove(sd.id);
-		}
-
-		public static ICollection<SpellDef> AllSpellDefs {
-			get {
-				return byId.Values;
-			}
-		}
-
-		#region Loading from scripts
-
-		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<SpellDef>(RegisterSpellDefType);
-		}
-
-		//for loading of Spelldefs from .scp scripts
-		public static new bool ExistsDefType(string name) {
-			return spellDefCtorsByName.ContainsKey(name);
-		}
-
-		private static Type[] SpellDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		//called by ClassManager
-		internal static bool RegisterSpellDefType(Type spellDefType) {
-			ConstructorInfo ci;
-			if (spellDefCtorsByName.TryGetValue(spellDefType.Name, out ci)) { //we have already a SpellDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of SpellDef classes.");
-			}
-			ci = spellDefType.GetConstructor(SpellDefConstructorParamTypes);
-			if (ci == null) {
-				throw new SEException("Proper constructor not found.");
-			}
-			spellDefCtorsByName[spellDefType.Name] = MemberWrapper.GetWrapperFor(ci);
-
-			ScriptLoader.RegisterScriptType(spellDefType.Name, LoadFromScripts, false);
-
-			return false;
-		}
-
-		internal static void StartingLoading() {
-
-		}
-
-		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
-			string typeName = input.HeaderType.ToLower();
-
-			string spellDefName = input.PopPropsLine("defname").Value;
-
-			AbstractScript def;
-			AllScriptsByDefname.TryGetValue(spellDefName, out def);
-			SpellDef spellDef = def as SpellDef;
-
-			ConstructorInfo constructor = spellDefCtorsByName[typeName];
-
-			if (spellDef == null) {
-				if (def != null) {//it isnt SpellDef
-					throw new ScriptException("SpellDef " + LogStr.Ident(spellDefName) + " has the same name as " + LogStr.Ident(def));
-				} else {
-					object[] cargs = new object[] { spellDefName, input.Filename, input.HeaderLine };
-					spellDef = (SpellDef) constructor.Invoke(cargs);
-				}
-			} else if (spellDef.IsUnloaded) {
-				if (spellDef.GetType() != constructor.DeclaringType) {
-					throw new OverrideNotAllowedException("You can not change the class of a SpellDef while resync. You have to recompile or restart to achieve that. Ignoring.");
-				}
-				spellDef.IsUnloaded = false;
-				//we have to load the name first, so that it may be unloaded by it...
-
-				PropsLine p = input.PopPropsLine("name");
-				spellDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
-
-				UnRegisterSpellDef(spellDef);//will be re-registered again
-			} else {
-				throw new OverrideNotAllowedException("SpellDef " + LogStr.Ident(spellDefName) + " defined multiple times.");
-			}
-
-			if (!TagMath.TryParseInt32(input.HeaderName, out spellDef.id)) {
-				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
-			}
-
-			//now do load the trigger code. 
-			if (input.TriggerCount > 0) {
-				input.HeaderName = "t__" + spellDefName + "__";
-				spellDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-			} else {
-				spellDef.scriptedTriggers = null;
-			}
-
-			spellDef.LoadScriptLines(input);
-
-			RegisterSpellDef(spellDef);
-
-			if (spellDef.scriptedTriggers == null) {
-				return spellDef;
-			} else {
-				return new UnloadableGroup(spellDef, spellDef.scriptedTriggers);
-			}
-		}
-
-		internal static void LoadingFinished() {
-
-		}
-
-		#endregion Loading from scripts
-
-		public override string ToString() {
-			return string.Concat(this.Defname, " (spellId ", this.id.ToString(), ")");
-		}
-
-		public bool TryCancellableTrigger(IPoint3D self, TriggerKey td, ScriptArgs sa) {
-			//cancellable trigger just for the one triggergroup
-			if (this.scriptedTriggers != null) {
-				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		#region FieldValues
+		//private int id;
+		#region Accessors
 		private FieldValue scrollItem;
 		private FieldValue runeItem;
 		private FieldValue name;
@@ -216,27 +76,27 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue effectRange;
 		private string runeWords;
 
-		public SpellDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {
+		public static SpellDef ByDefname(string defname) {
+			return AbstractScript.Get(defname) as SpellDef;
+		}
 
-			this.name = this.InitTypedField("name", null, typeof(string));
-			this.scrollItem = this.InitThingDefField("scrollItem", null, typeof(SpellScrollDef));
-			this.runeItem = this.InitThingDefField("runeItem", null, typeof(ItemDef));
-			this.castTime = this.InitTypedField("castTime", null, typeof(double));
-			this.flags = this.InitTypedField("flags", null, typeof(SpellFlag));
-			this.manaUse = this.InitTypedField("manaUse", 10, typeof(int));
-			this.requirements = this.InitTypedField("requirements", null, typeof(ResourcesList));
-			this.resources = this.InitTypedField("resources", null, typeof(ResourcesList));
-			this.difficulty = this.InitTypedField("difficulty", null, typeof(int));
-			this.effect = this.InitTypedField("effect", null, typeof(double[]));
-			this.sound = this.InitTypedField("sound", -1, typeof(SoundNames));
-			this.runes = this.InitTypedField("runes", null, typeof(string));
-			this.effectRange = this.InitTypedField("effectRange", 5, typeof(int));
+		public static SpellDef ById(int key) {
+			return ByDefIndex(key);
+		}
+
+		public static ICollection<SpellDef> AllSpellDefs {
+			get {
+				return AllIndexedDefs;
+			}
+		}
+
+		public override string ToString() {
+			return string.Concat(this.Defname, " (spellId ", this.Id.ToString(), ")");
 		}
 
 		public int Id {
 			get {
-				return this.id;
+				return this.DefIndex;
 			}
 		}
 
@@ -366,7 +226,6 @@ namespace SteamEngine.CompiledScripts {
 				this.effectRange.CurrentValue = value;
 			}
 		}
-		#endregion FieldValues
 
 		public string GetRuneWords() {
 			if (this.runeWords == null) {
@@ -431,6 +290,177 @@ namespace SteamEngine.CompiledScripts {
 				case 'z': return "Fea";		//duch
 			}
 			throw new SEException("Wrong spell rune " + ch);
+		}
+		#endregion Accessors
+
+		#region Loading from scripts
+
+
+		public SpellDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+
+			this.name = this.InitTypedField("name", null, typeof(string));
+			this.scrollItem = this.InitThingDefField("scrollItem", null, typeof(SpellScrollDef));
+			this.runeItem = this.InitThingDefField("runeItem", null, typeof(ItemDef));
+			this.castTime = this.InitTypedField("castTime", null, typeof(double));
+			this.flags = this.InitTypedField("flags", null, typeof(SpellFlag));
+			this.manaUse = this.InitTypedField("manaUse", 10, typeof(int));
+			this.requirements = this.InitTypedField("requirements", null, typeof(ResourcesList));
+			this.resources = this.InitTypedField("resources", null, typeof(ResourcesList));
+			this.difficulty = this.InitTypedField("difficulty", null, typeof(int));
+			this.effect = this.InitTypedField("effect", null, typeof(double[]));
+			this.sound = this.InitTypedField("sound", -1, typeof(SoundNames));
+			this.runes = this.InitTypedField("runes", null, typeof(string));
+			this.effectRange = this.InitTypedField("effectRange", 5, typeof(int));
+		}
+
+		//public static new void Bootstrap() {
+		//    ClassManager.RegisterSupplySubclasses<SpellDef>(RegisterSpellDefType);
+		//}
+
+		////for loading of Spelldefs from .scp scripts
+		//public static new bool ExistsDefType(string name) {
+		//    return spellDefCtorsByName.ContainsKey(name);
+		//}
+
+		//private static Type[] SpellDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+
+		////called by ClassManager
+		//internal static bool RegisterSpellDefType(Type spellDefType) {
+		//    ConstructorInfo ci;
+		//    if (spellDefCtorsByName.TryGetValue(spellDefType.Name, out ci)) { //we have already a SpellDef type named like that
+		//        throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of SpellDef classes.");
+		//    }
+		//    ci = spellDefType.GetConstructor(SpellDefConstructorParamTypes);
+		//    if (ci == null) {
+		//        throw new SEException("Proper constructor not found.");
+		//    }
+		//    spellDefCtorsByName[spellDefType.Name] = MemberWrapper.GetWrapperFor(ci);
+
+		//    ScriptLoader.RegisterScriptType(spellDefType.Name, LoadFromScripts, false);
+
+		//    return false;
+		//}
+
+		internal static void StartingLoading() {
+
+		}
+
+		public static new void Bootstrap() {
+			//ThingDef script sections are special in that they can have numeric header indicating model
+			AbstractDef.RegisterDefnameParser<SpellDef>(ParseDefnames);
+		}
+
+		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
+			ushort spellId;
+			if (!TagMath.TryParseUInt16(section.HeaderName, out spellId)) {
+				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
+			}
+			defname = "spell_" + spellId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+			PropsLine defnameLine = section.TryPopPropsLine("defname");
+			if (defnameLine != null) {
+				altdefname = ConvertTools.LoadSimpleQuotedString(defnameLine.Value);
+
+				if (string.Equals(defname, altdefname, StringComparison.OrdinalIgnoreCase)) {
+					Logger.WriteWarning("Defname redundantly specified for " + section.HeaderType + " " + LogStr.Ident(defname) + ".");
+					altdefname = null;
+				}
+			} else {
+				altdefname = null;
+			}
+		}
+
+		public override void LoadScriptLines(PropsSection ps) {
+			this.DefIndex = ConvertTools.ParseInt32(this.Defname.Substring(6)); //"spell_" = 6chars
+
+			base.LoadScriptLines(ps);
+
+			if (ps.TriggerCount > 0) {
+				ps.HeaderName = "t__" + this.Defname + "__";
+				this.scriptedTriggers = ScriptedTriggerGroup.Load(ps);
+			}
+		}
+
+		public override void Unload() {
+			if (this.scriptedTriggers != null) {
+				this.scriptedTriggers.Unload();
+			}
+			base.Unload();
+		}
+
+		//internal new static IUnloadable LoadFromScripts(PropsSection input) {
+		//    //it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
+		//    string typeName = input.HeaderType.ToLower();
+
+		//    string spellDefName = input.PopPropsLine("defname").Value;
+
+		//    AbstractScript def;
+		//    AllScriptsByDefname.TryGetValue(spellDefName, out def);
+		//    SpellDef spellDef = def as SpellDef;
+
+		//    ConstructorInfo constructor = spellDefCtorsByName[typeName];
+
+		//    if (spellDef == null) {
+		//        if (def != null) {//it isnt SpellDef
+		//            throw new ScriptException("SpellDef " + LogStr.Ident(spellDefName) + " has the same name as " + LogStr.Ident(def));
+		//        } else {
+		//            object[] cargs = new object[] { spellDefName, input.Filename, input.HeaderLine };
+		//            spellDef = (SpellDef) constructor.Invoke(cargs);
+		//        }
+		//    } else if (spellDef.IsUnloaded) {
+		//        if (spellDef.GetType() != constructor.DeclaringType) {
+		//            throw new OverrideNotAllowedException("You can not change the class of a SpellDef while resync. You have to recompile or restart to achieve that. Ignoring.");
+		//        }
+		//        spellDef.IsUnloaded = false;
+		//        //we have to load the name first, so that it may be unloaded by it...
+
+		//        PropsLine p = input.PopPropsLine("name");
+		//        spellDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
+
+		//        UnRegisterSpellDef(spellDef);//will be re-registered again
+		//    } else {
+		//        throw new OverrideNotAllowedException("SpellDef " + LogStr.Ident(spellDefName) + " defined multiple times.");
+		//    }
+
+		//    if (!TagMath.TryParseInt32(input.HeaderName, out spellDef.id)) {
+		//        throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
+		//    }
+
+		//    //now do load the trigger code. 
+		//    if (input.TriggerCount > 0) {
+		//        input.HeaderName = "t__" + spellDefName + "__";
+		//        spellDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
+		//    } else {
+		//        spellDef.scriptedTriggers = null;
+		//    }
+
+		//    spellDef.LoadScriptLines(input);
+
+		//    RegisterSpellDef(spellDef);
+
+		//    if (spellDef.scriptedTriggers == null) {
+		//        return spellDef;
+		//    } else {
+		//        return new UnloadableGroup(spellDef, spellDef.scriptedTriggers);
+		//    }
+		//}
+
+		internal static void LoadingFinished() {
+
+		}
+
+		#endregion Loading from scripts
+
+		#region Trigger methods
+		public bool TryCancellableTrigger(IPoint3D self, TriggerKey td, ScriptArgs sa) {
+			//cancellable trigger just for the one triggergroup
+			if (this.scriptedTriggers != null) {
+				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private static TriggerKey tkSuccess = TriggerKey.Get("success");
@@ -821,6 +851,7 @@ namespace SteamEngine.CompiledScripts {
 				Networking.PacketSequences.SendSound(place, sound, Globals.MaxUpdateRange);
 			}
 		}
+		#endregion Trigger methods
 	}
 
 	public class SpellEffectArgs {

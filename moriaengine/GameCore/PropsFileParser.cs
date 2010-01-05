@@ -246,16 +246,17 @@ namespace SteamEngine {
 
 		public PropsLine TryPopPropsLine(string name) {
 			PropsLine line;
-			props.TryGetValue(name, out line);
-			props.Remove(name);
+			if (props.TryGetValue(name, out line)) {
+				props.Remove(name);
+			}
 			return line;
 		}
 
 		public PropsLine PopPropsLine(string name) {
 			PropsLine line;
-			props.TryGetValue(name, out line);
-			props.Remove(name);
-			if (line == null) {
+			if (props.TryGetValue(name, out line)) {
+				props.Remove(name);
+			} else {
 				throw new SEException(LogStr.FileLine(this.filename, this.headerLine) + "There is no '" + name + "' line!");
 			}
 			return line;

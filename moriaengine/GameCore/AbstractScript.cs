@@ -27,7 +27,7 @@ namespace SteamEngine {
 		private readonly static Dictionary<string, AbstractScript> byDefname = new Dictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
 
 		private string defname;
-		private bool unloaded;
+		private bool unloaded = false;
 
 		public static void Bootstrap() {
 			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
@@ -39,15 +39,38 @@ namespace SteamEngine {
 			return script;
 		}
 
-		public static void UnloadAll() {
-			foreach (AbstractScript gs in byDefname.Values) {
-				gs.Unload();
+		public static void ForgetAll() {
+			foreach (AbstractScript gs in new List<AbstractScript>(byDefname.Values)) {
+				gs.Unregister();
 			}
-			byDefname.Clear();
+			Sanity.IfTrueThrow(byDefname.Count > 0, "byDefname.Count > 0 after UnloadAll");
 		}
 
+		//register with static dictionaries and lists. 
+		//Can be called multiple times without harm
+		virtual internal protected void Register() {
+			if (!string.IsNullOrEmpty(this.defname)) {
+				AbstractScript previous;
+				if (byDefname.TryGetValue(this.defname, out previous)) {
+					Sanity.IfTrueThrow(previous != this, "previous != this when registering AbstractScript '" + this.defname + "'");
+				}
+				byDefname[this.defname] = this;
+			}
+		}
 
-		protected static Dictionary<string, AbstractScript> AllScriptsByDefname {
+		//unregister from static dictionaries and lists. 
+		//Can be called multiple times without harm
+		virtual protected void Unregister() {
+			if (!string.IsNullOrEmpty(this.defname)) {
+				AbstractScript previous;
+				if (byDefname.TryGetValue(this.defname, out previous)) {
+					Sanity.IfTrueThrow(previous != this, "previous != this when unregistering AbstractScript '" + this.defname + "'"); 
+				}
+				byDefname.Remove(this.defname);
+			}
+		}
+
+		internal static Dictionary<string, AbstractScript> AllScriptsByDefname {
 			get {
 				return byDefname; 
 			}
@@ -64,7 +87,6 @@ namespace SteamEngine {
 			if (byDefname.ContainsKey(this.defname)) {
 				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname) + " already exists!");
 			}
-			byDefname[this.defname] = this;
 		}
 
 		protected AbstractScript(string defname) {
@@ -76,28 +98,29 @@ namespace SteamEngine {
 			if (byDefname.ContainsKey(this.defname)) {
 				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname) + " already exists!");
 			}
-			byDefname[this.defname] = this;
 		}
 
 		public virtual void Unload() {
 			this.unloaded = true;
 		}
 
+		public virtual void UnUnload() {
+			this.unloaded = false;
+		}
+
 		public bool IsUnloaded {
 			get { 
 				return this.unloaded; 
 			}
-			protected set { 
-				this.unloaded = value; 
-			}
+		}
+
+		internal void InternalSetDefname(string value) {
+			this.defname = value;
 		}
 
 		public string Defname {
 			get { 
 				return this.defname; 
-			}
-			internal set { 
-				this.defname = value; 
 			}
 		}
 

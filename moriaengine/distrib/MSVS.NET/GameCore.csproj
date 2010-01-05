@@ -201,6 +201,9 @@
     <Compile Include="..\..\GameCore\AbstractDefTriggerGroupHolder.cs">
       <Link>AbstractDefTriggerGroupHolder.cs</Link>
     </Compile>
+    <Compile Include="..\..\GameCore\AbstractIndexedDef.cs">
+      <Link>AbstractIndexedDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\GameCore\AbstractItem.cs">
       <Link>AbstractItem.cs</Link>
       <SubType>Code</SubType>

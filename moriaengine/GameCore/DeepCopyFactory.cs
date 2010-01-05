@@ -283,7 +283,7 @@ namespace SteamEngine {
 			return dl;
 		}
 
-		internal static void UnloadScripts() {
+		internal static void ForgetScripts() {
 			Dictionary<Type, IDeepCopyImplementor> copiedList = new Dictionary<Type, IDeepCopyImplementor>(implementors);
 
 			foreach (KeyValuePair<Type, IDeepCopyImplementor> pair in copiedList) {

@@ -44,10 +44,12 @@ namespace SteamEngine {
 
 		internal MultiData multiData;
 
+		private TriggerGroup defaultTriggerGroup;
+
 		private static Dictionary<Type, Type> thingDefTypesByThingType = new Dictionary<Type, Type>();
 		private static Dictionary<Type, Type> thingTypesByThingDefType = new Dictionary<Type, Type>();
 
-		private static Dictionary<string, Type> thingDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+		//private static Dictionary<string, Type> thingDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 		private static Dictionary<Type, ConstructorInfo> thingDefCtors = new Dictionary<Type, ConstructorInfo>();
 
 
@@ -82,6 +84,39 @@ namespace SteamEngine {
 				this.model.SetFromScripts(filename, headerLine, Globals.DefaultCharModel.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			} else {
 				throw new ScriptException("Char or item? This should NOT happen!");
+			}
+		}
+
+		#region Accessors
+		/**
+			This does NOT check Constants (and must not, or it would trigger infinite recursion from Constant.EvaluateToDef(string)).
+		*/
+		public static new ThingDef Get(string defname) {
+			AbstractScript script;
+			AllScriptsByDefname.TryGetValue(defname, out script);
+			return script as ThingDef;
+		}
+
+		/**
+			This does NOT check Constants.
+			
+			Searches for and returns a ThingDef for the specified model #. It is recommended that you use
+			FindItemDef or FindCharDef instead of using this method.
+			
+			This checks chardefs first, unless the defnumber is too high to be a chardef.
+			It checks itemdefs if we didn't find a chardef (or if we didn't look, if the defnumber was too high).
+			It will return null if the defnumber doesn't correspond to a chardef or itemdef.
+			This calls FindCharDef and FindItemDef to do the real work.
+			
+			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
+		*/
+		public static ThingDef Get(int defnumber) {
+			ThingDef tdone = null;
+			tdone = FindCharDef(defnumber);
+			if (tdone == null) {
+				return FindItemDef(defnumber);
+			} else {
+				return tdone;
 			}
 		}
 
@@ -145,13 +180,9 @@ namespace SteamEngine {
 		public abstract bool IsItemDef { get; }
 		public abstract bool IsCharDef { get; }
 
-		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			if ("flag".Equals(param)) {
-				param = "flags";
-			}
-			base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
-		}
+		#endregion Accessors
 
+		#region Thing factory methods
 		internal Thing CreateWhenLoading() {
 			this.ThrowIfUnloaded();
 			return CreateImpl();
@@ -243,7 +274,9 @@ namespace SteamEngine {
 		}
 
 		protected abstract Thing CreateImpl();
+		#endregion Thing factory methods
 
+		#region TriggerGroupHolder helper methods
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
@@ -297,58 +330,29 @@ namespace SteamEngine {
 			}
 			return false;
 		}
+		#endregion TriggerGroupHolder helper methods
 
-		/**
-			This does NOT check Constants (and must not, or it would trigger infinite recursion from Constant.EvaluateToDef(string)).
-		*/
-		public static new ThingDef Get(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-			return script as ThingDef;
-		}
+		#region Loading from scripts
 
-		/**
-			This does NOT check Constants.
-			
-			Searches for and returns a ThingDef for the specified model #. It is recommended that you use
-			FindItemDef or FindCharDef instead of using this method.
-			
-			This checks chardefs first, unless the defnumber is too high to be a chardef.
-			It checks itemdefs if we didn't find a chardef (or if we didn't look, if the defnumber was too high).
-			It will return null if the defnumber doesn't correspond to a chardef or itemdef.
-			This calls FindCharDef and FindItemDef to do the real work.
-			
-			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
-		*/
-		public static ThingDef Get(int defnumber) {
-			ThingDef tdone = null;
-			tdone = FindCharDef(defnumber);
-			if (tdone == null) {
-				return FindItemDef(defnumber);
-			} else {
-				return tdone;
+		//public static new bool ExistsDefType(string name) {
+		//    return thingDefTypesByName.ContainsKey(name);
+		//}
+
+		////checking type when loading...
+		//public static Type GetDefTypeByThingType(Type thingType) {//
+		//    Type defType;
+		//    thingDefTypesByThingType.TryGetValue(thingType, out defType);
+		//    return defType;
+		//}
+
+		protected override void LoadScriptLine(string filename, int line, string param, string args) {
+			if ("flag".Equals(param)) {
+				param = "flags";
 			}
+			base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
 		}
 
-		//for loading of thingdefs from .scp/.def scripts
-		public static Type GetDefTypeByName(string name) {
-			Type defType;
-			thingDefTypesByName.TryGetValue(name, out defType);
-			return defType;
-		}
-
-		public static new bool ExistsDefType(string name) {
-			return thingDefTypesByName.ContainsKey(name);
-		}
-
-		//checking type when loading...
-		public static Type GetDefTypeByThingType(Type thingType) {//
-			Type defType;
-			thingDefTypesByThingType.TryGetValue(thingType, out defType);
-			return defType;
-		}
-
-		private static Type[] thingDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+		//private static Type[] thingDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
 
 		//this should be typically called by the Bootstrap methods of scripted ThingDef
 		public static void RegisterThingDef(Type thingDefType, Type thingType) {
@@ -360,14 +364,14 @@ namespace SteamEngine {
 				throw new OverrideNotAllowedException("Thing type " + LogStr.Ident(thingType.FullName) + " already has it's ThingDef type -" + t.FullName + ".");
 			}
 
-			ConstructorInfo ci = thingDefType.GetConstructor(thingDefConstructorParamTypes);
-			if (ci == null) {
-				throw new SEException("Proper constructor not found.");
-			}
+			//ConstructorInfo ci = thingDefType.GetConstructor(thingDefConstructorParamTypes);
+			//if (ci == null) {
+			//    throw new SEException("Proper constructor not found.");
+			//}
 			thingDefTypesByThingType[thingType] = thingDefType;
 			thingTypesByThingDefType[thingDefType] = thingType;
-			thingDefTypesByName[thingDefType.Name] = thingDefType;
-			thingDefCtors[thingDefType] = MemberWrapper.GetWrapperFor(ci);
+			//thingDefTypesByName[thingDefType.Name] = thingDefType;
+			//thingDefCtors[thingDefType] = MemberWrapper.GetWrapperFor(ci);
 		}
 
 		/**
@@ -410,111 +414,175 @@ namespace SteamEngine {
 
 		}
 
-		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			Type thingDefType = null;
-			string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-			string defname = input.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-			//Console.WriteLine("loading section "+input.HeadToString());
-			//[typeName defname]
+		public static new void Bootstrap() {
+			//ThingDef script sections are special in that they can have numeric header indicating model
+			AbstractDef.RegisterDefnameParser<ThingDef>(ParseDefnames);
+		}
 
-			bool isNumeric = false;
-			//Attempt to convert defname to a uint.
 
-			int defnum;
-			if (ConvertTools.TryParseInt32(defname, out defnum)) {
-				defname = "0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
-				isNumeric = true;
-			}
-
-			thingDefType = ThingDef.GetDefTypeByName(typeName);
+		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
+			string typeName = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			Type thingDefType = ThingDef.GetDefTypeByName(typeName);
 			if (thingDefType == null) {
 				throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
 			}
 
-			if (thingDefType.IsAbstract) {
-				throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
+			int defnum;
+			defname = section.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			if (ConvertTools.TryParseInt32(defname, out defnum)) {
+				if (thingDefType.IsSubclassOf(typeof(AbstractItemDef))) {
+					defname = "i_0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+				} else if (thingDefType.IsSubclassOf(typeof(AbstractCharacterDef))) {
+					defname = "c_0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+				} else {//this probably can not happen, but one is never too sure :)
+					throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is neither AbstractCharacterDef nor AbstractItemDef subclass. Ignoring.");
+				}
 			}
 
-			if (thingDefType.IsSubclassOf(typeof(AbstractItemDef))) {
-				if (isNumeric) {
-					defname = "i_" + defname;
-				}
-			} else if (thingDefType.IsSubclassOf(typeof(AbstractCharacterDef))) {
-				//is character
-				if (isNumeric) {
-					defname = "c_" + defname;
-				}
-			} else {//this probably can not happen, but one is never too sure :)
-				throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is neither AbstractCharacterDef nor AbstractItemDef subclass. Ignoring.");
-			}
+			PropsLine defnameLine = section.TryPopPropsLine("defname");
+			if (defnameLine != null) {
+				altdefname = ConvertTools.LoadSimpleQuotedString(defnameLine.Value);
 
-			AbstractScript def;
-			AllScriptsByDefname.TryGetValue(defname, out def);
-			ThingDef thingDef = def as ThingDef;
-
-			if (thingDef == null) {
-				if (def != null) {//it isnt thingDef
-					throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
-				} else {
-					ConstructorInfo cw = thingDefCtors[thingDefType];
-					thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.Filename, input.HeaderLine }, null);
+				if (string.Equals(defname, altdefname, StringComparison.OrdinalIgnoreCase)) {
+					Logger.WriteWarning("Defname redundantly specified for " + section.HeaderType + " " + LogStr.Ident(defname) + ".");
+					altdefname = null;
 				}
-			} else if (thingDef.IsUnloaded) {
-				if (thingDef.GetType() != thingDefType) {
-					throw new OverrideNotAllowedException("You can not change the class of a Thingdef while resync. You have to recompile or restart to achieve that. Ignoring.");
-				}
-				thingDef.IsUnloaded = false;
-				UnRegisterThingDef(thingDef);//will be re-registered again
 			} else {
-				throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
+				altdefname = null;
 			}
+		}
 
-			thingDef.Defname = defname;
-			AllScriptsByDefname[defname] = thingDef;
-
-			thingDef.ClearTriggerGroups();//maybe clear other things too?
-
-			if (isNumeric) {
-				AbstractItemDef asItemDef = thingDef as AbstractItemDef;
-				if (asItemDef != null) {
-					if (defnum > highestItemModel) {
-						highestItemModel = defnum;
-					}
-					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
-					itemModelDefs[defnum] = asItemDef;
-				} else {
+		public override void LoadScriptLines(PropsSection ps) {
+			int defnum;
+			string defname = this.Defname;
+			if (ConvertTools.TryParseInt32(defname.Substring(2), out defnum)) {
+				if (this.IsCharDef && defname.StartsWith("c_")) {
 					if (defnum > highestCharModel) {
 						highestCharModel = defnum;
 					}
 					//Sanity.IfTrueThrow(idefnum>MaxCharModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxCharModels ("+MaxCharModels+").");
-					charModelDefs[defnum] = (AbstractCharacterDef) thingDef;
+					charModelDefs[defnum] = (AbstractCharacterDef) this;
+				} else if (this.IsItemDef && defname.StartsWith("i_")) {
+					if (defnum > highestItemModel) {
+						highestItemModel = defnum;
+					}
+					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
+					itemModelDefs[defnum] = (AbstractItemDef) this;
 				}
 			}
 
-			//header done. now we have the def instantiated.
-			//now load the other fields
-			thingDef.LoadScriptLines(input);
+			this.ClearTriggerGroups();//maybe clear other things too?
+
+			base.LoadScriptLines(ps);
 
 			//now do load the trigger code. 
-			TriggerGroup tg = null;
-			if (input.TriggerCount > 0) {
-				input.HeaderName = "t__" + defname + "__";
-				tg = ScriptedTriggerGroup.Load(input);
-				thingDef.AddTriggerGroup(tg);
-			}
-			if (tg == null) {
-				return thingDef;
-			} else {
-				return new UnloadableGroup(thingDef, tg);
+			if (ps.TriggerCount > 0) {
+				ps.HeaderName = "t__" + defname + "__";
+				this.defaultTriggerGroup = ScriptedTriggerGroup.Load(ps);
+				this.AddTriggerGroup(this.defaultTriggerGroup);
 			}
 		}
 
-		private static void UnRegisterThingDef(ThingDef td) {
-			AllScriptsByDefname.Remove(td.Defname);
-			if (td.Altdefname != null) {
-				AllScriptsByDefname.Remove(td.Altdefname);
+		public override void Unload() {
+			if (this.defaultTriggerGroup != null) {
+				this.defaultTriggerGroup.Unload();
 			}
+			base.Unload();
 		}
+
+		//internal static IUnloadable LoadFromScripts(PropsSection input) {
+
+
+
+
+
+
+
+		//    Type thingDefType = null;
+		//    string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+		//    string defname = input.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+		//    //Console.WriteLine("loading section "+input.HeadToString());
+		//    //[typeName defname]
+
+		//    bool isNumeric = false;
+		//    //Attempt to convert defname to a uint.
+
+		//    int defnum;
+		//    if (ConvertTools.TryParseInt32(defname, out defnum)) {
+		//        defname = "0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+		//        isNumeric = true;
+		//    }
+
+		//    thingDefType = ThingDef.GetDefTypeByName(typeName);
+		//    if (thingDefType == null) {
+		//        throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
+		//    }
+
+		//    if (thingDefType.IsAbstract) {
+		//        throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
+		//    }
+
+		//    if (thingDefType.IsSubclassOf(typeof(AbstractItemDef))) {
+		//        if (isNumeric) {
+		//            defname = "i_" + defname;
+		//        }
+		//    } else if (thingDefType.IsSubclassOf(typeof(AbstractCharacterDef))) {
+		//        //is character
+		//        if (isNumeric) {
+		//            defname = "c_" + defname;
+		//        }
+		//    } else {//this probably can not happen, but one is never too sure :)
+		//        throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is neither AbstractCharacterDef nor AbstractItemDef subclass. Ignoring.");
+		//    }
+
+		//    AbstractScript def;
+		//    AllScriptsByDefname.TryGetValue(defname, out def);
+		//    ThingDef thingDef = def as ThingDef;
+
+		//    if (thingDef == null) {
+		//        if (def != null) {//it isnt thingDef
+		//            throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
+		//        } else {
+		//            ConstructorInfo cw = thingDefCtors[thingDefType];
+		//            thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.Filename, input.HeaderLine }, null);
+		//        }
+		//    } else if (thingDef.IsUnloaded) {
+		//        if (thingDef.GetType() != thingDefType) {
+		//            throw new OverrideNotAllowedException("You can not change the class of a Thingdef while resync. You have to recompile or restart to achieve that. Ignoring.");
+		//        }
+		//        thingDef.IsUnloaded = false;
+		//        UnRegisterThingDef(thingDef);//will be re-registered again
+		//    } else {
+		//        throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
+		//    }
+
+		//    thingDef.Defname = defname;
+		//    AllScriptsByDefname[defname] = thingDef;
+
+			
+
+		//    if (isNumeric) {
+
+		//    }
+
+
+		//    //header done. now we have the def instantiated.
+		//    //now load the other fields
+		//    thingDef.LoadScriptLines(input);
+
+		//    if (tg == null) {
+		//        return thingDef;
+		//    } else {
+		//        return new UnloadableGroup(thingDef, tg);
+		//    }
+		//}
+
+		//private static void UnRegisterThingDef(ThingDef td) {
+		//    AllScriptsByDefname.Remove(td.Defname);
+		//    if (td.Altdefname != null) {
+		//        AllScriptsByDefname.Remove(td.Altdefname);
+		//    }
+		//}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal new static void LoadingFinished() {
@@ -558,22 +626,16 @@ namespace SteamEngine {
 			Logger.SetTitle("");
 		}
 
-		internal static void ClearAll() {
+		internal new static void ForgetAll() {
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
-			thingDefTypesByName.Clear();
+			//thingDefTypesByName.Clear();
 			thingDefCtors.Clear();
 
-
-			//for (int idx=0; idx<MaxItemModels; idx++) {
-			//    itemModelDefs[idx]=null;
-			//}
-			//for (int idx=0; idx<MaxCharModels; idx++) {
-			//    charModelDefs[idx]=null;
-			//}
 			itemModelDefs.Clear();
 			charModelDefs.Clear();
 		}
+		#endregion Loading from scripts
 	}
 
 	public class UnloadableGroup : IUnloadable {

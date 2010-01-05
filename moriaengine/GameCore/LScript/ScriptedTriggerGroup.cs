@@ -75,15 +75,15 @@ namespace SteamEngine {
 		}
 
 		public static new TriggerGroup Get(string name) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(name, out script);
-			return script as TriggerGroup;
+			return AbstractScript.Get(name) as TriggerGroup;
 		}
 
 		private static ScriptedTriggerGroup GetNewOrCleared(string defname) {
 			TriggerGroup tg = Get(defname);
 			if (tg == null) {
-				return new ScriptedTriggerGroup(defname);
+				ScriptedTriggerGroup stg = new ScriptedTriggerGroup(defname);
+				stg.Register();
+				return stg;
 			} else if (tg.IsUnloaded) {
 				return (ScriptedTriggerGroup) tg;
 			}
@@ -102,7 +102,7 @@ namespace SteamEngine {
 					group.AddTrigger(sc);
 				}
 			}
-			group.IsUnloaded = false;
+			group.UnUnload();
 			return group;
 		}
 

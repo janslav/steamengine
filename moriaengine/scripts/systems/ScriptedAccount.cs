@@ -86,12 +86,7 @@ namespace SteamEngine.CompiledScripts {
 			switch (valueName) {
 				//added loading of reg. mail
 				case "email":
-					System.Text.RegularExpressions.Match m = TagMath.stringRE.Match(valueString);
-					if (m.Success) {
-						this.email = m.Groups["value"].Value;
-					} else {
-						this.email = valueString;
-					}
+					this.email = ConvertTools.LoadSimpleQuotedString(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);

@@ -525,12 +525,7 @@ namespace SteamEngine {
 					ObjectSaver.Load(valueString, new LoadObject(LoadAccount_Delayed), filename, line);
 					break;
 				case "name":
-					Match ma = ConvertTools.stringRE.Match(valueString);
-					if (ma.Success) {
-						this.name = ma.Groups["value"].Value;
-					} else {
-						this.name = valueString;
-					}
+					this.name = ConvertTools.LoadSimpleQuotedString(valueString);
 					break;
 				case "directionandflags":
 					this.directionAndFlags = (DirectionAndFlag) TagMath.ParseByte(valueString);

@@ -256,7 +256,7 @@ namespace SteamEngine {
 					}
 					OpenedContainers.SendRemoveAllOpenedContainersFromView();
 					GameServer.BackupLinksToCharacters();
-					UnloadAll();
+					ForgetAll();
 					if (!LoadAll()) {
 						//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
 						//connections & native commands, though SE doesn't care what they type, and whatever it is,
@@ -293,7 +293,7 @@ namespace SteamEngine {
 		}
 
 		internal static void RetryRecompilingScripts() {
-			UnloadAll();
+			ForgetAll();
 			if (!LoadAll()) {
 				RunLevelManager.SetAwaitingRetry();
 				PacketSequences.BroadCast("Script recompiling failed, remaining paused.");
@@ -302,30 +302,30 @@ namespace SteamEngine {
 			}
 		}
 
-		private static void UnloadAll() {
+		private static void ForgetAll() {
 			ClearWorld();
 			Timers.Timer.Clear();
 			LocManager.UnregisterAssembly(ClassManager.ScriptsAssembly);
 			//CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
-			ClassManager.UnloadScripts();//bye-bye to all storec types
-			GeneratedCodeUtil.UnloadScripts();//bye-bye to scripted code generators
-			TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
-			ScriptHolder.UnloadAll();//bye-bye to all scripted functions
-			ThingDef.ClearAll();//clear thingdef constructors etc.
-			PluginDef.ClearAll();//clear plugindef constructors etc.
-			GroundTileType.UnloadScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
-			AbstractScript.UnloadAll();//all abstractscripts go bye-bye. This includes triggergroups, gumps, etc.
-			Constant.UnloadAll();
-			TestSuite.UnloadAll();
-			ObjectSaver.UnloadScripts();
-			DeepCopyFactory.UnloadScripts();
-			ScriptLoader.UnloadScripts();//unload scripted loaders :)
-			AbstractDef.UnloadScripts();//unload scripted defGetters
-			AbstractSkillDef.UnloadScripts();
+			ClassManager.ForgetScripts();//bye-bye to all storec types
+			GeneratedCodeUtil.ForgetScripts();//bye-bye to scripted code generators
+			//TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
+			ScriptHolder.ForgetAll();//bye-bye to all scripted functions
+			ThingDef.ForgetAll();//clear thingdef constructors etc.
+			PluginDef.ForgetAll();//clear plugindef constructors etc.
+			GroundTileType.ForgetScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
+			AbstractScript.ForgetAll();//all abstractscripts go bye-bye. This includes triggergroups, gumps, etc.
+			Constant.ForgetAll();
+			TestSuite.ForgetAll();
+			ObjectSaver.ForgetScripts();
+			DeepCopyFactory.ForgetScripts();
+			ScriptLoader.ForgetScripts();//unload scripted loaders :)
+			AbstractDef.ForgetScripts();//unload scripted defGetters
+			AbstractSkillDef.ForgetAll();
 			//Region.UnloadScripts();
 			//ExportImport.UnloadScripts();
-			Map.UnloadScripts();
-			FieldValue.UnloadScripts();
+			Map.ForgetScripts();
+			FieldValue.ForgetScripts();
 
 			Console.WriteLine("Scripts unloaded");
 		}

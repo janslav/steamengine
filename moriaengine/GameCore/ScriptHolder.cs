@@ -72,7 +72,7 @@ namespace SteamEngine {
 			throw new ServerException("ScriptHolder '" + this.name + "' already exists; Cannot create a new one with the same name.");
 		}
 
-		internal static void UnloadAll() {
+		internal static void ForgetAll() {
 			functionsByName.Clear();
 		}
 

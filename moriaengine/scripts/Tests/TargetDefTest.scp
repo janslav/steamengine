@@ -1,7 +1,7 @@
 
 //spustit prikazem .Target(targ_scripted), pripadne .Target(targ_scripted, nejakejdalsiparametr)
 
-[TargetDef targ_scripted]
+[ScriptedTargetDef targ_scripted]
 message="Target whatever you want..."
 
 //pokud neexistuje tento trigger, deje se prave akorat to ze se posle dotycna Message

@@ -250,7 +250,7 @@ titul_druid[8]	arcidruid
 titul_druid[9]	prvni arcidruid
 
 
-[template tm_shamannewbie]
+[TemplateDef tm_shamannewbie]
 ITEM = i_robe
 item = i_spellbook_3
 item = i_bandage_bloody, 100
@@ -258,7 +258,7 @@ ITEM = i_staff_gnarled_copper
 ITEM = i_dagger_copper
 ITEM = i_potion_nightsight, 3
 
-[template tm_Mystiknewbie]
+[TemplateDef tm_Mystiknewbie]
 ITEM = i_robe
 item = i_spellbook_3
 item = i_bandage, 50
@@ -266,21 +266,21 @@ ITEM = i_staff_gnarled_copper
 ITEM = i_dagger_copper
 ITEM = i_potion_nightsight, 3
 
-[template tm_necronewbie]
+[TemplateDef tm_necronewbie]
 item = i_spellbook_necro
 ITEM = i_robe
 ITEM = i_staff_gnarled_copper
 ITEM = i_dagger_copper
 ITEM = i_potion_nightsight, 3
 
-[template tm_magnewbie]
+[TemplateDef tm_magnewbie]
 item = i_spellbook_3
 ITEM = i_robe
 ITEM = i_staff_gnarled_copper
 ITEM = i_potion_nightsight, 3
 ITEM = i_dagger_copper
 
-[template tm_priestnewbie]
+[TemplateDef tm_priestnewbie]
 item = i_spellbook_3
 ITEM = i_robe
 item = i_bandage, 100
@@ -288,7 +288,7 @@ ITEM = i_hammer_pick_copper
 ITEM = i_dagger_copper
 ITEM = i_potion_nightsight, 3
 
-[template tm_warnewbie]
+[TemplateDef tm_warnewbie]
 item = i_spellbook_3
 ITEM = i_shirt_plain
 ITEM = random_pants
@@ -297,7 +297,7 @@ ITEM = i_COPPER_HEATER_SHIELD
 item = i_bandage, 50
 ITEM = i_potion_nightsight, 3
 
-[template tm_rangernewbie]
+[TemplateDef tm_rangernewbie]
 item = i_spellbook_3
 ITEM = i_shirt_plain
 ITEM = random_pants
@@ -307,7 +307,7 @@ ITEM = i_crossbolt_heavy_copper
 ITEM = i_dagger_copper
 ITEM = i_potion_nightsight, 3
 
-[template tm_thiefnewbie]
+[TemplateDef tm_thiefnewbie]
 item = i_spellbook_3
 ITEM = i_shirt_plain
 ITEM = random_pants
@@ -316,7 +316,7 @@ ITEM = i_kryss_copper
 ITEM = i_COPPER_metal_SHIELD
 ITEM = i_potion_nightsight, 3
 
-[template tm_craftnewbie]
+[TemplateDef tm_craftnewbie]
 item = i_spellbook_3
 ITEM = i_shirt_plain
 ITEM = random_pants

@@ -64,6 +64,16 @@ namespace SteamEngine.Common {
 			instance = this;
 		}
 
+		//remove quotes or just trim whitespace
+		public static string LoadSimpleQuotedString(string input) {
+			Match ma = stringRE.Match(input);
+			if (ma.Success) {
+				return Tools.UnescapeNewlines(ma.Groups["value"].Value);
+			} else {
+				return input.Trim();
+			}
+		}
+
 		[Summary("If the string contains a \n, \r, or \0, then it is truncated just before that character."
 			 + "If it contains any tabs, they are changed to spaces.")]
 		public static string RemoveIllegalChars(string s) {

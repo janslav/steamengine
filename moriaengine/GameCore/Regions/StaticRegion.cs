@@ -178,12 +178,7 @@ namespace SteamEngine.Regions {
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
 				case "name":
-					Match ma = ConvertTools.stringRE.Match(valueString);
-					if (ma.Success) {
-						this.name = String.Intern(ma.Groups["value"].Value);
-					} else {
-						this.name = String.Intern(valueString);
-					}
+					this.name = String.Intern(ConvertTools.LoadSimpleQuotedString(valueString));
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);

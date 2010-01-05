@@ -677,7 +677,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		//unloads instences that come from scripts.
-		internal static void UnloadScripts() {
+		internal static void ForgetScripts() {
 			Assembly coreAssembly = ClassManager.CoreAssembly;
 			List<ISaveImplementor> isis = new List<ISaveImplementor>(implementorsByName.Values);
 			implementorsByName.Clear();

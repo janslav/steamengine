@@ -26,13 +26,13 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
-	public class ProfessionDef : AbstractDef {
+	public class ProfessionDef : AbstractIndexedDef<ProfessionDef, string> {
 		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
 		internal static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
 
-		private static Dictionary<string, ProfessionDef> byName = new Dictionary<string, ProfessionDef>(StringComparer.OrdinalIgnoreCase);
+		//private static Dictionary<string, ProfessionDef> byName = new Dictionary<string, ProfessionDef>(StringComparer.OrdinalIgnoreCase);
 
-		private static Dictionary<string, ConstructorInfo> profDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
+		//private static Dictionary<string, ConstructorInfo> profDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 
 		//triggery class-specific
 		private TriggerGroup scriptedTriggers; //specified in the LScript code of the profession
@@ -75,121 +75,40 @@ namespace SteamEngine.CompiledScripts {
 			plr.On_ProfessionUnAssign(this);
 			On_UnAssign(plr);
 		}
-		#endregion triggerMethods
 
-		public static ProfessionDef ByDefname(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-			return script as ProfessionDef;
-		}
-
-		public static ProfessionDef ByName(string key) {
-			ProfessionDef retVal;
-			byName.TryGetValue(key, out retVal);
-			return retVal;
-		}
-
-		private static void RegisterProfessionDef(ProfessionDef pd) {
-			AllScriptsByDefname[pd.Defname] = pd;
-			byName[pd.Name] = pd;
-		}
-
-		private static void UnRegisterProfessionDef(ProfessionDef pd) {
-			AllScriptsByDefname.Remove(pd.Defname);
-			byName.Remove(pd.Name);
-		}
-
-		public static new void Bootstrap() {
-			ClassManager.RegisterSupplySubclasses<ProfessionDef>(RegisterProfessionDefType);
-		}
-
-		//for loading of ProfessionDefs from .scp scripts
-		public static new bool ExistsDefType(string name) {
-			return profDefCtorsByName.ContainsKey(name);
-		}
-
-		private static Type[] profDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		//called by ClassManager
-		internal static bool RegisterProfessionDefType(Type profDefType) {
-			ConstructorInfo ci;
-			if (profDefCtorsByName.TryGetValue(profDefType.Name, out ci)) { //we have already a ProfessionDef type named like that
-				throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of ProfessionDef classes.");
+		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+			//cancellable trigger just for the one triggergroup
+			if (this.scriptedTriggers != null) {
+				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
+					return true;
+				}
 			}
-			ci = profDefType.GetConstructor(profDefConstructorParamTypes);
-			if (ci == null) {
-				throw new SEException("Proper constructor not found.");
-			}
-			profDefCtorsByName[profDefType.Name] = MemberWrapper.GetWrapperFor(ci);
-
-			ScriptLoader.RegisterScriptType(profDefType.Name, LoadFromScripts, false);
-
 			return false;
 		}
 
-		internal static void StartingLoading() {
-		}
-
-		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			//it is something like this in the .scp file: [headerType headerName] = [ProfessionDef class_necro] etc.
-			string typeName = input.HeaderType.ToLower();
-			string profDefName = input.HeaderName.ToLower();
-
-			AbstractScript def;
-			AllScriptsByDefname.TryGetValue(profDefName, out def);
-			ProfessionDef profDef = def as ProfessionDef;
-
-			ConstructorInfo constructor = profDefCtorsByName[typeName];
-
-			if (profDef == null) {
-				if (def != null) {//it isnt profDef
-					throw new ScriptException("ProfessionDef " + LogStr.Ident(profDefName) + " has the same name as " + LogStr.Ident(def));
-				} else {
-					object[] cargs = new object[] { profDefName, input.Filename, input.HeaderLine };
-					profDef = (ProfessionDef) constructor.Invoke(cargs);
-				}
-			} else if (profDef.IsUnloaded) {
-				if (profDef.GetType() != constructor.DeclaringType) {
-					throw new OverrideNotAllowedException("You can not change the class of a ProfessionDef while resync. You have to recompile or restart to achieve that. Ignoring.");
-				}
-				profDef.IsUnloaded = false;
-				//we have to load the name first, so that it may be unloaded by it...
-
-				PropsLine p = input.PopPropsLine("name");
-				profDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
-
-				UnRegisterProfessionDef(profDef);//will be re-registered again
-			} else {
-				throw new OverrideNotAllowedException("ProfessionDef " + LogStr.Ident(profDefName) + " defined multiple times.");
-			}
-
-			//now do load the trigger code.
-			if (input.TriggerCount > 0) {
-				input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @login, logout etc. triggers
-				profDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-			} else {
-				profDef.scriptedTriggers = null;
-			}
-
-			profDef.LoadScriptLines(input);
-
-			RegisterProfessionDef(profDef);
-
-			if (profDef.scriptedTriggers == null) {
-				return profDef;
-			} else {
-				return new UnloadableGroup(profDef, profDef.scriptedTriggers);
+		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+			if (this.scriptedTriggers != null) {
+				this.scriptedTriggers.TryRun(self, td, sa);
 			}
 		}
 
-		internal static void LoadingFinished() {
+		#endregion triggerMethods
+		
+		#region Accessors
+		public static ProfessionDef ByDefname(string defname) {
+			return AbstractScript.Get(defname) as ProfessionDef;
 		}
+
+		public static ProfessionDef ByName(string key) {
+			return ByDefIndex(key);
+		}
+
 
 		//this comes from sphere tables - defined and used here as well
 		//CPROFESSIONPROP(Name,		CSCRIPTPROP_ARG1S, "Profession Name")
 		//CPROFESSIONPROP(SkillSum,	0, "Max Sum of skills allowed")
 		//CPROFESSIONPROP(StatSum,	0, "Max Sum of stats allowed")		
-		private FieldValue name; //logical name of the profession (such as "Necro")
+		//private FieldValue name; //logical name of the profession (such as "Necro")
 		private FieldValue skillSum; //Max Sum of skills allowed
 		private FieldValue statSum; //Max Sum of stats allowed
 
@@ -308,9 +227,48 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 		private FieldValue[] maxSkills;
 		private FieldValue[] basicSkills;
+
+		public string Name {
+			get {
+				return this.DefIndex;
+			}
+		}
+
+		[Summary("Return the maximal value of the given skill (by name) for this profession")]
+		public int MaxSkill(SkillName skillName) {
+			return this.MaxSkill((int) skillName);
+		}
+		[Summary("Return the maximal value of the given skill (by id) for this profession")]
+		public int MaxSkill(int skillId) {
+			return (int) maxSkills[skillId].CurrentValue;
+		}
+
+		[Summary("Return the basic value of the given skill (by name) for this profession")]
+		public int BasicSkill(SkillName skillName) {
+			return this.BasicSkill((int) skillName);
+		}
+		[Summary("Return the basic value of the given skill (by id) for this profession")]
+		public int BasicSkill(int skillId) {
+			return (int) basicSkills[skillId].CurrentValue;
+		}
+
+		public override string ToString() {
+			return Tools.TypeToString(this.GetType()) + " " + Name;
+		}
+
+		[Summary("Compiled trigger group specific for the given ProfessionDef")]
+		public virtual E_Profession CompiledTriggers {
+			get {
+				//return the specific instance of triggergroup (can differ for various professions)
+				return SingletonScript<E_Profession>.Instance;
+			}
+		}
+		#endregion Accessors
+
+		#region Load from scripts
 		public ProfessionDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			name = InitTypedField("name", "", typeof(string));
+			//name = InitTypedField("name", "", typeof(string));
 			skillSum = InitTypedField("skillSum", 0, typeof(int));
 			statSum = InitTypedField("statSum", 0, typeof(int));
 			//max skills
@@ -449,63 +407,128 @@ namespace SteamEngine.CompiledScripts {
                             basicMarksmanship,basicChivalry,basicBushido,basicNinjitsu};
 		}
 
-		public string Name {
-			get {
-				return (string) name.CurrentValue;
+
+		//private static void RegisterProfessionDef(ProfessionDef pd) {
+		//    AllScriptsByDefname[pd.Defname] = pd;
+		//    byName[pd.Name] = pd;
+		//}
+
+		//private static void UnRegisterProfessionDef(ProfessionDef pd) {
+		//    AllScriptsByDefname.Remove(pd.Defname);
+		//    byName.Remove(pd.Name);
+		//}
+
+		//public static new void Bootstrap() {
+		//    ClassManager.RegisterSupplySubclasses<ProfessionDef>(RegisterProfessionDefType);
+		//}
+
+		//for loading of ProfessionDefs from .scp scripts
+		//public static new bool ExistsDefType(string name) {
+		//    return profDefCtorsByName.ContainsKey(name);
+		//}
+
+		//private static Type[] profDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+
+		////called by ClassManager
+		//internal static bool RegisterProfessionDefType(Type profDefType) {
+		//    ConstructorInfo ci;
+		//    if (profDefCtorsByName.TryGetValue(profDefType.Name, out ci)) { //we have already a ProfessionDef type named like that
+		//        throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of ProfessionDef classes.");
+		//    }
+		//    ci = profDefType.GetConstructor(profDefConstructorParamTypes);
+		//    if (ci == null) {
+		//        throw new SEException("Proper constructor not found.");
+		//    }
+		//    profDefCtorsByName[profDefType.Name] = MemberWrapper.GetWrapperFor(ci);
+
+		//    ScriptLoader.RegisterScriptType(profDefType.Name, LoadFromScripts, false);
+
+		//    return false;
+		//}
+
+		internal static void StartingLoading() {
+		}
+
+		public override void LoadScriptLines(PropsSection ps) {
+			PropsLine p = ps.PopPropsLine("name");
+			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
+
+			base.LoadScriptLines(ps);
+
+			if (ps.TriggerCount > 0) {
+				ps.HeaderName = "t__" + this.Defname + "__";
+				this.scriptedTriggers = ScriptedTriggerGroup.Load(ps);
 			}
 		}
 
-		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
-			//cancellable trigger just for the one triggergroup
+		public override void Unload() {
 			if (this.scriptedTriggers != null) {
-				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
-					return true;
-				}
+				this.scriptedTriggers.Unload();
 			}
-			return false;
+			base.Unload();
 		}
 
-		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.TryRun(self, td, sa);
-			}
+		//internal new static IUnloadable LoadFromScripts(PropsSection input) {
+		//    //it is something like this in the .scp file: [headerType headerName] = [ProfessionDef class_necro] etc.
+		//    string typeName = input.HeaderType.ToLower();
+		//    string profDefName = input.HeaderName.ToLower();
+
+		//    AbstractScript def;
+		//    AllScriptsByDefname.TryGetValue(profDefName, out def);
+		//    ProfessionDef profDef = def as ProfessionDef;
+
+		//    ConstructorInfo constructor = profDefCtorsByName[typeName];
+
+		//    if (profDef == null) {
+		//        if (def != null) {//it isnt profDef
+		//            throw new ScriptException("ProfessionDef " + LogStr.Ident(profDefName) + " has the same name as " + LogStr.Ident(def));
+		//        } else {
+		//            object[] cargs = new object[] { profDefName, input.Filename, input.HeaderLine };
+		//            profDef = (ProfessionDef) constructor.Invoke(cargs);
+		//        }
+		//    } else if (profDef.IsUnloaded) {
+		//        if (profDef.GetType() != constructor.DeclaringType) {
+		//            throw new OverrideNotAllowedException("You can not change the class of a ProfessionDef while resync. You have to recompile or restart to achieve that. Ignoring.");
+		//        }
+		//        profDef.IsUnloaded = false;
+		//        //we have to load the name first, so that it may be unloaded by it...
+
+		//        PropsLine p = input.PopPropsLine("name");
+		//        profDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
+
+		//        UnRegisterProfessionDef(profDef);//will be re-registered again
+		//    } else {
+		//        throw new OverrideNotAllowedException("ProfessionDef " + LogStr.Ident(profDefName) + " defined multiple times.");
+		//    }
+
+		//    //now do load the trigger code.
+		//    if (input.TriggerCount > 0) {
+		//        input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @login, logout etc. triggers
+		//        profDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
+		//    } else {
+		//        profDef.scriptedTriggers = null;
+		//    }
+
+		//    profDef.LoadScriptLines(input);
+
+		//    RegisterProfessionDef(profDef);
+
+		//    if (profDef.scriptedTriggers == null) {
+		//        return profDef;
+		//    } else {
+		//        return new UnloadableGroup(profDef, profDef.scriptedTriggers);
+		//    }
+		//}
+
+		internal static void LoadingFinished() {
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			base.LoadScriptLine(filename, line, param, args);
 		}
-
-		public override string ToString() {
-			return Tools.TypeToString(this.GetType()) + " " + Name;
-		}
-
-		[Summary("Compiled trigger group specific for the given ProfessionDef")]
-		public virtual E_Profession CompiledTriggers {
-			get {
-				//return the specific instance of triggergroup (can differ for various professions)
-				return SingletonScript<E_Profession>.Instance;
-			}
-		}
+		#endregion Load from scripts
 
 		#region utilities
-		[Summary("Return the maximal value of the given skill (by name) for this profession")]
-		public int MaxSkill(SkillName skillName) {
-			return this.MaxSkill((int) skillName);
-		}
-		[Summary("Return the maximal value of the given skill (by id) for this profession")]
-		public int MaxSkill(int skillId) {
-			return (int) maxSkills[skillId].CurrentValue;
-		}
-
-		[Summary("Return the basic value of the given skill (by name) for this profession")]
-		public int BasicSkill(SkillName skillName) {
-			return this.BasicSkill((int) skillName);
-		}
-		[Summary("Return the basic value of the given skill (by id) for this profession")]
-		public int BasicSkill(int skillId) {
-			return (int) basicSkills[skillId].CurrentValue;
-		}
-
 		[SteamFunction]
 		[Summary("Assign the selected profession to the given char. Expecting existing professions defname as an argument")]
 		public static void Profession(Character chr, ScriptArgs args) {

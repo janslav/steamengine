@@ -33,8 +33,8 @@ namespace SteamEngine {
 
 		private static Dictionary<Type, Type> pluginDefTypesByPluginType = new Dictionary<Type, Type>();
 		private static Dictionary<Type, Type> pluginTypesByPluginDefType = new Dictionary<Type, Type>();
-		private static Dictionary<string, Type> pluginDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-		private static Dictionary<Type, ConstructorInfo> pluginDefCtors = new Dictionary<Type, ConstructorInfo>();
+		//private static Dictionary<string, Type> pluginDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+		//private static Dictionary<Type, ConstructorInfo> pluginDefCtors = new Dictionary<Type, ConstructorInfo>();
 
 		private static Dictionary<Type, PluginTriggerGroup> triggerGroupsByType = new Dictionary<Type, PluginTriggerGroup>();
 
@@ -75,28 +75,28 @@ namespace SteamEngine {
 			return script as PluginDef;
 		}
 
-		public static Type GetDefTypeByName(string name) {
-			Type defType;
-			pluginDefTypesByName.TryGetValue(name, out defType);
-			return defType;
-		}
+		//public static Type GetDefTypeByName(string name) {
+		//    Type defType;
+		//    pluginDefTypesByName.TryGetValue(name, out defType);
+		//    return defType;
+		//}
 
-		public static new bool ExistsDefType(string name) {
-			return pluginDefTypesByName.ContainsKey(name);
-		}
+		//public static new bool ExistsDefType(string name) {
+		//    return pluginDefTypesByName.ContainsKey(name);
+		//}
 
-		//checking type when loading...
-		public static Type GetDefTypeByPluginType(Type pluginType) {//
-			Type defType;
-			pluginDefTypesByPluginType.TryGetValue(pluginType, out defType);
-			return defType;
-		}
+		////checking type when loading...
+		//public static Type GetDefTypeByPluginType(Type pluginType) {//
+		//    Type defType;
+		//    pluginDefTypesByPluginType.TryGetValue(pluginType, out defType);
+		//    return defType;
+		//}
 
 		public static void RegisterPluginTG(Type defType, PluginTriggerGroup tg) {
 			triggerGroupsByType[defType] = tg;
 		}
 
-		private static Type[] pluginDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+		//private static Type[] pluginDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
 
 		//this should be typically called by the Bootstrap methods of scripted PluginDef
 		public static void RegisterPluginDef(Type pluginDefType, Type pluginType) {
@@ -108,82 +108,99 @@ namespace SteamEngine {
 				throw new OverrideNotAllowedException("Plugin type " + LogStr.Ident(pluginType.FullName) + " already has it's PluginDef type -" + t.FullName + ".");
 			}
 
-			ConstructorInfo ci = pluginDefType.GetConstructor(pluginDefConstructorParamTypes);
-			if (ci == null) {
-				throw new SEException("Proper constructor not found.");
-			}
+			//ConstructorInfo ci = pluginDefType.GetConstructor(pluginDefConstructorParamTypes);
+			//if (ci == null) {
+			//    throw new SEException("Proper constructor not found.");
+			//}
 			pluginDefTypesByPluginType[pluginType] = pluginDefType;
 			pluginTypesByPluginDefType[pluginDefType] = pluginType;
-			pluginDefTypesByName[pluginDefType.Name] = pluginDefType;
-			pluginDefCtors[pluginDefType] = MemberWrapper.GetWrapperFor(ci);
+			//pluginDefTypesByName[pluginDefType.Name] = pluginDefType;
+			//pluginDefCtors[pluginDefType] = MemberWrapper.GetWrapperFor(ci);
 		}
 
-		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			Type pluginDefType = null;
-			string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-			string defname = input.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-			//Console.WriteLine("loading section "+input.HeadToString());
-			//[typeName defname]
-
-			pluginDefType = PluginDef.GetDefTypeByName(typeName);
-			if (pluginDefType == null) {
-				throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
-			}
-
-			if (pluginDefType.IsAbstract) {
-				throw new SEException("The PluginDef Type " + LogStr.Ident(pluginDefType) + " is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
-			}
-
-			AbstractScript def;
-			AllScriptsByDefname.TryGetValue(defname, out def);
-			PluginDef pluginDef = def as PluginDef;
-
-			if (pluginDef == null) {
-				if (def != null) {//it isnt pluginDef
-					throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
-				} else {
-					ConstructorInfo cw = pluginDefCtors[pluginDefType];
-					pluginDef = (PluginDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.Filename, input.HeaderLine }, null);
-				}
-			} else if (pluginDef.IsUnloaded) {
-				if (pluginDef.GetType() != pluginDefType) {
-					throw new OverrideNotAllowedException("You can not change the class of a Plugindef while resync. You have to recompile or restart to achieve that. Ignoring.");
-				}
-				pluginDef.IsUnloaded = false;
-				AllScriptsByDefname.Remove(pluginDef.Defname);//will be put back again
-			} else {
-				throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
-			}
-
-			pluginDef.Defname = defname;
-			AllScriptsByDefname[defname] = pluginDef;
-
-			//header done. now we have the def instantiated.
-			//now load the other fields
-			pluginDef.LoadScriptLines(input);
+		public override void LoadScriptLines(PropsSection ps) {
+			base.LoadScriptLines(ps);
 
 			//now do load the trigger code. 
-			if (input.TriggerCount > 0) {
-				input.HeaderName = "t__" + input.HeaderName + "__";
-				pluginDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-			}
-			if (pluginDef.scriptedTriggers == null) {
-				return pluginDef;
-			} else {
-				return new UnloadableGroup(pluginDef, pluginDef.scriptedTriggers);
+			if (ps.TriggerCount > 0) {
+				ps.HeaderName = "t__" + this.Defname + "__";
+				this.scriptedTriggers = ScriptedTriggerGroup.Load(ps);
 			}
 		}
 
-		internal static void ClearAll() {
+		public override void Unload() {
+			if (this.scriptedTriggers != null) {
+				this.scriptedTriggers.Unload();
+			}
+			base.Unload();
+		}
+
+		//internal static IUnloadable LoadFromScripts(PropsSection input) {
+		//    Type pluginDefType = null;
+		//    string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+		//    string defname = input.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+		//    //Console.WriteLine("loading section "+input.HeadToString());
+		//    //[typeName defname]
+
+		//    pluginDefType = PluginDef.GetDefTypeByName(typeName);
+		//    if (pluginDefType == null) {
+		//        throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
+		//    }
+
+		//    if (pluginDefType.IsAbstract) {
+		//        throw new SEException("The PluginDef Type " + LogStr.Ident(pluginDefType) + " is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
+		//    }
+
+		//    AbstractScript def;
+		//    AllScriptsByDefname.TryGetValue(defname, out def);
+		//    PluginDef pluginDef = def as PluginDef;
+
+		//    if (pluginDef == null) {
+		//        if (def != null) {//it isnt pluginDef
+		//            throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
+		//        } else {
+		//            ConstructorInfo cw = pluginDefCtors[pluginDefType];
+		//            pluginDef = (PluginDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.Filename, input.HeaderLine }, null);
+		//        }
+		//    } else if (pluginDef.IsUnloaded) {
+		//        if (pluginDef.GetType() != pluginDefType) {
+		//            throw new OverrideNotAllowedException("You can not change the class of a Plugindef while resync. You have to recompile or restart to achieve that. Ignoring.");
+		//        }
+		//        pluginDef.IsUnloaded = false;
+		//        AllScriptsByDefname.Remove(pluginDef.Defname);//will be put back again
+		//    } else {
+		//        throw new OverrideNotAllowedException("PluginDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
+		//    }
+
+		//    pluginDef.Defname = defname;
+		//    AllScriptsByDefname[defname] = pluginDef;
+
+		//    //header done. now we have the def instantiated.
+		//    //now load the other fields
+		//    pluginDef.LoadScriptLines(input);
+
+		//    //now do load the trigger code. 
+		//    if (input.TriggerCount > 0) {
+		//        input.HeaderName = "t__" + input.HeaderName + "__";
+		//        pluginDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
+		//    }
+		//    if (pluginDef.scriptedTriggers == null) {
+		//        return pluginDef;
+		//    } else {
+		//        return new UnloadableGroup(pluginDef, pluginDef.scriptedTriggers);
+		//    }
+		//}
+
+		internal new static void ForgetAll() {
 			pluginDefTypesByPluginType.Clear();
-			pluginTypesByPluginDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
-			pluginDefTypesByName.Clear();
-			pluginDefCtors.Clear();
+			pluginTypesByPluginDefType.Clear();//we can assume that inside core there are no non-abstract plugindefs
+			//pluginDefTypesByName.Clear();
+			//pluginDefCtors.Clear();
 			triggerGroupsByType.Clear();
 		}
 
 		internal static void Init() {
-			foreach (AbstractScript script in AbstractScript.AllScriptsByDefname.Values) {
+			foreach (AbstractScript script in AbstractScript.AllScripts) {
 				PluginDef pd = script as PluginDef;
 				if (pd != null) {
 					pd.TryActivateCompiledTriggers();

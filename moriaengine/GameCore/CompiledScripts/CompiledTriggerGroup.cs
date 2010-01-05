@@ -56,10 +56,10 @@ namespace SteamEngine.CompiledScripts {
 			return this.GetType().Name;
 		}
 
-		public override void Unload() {
-			//we do nothing. Throwing exception is rude to AbstractScript.UnloadAll
-			//and doing base.Unload() would be a lie cos we can't really unload.
-		}
+		//public override void Unload() {
+		//    //we do nothing. Throwing exception is rude to AbstractScript.UnloadAll
+		//    //and doing base.Unload() would be a lie cos we can't really unload.
+		//}
 	}
 
 	internal sealed class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public abstract bool IsTypeOfMapTile(int mapTileId);
 
-		internal static void UnloadScripts() {
+		internal static void ForgetScripts() {
 			byName.Clear();
 		}
 	}
