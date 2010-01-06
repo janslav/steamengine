@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("A timer editing dialog")]
 	public class D_EditTimer : CompiledGumpDef {
-		internal static readonly TagKey editedTimerTK = TagKey.Get("_timer_edited_");
+		internal static readonly TagKey editedTimerTK = TagKey.Acquire("_timer_edited_");
 		private static int width = 400;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {

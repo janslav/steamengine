@@ -190,7 +190,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public static ItemDispidInfo Get(int num) {
+		public static ItemDispidInfo GetByModel(int num) {
 			if (num >= 0 && num < array.Count) {
 				return array[num];
 			} else {

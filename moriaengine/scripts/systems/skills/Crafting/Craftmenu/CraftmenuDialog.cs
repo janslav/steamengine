@@ -27,14 +27,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Craftmenu : CompiledGumpDef {
 		//public static readonly TagKey tkCraftmenuLastpos = TagKey.Get("_cm_lastPosition_");
 		private const string tkCraftmenuLastposPrefix = "_cm_lastPosition_";
-		private static TagKey tkInputIds = TagKey.Get("_cm_input_ids_");
+		private static TagKey tkInputIds = TagKey.Acquire("_cm_input_ids_");
 		private static int width = 600;
 
         private static TagKey tkLastCat;
         public static TagKey TkLastCat {
             get {
                 if (tkLastCat == null) {
-                    tkLastCat = TagKey.Get(D_Craftmenu.tkCraftmenuLastposPrefix);
+                    tkLastCat = TagKey.Acquire(D_Craftmenu.tkCraftmenuLastposPrefix);
                 }
                 return tkLastCat;
             }
@@ -323,7 +323,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
         }
 
         public static void Craftmenu(Character self, CraftingSkillDef skill) {
-            TagKey tkKey = TagKey.Get(tkCraftmenuLastposPrefix);
+            TagKey tkKey = TagKey.Acquire(tkCraftmenuLastposPrefix);
             Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(tkKey);
             CraftmenuCategory prevCat = null;
             if (lastPosDict != null && skill != null) {

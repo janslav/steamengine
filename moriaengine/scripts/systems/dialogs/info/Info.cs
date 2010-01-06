@@ -26,12 +26,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Class that will display the info dialog")]
 	public class D_Info : CompiledGumpDef {
-		internal static TagKey infoizedTargT = TagKey.Get("_info_target_");
-		internal static TagKey pagingButtonsTK = TagKey.Get("_paging_buttons_");
-		internal static TagKey pagingFieldsTK = TagKey.Get("_paging_fields_");
-		internal static TagKey btnsIndexPairingTK = TagKey.Get("_button_index_pairing_");
-		internal static TagKey editFieldsIndexPairingTK = TagKey.Get("_edit_fields_index_pairing_");
-		internal static TagKey detailIndexPairingTK = TagKey.Get("_detail_button_index_pairing_");
+		internal static TagKey infoizedTargT = TagKey.Acquire("_info_target_");
+		internal static TagKey pagingButtonsTK = TagKey.Acquire("_paging_buttons_");
+		internal static TagKey pagingFieldsTK = TagKey.Acquire("_paging_fields_");
+		internal static TagKey btnsIndexPairingTK = TagKey.Acquire("_button_index_pairing_");
+		internal static TagKey editFieldsIndexPairingTK = TagKey.Acquire("_edit_fields_index_pairing_");
+		internal static TagKey detailIndexPairingTK = TagKey.Acquire("_detail_button_index_pairing_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			object target = args[0];//target of info dialog

@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				int model = this.Model;
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
-					this.charModelInfo = CharModelInfo.Get(model);
+					this.charModelInfo = CharModelInfo.GetByModel(model);
 				}
 				return charModelInfo;
 			}
@@ -227,7 +227,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		private static TriggerKey warModeChangeTK = TriggerKey.Get("warModeChange");
+		private static TriggerKey warModeChangeTK = TriggerKey.Acquire("warModeChange");
 		public void Trigger_WarModeChange() {
 			TryTrigger(warModeChangeTK, null);
 			On_WarModeChange();
@@ -236,7 +236,7 @@ namespace SteamEngine.CompiledScripts {
 		public virtual void On_WarModeChange() {
 		}
 
-		private static TriggerKey visibilityChangeTK = TriggerKey.Get("visibilityChange");
+		private static TriggerKey visibilityChangeTK = TriggerKey.Acquire("visibilityChange");
 		public void Trigger_VisibilityChange() {
 			TryTrigger(visibilityChangeTK, null);
 			On_VisibilityChange();
@@ -678,22 +678,22 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region resisty
-		private static TagKey resistMagicTK = TagKey.Get("_resistMagic_");
-		private static TagKey resistFireTK = TagKey.Get("_resistFire_");
-		private static TagKey resistElectricTK = TagKey.Get("_resistElectric_");
-		private static TagKey resistAcidTK = TagKey.Get("_resistAcid_");
-		private static TagKey resistColdTK = TagKey.Get("_resistCold_");
-		private static TagKey resistPoisonTK = TagKey.Get("_resistPoison_");
-		private static TagKey resistMysticalTK = TagKey.Get("_resistMystical_");
-		private static TagKey resistPhysicalTK = TagKey.Get("_resistPhysical_");
-		private static TagKey resistSlashingTK = TagKey.Get("_resistSlashing_");
-		private static TagKey resistStabbingTK = TagKey.Get("_resistStabbing_");
-		private static TagKey resistBluntTK = TagKey.Get("_resistBlunt_");
-		private static TagKey resistArcheryTK = TagKey.Get("_resistArchery_");
-		private static TagKey resistBleedTK = TagKey.Get("_resistBleed_");
-		private static TagKey resistSummonTK = TagKey.Get("_resistSummon_");
-		private static TagKey resistDragonTK = TagKey.Get("_resistDragon_");
-		private static TagKey resistParalyseTK = TagKey.Get("_resistParalyse_");
+		private static TagKey resistMagicTK = TagKey.Acquire("_resistMagic_");
+		private static TagKey resistFireTK = TagKey.Acquire("_resistFire_");
+		private static TagKey resistElectricTK = TagKey.Acquire("_resistElectric_");
+		private static TagKey resistAcidTK = TagKey.Acquire("_resistAcid_");
+		private static TagKey resistColdTK = TagKey.Acquire("_resistCold_");
+		private static TagKey resistPoisonTK = TagKey.Acquire("_resistPoison_");
+		private static TagKey resistMysticalTK = TagKey.Acquire("_resistMystical_");
+		private static TagKey resistPhysicalTK = TagKey.Acquire("_resistPhysical_");
+		private static TagKey resistSlashingTK = TagKey.Acquire("_resistSlashing_");
+		private static TagKey resistStabbingTK = TagKey.Acquire("_resistStabbing_");
+		private static TagKey resistBluntTK = TagKey.Acquire("_resistBlunt_");
+		private static TagKey resistArcheryTK = TagKey.Acquire("_resistArchery_");
+		private static TagKey resistBleedTK = TagKey.Acquire("_resistBleed_");
+		private static TagKey resistSummonTK = TagKey.Acquire("_resistSummon_");
+		private static TagKey resistDragonTK = TagKey.Acquire("_resistDragon_");
+		private static TagKey resistParalyseTK = TagKey.Acquire("_resistParalyse_");
 
 		public int ResistMagic {
 			get {
@@ -1005,7 +1005,7 @@ namespace SteamEngine.CompiledScripts {
 			this.DeletePlugin(RegenerationPlugin.regenerationsPluginKey);
 		}
 
-		private static TriggerKey deathTK = TriggerKey.Get("death");
+		private static TriggerKey deathTK = TriggerKey.Acquire("death");
 
 		public void CauseDeath(Character killedBy) {
 			if (!this.Flag_Dead) {
@@ -1112,7 +1112,7 @@ namespace SteamEngine.CompiledScripts {
 			}
         }
 
-		private static TagKey oColorTK = TagKey.Get("_ocolor_");
+		private static TagKey oColorTK = TagKey.Acquire("_ocolor_");
 		public int OColor {
 			get {
 				object o = this.GetTag(oColorTK);
@@ -1130,7 +1130,7 @@ namespace SteamEngine.CompiledScripts {
 			this.RemoveTag(oColorTK);
 		}
 
-		private static TagKey oModelTK = TagKey.Get("_omodel_");
+		private static TagKey oModelTK = TagKey.Acquire("_omodel_");
 		public int OModel {
 			get {
 				object o = this.GetTag(oModelTK);
@@ -1148,7 +1148,7 @@ namespace SteamEngine.CompiledScripts {
 			this.RemoveTag(oModelTK);
 		}
 
-		private static TriggerKey disruptTK = TriggerKey.Get("disrupt");
+		private static TriggerKey disruptTK = TriggerKey.Acquire("disrupt");
 		public void Trigger_Disrupt() {
 			TryTrigger(disruptTK, null);
 			On_Disruption();
@@ -1158,7 +1158,7 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		private static TriggerKey hostileActionTK = TriggerKey.Get("hostileAction");
+		private static TriggerKey hostileActionTK = TriggerKey.Acquire("hostileAction");
 		public void Trigger_HostileAction(Character enemy) {
 			ScriptArgs sa = new ScriptArgs(enemy);
 			TryTrigger(hostileActionTK, sa);
@@ -1530,7 +1530,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TriggerKey skillChangeTK = TriggerKey.Get("skillChange");
+		private static TriggerKey skillChangeTK = TriggerKey.Acquire("skillChange");
 		public void Trigger_SkillChange(Skill skill, ushort oldValue) {
 			int newValue = skill.RealValue;
 			ScriptArgs sa = new ScriptArgs(skill.Id, oldValue, newValue, skill);
@@ -2052,7 +2052,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TagKey armorClassModifierTK = TagKey.Get("_armorClassModifier_");
+		private static TagKey armorClassModifierTK = TagKey.Acquire("_armorClassModifier_");
 		public int ArmorClassModifier {
 			get {
 				return Convert.ToInt32(this.GetTag(armorClassModifierTK));
@@ -2088,7 +2088,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TagKey mindDefenseModifierTK = TagKey.Get("_mindDefenseModifier_");
+		private static TagKey mindDefenseModifierTK = TagKey.Acquire("_mindDefenseModifier_");
 		public int MindDefenseModifier {
 			get {
 				return Convert.ToInt32(this.GetTag(mindDefenseModifierTK));
@@ -2327,7 +2327,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				int model = this.Model;
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
-					this.charModelInfo = CharModelInfo.Get(model);
+					this.charModelInfo = CharModelInfo.GetByModel(model);
 				}
 				return charModelInfo;
 			}

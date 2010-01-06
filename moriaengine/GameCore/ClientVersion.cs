@@ -31,7 +31,7 @@ namespace SteamEngine {
 		private static Dictionary<string, ClientVersion> byVersionString = new Dictionary<string, ClientVersion>(StringComparer.OrdinalIgnoreCase);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
-		public static ClientVersion Get(string versionString) {
+		public static ClientVersion Acquire(string versionString) {
 			ClientVersion cliver;
 			if (!byVersionString.TryGetValue(versionString, out cliver)) {
 				cliver = new ClientVersion(versionString);

@@ -61,7 +61,7 @@ namespace SteamEngine {
 			}
 		}
 
-		static TagKey visionRangeTK = TagKey.Get("_visionRange_");
+		static TagKey visionRangeTK = TagKey.Acquire("_visionRange_");
 		/**
 			Increases or decreases the vision range of this character.
 			

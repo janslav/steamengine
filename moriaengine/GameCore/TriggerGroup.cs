@@ -74,14 +74,12 @@ namespace SteamEngine {
 			return "TriggerGroup " + Defname;
 		}
 
-		public static new TriggerGroup Get(string name) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(name, out script);
-			return script as TriggerGroup;
+		public static new TriggerGroup GetByDefname(string name) {
+			return AbstractScript.GetByDefname(name) as TriggerGroup;
 		}
 
 		internal static void ReAddGlobals() {
-			foreach (AbstractScript script in AllScriptsByDefname.Values) {
+			foreach (AbstractScript script in AbstractScript.AllScripts) {
 				TriggerGroup tg = script as TriggerGroup;
 				if (tg != null) {
 					if (tg.Defname.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith("_global")) {

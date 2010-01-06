@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;//cancel because we're not using the skill's delay just yet
 		}
 
-		static TimerKey animTk = TimerKey.Get("_weaponAnimDelay_");
+		static TimerKey animTk = TimerKey.Acquire("_weaponAnimDelay_");
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;

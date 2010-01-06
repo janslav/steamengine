@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 400;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
-		private static readonly TagKey prefilledDefnameTK = TagKey.Get("_trigger_group_to_add_defname_");
+		private static readonly TagKey prefilledDefnameTK = TagKey.Acquire("_trigger_group_to_add_defname_");
 
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//nacteme obsah input fieldu
 				string tgDefname = gr.GetTextResponse(10);
 				//zkusime getnout TriggerGroupu
-				TriggerGroup tg = TriggerGroup.Get(tgDefname);
+				TriggerGroup tg = TriggerGroup.GetByDefname(tgDefname);
 				if (tg == null) {
 					//zobrait chybovou hlasku
 					Gump newGi = D_Display_Text.ShowError("Trigger group s defnamem '" + tgDefname + "' nenalezena!");

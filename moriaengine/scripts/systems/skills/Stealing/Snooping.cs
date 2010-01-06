@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
+		internal static PluginKey snoopedPluginKey = PluginKey.Acquire("_snoopedBackpacks_");
 
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class SnoopingPlugin {
 
 		public static readonly SnoopingPluginDef defInstance = new SnoopingPluginDef("p_snoopedBackpacks", "C#scripts", -1);
-		internal static PluginKey snoopedPluginKey = PluginKey.Get("_snoopedBackpacks_");
+		internal static PluginKey snoopedPluginKey = PluginKey.Acquire("_snoopedBackpacks_");
 		public static int duration = 180;
 
 		public bool On_DenyPickupItem(DenyPickupArgs args) {

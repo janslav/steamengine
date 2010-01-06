@@ -25,8 +25,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all players accounts in the game")]
 	public class D_AccList : CompiledGumpDef {
-		public static TagKey searchStringTK = TagKey.Get("_search_string_");
-		public static TagKey accListTK = TagKey.Get("_acc_list_");
+		public static TagKey searchStringTK = TagKey.Acquire("_search_string_");
+		public static TagKey accListTK = TagKey.Acquire("_acc_list_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(target.Account));
 			} else {
 				string accName = (String) text.Argv[0];
-				AbstractAccount acc = AbstractAccount.Get(accName);
+				AbstractAccount acc = AbstractAccount.GetByName(accName);
 				if (acc == null) {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + accName + " neexistuje!", (int) Hues.Red);
 					return;

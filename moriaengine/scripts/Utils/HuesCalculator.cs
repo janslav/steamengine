@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 				case MaterialType.Ore:
 					if (!oreHues.TryGetValue(material, out hue)) {
 						if (material == Material.Sand) {
-							hue = Constant.Get("color_o_pisek");
+							hue = Constant.GetByName("color_o_pisek");
 						} else {
 							hue = GetConstantForMetal(material);
 						}
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 				default:
 					throw new SEException("Can't find the hue for wooden Material." + wood + ".");
 			}
-			return Constant.Get(constantName);
+			return Constant.GetByName(constantName);
 		}
 
 		private static Constant GetConstantForMetal(Material metal) {
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 				default:
 					throw new SEException("Can't find the hue for metallic Material." + metal + ".");
 			}
-			return Constant.Get(constantName);
+			return Constant.GetByName(constantName);
 		}
 	}
 }

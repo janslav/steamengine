@@ -27,8 +27,8 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class ProfessionDef : AbstractIndexedDef<ProfessionDef, string> {
-		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
-		internal static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
+		internal static readonly TriggerKey tkAssign = TriggerKey.Acquire("Assign");
+		internal static readonly TriggerKey tkUnAssign = TriggerKey.Acquire("UnAssign");
 
 		//private static Dictionary<string, ProfessionDef> byName = new Dictionary<string, ProfessionDef>(StringComparer.OrdinalIgnoreCase);
 
@@ -95,12 +95,12 @@ namespace SteamEngine.CompiledScripts {
 		#endregion triggerMethods
 		
 		#region Accessors
-		public static ProfessionDef ByDefname(string defname) {
-			return AbstractScript.Get(defname) as ProfessionDef;
+		public static new ProfessionDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as ProfessionDef;
 		}
 
-		public static ProfessionDef ByName(string key) {
-			return ByDefIndex(key);
+		public static ProfessionDef GetByName(string key) {
+			return GetByDefIndex(key);
 		}
 
 
@@ -541,7 +541,7 @@ namespace SteamEngine.CompiledScripts {
 				Globals.SrcCharacter.Message("Nebylo zvoleno povolání pro pøiøazení", (int) Hues.Red);
 				return;
 			}
-			ProfessionDef profDef = ProfessionDef.ByDefname(args.Args);
+			ProfessionDef profDef = ProfessionDef.GetByDefname(args.Args);
 			if (profDef == null) {
 				Globals.SrcCharacter.Message("Povolání " + args.Args + " neexistuje!", (int) Hues.Red);
 			} else {

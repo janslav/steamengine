@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 			base.LoadScriptLine(filename, line, param, args);//the AbstractThingDef Loadline
 		}
 
-		public static SkillDef ById(SkillName name) {
+		public static SkillDef GetBySkillName(SkillName name) {
 			return (SkillDef) GetById((int) name);
 		}
 
@@ -331,20 +331,20 @@ namespace SteamEngine.CompiledScripts {
 		//	return cancel;
 		//}
 
-		public static readonly TriggerKey tkAbort = TriggerKey.Get("Abort");
-		public static readonly TriggerKey tkSkillAbort = TriggerKey.Get("SkillAbort");
-		public static readonly TriggerKey tkFail = TriggerKey.Get("Fail");
-		public static readonly TriggerKey tkSkillFail = TriggerKey.Get("SkillFail");
-		public static readonly TriggerKey tkMakeItem = TriggerKey.Get("MakeItem");
-		public static readonly TriggerKey tkSkillMakeItem = TriggerKey.Get("SkillMakeItem");
-		public static readonly TriggerKey tkSelect = TriggerKey.Get("Select");
-		public static readonly TriggerKey tkSkillSelect = TriggerKey.Get("SkillSelect");
-		public static readonly TriggerKey tkStart = TriggerKey.Get("Start");
-		public static readonly TriggerKey tkSkillStart = TriggerKey.Get("SkillStart");
-		public static readonly TriggerKey tkStroke = TriggerKey.Get("Stroke");
-		public static readonly TriggerKey tkSkillStroke = TriggerKey.Get("SkillStroke");
-		public static readonly TriggerKey tkSuccess = TriggerKey.Get("Success");
-		public static readonly TriggerKey tkSkillSuccess = TriggerKey.Get("SkillSuccess");
+		public static readonly TriggerKey tkAbort = TriggerKey.Acquire("Abort");
+		public static readonly TriggerKey tkSkillAbort = TriggerKey.Acquire("SkillAbort");
+		public static readonly TriggerKey tkFail = TriggerKey.Acquire("Fail");
+		public static readonly TriggerKey tkSkillFail = TriggerKey.Acquire("SkillFail");
+		public static readonly TriggerKey tkMakeItem = TriggerKey.Acquire("MakeItem");
+		public static readonly TriggerKey tkSkillMakeItem = TriggerKey.Acquire("SkillMakeItem");
+		public static readonly TriggerKey tkSelect = TriggerKey.Acquire("Select");
+		public static readonly TriggerKey tkSkillSelect = TriggerKey.Acquire("SkillSelect");
+		public static readonly TriggerKey tkStart = TriggerKey.Acquire("Start");
+		public static readonly TriggerKey tkSkillStart = TriggerKey.Acquire("SkillStart");
+		public static readonly TriggerKey tkStroke = TriggerKey.Acquire("Stroke");
+		public static readonly TriggerKey tkSkillStroke = TriggerKey.Acquire("SkillStroke");
+		public static readonly TriggerKey tkSuccess = TriggerKey.Acquire("Success");
+		public static readonly TriggerKey tkSkillSuccess = TriggerKey.Acquire("SkillSuccess");
 		//public static readonly TriggerKey tkGain = TriggerKey.Get("Gain");
 		//public static readonly TriggerKey tkSkillGain = TriggerKey.Get("SkillGain");
 	}
@@ -602,7 +602,7 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		private static Timers.TimerKey skillTimerKey = Timers.TimerKey.Get("_skillTimer_");
+		private static Timers.TimerKey skillTimerKey = Timers.TimerKey.Acquire("_skillTimer_");
 
 		[Persistence.SaveableClass]
 		[DeepCopyableClass]

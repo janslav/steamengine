@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 	public class PartyDef : RoleDef {
 		public static readonly PartyDef instance = new PartyDef("r_party", "C# scripts", -1);
 
-		public static readonly RoleKey rkParty = RoleKey.Get("_party_");
+		public static readonly RoleKey rkParty = RoleKey.Acquire("_party_");
 
 
 		public PartyDef(string defname, string filename, int headerLine)

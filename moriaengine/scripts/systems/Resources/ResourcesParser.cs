@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if the given string defines some Item. If so, return the def")]
 		internal static bool IsItemResource(string definition, out ItemDef idef) {
-			if ((idef = ItemDef.Get(definition) as ItemDef) != null) {
+			if ((idef = ItemDef.GetByDefname(definition) as ItemDef) != null) {
 				//this resource is an item
 				return true;
 			}
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if the given string defines some TriggerGroup. If so, return it")]
 		internal static bool IsTriggerGroupResource(string definition, out TriggerGroup tgr) {
-			if ((tgr = TriggerGroup.Get(definition)) != null) {
+			if ((tgr = TriggerGroup.GetByDefname(definition)) != null) {
 				//this resource is a trigger group
 				return true;
 			}
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if the given string defines some Ability. If so, return the def")]
 		internal static bool IsAbilityResource(string definition, out AbilityDef abl) {
-			if ((abl = AbilityDef.ByDefname(definition)) != null) {
+			if ((abl = AbilityDef.GetByDefname(definition)) != null) {
 				//this resource is an ability
 				return true;
 			}

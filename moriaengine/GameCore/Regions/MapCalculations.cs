@@ -138,7 +138,7 @@ namespace SteamEngine.Regions {
 					int itemZ = item.Z;
 					int itemModel = item.Model;
 					if ((itemModel < 0x4000) && (itemX == x) && (itemY == y)) {
-						ItemDispidInfo dispidInfo = ItemDispidInfo.Get(itemModel);
+						ItemDispidInfo dispidInfo = ItemDispidInfo.GetByModel(itemModel);
 						TileFlag staticFlag = dispidInfo.Flags;
 						surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
 						impassable = (staticFlag & TileFlag.Impassable) == TileFlag.Impassable;
@@ -234,7 +234,7 @@ namespace SteamEngine.Regions {
 						}
 
 						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.Get(model);
+						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0)
 							continue;
 						int itemX = item.X;
@@ -266,7 +266,7 @@ namespace SteamEngine.Regions {
 						}
 
 						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.Get(model);
+						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0) {
 							continue;
 						}
@@ -287,7 +287,7 @@ namespace SteamEngine.Regions {
 						}
 
 						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.Get(model);
+						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0) {
 							continue;
 						}
@@ -306,7 +306,7 @@ namespace SteamEngine.Regions {
 						}
 
 						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.Get(model);
+						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0) {
 							continue;
 						}
@@ -369,7 +369,7 @@ namespace SteamEngine.Regions {
 				AbstractItem item = items[i];
 
 				int model = item.Model;
-				ItemDispidInfo idi = ItemDispidInfo.Get(model);
+				ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
 				TileFlag flags = idi.Flags;
 
 				if ((flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
@@ -500,7 +500,7 @@ namespace SteamEngine.Regions {
 
 			for (int i = 0; i < items.Count; ++i) {
 				AbstractItem item = items[i];
-				ItemDispidInfo idi = ItemDispidInfo.Get(item.Model);
+				ItemDispidInfo idi = ItemDispidInfo.GetByModel(item.Model);
 				TileFlag flags = idi.Flags;
 
 				bool itemIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
@@ -659,7 +659,7 @@ namespace SteamEngine.Regions {
 			for (int i = 0; i < itemList.Count; ++i) {
 				AbstractItem item = itemList[i];
 
-				ItemDispidInfo idi = ItemDispidInfo.Get(item.Model);
+				ItemDispidInfo idi = ItemDispidInfo.GetByModel(item.Model);
 
 				bool itemIsWater = ((idi.Flags & TileFlag.Wet) == TileFlag.Wet);
 				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);

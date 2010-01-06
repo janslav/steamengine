@@ -25,10 +25,10 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Dialog for creating a new region")]
 	public class D_New_Region : CompiledGumpDef {
-		private static readonly TagKey defNameTK = TagKey.Get("_new_region_defname_");
-		private static readonly TagKey nameTK = TagKey.Get("_new_region_name_");
-		private static readonly TagKey homeposTK = TagKey.Get("_new_region_homepos_");
-		public static readonly TagKey parentDefTK = TagKey.Get("_new_region_parent_defname_");
+		private static readonly TagKey defNameTK = TagKey.Acquire("_new_region_defname_");
+		private static readonly TagKey nameTK = TagKey.Acquire("_new_region_name_");
+		private static readonly TagKey homeposTK = TagKey.Acquire("_new_region_homepos_");
+		public static readonly TagKey parentDefTK = TagKey.Acquire("_new_region_parent_defname_");
 		private static int width = 450;
 
 		[Summary("V argumentech (args) mohou prijit parametry pro dialogove editfieldy")]

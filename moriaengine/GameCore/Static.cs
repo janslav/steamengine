@@ -32,7 +32,7 @@ namespace SteamEngine {
 		private byte facet;
 
 		internal AbstractInternalItem(int id, int facet) {
-			this.dispidInfo = ItemDispidInfo.Get(id);
+			this.dispidInfo = ItemDispidInfo.GetByModel(id);
 			if (this.dispidInfo == null) {
 				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ". Something's wrong.");
 			}

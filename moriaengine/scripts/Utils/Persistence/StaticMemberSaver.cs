@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 		//private static string testField = "teeeeeeeeeeeeeeststriiiiing";
 
 		private static List<MemberInfo> registeredMembers = new List<MemberInfo>();
-		private static TagKey tkSavedStaticMembersTable = TagKey.Get("SavedStaticMembersTable");
+		private static TagKey tkSavedStaticMembersTable = TagKey.Acquire("SavedStaticMembersTable");
 
 		private static void LoadMembers() {
 			Hashtable table = Globals.Instance.GetTag(tkSavedStaticMembersTable) as Hashtable;

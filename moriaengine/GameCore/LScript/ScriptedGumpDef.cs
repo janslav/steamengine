@@ -39,7 +39,7 @@ namespace SteamEngine.LScript {
 		internal static ScriptedGumpDef Load(PropsSection input) {
 			string[] headers = input.HeaderName.Split(new char[] { ' ', '\t' }, 2);
 			string name = headers[0];//d_something
-			GumpDef gump = GumpDef.Get(name);
+			GumpDef gump = GumpDef.GetByDefname(name);
 			ScriptedGumpDef sgd;
 			if (gump != null) {
 				sgd = gump as ScriptedGumpDef;

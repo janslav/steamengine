@@ -25,9 +25,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all character's roles")]
 	public class D_CharsRolesList : CompiledGumpDef {
-		internal static readonly TagKey listTK = TagKey.Get("_roles_set_");
-		internal static readonly TagKey criteriumTK = TagKey.Get("_roles_criterium_");
-		internal static readonly TagKey sortingTK = TagKey.Get("_roles_sorting_");
+		internal static readonly TagKey listTK = TagKey.Acquire("_roles_set_");
+		internal static readonly TagKey criteriumTK = TagKey.Acquire("_roles_criterium_");
+		internal static readonly TagKey sortingTK = TagKey.Acquire("_roles_sorting_");
 
 		private static int width = 600;
 

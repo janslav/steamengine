@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(name, uid) {
 		}
 
-		public static RoleKey Get(string name) {
+		public static RoleKey Acquire(string name) {
 			RoleKey key;
 			if (byName.TryGetValue(name, out key)) {
 				return key;
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object Load(Match match) {
-			return RoleKey.Get(match.Groups["value"].Value);
+			return RoleKey.Acquire(match.Groups["value"].Value);
 		}
 
 		public string Prefix {

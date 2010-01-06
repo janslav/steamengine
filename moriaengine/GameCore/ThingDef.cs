@@ -91,10 +91,8 @@ namespace SteamEngine {
 		/**
 			This does NOT check Constants (and must not, or it would trigger infinite recursion from Constant.EvaluateToDef(string)).
 		*/
-		public static new ThingDef Get(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-			return script as ThingDef;
+		public static new ThingDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as ThingDef;
 		}
 
 		/**
@@ -110,7 +108,7 @@ namespace SteamEngine {
 			
 			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
 		*/
-		public static ThingDef Get(int defnumber) {
+		public static ThingDef GetByModel(int defnumber) {
 			ThingDef tdone = null;
 			tdone = FindCharDef(defnumber);
 			if (tdone == null) {
@@ -334,17 +332,6 @@ namespace SteamEngine {
 
 		#region Loading from scripts
 
-		//public static new bool ExistsDefType(string name) {
-		//    return thingDefTypesByName.ContainsKey(name);
-		//}
-
-		////checking type when loading...
-		//public static Type GetDefTypeByThingType(Type thingType) {//
-		//    Type defType;
-		//    thingDefTypesByThingType.TryGetValue(thingType, out defType);
-		//    return defType;
-		//}
-
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			if ("flag".Equals(param)) {
 				param = "flags";
@@ -352,9 +339,6 @@ namespace SteamEngine {
 			base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
 		}
 
-		//private static Type[] thingDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		//this should be typically called by the Bootstrap methods of scripted ThingDef
 		public static void RegisterThingDef(Type thingDefType, Type thingType) {
 			Type t;
 			if (thingDefTypesByThingType.TryGetValue(thingDefType, out t)) {
@@ -402,12 +386,6 @@ namespace SteamEngine {
 			AbstractCharacterDef def;
 			charModelDefs.TryGetValue(defnumber, out def);
 			return def;
-		}
-
-		public static ICollection AllThingDefs {
-			get {
-				return ThingDef.AllScriptsByDefname.Values;
-			}
 		}
 
 		internal static void StartingLoading() {
@@ -490,100 +468,6 @@ namespace SteamEngine {
 			base.Unload();
 		}
 
-		//internal static IUnloadable LoadFromScripts(PropsSection input) {
-
-
-
-
-
-
-
-		//    Type thingDefType = null;
-		//    string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-		//    string defname = input.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-		//    //Console.WriteLine("loading section "+input.HeadToString());
-		//    //[typeName defname]
-
-		//    bool isNumeric = false;
-		//    //Attempt to convert defname to a uint.
-
-		//    int defnum;
-		//    if (ConvertTools.TryParseInt32(defname, out defnum)) {
-		//        defname = "0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
-		//        isNumeric = true;
-		//    }
-
-		//    thingDefType = ThingDef.GetDefTypeByName(typeName);
-		//    if (thingDefType == null) {
-		//        throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
-		//    }
-
-		//    if (thingDefType.IsAbstract) {
-		//        throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is abstract, a.e. not meant to be directly used in scripts this way. Ignoring.");
-		//    }
-
-		//    if (thingDefType.IsSubclassOf(typeof(AbstractItemDef))) {
-		//        if (isNumeric) {
-		//            defname = "i_" + defname;
-		//        }
-		//    } else if (thingDefType.IsSubclassOf(typeof(AbstractCharacterDef))) {
-		//        //is character
-		//        if (isNumeric) {
-		//            defname = "c_" + defname;
-		//        }
-		//    } else {//this probably can not happen, but one is never too sure :)
-		//        throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is neither AbstractCharacterDef nor AbstractItemDef subclass. Ignoring.");
-		//    }
-
-		//    AbstractScript def;
-		//    AllScriptsByDefname.TryGetValue(defname, out def);
-		//    ThingDef thingDef = def as ThingDef;
-
-		//    if (thingDef == null) {
-		//        if (def != null) {//it isnt thingDef
-		//            throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def));
-		//        } else {
-		//            ConstructorInfo cw = thingDefCtors[thingDefType];
-		//            thingDef = (ThingDef) cw.Invoke(BindingFlags.Default, null, new object[] { defname, input.Filename, input.HeaderLine }, null);
-		//        }
-		//    } else if (thingDef.IsUnloaded) {
-		//        if (thingDef.GetType() != thingDefType) {
-		//            throw new OverrideNotAllowedException("You can not change the class of a Thingdef while resync. You have to recompile or restart to achieve that. Ignoring.");
-		//        }
-		//        thingDef.IsUnloaded = false;
-		//        UnRegisterThingDef(thingDef);//will be re-registered again
-		//    } else {
-		//        throw new OverrideNotAllowedException("ThingDef " + LogStr.Ident(defname) + " defined multiple times. Ignoring.");
-		//    }
-
-		//    thingDef.Defname = defname;
-		//    AllScriptsByDefname[defname] = thingDef;
-
-			
-
-		//    if (isNumeric) {
-
-		//    }
-
-
-		//    //header done. now we have the def instantiated.
-		//    //now load the other fields
-		//    thingDef.LoadScriptLines(input);
-
-		//    if (tg == null) {
-		//        return thingDef;
-		//    } else {
-		//        return new UnloadableGroup(thingDef, tg);
-		//    }
-		//}
-
-		//private static void UnRegisterThingDef(ThingDef td) {
-		//    AllScriptsByDefname.Remove(td.Defname);
-		//    if (td.Altdefname != null) {
-		//        AllScriptsByDefname.Remove(td.Altdefname);
-		//    }
-		//}
-
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal new static void LoadingFinished() {
 			//dump number of loaded instances?
@@ -594,7 +478,7 @@ namespace SteamEngine {
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
 				int a = 0;
 				int countPerCent = count / 200;
-				foreach (AbstractScript td in AllScriptsByDefname.Values) {
+				foreach (AbstractScript td in AbstractScript.AllScripts) {
 					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
 					}
@@ -612,7 +496,7 @@ namespace SteamEngine {
 						}
 
 						try {
-							idef.multiData = MultiData.Get(idef.Model);
+							idef.multiData = MultiData.GetByModel(idef.Model);
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {

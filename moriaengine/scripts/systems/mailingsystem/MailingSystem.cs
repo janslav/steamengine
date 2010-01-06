@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("Static class for operating with clients delayed messages.")]
 	public static class MsgsBoard {
 		[Summary("A unique tag name for holding a list of client delayed messages")]
-		internal static TagKey tkDelayedMsgs = TagKey.Get("_delayed_msgs_");
+		internal static TagKey tkDelayedMsgs = TagKey.Acquire("_delayed_msgs_");
 
 		[Summary("Default senders name (if the sender was not specified)")]
 		public const string NO_SENDER = "System";

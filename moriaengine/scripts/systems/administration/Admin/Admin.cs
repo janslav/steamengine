@@ -25,8 +25,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog that will display the admin dialog")]
 	public class D_Admin : CompiledGumpDef {
-		internal static readonly TagKey playersListTK = TagKey.Get("_players_list_");
-		internal static readonly TagKey plrListSortTK = TagKey.Get("_players_list_sorting_");
+		internal static readonly TagKey playersListTK = TagKey.Acquire("_players_list_");
+		internal static readonly TagKey plrListSortTK = TagKey.Acquire("_players_list_sorting_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam lidi z parametru (if any)

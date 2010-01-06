@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts {
 			return base.On_Step(direction, running);
 		}
 
-		private static TimerKey charLingeringTimerTK = TimerKey.Get("_charLingeringTimer_");
+		private static TimerKey charLingeringTimerTK = TimerKey.Acquire("_charLingeringTimer_");
 		public override void On_LogOut() {
 			//TODO: In safe/nonsafe areas, settings, etc.
 
@@ -358,7 +358,7 @@ namespace SteamEngine.CompiledScripts {
 
         #region Add
 		public void Add(int model) {
-			this.Add(ThingDef.Get(model),1);
+			this.Add(ThingDef.GetByModel(model),1);
 		}
 
 		public void Add(IThingFactory addedDef) {
@@ -366,7 +366,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
         public void Add(int model, int amount) {
-            this.Add(ThingDef.Get(model),amount);
+            this.Add(ThingDef.GetByModel(model),amount);
         }
 
 		public void Add(IThingFactory addedDef, int amount) {

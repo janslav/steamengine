@@ -169,7 +169,7 @@ namespace SteamEngine.CompiledScripts {
 
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.Uid) {"));
 					foreach (MethodInfo mi in triggerMethods) {
-						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
+						TriggerKey tk = TriggerKey.Acquire(mi.Name.Substring(3));
 						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.Uid + "): //" + tk.Name));
 						retVal.Statements.AddRange(
 							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
@@ -211,16 +211,9 @@ namespace SteamEngine.CompiledScripts {
 	//more in the Map class
 	//if someone has a better idea about how to do this ...
 	public abstract class GroundTileType : CompiledTriggerGroup {
-		private static Dictionary<string, GroundTileType> byName = new Dictionary<string, GroundTileType>(StringComparer.OrdinalIgnoreCase);
 
-		protected GroundTileType() {
-			byName[this.Defname] = this;
-		}
-
-		public static new GroundTileType Get(string name) {
-			GroundTileType gtt;
-			byName.TryGetValue(name, out gtt);
-			return gtt;
+		public static new GroundTileType GetByDefname(string name) {
+			return AbstractScript.GetByDefname(name) as GroundTileType;
 		}
 
 		public static bool IsMapTileInRange(int tileId, int aboveOrEqualTo, int below) {
@@ -228,9 +221,5 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public abstract bool IsTypeOfMapTile(int mapTileId);
-
-		internal static void ForgetScripts() {
-			byName.Clear();
-		}
 	}
 }

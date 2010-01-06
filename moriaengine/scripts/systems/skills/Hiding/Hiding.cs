@@ -31,13 +31,13 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		public static PluginKey pluginKey = PluginKey.Get("hiddenHelper");
+		public static PluginKey pluginKey = PluginKey.Acquire("hiddenHelper");
 
 		public static PluginDef p_hiddenHelper;
 		public static PluginDef P_HiddenHelper {
 			get {
 				if (p_hiddenHelper == null) {
-					p_hiddenHelper = PluginDef.Get("p_hiddenHelper");
+					p_hiddenHelper = PluginDef.GetByDefname("p_hiddenHelper");
 				}
 				return p_hiddenHelper;
 			}

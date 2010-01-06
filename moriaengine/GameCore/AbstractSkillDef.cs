@@ -43,10 +43,8 @@ namespace SteamEngine {
 		private TriggerGroup scriptedTriggers;
 
 		#region Accessors
-		public static AbstractSkillDef GetByDefname(string defname) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(defname, out script);
-			return script as AbstractSkillDef;
+		public static new AbstractSkillDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as AbstractSkillDef;
 		}
 
 		public static AbstractSkillDef GetByKey(string key) {
@@ -56,7 +54,7 @@ namespace SteamEngine {
 		}
 
 		public static AbstractSkillDef GetById(int id) {
-			return (AbstractSkillDef) ByDefIndex(id);
+			return GetByDefIndex(id);
 		}
 
 		public static int SkillsCount {

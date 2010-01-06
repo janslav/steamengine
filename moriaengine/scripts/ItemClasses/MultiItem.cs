@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts {
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
 					string defname = gc["defname"].Value;
-					ItemDef def = ThingDef.Get(defname) as ItemDef;
+					ItemDef def = ThingDef.GetByDefname(defname) as ItemDef;
 					if (def == null) {
 						int model;
 						if (ConvertTools.TryParseInt32(defname, out model)) {

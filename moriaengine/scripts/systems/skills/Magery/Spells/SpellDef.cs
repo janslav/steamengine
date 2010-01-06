@@ -76,12 +76,12 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue effectRange;
 		private string runeWords;
 
-		public static SpellDef ByDefname(string defname) {
-			return AbstractScript.Get(defname) as SpellDef;
+		public static new SpellDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as SpellDef;
 		}
 
-		public static SpellDef ById(int key) {
-			return ByDefIndex(key);
+		public static SpellDef GetById(int key) {
+			return GetByDefIndex(key);
 		}
 
 		public static ICollection<SpellDef> AllSpellDefs {
@@ -463,12 +463,12 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		private static TriggerKey tkSuccess = TriggerKey.Get("success");
-		private static TriggerKey tkStart = TriggerKey.Get("start");
-		private static TriggerKey tkSpellEffect = TriggerKey.Get("spelleffect");
-		private static TriggerKey tkEffectChar = TriggerKey.Get("effectchar");
-		private static TriggerKey tkEffectItem = TriggerKey.Get("effectitem");
-		private static TriggerKey tkEffectGround = TriggerKey.Get("effectground");
+		private static TriggerKey tkSuccess = TriggerKey.Acquire("success");
+		private static TriggerKey tkStart = TriggerKey.Acquire("start");
+		private static TriggerKey tkSpellEffect = TriggerKey.Acquire("spelleffect");
+		private static TriggerKey tkEffectChar = TriggerKey.Acquire("effectchar");
+		private static TriggerKey tkEffectItem = TriggerKey.Acquire("effectitem");
+		private static TriggerKey tkEffectGround = TriggerKey.Acquire("effectground");
 
 		internal void Trigger_Select(SkillSequenceArgs mageryArgs) {
 			//Checked so far: death, book on self

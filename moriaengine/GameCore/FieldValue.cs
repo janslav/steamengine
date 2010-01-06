@@ -290,7 +290,7 @@ namespace SteamEngine {
 
 		internal static bool TryResolveAsScript(string value, ref object retVal) {
 			value = value.Trim().TrimStart('#');
-			AbstractScript script = AbstractScript.Get(value);
+			AbstractScript script = AbstractScript.GetByDefname(value);
 			if (script != null) {
 				retVal = script;
 				return true;
@@ -517,7 +517,7 @@ namespace SteamEngine {
 						string str = valueAsString;
 						str = str.Trim();
 						str = str.TrimStart('#');
-						AbstractScript script = AbstractScript.Get(str);
+						AbstractScript script = AbstractScript.GetByDefname(str);
 						if (script != null) {
 							this.val = script;
 							return;

@@ -313,7 +313,7 @@ namespace SteamEngine {
 			ScriptHolder.ForgetAll();//bye-bye to all scripted functions
 			ThingDef.ForgetAll();//clear thingdef constructors etc.
 			PluginDef.ForgetAll();//clear plugindef constructors etc.
-			GroundTileType.ForgetScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
+			//GroundTileType.ForgetScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
 			AbstractScript.ForgetAll();//all abstractscripts go bye-bye. This includes triggergroups, gumps, etc.
 			Constant.ForgetAll();
 			TestSuite.ForgetAll();

@@ -139,7 +139,7 @@ namespace SteamEngine {
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
 				string name = m.Groups["value"].Value;
-				return AbstractAccount.Get(name);
+				return AbstractAccount.GetByName(name);
 			}
 		}
 
@@ -266,7 +266,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public static AbstractAccount Get(string acctname) {
+		public static AbstractAccount GetByName(string acctname) {
 			AbstractAccount acc;
 			if (accounts.TryGetValue(acctname, out acc)) {
 				return acc;
@@ -309,7 +309,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
 		public static LoginAttemptResult HandleLoginAttempt(string username, string password, GameState gs, out AbstractAccount acc) {
-			acc = AbstractAccount.Get(username);
+			acc = AbstractAccount.GetByName(username);
 			if (acc == null) {
 				if ((Globals.AutoAccountCreation) || (accounts.Count == 0)) {
 					acc = CreateAccount(username, password);
@@ -353,7 +353,7 @@ namespace SteamEngine {
 				acc.maxPlevel = Globals.MaximalPlevel;
 				acc.plevel = Globals.MaximalPlevel;
 			} else {
-				acc = AbstractAccount.Get(username);
+				acc = AbstractAccount.GetByName(username);
 			}
 			if (acc == null) {
 				return null;
@@ -403,7 +403,7 @@ namespace SteamEngine {
 				plevel - The maxPlevel you want them to be.
 		*/
 		public void Promote(int newMaxPlevel) {
-			PromoteOrDemote(Globals.Src.MaxPlevel, AbstractAccount.Get(name), newMaxPlevel);
+			PromoteOrDemote(Globals.Src.MaxPlevel, AbstractAccount.GetByName(name), newMaxPlevel);
 		}
 
 		public override bool IsDeleted { get { return deleted; } }

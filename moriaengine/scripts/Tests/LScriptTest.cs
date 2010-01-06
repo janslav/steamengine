@@ -198,8 +198,8 @@ namespace SteamEngine.LScript {
 			TestSnippet(5, "TestMethod_IPointParam(LScriptTesterIPoint4D())", "ambiguity test 7");
 			TestSnippet(5, "TestMethod_PointAndIpointParam(LScriptTesterIPoint4D())", "ambiguity test 8");
 
-			Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Get("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
-			Sanity.IfTrueThrow(!TriggerKey.Get("testtriggerkey").Equals(LScriptMain.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
+			Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Acquire("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
+			Sanity.IfTrueThrow(!TriggerKey.Acquire("testtriggerkey").Equals(LScriptMain.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
 
 			LScriptMain.RunSnippet(testObj, "return {0 1}");
 			LScriptMain.RunSnippet(testObj, "return { 0 1}");

@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static readonly Dictionary<GameState, Dictionary<int, Stack<Gump>>> globalDialogStacksCache = new Dictionary<GameState, Dictionary<int, Stack<Gump>>>();
 
 		[Summary("Tag used for stacking information about clients dialogs to be called back")]
-		private static readonly TagKey dialogStackTKa = TagKey.Get("_guta_dialogStackTree_");
+		private static readonly TagKey dialogStackTKa = TagKey.Acquire("_guta_dialogStackTree_");
 
 		[Summary("LSCript used method for setting the specified argument's value")]
 		public static void SetArgValue(Gump gi, int index, object value) {

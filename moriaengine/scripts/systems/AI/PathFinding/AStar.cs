@@ -313,7 +313,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TimerKey decayTimerKey = TimerKey.Get("_testDecayTimer_");
+		private static TimerKey decayTimerKey = TimerKey.Acquire("_testDecayTimer_");
 		[DeepCopyableClass]
 		[SaveableClass]
 		public class AStarDecayTimer : BoundTimer {
@@ -362,7 +362,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TimerKey walkTimerKey = TimerKey.Get("_testWalkTimer_");
+		private static TimerKey walkTimerKey = TimerKey.Acquire("_testWalkTimer_");
 
 		[DeepCopyableClass]
 		[SaveableClass]

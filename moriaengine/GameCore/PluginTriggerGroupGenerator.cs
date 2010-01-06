@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts {
 
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.Uid) {"));
 					foreach (MethodInfo mi in triggerMethods) {
-						TriggerKey tk = TriggerKey.Get(mi.Name.Substring(3));
+						TriggerKey tk = TriggerKey.Acquire(mi.Name.Substring(3));
 						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.Uid + "): //" + tk.Name));
 						retVal.Statements.AddRange(
 							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,

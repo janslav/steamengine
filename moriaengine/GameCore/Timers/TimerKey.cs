@@ -27,7 +27,7 @@ namespace SteamEngine.Timers {
 			: base(name, uid) {
 		}
 
-		public static TimerKey Get(string name) {
+		public static TimerKey Acquire(string name) {
 			TimerKey key;
 			if (byName.TryGetValue(name, out key)) {
 				return key;
@@ -59,7 +59,7 @@ namespace SteamEngine.Timers {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
-			return TimerKey.Get(match.Groups["value"].Value);
+			return TimerKey.Acquire(match.Groups["value"].Value);
 		}
 
 		public string Prefix {

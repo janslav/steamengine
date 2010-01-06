@@ -27,7 +27,7 @@ namespace SteamEngine {
 			: base(name, uid) {
 		}
 
-		public static PluginKey Get(string name) {
+		public static PluginKey Acquire(string name) {
 			PluginKey key;
 			if (byName.TryGetValue(name, out key)) {
 				return key;
@@ -62,7 +62,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
-			return PluginKey.Get(match.Groups["value"].Value);
+			return PluginKey.Acquire(match.Groups["value"].Value);
 		}
 
 		public string Prefix {

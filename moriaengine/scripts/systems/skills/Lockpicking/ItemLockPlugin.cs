@@ -26,7 +26,7 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	public partial class ItemLockPlugin {
 
-		public static PluginKey pkItemLock = PluginKey.Get("_itemLock_");
+		public static PluginKey pkItemLock = PluginKey.Acquire("_itemLock_");
 
 		public static bool IsLocked(Item i) {
 			ItemLockPlugin plugin = i.GetPlugin(pkItemLock) as ItemLockPlugin;

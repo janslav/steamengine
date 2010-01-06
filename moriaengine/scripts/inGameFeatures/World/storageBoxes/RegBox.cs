@@ -46,8 +46,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Surprisingly the dialog that will display the RegBox guts")]
 	public class D_RegBox : CompiledGumpDef {
 
-		private static readonly TagKey buttonsForReagsTK = TagKey.Get("_rb_ButtonsForReags_");
-		private static readonly TagKey buttonsCountTK = TagKey.Get("_rb_ButtonsCount_");
+		private static readonly TagKey buttonsForReagsTK = TagKey.Acquire("_rb_ButtonsForReags_");
+		private static readonly TagKey buttonsCountTK = TagKey.Acquire("_rb_ButtonsCount_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;

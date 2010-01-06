@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
         public static ItemDef BandageDef {
             get {
                 if (bandageDef == null) {
-                    bandageDef = (ItemDef)ThingDef.Get("i_bandage");
+                    bandageDef = (ItemDef)ThingDef.GetByDefname("i_bandage");
                 }
                 return bandageDef;
             }
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
             return false;
         }
 
-        private TimerKey healingTimerKey = TimerKey.Get("_healingTimer_");
+        private TimerKey healingTimerKey = TimerKey.Acquire("_healingTimer_");
     }
 
     // jen kvuli staticky promeny, tartar urcite vymysli jak to udelat lip :o)
@@ -195,7 +195,7 @@ namespace SteamEngine.CompiledScripts {
             if (skillSeqArgs.DelaySpan < TimeSpan.Zero) {
                 skillSeqArgs.PhaseStroke();
             } else {
-                skillSeqArgs.Self.AddTimer(TimerKey.Get("_skillTimer_"), new SkillSequenceArgs.SkillStrokeTimer(skillSeqArgs)).DueInSpan = skillSeqArgs.DelaySpan;
+                skillSeqArgs.Self.AddTimer(TimerKey.Acquire("_skillTimer_"), new SkillSequenceArgs.SkillStrokeTimer(skillSeqArgs)).DueInSpan = skillSeqArgs.DelaySpan;
             }
             return true;
         }
@@ -265,7 +265,7 @@ namespace SteamEngine.CompiledScripts {
         public static ItemDef BloodyBandageDef {
             get {
                 if (bloodyBandageDef == null) {
-                    bloodyBandageDef = (ItemDef)ThingDef.Get("i_bandage_bloody");
+                    bloodyBandageDef = (ItemDef)ThingDef.GetByDefname("i_bandage_bloody");
                 }
                 return bloodyBandageDef;
             }
@@ -275,7 +275,7 @@ namespace SteamEngine.CompiledScripts {
         public static ItemDef BandageDef {
             get {
                 if (bandageDef == null) {
-                    bandageDef = (ItemDef)ThingDef.Get("i_bandage");
+                    bandageDef = (ItemDef)ThingDef.GetByDefname("i_bandage");
                 }
                 return bandageDef;
             }

@@ -61,7 +61,7 @@ namespace SteamEngine {
 		private void AddTrigger(ScriptHolder sd) {
 			string name = sd.Name;
 			//Console.WriteLine("Adding trigger {0} to tg {1}", name, this);
-			TriggerKey tk = TriggerKey.Get(name);
+			TriggerKey tk = TriggerKey.Acquire(name);
 			if (triggers.ContainsKey(tk)) {
 				Logger.WriteError("Attempted to declare triggers of the same name (" + LogStr.Ident(name) + ") in trigger-group " + LogStr.Ident(this.Defname) + "!");
 				return;
@@ -74,12 +74,12 @@ namespace SteamEngine {
 			return "TriggerGroup " + Defname;
 		}
 
-		public static new TriggerGroup Get(string name) {
-			return AbstractScript.Get(name) as TriggerGroup;
+		public static new TriggerGroup GetByDefname(string name) {
+			return AbstractScript.GetByDefname(name) as TriggerGroup;
 		}
 
 		private static ScriptedTriggerGroup GetNewOrCleared(string defname) {
-			TriggerGroup tg = Get(defname);
+			TriggerGroup tg = GetByDefname(defname);
 			if (tg == null) {
 				ScriptedTriggerGroup stg = new ScriptedTriggerGroup(defname);
 				stg.Register();

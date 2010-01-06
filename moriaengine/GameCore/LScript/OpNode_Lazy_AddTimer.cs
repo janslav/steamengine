@@ -52,12 +52,12 @@ namespace SteamEngine.LScript {
 				constructed.funcName = ((Token) triggerOrName).GetImage();
 			} else {//it is Triggerkey
 				string tkName = ((Token) triggerOrName.GetChildAt(triggerOrName.GetChildCount() - 1)).GetImage();
-				TriggerKey tk = TriggerKey.Get(tkName);
+				TriggerKey tk = TriggerKey.Acquire(tkName);
 				constructed = new OpNode_AddTriggerTimer(parent, filename, line, column, code, tk);
 			}//
 
 			Node timerKeyNode = body.GetChildAt(0);
-			constructed.name = TimerKey.Get(((Token) timerKeyNode.GetChildAt(timerKeyNode.GetChildCount() - 1)).GetImage());
+			constructed.name = TimerKey.Acquire(((Token) timerKeyNode.GetChildAt(timerKeyNode.GetChildCount() - 1)).GetImage());
 			constructed.secondsNode = LScriptMain.CompileNode(constructed, body.GetChildAt(2));
 			if (body.GetChildCount() > 5) {
 				constructed.GetArgsFrom(body.GetChildAt(6));

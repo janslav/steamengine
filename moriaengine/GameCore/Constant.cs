@@ -142,7 +142,7 @@ namespace SteamEngine {
 			return def;
 		}
 
-		public static Constant Get(string name) {
+		public static Constant GetByName(string name) {
 			Constant def;
 			allConstantsByName.TryGetValue(name, out def);
 			return def;

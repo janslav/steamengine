@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 		//skillParam2: spell param (summoned creature def?)
 
 		public static void TryCastSpellFromBook(Character ch, int spellid) {
-			SpellDef sd = SpellDef.ById(spellid);
+			SpellDef sd = SpellDef.GetById(spellid);
 			if (sd != null) {
 				TryCastSpellFromBook(ch, sd);
 			} else {

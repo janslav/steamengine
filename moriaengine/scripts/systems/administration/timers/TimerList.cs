@@ -26,9 +26,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all object(tagholder)'s timers")]
 	public class D_TimerList : CompiledGumpDef {
-		internal static readonly TagKey holderTK = TagKey.Get("_timer_holder_");
-		internal static readonly TagKey timerListTK = TagKey.Get("_timer_list_");
-		internal static readonly TagKey timerCriteriumTK = TagKey.Get("_timer_criterium_");
+		internal static readonly TagKey holderTK = TagKey.Acquire("_timer_holder_");
+		internal static readonly TagKey timerListTK = TagKey.Acquire("_timer_list_");
+		internal static readonly TagKey timerCriteriumTK = TagKey.Acquire("_timer_criterium_");
 
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;

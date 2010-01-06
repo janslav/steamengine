@@ -24,9 +24,9 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Dialog listing all regions and enabling us to edit them")]
 	public class D_Regions : CompiledGumpDef {
-		public static readonly TagKey regsListTK = TagKey.Get("_regions_list_");//bude vyuzit jeste jinde, proto public a static
-		public static readonly TagKey regsSearchTK = TagKey.Get("_regions_list_search_crit_");
-		public static readonly TagKey regsSortingTK = TagKey.Get("_regions_list_sorting_");
+		public static readonly TagKey regsListTK = TagKey.Acquire("_regions_list_");//bude vyuzit jeste jinde, proto public a static
+		public static readonly TagKey regsSearchTK = TagKey.Acquire("_regions_list_search_crit_");
+		public static readonly TagKey regsSortingTK = TagKey.Acquire("_regions_list_sorting_");
 		private static int width = 600;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {

@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			"such as resources, skillmake or weight")]
 	public class D_Craftmenu_Settings : CompiledGumpDef {
 		private static int width = 600;
-		private static readonly TagKey previousItemdefValsTK = TagKey.Get("_previous_itemdef_values_");
+		private static readonly TagKey previousItemdefValsTK = TagKey.Acquire("_previous_itemdef_values_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);

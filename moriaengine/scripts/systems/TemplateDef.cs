@@ -36,8 +36,8 @@ namespace SteamEngine.CompiledScripts {
 		private static ItemDef defaultContainer;
 
 		#region Accessors
-		public static new TemplateDef Get(string defname) {
-			return AbstractScript.Get(defname) as TemplateDef;
+		public static new TemplateDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as TemplateDef;
 		}
 
 
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		public ItemDef DefaultContainer {
 			get {
 				if (defaultContainer == null) {
-					defaultContainer = (ItemDef) ThingDef.Get("i_bag");
+					defaultContainer = (ItemDef) ThingDef.GetByDefname("i_bag");
 					if (defaultContainer == null) {
 						throw new ScriptException("Missing TemplateDef's default container itemdef (i_bag)");
 					}
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts {
 								string altdefname = gc["value"].Value;
 								Match ma = TagMath.stringRE.Match(altdefname);
 								altdefname = String.Intern(ConvertTools.LoadSimpleQuotedString(altdefname));
-								AbstractScript def = Get(altdefname);
+								AbstractScript def = GetByDefname(altdefname);
 								TemplateDef t = def as TemplateDef;
 								if (t == null) { //is null or isnt TeplateDef
 									if (def != null) {//it isnt TemplateDef

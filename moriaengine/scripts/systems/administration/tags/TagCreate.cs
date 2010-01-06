@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					return;
 				}
 				TagHolder th = (TagHolder) args.GetTag(D_TagList.holderTK);
-				th.SetTag(TagKey.Get(tagName), objectifiedValue);
+				th.SetTag(TagKey.Acquire(tagName), objectifiedValue);
 				//vzit jeste predchozi dialog, musime smazat taglist aby se pregeneroval
 				//a obsahoval ten novy tag
 				Gump prevStacked = DialogStacking.PopStackedDialog(gi);

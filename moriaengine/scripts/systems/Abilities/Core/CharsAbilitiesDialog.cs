@@ -25,9 +25,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all character's abilities")]
 	public class D_CharsAbilitiesList : CompiledGumpDef {
-		internal static readonly TagKey listTK = TagKey.Get("_abilities_set_");
-		internal static readonly TagKey criteriumTK = TagKey.Get("_abilities_criterium_");
-		internal static readonly TagKey sortingTK = TagKey.Get("_abilities_sorting_");
+		internal static readonly TagKey listTK = TagKey.Acquire("_abilities_set_");
+		internal static readonly TagKey criteriumTK = TagKey.Acquire("_abilities_criterium_");
+		internal static readonly TagKey sortingTK = TagKey.Acquire("_abilities_sorting_");
 
 		private static int width = 800;
 

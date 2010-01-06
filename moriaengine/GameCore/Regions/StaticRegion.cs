@@ -322,7 +322,7 @@ namespace SteamEngine.Regions {
 		#endregion
 
 		#region Name/defname labouring methods
-		public static StaticRegion Get(string nameOrDefName) {
+		public static StaticRegion GetByNameOrDefname(string nameOrDefName) {
 			StaticRegion retVal;
 			if (!byDefname.TryGetValue(nameOrDefName, out retVal)) {
 				byName.TryGetValue(nameOrDefName, out retVal);

@@ -22,7 +22,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 
 	partial class CraftingProcessPlugin {
-		private static PluginKey craftingProcessPK = PluginKey.Get("_craftingProcess_");
+		private static PluginKey craftingProcessPK = PluginKey.Acquire("_craftingProcess_");
 
 		public static void UnInstallCraftingPlugin(Character self) {
 			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;

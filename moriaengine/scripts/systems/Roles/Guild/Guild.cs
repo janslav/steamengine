@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	//TODO!
 	public partial class Guild : RankSystem {
 
-		public static readonly RoleKey guildRK = RoleKey.Get("_guild_");
+		public static readonly RoleKey guildRK = RoleKey.Acquire("_guild_");
 
 		private static readonly List<Guild> allGuilds = new List<Guild>();
 

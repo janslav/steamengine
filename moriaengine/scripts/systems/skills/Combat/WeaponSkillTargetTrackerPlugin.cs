@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts {
 	partial class WeaponSkillTargetTrackerPlugin {
 		HashSet<Character> attackers = new HashSet<Character>();
 
-		private static PluginKey weaponSkillTargetPK = PluginKey.Get("_weaponSkillTarget_");
+		private static PluginKey weaponSkillTargetPK = PluginKey.Acquire("_weaponSkillTarget_");
 
 		public static void InstallTargetTracker(Character defender, Character attacker) {
 			WeaponSkillTargetTrackerPlugin p = defender.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;

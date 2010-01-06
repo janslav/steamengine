@@ -231,7 +231,7 @@ namespace SteamEngine.LScript {
 			}
 
 			//scripts
-			AbstractScript ad = AbstractScript.Get(this.name);
+			AbstractScript ad = AbstractScript.GetByDefname(this.name);
 			if (ad != null) {
 				finalOpNode = OpNode_Object.Construct(this.parent, ad);
 				goto runit;
@@ -359,7 +359,7 @@ namespace SteamEngine.LScript {
 
 			//var
 			if (this.args.Length == 0) {
-				if (Globals.Instance.HasTag(TagKey.Get(this.name))) {
+				if (Globals.Instance.HasTag(TagKey.Acquire(this.name))) {
 					finalOpNode = new OpNode_GetVar(this.parent, this.filename, this.line, this.column, this.OrigNode, this.name);
 					goto runit;
 				}
@@ -396,7 +396,7 @@ namespace SteamEngine.LScript {
 
 			if (this.args.Length == 0) {
 				//constant (defnames)
-				Constant con = Constant.Get(this.name);
+				Constant con = Constant.GetByName(this.name);
 				if (con != null) {
 					finalOpNode = new OpNode_Constant(this.parent, this.filename, this.line, this.column, this.OrigNode, con);
 					goto runit;

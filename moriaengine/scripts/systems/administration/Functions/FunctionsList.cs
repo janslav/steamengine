@@ -25,9 +25,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog that will display all steam functions available")]
 	public class D_Functions : CompiledGumpDef {
-		internal static readonly TagKey listTK = TagKey.Get("_functions_list_");
-		internal static readonly TagKey criteriaTK = TagKey.Get("_functions_search_criteria_");
-		internal static readonly TagKey sortTK = TagKey.Get("_functions_list_sorting_");
+		internal static readonly TagKey listTK = TagKey.Acquire("_functions_list_");
+		internal static readonly TagKey criteriaTK = TagKey.Acquire("_functions_search_criteria_");
+		internal static readonly TagKey sortTK = TagKey.Acquire("_functions_list_sorting_");
 
 		private static int width = 300;
 

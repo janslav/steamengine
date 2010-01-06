@@ -379,14 +379,14 @@ namespace SteamEngine {
 			Match m = tagRE.Match(valueName);
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
-				TagKey tk = TagKey.Get(tagName);
+				TagKey tk = TagKey.Acquire(tagName);
 				ObjectSaver.Load(valueString, DelayedLoad_Tag, filename, line, tk);
 				return;
 			}
 			m = timerKeyRE.Match(valueName);
 			if (m.Success) {	//If the name begins with '%'
 				string timerName = m.Groups["name"].Value;
-				TimerKey tk = TimerKey.Get(timerName);
+				TimerKey tk = TimerKey.Acquire(timerName);
 				ObjectSaver.Load(valueString, DelayedLoad_Timer, filename, line, tk);
 				return;
 			}

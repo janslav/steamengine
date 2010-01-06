@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 		//somewhere in the LScript as simple [RegenerationPluginDef p_regenerations]
 		//if the instance is not pre-created in either way it will crash during attempt to assign this plugin...
 		public static readonly RegenerationPluginDef defInstance = new RegenerationPluginDef("p_regenerations", "C#scripts", -1);
-		internal static PluginKey regenerationsPluginKey = PluginKey.Get("_regenerations_");
+		internal static PluginKey regenerationsPluginKey = PluginKey.Acquire("_regenerations_");
 
 		internal const double MIN_TIMER = 1.0d; //minimal timer usable
 		private const double ALLOWED_TIMER_DIFF = 1.5d; //allowed difference between the ideal and counted mean timer

@@ -234,7 +234,7 @@ namespace SteamEngine {
 				for (int a = 0; a < ItemDispidInfo.Count; a++) {
 					AbstractItemDef def = ThingDef.FindItemDef(a);
 					if (def == null) {
-						ItemDispidInfo idi = ItemDispidInfo.Get(a);
+						ItemDispidInfo idi = ItemDispidInfo.GetByModel(a);
 						if (idi.IsEmpty) {
 							numNonexistant++;
 							if (Globals.WriteMulDocsFiles) {
@@ -341,7 +341,7 @@ namespace SteamEngine {
 			}
 			scr.WriteLine("//This is not a script.");
 			for (int a = 0; a < ItemDispidInfo.Count; a++) {
-				ItemDispidInfo idi = ItemDispidInfo.Get(a);
+				ItemDispidInfo idi = ItemDispidInfo.GetByModel(a);
 				scr.WriteLine("");
 				scr.WriteLine("[Dispid 0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
 				string name = "Unnamed";

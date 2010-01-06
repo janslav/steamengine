@@ -41,7 +41,7 @@ namespace SteamEngine {
 		protected AbstractIndexedDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
 		}
 
-		public static TDef ByDefIndex(TIndex index) {
+		public static TDef GetByDefIndex(TIndex index) {
 			TDef retVal;
 			byIndex.TryGetValue(index, out retVal);
 			return retVal;
