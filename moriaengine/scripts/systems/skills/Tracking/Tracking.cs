@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class TrackingSkillDef : SkillDef {
 		//tag key for the tag with the list of trackers to the tracked character
-		internal static TagKey trackedByTK = TagKey.Get("_tracked_by_");
+		internal static TagKey trackedByTK = TagKey.Acquire("_tracked_by_");
 
 		[Summary("Maximal age [sec] of the footsteps to be tracked at skill 0")]
 		private FieldValue minFootstepAge;

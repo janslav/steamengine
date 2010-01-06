@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		static TimerKey timerKey = TimerKey.Get("_pluginTimer_");
+		static TimerKey timerKey = TimerKey.Acquire("_pluginTimer_");
 
 		public double Timer {
 			get {
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 			public PluginTimer() {
 			}
 
-			static TriggerKey timer = TriggerKey.Get("timer");
+			static TriggerKey timer = TriggerKey.Acquire("timer");
 
 			protected override void OnTimeout(TagHolder cont) {
 				((TimerPlugin) cont).TryRun(timer, null);

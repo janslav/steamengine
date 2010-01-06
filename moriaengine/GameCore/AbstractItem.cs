@@ -571,7 +571,7 @@ namespace SteamEngine {
 					this.flags = (InternalFlag) TagMath.ParseByte(valueString);
 					break;
 				case "type":
-					this.type = TriggerGroup.Get(valueString);
+					this.type = TriggerGroup.GetByDefname(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);

@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 			this.isGhost = IsGhostModel(model);
 		}
 
-		public static CharModelInfo Get(int model) {
+		public static CharModelInfo GetByModel(int model) {
 			CharModelInfo info;
 			if (animsByModel.TryGetValue(model, out info)) {
 				return info;
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static bool IsHumanModel(int model) {
-			return (CharModelInfo.Get(model).charAnimType & CharAnimType.Human) == CharAnimType.Human;
+			return (CharModelInfo.GetByModel(model).charAnimType & CharAnimType.Human) == CharAnimType.Human;
 		}
 	}
 }

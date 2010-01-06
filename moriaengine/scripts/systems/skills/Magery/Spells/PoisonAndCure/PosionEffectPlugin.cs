@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 		public const double minimumPoisonEffect = 0.1; //plugin gets removed when the regen modifier goes below this
 
 
-		static TimerKey tickTimerKey = TimerKey.Get("_poisonTickTimer_");
+		static TimerKey tickTimerKey = TimerKey.Acquire("_poisonTickTimer_");
 
 		public void On_Assign() {
 			Character self = (Character) this.Cont;

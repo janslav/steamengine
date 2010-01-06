@@ -4,7 +4,7 @@ if (<argvcount> < 1)
 	return
 endif
 
-arg.acc = GameAccount.Get(argv(0).ToString())
+arg.acc = GameAccount.GetByName(argv(0).ToString())
 if (arg.acc)
 	arg.acc.f_connectionstateinvariantstest_showPropertiesOnGameAccount
 	return

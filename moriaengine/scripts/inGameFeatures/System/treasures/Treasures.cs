@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		public CharacterDef DefaultTreasureSpawn {
 			get {
 				if (defaultTreasureSpawn == null) {
-					defaultTreasureSpawn = (CharacterDef) ThingDef.Get("c_ostard_zostrich");
+					defaultTreasureSpawn = (CharacterDef) ThingDef.GetByDefname("c_ostard_zostrich");
 				}
 				return defaultTreasureSpawn;
 			}
@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		public ItemDef DefaultTreasureItem {
 			get {
 				if (defaultTreasureItem == null) {
-					defaultTreasureItem = (ItemDef) ItemDef.Get("i_bag");
+					defaultTreasureItem = (ItemDef) ItemDef.GetByDefname("i_bag");
 				}
 				return defaultTreasureItem;
 			}
@@ -521,7 +521,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					for (int i = 0; i < treasure.TreasureItems.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
-							thisItem = ItemDef.Get(thisDef) as ItemDef;
+							thisItem = ItemDef.GetByDefname(thisDef) as ItemDef;
 							if (thisItem == null) {
 								p.RedMessage("'" + thisDef + "' neni platny defname!");
 								err = true;
@@ -622,7 +622,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					for (int i = 0; i < treasure.TreasureSpawns.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
-							thisChar = CharacterDef.Get(thisDef) as CharacterDef;
+							thisChar = CharacterDef.GetByDefname(thisDef) as CharacterDef;
 							if (thisChar == null) {
 								p.RedMessage("'" + thisDef + "' neni platny characterDef!");
 								err = true;
@@ -641,7 +641,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 					if (gr.PressedButton == 2) { // pressed Add button
 						p.SysMessage("Pøidán defaultní spawn.");
-						treasure.AddTreasureSpawn((CharacterDef) CharacterDef.Get("c_ostard_zostrich"), 1);
+						treasure.AddTreasureSpawn((CharacterDef) CharacterDef.GetByDefname("c_ostard_zostrich"), 1);
 						treasure.Dialog(p, this);
 						return;
 					}

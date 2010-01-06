@@ -134,7 +134,7 @@ namespace SteamEngine {
 		private static TriggerGroup T_Normal {
 			get {
 				if (t_normal == null) {
-					t_normal = TriggerGroup.Get("t_normal");
+					t_normal = TriggerGroup.GetByDefname("t_normal");
 				}
 				return t_normal;
 			}
@@ -244,7 +244,7 @@ namespace SteamEngine {
 			get {
 				int model = this.Model;
 				if ((this.dispidInfo == null) || (this.dispidInfo.Id != model)) {
-					this.dispidInfo = ItemDispidInfo.Get(model);
+					this.dispidInfo = ItemDispidInfo.GetByModel(model);
 				}
 				return this.dispidInfo;
 			}

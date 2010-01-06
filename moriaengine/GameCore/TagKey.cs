@@ -26,7 +26,7 @@ namespace SteamEngine {
 			: base(name, uid) {
 		}
 
-		public static TagKey Get(string name) {
+		public static TagKey Acquire(string name) {
 			TagKey key;
 			if (byName.TryGetValue(name, out key)) {
 				return key;

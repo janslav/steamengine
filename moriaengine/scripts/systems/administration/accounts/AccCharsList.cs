@@ -25,9 +25,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all characters of the account")]
 	public class D_Acc_Characters : CompiledGumpDef {
-		private static readonly TagKey accountTK = TagKey.Get("_account_with_chars_");
+		private static readonly TagKey accountTK = TagKey.Acquire("_account_with_chars_");
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			AbstractAccount acc = AbstractAccount.Get((string) args[0]); //jmeno accountu
+			AbstractAccount acc = AbstractAccount.GetByName((string) args[0]); //jmeno accountu
 			if (acc == null) {
 				Globals.SrcCharacter.SysMessage("Account se jménem " + args[0] + " neexistuje!", (int) Hues.Red);
 				return;
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				string accName = (String) text.Argv[0];
 				//overime zda existuje (uz ted)
-				AbstractAccount acc = AbstractAccount.Get(accName);
+				AbstractAccount acc = AbstractAccount.GetByName(accName);
 				if (acc == null) {
 					D_Display_Text.ShowError("Account se jménem " + accName + " neexistuje!");
 					return;

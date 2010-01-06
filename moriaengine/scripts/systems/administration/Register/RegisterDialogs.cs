@@ -25,9 +25,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all accounts notes")]
 	public class D_AccountNotes : CompiledGumpDef {
-		internal static readonly TagKey accountTK = TagKey.Get("_scripted_account_tag_");
-		internal static readonly TagKey issuesListTK = TagKey.Get("_acc_issues_list_"); //used for notes, crimes
-		internal static readonly TagKey issuesSortingTK = TagKey.Get("_acc_issues_sorting_"); //used the smae way
+		internal static readonly TagKey accountTK = TagKey.Acquire("_scripted_account_tag_");
+		internal static readonly TagKey issuesListTK = TagKey.Acquire("_acc_issues_list_"); //used for notes, crimes
+		internal static readonly TagKey issuesSortingTK = TagKey.Acquire("_acc_issues_sorting_"); //used the smae way
 		private static int width = 800;
 
 		[Summary("Seznam parametru: 0 - account jehoz noty zobrazujeme, " +
@@ -222,7 +222,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
 				}
 			} else {
-				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.Argv[0].ToString());
+				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.GetByName(text.Argv[0].ToString());
 				if (acc == null) {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0].ToString() + " neexistuje.", (int) Hues.Red);
 					return;
@@ -443,7 +443,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Globals.SrcCharacter.SysMessage("Zameruj hrace!");
 				}
 			} else {
-				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.Get(text.Argv[0].ToString());
+				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.GetByName(text.Argv[0].ToString());
 				if (acc == null) {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0].ToString() + " neexistuje.", (int) Hues.Red);
 					return;
@@ -461,8 +461,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	public class D_New_AccountNote : CompiledGumpDef {
-		internal static readonly TagKey isCrimeTK = TagKey.Get("_is_crime_issue_");
-		internal static readonly TagKey issuedCharTK = TagKey.Get("_issued_char_");
+		internal static readonly TagKey isCrimeTK = TagKey.Acquire("_is_crime_issue_");
+		internal static readonly TagKey issuedCharTK = TagKey.Acquire("_issued_char_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			bool isCrime = TagMath.ToBoolean(args.GetTag(D_New_AccountNote.isCrimeTK)); //true - crime note, false - normal note
@@ -539,7 +539,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					if (acc == null) {//try to load the account
 						string accName = gr.GetTextResponse(10);
-						acc = (ScriptedAccount) AbstractAccount.Get(accName);
+						acc = (ScriptedAccount) AbstractAccount.GetByName(accName);
 						if (acc == null) {//failed to find the acc
 							gi.Cont.SysMessage("Account se jménem " + accName + " neexistuje!", (int) Hues.Red);
 							DialogStacking.ResendAndRestackDialog(gi);

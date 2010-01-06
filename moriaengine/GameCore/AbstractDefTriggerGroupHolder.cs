@@ -67,7 +67,7 @@ namespace SteamEngine {
 
 			internal void Resolve() {
 				if (this.tgName != "0") {	//"0" means nothing
-					TriggerGroup tg = TriggerGroup.Get(this.tgName);
+					TriggerGroup tg = TriggerGroup.GetByDefname(this.tgName);
 					if (tg == null) {
 						Logger.WriteWarning(LogStr.FileLine(this.filename, this.line) + "'" + LogStr.Ident(this.tgName) + "' is not a valid TriggerGroup (Event/Type).");
 					} else {

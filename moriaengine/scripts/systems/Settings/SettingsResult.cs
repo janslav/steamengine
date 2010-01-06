@@ -26,7 +26,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Dialog showing the results after storing the info or settigns dialog changes")]
 	public class D_Settings_Result : CompiledGumpDef {
-		internal static readonly TagKey resultsListTK = TagKey.Get("_settings_results_list_");
+		internal static readonly TagKey resultsListTK = TagKey.Acquire("_settings_results_list_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//field containing the results for display

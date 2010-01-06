@@ -417,7 +417,7 @@ namespace SteamEngine.Persistence {
 					return true;
 				}
 
-				AbstractScript script = AbstractScript.Get(defname);
+				AbstractScript script = AbstractScript.GetByDefname(defname);
 				if (script != null) {
 					retVal = script;
 					return true;

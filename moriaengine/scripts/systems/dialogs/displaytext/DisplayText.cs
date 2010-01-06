@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private string dispText;
 		private Hues textColor;
 
-		internal static TagKey textHueTK = TagKey.Get("_text_hue_");
+		internal static TagKey textHueTK = TagKey.Acquire("_text_hue_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			label = string.Concat(args[0]); //the gump's label

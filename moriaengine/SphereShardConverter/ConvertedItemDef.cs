@@ -297,7 +297,7 @@ namespace SteamEngine.Converter {
 		public override void ThirdStage() {
 			if (isEquippable && !layerSet) {
 				int model = this.Model;
-				ItemDispidInfo info = ItemDispidInfo.Get(model);
+				ItemDispidInfo info = ItemDispidInfo.GetByModel(model);
 				if (info != null) {
 					this.layer = info.Quality.ToString();
 					Set("layer", this.layer, "Set by Converter");

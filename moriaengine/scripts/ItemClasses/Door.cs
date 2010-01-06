@@ -56,12 +56,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public static readonly TriggerKey tkOpen = TriggerKey.Get("open");
-		public static readonly TriggerKey tkClose = TriggerKey.Get("close");
-		public static readonly TriggerKey tkDenyOpen = TriggerKey.Get("denyOpen");
-		public static readonly TriggerKey tkDenyOpenDoor = TriggerKey.Get("denyOpenDoor");
-		public static readonly TriggerKey tkDenyClose = TriggerKey.Get("denyClose");
-		public static readonly TriggerKey tkDenyCloseDoor = TriggerKey.Get("denyCloseDoor");
+		public static readonly TriggerKey tkOpen = TriggerKey.Acquire("open");
+		public static readonly TriggerKey tkClose = TriggerKey.Acquire("close");
+		public static readonly TriggerKey tkDenyOpen = TriggerKey.Acquire("denyOpen");
+		public static readonly TriggerKey tkDenyOpenDoor = TriggerKey.Acquire("denyOpenDoor");
+		public static readonly TriggerKey tkDenyClose = TriggerKey.Acquire("denyClose");
+		public static readonly TriggerKey tkDenyCloseDoor = TriggerKey.Acquire("denyCloseDoor");
 
 		private void Trigger_Open(Character user) {
 			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);

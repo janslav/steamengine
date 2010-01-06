@@ -25,8 +25,8 @@ using SteamEngine.LScript;
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	public class D_BlockedIP : CompiledGumpDef {
-		internal static readonly TagKey ipSortingTK = TagKey.Get("_blocked_ips_sorting_");
-		internal static readonly TagKey ipsListTK = TagKey.Get("_blocked_ips_list_");
+		internal static readonly TagKey ipSortingTK = TagKey.Acquire("_blocked_ips_sorting_");
+		internal static readonly TagKey ipsListTK = TagKey.Acquire("_blocked_ips_list_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int IPwidth = 120; //velikost okna pro IP adresu 
@@ -179,7 +179,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	public class D_BlockIP : CompiledGumpDef {
-		internal static readonly TagKey ipToBlockTK = TagKey.Get("_ip_to_block_");
+		internal static readonly TagKey ipToBlockTK = TagKey.Acquire("_ip_to_block_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string ip = TagMath.SGetTagNotNull(args, D_BlockIP.ipToBlockTK);
@@ -250,8 +250,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	public class D_BlockIPRange : CompiledGumpDef {
-		internal static readonly TagKey ipFromRangeTK = TagKey.Get("_ip_from_range_");
-		internal static readonly TagKey ipToRangeTK = TagKey.Get("_ip_to_range_");
+		internal static readonly TagKey ipFromRangeTK = TagKey.Acquire("_ip_from_range_");
+		internal static readonly TagKey ipToRangeTK = TagKey.Acquire("_ip_to_range_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string ipfrom = TagMath.SGetTagNotNull(args, D_BlockIPRange.ipFromRangeTK);

@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("This class holds the profession assigned to one character (cont field). " +
 			"it holds a reference to the ProfessionDef, dispatches all trigger calls etc.")]
 	public sealed partial class ProfessionPlugin {
-		internal static PluginKey professionKey = PluginKey.Get("_profession_");
+		internal static PluginKey professionKey = PluginKey.Acquire("_profession_");
 
 		private ProfessionDef def;
 

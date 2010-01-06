@@ -27,12 +27,12 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class RoleDef : AbstractDef {
-		internal static readonly TriggerKey tkMemberAdded = TriggerKey.Get("MemberAdded");
-		internal static readonly TriggerKey tkMemberRemoved = TriggerKey.Get("MemberRemoved");
-		internal static readonly TriggerKey tkCreate = TriggerKey.Get("Create");
-		internal static readonly TriggerKey tkDestroy = TriggerKey.Get("Destroy");
-		internal static readonly TriggerKey tkDenyRemoveMember = TriggerKey.Get("DenyRemoveMember");
-		internal static readonly TriggerKey tkDenyAddMember = TriggerKey.Get("DenyAddMember");
+		internal static readonly TriggerKey tkMemberAdded = TriggerKey.Acquire("MemberAdded");
+		internal static readonly TriggerKey tkMemberRemoved = TriggerKey.Acquire("MemberRemoved");
+		internal static readonly TriggerKey tkCreate = TriggerKey.Acquire("Create");
+		internal static readonly TriggerKey tkDestroy = TriggerKey.Acquire("Destroy");
+		internal static readonly TriggerKey tkDenyRemoveMember = TriggerKey.Acquire("DenyRemoveMember");
+		internal static readonly TriggerKey tkDenyAddMember = TriggerKey.Acquire("DenyAddMember");
 
 		//private static Dictionary<string, RoleDef> byName = new Dictionary<string, RoleDef>(StringComparer.OrdinalIgnoreCase);
 
@@ -65,21 +65,9 @@ namespace SteamEngine.CompiledScripts {
 			return new Role(this, key);
 		}
 
-		public static RoleDef ByDefname(string defname) {
-			return AbstractScript.Get(defname) as RoleDef;
+		public static new RoleDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as RoleDef;
 		}
-
-		//public static RoleDef ByName(string key) {
-		//    RoleDef retVal;
-		//    byName.TryGetValue(key, out retVal);
-		//    return retVal;
-		//}
-
-		//public static int RolesCount {
-		//    get {
-		//        return byName.Count;
-		//    }
-		//}
 
 		#region Loading from scripts
 
@@ -203,14 +191,6 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 		#endregion Loading from scripts
-
-		//private FieldValue name; //logical name of the ability
-
-		//public string Name {
-		//    get {
-		//        return (string) name.CurrentValue;
-		//    }
-		//}
 
 		public bool TryCancellableTrigger(Role role, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup

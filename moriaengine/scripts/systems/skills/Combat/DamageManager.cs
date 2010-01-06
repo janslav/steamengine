@@ -107,8 +107,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		static TriggerKey beforeSwingTK = TriggerKey.Get("beforeSwing");
-		static TriggerKey beforeGetSwingTK = TriggerKey.Get("beforeGetSwing");
+		static TriggerKey beforeSwingTK = TriggerKey.Acquire("beforeSwing");
+		static TriggerKey beforeGetSwingTK = TriggerKey.Acquire("beforeGetSwing");
 
 		[Summary("Happens before applying armor, can be cancelled.")]
 		public static bool Trigger_BeforeSwing(WeaponSwingArgs swingArgs) {
@@ -130,8 +130,8 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		static TriggerKey causeDamageTK = TriggerKey.Get("causeDamage");
-		static TriggerKey damageTK = TriggerKey.Get("damage");
+		static TriggerKey causeDamageTK = TriggerKey.Acquire("causeDamage");
+		static TriggerKey damageTK = TriggerKey.Acquire("damage");
 
 		[Summary("Happens before applying armor, can be cancelled.")]
 		public static bool Trigger_Damage(DamageArgs damageArgs) {
@@ -153,8 +153,8 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		static TriggerKey afterSwingTK = TriggerKey.Get("afterSwing");
-		static TriggerKey afterGetSwingTK = TriggerKey.Get("afterGetSwing");
+		static TriggerKey afterSwingTK = TriggerKey.Acquire("afterSwing");
+		static TriggerKey afterGetSwingTK = TriggerKey.Acquire("afterGetSwing");
 
 		[Summary("Happens after applying armor, can be cancelled.")]
 		public static void Trigger_AfterSwing(WeaponSwingArgs swingArgs) {

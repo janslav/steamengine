@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class MeditationPlugin {
 		public static readonly MeditationPluginDef defInstance = new MeditationPluginDef("p_meditation", "C#scripts", -1);
-		internal static PluginKey meditationPluginKey = PluginKey.Get("_meditation_");
+		internal static PluginKey meditationPluginKey = PluginKey.Acquire("_meditation_");
 
 		public void On_Assign() {
 			//add the regeneration speed to character

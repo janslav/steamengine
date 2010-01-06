@@ -651,7 +651,7 @@ namespace SteamEngine {
 
 			//we need defname and p(x,y, z, m)  to construct the thing.
 
-			ThingDef thingDef = ThingDef.Get(input.HeaderName) as ThingDef;
+			ThingDef thingDef = ThingDef.GetByDefname(input.HeaderName) as ThingDef;
 
 			if (thingDef == null) {
 				Logger.WriteError(input.Filename, input.HeaderLine, "Defname '" + LogStr.Ident(input.HeaderName) + "' not found. Thing loading interrupted.");

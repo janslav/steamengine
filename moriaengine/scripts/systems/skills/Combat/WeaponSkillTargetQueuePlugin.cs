@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static PluginKey combatPluginPK = PluginKey.Get("_combatPlugin_");
+		private static PluginKey combatPluginPK = PluginKey.Acquire("_combatPlugin_");
 
 		[SteamFunction]
 		public static WeaponSkillTargetQueuePlugin AcquireCombatPlugin(Character self) {

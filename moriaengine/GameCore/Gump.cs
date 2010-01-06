@@ -31,10 +31,8 @@ namespace SteamEngine {
 			: base(name) {
 		}
 
-		public static new GumpDef Get(string name) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(name, out script);
-			return script as GumpDef;
+		public static new GumpDef GetByDefname(string name) {
+			return AbstractScript.GetByDefname(name) as GumpDef;
 		}
 
 		internal abstract Gump InternalConstruct(Thing focused, AbstractCharacter sendTo, DialogArgs args);

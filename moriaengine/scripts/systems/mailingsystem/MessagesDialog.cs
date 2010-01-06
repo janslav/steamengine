@@ -25,8 +25,8 @@ using SteamEngine.CompiledScripts;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Dialog that will display the list of clients delayed messages")]
 	public class D_DelayedMessages : CompiledGumpDef {
-		internal static readonly TagKey msgsSortingTK = TagKey.Get("_messages_sorting_");
-		internal static readonly TagKey msgsListTK = TagKey.Get("_messages_list_");
+		internal static readonly TagKey msgsSortingTK = TagKey.Acquire("_messages_sorting_");
+		internal static readonly TagKey msgsListTK = TagKey.Acquire("_messages_list_");
 
 		[Summary("Display the list of the messages")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {

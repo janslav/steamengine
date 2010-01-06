@@ -70,10 +70,10 @@ namespace SteamEngine.Regions {
 
 		//MapTileType
 		internal static void LoadingFinished() {
-			t_rock = GroundTileType.Get("t_rock");
-			t_grass = GroundTileType.Get("t_grass");
-			t_lava = GroundTileType.Get("t_lava");
-			t_dirt = GroundTileType.Get("t_dirt");
+			t_rock = GroundTileType.GetByDefname("t_rock");
+			t_grass = GroundTileType.GetByDefname("t_grass");
+			t_lava = GroundTileType.GetByDefname("t_lava");
+			t_dirt = GroundTileType.GetByDefname("t_dirt");
 			Sanity.IfTrueThrow(t_rock == null, "Could not find script for t_rock!");
 			Sanity.IfTrueThrow(t_grass == null, "Could not find script for t_grass!");
 			Sanity.IfTrueThrow(t_lava == null, "Could not find script for t_lava!");

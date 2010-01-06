@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class WarcryEffectPlugin {
 
 		public static readonly WarcryEffectPluginDef defInstance = new WarcryEffectPluginDef("p_warcryEffect", "C#scripts", -1);
-		internal static PluginKey warcyEffectPluginKey = PluginKey.Get("_warcryEffect_");
+		internal static PluginKey warcyEffectPluginKey = PluginKey.Acquire("_warcryEffect_");
 
 		//TODO - az bde magie tak sem udelat nejakj on_spellcast zrusit kouzlo... 
 

@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		static TimerKey timerKey = TimerKey.Get("_spellEffectTimer_");
+		static TimerKey timerKey = TimerKey.Acquire("_spellEffectTimer_");
 
 		public int SpellPower {
 			get {

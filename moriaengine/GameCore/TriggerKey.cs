@@ -29,7 +29,7 @@ namespace SteamEngine {
 			: base(name, uid) {
 		}
 
-		public static TriggerKey Get(string name) {
+		public static TriggerKey Acquire(string name) {
 			TriggerKey key;
 			if (byName.TryGetValue(name, out key)) {
 				return key;
@@ -41,99 +41,99 @@ namespace SteamEngine {
 
 		//Triggers defined as fields for faster access (Won't have to look up the string every time)
 
-		internal static readonly TriggerKey command = Get("command");
+		internal static readonly TriggerKey command = Acquire("command");
 
 		//internal static readonly TriggerKey fastWalk = Get("fastWalk");
 
-		internal static readonly TriggerKey startup = Get("startup");
-		internal static readonly TriggerKey shutdown = Get("shutdown");
+		internal static readonly TriggerKey startup = Acquire("startup");
+		internal static readonly TriggerKey shutdown = Acquire("shutdown");
 
-		internal static readonly TriggerKey beforeSave = Get("beforeSave");
-		internal static readonly TriggerKey openSaveStream = Get("openSaveStream");
-		internal static readonly TriggerKey afterSave = Get("afterSave");
-		internal static readonly TriggerKey beforeLoad = Get("beforeLoad");
-		internal static readonly TriggerKey openLoadStream = Get("openLoadStream");
-		internal static readonly TriggerKey afterLoad = Get("afterLoad");
+		internal static readonly TriggerKey beforeSave = Acquire("beforeSave");
+		internal static readonly TriggerKey openSaveStream = Acquire("openSaveStream");
+		internal static readonly TriggerKey afterSave = Acquire("afterSave");
+		internal static readonly TriggerKey beforeLoad = Acquire("beforeLoad");
+		internal static readonly TriggerKey openLoadStream = Acquire("openLoadStream");
+		internal static readonly TriggerKey afterLoad = Acquire("afterLoad");
 
-		internal static readonly TriggerKey step = Get("step");
-		internal static readonly TriggerKey itemStep = Get("itemStep");
+		internal static readonly TriggerKey step = Acquire("step");
+		internal static readonly TriggerKey itemStep = Acquire("itemStep");
 
-		internal static readonly TriggerKey login = Get("login");
-		internal static readonly TriggerKey logout = Get("logout");
+		internal static readonly TriggerKey login = Acquire("login");
+		internal static readonly TriggerKey logout = Acquire("logout");
 
-		internal static readonly TriggerKey assign = Get("assign");
-		internal static readonly TriggerKey unAssign = Get("unAssign");
+		internal static readonly TriggerKey assign = Acquire("assign");
+		internal static readonly TriggerKey unAssign = Acquire("unAssign");
 
 		//internal static readonly TriggerKey newPC = Get("newPC");
 
-		internal static readonly TriggerKey newPosition = Get("newPosition");
+		internal static readonly TriggerKey newPosition = Acquire("newPosition");
 
-		internal static readonly TriggerKey itemLeave = Get("itemLeave");
-		internal static readonly TriggerKey leaveItem = Get("leaveItem");
-		internal static readonly TriggerKey leaveChar = Get("leaveChar");
-		internal static readonly TriggerKey leaveRegion = Get("leaveRegion");
+		internal static readonly TriggerKey itemLeave = Acquire("itemLeave");
+		internal static readonly TriggerKey leaveItem = Acquire("leaveItem");
+		internal static readonly TriggerKey leaveChar = Acquire("leaveChar");
+		internal static readonly TriggerKey leaveRegion = Acquire("leaveRegion");
 
-		internal static readonly TriggerKey itemEnter = Get("itemEnter");
-		internal static readonly TriggerKey enterItem = Get("enterItem");
-		internal static readonly TriggerKey enterChar = Get("enterChar");
-		internal static readonly TriggerKey enterRegion = Get("enterRegion");
+		internal static readonly TriggerKey itemEnter = Acquire("itemEnter");
+		internal static readonly TriggerKey enterItem = Acquire("enterItem");
+		internal static readonly TriggerKey enterChar = Acquire("enterChar");
+		internal static readonly TriggerKey enterRegion = Acquire("enterRegion");
 
-		internal static readonly TriggerKey stackOnItem = Get("stackOnItem");
-		internal static readonly TriggerKey itemStackOn = Get("stackon_Item");
+		internal static readonly TriggerKey stackOnItem = Acquire("stackOnItem");
+		internal static readonly TriggerKey itemStackOn = Acquire("stackon_Item");
 
-		internal static readonly TriggerKey denyPickup = Get("denyPickup");
-		internal static readonly TriggerKey denyPickupItem = Get("denyPickupItem");
-		internal static readonly TriggerKey denyPickupItemFrom = Get("denyPickupItemFrom");
+		internal static readonly TriggerKey denyPickup = Acquire("denyPickup");
+		internal static readonly TriggerKey denyPickupItem = Acquire("denyPickupItem");
+		internal static readonly TriggerKey denyPickupItemFrom = Acquire("denyPickupItemFrom");
 
-		internal static readonly TriggerKey denyPutOnGround = Get("denyPutOnGround");
-		internal static readonly TriggerKey denyPutItemOnGround = Get("denyPutItemOnGround");
-		internal static readonly TriggerKey denyPutItemOn = Get("denyPutItemOn");
+		internal static readonly TriggerKey denyPutOnGround = Acquire("denyPutOnGround");
+		internal static readonly TriggerKey denyPutItemOnGround = Acquire("denyPutItemOnGround");
+		internal static readonly TriggerKey denyPutItemOn = Acquire("denyPutItemOn");
 
-		internal static readonly TriggerKey denyPutInItem = Get("denyPutInItem");
-		internal static readonly TriggerKey denyPutItemInItem = Get("denyPutItemInItem");
-		internal static readonly TriggerKey denyPutItemIn = Get("denyPutItemIn");
+		internal static readonly TriggerKey denyPutInItem = Acquire("denyPutInItem");
+		internal static readonly TriggerKey denyPutItemInItem = Acquire("denyPutItemInItem");
+		internal static readonly TriggerKey denyPutItemIn = Acquire("denyPutItemIn");
 
-		internal static readonly TriggerKey putItemOn = Get("putItemOn");
-		internal static readonly TriggerKey putOnItem = Get("putOnItem");
+		internal static readonly TriggerKey putItemOn = Acquire("putItemOn");
+		internal static readonly TriggerKey putOnItem = Acquire("putOnItem");
 
-		internal static readonly TriggerKey putOnChar = Get("putOnChar");
-		internal static readonly TriggerKey putItemOnChar = Get("putItemOnChar");
+		internal static readonly TriggerKey putOnChar = Acquire("putOnChar");
+		internal static readonly TriggerKey putItemOnChar = Acquire("putItemOnChar");
 
-		internal static readonly TriggerKey denyEquipOnChar = Get("denyEquipOnChar");
-		internal static readonly TriggerKey denyEquip = Get("denyEquip");
+		internal static readonly TriggerKey denyEquipOnChar = Acquire("denyEquipOnChar");
+		internal static readonly TriggerKey denyEquip = Acquire("denyEquip");
 
 		//internal static readonly TriggerKey playDropSound = Get("playDropSound");
 
-		internal static readonly TriggerKey destroy = Get("Destroy");
+		internal static readonly TriggerKey destroy = Acquire("Destroy");
 
-		internal static readonly TriggerKey itemEquip = Get("itemEquip");
-		internal static readonly TriggerKey equip = Get("Equip");
-		internal static readonly TriggerKey itemUnEquip = Get("itemUnEquip");
-		internal static readonly TriggerKey unEquip = Get("UnEquip");
-		internal static readonly TriggerKey hear = Get("hear");
-		internal static readonly TriggerKey say = Get("say");
+		internal static readonly TriggerKey itemEquip = Acquire("itemEquip");
+		internal static readonly TriggerKey equip = Acquire("Equip");
+		internal static readonly TriggerKey itemUnEquip = Acquire("itemUnEquip");
+		internal static readonly TriggerKey unEquip = Acquire("UnEquip");
+		internal static readonly TriggerKey hear = Acquire("hear");
+		internal static readonly TriggerKey say = Acquire("say");
 
-		internal static readonly TriggerKey create = Get("create");
-		internal static readonly TriggerKey dupe = Get("dupe");
+		internal static readonly TriggerKey create = Acquire("create");
+		internal static readonly TriggerKey dupe = Acquire("dupe");
 
-		internal static readonly TriggerKey charDClick = Get("charDClick");
-		internal static readonly TriggerKey itemDClick = Get("itemDClick");
-		internal static readonly TriggerKey dClick = Get("DClick");
+		internal static readonly TriggerKey charDClick = Acquire("charDClick");
+		internal static readonly TriggerKey itemDClick = Acquire("itemDClick");
+		internal static readonly TriggerKey dClick = Acquire("DClick");
 		//internal static readonly TriggerKey denyCharDClick = Get("denyCharDClick");
-		internal static readonly TriggerKey denyItemDClick = Get("denyItemDClick");
-		internal static readonly TriggerKey denyDClick = Get("denyDClick");
+		internal static readonly TriggerKey denyItemDClick = Acquire("denyItemDClick");
+		internal static readonly TriggerKey denyDClick = Acquire("denyDClick");
 
-		internal static readonly TriggerKey charClick = Get("charClick");
-		internal static readonly TriggerKey itemClick = Get("itemClick");
-		internal static readonly TriggerKey click = Get("Click");
+		internal static readonly TriggerKey charClick = Acquire("charClick");
+		internal static readonly TriggerKey itemClick = Acquire("itemClick");
+		internal static readonly TriggerKey click = Acquire("Click");
 
-		internal static readonly TriggerKey aosClick = Get("aosClick");
+		internal static readonly TriggerKey aosClick = Acquire("aosClick");
 
-		internal static readonly TriggerKey enter = Get("enter");//region trigger
-		internal static readonly TriggerKey exit = Get("exit");//character exiting/entering a region. can be cancellable...
-		internal static readonly TriggerKey clientAttach = Get("ClientAttach");
+		internal static readonly TriggerKey enter = Acquire("enter");//region trigger
+		internal static readonly TriggerKey exit = Acquire("exit");//character exiting/entering a region. can be cancellable...
+		internal static readonly TriggerKey clientAttach = Acquire("ClientAttach");
 
-		internal static readonly TriggerKey containerOpen = Get("containerOpen");
+		internal static readonly TriggerKey containerOpen = Acquire("containerOpen");
 	}
 
 
@@ -160,7 +160,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
-			return TriggerKey.Get(match.Groups["value"].Value);
+			return TriggerKey.Acquire(match.Groups["value"].Value);
 		}
 
 		public string Prefix {

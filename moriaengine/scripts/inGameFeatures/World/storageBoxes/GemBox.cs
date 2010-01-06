@@ -50,8 +50,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Surprisingly the dialog that will display the GemBox guts")]
 	public class D_GemBox : CompiledGumpDef {
 
-		private static readonly TagKey buttonsForGemsTK = TagKey.Get("_rb_ButtonsForGems_");
-		private static readonly TagKey buttonsCountTK = TagKey.Get("_rb_ButtonsCount_");
+		private static readonly TagKey buttonsForGemsTK = TagKey.Acquire("_rb_ButtonsForGems_");
+		private static readonly TagKey buttonsCountTK = TagKey.Acquire("_rb_ButtonsCount_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;

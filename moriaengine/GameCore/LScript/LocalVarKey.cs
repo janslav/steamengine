@@ -29,7 +29,7 @@ namespace SteamEngine {
 			: base(name, uid) {
 		}
 
-		public static LocalVarKey Get(string name) {
+		public static LocalVarKey Acquire(string name) {
 			LocalVarKey key;
 			if (byName.TryGetValue(name, out key)) {
 				return key;

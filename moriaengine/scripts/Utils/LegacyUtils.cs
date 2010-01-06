@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void Go(Character self, string s) {
-			StaticRegion reg = StaticRegion.Get(s);
+			StaticRegion reg = StaticRegion.GetByNameOrDefname(s);
 			if (reg != null) {
 				self.P(reg.P);
 				return;

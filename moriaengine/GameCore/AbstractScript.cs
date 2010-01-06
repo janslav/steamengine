@@ -33,7 +33,7 @@ namespace SteamEngine {
 			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
 		}
 
-		public static AbstractScript Get(string defname) {
+		public static AbstractScript GetByDefname(string defname) {
 			AbstractScript script;
 			byDefname.TryGetValue(defname, out script);
 			return script;
@@ -76,7 +76,7 @@ namespace SteamEngine {
 			}
 		} 
 
-		public static IEnumerable<AbstractScript> AllScripts {
+		public static ICollection<AbstractScript> AllScripts {
 			get {
 				return byDefname.Values;
 			}

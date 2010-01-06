@@ -21,23 +21,6 @@ namespace SteamEngine.CompiledScripts {
 			return list;
 		}
 
-		//public static string GetLogString(GameConn conn, string message) {
-		//    AbstractAccount acc = conn.Account;
-		//    AbstractCharacter ch = conn.CurCharacter;
-		//    if (acc != null) {
-		//        if (ch != null) {
-		//            return string.Concat(
-		//                "Acc '", acc.Name, "', char '", ch.Name, "' (#", ch.Uid.ToString("x"), "): " + message);
-		//        } else {
-		//            return string.Concat(
-		//                "Acc '", acc.Name, "': " + message);
-		//        }
-		//    } else {
-		//        return string.Concat(
-		//            "Client ", conn.uid, ": " + message);
-		//    }
-		//}
-
 		public static string GetLogString(GameState state, string message) {
 			AbstractAccount acc = state.Account;
 			AbstractCharacter ch = state.Character;

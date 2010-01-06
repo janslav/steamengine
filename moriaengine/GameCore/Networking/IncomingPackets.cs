@@ -427,7 +427,7 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			ClientVersion cv = ClientVersion.Get(this.ver);
+			ClientVersion cv = ClientVersion.Acquire(this.ver);
 			if (cv != state.Version) {
 				Console.WriteLine(LogStr.Ident(state.ToString()) + (" claims to be: " + cv.ToString()));
 				state.InternalSetClientVersion(cv);

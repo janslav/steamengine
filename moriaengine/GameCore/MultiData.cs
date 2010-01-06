@@ -151,7 +151,7 @@ namespace SteamEngine {
 			this.parts = new List<MultiComponentDescription>(numI);
 		}
 
-		public static MultiData Get(int id) {
+		public static MultiData GetByModel(int id) {
 			MultiData retVal;
 			multiItems.TryGetValue(id, out retVal);
 			return retVal;

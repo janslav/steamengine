@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		private TimerKey lockpickTimerKey = TimerKey.Get("_lockpickTimer_");
+		private TimerKey lockpickTimerKey = TimerKey.Acquire("_lockpickTimer_");
 	}
 
 	public class LockpickLoc : CompiledLocStringCollection {

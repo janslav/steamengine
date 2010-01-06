@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		internal static PluginKey effectPluginKey = PluginKey.Get("_discordanceEffect_");
+		internal static PluginKey effectPluginKey = PluginKey.Acquire("_discordanceEffect_");
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;

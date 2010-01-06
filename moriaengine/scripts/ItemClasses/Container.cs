@@ -100,14 +100,14 @@ namespace SteamEngine.CompiledScripts {
 
 			try {
 				Logger.Show("TestSuite", "Creating a backpack.");
-				AbstractDef i_backpack = ThingDef.Get("i_backpack");
+				AbstractDef i_backpack = ThingDef.GetByDefname("i_backpack");
 				Sanity.IfTrueThrow(i_backpack == null, "i_backpack does not exist!");
 				Sanity.IfTrueThrow(!(i_backpack is ContainerDef), "i_backpack is not a ContainerDef!");
 				backpack = (Item) ((ContainerDef) i_backpack).Create(1000, 500, 20, 0);
 				Sanity.IfTrueThrow(backpack == null, "The backpack was not created!");
 				Sanity.IfTrueThrow(!(backpack is Container), "The backpack is not a Container!");
 				Logger.Show("TestSuite", "Creating a longsword inside the backpack.");
-				AbstractDef i_sword_long = ThingDef.Get("i_sword_long");
+				AbstractDef i_sword_long = ThingDef.GetByDefname("i_sword_long");
 				Sanity.IfTrueThrow(i_sword_long == null, "i_sword_long does not exist!");
 				Sanity.IfTrueThrow(!(i_sword_long is EquippableDef), "i_sword_long is not an EquippableDef!");
 				sword = (Item) ((EquippableDef) i_sword_long).Create(backpack);

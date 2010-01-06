@@ -303,7 +303,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TagKey linkTK = TagKey.Get("_link_");
+		private static TagKey linkTK = TagKey.Acquire("_link_");
 		public virtual Thing Link {
 			get {
 				return this.GetTag(linkTK) as Thing;
@@ -347,7 +347,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		private static TagKey morepTK = TagKey.Get("_morep_");
+		private static TagKey morepTK = TagKey.Acquire("_morep_");
 
 		public virtual Point4D MoreP {
 			get {

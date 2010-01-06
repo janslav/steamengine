@@ -40,12 +40,12 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue resourcesConsumed;//resourcelist of resources to be consumed for ability using
 		private FieldValue resourcesPresent;//resourcelist of resources that player must have intending to run the ability
 
-		public static AbilityDef ByDefname(string defname) {
-			return AbstractScript.Get(defname) as AbilityDef;
+		public static new AbilityDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as AbilityDef;
 		}
 
-		public static AbilityDef ByName(string key) {
-			return (AbilityDef) ByDefIndex(key);
+		public static AbilityDef GetByName(string key) {
+			return GetByDefIndex(key);
 		}
 
 		public static int AbilitiesCount {
@@ -135,12 +135,12 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Trigger methods
 
-		internal static readonly TriggerKey tkAssign = TriggerKey.Get("Assign");
-		internal static readonly TriggerKey tkDenyAssign = TriggerKey.Get("DenyAssign");
-		internal static readonly TriggerKey tkUnAssign = TriggerKey.Get("UnAssign");
-		internal static readonly TriggerKey tkValueChanged = TriggerKey.Get("ValueChanged");
-		internal static readonly TriggerKey tkActivate = TriggerKey.Get("Activate");
-		internal static readonly TriggerKey tkDenyUse = TriggerKey.Get("DenyUse");
+		internal static readonly TriggerKey tkAssign = TriggerKey.Acquire("Assign");
+		internal static readonly TriggerKey tkDenyAssign = TriggerKey.Acquire("DenyAssign");
+		internal static readonly TriggerKey tkUnAssign = TriggerKey.Acquire("UnAssign");
+		internal static readonly TriggerKey tkValueChanged = TriggerKey.Acquire("ValueChanged");
+		internal static readonly TriggerKey tkActivate = TriggerKey.Acquire("Activate");
+		internal static readonly TriggerKey tkDenyUse = TriggerKey.Acquire("DenyUse");
 
 		private TriggerGroup scriptedTriggers;
 
@@ -282,10 +282,7 @@ namespace SteamEngine.CompiledScripts {
 				this.scriptedTriggers.TryRun(self, td, sa);
 			}
 		}
-
 		#endregion Trigger methods
-
-
 
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -294,45 +291,6 @@ namespace SteamEngine.CompiledScripts {
 			resourcesConsumed = InitTypedField("resourcesConsumed", null, typeof(ResourcesList));
 			resourcesPresent = InitTypelessField("resourcesPresent", null);
 		}
-
-		//private static void RegisterAbilityDef(AbilityDef ad) {
-		//    AllScriptsByDefname[ad.Defname] = ad;
-		//    byName[ad.Name] = ad;
-		//}
-
-		//private static void UnRegisterAbilityDef(AbilityDef ad) {
-		//    AllScriptsByDefname.Remove(ad.Defname);
-		//    byName.Remove(ad.Name);
-		//}
-
-		//public static new void Bootstrap() {
-		//    ClassManager.RegisterSupplySubclasses<AbilityDef>(RegisterAbilityDefType);
-		//}
-
-		//for loading of abilitydefs from .scp scripts
-		//public static new bool ExistsDefType(string name) {
-		//    return abilityDefCtorsByName.ContainsKey(name);
-		//}
-
-		//private static Type[] abilityDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		////called by ClassManager
-		//internal static bool RegisterAbilityDefType(Type abilityDefType) {
-		//    ConstructorInfo ci;
-		//    if (abilityDefCtorsByName.TryGetValue(abilityDefType.Name, out ci)) { //we have already a AbilityDef type named like that
-		//        throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of AbilityDef classes.");
-		//    }
-		//    ci = abilityDefType.GetConstructor(abilityDefConstructorParamTypes);
-		//    if (ci == null) {
-		//        throw new SEException("Proper constructor not found.");
-		//    }
-		//    abilityDefCtorsByName[abilityDefType.Name] = MemberWrapper.GetWrapperFor(ci);
-
-		//    ScriptLoader.RegisterScriptType(abilityDefType.Name, LoadFromScripts, false);
-
-		//    return false;
-		//}
-
 
 		internal static void StartingLoading() {
 
@@ -357,58 +315,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 			base.Unload();
 		}
-
-		//internal new static IUnloadable LoadFromScripts(PropsSection input) {
-		//    //it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
-		//    string typeName = input.HeaderType.ToLower();
-		//    string abilityDefName = input.HeaderName.ToLower();
-
-		//    AbstractScript def;
-		//    AllScriptsByDefname.TryGetValue(abilityDefName, out def);
-		//    AbilityDef abilityDef = def as AbilityDef;
-
-		//    ConstructorInfo constructor = abilityDefCtorsByName[typeName];
-
-		//    if (abilityDef == null) {
-		//        if (def != null) {//it isnt abilityDef
-		//            throw new ScriptException("AbilityDef " + LogStr.Ident(abilityDefName) + " has the same name as " + LogStr.Ident(def));
-		//        } else {
-		//            object[] cargs = new object[] { abilityDefName, input.Filename, input.HeaderLine };
-		//            abilityDef = (AbilityDef) constructor.Invoke(cargs);
-		//        }
-		//    } else if (abilityDef.IsUnloaded) {
-		//        if (abilityDef.GetType() != constructor.DeclaringType) {
-		//            throw new OverrideNotAllowedException("You can not change the class of a AbilityDef while resync. You have to recompile or restart to achieve that. Ignoring.");
-		//        }
-		//        abilityDef.IsUnloaded = false;
-		//        //we have to load the name first, so that it may be unloaded by it...
-
-		//        PropsLine p = input.PopPropsLine("name");
-		//        abilityDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
-
-		//        UnRegisterAbilityDef(abilityDef);//will be re-registered again
-		//    } else {
-		//        throw new OverrideNotAllowedException("AbilityDef " + LogStr.Ident(abilityDefName) + " defined multiple times.");
-		//    }
-
-		//    //now do load the trigger code. 
-		//    if (input.TriggerCount > 0) {
-		//        input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @assign, unassign etd. triggers
-		//        abilityDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-		//    } else {
-		//        abilityDef.scriptedTriggers = null;
-		//    }
-
-		//    abilityDef.LoadScriptLines(input);
-
-		//    RegisterAbilityDef(abilityDef);
-
-		//    if (abilityDef.scriptedTriggers == null) {
-		//        return abilityDef;
-		//    } else {
-		//        return new UnloadableGroup(abilityDef, abilityDef.scriptedTriggers);
-		//    }
-		//}
 
 		internal static void LoadingFinished() {
 

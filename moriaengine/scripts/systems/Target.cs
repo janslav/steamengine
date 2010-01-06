@@ -38,8 +38,8 @@ namespace SteamEngine.CompiledScripts {
 			this.targonCancel = this.On_TargonCancel;
 		}
 
-		public static new AbstractTargetDef Get(string defname) {
-			return AbstractScript.Get(defname) as AbstractTargetDef;
+		public static new AbstractTargetDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as AbstractTargetDef;
 		}
 
 		internal void Assign(Player self) {

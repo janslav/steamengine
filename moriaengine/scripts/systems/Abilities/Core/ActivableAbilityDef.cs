@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
 	[ViewableClass]
 	public class ActivableAbilityDef : AbilityDef {
-		internal static readonly TriggerKey tkUnActivate = TriggerKey.Get("UnActivate");
+		internal static readonly TriggerKey tkUnActivate = TriggerKey.Acquire("UnActivate");
 
 		//fields for storing the keys (comming from LScript or set in constructor of children)
 		private FieldValue triggerGroup;

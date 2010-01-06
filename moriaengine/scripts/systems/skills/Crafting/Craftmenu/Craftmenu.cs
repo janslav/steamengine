@@ -408,7 +408,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it")]
 		public void Bounce(AbstractItem whereto) {
-			Item newPouch = (Item)ItemDef.Get("i_pouch").Create(whereto);
+			Item newPouch = (Item)ItemDef.GetByDefname("i_pouch").Create(whereto);
 			newPouch.Name = this.Name;
 			foreach (ICraftmenuElement innerElem in this.Contents) {
 				innerElem.Bounce(newPouch);

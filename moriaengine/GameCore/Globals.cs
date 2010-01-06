@@ -764,7 +764,7 @@ namespace SteamEngine {
 		}
 
 		public static AbstractAccount FindAccount(string name) {
-			return AbstractAccount.Get(name);
+			return AbstractAccount.GetByName(name);
 		}
 
 		public static string Hex(int numb) {

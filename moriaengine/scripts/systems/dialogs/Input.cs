@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Abstract class designed for implementing by scripted and compiled version of a input dialog def")]
 	public abstract class AbstractInputDef : CompiledGumpDef {
-		protected static readonly TagKey inputParamsTK = TagKey.Get("_input_params_");
+		protected static readonly TagKey inputParamsTK = TagKey.Acquire("_input_params_");
 
 		public AbstractInputDef()
 			: base() {
@@ -35,8 +35,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Summary("Static 'factory' method for getting the instance of an existing input def.")]
-		public static new AbstractInputDef Get(string defname) {
-			return AbstractScript.Get(defname) as AbstractInputDef;
+		public static new AbstractInputDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as AbstractInputDef;
 		}
 
 		[Summary("Label of the input dialog")]
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			string typeName = input.HeaderType.ToLower();
 			string defname = input.HeaderName.ToLower();
 
-			AbstractScript def = AbstractScript.Get(defname);
+			AbstractScript def = AbstractScript.GetByDefname(defname);
 
 			ScriptedInputDialogDef id = def as ScriptedInputDialogDef;
 			if (id == null) {

@@ -24,8 +24,8 @@ using SteamEngine.Regions;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[Summary("Dialog for dispalying the regions rectangles")]
 	public class D_Region_Rectangles : CompiledGumpDef {
-		internal static readonly TagKey regionTK = TagKey.Get("_region_with_rects_");
-		internal static readonly TagKey rectsListTK = TagKey.Get("_rects_list_");
+		internal static readonly TagKey regionTK = TagKey.Acquire("_region_with_rects_");
+		internal static readonly TagKey rectsListTK = TagKey.Acquire("_rects_list_");
 
 
 		private static int width = 450;

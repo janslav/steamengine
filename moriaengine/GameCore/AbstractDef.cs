@@ -90,10 +90,8 @@ namespace SteamEngine {
 			return uid;
 		}
 
-		public static new AbstractDef Get(string name) {
-			AbstractScript script;
-			AllScriptsByDefname.TryGetValue(name, out script);
-			return script as AbstractDef;
+		public static new AbstractDef GetByDefname(string name) {
+			return AbstractScript.GetByDefname(name) as AbstractDef;
 		}
 		#endregion Accessors
 
@@ -104,7 +102,7 @@ namespace SteamEngine {
 			string typeName = input.HeaderType;
 			string defname = input.HeaderName;
 
-			AbstractDef def = Get(defname);
+			AbstractDef def = GetByDefname(defname);
 			if (def == null) {
 				Logger.WriteError(input.Filename, input.HeaderLine, LogStr.Ident(typeName + " " + defname)
 					+ " is in the world being loaded, but it was not defined in the scripts. Skipping.");
@@ -134,7 +132,7 @@ namespace SteamEngine {
 				Match m = TagHolder.tagRE.Match(fieldName);
 				if (m.Success) {	//If the name begins with 'tag.'
 					string tagName = m.Groups["name"].Value;
-					TagKey tk = TagKey.Get(tagName);
+					TagKey tk = TagKey.Acquire(tagName);
 					tagName = "tag." + tagName;
 					fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
 					fieldValues[tk] = fv;
@@ -228,16 +226,16 @@ namespace SteamEngine {
 			Logger.WriteDebug("Saving defs.");
 			output.WriteComment("Defs");
 
-			foreach (AbstractScript script in AllScriptsByDefname.Values) {
+			foreach (AbstractScript script in AllScripts) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					def.alreadySaved = false;
 				}
 			}
-			int count = AllScriptsByDefname.Count;
+			int count = AllScripts.Count;
 			int a = 0;
 			int countPerCent = count / 200;
-			foreach (AbstractScript script in AllScriptsByDefname.Values) {
+			foreach (AbstractScript script in AllScripts) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					if ((a % countPerCent) == 0) {
@@ -373,9 +371,9 @@ namespace SteamEngine {
 			defname = string.Intern(string.Concat(defname));
 			altdefname = string.Intern(string.Concat(altdefname));
 
-			AbstractScript def = AbstractScript.Get(defname);
+			AbstractScript def = AbstractScript.GetByDefname(defname);
 			if (!string.IsNullOrEmpty(altdefname)) {
-				AbstractScript defByAltdefname = AbstractScript.Get(altdefname);
+				AbstractScript defByAltdefname = AbstractScript.GetByDefname(altdefname);
 				if (defByAltdefname != null) {
 					if (def == null) {
 						def = defByAltdefname;
@@ -508,7 +506,7 @@ namespace SteamEngine {
 			FieldValue fieldValue;
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
-				TagKey tk = TagKey.Get(tagName);
+				TagKey tk = TagKey.Acquire(tagName);
 				fieldValue = (FieldValue) fieldValues[tk];
 				if (fieldValue == null) {
 					tagName = "tag." + tagName;
@@ -539,13 +537,13 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
 		public static void ResolveAll() {
-			int count = AllScriptsByDefname.Count;
+			int count = AllScripts.Count;
 			Logger.WriteDebug("Resolving " + count + " defs");
 
 			DateTime before = DateTime.Now;
 			int a = 0;
 			int countPerCent = count / 100;
-			foreach (AbstractScript script in AllScriptsByDefname.Values) {
+			foreach (AbstractScript script in AllScripts) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					if ((a % countPerCent) == 0) {

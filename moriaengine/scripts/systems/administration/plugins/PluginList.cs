@@ -25,9 +25,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all object(pluginholder)'s plugins")]
 	public class D_PluginList : CompiledGumpDef {
-		internal static readonly TagKey holderTK = TagKey.Get("_plugin_holder_");
-		internal static readonly TagKey pluginListTK = TagKey.Get("_plugin_list_");
-		internal static readonly TagKey pluginCriteriumTK = TagKey.Get("_plugin_criterium_");
+		internal static readonly TagKey holderTK = TagKey.Acquire("_plugin_holder_");
+		internal static readonly TagKey pluginListTK = TagKey.Acquire("_plugin_list_");
+		internal static readonly TagKey pluginCriteriumTK = TagKey.Acquire("_plugin_criterium_");
 
 		private static int width = 700;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;

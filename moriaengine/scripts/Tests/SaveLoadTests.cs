@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 			Thing[] arr = (Thing[]) list.ToArray(typeof(Thing));
 
-			globals.SetTag(TagKey.Get("_testArrayList"), list);
-			globals.SetTag(TagKey.Get("_testArray"), arr);
+			globals.SetTag(TagKey.Acquire("_testArrayList"), list);
+			globals.SetTag(TagKey.Acquire("_testArray"), arr);
 
 		}
 	}

@@ -305,7 +305,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[Summary("Tag key using for holding information about paging actual item index for dialogs.")]
-		public static readonly TagKey pagingIndexTK = TagKey.Get("_paging_index_");
+		public static readonly TagKey pagingIndexTK = TagKey.Acquire("_paging_index_");
 
 		[Summary("Look if the paging buttons has been pressed and if so, handle the actions as " +
 				" a normal OnResponse method, otherwise return to the dialog OnResponse method " +

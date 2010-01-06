@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 		internal static CombatArmorValues CalculateCombatArmorValues(Character self) {
 			int armorClassVsP, mindDefenseVsP, armorClassVsM, mindDefenseVsM;
 			int resist = SkillDef.SkillValueOfChar(self, SkillName.MagicResist);
-			double resistEffect = SkillDef.ById(SkillName.MagicResist).GetEffectForChar(self);
+			double resistEffect = SkillDef.GetBySkillName(SkillName.MagicResist).GetEffectForChar(self);
 			mindDefenseVsP = (int) (
 				(resist * resistEffect) / 1000);
 			mindDefenseVsM = mindDefenseVsP;
@@ -366,16 +366,16 @@ namespace SteamEngine.CompiledScripts {
 				delay *= CombatSettings.instance.weaponSpeedGlobal;
 				retVal.delay = TimeSpan.FromSeconds((0xfffff / 1000.0) / delay);//dedictvi z morie. funguje to tak proc to menit :)
 
-				double tacticsAttack = SkillDef.ById(SkillName.Tactics).GetEffectForChar(self);
-				double anatomyAttack = SkillDef.ById(SkillName.Anatomy).GetEffectForChar(self);
-				double armsloreAttack = SkillDef.ById(SkillName.ArmsLore).GetEffectForChar(self);
+				double tacticsAttack = SkillDef.GetBySkillName(SkillName.Tactics).GetEffectForChar(self);
+				double anatomyAttack = SkillDef.GetBySkillName(SkillName.Anatomy).GetEffectForChar(self);
+				double armsloreAttack = SkillDef.GetBySkillName(SkillName.ArmsLore).GetEffectForChar(self);
 				double strAttack = self.Str * CombatSettings.instance.attackStrModifier;
 				double sum = (tacticsAttack + anatomyAttack + armsloreAttack + strAttack) / 1000;
 				retVal.attackVsP = weapAttackVsP * sum;
 				retVal.attackVsM = weapAttackVsM * sum;
 
-				double evalIntMP = SkillDef.ById(SkillName.EvalInt).GetEffectForChar(self);
-				double spiritSpeakMP = SkillDef.ById(SkillName.SpiritSpeak).GetEffectForChar(self);
+				double evalIntMP = SkillDef.GetBySkillName(SkillName.EvalInt).GetEffectForChar(self);
+				double spiritSpeakMP = SkillDef.GetBySkillName(SkillName.SpiritSpeak).GetEffectForChar(self);
 				double intMP = self.Int * MagerySettings.instance.mindPowerIntModifier;
 				sum = (evalIntMP + spiritSpeakMP + intMP) / 1000;
 				retVal.mindPowerVsM = weapMindPowerVsM * sum;

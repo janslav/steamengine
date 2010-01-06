@@ -25,8 +25,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all object(pluginholder)'s trigger groups")]
 	public class D_TriggerGroupsList : CompiledGumpDef {
-		internal static readonly TagKey tgListTK = TagKey.Get("_tg_list_");
-		internal static readonly TagKey tgCriteriumTK = TagKey.Get("_tg_criterium_");
+		internal static readonly TagKey tgListTK = TagKey.Acquire("_tg_list_");
+		internal static readonly TagKey tgCriteriumTK = TagKey.Acquire("_tg_criterium_");
 
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;

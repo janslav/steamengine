@@ -25,9 +25,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	[Summary("Dialog listing all object(tagholder)'s tags")]
 	public class D_TagList : CompiledGumpDef {
-		internal static readonly TagKey holderTK = TagKey.Get("_tag_holder_");
-		internal static readonly TagKey tagListTK = TagKey.Get("_tag_list_");
-		internal static readonly TagKey tagCriteriumTK = TagKey.Get("_tag_criterium_");
+		internal static readonly TagKey holderTK = TagKey.Acquire("_tag_holder_");
+		internal static readonly TagKey tagListTK = TagKey.Acquire("_tag_list_");
+		internal static readonly TagKey tagCriteriumTK = TagKey.Acquire("_tag_criterium_");
 
 		private static int width = 700;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;

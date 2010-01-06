@@ -304,7 +304,7 @@ namespace SteamEngine {
 			Match m = pluginKeyRE.Match(valueName);
 			if (m.Success) {	//If the name begins with '@@'
 				string pluginName = m.Groups["name"].Value;
-				PluginKey tk = PluginKey.Get(pluginName);
+				PluginKey tk = PluginKey.Acquire(pluginName);
 				if (m.Groups["asterisk"].Value.Length > 0) {
 					ObjectSaver.Load(valueString, DelayedLoad_SimplePlugin, filename, line, tk);
 				} else {
@@ -325,7 +325,7 @@ namespace SteamEngine {
 					} else {
 						tgName = valueString;
 					}
-					TriggerGroup tg = TriggerGroup.Get(tgName);
+					TriggerGroup tg = TriggerGroup.GetByDefname(tgName);
 					if (tg != null) {
 						this.PrivateAddTriggerGroup(tg);
 					} else {

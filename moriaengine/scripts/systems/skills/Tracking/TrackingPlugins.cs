@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class PlayerTrackingPlugin {
 		public static readonly PlayerTrackingPluginDef defInstance = new PlayerTrackingPluginDef("p_tracking", "C#scripts", -1);
-		private readonly static PluginKey trackingPluginKey = PluginKey.Get("_tracking_");
+		private readonly static PluginKey trackingPluginKey = PluginKey.Acquire("_tracking_");
 
 		public const int refreshTimeout = 5; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
 
@@ -200,7 +200,7 @@ namespace SteamEngine.CompiledScripts {
 			//check the steps counter
 			this.stepsCntr--;
 			if (stepsCntr == 0) {//force another check of tracking success
-				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
+				if (!SkillDef.GetBySkillName(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
 					this.Delete();
 					return;
 				} else {
@@ -302,7 +302,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class NPCTrackingPlugin {
 		public static readonly NPCTrackingPluginDef defInstance = new NPCTrackingPluginDef("p_NPCtracking", "C#scripts", -1);
-		internal static PluginKey npcTrackingPluginKey = PluginKey.Get("_NPCtracking_");
+		internal static PluginKey npcTrackingPluginKey = PluginKey.Acquire("_NPCtracking_");
 		internal static int refreshTimeout = 10; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
 
 		private int stepsCntr;
@@ -320,7 +320,7 @@ namespace SteamEngine.CompiledScripts {
 			//check the steps counter
 			this.stepsCntr--;
 			if (stepsCntr == 0) {//force another check of tracking success
-				if (!SkillDef.ById(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
+				if (!SkillDef.GetBySkillName(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
 					this.Delete();
 					return;
 				} else {

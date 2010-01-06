@@ -170,7 +170,7 @@ namespace SteamEngine.CompiledScripts {
 					int firstSpellId = book.FirstSpellId;
 					for (int i = firstSpellId, n = firstSpellId + 64; i < n; i++) {
 						if (book.HasSpell(i)) {
-							SpellDef spell = SpellDef.ById(i);
+							SpellDef spell = SpellDef.GetById(i);
 							if (spell != null) {
 								SpellScrollDef scrollDef = spell.ScrollItem;
 								if (scrollDef != null) {

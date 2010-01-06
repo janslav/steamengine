@@ -280,15 +280,15 @@ namespace SteamEngine.LScript {
 					return OpNode_Object.Construct(parent, (object) null);
 
 				case StrictConstants.TIMER_KEY:
-					return OpNode_Object.Construct(parent, SteamEngine.Timers.TimerKey.Get(
+					return OpNode_Object.Construct(parent, SteamEngine.Timers.TimerKey.Acquire(
 						((Token) code.GetChildAt(1)).GetImage()));
 
 				case StrictConstants.TRIGGER_KEY:
-					return OpNode_Object.Construct(parent, TriggerKey.Get(
+					return OpNode_Object.Construct(parent, TriggerKey.Acquire(
 						((Token) code.GetChildAt(1)).GetImage()));
 
 				case StrictConstants.PLUGIN_KEY:
-					return OpNode_Object.Construct(parent, PluginKey.Get(
+					return OpNode_Object.Construct(parent, PluginKey.Acquire(
 						((Token) code.GetChildAt(2)).GetImage()));
 
 				case StrictConstants.ARGCHK:

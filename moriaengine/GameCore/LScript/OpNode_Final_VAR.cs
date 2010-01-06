@@ -28,7 +28,7 @@ namespace SteamEngine.LScript {
 					int line, int column, Node origNode, string name, OpNode arg)
 			: base(parent, filename, line, column, origNode) {
 			this.arg = arg;
-			this.name = TagKey.Get(name);
+			this.name = TagKey.Acquire(name);
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
@@ -67,7 +67,7 @@ namespace SteamEngine.LScript {
 		internal OpNode_GetVar(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.name = TagKey.Get(name);
+			this.name = TagKey.Acquire(name);
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -90,7 +90,7 @@ namespace SteamEngine.LScript {
 		internal OpNode_VarExists(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.name = TagKey.Get(name);
+			this.name = TagKey.Acquire(name);
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -113,7 +113,7 @@ namespace SteamEngine.LScript {
 		internal OpNode_RemoveVar(IOpNodeHolder parent, string filename,
 					int line, int column, Node origNode, string name)
 			: base(parent, filename, line, column, origNode) {
-			this.name = TagKey.Get(name);
+			this.name = TagKey.Acquire(name);
 		}
 
 		internal override object Run(ScriptVars vars) {
