@@ -50,7 +50,11 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return this.Defname + "/" + this.altdefname;
+			if (string.IsNullOrEmpty(this.altdefname) || string.IsNullOrEmpty(this.Defname)) {
+				return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.PrettyDefname, "]");
+			} else {
+				return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.altdefname, "]");
+			}
 		}
 
 		public string Filepos {

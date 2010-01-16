@@ -26,74 +26,8 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
+	[Summary("Def listing fields necessary for all professions. Actual profession-elated active code is in ProfessionPlugin class")]
 	public class ProfessionDef : AbstractIndexedDef<ProfessionDef, string> {
-		internal static readonly TriggerKey tkAssign = TriggerKey.Acquire("Assign");
-		internal static readonly TriggerKey tkUnAssign = TriggerKey.Acquire("UnAssign");
-
-		//private static Dictionary<string, ProfessionDef> byName = new Dictionary<string, ProfessionDef>(StringComparer.OrdinalIgnoreCase);
-
-		//private static Dictionary<string, ConstructorInfo> profDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
-
-		//triggery class-specific
-		private TriggerGroup scriptedTriggers; //specified in the LScript code of the profession
-
-		[Summary("Method for assigning the selected profession to specified player")]
-		public void AssignTo(Player plr) {
-			ProfessionPlugin pplInst = (ProfessionPlugin) plr.GetPlugin(ProfessionPlugin.professionKey);
-			if (pplInst != null) {//we already have some profession...
-				//first remove the old profession (including proper unassignment of all TGs etc.)
-				Trigger_UnAssign(pplInst, plr);
-			}
-			//add the new profession (update the local variable reference to ProfessionPlugin
-			pplInst = (ProfessionPlugin) plr.AddNewPlugin(ProfessionPlugin.professionKey, SingletonScript<ProfessionPluginDef>.Instance);
-			pplInst.ProfessionDef = this;
-			Trigger_Assign(pplInst, plr);
-		}
-
-		#region triggerMethods
-		protected virtual void On_Assign(Player plr) {
-			plr.AddTriggerGroup(scriptedTriggers); //LScript trigs. (if any)
-			plr.AddTriggerGroup(CompiledTriggers); //compiled trigs. (if any)
-		}
-
-		protected void Trigger_Assign(ProfessionPlugin prof, Player plr) {
-			TryTrigger(plr, ProfessionDef.tkAssign, new ScriptArgs(prof));
-			plr.On_ProfessionAssign(this);
-			On_Assign(plr);
-		}
-
-		protected virtual void On_UnAssign(Player plr) {
-			plr.RemoveTriggerGroup(scriptedTriggers); //remove both TGs (if any)
-			plr.RemoveTriggerGroup(CompiledTriggers);
-			plr.RemovePlugin(ProfessionPlugin.professionKey);//and also the plugin...
-		}
-
-		[Remark("This trigger method should be called only when assigning another profession over one old " +
-				"so the player never stays without the profession as a result")]
-		protected void Trigger_UnAssign(ProfessionPlugin prof, Player plr) {
-			TryTrigger(plr, ProfessionDef.tkUnAssign, new ScriptArgs(prof));
-			plr.On_ProfessionUnAssign(this);
-			On_UnAssign(plr);
-		}
-
-		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
-			//cancellable trigger just for the one triggergroup
-			if (this.scriptedTriggers != null) {
-				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.TryRun(self, td, sa);
-			}
-		}
-
-		#endregion triggerMethods
-		
 		#region Accessors
 		public static new ProfessionDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as ProfessionDef;
@@ -103,15 +37,8 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-
-		//this comes from sphere tables - defined and used here as well
-		//CPROFESSIONPROP(Name,		CSCRIPTPROP_ARG1S, "Profession Name")
-		//CPROFESSIONPROP(SkillSum,	0, "Max Sum of skills allowed")
-		//CPROFESSIONPROP(StatSum,	0, "Max Sum of stats allowed")		
-		//private FieldValue name; //logical name of the profession (such as "Necro")
 		private FieldValue skillSum; //Max Sum of skills allowed
 		private FieldValue statSum; //Max Sum of stats allowed
-
 		#region Maximum skill values
 		private FieldValue maxAlchemy;
 		private FieldValue maxAnatomy;
@@ -168,7 +95,6 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue maxBushido;
 		private FieldValue maxNinjitsu;
 		#endregion
-
 		#region Basic skill values
 		private FieldValue basicAlchemy;
 		private FieldValue basicAnatomy;
@@ -227,12 +153,76 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 		private FieldValue[] maxSkills;
 		private FieldValue[] basicSkills;
+		private FieldValue professionPluginDef;
+		private FieldValue allowedSpells;
+		private FieldValue allowedAbilities;
+
+		private HashSet<AbilityDef> cachedAbilities;
+		private HashSet<SpellDef> cachedSpells;
 
 		public string Name {
 			get {
 				return this.DefIndex;
 			}
 		}
+
+		public PluginDef ProfessionPluginDef {
+			get {
+				return (PluginDef) this.professionPluginDef.CurrentValue;
+			}
+			set {
+				this.professionPluginDef.CurrentValue = value;
+			}
+		}
+
+		private HashSet<AbilityDef> GetCachedAbilities() {
+			if (this.cachedAbilities == null) {
+				HashSet<AbilityDef> hs = new HashSet<AbilityDef>();
+				foreach (AbilityDef def in (AbilityDef[]) this.allowedAbilities.CurrentValue) {
+					hs.Add(def);
+				}
+				this.cachedAbilities = hs;
+			}
+			return this.cachedAbilities;
+		}
+
+		public ICollection<AbilityDef> AllowedAbilities {
+			get {
+				return this.GetCachedAbilities();
+			}
+		}
+
+		public bool CanUseAbility(AbilityDef ability) {
+			return this.GetCachedAbilities().Contains(ability);
+		}
+
+		private HashSet<SpellDef> GetCachedSpells() {
+			if (this.cachedSpells == null) {
+				HashSet<SpellDef> hs = new HashSet<SpellDef>();
+				foreach (SpellDef def in (SpellDef[]) this.allowedSpells.CurrentValue) {
+					hs.Add(def);
+				}
+				this.cachedSpells = hs;
+			}
+			return this.cachedSpells;
+		}
+
+		public ICollection<SpellDef> AllowedSpells {
+			get {
+				return this.GetCachedSpells();
+			}
+		}
+
+		public bool CanCastSpell(SpellDef spell) {
+			return this.GetCachedSpells().Contains(spell);
+		}
+
+		public override void Unload() {
+			base.Unload();
+			this.cachedSpells = null;
+			this.cachedAbilities = null;
+		}
+
 
 		[Summary("Return the maximal value of the given skill (by name) for this profession")]
 		public int MaxSkill(SkillName skillName) {
@@ -253,22 +243,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return Tools.TypeToString(this.GetType()) + " " + Name;
-		}
-
-		[Summary("Compiled trigger group specific for the given ProfessionDef")]
-		public virtual E_Profession CompiledTriggers {
-			get {
-				//return the specific instance of triggergroup (can differ for various professions)
-				return SingletonScript<E_Profession>.Instance;
-			}
+			return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Name, "]");
 		}
 		#endregion Accessors
 
 		#region Load from scripts
 		public ProfessionDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			//name = InitTypedField("name", "", typeof(string));
+
+			this.professionPluginDef = this.InitTypedField("professionPluginDef", null, typeof(PluginDef));
+			this.allowedSpells = this.InitTypedField("allowedSpells", new SpellDef[0], typeof(SpellDef[]));
+			this.allowedAbilities = this.InitTypedField("allowedAbilities", new AbilityDef[0], typeof(AbilityDef[]));
+
+
 			skillSum = InitTypedField("skillSum", 0, typeof(int));
 			statSum = InitTypedField("statSum", 0, typeof(int));
 			//max skills
@@ -327,60 +314,60 @@ namespace SteamEngine.CompiledScripts {
 			maxBushido = InitTypedField("maxBushido", 1000, typeof(int));
 			maxNinjitsu = InitTypedField("maxNinjutsu", 1000, typeof(int));
 			//basic skills
-			basicAlchemy = InitTypedField("basicAlchemy", 1000, typeof(int));
-			basicAnatomy = InitTypedField("basicAnatomy", 1000, typeof(int));
-			basicAnimalLore = InitTypedField("basicAnimalLore", 1000, typeof(int));
-			basicItemID = InitTypedField("basicItemID", 1000, typeof(int));
-			basicArmsLore = InitTypedField("basicArmsLore", 1000, typeof(int));
-			basicParry = InitTypedField("basicParrying", 1000, typeof(int));
-			basicBegging = InitTypedField("basicBegging", 1000, typeof(int));
-			basicBlacksmith = InitTypedField("basicBlacksmithing", 1000, typeof(int));
-			basicFletching = InitTypedField("basicBowcraft", 1000, typeof(int));
-			basicPeacemaking = InitTypedField("basicPeacemaking", 1000, typeof(int));
-			basicCamping = InitTypedField("basicCamping", 1000, typeof(int));
-			basicCarpentry = InitTypedField("basicCarpentry", 1000, typeof(int));
-			basicCartography = InitTypedField("basicCartography", 1000, typeof(int));
-			basicCooking = InitTypedField("basicCooking", 1000, typeof(int));
-			basicDetectHidden = InitTypedField("basicDetectingHidden", 1000, typeof(int));
-			basicDiscordance = InitTypedField("basicDiscordance", 1000, typeof(int));
-			basicEvalInt = InitTypedField("basicEI", 1000, typeof(int));
-			basicHealing = InitTypedField("basicHealing", 1000, typeof(int));
-			basicFishing = InitTypedField("basicFishing", 1000, typeof(int));
-			basicForensics = InitTypedField("basicForensics", 1000, typeof(int));
-			basicHerding = InitTypedField("basicHerding", 1000, typeof(int));
-			basicHiding = InitTypedField("basicHiding", 1000, typeof(int));
-			basicProvocation = InitTypedField("basicProvocation", 1000, typeof(int));
-			basicInscribe = InitTypedField("basicInscription", 1000, typeof(int));
-			basicLockpicking = InitTypedField("basicLockpicking", 1000, typeof(int));
-			basicMagery = InitTypedField("basicMagery", 1000, typeof(int));
-			basicMagicResist = InitTypedField("basicResist", 1000, typeof(int));
-			basicTactics = InitTypedField("basicTactics", 1000, typeof(int));
-			basicSnooping = InitTypedField("basicSnooping", 1000, typeof(int));
-			basicMusicianship = InitTypedField("basicMusicianship", 1000, typeof(int));
-			basicPoisoning = InitTypedField("basicPoisoning", 1000, typeof(int));
-			basicArchery = InitTypedField("basicArchery", 1000, typeof(int));
-			basicSpiritSpeak = InitTypedField("basicSpiritSpeak", 1000, typeof(int));
-			basicStealing = InitTypedField("basicStealing", 1000, typeof(int));
-			basicTailoring = InitTypedField("basicTailoring", 1000, typeof(int));
-			basicAnimalTaming = InitTypedField("basicTaming", 1000, typeof(int));
-			basicTasteID = InitTypedField("basicTasteID", 1000, typeof(int));
-			basicTinkering = InitTypedField("basicTinkering", 1000, typeof(int));
-			basicTracking = InitTypedField("basicTracking", 1000, typeof(int));
-			basicVeterinary = InitTypedField("basicVeterinary", 1000, typeof(int));
-			basicSwords = InitTypedField("basicSwordsmanship", 1000, typeof(int));
-			basicMacing = InitTypedField("basicMacefighting", 1000, typeof(int));
-			basicFencing = InitTypedField("basicFencing", 1000, typeof(int));
-			basicWrestling = InitTypedField("basicWrestling", 1000, typeof(int));
-			basicLumberjacking = InitTypedField("basicLumberjacking", 1000, typeof(int));
-			basicMining = InitTypedField("basicMining", 1000, typeof(int));
-			basicMeditation = InitTypedField("basicMeditation", 1000, typeof(int));
-			basicStealth = InitTypedField("basicStealth", 1000, typeof(int));
-			basicRemoveTrap = InitTypedField("basicRemoveTrap", 1000, typeof(int));
-			basicNecromancy = InitTypedField("basicNecromancy", 1000, typeof(int));
-			basicMarksmanship = InitTypedField("basicMarksmanship", 1000, typeof(int));
-			basicChivalry = InitTypedField("basicChivalry", 1000, typeof(int));
-			basicBushido = InitTypedField("basicBushido", 1000, typeof(int));
-			basicNinjitsu = InitTypedField("basicNinjutsu", 1000, typeof(int));
+			basicAlchemy = InitTypedField("basicAlchemy", 0, typeof(int));
+			basicAnatomy = InitTypedField("basicAnatomy", 0, typeof(int));
+			basicAnimalLore = InitTypedField("basicAnimalLore", 0, typeof(int));
+			basicItemID = InitTypedField("basicItemID", 0, typeof(int));
+			basicArmsLore = InitTypedField("basicArmsLore", 0, typeof(int));
+			basicParry = InitTypedField("basicParrying", 0, typeof(int));
+			basicBegging = InitTypedField("basicBegging", 0, typeof(int));
+			basicBlacksmith = InitTypedField("basicBlacksmithing", 0, typeof(int));
+			basicFletching = InitTypedField("basicBowcraft", 0, typeof(int));
+			basicPeacemaking = InitTypedField("basicPeacemaking", 0, typeof(int));
+			basicCamping = InitTypedField("basicCamping", 0, typeof(int));
+			basicCarpentry = InitTypedField("basicCarpentry", 0, typeof(int));
+			basicCartography = InitTypedField("basicCartography", 0, typeof(int));
+			basicCooking = InitTypedField("basicCooking", 0, typeof(int));
+			basicDetectHidden = InitTypedField("basicDetectingHidden", 0, typeof(int));
+			basicDiscordance = InitTypedField("basicDiscordance", 0, typeof(int));
+			basicEvalInt = InitTypedField("basicEI", 0, typeof(int));
+			basicHealing = InitTypedField("basicHealing", 0, typeof(int));
+			basicFishing = InitTypedField("basicFishing", 0, typeof(int));
+			basicForensics = InitTypedField("basicForensics", 0, typeof(int));
+			basicHerding = InitTypedField("basicHerding", 0, typeof(int));
+			basicHiding = InitTypedField("basicHiding", 0, typeof(int));
+			basicProvocation = InitTypedField("basicProvocation", 0, typeof(int));
+			basicInscribe = InitTypedField("basicInscription", 0, typeof(int));
+			basicLockpicking = InitTypedField("basicLockpicking", 0, typeof(int));
+			basicMagery = InitTypedField("basicMagery", 0, typeof(int));
+			basicMagicResist = InitTypedField("basicResist", 0, typeof(int));
+			basicTactics = InitTypedField("basicTactics", 0, typeof(int));
+			basicSnooping = InitTypedField("basicSnooping", 0, typeof(int));
+			basicMusicianship = InitTypedField("basicMusicianship", 0, typeof(int));
+			basicPoisoning = InitTypedField("basicPoisoning", 0, typeof(int));
+			basicArchery = InitTypedField("basicArchery", 0, typeof(int));
+			basicSpiritSpeak = InitTypedField("basicSpiritSpeak", 0, typeof(int));
+			basicStealing = InitTypedField("basicStealing", 0, typeof(int));
+			basicTailoring = InitTypedField("basicTailoring", 0, typeof(int));
+			basicAnimalTaming = InitTypedField("basicTaming", 0, typeof(int));
+			basicTasteID = InitTypedField("basicTasteID", 0, typeof(int));
+			basicTinkering = InitTypedField("basicTinkering", 0, typeof(int));
+			basicTracking = InitTypedField("basicTracking", 0, typeof(int));
+			basicVeterinary = InitTypedField("basicVeterinary", 0, typeof(int));
+			basicSwords = InitTypedField("basicSwordsmanship", 0, typeof(int));
+			basicMacing = InitTypedField("basicMacefighting", 0, typeof(int));
+			basicFencing = InitTypedField("basicFencing", 0, typeof(int));
+			basicWrestling = InitTypedField("basicWrestling", 0, typeof(int));
+			basicLumberjacking = InitTypedField("basicLumberjacking", 0, typeof(int));
+			basicMining = InitTypedField("basicMining", 0, typeof(int));
+			basicMeditation = InitTypedField("basicMeditation", 0, typeof(int));
+			basicStealth = InitTypedField("basicStealth", 0, typeof(int));
+			basicRemoveTrap = InitTypedField("basicRemoveTrap", 0, typeof(int));
+			basicNecromancy = InitTypedField("basicNecromancy", 0, typeof(int));
+			basicMarksmanship = InitTypedField("basicMarksmanship", 0, typeof(int));
+			basicChivalry = InitTypedField("basicChivalry", 0, typeof(int));
+			basicBushido = InitTypedField("basicBushido", 0, typeof(int));
+			basicNinjitsu = InitTypedField("basicNinjutsu", 0, typeof(int));
 
 			//now prepare the array with skills indexed by numbers in SkillName enumeration
 			maxSkills = new FieldValue[] {maxAlchemy,maxAnatomy,maxAnimalLore,maxItemID,maxArmsLore,
@@ -414,78 +401,25 @@ namespace SteamEngine.CompiledScripts {
 			base.LoadScriptLines(ps);
 
 			if (ps.TriggerCount > 0) {
-				ps.HeaderName = "t__" + this.Defname + "__";
-				this.scriptedTriggers = ScriptedTriggerGroup.Load(ps);
+				Logger.WriteWarning("Triggers in a ProfessionDef aren't valid. Use the relevant PluginDef for that functionality");
 			}
-		}
-
-		public override void Unload() {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.Unload();
-			}
-			base.Unload();
-		}
-
-		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			base.LoadScriptLine(filename, line, param, args);
 		}
 		#endregion Load from scripts
 
 		#region utilities
-		[SteamFunction]
-		[Summary("Assign the selected profession to the given char. Expecting existing professions defname as an argument")]
-		public static void Profession(Character chr, ScriptArgs args) {
-			Player plr = chr as Player;
-			if (plr == null) {
-				Globals.SrcCharacter.Message("Povolání mùže být pøiøazeno pouze hráèi", (int) Hues.Red);
-				return;
+
+		public static ProfessionDef GetProfessionOfChar(Player player) {
+			ProfessionPlugin plugin = ProfessionPlugin.GetInstalledPlugin(player);
+			if (plugin != null) {
+				return plugin.ProfessionDef;
 			}
-			if ((args == null) || (args.Args == null) || args.Argv.Length == 0) {
-				Globals.SrcCharacter.Message("Nebylo zvoleno povolání pro pøiøazení", (int) Hues.Red);
-				return;
-			}
-			ProfessionDef profDef = ProfessionDef.GetByDefname(args.Args);
-			if (profDef == null) {
-				Globals.SrcCharacter.Message("Povolání " + args.Args + " neexistuje!", (int) Hues.Red);
-			} else {
-				profDef.AssignTo(plr);
-			}
+			return null;
+		}
+
+		public static void SetProfessionOfChar(Player player, ProfessionDef value) {
+			ProfessionPlugin.InstallProfessionPlugin(player, value);
 		}
 		#endregion utilities
-	}
 
-	[Summary("Triggergroup holding all possible triggers for profession that can have some influence on players actions " +
-			" - cancellable triggers that can cancel the performed action if the profession doesn't allow it")]
-	public class E_Profession : CompiledTriggerGroup {
-
-		public virtual bool On_SkillSelect(Character self, ScriptArgs sa) {
-			//sa contains "self" and "skill ID"
-			if (self.IsGM) {//GM always allowed, stop checking
-				return false;
-			}
-			return false;
-		}
-
-		public virtual bool On_SkillStart(Character self, ScriptArgs sa) {
-			//sa contains "self" and "skill ID"
-			if (self.IsGM) {//GM always allowed, stop checking
-				return false;
-			}
-			return false;
-		}
-
-		public virtual bool On_AbilityDenyAssign(DenyAbilityArgs args) {
-			if (args.abiliter.IsGM) {//GM always allowed, stop checking
-				return false;
-			}
-			return false;
-		}
-
-		public virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
-			if (args.abiliter.IsGM) {//GM always allowed, stop checking
-				return false;
-			}
-			return false;
-		}
 	}
 }

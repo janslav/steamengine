@@ -425,14 +425,14 @@
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Professions\Profession.cs">
-      <Link>systems\Professions\Profession.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Professions\Profession.Generated.cs">
-      <Link>systems\Professions\Profession.Generated.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\Professions\ProfessionDef.cs">
       <Link>systems\Professions\ProfessionDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\ProfessionPlugin.cs">
+      <Link>systems\Professions\ProfessionPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\ProfessionPlugin.Generated.cs">
+      <Link>systems\Professions\ProfessionPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
       <Link>systems\Regions\FlaggedRegion.cs</Link>
@@ -1049,6 +1049,9 @@
     </None>
     <None Include="..\..\scripts\systems\PlayerCreation.scp">
       <Link>systems\PlayerCreation.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Professions\professions.def">
+      <Link>systems\Professions\professions.def</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Healing\healing.scp">
       <Link>systems\skills\Healing\healing.scp</Link>
