@@ -96,10 +96,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public Globals serv() {
-			return Globals.Instance;
-		}
-
 		public void Where() {
 			Message("You are at " + P());
 			Message("You are in " + Region.HierarchyName);
@@ -156,21 +152,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Profession
-		public ProfessionPlugin Profession {
+		public ProfessionPlugin ProfessionPlugin {
 			get {
-				return (ProfessionPlugin) GetPlugin(ProfessionPlugin.professionKey);
+				return ProfessionPlugin.GetInstalledPlugin(this);
 			}
 		}
 
-		[Remark("Trigger method called when the profession is assigned to the player. " +
-				"It initializes all skills' min and max values.")]
-		public virtual void On_ProfessionAssign(ProfessionDef profDef) {
-			//this trigger is called after the profession has been assigned, so we can use it now
-			Profession.Init();
-		}
-
-		public virtual void On_ProfessionUnAssign(ProfessionDef profDef) {
-
+		public ProfessionDef Profession {
+			get {
+				return ProfessionDef.GetProfessionOfChar(this);
+			}
+			set {
+				ProfessionDef.SetProfessionOfChar(this, value);
+			}
 		}
 		#endregion Profession
 

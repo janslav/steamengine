@@ -1,0 +1,73 @@
+//	This program is free software; you can redistribute it and/or modify
+//	it under the terms of the GNU General Public License as published by
+//	the Free Software Foundation; either version 2 of the License, or
+//	(at your option) any later version.
+//	
+//	This program is distributed in the hope that it will be useful,
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//	GNU General Public License for more details.
+//	
+//	You should have received a copy of the GNU General Public License
+//	along with this program; if not, write to the Free Software
+//	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//	Or visit http://www.gnu.org/copyleft/gpl.html
+
+
+[ProfessionPluginDef plugin_profession_default]
+
+[ProfessionDef profession_mage]
+Defname = class_mage
+Name = "mag"
+professionPluginDef = plugin_profession_default
+
+//only listing those less than 1000
+maxAnimalLore=250
+maxAnatomy=750
+maxArchery=0
+maxArmsLore=0
+maxBegging=500
+maxBlacksmithing=0
+maxBowcraft=0
+maxCamping=500
+maxCarpentry=0
+maxDetectingHidden=500
+maxDiscordance=0
+maxFencing=0
+maxForensics=750
+maxHealing=500
+maxHerding=500
+maxHiding=500
+maxLockPicking=0
+maxMacefighting=500
+maxMusicianship=0
+maxParrying=0
+maxPeacemaking=0
+maxPoisoning=250
+maxProvocation=0
+maxRemoveTrap=500
+maxSnooping=0
+maxStealing=0
+maxStealth=500
+maxSwordsmanship=0
+maxTactics=500
+maxTailoring=0
+maxTaming=0
+maxTinkering=0
+maxTracking=250
+maxVeterinary=500
+maxWrestling=500
+
+//only listing those higher than 0
+basicAlchemy=300
+basicCartography=300
+basicEI=300
+basicInscription=300
+basicMagery=300
+basicResist=300
+basicMeditation=300
+
+//list allowed spells and abilities
+allowedSpells=s_nightsight, s_wall_of_stone, s_harm
+
+allowedAbilities=a_regen_hits, a_regen_stam, a_regen_mana

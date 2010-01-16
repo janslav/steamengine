@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("C# based @denyUse trigger method, implementation of common checks (timers...)")]
 		protected virtual bool On_DenyUse(DenyAbilityArgs args) {
-			Ability ab = args.runAbility;
+			Ability ab = args.ranAbility;
 			//common check - is the usage timer OK?
 			if ((Globals.TimeInSeconds - ab.LastUsage) <= this.UseDelay) { //check the timing if OK
 				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
@@ -342,19 +342,19 @@ namespace SteamEngine.CompiledScripts {
 
 	public class DenyAbilityArgs : ScriptArgs {
 		public readonly Character abiliter;
-		public readonly AbilityDef runAbilityDef;
-		public readonly Ability runAbility;
+		public readonly AbilityDef ranAbilityDef;
+		public readonly Ability ranAbility;
 
 		public DenyAbilityArgs(params object[] argv)
 			: base(argv) {
 			Sanity.IfTrueThrow(!(argv[0] is DenyResultAbilities), "argv[0] is not DenyResultAbilities");
 		}
 
-		public DenyAbilityArgs(Character abiliter, AbilityDef runAbilityDef, Ability runAbility)
-			: this(DenyResultAbilities.Allow, abiliter, runAbilityDef, runAbility) {
+		public DenyAbilityArgs(Character abiliter, AbilityDef ranAbilityDef, Ability ranAbility)
+			: this(DenyResultAbilities.Allow, abiliter, ranAbilityDef, ranAbility) {
 			this.abiliter = abiliter;
-			this.runAbilityDef = runAbilityDef;
-			this.runAbility = runAbility; //this can be null (if we dont have the ability)
+			this.ranAbilityDef = ranAbilityDef;
+			this.ranAbility = ranAbility; //this can be null (if we dont have the ability)
 		}
 
 		public DenyResultAbilities Result {
