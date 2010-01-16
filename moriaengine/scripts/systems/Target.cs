@@ -196,34 +196,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//internal new static IUnloadable LoadFromScripts(PropsSection input) {
-		//    string typeName = input.HeaderType.ToLower();
-		//    string defname = input.HeaderName.ToLower();
-
-		//    AbstractScript def;
-		//    AllScriptsByDefname.TryGetValue(defname, out def);
-		//    ScriptedTargetDef td = def as ScriptedTargetDef;
-		//    if (td == null) {
-		//        if (def != null) {//it isnt ScriptedTargetDef
-		//            throw new OverrideNotAllowedException("ScriptedTargetDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
-		//        } else {
-		//            td = new ScriptedTargetDef(defname, input.Filename, input.HeaderLine);
-		//        }
-		//    } else if (td.IsUnloaded) {
-		//        td.IsUnloaded = false;
-		//        UnRegisterScriptedTargetDef(td);//will be re-registered again
-		//    } else {
-		//        throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");
-		//    }
-
-		//    LoadTriggers(input, td);
-
-		//    RegisterScriptedTargetDef(td);
-
-		//    td.LoadScriptLines(input);
-		//    return td;
-		//}
-
 		private static void LoadTriggers(PropsSection input, ScriptedTargetDef td) {
 			TriggerSection trigger_start = input.PopTrigger("start");
 			if (trigger_start != null) {
@@ -283,25 +255,6 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
-
-		//private static void UnRegisterScriptedTargetDef(ScriptedTargetDef td) {
-		//    AllScriptsByDefname.Remove(td.Defname);
-		//    if (td.Altdefname != null) {
-		//        AllScriptsByDefname.Remove(td.Altdefname);
-		//    }
-		//}
-
-		//private static void RegisterScriptedTargetDef(ScriptedTargetDef td) {
-		//    AllScriptsByDefname[td.Defname] = td;
-		//    if (td.Altdefname != null) {
-		//        AllScriptsByDefname[td.Altdefname] = td;
-		//    }
-		//}
-
-		//public static new void Bootstrap() {
-		//    ScriptLoader.RegisterScriptType(new string[] { "ScriptedTargetDef", "TargetDef" },
-		//        LoadFromScripts, false);
-		//}
 
 		protected override sealed void On_Start(Player ch, object parameter) {
 			ThrowIfUnloaded();

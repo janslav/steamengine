@@ -314,38 +314,6 @@ namespace SteamEngine.CompiledScripts {
 			this.effectRange = this.InitTypedField("effectRange", 5, typeof(int));
 		}
 
-		//public static new void Bootstrap() {
-		//    ClassManager.RegisterSupplySubclasses<SpellDef>(RegisterSpellDefType);
-		//}
-
-		////for loading of Spelldefs from .scp scripts
-		//public static new bool ExistsDefType(string name) {
-		//    return spellDefCtorsByName.ContainsKey(name);
-		//}
-
-		//private static Type[] SpellDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		////called by ClassManager
-		//internal static bool RegisterSpellDefType(Type spellDefType) {
-		//    ConstructorInfo ci;
-		//    if (spellDefCtorsByName.TryGetValue(spellDefType.Name, out ci)) { //we have already a SpellDef type named like that
-		//        throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of SpellDef classes.");
-		//    }
-		//    ci = spellDefType.GetConstructor(SpellDefConstructorParamTypes);
-		//    if (ci == null) {
-		//        throw new SEException("Proper constructor not found.");
-		//    }
-		//    spellDefCtorsByName[spellDefType.Name] = MemberWrapper.GetWrapperFor(ci);
-
-		//    ScriptLoader.RegisterScriptType(spellDefType.Name, LoadFromScripts, false);
-
-		//    return false;
-		//}
-
-		internal static void StartingLoading() {
-
-		}
-
 		public static new void Bootstrap() {
 			//ThingDef script sections are special in that they can have numeric header indicating model
 			AbstractDef.RegisterDefnameParser<SpellDef>(ParseDefnames);
@@ -387,67 +355,6 @@ namespace SteamEngine.CompiledScripts {
 				this.scriptedTriggers.Unload();
 			}
 			base.Unload();
-		}
-
-		//internal new static IUnloadable LoadFromScripts(PropsSection input) {
-		//    //it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
-		//    string typeName = input.HeaderType.ToLower();
-
-		//    string spellDefName = input.PopPropsLine("defname").Value;
-
-		//    AbstractScript def;
-		//    AllScriptsByDefname.TryGetValue(spellDefName, out def);
-		//    SpellDef spellDef = def as SpellDef;
-
-		//    ConstructorInfo constructor = spellDefCtorsByName[typeName];
-
-		//    if (spellDef == null) {
-		//        if (def != null) {//it isnt SpellDef
-		//            throw new ScriptException("SpellDef " + LogStr.Ident(spellDefName) + " has the same name as " + LogStr.Ident(def));
-		//        } else {
-		//            object[] cargs = new object[] { spellDefName, input.Filename, input.HeaderLine };
-		//            spellDef = (SpellDef) constructor.Invoke(cargs);
-		//        }
-		//    } else if (spellDef.IsUnloaded) {
-		//        if (spellDef.GetType() != constructor.DeclaringType) {
-		//            throw new OverrideNotAllowedException("You can not change the class of a SpellDef while resync. You have to recompile or restart to achieve that. Ignoring.");
-		//        }
-		//        spellDef.IsUnloaded = false;
-		//        //we have to load the name first, so that it may be unloaded by it...
-
-		//        PropsLine p = input.PopPropsLine("name");
-		//        spellDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
-
-		//        UnRegisterSpellDef(spellDef);//will be re-registered again
-		//    } else {
-		//        throw new OverrideNotAllowedException("SpellDef " + LogStr.Ident(spellDefName) + " defined multiple times.");
-		//    }
-
-		//    if (!TagMath.TryParseInt32(input.HeaderName, out spellDef.id)) {
-		//        throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
-		//    }
-
-		//    //now do load the trigger code. 
-		//    if (input.TriggerCount > 0) {
-		//        input.HeaderName = "t__" + spellDefName + "__";
-		//        spellDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-		//    } else {
-		//        spellDef.scriptedTriggers = null;
-		//    }
-
-		//    spellDef.LoadScriptLines(input);
-
-		//    RegisterSpellDef(spellDef);
-
-		//    if (spellDef.scriptedTriggers == null) {
-		//        return spellDef;
-		//    } else {
-		//        return new UnloadableGroup(spellDef, spellDef.scriptedTriggers);
-		//    }
-		//}
-
-		internal static void LoadingFinished() {
-
 		}
 
 		#endregion Loading from scripts

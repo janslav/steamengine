@@ -292,10 +292,6 @@ namespace SteamEngine.CompiledScripts {
 			resourcesPresent = InitTypelessField("resourcesPresent", null);
 		}
 
-		internal static void StartingLoading() {
-
-		}
-
 		public override void LoadScriptLines(PropsSection ps) {
 			PropsLine p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
@@ -314,10 +310,6 @@ namespace SteamEngine.CompiledScripts {
 				this.scriptedTriggers.Unload();
 			}
 			base.Unload();
-		}
-
-		internal static void LoadingFinished() {
-
 		}
 
 		#region utilities

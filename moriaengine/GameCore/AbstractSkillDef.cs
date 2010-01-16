@@ -160,26 +160,6 @@ namespace SteamEngine {
 			}
 		}
 
-		//public static void RegisterSkillDef(AbstractSkillDef sd) {
-		//    int id = sd.Id;
-		//    while (byId.Count <= id) {
-		//        byId.Add(null);
-		//    }
-		//    AbstractSkillDef oldSd = byId[id];
-		//    if (oldSd != null) { //or should we throw exception or what...?
-		//        UnregisterSkillDef(oldSd);
-		//    }
-		//    byId[id] = sd;
-		//    AllScriptsByDefname[sd.Defname] = sd;
-			
-		//}
-
-		//public static void UnregisterSkillDef(AbstractSkillDef sd) {
-		//    byId[sd.Id] = null;
-		//    AllScriptsByDefname.Remove(sd.Defname);
-		//    byKey.Remove(sd.Key);
-		//}
-
 		internal new static void ForgetAll() {
 			AbstractScript.ForgetAll(); //just to be sure
 
@@ -188,33 +168,6 @@ namespace SteamEngine {
 			//byId.Clear();
 			//skillDefCtorsByName.Clear();
 		}
-
-		//public static new void Bootstrap() {
-		//    ClassManager.RegisterSupplySubclasses<AbstractSkillDef>(RegisterSkillDefType);
-		//}
-
-		//for loading of skilldefs from .scp/.def scripts
-		//public static new bool ExistsDefType(string name) {
-		//    return skillDefCtorsByName.ContainsKey(name);
-		//}
-
-		//private static Type[] skillDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		//called by ClassManager
-		//internal static bool RegisterSkillDefType(Type skillDefType) {
-		//    if (!skillDefType.IsAbstract) {
-		//        ConstructorInfo ci;
-		//        if (skillDefCtorsByName.TryGetValue(skillDefType.Name, out ci)) { //we have already a ThingDef type named like that
-		//            throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of SkillDef classes.");
-		//        }
-		//        ci = skillDefType.GetConstructor(skillDefConstructorParamTypes);
-		//        if (ci == null) {
-		//            throw new SEException("Proper constructor not found.");
-		//        }
-		//        skillDefCtorsByName[skillDefType.Name] = MemberWrapper.GetWrapperFor(ci);
-		//    }
-		//    return false;
-		//}
 		
 		protected AbstractSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -245,76 +198,6 @@ namespace SteamEngine {
 		internal static void StartingLoading() {
 
 		}
-
-		//internal static IUnloadable LoadFromScripts(PropsSection input) {
-		//    string typeName = input.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-
-		//    PropsLine prop = input.PopPropsLine("defname");
-		//    if (prop == null) {
-		//        throw new SEException("Missing the defname field for this SkillDef.");
-		//    }
-
-		//    string defName;
-		//    Match ma = TagMath.stringRE.Match(prop.Value);
-		//    if (ma.Success) {
-		//        defName = String.Intern(ma.Groups["value"].Value);
-		//    } else {
-		//        defName = String.Intern(prop.Value);
-		//    }
-
-		//    AbstractScript def;
-		//    AllScriptsByDefname.TryGetValue(defName, out def);
-		//    AbstractSkillDef skillDef = def as AbstractSkillDef;
-
-		//    ConstructorInfo constructor = skillDefCtorsByName[typeName];
-
-		//    if (skillDef == null) {
-		//        if (def != null) {//it isnt skilldef
-		//            throw new ScriptException("SkillDef " + LogStr.Ident(defName) + " has the same name as " + LogStr.Ident(def));
-		//        } else {
-		//            object[] cargs = new object[] { defName, input.Filename, input.HeaderLine };
-		//            skillDef = (AbstractSkillDef) constructor.Invoke(cargs);
-		//        }
-		//    } else if (skillDef.IsUnloaded) {
-		//        if (skillDef.GetType() != constructor.DeclaringType) {
-		//            throw new OverrideNotAllowedException("You can not change the class of a Skilldef while resync. You have to recompile or restart to achieve that. Ignoring.");
-		//        }
-		//        skillDef.IsUnloaded = false;
-		//        //we have to load the key first, so that it may be unloaded by it...
-
-		//        PropsLine p = input.PopPropsLine("key");
-		//        skillDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
-
-		//        UnregisterSkillDef(skillDef);//will be re-registered again
-		//    } else {
-		//        throw new OverrideNotAllowedException("SkillDef " + LogStr.Ident(defName) + " defined multiple times.");
-		//    }
-
-		//    ushort skillId;
-		//    if (!TagMath.TryParseUInt16(input.HeaderName, out skillId)) {
-		//        throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
-		//    }
-
-		//    skillDef.id = skillId;
-
-		//    //now do load the trigger code. 
-		//    if (input.TriggerCount > 0) {
-		//        input.HeaderName = "t__" + input.HeaderName + "__";
-		//        skillDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-		//    } else {
-		//        skillDef.scriptedTriggers = null;
-		//    }
-
-		//    skillDef.LoadScriptLines(input);
-
-		//    RegisterSkillDef(skillDef);
-
-		//    if (skillDef.scriptedTriggers == null) {
-		//        return skillDef;
-		//    } else {
-		//        return new UnloadableGroup(skillDef, skillDef.scriptedTriggers);
-		//    }
-		//}
 
 		internal static void LoadingFinished() {
 

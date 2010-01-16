@@ -70,20 +70,6 @@ namespace SteamEngine.CompiledScripts {
 			container = InitThingDefField("container", null, typeof(ItemDef));
 		}
 
-		//private static void UnRegisterTemplateDef(TemplateDef td) {
-		//    AllScriptsByDefname.Remove(td.Defname);
-		//    if (td.Altdefname != null) {
-		//        AllScriptsByDefname.Remove(td.Altdefname);
-		//    }
-		//}
-
-		//private static void RegisterTemplateDef(TemplateDef td) {
-		//    AllScriptsByDefname[td.Defname] = td;
-		//    if (td.Altdefname != null) {
-		//        AllScriptsByDefname[td.Altdefname] = td;
-		//    }
-		//}
-
 		public static new void Bootstrap() {
 			ScriptLoader.RegisterScriptType("TemplateDef",
 				new LoadSection(AbstractDef.LoadFromScripts), true);
@@ -93,42 +79,6 @@ namespace SteamEngine.CompiledScripts {
 
 			base.LoadFromSaves(ps); //would try to load the lines as fieldvalues... we already did that
 		}
-
-		//internal static IUnloadable LoadFromScripts(PropsSection input) {
-		//    string typeName = input.HeaderType.ToLower();
-		//    string defname = input.HeaderName.ToLower();
-		//    //Console.WriteLine("loading section "+input.HeadToString());
-		//    //[typeName defname]
-
-		//    //Attempt to convert defname to a uint, so that we can "normalize" it
-		//    int defnum;
-		//    if (TagMath.TryParseInt32(defname, out defnum)) {
-		//        defname = "td_0x" + defnum.ToString("x");
-		//    }
-
-		//    AbstractScript def;
-		//    AllScriptsByDefname.TryGetValue(defname, out def);
-		//    TemplateDef td = def as TemplateDef;
-		//    if (td == null) {
-		//        if (def != null) {//it isnt TemplateDef
-		//            throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
-		//        } else {
-		//            td = new TemplateDef(defname, input.Filename, input.HeaderLine);
-		//        }
-		//    } else if (td.IsUnloaded) {
-		//        td.IsUnloaded = false;
-		//        UnRegisterTemplateDef(td);//will be re-registered again
-		//    } else {
-		//        throw new OverrideNotAllowedException("TemplateDef " + LogStr.Ident(defname) + " defined multiple times.");
-		//    }
-
-		//    def = ParseText(input, defname, td);
-
-		//    //that's all, we're done ;)
-		//    RegisterTemplateDef(td);
-
-		//    return td;
-		//}
 
 		private static void ParseText(PropsSection input, TemplateDef td) {
 			TriggerSection trigger = input.GetTrigger(0);
