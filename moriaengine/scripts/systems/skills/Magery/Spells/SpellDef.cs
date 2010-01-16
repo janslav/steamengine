@@ -602,11 +602,11 @@ namespace SteamEngine.CompiledScripts {
 				bool canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
 				bool canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
 				if (canEffectItem || canEffectChar) {
-					foreach (Thing t in caster.GetMap().GetThingsInRange(target.X, target.Y, this.EffectRange)) {
+					foreach (Thing t in caster.GetMap().GetThingsInRange(targetTop.X, targetTop.Y, this.EffectRange)) {
 						if (t == target) { //already done
 							continue;
 						}
-						targetTop = new Point4D(t.TopPoint);
+						targetTop = new Point4D(t.TopPoint); //make a sound at least once 
 						Character ch = t as Character;
 						if (ch != null) {
 							if (canEffectChar) {

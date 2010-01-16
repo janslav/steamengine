@@ -201,7 +201,8 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	partial class WeaponSkillTargetQueuePluginDef {
-		public static WeaponSkillTargetQueuePluginDef instance = new WeaponSkillTargetQueuePluginDef("p_weaponSkillTargetQueue", "C# scripts", -1);
+		public static WeaponSkillTargetQueuePluginDef instance = (WeaponSkillTargetQueuePluginDef)
+			new WeaponSkillTargetQueuePluginDef("p_weaponSkillTargetQueue", "C# scripts", -1).Register();
 	}
 
 }

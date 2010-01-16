@@ -40,8 +40,12 @@ namespace SteamEngine.CompiledScripts {
 			this.Delete();
 		}
 
-		public void On_DispellEffect() {
+		public void On_Dispell(SpellEffectArgs spell) {
 			if (this.Dispellable) {
+				Thing t = this.Cont as Thing;
+				if (t != null) {
+					DispellDef.ShowDispellEffect(t.TopObj());
+				}
 				this.Delete();
 			}
 		}

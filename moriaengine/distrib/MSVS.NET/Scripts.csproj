@@ -704,6 +704,9 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs">
       <Link>systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\Dispell\Dispell.cs">
+      <Link>systems\skills\Magery\Spells\Dispell\Dispell.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DurableSpellDef.cs">
       <Link>systems\skills\Magery\Spells\DurableSpellDef.cs</Link>
     </Compile>
@@ -1056,8 +1059,11 @@
     <None Include="..\..\scripts\systems\skills\Lockpicking\lockpicking.scp">
       <Link>systems\skills\Lockpicking\lockpicking.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\Dispell\dispellDefs.def">
+      <Link>systems\skills\Magery\Spells\Dispell\dispellDefs.def</Link>
+    </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
-      <Link>systems\skills\Magery\nightSight.scp</Link>
+      <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct</Link>

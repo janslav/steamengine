@@ -167,22 +167,6 @@
 //MANAUSE=14
 //Requirements=50.0 Magery
 //
-//[SpellDef 34]
-//DEFNAME=s_dispel_field
-//NAME=Dispel Field
-//SOUND=snd_SPELL_DISPEL_FIELD
-//RUNES=AG
-//CASTTIME=2.5
-////RESOURCES=i_reag_black_pearl,i_reag_garlic,i_reag_spider_silk,i_reag_sulfur_ash
-//RUNEITEM=i_rune_DISPEL_FIELD
-//SCROLLITEM=i_scroll_DISPEL_FIELD
-//FLAGS=//SPELLFLAG_TARG_OBJ
-////EFFECTID=0
-//EFFECT=0
-//DURATION=0.0
-//MANAUSE=10
-//Requirements=50.0 Magery
-//
 //[SpellDef 35]
 //// NOTE: This spell is used primarily for roleplaying purposes or for avoiding being killed if red. The longer duration would not unbalance gameplay in any way I could see.
 //DEFNAME=s_incognito
@@ -251,23 +235,6 @@
 //MANAUSE=16
 //Requirements=50.0 Magery
 //
-//////////////////////////////////////////////// 6 kruh
-//[SpellDef 41]
-//DEFNAME=s_dispel
-//NAME=Dispel
-//SOUND=snd_SPELL_DISPEL
-//RUNES=AO
-//CASTTIME=2.5
-////RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_sulfur_ash
-//RUNEITEM=i_rune_DISPEL
-//SCROLLITEM=i_scroll_DISPEL
-//FLAGS=0//SPELLFLAG_TARG_CHAR
-////EFFECTID=0
-//EFFECT=0
-//DURATION=0.0
-//MANAUSE=18
-//Requirements=60.0 Magery
-//
 //[SpellDef 44]
 //// NOTE: Used primarily to regain mana while fighting or cast helpful spells without incurring attack. Duration should reflect the non-offensive use of this spell
 //DEFNAME=s_invisibility
@@ -317,22 +284,6 @@
 //EFFECT=0,10
 //DURATION=0.0
 //MANAUSE=20
-//Requirements=70.0 Magery
-//
-//[SpellDef 54]
-//DEFNAME=s_mass_dispel
-//NAME=Mass Dispel
-//SOUND=snd_SPELL_MASS_DISPEL
-//RUNES=VAO
-//CASTTIME=3.5
-////RESOURCES=i_reag_black_pearl,i_reag_garlic,i_reag_mandrake_root,i_reag_sulfur_ash
-//RUNEITEM=i_rune_MASS_DISPEL
-//SCROLLITEM=i_scroll_MASS_DISPEL
-//FLAGS=0
-////EFFECTID=0
-//EFFECT=0
-//DURATION=0.0
-//MANAUSE=40
 //Requirements=70.0 Magery
 //
 //[SpellDef 56]

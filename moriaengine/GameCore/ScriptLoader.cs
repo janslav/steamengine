@@ -206,22 +206,6 @@ namespace SteamEngine {
 								//	Skills.Load(input);
 								//	return null;
 								default:
-									//"itemdef", "characterdef", etc.
-									//if (StringComparer.OrdinalIgnoreCase.Equals(type, "chardef")) {
-									//    type = "CharacterDef";
-									//}
-									//if (ThingDef.ExistsDefType(type)) {
-									//    file.Add(ThingDef.LoadFromScripts(section));
-									//    continue;
-									//}
-									//if (PluginDef.ExistsDefType(type)) {
-									//    file.Add(PluginDef.LoadFromScripts(section));
-									//    continue;
-									//}
-									//if (AbstractSkillDef.ExistsDefType(type)) {
-									//    file.Add(AbstractSkillDef.LoadFromScripts(section));
-									//    continue;
-									//}
 									RegisteredScript rs;
 									if (scriptTypesByName.TryGetValue(type, out rs)) {
 										file.Add(rs.deleg(section));
@@ -320,8 +304,10 @@ namespace SteamEngine {
 			}
 		}
 
-		//unloads instances that come from scripts.
+		//forgets stuff that come from scripts.
 		internal static void ForgetScripts() {
+			allFiles.Clear();
+
 			Assembly coreAssembly = CompiledScripts.ClassManager.CoreAssembly;
 
 			Dictionary<string, RegisteredScript> origScripts = scriptTypesByName;

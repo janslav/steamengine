@@ -48,7 +48,8 @@ namespace SteamEngine {
 
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
-		virtual internal protected void Register() {
+		//Returns self for easier usage 
+		virtual public AbstractScript Register() {
 			if (!string.IsNullOrEmpty(this.defname)) {
 				AbstractScript previous;
 				if (byDefname.TryGetValue(this.defname, out previous)) {
@@ -56,6 +57,7 @@ namespace SteamEngine {
 				}
 				byDefname[this.defname] = this;
 			}
+			return this;
 		}
 
 		//unregister from static dictionaries and lists. 

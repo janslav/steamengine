@@ -35,5 +35,11 @@ namespace SteamEngine.CompiledScripts {
 				return true;
 			}
 		}
+
+		public override void On_Dispell(SpellEffectArgs spellEffectArgs) {
+			base.On_Dispell(spellEffectArgs);
+			DispellDef.ShowDispellEffect(this);
+			this.Delete();
+		}
 	}
 }
