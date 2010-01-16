@@ -27,7 +27,8 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class PartyDef : RoleDef {
-		public static readonly PartyDef instance = new PartyDef("r_party", "C# scripts", -1);
+		public static readonly PartyDef instance = (PartyDef)
+			new PartyDef("r_party", "C# scripts", -1).Register();
 
 		public static readonly RoleKey rkParty = RoleKey.Acquire("_party_");
 

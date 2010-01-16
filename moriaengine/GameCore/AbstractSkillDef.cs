@@ -108,7 +108,7 @@ namespace SteamEngine {
 
 		#region Load from scripts
 
-		protected internal override void Register() {
+		public override AbstractScript Register() {
 			try {
 				string key = this.Key;
 				AbstractSkillDef previous;
@@ -119,6 +119,7 @@ namespace SteamEngine {
 			} finally {
 				base.Register();
 			}
+			return this;
 		}
 
 		protected override void Unregister() {

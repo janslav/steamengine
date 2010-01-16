@@ -2454,6 +2454,9 @@ namespace SteamEngine.CompiledScripts {
 				return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
 			}
 		}
+
+		public virtual void On_Dispell(SpellEffectArgs spellEffectArgs) {
+		}
 	}
 
 	internal class CharacterLoc : CompiledLocStringCollection {

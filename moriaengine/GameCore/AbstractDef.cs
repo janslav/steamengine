@@ -457,7 +457,7 @@ namespace SteamEngine {
 
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
-		override protected internal void Register() {
+		override public AbstractScript Register() {
 			try {
 				if (!string.IsNullOrEmpty(this.altdefname)) {
 					AbstractScript previous;
@@ -469,6 +469,7 @@ namespace SteamEngine {
 			} finally {
 				base.Register();
 			}
+			return this;
 		}
 
 		//unregister from static dictionaries and lists. 

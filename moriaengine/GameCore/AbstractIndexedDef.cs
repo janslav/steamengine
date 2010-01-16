@@ -68,7 +68,7 @@ namespace SteamEngine {
 			}
 		}
 
-		protected internal override void Register() {
+		public override AbstractScript Register() {
 			try {
 				TDef previous;
 				if (byIndex.TryGetValue(this.index, out previous)) {
@@ -78,6 +78,7 @@ namespace SteamEngine {
 			} finally {
 				base.Register();
 			}
+			return this;
 		}
 
 		protected override void Unregister() {

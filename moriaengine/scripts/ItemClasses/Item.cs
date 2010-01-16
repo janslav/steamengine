@@ -361,5 +361,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+
+		public virtual void On_Dispell(SpellEffectArgs spellEffectArgs) {
+		}
 	}
 }

@@ -44,15 +44,21 @@ namespace SteamEngine {
 		private List<string> avoided = new List<string>();
 		private long lengthSum;
 
+		internal ScriptFileCollection(string dirPath, string extension) {
+			this.mainDir = new DirectoryInfo(dirPath);
+			this.extensions.Add(extension);
+		}
+
 		internal long LengthSum {
 			get {
 				return this.lengthSum;
 			}
 		}
 
-		internal ScriptFileCollection(string dirPath, string extension) {
-			this.mainDir = new DirectoryInfo(dirPath);
-			this.extensions.Add(extension);
+		public void Clear() {
+			this.scriptFiles.Clear();
+			this.lengthSum = 0;
+			this.newestDateTime = DateTime.MinValue;
 		}
 
 		internal void AddExtension(string extension) {
@@ -144,7 +150,7 @@ namespace SteamEngine {
 		private void FindChangedFiles(List<ScriptFile> list) {
 			foreach (ScriptFile fs in this.scriptFiles.Values) {
 				long prevLength = fs.Length;
-				if (fs.HasChanged) {
+				if (fs.CheckChanged()) {
 					list.Add(fs);
 					this.lengthSum -= prevLength;
 					this.lengthSum += fs.Length;//the new length already
@@ -228,24 +234,22 @@ namespace SteamEngine {
 			}
 		}
 
-		internal bool HasChanged {
-			get {
-				file.Refresh();
-				if (file.Exists) {
-					if (attribs == file.Attributes) {
-						if (time == file.LastWriteTime) {
-							if (length == file.Length) {
-								return false;
-							}
+		internal bool CheckChanged() {
+			file.Refresh();
+			if (file.Exists) {
+				if (attribs == file.Attributes) {
+					if (time == file.LastWriteTime) {
+						if (length == file.Length) {
+							return false;
 						}
 					}
-					attribs = file.Attributes;
-					time = file.LastWriteTime;
-					length = file.Length;
 				}
-				Unload();
-				return true;
+				attribs = file.Attributes;
+				time = file.LastWriteTime;
+				length = file.Length;
 			}
+			Unload();
+			return true;
 		}
 
 		internal bool Exists {

@@ -85,6 +85,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	partial class WeaponSkillTargetTrackerPluginDef {
-		public static WeaponSkillTargetTrackerPluginDef instance = new WeaponSkillTargetTrackerPluginDef("p_weaponSkillTargetTracker", "C# scripts", -1);
+		public static WeaponSkillTargetTrackerPluginDef instance = (WeaponSkillTargetTrackerPluginDef) 
+			new WeaponSkillTargetTrackerPluginDef("p_weaponSkillTargetTracker", "C# scripts", -1).Register();
 	}
 }

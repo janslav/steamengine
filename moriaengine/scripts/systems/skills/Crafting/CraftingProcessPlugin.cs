@@ -118,6 +118,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	partial class CraftingProcessPluginDef {
-		public static CraftingProcessPluginDef instance = new CraftingProcessPluginDef("p_craftingProcess", "C# scripts", -1);
+		public static CraftingProcessPluginDef instance = (CraftingProcessPluginDef)
+			new CraftingProcessPluginDef("p_craftingProcess", "C# scripts", -1).Register();
 	}
 }
