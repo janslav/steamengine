@@ -407,48 +407,6 @@ namespace SteamEngine.CompiledScripts {
                             basicMarksmanship,basicChivalry,basicBushido,basicNinjitsu};
 		}
 
-
-		//private static void RegisterProfessionDef(ProfessionDef pd) {
-		//    AllScriptsByDefname[pd.Defname] = pd;
-		//    byName[pd.Name] = pd;
-		//}
-
-		//private static void UnRegisterProfessionDef(ProfessionDef pd) {
-		//    AllScriptsByDefname.Remove(pd.Defname);
-		//    byName.Remove(pd.Name);
-		//}
-
-		//public static new void Bootstrap() {
-		//    ClassManager.RegisterSupplySubclasses<ProfessionDef>(RegisterProfessionDefType);
-		//}
-
-		//for loading of ProfessionDefs from .scp scripts
-		//public static new bool ExistsDefType(string name) {
-		//    return profDefCtorsByName.ContainsKey(name);
-		//}
-
-		//private static Type[] profDefConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
-
-		////called by ClassManager
-		//internal static bool RegisterProfessionDefType(Type profDefType) {
-		//    ConstructorInfo ci;
-		//    if (profDefCtorsByName.TryGetValue(profDefType.Name, out ci)) { //we have already a ProfessionDef type named like that
-		//        throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of ProfessionDef classes.");
-		//    }
-		//    ci = profDefType.GetConstructor(profDefConstructorParamTypes);
-		//    if (ci == null) {
-		//        throw new SEException("Proper constructor not found.");
-		//    }
-		//    profDefCtorsByName[profDefType.Name] = MemberWrapper.GetWrapperFor(ci);
-
-		//    ScriptLoader.RegisterScriptType(profDefType.Name, LoadFromScripts, false);
-
-		//    return false;
-		//}
-
-		internal static void StartingLoading() {
-		}
-
 		public override void LoadScriptLines(PropsSection ps) {
 			PropsLine p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
@@ -466,61 +424,6 @@ namespace SteamEngine.CompiledScripts {
 				this.scriptedTriggers.Unload();
 			}
 			base.Unload();
-		}
-
-		//internal new static IUnloadable LoadFromScripts(PropsSection input) {
-		//    //it is something like this in the .scp file: [headerType headerName] = [ProfessionDef class_necro] etc.
-		//    string typeName = input.HeaderType.ToLower();
-		//    string profDefName = input.HeaderName.ToLower();
-
-		//    AbstractScript def;
-		//    AllScriptsByDefname.TryGetValue(profDefName, out def);
-		//    ProfessionDef profDef = def as ProfessionDef;
-
-		//    ConstructorInfo constructor = profDefCtorsByName[typeName];
-
-		//    if (profDef == null) {
-		//        if (def != null) {//it isnt profDef
-		//            throw new ScriptException("ProfessionDef " + LogStr.Ident(profDefName) + " has the same name as " + LogStr.Ident(def));
-		//        } else {
-		//            object[] cargs = new object[] { profDefName, input.Filename, input.HeaderLine };
-		//            profDef = (ProfessionDef) constructor.Invoke(cargs);
-		//        }
-		//    } else if (profDef.IsUnloaded) {
-		//        if (profDef.GetType() != constructor.DeclaringType) {
-		//            throw new OverrideNotAllowedException("You can not change the class of a ProfessionDef while resync. You have to recompile or restart to achieve that. Ignoring.");
-		//        }
-		//        profDef.IsUnloaded = false;
-		//        //we have to load the name first, so that it may be unloaded by it...
-
-		//        PropsLine p = input.PopPropsLine("name");
-		//        profDef.LoadScriptLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
-
-		//        UnRegisterProfessionDef(profDef);//will be re-registered again
-		//    } else {
-		//        throw new OverrideNotAllowedException("ProfessionDef " + LogStr.Ident(profDefName) + " defined multiple times.");
-		//    }
-
-		//    //now do load the trigger code.
-		//    if (input.TriggerCount > 0) {
-		//        input.HeaderName = "t__" + input.HeaderName + "__"; //naming of the trigger group for @login, logout etc. triggers
-		//        profDef.scriptedTriggers = ScriptedTriggerGroup.Load(input);
-		//    } else {
-		//        profDef.scriptedTriggers = null;
-		//    }
-
-		//    profDef.LoadScriptLines(input);
-
-		//    RegisterProfessionDef(profDef);
-
-		//    if (profDef.scriptedTriggers == null) {
-		//        return profDef;
-		//    } else {
-		//        return new UnloadableGroup(profDef, profDef.scriptedTriggers);
-		//    }
-		//}
-
-		internal static void LoadingFinished() {
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
