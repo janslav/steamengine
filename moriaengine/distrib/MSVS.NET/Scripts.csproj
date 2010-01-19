@@ -1074,6 +1074,12 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.ct">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Warcry\Warcry.ct">
+      <Link>systems\Abilities\Warcry\Warcry.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Warcry\warcry.scp">
+      <Link>systems\Abilities\Warcry\warcry.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\defs.scp">
       <Link>systems\defs.scp</Link>
     </None>

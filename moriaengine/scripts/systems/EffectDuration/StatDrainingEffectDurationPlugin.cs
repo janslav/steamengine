@@ -33,6 +33,10 @@ namespace SteamEngine.CompiledScripts {
 			this.manaDrain = manaDrain;
 			this.stamDrain = stamDrain;
 			this.manaDrain = manaDrain;
+
+			if (this.Cont != null) {
+				this.ApplyDrains();
+			}
 		}
 
 		public double HitsDrain {
@@ -50,6 +54,27 @@ namespace SteamEngine.CompiledScripts {
 		public double ManaDrain {
 			get {
 				return this.manaDrain;
+			}
+		}
+
+		public virtual void Assign() {
+			this.ApplyDrains();
+		}
+
+		private void ApplyDrains() {
+			Character ch = (Character) this.Cont;
+			if (ch != null) {
+				ch.HitsRegenSpeed -= this.hitsDrain;
+				ch.StamRegenSpeed -= this.stamDrain;
+				ch.ManaRegenSpeed -= this.manaDrain;
+			}
+		}
+
+		public void UnAssign(Character cont) {
+			if (cont != null) {
+				cont.HitsRegenSpeed += this.hitsDrain;
+				cont.StamRegenSpeed += this.stamDrain;
+				cont.ManaRegenSpeed += this.manaDrain;
 			}
 		}
 	}
