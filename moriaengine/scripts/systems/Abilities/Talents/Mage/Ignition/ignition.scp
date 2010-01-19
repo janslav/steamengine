@@ -1,4 +1,4 @@
-[StatDrainingAbility a_ignition]
+[StatDrainingAbilityDef a_ignition]
 Name="Ignition"
 //MaxPoints=10
 ManaDrain=1
