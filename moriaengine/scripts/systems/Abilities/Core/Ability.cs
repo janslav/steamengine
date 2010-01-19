@@ -27,7 +27,6 @@ namespace SteamEngine.CompiledScripts {
 	public sealed class Ability {
 		private int realPoints;
 		private int modification;
-		private bool running;
 		private Character cont;
 		private AbilityDef def;
 		private TimeSpan lastUsage;
@@ -35,7 +34,6 @@ namespace SteamEngine.CompiledScripts {
 		internal Ability(AbilityDef def, Character cont) {
 			this.modification = 0;
 			this.realPoints = 0;
-			this.running = false;
 			this.cont = cont;
 			this.def = def;
 		}
@@ -95,12 +93,12 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Is the ability actually running?")]
 		public bool Running {
 			get {
-				return this.running;
+				ActivableAbilityDef activableAbility = this.def as ActivableAbilityDef;
+				if (activableAbility != null) {
+					return activableAbility.IsRuninng(this.cont);
+				}
+				return false;
 			}
-		}
-
-		internal void InternalSetRunning(bool running) {
-			this.running = running;
 		}
 
 		public string Name {
@@ -133,13 +131,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal string GetSaveString() {
-			if ((this.modification == 0) && (!this.running)) {
+			if (this.modification == 0) {
 				return this.realPoints.ToString();
 			} else {
-				if (this.running) {
-					return String.Concat(this.RealPoints.ToString(), ", ",
-						this.modification.ToString(), ", true");
-				}
 				return String.Concat(this.RealPoints.ToString(), ", ", this.modification.ToString());
 			}
 		}
@@ -152,11 +146,6 @@ namespace SteamEngine.CompiledScripts {
 			int len = split.Length;
 			if (len > 1) {
 				if (!ConvertTools.TryParseInt32(split[1], out this.modification)) {
-					return false;
-				}
-			}
-			if (len > 2) {
-				if (!ConvertTools.TryParseBoolean(split[2], out this.running)) {
 					return false;
 				}
 			}

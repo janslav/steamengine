@@ -14,4 +14,4 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate WarcryEffectPlugin : TimerPlugin]
+[PluginTemplate WarcryEffectPlugin : EffectDurationPlugin]
