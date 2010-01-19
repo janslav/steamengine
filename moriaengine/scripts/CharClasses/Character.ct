@@ -51,7 +51,7 @@ Def:	//vars on the def
 	
 	
 Vars:	//vars defined in the class, so they basically do what tags do, but better
-	short experience=0
+	//short experience=0
 	short hitpoints=100
 	short mana=100
 	short stamina=100

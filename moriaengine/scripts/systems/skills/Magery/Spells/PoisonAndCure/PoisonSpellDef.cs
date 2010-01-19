@@ -38,10 +38,10 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			target.Trigger_HostileAction(spellEffectArgs.Caster);
 
-			SpellSourceType sourceType = spellEffectArgs.SourceType;
+			EffectFlag sourceType = spellEffectArgs.EffectFlag;
 			DamageType damageType = DamageType.Poison;
 			PluginKey key;
-			if (sourceType == SpellSourceType.Potion) {
+			if (sourceType == EffectFlag.FromPotion) {
 				key = this.EffectPluginKey_Potion;
 			} else {
 				key = this.EffectPluginKey_Spell;
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (effect > PoisonEffectPlugin.minimumPoisonEffect) { //else it does nothing to this target, so it's effectively immune
 				PoisonEffectPlugin poisonPlugin = target.GetPlugin(key) as PoisonEffectPlugin;
-				if ((poisonPlugin == null) || (effect > poisonPlugin.Effect)) { //previous poison is not better than ours, or there is none
+				if ((poisonPlugin == null) || (effect > poisonPlugin.EffectPower)) { //previous poison is not better than ours, or there is none
 
 					poisonPlugin = (PoisonEffectPlugin) this.EffectPluginDef.Create();
 					poisonPlugin.Init(spellEffectArgs.Caster, sourceType, effect, TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)));

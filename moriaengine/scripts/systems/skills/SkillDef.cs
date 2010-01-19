@@ -25,6 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public abstract class SkillDef : AbstractSkillDef {
 
+		#region Accessors
 		//this is from spheretables: all these should or could be defined here...
 		//CSKILLDEFPROP(AdvRate,		0, "")	<--- done
 		//CSKILLDEFPROP(Bonus_Dex,	0, "
@@ -40,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 		//CSKILLDEFPROP(Stat_Str,		0, "")
 		//CSKILLDEFPROP(Title,		0, "")
 		//CSKILLDEFPROP(Values,		0, "")
-
+		
 		private FieldValue advRate;
 		private FieldValue delay;
 		private FieldValue effect;
@@ -51,20 +52,6 @@ namespace SteamEngine.CompiledScripts {
 			delay = InitTypedField("delay", 0, typeof(double[]));
 			effect = InitTypedField("effect", 0, typeof(double[]));
 		}
-
-		//		protected override void LoadLine(string param, string args) {
-		//			switch(param) {
-		//				case "advrate":
-		//					advRate = SetFieldMemory("advRate", args, typeof(double[]));
-		//					break;
-		//				case "delay":
-		//					delay = SetFieldMemory("delay", args, typeof(double[]));
-		//					break;
-		//				default:
-		//					base.LoadLine(param, args);
-		//					break;
-		//			}
-		//		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			base.LoadScriptLine(filename, line, param, args);//the AbstractThingDef Loadline
@@ -97,9 +84,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int SkillValueOfChar(Character ch) {
-			//return ch.Skills[this.id].RealValue;
 			return ch.GetSkill(this.Id);
-			//return ((Skill)ch.SkillsAbilities[this]).RealValue;
 		}
 
 		public static int SkillValueOfChar(Character ch, ushort id) {
@@ -174,6 +159,7 @@ namespace SteamEngine.CompiledScripts {
 				return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), this.Effect);
 			}
 		}
+		#endregion Accessors
 
 		public static bool CheckSuccess(int skillValue, int difficulty) {
 			return SkillUtils.CheckSuccess(skillValue, difficulty);
@@ -188,6 +174,25 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		#region Triggers
+
+		public static readonly TriggerKey tkAbort = TriggerKey.Acquire("Abort");
+		public static readonly TriggerKey tkSkillAbort = TriggerKey.Acquire("SkillAbort");
+		public static readonly TriggerKey tkFail = TriggerKey.Acquire("Fail");
+		public static readonly TriggerKey tkSkillFail = TriggerKey.Acquire("SkillFail");
+		public static readonly TriggerKey tkMakeItem = TriggerKey.Acquire("MakeItem");
+		public static readonly TriggerKey tkSkillMakeItem = TriggerKey.Acquire("SkillMakeItem");
+		public static readonly TriggerKey tkSelect = TriggerKey.Acquire("Select");
+		public static readonly TriggerKey tkSkillSelect = TriggerKey.Acquire("SkillSelect");
+		public static readonly TriggerKey tkStart = TriggerKey.Acquire("Start");
+		public static readonly TriggerKey tkSkillStart = TriggerKey.Acquire("SkillStart");
+		public static readonly TriggerKey tkStroke = TriggerKey.Acquire("Stroke");
+		public static readonly TriggerKey tkSkillStroke = TriggerKey.Acquire("SkillStroke");
+		public static readonly TriggerKey tkSuccess = TriggerKey.Acquire("Success");
+		public static readonly TriggerKey tkSkillSuccess = TriggerKey.Acquire("SkillSuccess");
+		//public static readonly TriggerKey tkGain = TriggerKey.Get("Gain");
+		//public static readonly TriggerKey tkSkillGain = TriggerKey.Get("SkillGain");
+		
 		internal bool Trigger_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage())
@@ -314,39 +319,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... ")]
 		protected abstract void On_Abort(SkillSequenceArgs skillSeqArgs);
-
-		//[Summary("This method fires the @skillMakeItem triggers. "
-		//+"Gets usually called after an item has been crafted, with the AbstractItem as additional argument")]
-		//protected bool Trigger_MakeItem(Character self, AbstractItem i) {
-		//	if (self==null) return false;
-		//	bool cancel=false;
-		//	ScriptArgs sa = new ScriptArgs(self, i, Id);
-		//	cancel=TryCancellableTrigger(self, tkMakeItem, sa);
-		//	if (!cancel) {
-		//		cancel=self.TryCancellableTrigger(self, tkSkillMakeItem, sa);
-		//		if (!cancel) {
-		//			cancel=self.On_SkillMakeItem(Id, i);
-		//		}
-		//	}
-		//	return cancel;
-		//}
-
-		public static readonly TriggerKey tkAbort = TriggerKey.Acquire("Abort");
-		public static readonly TriggerKey tkSkillAbort = TriggerKey.Acquire("SkillAbort");
-		public static readonly TriggerKey tkFail = TriggerKey.Acquire("Fail");
-		public static readonly TriggerKey tkSkillFail = TriggerKey.Acquire("SkillFail");
-		public static readonly TriggerKey tkMakeItem = TriggerKey.Acquire("MakeItem");
-		public static readonly TriggerKey tkSkillMakeItem = TriggerKey.Acquire("SkillMakeItem");
-		public static readonly TriggerKey tkSelect = TriggerKey.Acquire("Select");
-		public static readonly TriggerKey tkSkillSelect = TriggerKey.Acquire("SkillSelect");
-		public static readonly TriggerKey tkStart = TriggerKey.Acquire("Start");
-		public static readonly TriggerKey tkSkillStart = TriggerKey.Acquire("SkillStart");
-		public static readonly TriggerKey tkStroke = TriggerKey.Acquire("Stroke");
-		public static readonly TriggerKey tkSkillStroke = TriggerKey.Acquire("SkillStroke");
-		public static readonly TriggerKey tkSuccess = TriggerKey.Acquire("Success");
-		public static readonly TriggerKey tkSkillSuccess = TriggerKey.Acquire("SkillSuccess");
-		//public static readonly TriggerKey tkGain = TriggerKey.Get("Gain");
-		//public static readonly TriggerKey tkSkillGain = TriggerKey.Get("SkillGain");
+		#endregion Triggers
 	}
 
 	[Persistence.SaveableClass]
@@ -363,7 +336,6 @@ namespace SteamEngine.CompiledScripts {
 
 		[Persistence.LoadingInitializer]
 		public SkillSequenceArgs() {
-
 			this.scriptArgs = new ScriptArgs(this);
 		}
 

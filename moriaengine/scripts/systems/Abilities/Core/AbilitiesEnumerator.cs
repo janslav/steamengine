@@ -26,8 +26,8 @@ namespace SteamEngine.CompiledScripts {
 		private Ability current;
 		private IEnumerator valuesEnum;
 
-		internal AbilitiesEnumerator(Character chr) {
-			valuesEnum = chr.SkillsAbilities.Values.GetEnumerator();
+		internal AbilitiesEnumerator(Dictionary<AbstractDef, object> dict) {
+			this.valuesEnum = dict.Values.GetEnumerator();
 		}
 
 		#region IEnumerator<Ability> Members

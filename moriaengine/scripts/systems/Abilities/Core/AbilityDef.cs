@@ -35,10 +35,12 @@ namespace SteamEngine.CompiledScripts {
 		#region Accessors
 		//private string name; //logical name of the ability
 
-		private FieldValue maxPoints; //maximum points allowed to assign
-		private FieldValue useDelay;
+		private FieldValue chance; //maximum points allowed to assign
+		private FieldValue cooldown;
 		private FieldValue resourcesConsumed;//resourcelist of resources to be consumed for ability using
 		private FieldValue resourcesPresent;//resourcelist of resources that player must have intending to run the ability
+		private FieldValue effectPower;
+		private FieldValue effectDuration;
 
 		public static new AbilityDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbilityDef;
@@ -68,203 +70,250 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[InfoField("Max points")]
-		public ushort MaxPoints {
+		[Summary("Used in some abilities to compute the probabilty of their success. "+
+			"Typically 1.0 = 100%")]
+		public double Chance {
 			get {
-				return (ushort) maxPoints.CurrentValue;
+				return (double) this.chance.CurrentValue;
 			}
 			set {
-				maxPoints.CurrentValue = value;
+				this.chance.CurrentValue = value;
 			}
 		}
 
-		[InfoField("Usage delay")]
-		[Summary("Field for holding the number information about the pause between next activation try." +
+		public bool CheckSuccess(Character target) {
+			return CheckSuccess(target.GetAbility(this));
+		}
+
+		public bool CheckSuccess(Ability ab) {
+			return CheckSuccess(ab.ModifiedPoints);
+		}
+
+		public bool CheckSuccess(int points) {
+			return Globals.dice.NextDouble() <= (points * this.Chance);
+		}
+
+		[Summary("Field for holding the number of seconds between next activation try." +
 				"You can use 0 for no delay")]
-		public double UseDelay {
+		public double Cooldown {
 			get {
-				return (double) useDelay.CurrentValue;
+				return (double) this.cooldown.CurrentValue;
 			}
 			set {
-				useDelay.CurrentValue = value;
+				this.cooldown.CurrentValue = value;
 			}
 		}
 
-		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			base.LoadScriptLine(filename, line, param, args);
+		[NoShow]
+		[Summary("Field for holding the number of seconds between next activation try." +
+				"You can use 0 for no delay")]
+		public TimeSpan CooldownAsSpan {
+			get {
+				return TimeSpan.FromSeconds(this.Cooldown);
+			}
 		}
 
-		public override string ToString() {
-			return Tools.TypeToString(this.GetType()) + " " + Name;
+		[Summary("Used in some abilities to compute the power of their effect")]
+		public double EffectPower {
+			get {
+				return (double) effectPower.CurrentValue;
+			}
+			set {
+				effectPower.CurrentValue = value;
+			}
 		}
 
+		[Summary("Used in some abilities to compute the duration of their effect. Typically in seconds.")]
+		public double EffectDuration {
+			get {
+				return (double) effectDuration.CurrentValue;
+			}
+			set {
+				effectDuration.CurrentValue = value;
+			}
+		}
+
+		
 		#endregion Accessors
 
 		#region Factory methods
-		[Summary("Method for instatiating Abilities. Basic implementation is easy but can be overriden " +
-				"if we want to return some descendants of the Ability class - e.g. RegenAbility...")]
+		[Summary("Method for instatiating Abilities.")]
 		public virtual Ability Create(Character chr) {
 			return new Ability(this, chr);
 		}
 
 		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability" +
 				"and in case he has, it runs the protected activation method")]
-		public void Activate(Character chr) {
+		public virtual void Activate(Character chr) {
 			Ability ab = chr.GetAbilityObject(this);
-			if (ab == null || ab.Points == 0) {
-				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
+			if (ab == null || ab.ModifiedPoints == 0) {
+				this.SendAbilityResultMessage(DenyResultAbilities.Deny_DoesntHaveAbility);
 			} else {
-				DenyAbilityArgs args = new DenyAbilityArgs(chr, this, ab);
-				bool cancelDeny = Trigger_DenyUse(args); //return value means only that the trigger has been cancelled
-				DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot run the ability
+
+				DenyResultAbilities retVal = this.Trigger_DenyActivate(chr, ab); //return value means only that the trigger has been cancelled
 
 				if (retVal == DenyResultAbilities.Allow) {
-					bool cancelActivate = Trigger_Activate(chr);
-					ab.LastUsage = Globals.TimeInSeconds; //set the last usage time
-					Activate(chr, ab); //call specific behaviour of the ability class (logging, Ability object state switching etc.)					
+					this.Trigger_Activate(chr, ab);
+					ab.LastUsage = Globals.TimeAsSpan; //set the last usage time
 				}
-				SendAbilityResultMessage(chr, retVal); //send result(message) of the "activate" call to the client
-			}
-		}
 
-		protected virtual void Activate(Character chr, Ability ab) {
-			//default without implementation, children can contain some specific behaviour which goes 
-			//beyond the Activate(Character) method capabilities...
+				this.SendAbilityResultMessage(retVal); //send result(message) of the "activate" call to the client
+			}
 		}
 		#endregion Factory methods
 
 		#region Trigger methods
 
-		internal static readonly TriggerKey tkAssign = TriggerKey.Acquire("Assign");
-		internal static readonly TriggerKey tkDenyAssign = TriggerKey.Acquire("DenyAssign");
-		internal static readonly TriggerKey tkUnAssign = TriggerKey.Acquire("UnAssign");
-		internal static readonly TriggerKey tkValueChanged = TriggerKey.Acquire("ValueChanged");
-		internal static readonly TriggerKey tkActivate = TriggerKey.Acquire("Activate");
-		internal static readonly TriggerKey tkDenyUse = TriggerKey.Acquire("DenyUse");
+		internal static readonly TriggerKey tkAssign = TriggerKey.Acquire("assign");
+		internal static readonly TriggerKey tkUnAssign = TriggerKey.Acquire("unAssign");
+		internal static readonly TriggerKey tkAbilityValueChanged = TriggerKey.Acquire("abilityValueChanged");
+		internal static readonly TriggerKey tkValueChanged = TriggerKey.Acquire("valueChanged");
+		internal static readonly TriggerKey tkActivateAbility = TriggerKey.Acquire("activateAbility");
+		internal static readonly TriggerKey tkActivate = TriggerKey.Acquire("activate");
+		internal static readonly TriggerKey tkDenyActivateAbility = TriggerKey.Acquire("denyActivateAbility");
+		internal static readonly TriggerKey tkDenyActivate = TriggerKey.Acquire("denyActivate");
 
 		private TriggerGroup scriptedTriggers;
 
+		[Summary("LScript based @activate triggers" +
+				"Gets called when every prerequisity has been fulfilled and the ability can be run now")]
+		protected void Trigger_Activate(Character chr, Ability ab) {
+			ScriptArgs sa = new ScriptArgs(this, ab);
+
+			bool cancel = chr.TryCancellableTrigger(AbilityDef.tkActivateAbility, sa);
+			if (!cancel) {
+				try {
+					cancel = chr.On_ActivateAbility(this, ab);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(chr, AbilityDef.tkActivate, null);
+					if (!cancel) {
+						try {
+							this.On_Activate(chr, ab);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
+			}
+		}
+
 		[Summary("C# based @activate trigger method")]
-		protected virtual bool On_Activate(Character chr) {
+		protected virtual bool On_Activate(Character chr, Ability ab) {
 			chr.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Activate");
 			return false; //no cancelling
 		}
 
-		[Summary("LScript based @activate triggers" +
-				"Gets called when every prerequisity has been fulfilled and the ability can be run now")]
-		protected bool Trigger_Activate(Character chr) {
-			bool cancel = false;
-			cancel = TryCancellableTrigger(chr, AbilityDef.tkActivate, null);
-			if (!cancel) {
-				cancel = chr.On_AbilityActivate(this);
-				if (!cancel) {//still not cancelled
-					cancel = On_Activate(chr);
-				}
-			}
-			return cancel;
-		}
-
 		[Summary("This method fires the @denyUse triggers. "
-				+ "Their purpose is to check if all requirements for running the ability have been met")]
-		protected bool Trigger_DenyUse(DenyAbilityArgs args) {
-			bool cancel = false;
-			cancel = this.TryCancellableTrigger(args.abiliter, AbilityDef.tkDenyUse, args);
-			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
-				cancel = args.abiliter.On_AbilityDenyUse(args);
-				if (!cancel) {//still not cancelled
-					cancel = On_DenyUse(args);
+		        + "Their purpose is to check if all requirements for running the ability have been met")]
+		protected DenyResultAbilities Trigger_DenyActivate(Character chr, Ability ab) {
+			DenyAbilityArgs denyArgs = new DenyAbilityArgs(chr, this, ab);
+
+			bool cancel = chr.TryCancellableTrigger(tkDenyActivateAbility, denyArgs);
+			if (!cancel) {
+				try {
+					cancel = chr.On_DenyActivateAbility(denyArgs);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(chr, AbilityDef.tkDenyActivate, denyArgs);
+					if (!cancel) {
+						try {
+							this.On_DenyActivate(denyArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
 				}
 			}
-			return cancel;
+			return denyArgs.Result;
 		}
 
-		[Summary("C# based @denyUse trigger method, implementation of common checks (timers...)")]
-		protected virtual bool On_DenyUse(DenyAbilityArgs args) {
-			Ability ab = args.ranAbility;
-			//common check - is the usage timer OK?
-			if ((Globals.TimeInSeconds - ab.LastUsage) <= this.UseDelay) { //check the timing if OK
-				args.Result = DenyResultAbilities.Deny_TimerNotPassed;
-				return true;//same as "return 1" from LScript - cancel trigger sequence
-			}
-			//check resources present (if needed)
-			ResourcesList resPresent = resourcesPresent.CurrentValue as ResourcesList;
-			if (resPresent != null) {
-				IResourceListItem missingItem;
-				if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-					ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
-					args.Result = DenyResultAbilities.Deny_NotEnoughResourcesPresent;
-					return true;
-				}
-			}
-			//check consumable resources
-			ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
-			if (resConsum != null) {
-				//look to the backpack and among the items that we are wearing
-				IResourceListItem missingItem;
-				if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-					ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
-					args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
-					return true;
-				}
-			}
-			return false; //continue
+		[Summary("C# based @denyUse trigger method, implementation of common checks")]
+		protected virtual bool On_DenyActivate(DenyAbilityArgs args) {
+		    Ability ab = args.ranAbility;
+		    //check cooldown
+		    if ((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) { //check the timing if OK
+		        args.Result = DenyResultAbilities.Deny_TimerNotPassed;
+		        return true;//same as "return 1" from LScript - cancel trigger sequence
+		    }
+
+		    //check resources present (if needed)
+		    ResourcesList resPresent = resourcesPresent.CurrentValue as ResourcesList;
+		    if (resPresent != null) {
+		        IResourceListItem missingItem;
+		        if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
+		            ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
+		            args.Result = DenyResultAbilities.Deny_NotEnoughResourcesPresent;
+		            return true;
+		        }
+		    }
+
+		    //check consumable resources
+		    ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
+		    if (resConsum != null) {
+		        //look to the backpack and among the items that we are wearing
+		        IResourceListItem missingItem;
+		        if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
+		            ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
+		            args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
+		            return true;
+		        }
+		    }
+
+		    return false; //all ok, continue
+		}
+
+		//this is not a character trigger. I think for them the @valuechanged should be enough
+		private void Trigger_Assign(Character chr, Ability ab, ScriptArgs sa) {
+			this.TryTrigger(chr, AbilityDef.tkAssign, sa);
+			try {
+				this.On_Assign(chr, ab);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		[Summary("This method implements the assigning of the first point to the Ability")]
-		protected virtual void On_Assign(Character ch) {
+		protected virtual void On_Assign(Character ch, Ability ab) {
 			//ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
 		}
 
-		internal void Trigger_Assign(Character chr) {
-			if (chr != null) {
-				TryTrigger(chr, AbilityDef.tkAssign, null);
-				chr.On_AbilityAssign(this);
-				On_Assign(chr);
-			}
+		//this is not a character trigger. I think for them the @valuechanged should be enough
+		internal void Trigger_UnAssign(Character chr, Ability ab, ScriptArgs sa) {
+			this.TryTrigger(chr, AbilityDef.tkUnAssign, sa);
+			try {
+				this.On_UnAssign(chr, ab);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[Summary("This method fires the @denyAssign triggers. "
-				+ "Their purpose is to check if character can be assigned this ability")]
-		protected virtual bool On_DenyAssign(DenyAbilityArgs args) {
-			//ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_DenyAssign");
-			return false; //continue
-		}
-
-		internal bool Trigger_DenyAssign(DenyAbilityArgs args) {
-			bool cancel = false;
-			cancel = this.TryCancellableTrigger(args.abiliter, AbilityDef.tkDenyAssign, args);
-			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
-				cancel = args.abiliter.On_AbilityDenyAssign(args);
-				if (!cancel) {//still not cancelled
-					cancel = On_DenyAssign(args);
-				}
-			}
-			return cancel;
-		}
-
-		[Summary("This method implements the unassigning of the last point from the Ability")]
-		protected virtual void On_UnAssign(Character ch) {
-			ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_UnAssign");
-		}
-
-		internal void Trigger_UnAssign(Character chr) {
-			if (chr != null) {
-				TryTrigger(chr, AbilityDef.tkUnAssign, null);
-				chr.On_AbilityUnAssign(this);
-				On_UnAssign(chr);
-			}
-		}
-
-		[Summary("This method implements changing ability points")]
-		protected virtual void On_ValueChanged(Character ch, Ability ab, int previousValue) {
+		[Summary("This method implements the assigning of the first point to the Ability")]
+		protected virtual void On_UnAssign(Character ch, Ability ab) {
+			//ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
 		}
 
 		internal void Trigger_ValueChanged(Character chr, Ability ab, int previousValue) {
-			if (chr != null) {
-				TryTrigger(chr, AbilityDef.tkValueChanged, new ScriptArgs(ab, previousValue));
-				chr.On_AbilityValueChanged(ab, previousValue);
-				On_ValueChanged(chr, ab, previousValue);
+			ScriptArgs sa = new ScriptArgs(this, ab, previousValue);
+			chr.TryTrigger(AbilityDef.tkAbilityValueChanged, sa);
+			try {
+				chr.On_AbilityValueChanged(this, ab, previousValue);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+
+			this.TryTrigger(chr, AbilityDef.tkValueChanged, sa);
+			try {
+				this.On_ValueChanged(chr, ab, previousValue);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+
+			int newValue = ab.ModifiedPoints;
+			if (previousValue == 0) {
+				if (newValue > 0) {
+					this.Trigger_Assign(chr, ab, sa);
+				} else {
+					Logger.WriteWarning("previousValue == 0 && newValue == " + newValue, new System.Diagnostics.StackTrace());
+				}
+			} else if (newValue == 0) { //should mean that the previous value was positive
+				if (previousValue > 0) {
+					this.Trigger_UnAssign(chr, ab, sa);
+				} else {
+					Logger.WriteWarning("newValue == 0 && previousValue == " + previousValue, new System.Diagnostics.StackTrace());
+				}
 			}
+		}
+
+		protected virtual void On_ValueChanged(Character ch, Ability ab, int previousValue) {
 		}
 
 		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
@@ -286,12 +335,15 @@ namespace SteamEngine.CompiledScripts {
 
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			useDelay = InitTypedField("useDelay", 0, typeof(double));
-			maxPoints = InitTypedField("maxPoints", 0, typeof(ushort));
-			resourcesConsumed = InitTypedField("resourcesConsumed", null, typeof(ResourcesList));
-			resourcesPresent = InitTypelessField("resourcesPresent", null);
+			this.cooldown = InitTypedField("cooldown", 0, typeof(double));
+			this.chance = InitTypedField("chance", 1, typeof(double));
+			this.resourcesConsumed = InitTypedField("resourcesConsumed", null, typeof(ResourcesList));
+			this.resourcesPresent = InitTypelessField("resourcesPresent", null);
+			this.effectPower = InitTypedField("effectPower", 1.0, typeof(double));
+			this.effectDuration = InitTypedField("effectDuration", 5.0, typeof(double));			
 		}
 
+		#region Loading from scripts
 		public override void LoadScriptLines(PropsSection ps) {
 			PropsLine p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
@@ -311,29 +363,30 @@ namespace SteamEngine.CompiledScripts {
 			}
 			base.Unload();
 		}
+		#endregion Loading from scripts
 
 		#region utilities
 		[Summary("Method for sending clients messages about their attempt of ability usage")]
-		internal void SendAbilityResultMessage(Character toWhom, DenyResultAbilities res) {
+		internal void SendAbilityResultMessage(DenyResultAbilities res) {
 			switch (res) {
 				//case DenyResultAbilities.Allow:								
 				case DenyResultAbilities.Deny_DoesntHaveAbility:
-					toWhom.RedMessage("O abilitì " + Name + " nevíš vùbec nic");
+					Globals.SrcWriteLine("O abilitì " + this.Name + " nevíš vùbec nic");
 					break;
 				case DenyResultAbilities.Deny_TimerNotPassed:
-					toWhom.RedMessage("Abilitu nelze použít tak brzy po pøedchozím použití");
+					Globals.SrcWriteLine("Abilitu nelze použít tak brzy po pøedchozím použití");
 					break;
 				case DenyResultAbilities.Deny_WasSwitchedOff:
-					toWhom.SysMessage("Abilita " + Name + " byla vypnuta");
+					Globals.SrcWriteLine("Abilita " + this.Name + " byla vypnuta");
 					break;
 				case DenyResultAbilities.Deny_NotEnoughResourcesToConsume:
-					toWhom.RedMessage("Nedostatek zdrojù ke spotøebì pro spuštìní ability " + Name);
+					Globals.SrcWriteLine("Nedostatek zdrojù ke spotøebì pro spuštìní ability " + this.Name);
 					break;
 				case DenyResultAbilities.Deny_NotEnoughResourcesPresent:
-					toWhom.RedMessage("Nedostatek zdrojù pro spuštìní ability " + Name);
+					Globals.SrcWriteLine("Nedostatek zdrojù pro spuštìní ability " + this.Name);
 					break;
 				case DenyResultAbilities.Deny_NotAllowedToHaveThisAbility:
-					toWhom.RedMessage("Nejsi oprávnìn mít abilitu " + Name);
+					Globals.SrcWriteLine("Nejsi oprávnìn mít abilitu " + this.Name);
 					break;
 			}
 		}
@@ -359,10 +412,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public DenyResultAbilities Result {
 			get {
-				return (DenyResultAbilities) Convert.ToInt32(Argv[0]);
+				return (DenyResultAbilities) Convert.ToInt32(this.Argv[0]);
 			}
 			set {
-				Argv[0] = value;
+				this.Argv[0] = value;
 			}
 		}
 	}

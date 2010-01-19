@@ -14,9 +14,7 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate SpellEffectDurationPlugin : TimerPlugin]
-Vars:
-	double effect = 0
-	Thing source = null
-	SpellSourceType sourceType = SpellSourceType.Unknown
-	
+[PluginTemplate IgnitionActivatedPlugin : StatDrainingEffectDurationPlugin]
+
+
+[PluginTemplate IgnitionEffectPlugin : EffectDurationPlugin]

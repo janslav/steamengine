@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class StrModSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
-			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, (short) this.Effect, out this.strDifference);
+			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, (short) this.EffectPower, out this.strDifference);
 		}
 
 		public void On_UnAssign(Character cont) {
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class DexModSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
-			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, (short) this.Effect, out this.dexDifference);
+			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, (short) this.EffectPower, out this.dexDifference);
 		}
 
 		public void On_UnAssign(Character cont) {
@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class IntModSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
-			short shortEffect = (short) this.Effect;
+			short shortEffect = (short) this.EffectPower;
 
 			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
 			//also lower npc maxmana?
@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class BlessSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
-			short shortEffect = (short) this.Effect;
+			short shortEffect = (short) this.EffectPower;
 			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, shortEffect, out this.strDifference);
 			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, shortEffect, out this.dexDifference);
 			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class CurseSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
-			short shortEffect = (short) this.Effect;
+			short shortEffect = (short) this.EffectPower;
 
 			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, shortEffect, out this.strDifference);
 			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, shortEffect, out this.dexDifference);

@@ -25,24 +25,18 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Overall regeneration ancestor (hits, mana, stamina etc...). Allows specifying the regeneration speed coefficient.")]
+	[Summary("Stamina Regeneration")]
 	[ViewableClass]
-	public class RegenerationDef : PassiveAbilityDef {
-		private FieldValue regenSpeed;//how many points do we need to have to regenerate 1stat/1sec
+	public class StaminaRegenAbilityDef : PassiveAbilityDef {
 
-		public RegenerationDef(string defname, string filename, int headerLine)
+		public StaminaRegenAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			regenSpeed = InitTypedField("regenSpeedCoef", 10, typeof(ushort));
 		}
 
-		[InfoField("Regeneration Speed")]
-		public ushort RegenerationSpeed {
-			get {
-				return (ushort) regenSpeed.CurrentValue;
-			}
-			set {
-				regenSpeed.CurrentValue = value;
-			}
+		//recount regeneration speed
+		protected override void On_ValueChanged(Character ch, Ability ab, int previousValue) {
+			//add the difference (can be positive or negative)
+			ch.StamRegenSpeed += (ab.ModifiedPoints - previousValue) * EffectPower;
 		}
 	}
 }

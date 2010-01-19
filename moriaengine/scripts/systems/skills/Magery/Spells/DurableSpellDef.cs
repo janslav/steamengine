@@ -96,22 +96,24 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectChar(target, spellEffectArgs);
 
-			SpellSourceType sourceType = spellEffectArgs.SourceType;
+			EffectFlag effectFlag = spellEffectArgs.EffectFlag;
 			PluginKey key;
-			if (sourceType == SpellSourceType.Potion) {
+			if ((effectFlag & EffectFlag.FromPotion) == EffectFlag.FromPotion) {
 				key = this.EffectPluginKey_Potion;
-			} else {
+			} else if ((effectFlag & EffectFlag.FromSpellBook) == EffectFlag.FromSpellBook) {
 				key = this.EffectPluginKey_Spell;
+			} else {
+				throw new SEException("Undefined source type");
 			}
 
 			target.DeletePlugin(key);
 
 			Plugin plugin = this.EffectPluginDef.Create();
 
-			SpellEffectDurationPlugin durationPlugin = plugin as SpellEffectDurationPlugin;
+			EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
 			if (durationPlugin != null) {
 				int spellPower = spellEffectArgs.SpellPower;
-				durationPlugin.Init(spellEffectArgs.Caster, sourceType, this.GetEffectForValue(spellPower), TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)));
+				durationPlugin.Init(spellEffectArgs.Caster, effectFlag, this.GetEffectForValue(spellPower), TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)));
 			}
 			target.AddPlugin(key, plugin);
 		}

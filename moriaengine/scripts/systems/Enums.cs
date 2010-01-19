@@ -457,12 +457,17 @@ namespace SteamEngine.CompiledScripts {
 		Allied = 1, //same realm
 		Friendly = 2 //same guild/allied guild, party
 	}
+	
+	[Flags]
+	public enum EffectFlag {
+		Unknown = 0x00, None = 0x00, Zero = 0x00,
+		FromSpellBook = 0x01, FromBook = 0x01,
+		FromSpellScroll = 0x02, FromScroll = 0x02,
+		FromPotion = 0x04,
+		FromTrap = 0x08, //?
+		FromAbility = 0x10,
 
-	public enum SpellSourceType {
-		Unknown = 0, None = 0,
-		SpellBook = 1, Book = 1, 
-		SpellScroll = 2, Scroll = 2,
-		Potion = 3,
-		Trap = 4 //?
+		BeneficialEffect = 0x4000,
+		HarmfulEffect = 0x8000,
 	}
 }

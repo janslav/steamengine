@@ -14,5 +14,9 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate PoisonEffectPlugin : EffectDurationPlugin]
-
+[PluginTemplate EffectDurationPlugin : TimerPlugin]
+Vars:
+	double effectPower = 0
+	Thing source = null
+	EffectFlag sourceType = EffectFlag.Unknown
+	

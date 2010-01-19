@@ -25,87 +25,142 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("This class holds information about one ability the user has - the number of ability points " +
 			 "and any additional info (such as timers connected with the ability running etc.)")]
 	public sealed class Ability {
-		private int points;
-
+		private int realPoints;
+		private int modification;
 		private bool running;
-
 		private Character cont;
-
 		private AbilityDef def;
-
-		private double lastUsage;
+		private TimeSpan lastUsage;
 
 		internal Ability(AbilityDef def, Character cont) {
-			this.points = 0;
+			this.modification = 0;
+			this.realPoints = 0;
 			this.running = false;
 			this.cont = cont;
 			this.def = def;
 		}
 
-		[Summary("Get or set actual ability points for this ability. Considers using of triggers if necessary")]
-		public int Points {
+		[Summary("Character's ability points. This is the real value, i.e. unmodified my temporary effect, equipped magic items, etc.")]
+		public int RealPoints {
 			get {
-				return points;
+				return this.realPoints;
 			}
 			set {
-				int oldValue = this.points;
-				int newValue = Math.Min(0, Math.Max(value, this.MaxPoints)); //allow to go only in <0,this.MaxPoints>
-				if (oldValue != newValue) {//do we change at all?
-					this.points = newValue;
-					def.Trigger_ValueChanged(cont, this, oldValue); //call changetrigger with information about previous value
+				int oldValue = this.realPoints;
+				int newValue = Math.Min(0, value);
+				int diff = newValue - oldValue;
+				if (diff != 0) {
+					int oldModified = this.ModifiedPoints;
+					this.realPoints = newValue;
+					if (oldModified != this.ModifiedPoints) {
+						this.def.Trigger_ValueChanged(this.cont, this, oldModified); //call changetrigger with information about previous value
+					}
 
-					if (this.points == 0) { //removed last point(s)						
-						cont.RemoveAbility(def);//remove the ability from cont
+					if ((newValue == 0) && (this.modification == 0)) { //removed last point(s)						
+						this.cont.InternalRemoveAbility(def);
 					}
 				}
 			}
 		}
 
-		[Summary("Obtain max points this ability can be assigned")]
-		public ushort MaxPoints {
+
+		[Summary("Character's ability points. This is the modified value, which can be different from RealPoints when some temporary effects take place. " +
+			"When character dies, this value should become equal to RealPoints.")]
+		[Remark("This will never return a negative value, even if RealPoints+modification is negative. That's why the modification must be changed in a separate method.")]
+		public int ModifiedPoints {
 			get {
-				//call the method on the def, the max value can be dependant on the container's profession e.g.
-				return def.MaxPoints;
+				return Math.Max(0, this.realPoints + this.modification);
+			}
+		}
+
+		[Summary("Change the value of ModifiedPoints")]
+		public void ModifyPoints(int difference) {
+			if (difference != 0) {
+				int oldValue = this.ModifiedPoints;
+				this.modification += difference;
+				int newValue = this.ModifiedPoints;
+				if (oldValue != newValue) { //modified value may not have changed if we're still in negative numbers
+					this.def.Trigger_ValueChanged(this.cont, this, oldValue); //call changetrigger with information about previous value
+				}
+			}
+		}
+
+		[Summary("Obtain max points this ability can be assigned")]
+		public int MaxPoints {
+			get {
+				return 100; //TODO
 			}
 		}
 
 		[Summary("Is the ability actually running?")]
 		public bool Running {
 			get {
-				return running;
+				return this.running;
 			}
-			internal set {
-				running = value;
-			}
+		}
+
+		internal void InternalSetRunning(bool running) {
+			this.running = running;
 		}
 
 		public string Name {
 			get {
-				return def.Name;
+				return this.def.Name;
 			}
 		}
 
 		[Summary("Character who possesses this ability")]
 		public Character Cont {
 			get {
-				return cont;
+				return this.cont;
 			}
 		}
 
 		public AbilityDef AbilityDef {
 			get {
-				return def;
+				return this.def;
 			}
 		}
 
 		[Summary("Server time of the last usage")]
-		public double LastUsage {
+		public TimeSpan LastUsage {
 			get {
-				return lastUsage;
+				return this.lastUsage;
 			}
 			internal set {
-				lastUsage = value;
+				this.lastUsage = value;
 			}
+		}
+
+		internal string GetSaveString() {
+			if ((this.modification == 0) && (!this.running)) {
+				return this.realPoints.ToString();
+			} else {
+				if (this.running) {
+					return String.Concat(this.RealPoints.ToString(), ", ",
+						this.modification.ToString(), ", true");
+				}
+				return String.Concat(this.RealPoints.ToString(), ", ", this.modification.ToString());
+			}
+		}
+
+		internal bool LoadSavedString(string p) {
+			string[] split = Utility.SplitSphereString(p);
+			if (!ConvertTools.TryParseInt32(split[0], out this.realPoints)) {
+				return false;
+			}
+			int len = split.Length;
+			if (len > 0) {
+				if (!ConvertTools.TryParseInt32(split[1], out this.modification)) {
+					return false;
+				}
+			}
+			if (len > 1) {
+				if (!ConvertTools.TryParseBoolean(split[2], out this.running)) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }

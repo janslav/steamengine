@@ -204,7 +204,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		//we have to make sure that we are sorting a list of DictionaryEntries which are abilitydefs
-		//otherwise this will crash on some ClassCastException -)
+		//otherwise this will crash on some ClassCastException -) -ker
+		//not really. Compiler makes sure of that, this is no java :P -tar
 		public int Compare(AbilityDef x, AbilityDef y) {
 			return StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 		}

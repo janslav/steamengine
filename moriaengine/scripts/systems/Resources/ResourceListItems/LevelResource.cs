@@ -31,10 +31,10 @@ namespace SteamEngine.CompiledScripts {
 		#region IResourceListItem Members
 		public double DesiredCount {
 			get {
-				return number;
+				return this.number;
 			}
 			set {
-				number = value;
+				this.number = (int) value;
 			}
 		}
 
@@ -56,9 +56,11 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 
 		#region IResourceListItemNonMultiplicable Members
-		public bool IsResourcePresent(Player plr) {
-			return plr.Level >= DesiredCount;
+
+		public bool IsResourcePresent(Character chr) {
+			return ((Player) chr).Level >= DesiredCount;
 		}
+
 		#endregion
 	}
 }

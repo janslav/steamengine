@@ -44,34 +44,21 @@ namespace SteamEngine.Common {
 		[Conditional("TRACE")]
 		public static void IfTrueSay(bool b, string s) {
 			if (b) {
-				Logger.WriteError(s);
-				StackTrace();
+				Logger.WriteError(s, new StackTrace(true));
 			}
 		}
 
 		[Conditional("TRACE")]
 		public static void IfTrueSay(bool b, LogStr s) {
 			if (b) {
-				Logger.WriteError(s);
-				StackTrace();
+				Logger.WriteError(s, new StackTrace(true));
 			}
-		}
-
-		[Conditional("TRACE")]
-		public static void StackTrace() {
-			Console.WriteLine("Stack Trace:");
-			Console.WriteLine(Environment.StackTrace);
-			/*StackTrace st = new StackTrace(true);
-			for(int frameNum=0; frameNum<st.FrameCount; frameNum++) {
-				StackFrame frame=st.GetFrame(frameNum);
-				Console.WriteLine(" at "+frame.GetMethod()+" in "+frame.GetFileName()+": line "+frame.GetFileLineNumber());
-            }*/
 		}
 
 		[Conditional("TRACE")]
 		public static void StackTraceIf(bool condition) {
 			if (condition) {
-				StackTrace();
+				Logger.WriteError(new StackTrace(true));
 			}
 		}
 	}

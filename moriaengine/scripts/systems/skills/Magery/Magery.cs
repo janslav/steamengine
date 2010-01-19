@@ -117,17 +117,12 @@ namespace SteamEngine.CompiledScripts {
 			if (CanSeeTargetWithMessage(skillSeqArgs, self)) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 
-				SpellSourceType sourceType;
-				if (skillSeqArgs.Tool is SpellScroll) {
-					sourceType = SpellSourceType.SpellScroll;
-				} else {
-					sourceType = SpellSourceType.SpellBook; //we assume there is no other possibility (for now?)
-				}
+				bool isFromScroll = skillSeqArgs.Tool is SpellScroll;
 
-				int manaUse = spell.GetManaUse(sourceType);
+				int manaUse = spell.GetManaUse(isFromScroll);
 				int mana = self.Mana;
 				if (mana >= manaUse) {
-					if (sourceType == SpellSourceType.SpellBook) {
+					if (!isFromScroll) {
 						ResourcesList req = spell.Requirements;
 						ResourcesList res = spell.Resources;
 
@@ -138,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 							//? self.ClilocSysMessage(502630); // More reagents are needed for this spell.
 							return true;
 						}
-					} else if (sourceType == SpellSourceType.SpellScroll) {
+					} else {
 						skillSeqArgs.Tool.Consume(1);
 					}
 
@@ -197,12 +192,12 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 
-			SpellSourceType sourceType;
+			bool isFromScroll;
 			Item tool = skillSeqArgs.Tool;
 			if (tool != null) {
 				SpellBook book = skillSeqArgs.Tool as SpellBook;
 				if (book != null) {
-					sourceType = SpellSourceType.SpellBook;
+					isFromScroll = false;
 					if (book.IsDeleted || (book.TopObj() != self)) {
 						self.ClilocSysMessage(501608);	//You don't have a spellbook.
 						return false;
@@ -211,7 +206,7 @@ namespace SteamEngine.CompiledScripts {
 						return false;
 					}
 				} else if (tool is SpellScroll) { //it might be deleted by now, but we can still check for it's type...
-					sourceType = SpellSourceType.SpellScroll;
+					isFromScroll = true;
 				} else {
 					throw new SEBugException("Magery tool is neither book nor scroll?");
 				}
@@ -223,7 +218,7 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 
-			skillSeqArgs.Success = this.CheckSuccess(self, spell.GetDifficulty(sourceType));
+			skillSeqArgs.Success = this.CheckSuccess(self, spell.GetDifficulty(isFromScroll));
 
 			return false;
 		}
