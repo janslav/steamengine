@@ -68,7 +68,8 @@ basicResist=300
 basicMeditation=300
 
 //list allowed spells and abilities
-allowedSpells=s_nightsight, s_wall_of_stone, s_harm
+allowedSpells=s_nightsight,s_wall_of_stone
+//, s_harm
 
 allowedAbilities=a_regen_hits, a_regen_stam, a_regen_mana
 

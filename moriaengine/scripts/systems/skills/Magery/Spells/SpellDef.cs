@@ -90,9 +90,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override string ToString() {
-			return string.Concat(this.Defname, " (spellId ", this.Id.ToString(), ")");
-		}
+		//public override string ToString() {
+		//    return string.Concat(this.PrettyDefname, " (spellId ", this.Id.ToString(), ")");
+		//}
 
 		public int Id {
 			get {

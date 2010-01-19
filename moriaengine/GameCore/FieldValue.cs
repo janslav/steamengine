@@ -125,11 +125,25 @@ namespace SteamEngine {
 						object retVal = null;
 						if (value != null) {
 							if (value.Length > 0) {
-								//if ((type != null) && ((ConvertTools.IsNumberType(type)) || (fvType == FieldValueType.ThingDefType) || (fvType == FieldValueType.Model))
-								if (!ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
-									string statement = string.Concat("return(", value, ")");
-									retVal = SteamEngine.LScript.LScriptMain.RunSnippet(
-										tempVI.filename, tempVI.line, Globals.Instance, statement);
+								if ((this.fvType == FieldValueType.Typed) && (this.type.IsArray)) {
+									
+									if (this.type.GetArrayRank() > 1) {
+										throw new SEException("Can't use a multirank array in a FieldValue");
+									}
+									string[] sourceArray = Utility.SplitSphereString(value); //
+									Type elemType = this.type.GetElementType();
+									int n = sourceArray.Length;
+									Array resultArray = Array.CreateInstance(elemType, n);
+
+									for (int i = 0; i<n; i++) {
+										resultArray.SetValue(ConvertTools.ConvertTo(elemType,
+											ResolveSingleValue(tempVI, sourceArray[i], null)), 
+											i);
+									}
+
+									retVal = resultArray;
+								} else {
+									retVal = ResolveSingleValue(tempVI, value, retVal);
 								}
 							} else {
 								retVal = "";
@@ -161,6 +175,14 @@ namespace SteamEngine {
 			}
 		}
 
+		private object ResolveSingleValue(TemporaryValueImpl tempVI, string value, object retVal) {
+			if (!ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
+				string statement = string.Concat("return(", value, ")");
+				retVal = SteamEngine.LScript.LScriptMain.RunSnippet(
+					tempVI.filename, tempVI.line, Globals.Instance, statement);
+			}
+			return retVal;
+		}
 
 		private readonly static Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -499,60 +521,53 @@ namespace SteamEngine {
 				return obj;
 			}
 
+			private static object ConvertSingleValue(Type type, object value) {
+				string valueAsString = value as string;
+				if (typeof(AbstractScript).IsAssignableFrom(type) && valueAsString != null) {
+					valueAsString = valueAsString.Trim();
+					valueAsString = valueAsString.TrimStart('#');
+					AbstractScript script = AbstractScript.GetByDefname(valueAsString);
+					if (script != null) {
+						return script;
+					}
+				}
+				return GetInternStringIfPossible(TagMath.ConvertTo(type, value)); //ConvertTo will throw exception if impossible
+			}
+
 			internal override object Value {
 				get {
 					return val;
 				}
 				set {
-					string valueAsString = value as string;
-					bool valueIsString = (valueAsString != null);
-
-					if (type.IsInstanceOfType(value)) {
-						this.val = GetInternStringIfPossible(value);
-						return;
-					} else if (value == null) {
-						this.val = TagMath.ConvertTo(type, value);
-						return;
-					} else if (typeof(AbstractScript).IsAssignableFrom(type) && valueIsString) {
-						string str = valueAsString;
-						str = str.Trim();
-						str = str.TrimStart('#');
-						AbstractScript script = AbstractScript.GetByDefname(str);
-						if (script != null) {
-							this.val = script;
-							return;
-						}
-					} else {
-						Type valueType = value.GetType();
-
-						if (type.IsArray) {
-							Array arr;
-							Array retVal;
+					if (value != null) {
+						Type sourceType = value.GetType();
+						if ((sourceType != this.type) && (type.IsArray)) {
+							Array sourceArray;
+							Array resultArray;
 							Type elemType = type.GetElementType();
-							if (valueType.IsArray) {//we must change the element type
-								arr = (Array) value;
-							} else if (valueIsString) {
-								arr = Utility.SplitSphereString(valueAsString);
+							if (sourceType.IsArray) {//we must change the element type
+								if (sourceType.GetArrayRank() > 1) {
+									throw new SEException("Can't use a multirank array in a FieldValue");
+								}
+								sourceArray = (Array) value;
+							} else if (value is String) {
+								sourceArray = Utility.SplitSphereString((string) value); //
 							} else {
-								retVal = Array.CreateInstance(elemType, 1);
-								retVal.SetValue(TagMath.ConvertTo(elemType, value), 0);
-								this.val = TagMath.ConvertTo(type, retVal);
-								return;
+								sourceArray = new object[] { value }; //just wrap it in a 1-element array, gets converted in the next step
 							}
 
-							int n = arr.Length;
-							retVal = Array.CreateInstance(elemType, n);
+							int n = sourceArray.Length;
+							resultArray = Array.CreateInstance(elemType, n);
 							for (int i = 0; i < n; i++) {
-								retVal.SetValue(
-									TagMath.ConvertTo(elemType, arr.GetValue(i)), i);
+								resultArray.SetValue(
+									ConvertSingleValue(elemType, sourceArray.GetValue(i)), i);
 							}
 
-							this.val = TagMath.ConvertTo(type, retVal);//this should actually do nothing, just for check
+							this.val = TagMath.ConvertTo(type, resultArray); //this should actually do nothing, just for check
 							return;
 						}
-
 					}
-					this.val = GetInternStringIfPossible(TagMath.ConvertTo(type, value));
+					this.val = ConvertSingleValue(type, value);
 				}
 			}
 		}

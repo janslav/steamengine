@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				int oldValue = this.realPoints;
-				int newValue = Math.Min(0, value);
+				int newValue = Math.Max(0, value);
 				int diff = newValue - oldValue;
 				if (diff != 0) {
 					int oldModified = this.ModifiedPoints;
@@ -150,12 +150,12 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 			int len = split.Length;
-			if (len > 0) {
+			if (len > 1) {
 				if (!ConvertTools.TryParseInt32(split[1], out this.modification)) {
 					return false;
 				}
 			}
-			if (len > 1) {
+			if (len > 2) {
 				if (!ConvertTools.TryParseBoolean(split[2], out this.running)) {
 					return false;
 				}

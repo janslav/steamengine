@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Dictionary of character's skills and abilities. Key is (ability/skill)def, value is instance of " +
 				"Ability/Skill object of the desired entity")]
-		private Dictionary<AbstractDef, object> skillsabilities = null;
+		private Dictionary<AbstractDef, object> skillsabilities;
 
 		float weight;
 		private CharModelInfo charModelInfo;
@@ -1283,13 +1283,22 @@ namespace SteamEngine.CompiledScripts {
 			throw new SEException(factory + " did not create an equippable item.");
 		}
 
+		private Dictionary<AbstractDef, object> SkillsAbilities {
+			get {
+				if (this.skillsabilities == null) {
+					this.skillsabilities = new Dictionary<AbstractDef, object>();
+				}
+				return this.skillsabilities;
+			}
+		}
+
 		public override void On_Dupe(Thing model) {
 			Character copyFrom = (Character) model;
 
 			//rewritten using dictionary of skills and abilities
 			foreach (Skill skl in copyFrom.Skills) {
 				Skill newSkill = new Skill(skl, this); //create a copy
-				this.skillsabilities.Add(SkillDef.GetById(newSkill.Id), newSkill);//add to the duped char's storage
+				this.SkillsAbilities.Add(SkillDef.GetById(newSkill.Id), newSkill);//add to the duped char's storage
 			}
 
 			//if (copyFrom.skills != null) {
@@ -1473,7 +1482,7 @@ namespace SteamEngine.CompiledScripts {
 		private void AddNewSkill(int id, SkillLockType type) {
 			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
 			ISkill skl = new Skill((ushort) id, this);
-			this.skillsabilities[newSkillDef] = skl; //add to dict
+			this.SkillsAbilities[newSkillDef] = skl; //add to dict
 			skl.Lock = type; //set lock type
 		}
 
@@ -1481,7 +1490,7 @@ namespace SteamEngine.CompiledScripts {
 		private void AddNewSkill(int id, int value, int cap) {
 			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
 			ISkill skl = new Skill(id, this);
-			this.skillsabilities[newSkillDef] = skl; //add to dict
+			this.SkillsAbilities[newSkillDef] = skl; //add to dict
 			skl.RealValue = value; //set value
 			skl.Cap = cap; //set lock type
 		}
@@ -1489,7 +1498,7 @@ namespace SteamEngine.CompiledScripts {
 		internal void InternalRemoveSkill(int id) {
 			CharSyncQueue.AboutToChangeSkill(this, id);
 			AbstractSkillDef aDef = AbstractSkillDef.GetById(id);
-			this.skillsabilities.Remove(aDef);
+			this.SkillsAbilities.Remove(aDef);
 		}
 
 		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
@@ -1643,17 +1652,22 @@ namespace SteamEngine.CompiledScripts {
 		public bool HasAbility(AbilityDef aDef, out Ability abil) {
 			abil = null;
 			object retVal = null;
-			bool hasOrNot = this.skillsabilities.TryGetValue(aDef, out retVal);
-			if (hasOrNot) {
-				abil = (Ability) retVal; //found ability, cast the return value
+			bool has = false;
+			if (this.skillsabilities != null) {
+				has = this.skillsabilities.TryGetValue(aDef, out retVal);
+				if (has) {
+					abil = (Ability) retVal; //found ability, cast the return value
+				}
 			}
 
-			return hasOrNot;
+			return has;
 		}
 
 		public Ability GetAbilityObject(AbilityDef aDef) {
 			object retVal = null;
-			this.skillsabilities.TryGetValue(aDef, out retVal);
+			if (this.skillsabilities != null) {
+				this.skillsabilities.TryGetValue(aDef, out retVal);
+			}
 			return (Ability) retVal; //either null or Ability instance if the player has it
 		}
 
@@ -1678,13 +1692,14 @@ namespace SteamEngine.CompiledScripts {
 		private Ability AcquireAbilityObject(AbilityDef def) {
 			Ability ab;
 			if (!this.HasAbility(def, out ab)) {
-				this.skillsabilities.Add(def, ab);
+				ab = new Ability(def, this);
+				this.SkillsAbilities.Add(def, ab);
 			}
 			return ab;
 		}
 
 		internal void InternalRemoveAbility(AbilityDef aDef) {
-			this.skillsabilities.Remove(aDef);
+			this.SkillsAbilities.Remove(aDef);
 		}
 
 		internal virtual void On_AbilityValueChanged(AbilityDef aDef, Ability ab, int previousValue) {

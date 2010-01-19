@@ -51,4 +51,4 @@ Requirements=70.0 Magery
 EffectFactory.StationaryEffectAt(this, 0x376A, 9, 20)
 
 [function f_dispellEffect_item]
-EffectFactory.StationaryEffect(this, 0x3728, 8, 20)
+EffectFactory.StationaryEffectAt(this, 0x3728, 8, 20)

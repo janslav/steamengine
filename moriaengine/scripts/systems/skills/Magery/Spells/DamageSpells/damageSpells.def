@@ -143,11 +143,14 @@ CASTTIME=2.8
 RUNEITEM=i_rune_FLAMESTRIKE
 SCROLLITEM=i_scroll_FLAMESTRIKE
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-//EFFECTID=03709
+DamageType = DamageType.MagicFire
 EFFECT=0,35
 
 MANAUSE=40
 Requirements=70.0 Magery
+
+on=@effectChar
+	EffectFactory.StationaryEffect(this, 0x3709, 10, 30)
 
 [SpellDef 55]//utocne
 // NOTE: Does Meteor Swarm have a duration or does it just send out one blast of 'rocks' ??? IF a duration then certainly no more the 30secs IMO.
