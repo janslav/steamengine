@@ -1,5 +1,5 @@
 [WarcryDef a_warcry]
 name="Warcry"
-maxPoints=10
+//maxPoints=10
 useDelay = 180
 effectDuration = 10

@@ -1,6 +1,6 @@
 [StatDrainingAbility a_ignition]
 Name="Ignition"
-MaxPoints=10
+//MaxPoints=10
 ManaDrain=1
 EffectPower=1
 EffectDuration=60

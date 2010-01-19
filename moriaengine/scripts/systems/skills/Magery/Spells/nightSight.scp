@@ -19,7 +19,7 @@ EffectPluginKey_Potion = @@potionEffect_nightSight
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x376A, 9, 32)
 
-[SpellEffectDurationPluginDef p_nightSightSpellEffect]
+[EffectDurationPluginDef p_nightSightSpellEffect]
 on=@assign
 	this.Cont.PersonalLightLevel = this.Cont.PersonalLightLevel + this.Effect
 
