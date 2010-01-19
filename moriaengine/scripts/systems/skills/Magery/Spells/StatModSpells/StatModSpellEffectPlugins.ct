@@ -13,29 +13,29 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[PluginTemplate IntModSpellEffectPlugin : SpellEffectDurationPlugin]
+[PluginTemplate IntModSpellEffectPlugin : EffectDurationPlugin]
 Vars:
 	public short intDifference = 0
 
 
-[PluginTemplate StrModSpellEffectPlugin : SpellEffectDurationPlugin]
+[PluginTemplate StrModSpellEffectPlugin : EffectDurationPlugin]
 Vars:
 	public short strDifference = 0
 
 
-[PluginTemplate DexModSpellEffectPlugin : SpellEffectDurationPlugin]
+[PluginTemplate DexModSpellEffectPlugin : EffectDurationPlugin]
 Vars:
 	public short dexDifference = 0
 
 
-[PluginTemplate BlessSpellEffectPlugin : SpellEffectDurationPlugin]
+[PluginTemplate BlessSpellEffectPlugin : EffectDurationPlugin]
 Vars:
 	public short intDifference = 0
 	public short dexDifference = 0
 	public short strDifference = 0
 
 
-[PluginTemplate CurseSpellEffectPlugin : SpellEffectDurationPlugin]
+[PluginTemplate CurseSpellEffectPlugin : EffectDurationPlugin]
 Vars:
 	public short intDifference = 0
 	public short dexDifference = 0

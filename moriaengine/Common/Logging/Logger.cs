@@ -89,10 +89,10 @@ namespace SteamEngine.Common {
 				LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
 		}
 
-		//public static void WriteFatal(string file, object line, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
-		//}
+		public static void WriteFatal(string file, object line, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
+		}
 
 		public static void WriteFatal(LogStr msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -114,10 +114,10 @@ namespace SteamEngine.Common {
 				LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
 		}
 
-		//public static void WriteFatal(LogStr msg, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
-		//}
+		public static void WriteFatal(LogStr msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+		}
 
 		public static void WriteFatal(string msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -139,10 +139,10 @@ namespace SteamEngine.Common {
 				LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
-		//public static void WriteFatal(string msg, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
-		//}
+		public static void WriteFatal(string msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+		}
 
 		public static void WriteFatal(object data) {
 			WriteLine(LogStr.Concat(
@@ -164,10 +164,10 @@ namespace SteamEngine.Common {
 				LogStr.Fatal("FATAL: "), ErrText(data)));
 		}
 
-		//public static void WriteFatal(SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Fatal("FATAL: "), ErrText(data)));
-		//}
+		public static void WriteFatal(StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Fatal("FATAL: "), ErrText(data)));
+		}
 
 		#endregion WriteFatal
 
@@ -192,10 +192,10 @@ namespace SteamEngine.Common {
 				LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
 		}
 
-		//public static void WriteCritical(string file, object line, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
-		//}
+		public static void WriteCritical(string file, object line, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
+		}
 
 		public static void WriteCritical(LogStr msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -217,10 +217,10 @@ namespace SteamEngine.Common {
 				LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
 		}
 
-		//public static void WriteCritical(LogStr msg, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
-		//}
+		public static void WriteCritical(LogStr msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+		}
 
 		public static void WriteCritical(string msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -242,10 +242,10 @@ namespace SteamEngine.Common {
 				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
-		//public static void WriteCritical(string msg, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
-		//}
+		public static void WriteCritical(string msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+		}
 
 		public static void WriteCritical(object data) {
 			WriteLine(LogStr.Concat(
@@ -267,10 +267,10 @@ namespace SteamEngine.Common {
 				LogStr.Critical("CRITICAL: "), ErrText(data)));
 		}
 
-		//public static void WriteCritical(SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Critical("CRITICAL: "), ErrText(data)));
-		//}
+		public static void WriteCritical(StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Critical("CRITICAL: "), ErrText(data)));
+		}
 
 		#endregion WriteCritical
 
@@ -295,10 +295,10 @@ namespace SteamEngine.Common {
 				LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
 		}
 
-		//public static void WriteError(string file, object line, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
-		//}
+		public static void WriteError(string file, object line, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
+		}
 
 		public static void WriteError(LogStr msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -320,10 +320,10 @@ namespace SteamEngine.Common {
 				LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
 		}
 
-		//public static void WriteError(LogStr msg, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
-		//}
+		public static void WriteError(LogStr msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
+		}
 
 		public static void WriteError(string msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -345,10 +345,10 @@ namespace SteamEngine.Common {
 				LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
-		//public static void WriteError(string msg, SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
-		//}
+		public static void WriteError(string msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
+		}
 
 		public static void WriteError(object data) {
 			WriteLine(LogStr.Concat(
@@ -370,10 +370,10 @@ namespace SteamEngine.Common {
 				LogStr.Error("ERROR: "), ErrText(data)));
 		}
 
-		//public static void WriteError(SEException data) {
-		//    instance.WriteLine(LogStr.Concat(
-		//        LogStr.Error("ERROR: "), ErrText(data)));
-		//}
+		public static void WriteError(StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Error("ERROR: "), ErrText(data)));
+		}
 
 		#endregion WriteError
 
@@ -398,10 +398,10 @@ namespace SteamEngine.Common {
 				LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
 		}
 
-		//public static void WriteWarning(string file, object line, SEException data) {
-		//    WriteLine(LogStr.Concat(
-		//        LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
-		//}
+		public static void WriteWarning(string file, object line, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
+		}
 
 		public static void WriteWarning(LogStr msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -423,10 +423,10 @@ namespace SteamEngine.Common {
 				LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
 		}
 
-		//public static void WriteWarning(LogStr msg, SEException data) {
-		//    WriteLine(LogStr.Concat(
-		//        LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
-		//}
+		public static void WriteWarning(LogStr msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
+		}
 
 		public static void WriteWarning(string msg, object data) {
 			WriteLine(LogStr.Concat(
@@ -448,10 +448,10 @@ namespace SteamEngine.Common {
 				LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
 		}
 
-		//public static void WriteWarning(string msg, SEException data) {
-		//    WriteLine(LogStr.Concat(
-		//        LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
-		//}
+		public static void WriteWarning(string msg, StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
+		}
 
 		public static void WriteWarning(object data) {
 			WriteLine(LogStr.Concat(
@@ -473,10 +473,10 @@ namespace SteamEngine.Common {
 				LogStr.Warning("WARNING: "), ErrText(data)));
 		}
 
-		//public static void WriteWarning(SEException data) {
-		//    WriteLine(LogStr.Concat(
-		//        LogStr.Warning("WARNING: "), ErrText(data)));
-		//}
+		public static void WriteWarning(StackTrace data) {
+			WriteLine(LogStr.Concat(
+				LogStr.Warning("WARNING: "), ErrText(data)));
+		}
 
 		#endregion WriteWarning
 
@@ -501,10 +501,10 @@ namespace SteamEngine.Common {
 			WriteLine(LogStr.Debug("(D) " + ErrText(data)));
 		}
 
-		//[Conditional("DEBUG")]
-		//public static void WriteDebug(SEException data) {
-		//    instance.WriteLine(LogStr.Debug("(D) " + ErrText(data)));
-		//}
+		[Conditional("DEBUG")]
+		public static void WriteDebug(StackTrace data) {
+			WriteLine(LogStr.Debug("(D) " + ErrText(data)));
+		}
 		#endregion WriteDebug
 
 		#region WriteInfo
@@ -538,7 +538,7 @@ namespace SteamEngine.Common {
 			}
 		}
 		[Conditional("TRACE")]
-		public static void WriteInfo(bool ifTrue, SEException txt) {
+		public static void WriteInfo(bool ifTrue, StackTrace txt) {
 			if (ifTrue) {
 				WriteLine("Info: " + LogStr.Highlight(txt));
 			}
@@ -555,6 +555,10 @@ namespace SteamEngine.Common {
 			if (ls != null) {
 				return ErrText(ls);
 			}
+			StackTrace stackTrace = data as StackTrace;
+			if (stackTrace != null) {
+				return ErrText(stackTrace);
+			}
 			return ErrText(String.Concat(data));
 		}
 
@@ -570,17 +574,27 @@ namespace SteamEngine.Common {
 			if (e != null) {
 				LogStrBuilder builder = new LogStrBuilder();
 				string str = "\t";
-				RenderStackTrace(ref str, builder, e);
+				RenderException(ref str, builder, e);
 				return builder.ToLogStr();
 			} else {
 				return LogStr.Raw("");
 			}
 		}
 
-		private static void RenderStackTrace(ref string leftPad, LogStrBuilder builder, Exception e) {
+		public static LogStr ErrText(StackTrace stackTrace) {
+			if (stackTrace != null) {
+				LogStrBuilder builder = new LogStrBuilder();
+				RenderStackTrace("\t", builder, stackTrace);
+				return builder.ToLogStr();
+			} else {
+				return LogStr.Raw("");
+			}
+		}
+
+		internal static void RenderException(ref string leftPad, LogStrBuilder builder, Exception e) {
 			Exception innerEx = e.InnerException;
 			if (innerEx != null) {
-				RenderStackTrace(ref leftPad, builder, innerEx);
+				RenderException(ref leftPad, builder, innerEx);
 				//builder.Append(Environment.NewLine);
 				//builder.Append(leftPad);
 				builder.Append(" ---> ");
@@ -594,6 +608,11 @@ namespace SteamEngine.Common {
 			}
 
 			StackTrace trace = new StackTrace(e, true);
+			RenderStackTrace(leftPad, builder, trace);
+			leftPad += "\t";
+		}
+
+		private static void RenderStackTrace(string leftPad, LogStrBuilder builder, StackTrace trace) {
 			int n = trace.FrameCount;
 
 			for (int i = 0; i < n; i++) {
@@ -658,7 +677,6 @@ namespace SteamEngine.Common {
 					}
 				}
 			}
-			leftPad += "\t";
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]

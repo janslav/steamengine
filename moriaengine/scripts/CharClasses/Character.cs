@@ -1289,7 +1289,7 @@ namespace SteamEngine.CompiledScripts {
 			//rewritten using dictionary of skills and abilities
 			foreach (Skill skl in copyFrom.Skills) {
 				Skill newSkill = new Skill(skl, this); //create a copy
-				SkillsAbilities.Add(SkillDef.GetById(newSkill.Id), newSkill);//add to the duped char's storage
+				this.skillsabilities.Add(SkillDef.GetById(newSkill.Id), newSkill);//add to the duped char's storage
 			}
 
 			//if (copyFrom.skills != null) {
@@ -1323,10 +1323,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//now abilities
 			foreach (Ability ab in Abilities) {
-				int points = ab.Points;
-				if (points != 0) {
-					output.WriteValue(ab.AbilityDef.Defname, points);
-				}
+				output.WriteLine(String.Concat(ab.AbilityDef.Defname, "=", ab.GetSaveString()));
 			}
 
 			base.On_Save(output);
@@ -1378,10 +1375,8 @@ namespace SteamEngine.CompiledScripts {
 				string defName = abDef.Defname;
 				PropsLine ps = input.TryPopPropsLine(defName);
 				if (ps != null) {
-					int val;
-					if (TagMath.TryParseInt32(ps.Value, out val)) {
-						AddNewAbility(abDef, val);
-					} else {
+					Ability ab = this.AcquireAbilityObject(abDef);
+					if (!ab.LoadSavedString(ps.Value)) {
 						Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
 					}
 				}
@@ -1394,7 +1389,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Enumerator of all character's skills")]
 		public override IEnumerable<ISkill> Skills {
 			get {
-				return new SkillsEnumerator(this);
+				return new SkillsEnumerator(this.skillsabilities);
 			}
 		}
 
@@ -1478,7 +1473,7 @@ namespace SteamEngine.CompiledScripts {
 		private void AddNewSkill(int id, SkillLockType type) {
 			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
 			ISkill skl = new Skill((ushort) id, this);
-			SkillsAbilities[newSkillDef] = skl; //add to dict
+			this.skillsabilities[newSkillDef] = skl; //add to dict
 			skl.Lock = type; //set lock type
 		}
 
@@ -1486,7 +1481,7 @@ namespace SteamEngine.CompiledScripts {
 		private void AddNewSkill(int id, int value, int cap) {
 			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
 			ISkill skl = new Skill(id, this);
-			SkillsAbilities[newSkillDef] = skl; //add to dict
+			this.skillsabilities[newSkillDef] = skl; //add to dict
 			skl.RealValue = value; //set value
 			skl.Cap = cap; //set lock type
 		}
@@ -1494,7 +1489,7 @@ namespace SteamEngine.CompiledScripts {
 		internal void InternalRemoveSkill(int id) {
 			CharSyncQueue.AboutToChangeSkill(this, id);
 			AbstractSkillDef aDef = AbstractSkillDef.GetById(id);
-			SkillsAbilities.Remove(aDef);
+			this.skillsabilities.Remove(aDef);
 		}
 
 		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
@@ -1632,20 +1627,15 @@ namespace SteamEngine.CompiledScripts {
 		//}
 		#endregion Skills
 
-		internal Dictionary<AbstractDef, object> SkillsAbilities {
-			get {
-				if (skillsabilities == null) {
-					skillsabilities = new Dictionary<AbstractDef, object>();
-				}
-				return skillsabilities;
-			}
+		#region abilities
+		public void ActivateAbility(AbilityDef aDef) {
+			aDef.Activate(this);
 		}
 
-		#region abilities
 		[Summary("Enumerator of all character's abilities")]
 		public IEnumerable<Ability> Abilities {
 			get {
-				return new AbilitiesEnumerator(this);
+				return new AbilitiesEnumerator(this.skillsabilities);
 			}
 		}
 
@@ -1653,7 +1643,7 @@ namespace SteamEngine.CompiledScripts {
 		public bool HasAbility(AbilityDef aDef, out Ability abil) {
 			abil = null;
 			object retVal = null;
-			bool hasOrNot = SkillsAbilities.TryGetValue(aDef, out retVal);
+			bool hasOrNot = this.skillsabilities.TryGetValue(aDef, out retVal);
 			if (hasOrNot) {
 				abil = (Ability) retVal; //found ability, cast the return value
 			}
@@ -1663,83 +1653,56 @@ namespace SteamEngine.CompiledScripts {
 
 		public Ability GetAbilityObject(AbilityDef aDef) {
 			object retVal = null;
-			SkillsAbilities.TryGetValue(aDef, out retVal);
+			this.skillsabilities.TryGetValue(aDef, out retVal);
 			return (Ability) retVal; //either null or Ability instance if the player has it
 		}
 
-		[Summary("Get number of points the character has for specified AbilityDef (0 if he doesnt have it at all)")]
+		[Summary("Get number of modified points the character has for specified AbilityDef. Equals getting the ModifiedPoints property value on the Ability object directly.")]
 		public int GetAbility(AbilityDef aDef) {
 			Ability retAb = GetAbilityObject(aDef);
-			return (retAb == null ? 0 : retAb.Points); //either null or Ability.Points if the player has it
+			return (retAb == null ? 0 : retAb.ModifiedPoints); //either null or Ability.Points if the player has it
 		}
 
-		[Summary("Add specified number of points the character has for specified AbilityDef. If the result is" +
-				"<= 0 then we will remove the ability")]
-		public void AddAbilityPoints(AbilityDef aDef, int points) {
-			Ability ab = GetAbilityObject(aDef);
-			if (ab != null) {
-				ab.Points += points;
-			} else if (points > 0) { //we wont create a new ability with 0 or <0 number of points!
-				AddNewAbility(aDef, points);
+		[Summary("Modifies the points of the Ability by given diference. Equals calling ModifyPoints on the Ability object directly.")]
+		public void ModifyAbilityPoints(AbilityDef aDef, int difference) {
+			Ability ab = this.AcquireAbilityObject(aDef);
+			ab.ModifyPoints(difference);
+		}
+
+		[Summary("Set specified number of real points the character has for specified AbilityDef. Equals setting the RealPoints property on the Ability object directly.")]
+		public void SetRealAbilityPoints(AbilityDef aDef, int points) {
+			Ability ab = this.AcquireAbilityObject(aDef);
+			ab.RealPoints = points;
+		}
+
+		private Ability AcquireAbilityObject(AbilityDef def) {
+			Ability ab;
+			if (!this.HasAbility(def, out ab)) {
+				this.skillsabilities.Add(def, ab);
 			}
+			return ab;
 		}
 
-		[Summary("Set specified number of points the character has for specified AbilityDef, check for positive value afterwards.")]
-		public void SetAbilityPoints(AbilityDef aDef, int points) {
-			Ability ab = GetAbilityObject(aDef);
-			if (ab != null) {
-				ab.Points = points;
-			} else if (points > 0) { //we wont create a new ability with 0 or <0 number of points!
-				AddNewAbility(aDef, points);
-			}
+		internal void InternalRemoveAbility(AbilityDef aDef) {
+			this.skillsabilities.Remove(aDef);
 		}
 
-		private void AddNewAbility(AbilityDef aDef, int points) {
-			Ability ab = aDef.Create(this);
-
-			DenyAbilityArgs args = new DenyAbilityArgs(this, aDef, ab);
-			bool cancelAssign = aDef.Trigger_DenyAssign(args); //return value means only that the trigger has been cancelled
-			DenyResultAbilities retVal = args.Result;//this value contains the info if we can or cannot assign the ability
-
-			if (retVal == DenyResultAbilities.Allow) {
-				SkillsAbilities.Add(aDef, ab); //first add the object to the dictionary			
-				ab.Points = points; //then set points
-				aDef.Trigger_Assign(this); //then call the assign trigger
-			}
-			aDef.SendAbilityResultMessage(this, retVal); //send result(message) of the "activate" call to the client
+		internal virtual void On_AbilityValueChanged(AbilityDef aDef, Ability ab, int previousValue) {
 		}
 
-		internal void RemoveAbility(AbilityDef aDef) {
-			SkillsAbilities.Remove(aDef);
-			aDef.Trigger_UnAssign(this); //then call the unassign trigger
-		}
-
-		internal virtual void On_AbilityAssign(AbilityDef aDef) {
-		}
-
-		internal virtual void On_AbilityUnAssign(AbilityDef aDef) {
-		}
-
-		internal virtual void On_AbilityValueChanged(Ability ab, int previousValue) {
-		}
-
-		internal virtual bool On_AbilityActivate(AbilityDef aDef) {
+		internal virtual bool On_DenyActivateAbility(DenyAbilityArgs args) {
 			return false;
 		}
 
-		internal virtual void On_AbilityUnActivate(AbilityDef aDef) {
-		}
-
-		internal virtual bool On_AbilityDenyUse(DenyAbilityArgs args) {
-			//args contain DenyResultAbilities, Character, AbilityDef and Ability as parameters 
-			//(Ability can be null)
+		internal virtual bool On_ActivateAbility(AbilityDef aDef, Ability ab) {
 			return false;
 		}
 
-		internal virtual bool On_AbilityDenyAssign(DenyAbilityArgs args) {
-			//args contain DenyResultAbilities, Character, AbilityDef and Ability as parameters 
-			//(Ability can be null)
+		internal virtual bool On_UnActivateAbility(ActivableAbilityDef aDef, Ability ab) {
 			return false;
+		}
+
+		internal virtual void On_AbilityUnActivate(AbilityDef aDef, Ability ab) {
 		}
 		#endregion abilities
 
@@ -1768,6 +1731,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public virtual bool On_SpellEffect(SpellEffectArgs spellEffectArgs) {
+			return false;
+		}
+
+		public virtual bool On_CauseSpellEffect(IPoint3D target, SpellEffectArgs spellEffectArgs) {
 			return false;
 		}
 
@@ -1977,16 +1944,6 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Message displayed in green - used for ingame purposes")]
 		public void InfoMessage(string arg) {
 			SysMessage(arg, (int) Hues.Info);
-		}
-
-
-		public short Experience {
-			get {
-				return experience;
-			}
-			set {
-				experience = value;
-			}
 		}
 
 		public Item Hair {

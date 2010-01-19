@@ -31,10 +31,10 @@ namespace SteamEngine.CompiledScripts {
 			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
 	[ViewableClass]
 	public class ActivableAbilityDef : AbilityDef {
-		internal static readonly TriggerKey tkUnActivate = TriggerKey.Acquire("UnActivate");
+		internal static readonly TriggerKey tkUnActivate = TriggerKey.Acquire("unActivate");
+		internal static readonly TriggerKey tkUnActivateAbility = TriggerKey.Acquire("unActivateAbility");
 
 		//fields for storing the keys (comming from LScript or set in constructor of children)
-		private FieldValue triggerGroup;
 		private FieldValue pluginDef;
 		private FieldValue pluginKey;
 
@@ -44,90 +44,103 @@ namespace SteamEngine.CompiledScripts {
 			//the field will be in the LScript as follows:
 			//[ActivableAbilityDef a_bility]
 			//...
-			//triggerGroup=t_some_triggergroup
 			//pluginDef=p_some_plugindef
-			//pluginKey=p_some_pluginkey
-			//these values will be then used for assigning TG / plugin to the ability holder
+			//pluginKey=some_pluginkey
+			//these values will be then used for assigning plugin to the ability holder
 			//...
 			//we expect the values from Lscript as follows
-			triggerGroup = InitTypedField("triggerGroup", null, typeof(TriggerGroup)); //which trigger group will be stored on ability holder
+			//triggerGroup = InitTypedField("triggerGroup", null, typeof(TriggerGroup)); //which trigger group will be stored on ability holder
 			pluginDef = InitTypedField("pluginDef", null, typeof(PluginDef)); //which plugin will be stored on ability holder
 			pluginKey = InitTypedField("pluginKey", null, typeof(PluginKey)); //how the plugin will be stored on ability holder
 		}
 
-		[Summary("Check the ability on the character, if he has it, chesk its state and decide what to do next." +
-				"If its is running - deactivate, otherwise - activate.")]
-		public void ActivateOrUnactivate(Character chr) {
+		[Summary("If its is running - deactivate, otherwise - activate.")]
+		public void Switch(Character chr) {
 			Ability ab = chr.GetAbilityObject(this);
-			if (ab != null || ab.Points > 0) {//"0th" common check - do we have the ability?
-				if (ab.Running) {
-					UnActivate(chr, ab);
-				} else {
-					Activate(chr);//try to activate
-				}
+			if ((ab != null) && (ab.Running)) {
+				this.PrivateUnActivate(chr, ab);
 			} else {
-				SendAbilityResultMessage(chr, DenyResultAbilities.Deny_DoesntHaveAbility);
+				this.Activate(chr);//try to activate
 			}
 		}
 
-		[Summary("Common method for simple switching the ability off")]
-		private void UnActivate(Character chr) {
+		public override void Activate(Character chr) {
+			Ability ab = chr.GetAbilityObject(this);
+			if ((ab != null) && (ab.Running)) {
+				//? throw new SEException(this + " already running");
+			} else {
+				base.Activate(chr);
+				if (ab != null) {
+					ab.InternalSetRunning(true);
+				}
+			}
+		}
+
+		[Summary("C# based @activate trigger method, Overriden from parent - add Plugin to ability holder")]
+		protected override bool On_Activate(Character chr, Ability ab) {
+			PluginDef def = this.PluginDef;
+			if (def != null) {
+				Plugin plugin = def.Create();
+				EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
+				if (durationPlugin != null) {
+					durationPlugin.Init(chr, EffectFlag.BeneficialEffect | EffectFlag.FromAbility,
+						this.EffectPower, TimeSpan.MinValue);
+				}
+				chr.AddPlugin(this.PluginKey, plugin);
+			}
+			return base.On_Activate(chr, ab);
+		}
+
+		public void UnActivate(Character chr) {
 			Ability ab = chr.GetAbilityObject(this); //will return null if the ability was unassigned
-			UnActivate(chr, ab);
+			if ((ab != null) && (ab.Running)) {
+				this.PrivateUnActivate(chr, ab);
+			} else {
+				//? throw new SEException(this + " not running.");
+			}			
 		}
 
-		private void UnActivate(Character chr, Ability ab) {
-			if (ab != null && ab.Running) { //do it only if present and running
-				//might have been zeroed (removed) int his case just call the trigger
-				ab.Running = false;
+		//only call when we know we need to unactivate
+		private void PrivateUnActivate(Character chr, Ability ab) {
+			ab.InternalSetRunning(false);
+			this.Trigger_UnActivate(chr, ab); //ability is running, do the triggers (usually to remove triggergroup / plugin)			
+		}
+
+		private void Trigger_UnActivate(Character chr, Ability ab) {
+			ScriptArgs sa = new ScriptArgs(this, ab);
+
+			bool cancel = chr.TryCancellableTrigger(tkUnActivateAbility, sa);
+			if (!cancel) {
+				try {
+					cancel = chr.On_UnActivateAbility(this, ab);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				if (!cancel) {
+					cancel = this.TryCancellableTrigger(chr, tkUnActivate, sa);
+					if (!cancel) {
+						try {
+							this.On_UnActivate(chr, ab);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
+				}
 			}
-			Trigger_UnActivate(chr); //ability is running, do the triggers (usually to remove triggergroup / plugin)			
-		}
-
-		protected override void Activate(Character chr, Ability ab) {
-			//TODO - logging, Ability object state switching
-			ab.Running = true;
-		}
-
-		#region triggerMethods
-		[Summary("When unassigning, do not forget to deactivate the ability (and additionally remove TGs and plugins)")]
-		protected override void On_UnAssign(Character ch) {
-			UnActivate(ch); //unactivate the ability automatically
 		}
 
 		[Summary("C# based trigger method")]
-		protected virtual void On_UnActivate(Character ch) {
-			ch.RemoveTriggerGroup(this.TriggerGroup);
-			ch.RemovePlugin(this.PluginKeyInstance);
-		}
-
-		[Summary("LScript based @unactivate triggers and all unactivate trigger methods." +
-				"We typically remove the triggergroups and plugins (if any) here.")]
-		protected void Trigger_UnActivate(Character chr) {
-			if (chr != null) {
-				TryTrigger(chr, ActivableAbilityDef.tkUnActivate, null);
-				chr.On_AbilityUnActivate(this);
-				On_UnActivate(chr);
+		protected virtual void On_UnActivate(Character ch, Ability ab) {
+			PluginKey key = this.PluginKey;
+			if (key != null) {
+				ch.DeletePlugin(key);
 			}
 		}
 
-		[Summary("C# based @activate trigger method, Overriden from parent - add TG / Plugin to ability holder")]
-		protected override bool On_Activate(Character ch) {
-			ch.AddTriggerGroup(this.TriggerGroup);
-			if (this.PluginDef != null) {
-				ch.AddNewPlugin(this.PluginKeyInstance, this.PluginDef);
+		#region triggerMethods
+		[Summary("When unassigning, do not forget to deactivate the ability")]
+		protected override void On_UnAssign(Character ch, Ability ab) {
+			if (ab.Running) {
+				this.PrivateUnActivate(ch, ab); //unactivate the ability automatically
 			}
-			return false;//no cancelling, correctly return
 		}
 		#endregion triggerMethods
-
-		[Summary("Triggergroup connected with this ability (can be null if no key is specified). It will be used " +
-				"for appending trigger groups to the ability holder")]
-		public TriggerGroup TriggerGroup {
-			get {
-				return (TriggerGroup) triggerGroup.CurrentValue;
-			}
-		}
 
 		[Summary("Plugindef connected with this ability (can be null if no key is specified). It will be used " +
 				"for creating plugin instances and setting them to the ability holder")]
@@ -135,12 +148,18 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return (PluginDef) pluginDef.CurrentValue;
 			}
+			set {
+				this.pluginDef.CurrentValue = value;
+			}
 		}
 
 		[Summary("Return plugin key from the field value (used e.g. for adding/removing plugins to the character)")]
-		public PluginKey PluginKeyInstance {
+		public PluginKey PluginKey {
 			get {
 				return (PluginKey) pluginKey.CurrentValue;
+			}
+			set {
+				this.pluginKey.CurrentValue = value;
 			}
 		}
 	}

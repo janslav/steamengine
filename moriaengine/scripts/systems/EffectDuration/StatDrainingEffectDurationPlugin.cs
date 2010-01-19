@@ -27,58 +27,30 @@ namespace SteamEngine.CompiledScripts {
 
 
 	[Dialogs.ViewableClass]
-	public partial class SpellEffectDurationPlugin {
+	public partial class StatDrainingEffectDurationPlugin {
 
-		public void Init(Thing source, SpellSourceType sourceType, double effect, TimeSpan duration) {
-			this.source = source;
-			this.sourceType = sourceType;
-			this.effect = effect;
-			this.Timer = duration.TotalSeconds;
+		public void InitDrain(double hitsDrain, double stamDrain, double manaDrain) {
+			this.manaDrain = manaDrain;
+			this.stamDrain = stamDrain;
+			this.manaDrain = manaDrain;
 		}
 
-		public void On_Timer() {
-			this.Delete();
-		}
-
-		public void On_Dispell(SpellEffectArgs spell) {
-			if (this.Dispellable) {
-				Thing t = this.Cont as Thing;
-				if (t != null) {
-					DispellDef.ShowDispellEffect(t.TopObj());
-				}
-				this.Delete();
-			}
-		}
-
-		public double Effect {
+		public double HitsDrain {
 			get {
-				return this.effect;
-			}
-			protected set {
-				this.effect = value;
+				return this.hitsDrain;
 			}
 		}
 
-		public bool Dispellable {
+		public double StamDrain {
 			get {
-				return !(this.sourceType == SpellSourceType.Potion); //potion effects are generally not dispellable. Might want some exception from this rule at some point...?
+				return this.stamDrain;
 			}
 		}
 
-		public Thing Source {
+		public double ManaDrain {
 			get {
-				return this.source;
+				return this.manaDrain;
 			}
-		}
-
-		public SpellSourceType SourceType {
-			get {
-				return this.sourceType;
-			}
-		}
-
-		public void On_Death() {
-			this.Delete();
 		}
 	}
 }

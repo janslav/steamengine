@@ -94,8 +94,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//infodialog
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + 2 * i).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ab.Name).Hue(hue).Build();
-				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(ab.Points + "/" + ab.MaxPoints).Hue(hue).Build();
-				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Globals.TimeInSeconds - ab.LastUsage + "secs ago").Hue(hue).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(ab.ModifiedPoints + "/" + ab.MaxPoints).Hue(hue).Build();
+				TimeSpan ago = Globals.TimeAsSpan - ab.LastUsage;
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(ago.TotalSeconds + "secs ago").Hue(hue).Build();
 				dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text(ab.Running ? "Y" : "N").Hue(hue).Build();
 				dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text(ab.AbilityDef.Defname).Hue(hue).Build();
 				//abilitydef info dialog

@@ -72,4 +72,32 @@ namespace SteamEngine.LScript {
 		}
 	}
 
+	public class UnloadableGroup : IUnloadable {
+		IUnloadable[] array;
+
+		public UnloadableGroup(params IUnloadable[] array) {
+			this.array = array;
+		}
+
+		public void Unload() {
+			foreach (IUnloadable member in array) {
+				if (member != null) {
+					member.Unload();
+				}
+			}
+		}
+
+		public bool IsUnloaded {
+			get {
+				foreach (IUnloadable member in array) {
+					if (member != null) {
+						if (member.IsUnloaded) {
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+		}
+	}
 }

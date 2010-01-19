@@ -25,18 +25,18 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Hitpoints Regeneration")]
+	[Summary("Mana Regeneration")]
 	[ViewableClass]
-	public class HitsRegenDef : RegenerationDef {
+	public class ManaRegenAbilityDef : PassiveAbilityDef {
 
-		public HitsRegenDef(string defname, string filename, int headerLine)
+		public ManaRegenAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
 
 		//recount regeneration speed
 		protected override void On_ValueChanged(Character ch, Ability ab, int previousValue) {
 			//add the difference (can be positive or negative)
-			ch.HitsRegenSpeed += (ab.Points - previousValue) / RegenerationSpeed;
+			ch.ManaRegenSpeed += (ab.ModifiedPoints - previousValue) * EffectPower;
 		}
 	}
 }

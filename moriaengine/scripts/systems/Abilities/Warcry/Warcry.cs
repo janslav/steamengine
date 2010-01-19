@@ -28,24 +28,21 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("War's warcry")]
 	[ViewableClass]
 	public class WarcryDef : ImmediateAbilityDef {
-		private FieldValue effectDuration;
-
 		public WarcryDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			effectDuration = InitTypedField("effectDuration", 10, typeof(double));
 		}
 
 		#region triggerMethods
-		protected override bool On_DenyUse(DenyAbilityArgs args) {
+		protected override bool On_DenyActivate(DenyAbilityArgs args) {
 			bool retVal = false;
 			//TODO - zde ještì implementovat to jestli dotyènej žije/nežije atd.
 
-			retVal = base.On_DenyUse(args); //call superclass for common checks - including resources consuming etc
+			retVal = base.On_DenyActivate(args); //call superclass for common checks - including resources consuming etc
 			return retVal;
 		}
 
 		[Summary("Functional implementation of warcry ability")]
-		protected override bool On_Activate(Character chr) {
+		protected override bool On_Activate(Character chr, Ability ab) {
 			//TODO - taky nejak zarvat nebo co !
 			foreach (Player plr in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort) ComputeRange(chr))) {
 				if (chr == plr) {
@@ -65,17 +62,6 @@ namespace SteamEngine.CompiledScripts {
 			return false; //no cancel needed
 		}
 		#endregion triggerMethods
-
-		[InfoField("Effect duration")]
-		[Summary("Number of seconds the warcry effect will last on the hit player")]
-		public double EffectDuration {
-			get {
-				return (double) effectDuration.CurrentValue;
-			}
-			set {
-				effectDuration.CurrentValue = value;
-			}
-		}
 
 		[Summary("Compute the warcry range using the information from character (using i.e char's level" +
 				" and the ability points...). Consider that 18 steps should be maximum (client limits)")]
@@ -106,10 +92,6 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_UnAssign(Character formerCont) {
 			formerCont.SysMessage("Neblahé úèinky warcry pominuly");
-		}
-
-		public void On_Timer() {
-			this.Delete();
 		}
 	}
 }

@@ -248,29 +248,32 @@
     <Compile Include="..\..\scripts\systems\Abilities\Core\PassiveAbilityDef.cs">
       <Link>systems\Abilities\Core\PassiveAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\HitsRegenerationDef.cs">
-      <Link>systems\Abilities\Regenerations\HitsRegenerationDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Core\StatDrainingAbilityDef.cs">
+      <Link>systems\Abilities\Core\StatDrainingAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\ManaRegenerationDef.cs">
-      <Link>systems\Abilities\Regenerations\ManaRegenerationDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\HitsRegenAbilityDef.cs">
+      <Link>systems\Abilities\Regenerations\HitsRegenAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationDef.cs">
-      <Link>systems\Abilities\Regenerations\RegenerationDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\ManaRegenAbilityDef.cs">
+      <Link>systems\Abilities\Regenerations\ManaRegenAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationPlugin.cs">
-      <Link>systems\Abilities\Regenerations\RegenerationPlugin.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\RegenerationPlugin.Generated.cs">
-      <Link>systems\Abilities\Regenerations\RegenerationPlugin.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\StaminaRegenerationDef.cs">
-      <Link>systems\Abilities\Regenerations\StaminaRegenerationDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\StamRegenAbilityDef.cs">
+      <Link>systems\Abilities\Regenerations\StamRegenAbilityDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.cs">
       <Link>systems\Abilities\Specials\Berserker\Berserker.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.Generated.cs">
       <Link>systems\Abilities\Specials\Berserker\Berserker.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs">
+      <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionEffectPlugin.cs">
+      <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.Generated.cs">
+      <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
       <Link>systems\Abilities\Warcry\Warcry.cs</Link>
@@ -404,6 +407,18 @@
     <Compile Include="..\..\scripts\systems\dialogs\Paging.cs">
       <Link>systems\dialogs\Paging.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\EffectDurationPlugin.cs">
+      <Link>systems\EffectDuration\EffectDurationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\EffectDurationPlugin.Generated.cs">
+      <Link>systems\EffectDuration\EffectDurationPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\StatDrainingEffectDurationPlugin.cs">
+      <Link>systems\EffectDuration\StatDrainingEffectDurationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\StatDrainingEffectDurationPlugin.Generated.cs">
+      <Link>systems\EffectDuration\StatDrainingEffectDurationPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Enums.cs">
       <Link>systems\Enums.cs</Link>
     </Compile>
@@ -434,6 +449,12 @@
     <Compile Include="..\..\scripts\systems\Professions\ProfessionPlugin.Generated.cs">
       <Link>systems\Professions\ProfessionPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.cs">
+      <Link>systems\Regeneration\RegenerationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.Generated.cs">
+      <Link>systems\Regeneration\RegenerationPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
       <Link>systems\Regions\FlaggedRegion.cs</Link>
     </Compile>
@@ -451,6 +472,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\ItemResource.cs">
       <Link>systems\Resources\ResourceListItems\ItemResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\LevelResource.cs">
+      <Link>systems\Resources\ResourceListItems\LevelResource.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\SkillResource.cs">
       <Link>systems\Resources\ResourceListItems\SkillResource.cs</Link>
@@ -727,12 +751,6 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
       <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.cs">
-      <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs">
-      <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.cs">
       <Link>systems\skills\Magery\Spells\SpellEffectItem.cs</Link>
@@ -1038,8 +1056,32 @@
     <None Include="..\..\remoteconsole\properties\datasources\endpointsetting.datasource">
       <Link>DataSources\endpointsetting.datasource</Link>
     </None>
+    <None Include="..\..\scripts\CharClasses\Character.ct">
+      <Link>CharClasses\Character.ct</Link>
+    </None>
+    <None Include="..\..\scripts\CharClasses\NPC.ct">
+      <Link>CharClasses\NPC.ct</Link>
+    </None>
+    <None Include="..\..\scripts\CharClasses\Player.ct">
+      <Link>CharClasses\Player.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
+      <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\ignition.scp">
+      <Link>systems\Abilities\Talents\Mage\Ignition\ignition.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.ct">
+      <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.ct</Link>
+    </None>
     <None Include="..\..\scripts\systems\defs.scp">
       <Link>systems\defs.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\EffectDuration\EffectDurationPlugin.ct">
+      <Link>systems\EffectDuration\EffectDurationPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\EffectDuration\StatDrainingEffectDurationPlugin.ct">
+      <Link>systems\EffectDuration\StatDrainingEffectDurationPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\mailingsystem\mailsending.scp">
       <Link>systems\mailingsystem\mailsending.scp</Link>
@@ -1052,6 +1094,9 @@
     </None>
     <None Include="..\..\scripts\systems\Professions\professions.def">
       <Link>systems\Professions\professions.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.ct">
+      <Link>systems\Regeneration\RegenerationPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Healing\healing.scp">
       <Link>systems\skills\Healing\healing.scp</Link>
@@ -1071,11 +1116,14 @@
     <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct">
-      <Link>systems\skills\Magery\Spells\SpellEffectDurationPlugin.ct</Link>
-    </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.ct">
       <Link>systems\skills\Magery\Spells\SpellEffectItem.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.ct">
+      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\statModSpells.def">
+      <Link>systems\skills\Magery\Spells\StatModSpells\statModSpells.def</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\RecallRune.ct">
       <Link>systems\skills\Magery\Spells\TeleportingSpells\RecallRune.ct</Link>

@@ -14,5 +14,10 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate PoisonEffectPlugin : EffectDurationPlugin]
+[PluginTemplate StatDrainingEffectDurationPlugin : EffectDurationPlugin]
+Vars:
+	double hitsDrain = 0
+	double manaDrain = 0
+	double stamDrain = 0
 
+	

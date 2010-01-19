@@ -36,11 +36,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region triggerMethods
-		protected override bool On_DenyUse(DenyAbilityArgs args) {
+		protected override bool On_DenyActivate(DenyAbilityArgs args) {
 			bool retVal = false;
 			//TODO - zde ještì implementovat to jestli dotyènej žije/nežije atd.
 
-			retVal = base.On_DenyUse(args); //call superclass for common checks - including resources consuming etc
+			retVal = base.On_DenyActivate(args); //call superclass for common checks - including resources consuming etc
 			return retVal;
 		}
 		#endregion triggerMethods
@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Switching on the berserker ability (if the player has the ability)")]
 		public static void BerserkerFunction(Character chr, ScriptArgs args) {
 			BerserkerDef bskrDef = SingletonScript<BerserkerDef>.Instance;
-			bskrDef.ActivateOrUnactivate(chr);
+			bskrDef.Switch(chr);
 		}
 	}
 

@@ -93,16 +93,18 @@ namespace SteamEngine.CompiledScripts {
 			if (this.SkillValueOfChar(target) > 0) {
 				self.SysMessage("Tohle nelze oslabit.");
 			} else if (skillSeqArgs.Success) { //set by Musicianship in @Start
-				double targExperience = target.Experience;
-				int mySkillValue = this.SkillValueOfChar(self);
-				if ((mySkillValue * 0.3) < targExperience) {
-					self.SysMessage("Oslabeni tohoto cile presahuje tve moznosti.");
-				} else {
-					double discordancePower = ScriptUtil.EvalRandomFaktor(mySkillValue, 0, 300);
-					if (discordancePower <= targExperience) {
-						skillSeqArgs.Success = false;
-					} //else success stays true
-				}
+				//TODO experience revamp
+
+				//double targExperience = target.Experience;
+				//int mySkillValue = this.SkillValueOfChar(self);
+				//if ((mySkillValue * 0.3) < targExperience) {
+				//    self.SysMessage("Oslabeni tohoto cile presahuje tve moznosti.");
+				//} else {
+				//    double discordancePower = ScriptUtil.EvalRandomFaktor(mySkillValue, 0, 300);
+				//    if (discordancePower <= targExperience) {
+				//        skillSeqArgs.Success = false;
+				//    } //else success stays true
+				//}
 			}
 			return false;
 		}
