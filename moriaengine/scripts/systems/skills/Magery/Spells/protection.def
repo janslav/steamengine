@@ -19,7 +19,7 @@ EffectPluginKey_Potion = @@potionEffect_protection
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x375A, 9, 20)
 
-[SpellEffectDurationPluginDef p_protectionSpellEffect]
+[EffectDurationPluginDef p_protectionSpellEffect]
 on=@assign
 	this.Cont.ArmorClassModifier = this.Cont.ArmorClassModifier + this.Effect
 

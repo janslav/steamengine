@@ -1,9 +1,9 @@
-[BerserkerDef a_berserker]
-name="Berserker"
-maxPoints=10
-useDelay = 180
-
-damageModifier=1.3 //damage coefficient 
-
-pluginDef=p_berserker
-pluginKey=_berserker_
+//[BerserkerDef a_berserker]
+//name="Berserker"
+////maxPoints=10
+//useDelay = 180
+//
+//effectPower=1.3 //damage coefficient 
+//
+//pluginDef=p_berserker
+//pluginKey=_berserker_
