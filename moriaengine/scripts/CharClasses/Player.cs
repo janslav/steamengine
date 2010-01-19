@@ -33,6 +33,26 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class Player : Character {
 
+		public short Level {
+			get {
+				return this.level;
+			}
+			set {
+				this.level = value;
+				//TODO - cokoliv co se muze stat pri gainu levelu - patrne budeme mit trigger atd
+			}
+		}
+
+		public int Experience {
+			get {
+				return this.experience;
+			}
+			set {
+				this.experience = value;
+				//TODO - cokoliv co se muze stat pri gainu levelu - patrne budeme mit trigger atd
+			}
+		}
+
 		public short Vit {
 			get {
 				return this.vitality;
