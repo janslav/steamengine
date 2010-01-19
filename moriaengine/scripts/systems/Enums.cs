@@ -189,20 +189,27 @@ namespace SteamEngine.CompiledScripts {
 		Cold = 0x000020,
 		MagicCold = Magic | Cold,
 		[Summary("Mystikuv utok")]
-		Mystical = Magic | 0x000080,
+		Mystical = 0x000080,
+		MagicMystical = Magic | Mystical,
 		[Summary("Damage redukovano fyzickym rezistem (neplest s armorem)")]
 		Physical = 0x000002,
 		[Summary("Secne zbrane (mece, sekery) ")]
-		Slashing = Physical | 0x000100,
+		Slashing = 0x000100,
+		PhysicalSlashing = Physical | Slashing,
 		[Summary("Bodne zbrane (mece, dyky, vidle) (drive piercing, prejmenovano aby se to nepletlo s prubojnosti)")]
-		Stabbing = Physical | 0x000200,
+		Stabbing = 0x000200,
+		PhysicalStabbing = Physical | Stabbing,
 		[Summary("Secne bodne zbrane (mece)")]
-		Sharp = Physical | Slashing | Stabbing,
+		Sharp = Slashing | Stabbing,
+		PhysicalSharp = Physical | Sharp,
 		[Summary("Tupe zbrane (hole, palcaty)")]
-		Blunt = Physical | 0x000400,
+		Blunt = 0x000400,
+		PhysicalBlunt = Physical | Blunt,
 		[Summary("Palne zbrane (luky, kuse)")]
-		Archery = Physical | 0x000800,
-		Bleed = Physical | 0x001000,
+		Archery = 0x000800,
+		PhysicalArchery = Physical | Archery,
+		Bleed = 0x001000,
+		PhysicalBleed = Physical | Bleed,
 
 		Summon = 0x002000,
 		Dragon = 0x004000

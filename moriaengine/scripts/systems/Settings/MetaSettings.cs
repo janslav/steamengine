@@ -59,5 +59,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return MagerySettings.instance;
 			}
 		}
+
+		[InfoField("Abilities")]
+		public AllAbilitiesMassSetting allAbilities = new AllAbilitiesMassSetting();
+	}
+
+	public class AllAbilitiesMassSetting : MassSettings_ByClass_List<AbilityDef> {
+		
+		public override string Name {
+			get { return "Seznam všech abilit"; }
+		}
 	}
 }

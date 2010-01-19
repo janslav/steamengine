@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void Init(Thing source, EffectFlag sourceType, double power, TimeSpan duration) {
 			this.source = source;
-			this.sourceType = sourceType;
+			this.flags = sourceType;
 			this.effectPower = power;
 			if (duration >= TimeSpan.Zero) {
 				this.Timer = duration.TotalSeconds;
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool Dispellable {
 			get {
-				return (this.sourceType & EffectFlag.FromBook) == EffectFlag.FromBook; //potion effects are generally not dispellable. Might want some exception from this rule at some point...?
+				return (this.flags & EffectFlag.FromBook) == EffectFlag.FromBook; //potion effects are generally not dispellable. Might want some exception from this rule at some point...?
 			}
 		}
 
@@ -73,9 +73,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public EffectFlag SourceType {
+		public EffectFlag Flags {
 			get {
-				return this.sourceType;
+				return this.flags;
 			}
 		}
 

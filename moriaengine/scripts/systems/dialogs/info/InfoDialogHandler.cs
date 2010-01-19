@@ -170,6 +170,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					thirdColumnIsText = field.ReadOnly;
 					if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
 						thirdColumnText = Enum.GetName(field.FieldType, fieldValue);
+						if (thirdColumnText == null) { 
+							thirdColumnText = Convert.ToInt64(fieldValue).ToString();
+						}
 						secondColIsButton = !field.ReadOnly; //editable enum will have button						
 					} else {
 						thirdColumnText = field.GetStringValue(target);

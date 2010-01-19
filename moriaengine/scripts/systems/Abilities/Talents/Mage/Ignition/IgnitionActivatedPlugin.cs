@@ -37,6 +37,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		static PluginKey pkIgnitionEffect = PluginKey.Acquire("_ignition_effect_");
+
 		public void On_CauseSpellEffect(SpellEffectArgs spellEffectArgs) {
 			DamageSpellDef damageSpell = spellEffectArgs.SpellDef as DamageSpellDef;
 			if (damageSpell != null) {
@@ -45,23 +47,23 @@ namespace SteamEngine.CompiledScripts {
 					if (target != null) {
 						ActivableAbilityDef def = IgnitionDef;
 
-						int points = target.GetAbility(def);
+						int points = spellEffectArgs.Caster.GetAbility(def);
 						if (points > 0) {
-							if (def.CheckSuccess(points)) {
-								PluginKey key = def.PluginKey;
+							if (def.CheckSuccess(points)) {								
 
 								double power = points * def.EffectPower;
-								power *= DamageManager.GetResistModifier(target, DamageType.Fire); //apply fire resist
+								power *= DamageManager.GetResistModifier(target, DamageType.MagicFire); //apply fire resist
+
+								IgnitionEffectPlugin ignitionPlugin = target.GetPlugin(pkIgnitionEffect) as IgnitionEffectPlugin;
+								if (ignitionPlugin != null) {
+									power += Math.Max(0, ignitionPlugin.EffectPower); //we add the power of previous ignition instance, if any
+								}
 
 								if (power > IgnitionEffectPlugin.minimumIgnitionEffect) { //else it does nothing to this target, so it's effectively immune
-									IgnitionEffectPlugin ignitionPlugin = target.GetPlugin(key) as IgnitionEffectPlugin;
-									if ((ignitionPlugin == null) || (power > ignitionPlugin.EffectPower)) { //previous ignition is not better than ours, or there is none
-
-										ignitionPlugin = (IgnitionEffectPlugin) IgnitionEffectPluginDef.instance.Create();
-										ignitionPlugin.Init(spellEffectArgs.Caster, EffectFlag.FromAbility | EffectFlag.HarmfulEffect,
-											power, TimeSpan.FromSeconds(def.EffectDuration));
-										target.AddPlugin(key, ignitionPlugin);
-									}
+									ignitionPlugin = (IgnitionEffectPlugin) IgnitionEffectPluginDef.instance.Create();
+									ignitionPlugin.Init(spellEffectArgs.Caster, EffectFlag.FromAbility | EffectFlag.HarmfulEffect,
+										power, TimeSpan.FromSeconds(def.EffectDuration));
+									target.AddPlugin(pkIgnitionEffect, ignitionPlugin);
 								}
 							}
 						}

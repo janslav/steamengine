@@ -4,3 +4,8 @@ Name="Ignition"
 ManaDrain=1
 EffectPower=1
 EffectDuration=60
+
+PluginKey = @@ignition
+PluginDef = p_ignition
+
+[IgnitionActivatedPluginDef p_ignition]

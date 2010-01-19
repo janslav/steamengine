@@ -198,7 +198,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("C# based @activate trigger method")]
 		protected virtual bool On_Activate(Character chr, Ability ab) {
-			chr.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Activate");
+			//chr.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Activate");
 			return false; //no cancelling
 		}
 

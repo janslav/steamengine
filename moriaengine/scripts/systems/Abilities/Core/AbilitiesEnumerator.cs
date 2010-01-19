@@ -27,7 +27,11 @@ namespace SteamEngine.CompiledScripts {
 		private IEnumerator valuesEnum;
 
 		internal AbilitiesEnumerator(Dictionary<AbstractDef, object> dict) {
-			this.valuesEnum = dict.Values.GetEnumerator();
+			if (dict != null) {
+				this.valuesEnum = dict.Values.GetEnumerator();
+			} else {
+				this.valuesEnum = EmptyReadOnlyCollection.instance;
+			}
 		}
 
 		#region IEnumerator<Ability> Members

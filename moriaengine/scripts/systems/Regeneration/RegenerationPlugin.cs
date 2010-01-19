@@ -31,7 +31,8 @@ namespace SteamEngine.CompiledScripts {
 		//this is to initialize (create the instance) of the Regen.Plug.Def. it must be here as bellow or 
 		//somewhere in the LScript as simple [RegenerationPluginDef p_regenerations]
 		//if the instance is not pre-created in either way it will crash during attempt to assign this plugin...
-		public static readonly RegenerationPluginDef defInstance = new RegenerationPluginDef("p_regenerations", "C#scripts", -1);
+		public static readonly RegenerationPluginDef defInstance = (RegenerationPluginDef)
+			new RegenerationPluginDef("p_regenerations", "C# scripts", -1).Register();
 		internal static PluginKey regenerationsPluginKey = PluginKey.Acquire("_regenerations_");
 
 		internal const double MIN_TIMER = 1.0d; //minimal timer usable

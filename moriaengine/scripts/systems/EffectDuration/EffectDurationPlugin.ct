@@ -18,5 +18,5 @@
 Vars:
 	double effectPower = 0
 	Thing source = null
-	EffectFlag sourceType = EffectFlag.Unknown
+	EffectFlag flags = EffectFlag.Unknown
 	
