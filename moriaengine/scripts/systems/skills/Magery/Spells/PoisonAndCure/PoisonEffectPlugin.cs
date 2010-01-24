@@ -45,12 +45,13 @@ namespace SteamEngine.CompiledScripts {
 			self.Flag_GreenHealthBar = true;
 		}
 
-		public void On_UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			cont.HitsRegenSpeed += this.EffectPower;
 
 			PoisonSpellDef poisonSpell = SingletonScript<PoisonSpellDef>.Instance;
 			cont.Flag_GreenHealthBar = //
 				cont.HasPlugin(poisonSpell.EffectPluginKey_Potion) || cont.HasPlugin(poisonSpell.EffectPluginKey_Spell);
+			base.On_UnAssign(cont);
 		}
 
 		public void ModifyEffect(double difference) {

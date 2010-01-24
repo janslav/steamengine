@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 		static TimerKey tickTimerKey = TimerKey.Acquire("_ignitionTickTimer_");
 
-		public void On_Assign() {
+		public virtual void On_Assign() {
 			Character self = (Character) this.Cont;
 
 			double effect = this.EffectPower;
@@ -42,12 +42,13 @@ namespace SteamEngine.CompiledScripts {
 			//? self.Flag_GreenHealthBar = true;
 		}
 
-		public void On_UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			cont.HitsRegenSpeed += this.EffectPower;
 
 			//? PoisonSpellDef poisonSpell = SingletonScript<PoisonSpellDef>.Instance;
 			//? cont.Flag_GreenHealthBar = //
 			//?     cont.HasPlugin(poisonSpell.EffectPluginKey_Potion) || cont.HasPlugin(poisonSpell.EffectPluginKey_Spell);
+			base.On_UnAssign(cont);
 		}
 
 		public void ModifyEffect(double difference) {
@@ -68,6 +69,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = this.Cont as Character;
 			if (self != null) {
 				EffectFactory.StationaryEffect(self, 0x36BD, 20, 10);
+				SoundCalculator.PlayHurtSound(self);
 			}			
 		}
 	}

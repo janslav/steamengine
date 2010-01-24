@@ -737,14 +737,14 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs">
       <Link>systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.cs">
-      <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs">
-      <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpellDef.cs">
       <Link>systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpellDef.cs</Link>
@@ -1065,6 +1065,9 @@
     <None Include="..\..\scripts\CharClasses\Player.ct">
       <Link>CharClasses\Player.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Core\playerFunctions.scp">
+      <Link>systems\Abilities\Core\playerFunctions.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
       <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
     </None>
@@ -1073,6 +1076,9 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.ct">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Mage\silence.scp">
+      <Link>systems\Abilities\Talents\Mage\silence.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Warcry\Warcry.ct">
       <Link>systems\Abilities\Warcry\Warcry.ct</Link>
@@ -1119,8 +1125,8 @@
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
       <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct">
-      <Link>systems\skills\Magery\Spells\PoisonAndCure\PosionEffectPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.ct">
       <Link>systems\skills\Magery\Spells\SpellEffectItem.ct</Link>
@@ -1136,6 +1142,12 @@
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct">
       <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Musicianship.scp">
+      <Link>systems\skills\Musicianship.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Skills.scp">
+      <Link>systems\skills\Skills.scp</Link>
     </None>
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>

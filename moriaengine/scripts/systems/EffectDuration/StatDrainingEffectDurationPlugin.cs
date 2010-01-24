@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual void Assign() {
+		public virtual void On_Assign() {
 			this.ApplyDrains();
 		}
 
@@ -70,12 +70,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			if (cont != null) {
 				cont.HitsRegenSpeed += this.hitsDrain;
 				cont.StamRegenSpeed += this.stamDrain;
 				cont.ManaRegenSpeed += this.manaDrain;
 			}
+			base.On_UnAssign(cont);
 		}
 	}
 }

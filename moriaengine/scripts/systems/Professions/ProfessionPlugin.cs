@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 		private ProfessionDef def;
 
 		[Summary("Initialize the profession on the character")]
-		public void On_Assign(Player newCont) {
+		public void On_Assign() {
 			Sanity.IfTrueThrow(this.def == null, "this.def == null on ProfessionPlugin assigning");
 
 			//maybe we should do this on the first use of said skill/spell/ability...? Or maybe just in the startroom stone script?

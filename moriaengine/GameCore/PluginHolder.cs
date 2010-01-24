@@ -202,7 +202,8 @@ namespace SteamEngine {
 			}
 			Plugin curPlugin = firstPlugin;
 			while (curPlugin != null) {
-				curPlugin.Run(tk, sa);
+				object scriptedRetVal, compiledRetVal;
+				curPlugin.Run(tk, sa, out scriptedRetVal, out compiledRetVal);
 				curPlugin = curPlugin.nextInList;
 			}
 		}
@@ -215,7 +216,8 @@ namespace SteamEngine {
 			}
 			Plugin curPlugin = firstPlugin;
 			while (curPlugin != null) {
-				curPlugin.TryRun(tk, sa);
+				object scriptedRetVal, compiledRetVal;
+				curPlugin.TryRun(tk, sa, out scriptedRetVal, out compiledRetVal);
 				curPlugin = curPlugin.nextInList;
 			}
 		}
@@ -245,7 +247,9 @@ namespace SteamEngine {
 			}
 			Plugin curPlugin = firstPlugin;
 			while (curPlugin != null) {
-				if (TagMath.Is1(curPlugin.Run(tk, sa))) {
+				object scriptedRetVal, compiledRetVal;
+				curPlugin.Run(tk, sa, out scriptedRetVal, out compiledRetVal);
+				if (TagMath.Is1(scriptedRetVal) || TagMath.Is1(compiledRetVal)) {
 					return true;
 				}
 				curPlugin = curPlugin.nextInList;
@@ -263,7 +267,9 @@ namespace SteamEngine {
 			}
 			Plugin curPlugin = firstPlugin;
 			while (curPlugin != null) {
-				if (TagMath.Is1(curPlugin.TryRun(tk, sa))) {
+				object scriptedRetVal, compiledRetVal;
+				curPlugin.Run(tk, sa, out scriptedRetVal, out compiledRetVal);
+				if (TagMath.Is1(scriptedRetVal) || TagMath.Is1(compiledRetVal)) {
 					return true;
 				}
 				curPlugin = curPlugin.nextInList;
@@ -370,13 +376,15 @@ namespace SteamEngine {
 				plugin.nextInList = firstPlugin;
 			}
 			firstPlugin = plugin;
-			plugin.TryRun(TriggerKey.assign, null);
+			object scriptedRetVal, compiledRetVal;
+			plugin.TryRun(TriggerKey.assign, null, out scriptedRetVal, out compiledRetVal);
 			return plugin;
 		}
 
 		public Plugin AddPluginAsSimple(PluginKey pk, Plugin plugin) {
 			AddPluginImpl(pk, plugin);
-			plugin.TryRun(TriggerKey.assign, null);
+			object scriptedRetVal, compiledRetVal;
+			plugin.TryRun(TriggerKey.assign, null, out scriptedRetVal, out compiledRetVal);
 			return plugin;
 		}
 
@@ -478,7 +486,8 @@ namespace SteamEngine {
 			plugin.cont = null;
 			plugin.prevInList = null;
 			plugin.nextInList = null;
-			plugin.TryRun(TriggerKey.unAssign, new ScriptArgs(this));
+			object scriptedRetVal, compiledRetVal;
+			plugin.TryRun(TriggerKey.unAssign, new ScriptArgs(this), out scriptedRetVal, out compiledRetVal);
 			return plugin;
 		}
 
