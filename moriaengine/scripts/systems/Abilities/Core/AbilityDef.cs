@@ -198,7 +198,9 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("C# based @activate trigger method")]
 		protected virtual bool On_Activate(Character chr, Ability ab) {
-			//chr.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Activate");
+			chr.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				Loc<AbilityDefLoc>.Get(chr.Language).AbilityActivated,
+				ab.AbilityDef.Name));
 			return false; //no cancelling
 		}
 
@@ -418,5 +420,9 @@ namespace SteamEngine.CompiledScripts {
 				this.Argv[0] = value;
 			}
 		}
+	}
+
+	public class AbilityDefLoc : CompiledLocStringCollection {
+		public string AbilityActivated = "Abilita {0} aktivována";
 	}
 }

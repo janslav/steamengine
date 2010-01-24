@@ -103,8 +103,9 @@ namespace SteamEngine.CompiledScripts {
 			((Character) Cont).RedMessage("Jsi v šoku!");
 		}
 
-		public void On_UnAssign(Character formerCont) {
+		public override void On_UnAssign(Character formerCont) {
 			formerCont.SysMessage("Neblahé úèinky warcry pominuly");
+			//base.On_UnAssign(formerCont);
 		}
 	}
 }

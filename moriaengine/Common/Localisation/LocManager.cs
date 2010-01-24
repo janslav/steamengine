@@ -78,13 +78,27 @@ namespace SteamEngine.Common {
 			return Language.English;
 		}
 
-		public static void UnregisterAssembly(Assembly assemblyBeingUnloaded) {
+		public static void ForgetInstancesFromAssembly(Assembly assemblyBeingUnloaded) {
 			Dictionary<string, LocStringCollection> defaults = loadedLanguages[(int)Language.Default];
 			LocStringCollection[] allLocs = new LocStringCollection[defaults.Count];
 			defaults.Values.CopyTo(allLocs, 0); //we copy the list first, because we're going to remove some entries in a foreach loop
 
 			foreach (LocStringCollection loc in allLocs) {
 				if (loc.GetType().Assembly == assemblyBeingUnloaded) {
+					foreach (Dictionary<string, LocStringCollection> langDict in loadedLanguages) {
+						langDict.Remove(loc.Defname);
+					}
+				}
+			}
+		}
+
+		public static void ForgetInstancesOfType(Type type) {
+			Dictionary<string, LocStringCollection> defaults = loadedLanguages[(int) Language.Default];
+			LocStringCollection[] allLocs = new LocStringCollection[defaults.Count];
+			defaults.Values.CopyTo(allLocs, 0); //we copy the list first, because we're going to remove some entries in a foreach loop
+
+			foreach (LocStringCollection loc in allLocs) {
+				if (loc.GetType() == type) {
 					foreach (Dictionary<string, LocStringCollection> langDict in loadedLanguages) {
 						langDict.Remove(loc.Defname);
 					}

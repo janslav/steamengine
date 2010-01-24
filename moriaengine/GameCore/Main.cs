@@ -305,7 +305,8 @@ namespace SteamEngine {
 		private static void ForgetAll() {
 			ClearWorld();
 			Timers.Timer.Clear();
-			LocManager.UnregisterAssembly(ClassManager.ScriptsAssembly);
+			LocManager.ForgetInstancesFromAssembly(ClassManager.ScriptsAssembly);
+			LocManager.ForgetInstancesOfType(typeof(LScript.ScriptedLocStringCollection));
 			//CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
 			ClassManager.ForgetScripts();//bye-bye to all storec types
 			GeneratedCodeUtil.ForgetScripts();//bye-bye to scripted code generators

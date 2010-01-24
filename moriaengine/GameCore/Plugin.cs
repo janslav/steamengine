@@ -60,36 +60,36 @@ namespace SteamEngine {
 		}
 
 		//the first trigger that throws an exceptions terminates the other ones that way
-		public object Run(TriggerKey tk, ScriptArgs sa) {
+		public void Run(TriggerKey tk, ScriptArgs sa, out object scriptedRetVal, out object compiledRetVal) {
+			scriptedRetVal = null;
+			compiledRetVal = null;
 			if (!isDeleted) {
-				object retVal = null;
 				TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
 				if (scriptedTriggers != null) {
-					retVal = scriptedTriggers.Run(this, tk, sa);
+					scriptedRetVal = scriptedTriggers.Run(this, tk, sa);
 				}
 
 				PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
 				if (compiledTriggers != null) {
-					retVal = compiledTriggers.Run(this, tk, sa);
+					compiledRetVal = compiledTriggers.Run(this, tk, sa);
 				}
-				return retVal;
 			}
-			return null;
 		}
 
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public object TryRun(TriggerKey tk, ScriptArgs sa) {
-			object retVal = null;
+		public void TryRun(TriggerKey tk, ScriptArgs sa, out object scriptedRetVal, out object compiledRetVal) {
+			scriptedRetVal = null;
+			compiledRetVal = null;
 			if (!isDeleted) {
 				TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
 				if (scriptedTriggers != null) {
-					retVal = scriptedTriggers.TryRun(this, tk, sa);
+					scriptedRetVal = scriptedTriggers.TryRun(this, tk, sa);
 				}
 				PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
 				if (compiledTriggers != null) {
 					try {
-						retVal = compiledTriggers.Run(this, tk, sa);
+						compiledRetVal = compiledTriggers.Run(this, tk, sa);
 					} catch (FatalException) {
 						throw;
 					} catch (Exception e) {
@@ -97,7 +97,6 @@ namespace SteamEngine {
 					}
 				}
 			}
-			return retVal;
 		}
 
 		public override void Delete() {
@@ -105,10 +104,15 @@ namespace SteamEngine {
 				cont.RemovePlugin(this);
 			}
 			if (!isDeleted) {
-				this.TryRun(TriggerKey.destroy, null);
+				object scriptedRetVal, compiledRetVal;
+				this.TryRun(TriggerKey.destroy, null, out scriptedRetVal, out compiledRetVal);
 				isDeleted = true;
 			}
 			base.Delete();
+		}
+
+		public override string ToString() {
+			return Tools.TypeToString(this.GetType()) + " " + this.Def.PrettyDefname;
 		}
 
 		#region save/load

@@ -71,8 +71,9 @@ namespace SteamEngine.CompiledScripts {
 			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, (short) this.EffectPower, out this.strDifference);
 		}
 
-		public void On_UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			cont.Str -= this.strDifference;
+			base.On_UnAssign(cont);
 		}
 	}
 
@@ -83,8 +84,9 @@ namespace SteamEngine.CompiledScripts {
 			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, (short) this.EffectPower, out this.dexDifference);
 		}
 
-		public void On_UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			cont.Dex -= this.dexDifference;
+			base.On_UnAssign(cont);
 		}
 	}
 
@@ -102,8 +104,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			cont.Int -= this.intDifference;
+			base.On_UnAssign(cont);
 		}
 	}
 
@@ -121,10 +124,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			cont.Str -= this.strDifference;
 			cont.Dex -= this.dexDifference;
 			cont.Int -= this.intDifference;
+			base.On_UnAssign(cont);
 		}
 	}
 
@@ -188,7 +192,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_UnAssign(Character cont) {
+		public override void On_UnAssign(Character cont) {
 			cont.Str -= this.strDifference;
 			cont.Dex -= this.dexDifference;
 			cont.Int -= this.intDifference;
@@ -203,6 +207,7 @@ namespace SteamEngine.CompiledScripts {
 				contAsNPC.ResistFire -= this.resistFireDifference;
 				contAsNPC.ResistCold -= this.resistColdDifference;
 			}
+			base.On_UnAssign(cont);
 		}
 	}
 }

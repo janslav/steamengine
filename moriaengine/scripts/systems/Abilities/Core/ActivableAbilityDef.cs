@@ -54,6 +54,14 @@ namespace SteamEngine.CompiledScripts {
 			pluginKey = InitTypedField("pluginKey", null, typeof(PluginKey)); //how the plugin will be stored on ability holder
 		}
 
+		public bool IsActive(Character ch) {
+			Plugin plugin = ch.GetPlugin(this.PluginKey);
+			if (plugin != null) {
+				return plugin.Def == this.PluginDef;
+			}
+			return false;
+		}
+
 		[Summary("If its is running - deactivate, otherwise - activate.")]
 		public void Switch(Character chr) {
 			Plugin plugin = chr.GetPlugin(this.PluginKey);
@@ -87,36 +95,6 @@ namespace SteamEngine.CompiledScripts {
 		public void UnActivate(Character chr) {
 			chr.DeletePlugin(this.PluginKey);
 		}
-
-		//only call when we know we need to unactivate
-		//private void PrivateUnActivate(Character chr, Ability ab) {
-		//    ab.InternalSetRunning(false);
-		//    this.Trigger_UnActivate(chr, ab); //ability is running, do the triggers (usually to remove triggergroup / plugin)			
-		//}
-
-		//private void Trigger_UnActivate(Character chr, Ability ab) {
-		//    ScriptArgs sa = new ScriptArgs(this, ab);
-
-		//    bool cancel = chr.TryCancellableTrigger(tkUnActivateAbility, sa);
-		//    if (!cancel) {
-		//        try {
-		//            cancel = chr.On_UnActivateAbility(this, ab);
-		//        } catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-		//        if (!cancel) {
-		//            cancel = this.TryCancellableTrigger(chr, tkUnActivate, sa);
-		//            if (!cancel) {
-		//                try {
-		//                    this.On_UnActivate(chr, ab);
-		//                } catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-		//            }
-		//        }
-		//    }
-		//}
-
-		//[Summary("C# based trigger method")]
-		//protected virtual void On_UnActivate(Character ch, Ability ab) {
-		//    ch.DeletePlugin(this.PluginKey);
-		//}
 
 		#region triggerMethods
 		[Summary("When unassigning, do not forget to deactivate the ability")]

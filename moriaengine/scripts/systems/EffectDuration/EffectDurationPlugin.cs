@@ -38,11 +38,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_Timer() {
+		public virtual void On_Timer() {
 			this.Delete();
 		}
 
-		public void On_Dispell(SpellEffectArgs spell) {
+		public virtual void On_Dispell(SpellEffectArgs spell) {
 			if (this.Dispellable) {
 				Thing t = this.Cont as Thing;
 				if (t != null) {
@@ -79,8 +79,56 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void On_Death() {
+		public virtual void On_Death() {
 			this.Delete();
 		}
+
+		//default "effect ended" message
+		public virtual void On_UnAssign(Character cont) {
+			if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
+				if (cont == this.source) { //my own ability
+					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						Loc<EffectDurationLoc>.Get(cont.Language).AbilityUnActivated,
+						this.ToString())); //TODO? better way to obtain the ability name. 
+				} else {
+					string msg;
+					if ((this.flags & EffectFlag.BeneficialEffect) == EffectFlag.BeneficialEffect) {
+						msg = Loc<EffectDurationLoc>.Get(cont.Language).GoodAbilityEffectEnded;
+					} else if ((this.flags & EffectFlag.HarmfulEffect) == EffectFlag.HarmfulEffect) {
+						msg = Loc<EffectDurationLoc>.Get(cont.Language).EvilAbilityEffectEnded;
+					} else {
+						msg = Loc<EffectDurationLoc>.Get(cont.Language).AbilityEffectEnded;
+					}
+					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						msg, this.ToString())); //TODO? better way to obtain the ability name. 
+				}
+			} else if (((this.flags & EffectFlag.FromSpellBook) == EffectFlag.FromSpellBook) ||
+					((this.flags & EffectFlag.FromSpellScroll) == EffectFlag.FromSpellScroll)) {
+				string msg;
+				if ((this.flags & EffectFlag.BeneficialEffect) == EffectFlag.BeneficialEffect) {
+					msg = Loc<EffectDurationLoc>.Get(cont.Language).GoodSpellEffecEnded;
+				} else if ((this.flags & EffectFlag.HarmfulEffect) == EffectFlag.HarmfulEffect) {
+					msg = Loc<EffectDurationLoc>.Get(cont.Language).EvilSpellEffecEnded;
+				} else {
+					msg = Loc<EffectDurationLoc>.Get(cont.Language).SpellEffecEnded;
+				}
+				cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						msg, this.ToString())); //TODO? better way to obtain the ability name. 
+			} else {
+				cont.SysMessage("Effect '"+this.ToString()+"' ended.");
+			}
+		}
+	}
+
+	public class EffectDurationLoc : CompiledLocStringCollection {
+		public string AbilityUnActivated = "Ability '{0}' deactivated.";
+
+		public string AbilityEffectEnded = "Effect of ability '{0}' ended.";
+		public string EvilAbilityEffectEnded = "The unpleasant effect of ability '{0}' ended.";
+		public string GoodAbilityEffectEnded = "The pleasant effect of ability '{0}' ended.";
+
+		public string SpellEffecEnded = "Effect of spell '{0}' ended.";
+		public string EvilSpellEffecEnded = "The unpleasant effect of spell '{0}' ended.";
+		public string GoodSpellEffecEnded = "The pleasant effect of spell '{0}' ended.";
 	}
 }

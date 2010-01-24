@@ -1,0 +1,55 @@
+[StatDrainingAbilityDef a_silence]
+Name="Silence"
+ManaDrain=1
+EffectPower=1
+EffectDuration=10
+chance=0.1
+
+PluginKey = @@silence
+PluginDef = p_silence
+
+[StatDrainingEffectDurationPluginDef p_silence]
+on=@CauseSpellEffect
+if (argv[0].SpellDef == s_lightning)
+	arg.self = this.Cont
+	if (a_silence.CheckSuccess(<arg.self>))
+		arg.span = a_silence.EffectDuration + arg.self.GetAbility(a_silence_bonus) * a_silence_bonus.EffectDuration
+		if (<arg.span> > 0)
+			arg.eff = p_silence_effect.Create()
+			arg.eff.Init(arg.self, EffectFlag.FromAbility | EffectFlag.HarmfulEffect, 0, System.TimeSpan.FromSeconds(<arg.span>))
+			argv[0].CurrentTarget.AddPlugin(@@silence_effect, arg.eff)
+			
+			arg.self.SysMessage(System.String.Format(LocManager.GetEntry("loc_silence", "YourTargetIsSilenced", arg.self.Language), argv[0].CurrentTarget.Name, <arg.span>))
+			argv[0].CurrentTarget.SysMessage(System.String.Format(LocManager.GetEntry("loc_silence", "YouHaveBeenSilenced", argv[0].CurrentTarget.Language), <arg.span>))
+		endif
+	endif
+endif
+
+
+[EffectDurationPluginDef p_silence_effect]
+on=@skillselect
+if (argv[0].SkillDef == skill_magery) 
+	this.Cont.SysMessage(LocManager.GetEntry("loc_silence", "YoureSilenced", this.Cont.Language))
+	return 1
+endif
+return 0
+	
+on=@skillstart
+if (argv[0].SkillDef == skill_magery) 
+	this.Cont.SysMessage(LocManager.GetEntry("loc_silence", "YoureSilenced", this.Cont.Language))
+	return 1
+endif
+return 0
+
+
+[StatDrainingAbilityDef a_silence_bonus]
+Name="Silence bonus"
+EffectPower=1
+EffectDuration=2
+
+
+[ScriptedLoc loc_silence]
+YouHaveBeenSilenced = You have been silenced for {0} seconds
+YourTargetIsSilenced = You have silenced {0} for {1} seconds
+
+YoureSilenced = You're silenced so you can't cast any spells
