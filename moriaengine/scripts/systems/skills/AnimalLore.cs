@@ -10,15 +10,15 @@ using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public class AnatomySkillDef : SkillDef {
-        public AnatomySkillDef(string defname, string filename, int headerLine)
+	public class AnimalLoreSkillDef : SkillDef {
+        public AnimalLoreSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
 
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			Player self = skillSeqArgs.Self as Player;
 			if (self != null) {
-				self.Target(SingletonScript<Targ_Anatomy>.Instance, skillSeqArgs);
+				self.Target(SingletonScript<Targ_AnimalLore>.Instance, skillSeqArgs);
 			}
 			return true;
 		}
@@ -34,18 +34,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-            //TODO: Rozlisit target pouze na osoby
+            //TODO: Rozlisit target pouze na zver
 			Character self = skillSeqArgs.Self;
 			Character targetted = skillSeqArgs.Target1 as Character;
             GameState stateSelf = self.GameState;
 			if (targetted == null || targetted.IsDeleted) {
                 if (stateSelf != null) {
-                    stateSelf.WriteLine(self.IsFemale == true ? Loc<AnatomyLoc>.Get(stateSelf.Language).TargetForgottenF : Loc<AnatomyLoc>.Get(stateSelf.Language).TargetForgottenM);
+                    stateSelf.WriteLine(self.IsFemale == true ? Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetForgottenF : Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetForgottenM);
                 }
             } else if (self.CanReachWithMessage(targetted)) {
                 //TODO: Hlasky pro ruzne intervaly STR/STAM
                 if (stateSelf != null) {
-                    stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).ASuccess1);
+                    stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ASuccess1);
                 }
 			}
 			return false;
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
             GameState stateSelf = skillSeqArgs.Self.GameState;
             if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).AFailed);
+                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).AFailed);
             }
 			return false;
 		}
@@ -62,16 +62,16 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
             GameState stateSelf = skillSeqArgs.Self.GameState;
             if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).ACanceled);
+                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ACanceled);
             }
 		}
 	}
 
-    public class Targ_Anatomy : CompiledTargetDef {
+    public class Targ_AnimalLore : CompiledTargetDef {
 		protected override void On_Start(Player self, object parameter) {
 			GameState stateSelf = self.GameState;
             if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).TargetWho);
+                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetWho);
             }
 			base.On_Start(self, parameter);
 		}
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
             } else {
                 GameState stateSelf = self.GameState;
                 if (stateSelf != null) {
-                    stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).TargetOnlyHuman);
+                    stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetOnlyHuman);
                 }
                 return false;
             }
@@ -98,19 +98,19 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
             GameState stateSelf = self.GameState;
             if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).TargetOnlyHuman);
+                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetOnlyHuman);
             }
             return false;
 		}
 	}
 
-    public class AnatomyLoc : CompiledLocStringCollection {
-        internal readonly string TargetWho = "Koho chceš zkoumat?";
-        internal readonly string TargetOnlyHuman = "Zamìøuj pouze osoby!";
-        internal readonly string ACanceled = "Anatomie byla pøerušena.";
+    public class AnimalLoreLoc : CompiledLocStringCollection {
+        internal readonly string TargetWho = "Co chceš zkoumat?";
+        internal readonly string TargetOnlyHuman = "Zamìøuj pouze zvìø!";
+        internal readonly string ACanceled = "Animal Lore bylo pøerušeno.";
         internal readonly string AFailed = "Tvé zkoumání se nezdaøilo.";
-        internal readonly string TargetForgottenF = "Zapomìla jsi koho chceš zkoumat!";
-        internal readonly string TargetForgottenM = "Zapomìl jsi koho chceš zkoumat!";
-        internal readonly string ASuccess1 = "Anatomie se ti povedla.";
+        internal readonly string TargetForgottenF = "Zapomìla jsi co chceš zkoumat!";
+        internal readonly string TargetForgottenM = "Zapomìl jsi co chceš zkoumat!";
+        internal readonly string ASuccess1 = "Animal Lore se ti povedlo.";
     }
 }
