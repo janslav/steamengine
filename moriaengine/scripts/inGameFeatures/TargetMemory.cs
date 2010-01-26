@@ -5,6 +5,7 @@ using System.Text;
 namespace SteamEngine.CompiledScripts.inGameFeatures {
     public static class TargetMemory {
 
+        //Metody pro targetovani a ulozeni thingu
         #region SetEquip
         [SteamFunction]
         public static void SetEquip(Player self, int n) {
@@ -66,6 +67,7 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
         }
         #endregion
 
+        //Metody pro healovani ulozenych charakteru
         #region Heal
         [SteamFunction]
         public static void Heal(Player self, int n) {
@@ -130,6 +132,7 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
         }
         #endregion
 
+        //Metody pro pouziti ulozenych thingu
         #region UseEquip
         [SteamFunction]
         public static void UseEquip(Player self, int n) {
@@ -192,66 +195,6 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
         }
         #endregion
 
-        //#region SetLast
-        //[SteamFunction]
-        //public static void SetLast(Player self, int n) {
-        //    if (n <= 10) {
-                
-        //    } else {
-        //        self.SysMessage("Moc velky index!");
-        //    }
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast1(Player self) {
-        //    SetLast(self, 1);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast2(Player self) {
-        //    SetLast(self, 2);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast3(Player self) {
-        //    SetLast(self, 3);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast4(Player self) {
-        //    SetLast(self, 4);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast5(Player self) {
-        //    SetLast(self, 5);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast6(Player self) {
-        //    SetLast(self, 6);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast7(Player self) {
-        //    SetLast(self, 7);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast8(Player self) {
-        //    SetLast(self, 8);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast9(Player self) {
-        //    SetLast(self, 9);
-        //}
-
-        //[SteamFunction]
-        //public static void SetLast10(Player self) {
-        //    SetLast(self, 10);
-        //}
-        //#endregion
     }
 
     public class Targ_TargetMemory : CompiledTargetDef {
