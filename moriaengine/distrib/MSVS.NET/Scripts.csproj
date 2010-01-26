@@ -611,6 +611,9 @@
     <Compile Include="..\..\scripts\systems\skills\Anatomy.cs">
       <Link>systems\skills\Anatomy.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\AnimalLore.cs">
+      <Link>systems\skills\AnimalLore.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
       <Link>systems\skills\ArmsLore.cs</Link>
     </Compile>

@@ -1,14 +1,11 @@
-[SCRIPTEDSKILLDEF 1]
+[ANATOMYSKILLDEF 1]
 DEFNAME=Skill_Anatomy
 KEY="Anatomy"
 StartByMacroEnabled = true
 DELAY=3, 1
 EFFECT=0, 155 //bonus k utocnymu cislu
 
-ON=@Fail
-	src.message "You can't think of anything about this creature"
-
-[SCRIPTEDSKILLDEF 2]
+[AnimalLoreSKILLDEF 2]
 DEFNAME=Skill_Animal_Lore
 KEY="AnimalLore"
 StartByMacroEnabled = true
