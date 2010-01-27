@@ -34,7 +34,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-            //TODO: Rozlisit target pouze na osoby
 			Character self = skillSeqArgs.Self;
 			Character targetted = skillSeqArgs.Target1 as Character;
             GameState stateSelf = self.GameState;
@@ -81,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
                 return false;
             }
 
-            if (targetted is Character) {
+            if (targetted.IsHuman) {
                 SkillSequenceArgs skillSeq = (SkillSequenceArgs)parameter;
                 skillSeq.Target1 = targetted;
                 skillSeq.PhaseStart();
