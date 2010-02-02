@@ -171,9 +171,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (iss != null) {
 					string pref = iss.Prefix;
 					if (pref.Contains("(")) {
-						return iss.Prefix; //it already contains the brackets
+						return pref; //it already contains the brackets
 					} else { //add the surrounding brackets
-						return "(" + iss.Prefix + ")";
+						return "(" + pref + ")";
 					}
 				} else {
 					return "(" + t.Name + ")"; //this is the final desperate possibility
