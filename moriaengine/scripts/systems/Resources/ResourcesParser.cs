@@ -158,6 +158,11 @@ namespace SteamEngine.CompiledScripts {
 			if (definition.Equals("vit", StringComparison.InvariantCultureIgnoreCase)) {
 				return new StatVitResource(number);
 			}
+
+			//try the level resource
+			if (definition.Equals("level", StringComparison.InvariantCultureIgnoreCase)) {
+				return new LevelResource((int)number);
+			}
 			throw new SEException(LogStr.Error("Unresolved resource: " + number + " " + definition));
 		}
 	}

@@ -167,6 +167,8 @@ namespace SteamEngine.CompiledScripts {
 				toWho.SysMessage("Je vyžadováno alespoň " + missingItem.DesiredCount + " " + missingItem.Name);
 			} else if (missingItem is TriggerGroupResource) {
 				toWho.SysMessage("Je vyžadována přítomnost typu " + missingItem.Name + " (počet alespoň " + missingItem.DesiredCount + ")");
+			} else if (missingItem is LevelResource) {
+				toWho.SysMessage("Je potřeba mít alespoň " + missingItem.DesiredCount + " " + missingItem.Name);
 			}
 		}
 

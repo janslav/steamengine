@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(80, 50);
 
 			//nadpis dialogu, cudliky na back a zruseni
-			
+
 			dlg.AddTable(new GUTATable(1, innerWidth - 3 * ButtonMetrics.D_BUTTON_WIDTH - 5 * ImprovedDialog.D_COL_SPACE, ButtonMetrics.D_BUTTON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Kategorie výroby: " + cat.FullName).Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonBack).Id(1).Build(); //one category back button
@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable.RowHeight = ImprovedDialog.ICON_HEIGHT; //it'll contain pictures...
 			dlg.CopyColsFromLastTable();
 			dlg.LastTable.InnerRowsDelimited = true;
-			
+
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			int maxIndex = cat.Contents.Count - 1; //maximal index to access (in case of omitting...)
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					dlg.LastTable[rowCntr, 2] = GUTAImage.Builder.NamedGump(GumpIDs.Pouch).Build();
 				} else {
 					oneItm = (CraftmenuItem) elem;
-					if (!oneItm.itemDef.CanBeMade((Character)focus)) {
+					if (!oneItm.itemDef.CanBeMade((Character) focus)) {
 						//cannot be made, do not display, step over and continue
 						if (imax < maxIndex) {
 							imax++; //we can iterate additional one step 
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					inputIds.Add(6 * i + 15);//store the index to the list
 					dlg.LastTable[rowCntr, 2] = GUTAImage.Builder.Gump(oneItm.itemDef.Model).Color(oneItm.itemDef.Color).Build();
 					dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(6 * i + 13).Valign(DialogAlignment.Valign_Center).Build();//display info
-					
+
 					//now the list of resources
 					ResourcesList reses = oneItm.itemDef.Resources;
 					if (reses != null) {//only if we have any resources...
@@ -190,8 +190,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			CraftmenuCategory cat = (CraftmenuCategory)args[0];
-			int btnNo = (int)gr.PressedButton;
+			CraftmenuCategory cat = (CraftmenuCategory) args[0];
+			int btnNo = (int) gr.PressedButton;
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
 				Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict;
@@ -215,24 +215,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //new items to add (target)
-                        lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
-                        if (lastPosDict == null) {
-                            lastPosDict = new Dictionary<CraftingSkillDef, CraftmenuCategory>();
-                            gi.Cont.SetTag(TkLastCat, lastPosDict);
-                        }
-                        lastPosDict[cat.CategorySkill] = cat; //store the category associated to this crafting skill
-						((Player)gi.Cont).Target(SingletonScript<Targ_Craftmenu>.Instance, cat);
+						lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
+						if (lastPosDict == null) {
+							lastPosDict = new Dictionary<CraftingSkillDef, CraftmenuCategory>();
+							gi.Cont.SetTag(TkLastCat, lastPosDict);
+						}
+						lastPosDict[cat.CategorySkill] = cat; //store the category associated to this crafting skill
+						((Player) gi.Cont).Target(SingletonScript<Targ_Craftmenu>.Instance, cat);
 						DialogStacking.ClearDialogStack(gi.Cont); //dont show any dialogs now
 						break;
 					case 4: //start making
 						//first we will prepare the list of Item-Count pairs to be made
-						List<int> inputIds = (List<int>)args.GetTag(D_Craftmenu.tkInputIds);//get the ids info
+						List<int> inputIds = (List<int>) args.GetTag(D_Craftmenu.tkInputIds);//get the ids info
 						SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
 						foreach (int id in inputIds) {
-							int requestedCount = (int)gr.GetNumberResponse(id);//always integer number
+							int requestedCount = (int) gr.GetNumberResponse(id);//always integer number
 							if (requestedCount > 0) {//non zero request for making, parse the line number
-								int line = (int)((id - 15) / 6); //input fields have IDs as 6*i + 15
-								CraftmenuItem cmItm = (CraftmenuItem)cat.Contents[line];
+								int line = (int) ((id - 15) / 6); //input fields have IDs as 6*i + 15
+								CraftmenuItem cmItm = (CraftmenuItem) cat.Contents[line];
 								selectionQueue.Enqueue(new CraftingSelection(cmItm.itemDef, requestedCount));
 							}
 						}
@@ -242,23 +242,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 5: //openhere
 						lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
-                        if (lastPosDict == null) {
-                            lastPosDict = new Dictionary<CraftingSkillDef, CraftmenuCategory>();
-                            gi.Cont.SetTag(TkLastCat, lastPosDict);						
-                        }
-                        lastPosDict[cat.CategorySkill] = cat; //store the category associated to one crafting skill
+						if (lastPosDict == null) {
+							lastPosDict = new Dictionary<CraftingSkillDef, CraftmenuCategory>();
+							gi.Cont.SetTag(TkLastCat, lastPosDict);
+						}
+						lastPosDict[cat.CategorySkill] = cat; //store the category associated to one crafting skill
 						gi.Cont.SysMessage("Pozice výrobního menu pro skill " + cat.CategorySkill.Key + " nastavena na kategorii " + cat.FullName);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //stop opening here
-                        lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
-                        if (lastPosDict != null) {
-                            lastPosDict.Remove(cat.CategorySkill);
-                            if (lastPosDict.Count == 0) {
-                                gi.Cont.RemoveTag(TkLastCat); //no more last positions left
-                            }
-                        }
-						gi.Cont.SysMessage("Nastavení poslední pozice výrobního menu pro skill "+cat.CategorySkill.Key+" zrušeno");
+						lastPosDict = gi.Cont.GetTag(TkLastCat) as Dictionary<CraftingSkillDef, CraftmenuCategory>;
+						if (lastPosDict != null) {
+							lastPosDict.Remove(cat.CategorySkill);
+							if (lastPosDict.Count == 0) {
+								gi.Cont.RemoveTag(TkLastCat); //no more last positions left
+							}
+						}
+						gi.Cont.SysMessage("Nastavení poslední pozice výrobního menu pro skill " + cat.CategorySkill.Key + " zrušeno");
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 7: //go to settings page with this category
@@ -270,7 +270,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else {
 				int btnNumber = (btnNo - 10) % 6; //on one line we have numbers 10,11,12,13,14,15 next line is 16,17,18,19,20,21 etc.
-				int line = (int)((btnNo - (10+btnNumber)) / 6); //e.g. 12 - (10+2) / 6 = 0; 21 - (10+3) / 6 = 8/6 = 1; 15 - (10 + 1) / 6 = 0 etc...
+				int line = (int) ((btnNo - (10 + btnNumber)) / 6); //e.g. 12 - (10+2) / 6 = 0; 21 - (10+3) / 6 = 8/6 = 1; 15 - (10 + 1) / 6 = 0 etc...
 				ICraftmenuElement elem = cat.Contents[line];
 				Gump newGi = null;
 				switch (btnNumber) {
@@ -291,12 +291,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3://show the Item Info
-						newGi = gi.Cont.Dialog(SingletonScript<D_Craftmenu_ItemInfo>.Instance, new DialogArgs(((CraftmenuItem)elem).itemDef));
+						newGi = gi.Cont.Dialog(SingletonScript<D_Craftmenu_ItemInfo>.Instance, new DialogArgs(((CraftmenuItem) elem).itemDef));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 4://remove from the list
 						//put the craftmenu element to the user's backpack and remove from the list
-						elem.Bounce(((Player)gi.Cont).Backpack);
+						elem.Bounce(((Player) gi.Cont).Backpack);
 						elem.Remove();
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
@@ -304,23 +304,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-        [Summary("Display the craftmenu categories dialog. You can use some of the crafting skills SkillName as " +
-                "a parameter to display directly the particular skill Craftmenu")]
-        [SteamFunction]
-        public static void Craftmenu(Character self, ScriptArgs args) {
-            CraftingSkillDef sklDef;
-            string skillName;
-            int skillId;
-            if (args == null || args.Argv == null || args.Argv.Length == 0) {
-                Craftmenu(self);
-            } else if ((sklDef = args.Argv[0] as CraftingSkillDef) != null) { //check if the parameter was a skill name
-                Craftmenu(self, sklDef);
-            } else if ((skillName = args.Argv[0] as String) != null) {
-                Craftmenu(self, skillName);
-            } else if (ConvertTools.TryConvertToInt32(args.Argv[0], out skillId)) {
-                Craftmenu(self, (SkillName)skillId);
-            } 
-        }
+		[Summary("Display the craftmenu categories dialog. You can use some of the crafting skills SkillName as " +
+				"a parameter to display directly the particular skill Craftmenu")]
+		[SteamFunction]
+		public static void Craftmenu(Character self, ScriptArgs args) {
+			CraftingSkillDef sklDef;
+			string skillName;
+			int skillId;
+			if (args == null || args.Argv == null || args.Argv.Length == 0) {
+				Craftmenu(self);
+			} else if ((sklDef = args.Argv[0] as CraftingSkillDef) != null) { //check if the parameter was a skill name
+				Craftmenu(self, sklDef);
+			} else if ((skillName = args.Argv[0] as String) != null) {
+				Craftmenu(self, skillName);
+			} else if (ConvertTools.TryConvertToInt32(args.Argv[0], out skillId)) {
+				Craftmenu(self, (SkillName) skillId);
+			}
+		}
 
         public static void Craftmenu(Character self, CraftingSkillDef skill) {
             TagKey tkKey = TagKey.Acquire(tkCraftmenuLastposPrefix);
@@ -334,23 +334,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
             } else if (skill != null) {//no bookmark, open the main skill category
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName) skill.Id]));
 			} else { //default craftmenu opening (selection of skills)
-                self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
-            }
-        }
+				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
+			}
+		}
 
-        public static void Craftmenu(Character self, string skillName) {
-            CraftingSkillDef sklDef = (CraftingSkillDef)CraftingSkillDef.GetByKey(skillName);
-            Craftmenu(self, sklDef);
-        }
+		public static void Craftmenu(Character self, string skillName) {
+			CraftingSkillDef sklDef = (CraftingSkillDef) CraftingSkillDef.GetByKey(skillName);
+			Craftmenu(self, sklDef);
+		}
 
-        public static void Craftmenu(Character self, SkillName skillName) {
-            CraftingSkillDef sklDef = (CraftingSkillDef)CraftingSkillDef.GetById((int)skillName);
-            Craftmenu(self, sklDef);
-        }
+		public static void Craftmenu(Character self, SkillName skillName) {
+			CraftingSkillDef sklDef = (CraftingSkillDef) CraftingSkillDef.GetById((int) skillName);
+			Craftmenu(self, sklDef);
+		}
 
-        public static void Craftmenu(Character self) {
-            Craftmenu(self, (CraftingSkillDef) null);
-        }
+		public static void Craftmenu(Character self) {
+			Craftmenu(self, (CraftingSkillDef) null);
+		}
 	}
 
 	[Summary("Dialog listing all available craftmenu categories (one for every crafting skill)")]
@@ -362,7 +362,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.SetLocation(70, 70);
 
 			//nadpis tabulky
-			dlg.AddTable(new GUTATable(1,0,ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Kategorie výroby").Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
@@ -465,7 +465,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void Response(Character sentTo, TagHolder focus, string filledText) {
-			CraftmenuCategory cat = (CraftmenuCategory)GumpInstance.InputArgs[0];
+			CraftmenuCategory cat = (CraftmenuCategory) GumpInstance.InputArgs[0];
 			CraftmenuCategory newCat = new CraftmenuCategory(filledText);
 			cat.Contents.Add(newCat);
 			newCat.Parent = cat;

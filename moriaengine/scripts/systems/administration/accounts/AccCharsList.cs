@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			AbstractAccount acc = (AbstractAccount) args.GetTag(D_Acc_Characters.accountTK);
 
-			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
+			if (gr.PressedButton < 10) { //ovladaci tlacitka		
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
