@@ -266,6 +266,9 @@
     <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.Generated.cs">
       <Link>systems\Abilities\Specials\Berserker\Berserker.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Cleric\Selfress.cs">
+      <Link>systems\Abilities\Talents\Cleric\Selfress.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs</Link>
     </Compile>
@@ -1076,6 +1079,9 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
       <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Cleric\Selfress.scp">
+      <Link>systems\Abilities\Talents\Cleric\Selfress.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\ignition.scp">
       <Link>systems\Abilities\Talents\Mage\Ignition\ignition.scp</Link>
