@@ -1017,8 +1017,7 @@ namespace SteamEngine.CompiledScripts {
 				this.Dismount();
 				SoundCalculator.PlayDeathSound(this);
 
-				TryTrigger(deathTK, new ScriptArgs(killedBy));
-				On_Death(killedBy);
+				this.Trigger_Death(killedBy);
 
 				CharSyncQueue.AboutToChangeHitpoints(this);
 				this.hitpoints = 0;
@@ -1069,6 +1068,13 @@ namespace SteamEngine.CompiledScripts {
 					pg.Dispose();
 				}
 			}
+		}
+
+		private void Trigger_Death(Character killedBy) {
+			this.TryTrigger(deathTK, new ScriptArgs(killedBy));
+			try {
+				this.On_Death(killedBy);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
         [Summary("Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo")]

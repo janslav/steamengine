@@ -146,6 +146,12 @@
     <Compile Include="..\..\scripts\ItemClasses\ColoredProjectile.Generated.cs">
       <Link>ItemClasses\ColoredProjectile.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredStaff.cs">
+      <Link>ItemClasses\ColoredStaff.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredStaff.Generated.cs">
+      <Link>ItemClasses\ColoredStaff.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\ItemClasses\ColoredWeapon.cs">
       <Link>ItemClasses\ColoredWeapon.cs</Link>
     </Compile>
@@ -1073,6 +1079,54 @@
     </None>
     <None Include="..\..\scripts\CharClasses\Player.ct">
       <Link>CharClasses\Player.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredArmor.ct">
+      <Link>ItemClasses\ColoredArmor.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredProjectile.ct">
+      <Link>ItemClasses\ColoredProjectile.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredStaff.ct">
+      <Link>ItemClasses\ColoredStaff.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredWeapon.ct">
+      <Link>ItemClasses\ColoredWeapon.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Container.ct">
+      <Link>ItemClasses\Container.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Corpse.ct">
+      <Link>ItemClasses\Corpse.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Destroyable.ct">
+      <Link>ItemClasses\Destroyable.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Door.ct">
+      <Link>ItemClasses\Door.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Equippable.ct">
+      <Link>ItemClasses\Equippable.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Item.ct">
+      <Link>ItemClasses\Item.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\MultiItem.ct">
+      <Link>ItemClasses\MultiItem.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Musical.ct">
+      <Link>ItemClasses\Musical.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Projectile.ct">
+      <Link>ItemClasses\Projectile.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Ship.ct">
+      <Link>ItemClasses\Ship.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Weapon.ct">
+      <Link>ItemClasses\Weapon.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Wearable.ct">
+      <Link>ItemClasses\Wearable.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Core\playerFunctions.scp">
       <Link>systems\Abilities\Core\playerFunctions.scp</Link>
