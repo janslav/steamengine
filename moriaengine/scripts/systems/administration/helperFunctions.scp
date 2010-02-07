@@ -1,0 +1,11 @@
+[function allSkills]
+if (argvcount)
+	foreach (sd in SkillDef.AllSkillDefs)
+		this.SetSkill(sd.Id, argv[0])
+	endforeach
+else
+	foreach (s in this.Skills)
+		arg.sd = AbstractSkillDef.GetById(<arg.s.Id>)
+		echo("<arg.sd.Key>: <s.ModifiedValue>")
+	endforeach
+endif
