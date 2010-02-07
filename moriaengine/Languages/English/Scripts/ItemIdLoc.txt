@@ -1,0 +1,5 @@
+TargetWhat                      = Co chceš identifikovat?
+TargetForgotten                 = Zapoměl jsi, co máš identifikovat!
+ICanceled                       = Identifikace předmětu přerušena.
+IFailed                         = Identifikace předmětu se nezdařila.
+ISuccess                        = 

@@ -1,0 +1,7 @@
+TargetWho                       = Koho chceš zkoumat?
+TargetOnlyHuman                 = Zaměřuj pouze osoby!
+ACanceled                       = Anatomie byla přerušena.
+AFailed                         = Tvé zkoumání se nezdařilo.
+TargetForgottenF                = Zapoměla jsi koho chceš zkoumat!
+TargetForgottenM                = Zapoměl jsi koho chceš zkoumat!
+ASuccess1                       = Anatomie se ti povedla.
