@@ -76,6 +76,18 @@ namespace SteamEngine.CompiledScripts {
 			base.On_DClick(from);
 		}
 
+		public override void On_Unequip(ItemInCharArgs args) {
+			if (this.mana > 0) {
+				Player self = args.Cont as Player;
+				if (self != null) {
+					self.WriteLine(Loc<ColoredStaffLoc>.Get(self.Language).manaVanished);
+				}
+				this.mana = 0;
+			}
+
+			base.On_Unequip(args);
+		}
+
 		private double CalculateMaxMana(Player self) {
 			double staffMaxMana = this.TypeDef.MaxMana;
 			double perCentBonus = self.GetAbility(A_mana_deposit_bonus) * A_mana_deposit_bonus.EffectPower;
@@ -121,5 +133,6 @@ namespace SteamEngine.CompiledScripts {
 
 	public class ColoredStaffLoc : CompiledLocStringCollection {
 		public string manaInStaff = "Mana v holi";
+		public string manaVanished = "Mana v holi je svázána s tvou myslí - odložením hole mana vyprchala.";
 	}
 }
