@@ -56,39 +56,39 @@ namespace SteamEngine.Converter {
 			this.origFile = input.Filename;
 			this.convertFile = ConverterMain.currentIFile;
 
-			headerType = input.HeaderType;
+			this.headerType = input.HeaderType;
 			headerName = input.HeaderName;
 		}
 
 		public void Set(PropsLine line) {
 			if ((line.Comment == null) || (line.Comment.Length == 0)) {
-				writtenData.Add(String.Format("{0} = {1}", line.Name, line.Value));
+				this.writtenData.Add(String.Format("{0} = {1}", line.Name, line.Value));
 			} else {
-				writtenData.Add(String.Format("{0} = {1} //{2} ", line.Name, line.Value, line.Comment));
+				this.writtenData.Add(String.Format("{0} = {1} //{2} ", line.Name, line.Value, line.Comment));
 			}
 		}
 
 		public void Set(string key, string value, string comment) {
 			if ((comment == null) || (comment.Length == 0)) {
-				writtenData.Add(String.Format("{0} = {1}", key, value));
+				this.writtenData.Add(String.Format("{0} = {1}", key, value));
 			} else {
-				writtenData.Add(String.Format("{0} = {1} //{2} ", key, value, comment));
+				this.writtenData.Add(String.Format("{0} = {1} //{2} ", key, value, comment));
 			}
 		}
 
 		public virtual void Dump(TextWriter writer) {
 			writer.WriteLine();
-			string header = String.Concat("[", headerType, " ", headerName, "]");
+			string header = String.Concat("[", this.headerType, " ", headerName, "]");
 
-			if (origData.HeaderComment.Length > 0) {
-				header = header + " //" + origData.HeaderComment;
+			if (this.origData.HeaderComment.Length > 0) {
+				header = header + " //" + this.origData.HeaderComment;
 			}
 			if (dontDump) {
 				header = "//" + header + " //(commented out by Converter) ";
 			}
 			writer.WriteLine(header);
 
-			foreach (string line in writtenData) {
+			foreach (string line in this.writtenData) {
 				writer.WriteLine(dontDump ? ("//" + line) : line);
 			}
 		}
@@ -100,13 +100,13 @@ namespace SteamEngine.Converter {
 					LineImpl deleg = task.deleg;
 
 					string key = origKey;
-					PropsLine line = origData.TryPopPropsLine(key);
+					PropsLine line = this.origData.TryPopPropsLine(key);
 
 					for (int a = 0; (line != null); a++) {
 						deleg(this, line);
 
 						key = origKey + a.ToString();
-						line = origData.TryPopPropsLine(key);
+						line = this.origData.TryPopPropsLine(key);
 					}
 				}
 			}
@@ -118,20 +118,20 @@ namespace SteamEngine.Converter {
 
 		public virtual void FirstStage() {
 			bool needspace = false;
-			PropsLine line = origData.TryPopPropsLine("category");
+			PropsLine line = this.origData.TryPopPropsLine("category");
 			if (line != null) {
 				Set(line); needspace = true;
 			}
-			line = origData.TryPopPropsLine("subsection");
+			line = this.origData.TryPopPropsLine("subsection");
 			if (line != null) {
 				Set(line); needspace = true;
 			}
-			line = origData.TryPopPropsLine("description");
+			line = this.origData.TryPopPropsLine("description");
 			if (line != null) {
 				Set(line); needspace = true;
 			}
 			if (needspace) {
-				writtenData.Add("");
+				this.writtenData.Add("");
 			}
 
 
@@ -145,7 +145,7 @@ namespace SteamEngine.Converter {
 		public virtual void ThirdStage() {
 			BasicStageImpl(thirdStageImplementations);
 
-			foreach (PropsLine line in origData.PropsLines) {
+			foreach (PropsLine line in this.origData.PropsLines) {
 				if (line.Name.ToLower().StartsWith("tag.")) {
 					WriteAsIs(this, line);
 				} else {

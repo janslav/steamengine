@@ -100,7 +100,7 @@ namespace SteamEngine.Converter {
 				//} else {
 				//headerType = "Region";
 			}
-			headerType = "Region";
+			this.headerType = "Region";
 			//todo: make this strip all non-ascii characters
 			string[] splitted = nonCharacterSplitRE.Split(name);
 			splitted[0] = "a_" + splitted[0];
@@ -259,7 +259,7 @@ namespace SteamEngine.Converter {
 				}
 			}
 			if ((occurences == 0) && (hierarchyIndex != 0)) {
-				Warning(origData.HeaderLine, "Region " + this.headerName + " has no parents!");
+				Warning(this.origData.HeaderLine, "Region " + this.headerName + " has no parents!");
 			}
 			parents = new ConvertedRegion[occurences];
 			int index = 0;

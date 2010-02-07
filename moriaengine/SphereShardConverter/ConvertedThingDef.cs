@@ -44,14 +44,14 @@ namespace SteamEngine.Converter {
 
 		public int Model {
 			get {
-				if (modelNum == -1) {
-					if (modelDef != null) {
-						return modelDef.Model;
+				if (this.modelNum == -1) {
+					if (this.modelDef != null) {
+						return this.modelDef.Model;
 					}
 				} else {
-					return modelNum;
+					return this.modelNum;
 				}
-				Error(origData.HeaderLine, "ThingDef " + headerName + " has no model set...?");
+				Error(this.origData.HeaderLine, "ThingDef " + headerName + " has no model set...?");
 				return -1;
 			}
 		}
@@ -78,106 +78,106 @@ namespace SteamEngine.Converter {
 		public override void FirstStage() {
 			base.FirstStage();
 
-			dupeItemLine = origData.TryPopPropsLine("dupeitem");
-			if (dupeItemLine != null) {
+			this.dupeItemLine = this.origData.TryPopPropsLine("dupeitem");
+			if (this.dupeItemLine != null) {
 				int headerNum;
 				if (ConvertTools.TryParseInt32(headerName, out headerNum)) {
 					headerName = "0x" + headerNum.ToString("x");
-					modelNum = headerNum;
+					this.modelNum = headerNum;
 				}
 			} else {
 				bool needsHeader = false;
-				idLine = origData.TryPopPropsLine("id");
+				this.idLine = this.origData.TryPopPropsLine("id");
 
 				int headerNum;
 				if (ConvertTools.TryParseInt32(headerName, out headerNum)) {
-					if (idLine != null) {//it does not mean model...
+					if (this.idLine != null) {//it does not mean model...
 						needsHeader = true;
 					} else {
-						hasNumericalHeader = true;
+						this.hasNumericalHeader = true;
 						//ownModel = true;
-						modelNum = headerNum;
-						byModel[headerNum] = this;
+						this.modelNum = headerNum;
+						this.byModel[headerNum] = this;
 						headerName = "0x" + headerNum.ToString("x");
 					}
 				} else {
-					byDefname[headerName] = this;
+					this.byDefname[headerName] = this;
 				}
 
-				defname1 = origData.TryPopPropsLine("defname");
-				if (defname1 != null) {
+				this.defname1 = this.origData.TryPopPropsLine("defname");
+				if (this.defname1 != null) {
 					if (needsHeader) {
-						headerName = defname1.Value;
+						headerName = this.defname1.Value;
 						needsHeader = false;
 					}
-					byDefname[defname1.Value] = this;
+					this.byDefname[this.defname1.Value] = this;
 				}
 
-				defname2 = origData.TryPopPropsLine("defname2");
-				if (defname2 != null) {
+				this.defname2 = this.origData.TryPopPropsLine("defname2");
+				if (this.defname2 != null) {
 					if (needsHeader) {
-						headerName = defname2.Value;
+						headerName = this.defname2.Value;
 						needsHeader = false;
 					}
-					byDefname[defname2.Value] = this;
+					this.byDefname[this.defname2.Value] = this;
 				}
 
 				if (needsHeader) {
 					//what now? :)
 					headerName = "i_hadnodefname_0x" + headerNum.ToString("x");
-					Info(origData.HeaderLine, "Has no defname except a number, and model defined elsewhere...");
+					Info(this.origData.HeaderLine, "Has no defname except a number, and model defined elsewhere...");
 				}
 			}
 		}
 
 		public override void SecondStage() {
 			base.SecondStage();
-			if (idLine != null) {
+			if (this.idLine != null) {
 				int idNum;
-				if (ConvertTools.TryParseInt32(idLine.Value, out idNum)) {
-					if (byModel.TryGetValue(idNum, out modelDef)) {
-						Set("model", modelDef.PrettyDefname, idLine.Comment);
+				if (ConvertTools.TryParseInt32(this.idLine.Value, out idNum)) {
+					if (this.byModel.TryGetValue(idNum, out this.modelDef)) {
+						Set("model", this.modelDef.PrettyDefname, this.idLine.Comment);
 						//Info(idLine.line, "ID Written as "+modelDef.PrettyDefname);
 					} else {
-						Set("model", "0x" + idNum.ToString("x"), idLine.Comment);
-						modelNum = idNum;
+						Set("model", "0x" + idNum.ToString("x"), this.idLine.Comment);
+						this.modelNum = idNum;
 					}
 				} else {
-					Set("model", idLine.Value, idLine.Comment);
-					byDefname.TryGetValue(idLine.Value, out modelDef);
+					Set("model", this.idLine.Value, this.idLine.Comment);
+					this.byDefname.TryGetValue(this.idLine.Value, out this.modelDef);
 				}
 			}
 
-			if (dupeItemLine != null) {
+			if (this.dupeItemLine != null) {
 				int dupeItemNum;
 				bool dupeItemSet = false;
-				if (ConvertTools.TryParseInt32(dupeItemLine.Value, out dupeItemNum)) {
+				if (ConvertTools.TryParseInt32(this.dupeItemLine.Value, out dupeItemNum)) {
 					ConvertedThingDef dupeItemDef;
-					if (byModel.TryGetValue(dupeItemNum, out dupeItemDef)) {
-						Set(dupeItemLine.Name, dupeItemDef.PrettyDefname, dupeItemLine.Comment);
+					if (this.byModel.TryGetValue(dupeItemNum, out dupeItemDef)) {
+						Set(this.dupeItemLine.Name, dupeItemDef.PrettyDefname, this.dupeItemLine.Comment);
 						dupeItemSet = true;
 						//Info(dupeItemLine.line, "DupeItem Written as "+dupeItemDef.PrettyDefname);
 					}
 				}
 				if (!dupeItemSet) {
-					MayBeHex_IgnorePoint(this, dupeItemLine);
+					MayBeHex_IgnorePoint(this, this.dupeItemLine);
 				}
 			}
 		}
 
 		public override void ThirdStage() {
 			bool defnameWritten = false;
-			if (defname1 != null) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(headerName, defname1.Value)) {
+			if (this.defname1 != null) {
+				if (!StringComparer.OrdinalIgnoreCase.Equals(headerName, this.defname1.Value)) {
 					defnameWritten = true;
-					Set(defname1);
+					Set(this.defname1);
 				}
 			}
-			if (defname2 != null) {
+			if (this.defname2 != null) {
 				if (defnameWritten) {
-					Warning(defname2.Line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
-				} else if (!StringComparer.OrdinalIgnoreCase.Equals(headerType, defname2.Value)) {
-					Set("defname", defname2.Value, defname2.Comment);
+					Warning(this.defname2.Line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
+				} else if (!StringComparer.OrdinalIgnoreCase.Equals(this.headerType, this.defname2.Value)) {
+					Set("defname", this.defname2.Value, this.defname2.Comment);
 				}
 			}
 
@@ -186,13 +186,13 @@ namespace SteamEngine.Converter {
 
 		public string PrettyDefname {
 			get {
-				if (!hasNumericalHeader) {
+				if (!this.hasNumericalHeader) {
 					return headerName;
 				}
-				if (defname1 != null) {
-					return defname1.Value;
+				if (this.defname1 != null) {
+					return this.defname1.Value;
 				}
-				if (defname2 != null) {
+				if (this.defname2 != null) {
 					return defname2.Value;
 				}
 

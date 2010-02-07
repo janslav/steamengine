@@ -72,10 +72,10 @@ namespace SteamEngine.Converter {
 				//case "c_man_gm":
 				case "c_man":
 				case "c_woman":
-					headerType = "PlayerDef";
+					this.headerType = "PlayerDef";
 					break;
 				default:
-					headerType = "NPCDef";
+					this.headerType = "NPCDef";
 					break;
 			}
 		}
