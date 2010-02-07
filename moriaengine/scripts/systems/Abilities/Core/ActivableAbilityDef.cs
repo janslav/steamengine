@@ -82,18 +82,23 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("C# based @activate trigger method, Overriden from parent - add Plugin to ability holder")]
 		protected override bool On_Activate(Character chr, Ability ab) {
 			PluginDef def = this.PluginDef;
-			Plugin plugin = def.Create();
-			EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
-			if (durationPlugin != null) {
-				durationPlugin.Init(chr, EffectFlag.BeneficialEffect | EffectFlag.FromAbility,
-					this.EffectPower, TimeSpan.MinValue);
+			if (def != null) {
+				Plugin plugin = def.Create();
+				EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
+				if (durationPlugin != null) {
+					durationPlugin.Init(chr, EffectFlag.BeneficialEffect | EffectFlag.FromAbility,
+						this.EffectPower, TimeSpan.MinValue);
+				}
+				chr.AddPlugin(this.PluginKey, plugin);
 			}
-			chr.AddPlugin(this.PluginKey, plugin);
 			return base.On_Activate(chr, ab);
 		}
 
 		public void UnActivate(Character chr) {
-			chr.DeletePlugin(this.PluginKey);
+			PluginKey key = this.PluginKey;
+			if (key != null) {
+				chr.DeletePlugin(key);
+			}
 		}
 
 		#region triggerMethods
@@ -122,10 +127,6 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				this.pluginKey.CurrentValue = value;
 			}
-		}
-
-		public bool IsRuninng(Character character) {
-			return character.HasPlugin(this.PluginKey);
 		}
 	}
 }

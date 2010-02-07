@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				ActivableAbilityDef activableAbility = this.def as ActivableAbilityDef;
 				if (activableAbility != null) {
-					return activableAbility.IsRuninng(this.cont);
+					return activableAbility.IsActive(this.cont);
 				}
 				return false;
 			}

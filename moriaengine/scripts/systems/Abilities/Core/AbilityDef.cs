@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		#region Accessors
 		//private string name; //logical name of the ability
 
-		private FieldValue chance; //maximum points allowed to assign
+		private FieldValue chance;
 		private FieldValue cooldown;
 		private FieldValue resourcesConsumed;//resourcelist of resources to be consumed for ability using
 		private FieldValue resourcesPresent;//resourcelist of resources that player must have intending to run the ability
