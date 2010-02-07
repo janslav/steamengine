@@ -47,6 +47,9 @@ namespace SteamEngine.CompiledScripts {
 		public MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double> mindPowerVsP = new MetaMassSetting<WeaponMindPowerVsPMassSetting, ColoredWeaponDef, double>();
 
 		public SpellsSettings spells = new SpellsSettings();
+
+		[InfoField("Maxmana holí")]
+		public StaffMaxManaMassSetting allSpells = new StaffMaxManaMassSetting();
 	}
 
 	[Dialogs.ViewableClass]
@@ -167,6 +170,31 @@ namespace SteamEngine.CompiledScripts {
 		
 		public override string Name {
 			get { return "Seznam všech kouzel"; }
+		}
+	}
+
+	public class StaffMaxManaMassSetting : MassSettings_ByClass_SingleField<ColoredStaffDef, int> {
+
+		public override string Name {
+			get { return "Maxmana holí"; }
+		}
+
+		protected class StaffMaxManaFieldView : FieldView_ByClass_SingleField {
+			internal StaffMaxManaFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(ColoredStaffDef def, int value) {
+				def.MaxMana = value;
+			}
+
+			internal override int GetValue(ColoredStaffDef def) {
+				return def.MaxMana;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new StaffMaxManaFieldView(index);
 		}
 	}
 }

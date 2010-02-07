@@ -33,13 +33,20 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class Player : Character {
 
-		public short Level {
+		public int Level {
 			get {
 				return this.level;
 			}
 			set {
-				this.level = value;
+				this.level = (short) value;
 				//TODO - cokoliv co se muze stat pri gainu levelu - patrne budeme mit trigger atd
+			}
+		}
+
+		//used in some cases where 60 is considered the effective max level
+		public int EffectiveLevel {
+			get {
+				return Math.Min((int) this.level, 60);
 			}
 		}
 

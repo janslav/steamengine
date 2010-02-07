@@ -16,7 +16,9 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
+using SteamEngine.Common;
+using SteamEngine.Networking;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -25,5 +27,99 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class ColoredStaff {
+
+		//this ability raises the maximum of mana that can be deposited in a staff
+		private static AbilityDef a_mana_deposit_bonus;
+		private static AbilityDef A_mana_deposit_bonus {
+			get {
+				if (a_mana_deposit_bonus == null) {
+					a_mana_deposit_bonus = AbilityDef.GetByDefname("a_mana_deposit_bonus");
+				}
+				return a_mana_deposit_bonus;
+			}
+		}
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
+			base.On_Click(clicker, clickerState, clickerConn);
+			this.ShowMana(clicker as Player);
+		}
+
+		public override void On_DClick(AbstractCharacter from) {
+			Player self = from as Player;
+			if ((self != null) && (this.Cont == from)) { //we have it equipped
+				int selfMana = self.Mana;
+				int selfMaxMana = self.MaxMana;
+				if (selfMana >= selfMaxMana) {
+					double staffMaxMana = this.CalculateMaxMana(self);
+					if (this.mana < staffMaxMana) {
+						double manaswap = (self.EffectiveLevel + 30.0) / 100.0; //swap effectivity = 90% at level 60
+						double staffResultMana = this.mana + selfMana * manaswap;
+						if (staffResultMana > staffMaxMana) {
+							self.Mana = (short) ((staffResultMana - staffMaxMana) / manaswap);
+							this.mana = (ushort) staffMaxMana;
+						} else {
+							self.Mana = 0;
+							this.mana = (ushort) staffResultMana;
+						}
+						this.ManaSwapped(self);
+					}
+				} else {
+					int manadiff = Math.Min(selfMaxMana - selfMana, this.mana);
+					if (manadiff > 0) {
+						self.Mana = (short) (selfMana + manadiff);
+						this.mana = (ushort) (this.mana - manadiff);
+						this.ManaSwapped(self);
+					}
+				}
+				this.ShowMana(self);
+			}
+
+			base.On_DClick(from);
+		}
+
+		private double CalculateMaxMana(Player self) {
+			double staffMaxMana = this.TypeDef.MaxMana;
+			double perCentBonus = self.GetAbility(A_mana_deposit_bonus) * A_mana_deposit_bonus.EffectPower;
+			staffMaxMana += (staffMaxMana * perCentBonus);
+			return staffMaxMana;
+		}
+
+		private void ManaSwapped(Player self) {
+			this.SoundTo(250, self);
+			this.InvalidateProperties();
+		}
+
+		public void ShowMana(Player self) {
+			if (self != null) {
+				double staffMaxMana = this.CalculateMaxMana(self);
+				Globals.SrcWriteLine(String.Concat(
+					Loc<ColoredStaffLoc>.Get(self.Language).manaInStaff, ": ",
+					this.mana.ToString(), "/", 
+					staffMaxMana.ToString()));
+			}
+		}
+
+		public int Mana {
+			get {
+				return this.mana;
+			}
+			set {
+				ushort newValue = (ushort) value;
+				if (this.mana != newValue) {
+					this.mana = (ushort) newValue;
+					this.InvalidateProperties();
+				}
+			}
+		}
+
+		public override void BuildAosToolTips(AosToolTips opc, Language language) {
+			base.BuildAosToolTips(opc, language);
+
+			opc.AddNameColonValue(Loc<ColoredStaffLoc>.Get(language).manaInStaff,
+				String.Concat(this.mana.ToString(), "/", this.TypeDef.MaxMana.ToString()));
+		}
+	}
+
+	public class ColoredStaffLoc : CompiledLocStringCollection {
+		public string manaInStaff = "Mana v holi";
 	}
 }

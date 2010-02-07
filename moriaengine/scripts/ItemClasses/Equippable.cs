@@ -47,14 +47,17 @@ namespace SteamEngine.CompiledScripts {
 			if (this.IsEquippable) {
 				//pick it up into dragging layer, then equip it. 
 				//We want the same triggers fired as if the client dragged it manually (yes, a lot of triggers)
-				DenyResult dr = from.TryPickupItem(this, 1);
-				if (dr == DenyResult.Allow) {
-					dr = from.TryEquipItemOnChar(from);
-				}
-				if (dr != DenyResult.Allow) {
-					GameState state = from.GameState;
-					if (state != null) {
-						PacketSequences.SendDenyResultMessage(state.Conn, this, dr);
+				
+				if ((this.Cont != from) || (this.Z != this.Layer)) { //we only try the equipping if not already equipped
+					DenyResult dr = from.TryPickupItem(this, 1);
+					if (dr == DenyResult.Allow) {
+						dr = from.TryEquipItemOnChar(from);
+					}
+					if (dr != DenyResult.Allow) {
+						GameState state = from.GameState;
+						if (state != null) {
+							PacketSequences.SendDenyResultMessage(state.Conn, this, dr);
+						}
 					}
 				}
 			}
