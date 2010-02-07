@@ -32,7 +32,7 @@ namespace SteamEngine.Converter {
 		public ConvertedTemplateDef(PropsSection input)
 			: base(input) {
 
-			headerType = "TemplateDef";
+			this.headerType = "TemplateDef";
 		}
 
 		public override void FirstStage() {
@@ -45,12 +45,12 @@ namespace SteamEngine.Converter {
 
 		public override void SecondStage() {
 			StringWriter writer = new StringWriter();
-			StringReader reader = new StringReader(origData.GetTrigger(0).Code.ToString());
+			StringReader reader = new StringReader(this.origData.GetTrigger(0).Code.ToString());
 			string line;
-			int linenum = origData.HeaderLine;
+			int linenum = this.origData.HeaderLine;
 			while ((line = reader.ReadLine()) != null) {
 				linenum++;
-				Match m = PropsFileParser.valueRE.Match(line);
+				Match m = CompiledLocStringCollection.valueRE.Match(line);
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
 					string name = gc["name"].Value;
@@ -86,7 +86,7 @@ namespace SteamEngine.Converter {
 			reader = new StringReader(writer.GetStringBuilder().ToString());
 			writer = new StringWriter();
 			while ((line = reader.ReadLine()) != null) {
-				Match m = PropsFileParser.valueRE.Match(line);
+				Match m = CompiledLocStringCollection.valueRE.Match(line);
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
 					string name = gc["name"].Value;

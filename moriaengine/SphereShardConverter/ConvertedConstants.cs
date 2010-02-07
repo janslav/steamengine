@@ -28,15 +28,15 @@ namespace SteamEngine.Converter {
 	public class ConvertedConstants : ConvertedDef {
 		public ConvertedConstants(PropsSection input)
 			: base(input) {
-			headerType = "Constants";
+			this.headerType = "Constants";
 		}
 
 		public override void FirstStage() {
 			base.FirstStage();
 			string line;
-			StringReader reader = new StringReader(origData.GetTrigger(0).Code.ToString());
+			StringReader reader = new StringReader(this.origData.GetTrigger(0).Code.ToString());
 			while ((line = reader.ReadLine()) != null) {
-				writtenData.Add(ConvertedTemplateDef.FixRandomExpression(line));
+				this.writtenData.Add(ConvertedTemplateDef.FixRandomExpression(line));
 			}
 		}
 	}

@@ -84,7 +84,7 @@ namespace SteamEngine.Converter {
 			this.secondStageImplementations.Add(secondStageImpl);
 			this.thirdStageImplementations.Add(thirdStageImpl);
 
-			headerType = "ItemDef";
+			this.headerType = "ItemDef";
 		}
 
 		//regexp for checking if the string is something like this: "blacksmithing 40.3" - we must switch the number and the string
@@ -288,8 +288,8 @@ namespace SteamEngine.Converter {
 		}
 
 		private void MakeEquippable() {
-			if (headerType.Equals("ItemDef")) {
-				headerType = "EquippableDef";
+			if (this.headerType.Equals("ItemDef")) {
+				this.headerType = "EquippableDef";
 			}
 			isEquippable = true;
 		}
@@ -304,7 +304,7 @@ namespace SteamEngine.Converter {
 					layerSet = true;
 				} else {
 					Set("//layer", "unknown", "");
-					Info(origData.HeaderLine, "Unknown layer for ItemDef " + headerName);
+					Info(this.origData.HeaderLine, "Unknown layer for ItemDef " + headerName);
 				}
 			}
 
@@ -343,8 +343,12 @@ namespace SteamEngine.Converter {
 							weaponType = WeaponType.OneHandSpike;
 						}
 						break;
-					case "t_weapon_mace_crook":
 					case "t_weapon_mace_staff":
+						if (isColored) {
+							this.headerType = "ColoredStaffDef";
+						}
+						goto case "t_weapon_mace_crook";
+					case "t_weapon_mace_crook":
 						materialType = MaterialType.Wood;
 						goto case "t_weapon_mace_smith";
 					case "t_weapon_mace_smith":
