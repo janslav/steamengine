@@ -272,9 +272,6 @@
     <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.Generated.cs">
       <Link>systems\Abilities\Specials\Berserker\Berserker.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\Cleric\Selfress.cs">
-      <Link>systems\Abilities\Talents\Cleric\Selfress.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs</Link>
     </Compile>
@@ -283,6 +280,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.Generated.cs">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Priest\Selfress.cs">
+      <Link>systems\Abilities\Talents\Priest\Selfress.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
       <Link>systems\Abilities\Warcry\Warcry.cs</Link>
@@ -1134,9 +1134,6 @@
     <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
       <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\Cleric\Selfress.scp">
-      <Link>systems\Abilities\Talents\Cleric\Selfress.scp</Link>
-    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\ignition.scp">
       <Link>systems\Abilities\Talents\Mage\Ignition\ignition.scp</Link>
     </None>
@@ -1145,6 +1142,9 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\silence.scp">
       <Link>systems\Abilities\Talents\Mage\silence.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Priest\Selfress.scp">
+      <Link>systems\Abilities\Talents\Priest\Selfress.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Warcry\Warcry.ct">
       <Link>systems\Abilities\Warcry\Warcry.ct</Link>

@@ -1000,9 +1000,12 @@ namespace SteamEngine.CompiledScripts {
 			this.CauseDeath((Character) Globals.SrcCharacter);
 		}
 
+        private static TagKey DeathTimeTK = TagKey.Acquire("_deathTime_");
+
 		public virtual void On_Death(Character killedBy) {
 			//stop regenerating
 			this.DeletePlugin(RegenerationPlugin.regenerationsPluginKey);
+            this.SetTag(DeathTimeTK, Globals.TimeAsSpan);
 		}
 
 		private static TriggerKey deathTK = TriggerKey.Acquire("death");

@@ -23,7 +23,7 @@ Def:	//vars on the def
 	int AttackSound = SoundNames.None
 	int HurtSound = SoundNames.None
 	int DeathSound = SoundNames.None
-
+	
 	int corpseModel = 0x2006
 
 	int icon = 0
