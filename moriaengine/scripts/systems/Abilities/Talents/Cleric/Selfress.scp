@@ -1,5 +1,0 @@
-[SelfressDef a_selfress]
-Name="Selfress"
-//MaxPoints = 10
-Cooldown = 2700
-//resourcesConsumed = i_candle
