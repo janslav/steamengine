@@ -1,11 +1,11 @@
+﻿Fail                            = Léčení se ti nezdařilo!
 Success                         = Léčení se ti povedlo!
-Fail                            = Léčení se ti nezdařilo!
 NoBands                         = Nemáš u sebe bandáže!
-TargetOut                       = {0} je od tebe příliš daleko!
+TargetOut                       =  je od tebe příliš daleko!
 SelfFull                        = Jsi zcela zdráv!
-TargetFull                      = {0} je zcela zdráv!
-TargetFailed                    = {0} selhal při pokusu tě ošetřit!
+TargetFull                      =  je zcela zdráv!
+TargetFailed                    =  selhal při pokusu tě ošetřit!
 TargetWho                       = Koho chceš léčit?
 TargetItem                      = Předměty nelze léčit.
-TargetStartHeal                 = Začínáš léčit {0}.
+TargetStartHeal                 = Začínáš léčit 
 SelfStartHeal                   = Začínáš se léčit.
