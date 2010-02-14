@@ -14,6 +14,6 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate BerserkerPlugin : Plugin]
-Vars:
-	public double damageModifier = 1.0
+//[PluginTemplate BerserkerPlugin : Plugin]
+//Vars:
+//	public double damageModifier = 1.0
