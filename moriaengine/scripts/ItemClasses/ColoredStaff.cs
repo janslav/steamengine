@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//this ability raises the maximum of mana that can be deposited in a staff
 		private static AbilityDef a_mana_deposit_bonus;
-		private static AbilityDef A_mana_deposit_bonus {
+		private static AbilityDef ManaDepositBonusDef {
 			get {
 				if (a_mana_deposit_bonus == null) {
 					a_mana_deposit_bonus = AbilityDef.GetByDefname("a_mana_deposit_bonus");
@@ -90,7 +90,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private double CalculateMaxMana(Player self) {
 			double staffMaxMana = this.TypeDef.MaxMana;
-			double perCentBonus = self.GetAbility(A_mana_deposit_bonus) * A_mana_deposit_bonus.EffectPower;
+			double perCentBonus = self.GetAbility(ManaDepositBonusDef) * ManaDepositBonusDef.EffectPower;
 			staffMaxMana += (staffMaxMana * perCentBonus);
 			return staffMaxMana;
 		}
