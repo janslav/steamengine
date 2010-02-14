@@ -275,6 +275,12 @@
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.Generated.cs">
       <Link>systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.cs">
+      <Link>systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs</Link>
     </Compile>
@@ -1143,6 +1149,9 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\Common\manaDepositBonus.scp">
       <Link>systems\Abilities\Talents\Common\manaDepositBonus.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Common\manaRegenBoost.scp">
+      <Link>systems\Abilities\Talents\Common\manaRegenBoost.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Common\ManaSaving\manaSaving.scp">
       <Link>systems\Abilities\Talents\Common\ManaSaving\manaSaving.scp</Link>
     </None>
@@ -1151,6 +1160,12 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Common\spellBoost.scp">
       <Link>systems\Abilities\Talents\Common\spellBoost.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Mage\ClearCast\clearCast.scp">
+      <Link>systems\Abilities\Talents\Mage\ClearCast\clearCast.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.ct">
+      <Link>systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\ignition.scp">
       <Link>systems\Abilities\Talents\Mage\Ignition\ignition.scp</Link>

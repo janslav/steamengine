@@ -26,32 +26,29 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class ManaSavingPlugin {
+	public partial class ClearCastPlugin {
 
-		private static ActivableAbilityDef a_mana_saving;
-		private static ActivableAbilityDef ManaSavingDef {
+		private static ActivableAbilityDef a_clearcast;
+		public static ActivableAbilityDef ClearCastDef {
 			get {
-				if (a_mana_saving == null) {
-					a_mana_saving = (ActivableAbilityDef) AbilityDef.GetByDefname("a_mana_saving");
+				if (a_clearcast == null) {
+					a_clearcast = (ActivableAbilityDef) AbilityDef.GetByDefname("a_clearcast");
 				}
-				return a_mana_saving;
+				return a_clearcast;
 			}
 		}
 
-		public void On_SkillSuccess(SkillSequenceArgs skillSeqArgs) {
+		public override void On_Assign() {
+			base.On_Assign();
+			this.Timer = ClearCastDef.EffectDuration;
+		}
+
+		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				Character self = (Character) this.Cont;
-				ActivableAbilityDef abilityDef = ManaSavingDef;
+				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 
-				if (abilityDef.CheckSuccess(self) &&
-					(!ClearCastPlugin.ClearCastDef.IsActive(self)) && //clearcast makes manause 0 so in that case we don't return anything. Or should we?
-					(self.Mana < self.MaxMana)) {
-						SpellDef spell = (SpellDef) skillSeqArgs.Param1;
-						double manause = spell.GetManaUse(skillSeqArgs.Tool is SpellScroll);
-						int giveback = (int) Math.Round(manause * this.EffectPower);
-					
-						self.Mana = (short) Math.Min(self.Mana + giveback, self.MaxMana);
-				}
+				self.Mana += (short) spell.GetManaUse(skillSeqArgs.Tool is SpellScroll);
 			}
 		}
 	}

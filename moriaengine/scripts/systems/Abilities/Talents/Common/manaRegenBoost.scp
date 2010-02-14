@@ -17,5 +17,5 @@ this.EffectPower = this.Cont.GetAbility(a_regen_mana) * a_regen_mana.EffectPower
 this.Cont.ManaRegenSpeed = this.Cont.ManaRegenSpeed + this.EffectPower
 
 on=@unassign
-argv[0].ManaRegenSpeed = this.Cont.ManaRegenSpeed - this.EffectPower
+argv[0].ManaRegenSpeed = argv[0].ManaRegenSpeed - this.EffectPower
 
