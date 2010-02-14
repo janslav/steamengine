@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return this.effectPower;
 			}
-			protected set {
+			set {
 				this.effectPower = value;
 			}
 		}
