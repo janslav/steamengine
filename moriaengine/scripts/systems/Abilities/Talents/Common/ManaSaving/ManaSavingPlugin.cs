@@ -26,7 +26,6 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	//the similarity to Poison is not random :)
 	public partial class ManaSavingPlugin {
 
 		private static ActivableAbilityDef a_mana_saving;
@@ -43,13 +42,12 @@ namespace SteamEngine.CompiledScripts {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				Character self = (Character) this.Cont;
 				ActivableAbilityDef abilityDef = ManaSavingDef;
-				int aPoints = self.GetAbility(abilityDef);
 
-				if (abilityDef.CheckSuccess(aPoints)) {
+				if (abilityDef.CheckSuccess(self)) {
 					if (self.Mana < self.MaxMana) {
 						SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 						double manause = spell.GetManaUse(skillSeqArgs.Tool is SpellScroll);
-						int giveback = (int) Math.Round(manause * abilityDef.EffectPower * aPoints);
+						int giveback = (int) Math.Round(manause * this.EffectPower);
 					
 						self.Mana = (short) Math.Min(self.Mana + giveback, self.MaxMana);
 					}

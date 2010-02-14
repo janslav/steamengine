@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 						if (points > 0) {
 							if (def.CheckSuccess(points)) {								
 
-								double power = points * def.EffectPower;
+								double power = this.EffectPower;
 								power *= DamageManager.GetResistModifier(target, DamageType.MagicFire); //apply fire resist
 
 								IgnitionEffectPlugin ignitionPlugin = target.GetPlugin(pkIgnitionEffect) as IgnitionEffectPlugin;

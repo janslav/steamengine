@@ -230,7 +230,7 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual bool On_DenyActivate(DenyAbilityArgs args) {
 		    Ability ab = args.ranAbility;
 		    //check cooldown
-		    if ((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) { //check the timing if OK
+		    if (((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) && !args.abiliter.IsGM) { //check the timing if OK
 		        args.Result = DenyResultAbilities.Deny_TimerNotPassed;
 		        return true;//same as "return 1" from LScript - cancel trigger sequence
 		    }
