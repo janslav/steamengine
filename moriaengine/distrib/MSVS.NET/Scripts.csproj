@@ -269,8 +269,11 @@
     <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.cs">
       <Link>systems\Abilities\Specials\Berserker\Berserker.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.Generated.cs">
-      <Link>systems\Abilities\Specials\Berserker\Berserker.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.cs">
+      <Link>systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs</Link>
@@ -280,9 +283,6 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.Generated.cs">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionPlugins.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\Priest\Selfress.cs">
-      <Link>systems\Abilities\Talents\Priest\Selfress.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
       <Link>systems\Abilities\Warcry\Warcry.cs</Link>
@@ -1134,6 +1134,18 @@
     <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
       <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.ct">
+      <Link>systems\Abilities\Specials\Berserker\Berserker.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Specials\Berserker\berserker.scp">
+      <Link>systems\Abilities\Specials\Berserker\berserker.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Common\ManaSaving\manaSaving.scp">
+      <Link>systems\Abilities\Talents\Common\ManaSaving\manaSaving.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.ct">
+      <Link>systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.ct</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\ignition.scp">
       <Link>systems\Abilities\Talents\Mage\Ignition\ignition.scp</Link>
     </None>
@@ -1142,9 +1154,6 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\silence.scp">
       <Link>systems\Abilities\Talents\Mage\silence.scp</Link>
-    </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\Priest\Selfress.scp">
-      <Link>systems\Abilities\Talents\Priest\Selfress.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Warcry\Warcry.ct">
       <Link>systems\Abilities\Warcry\Warcry.ct</Link>
@@ -1245,6 +1254,9 @@
     <Content Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\wallSpells.def">
       <Link>systems\skills\Magery\Spells\WallSpells\wallSpells.def</Link>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="systems\Abilities\Talents\Priest\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
