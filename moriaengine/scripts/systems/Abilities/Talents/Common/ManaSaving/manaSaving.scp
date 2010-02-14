@@ -1,0 +1,10 @@
+[StatDrainingAbilityDef a_mana_saving]
+Name="Mana Saving"
+StamDrain=1
+EffectPower=0.09 //gives back only 90%
+Chance=0.095
+
+PluginKey = @@mana_saving
+PluginDef = p_mana_saving
+
+[ManaSavingPluginDef p_mana_saving]
