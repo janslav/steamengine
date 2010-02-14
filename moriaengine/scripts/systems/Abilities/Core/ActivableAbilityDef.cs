@@ -55,27 +55,32 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsActive(Character ch) {
-			Plugin plugin = ch.GetPlugin(this.PluginKey);
-			if (plugin != null) {
-				return plugin.Def == this.PluginDef;
+			PluginKey key = this.PluginKey;
+			if (key != null) {
+				Plugin plugin = ch.GetPlugin(key);
+				if (plugin != null) {
+					return plugin.Def == this.PluginDef;
+				}
 			}
 			return false;
 		}
 
 		[Summary("If its is running - deactivate, otherwise - activate.")]
 		public void Switch(Character chr) {
-			Plugin plugin = chr.GetPlugin(this.PluginKey);
-			if (plugin != null) {
-				plugin.Delete();
-			} else {
-				this.Activate(chr);//try to activate
+			PluginKey key = this.PluginKey;
+			if (key != null) {
+				Plugin plugin = chr.GetPlugin(key);
+				if (plugin != null) {
+					plugin.Delete();
+					return;
+				}
 			}
+			this.Activate(chr); //try to activate
 		}
 
 		public override void Activate(Character chr) {
-			Plugin plugin = chr.GetPlugin(this.PluginKey);
-			if (plugin == null) {
-				base.Activate(chr);//try to activate
+			if (!this.IsActive(chr)){
+				base.Activate(chr); //try to activate
 			}
 		}
 
