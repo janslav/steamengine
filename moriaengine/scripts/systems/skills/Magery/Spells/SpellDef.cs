@@ -864,7 +864,12 @@ namespace SteamEngine.CompiledScripts {
 		public CharRelation CasterToMainTargetRelation {
 			get {
 				if (!this.relationFoundOut) {
-					this.relation = Notoriety.GetCharRelation(this.caster, (Character) this.mainTarget);
+					Character targetAsChar = this.mainTarget as Character;
+					if (targetAsChar != null) {
+						this.relation = Notoriety.GetCharRelation(this.caster, targetAsChar);
+					} else {
+						this.relation = CharRelation.AlwaysHostile;
+					}
 					this.relationFoundOut = true;
 				}
 				return this.relation;

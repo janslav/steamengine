@@ -9,13 +9,14 @@ RUNES=IPY
 RUNEITEM=i_rune_MAGIC_ARROW
 SCROLLITEM=i_scroll_MAGIC_ARROW
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
+DamageType = DamageType.MagicFire
 EFFECT=0,3
 MANAUSE=6
-Requirements=4.0 Magery
-difficulty = 5
+Requirements=40 Magery
+difficulty=40
 
 on=@effectChar
-	EffectFactory.EffectFromTo(argo.Caster, this, 0x36E4, 5, 0, false, true, 0, 0)
+	EffectFactory.EffectFromTo(argo.Caster, this, 0x36E4, 5, 0, false, true)
 	
 [DamageSpellDef 12]//utocne
 DEFNAME=s_harm
@@ -27,11 +28,11 @@ CASTTIME=1.2
 RUNEITEM=i_rune_HARM
 SCROLLITEM=i_scroll_HARM
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-EFFECT=6,12
 
+EFFECT=6,12
 MANAUSE=6 
-Requirements=20.0 Magery 
-difficulty = 200
+Requirements=200 Magery 
+difficulty=200
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x374A, 10, 15)
@@ -39,16 +40,21 @@ on=@effectChar
 [DamageSpellDef 18]
 DEFNAME=s_fireball
 NAME=Fireball
-SOUND=snd_SPELL_FIREBALL
+SOUND=0x44B
 RUNES=VF
 CASTTIME=1.7
 //RESOURCES=i_reag_black_pearl,i_reag_sulfur_ash
 RUNEITEM=i_rune_FIREBALL
 SCROLLITEM=i_scroll_FIREBALL
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-EFFECT=0,15
-MANAUSE=10
-Requirements=30.0 Magerys
+DamageType = DamageType.MagicFire
+EFFECT=0,11
+MANAUSE=6
+Requirements=30.0 Magery
+difficulty=300
+
+on=@effectChar
+	EffectFactory.EffectFromTo(argo.Caster, this, 0x36D4, 7, 0, false, true)
 
 [DamageSpellDef 30]//utocne
 DEFNAME=s_lightning
@@ -60,10 +66,11 @@ SOUND=41
 RUNEITEM=i_rune_LIGHTNING
 SCROLLITEM=i_scroll_LIGHTNING
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-DamageType = DamageType.MagicFire
+DamageType = DamageType.MagicElectric
 EFFECT=0,15
 MANAUSE=11
-Requirements=40.0 Magery
+Requirements=400 Magery
+difficulty=400
 
 on=@effectChar
 	EffectFactory.LightningEffect(this)
@@ -77,38 +84,49 @@ CASTTIME=2.5
 //RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_nightshade,i_reag_sulfur_ash
 RUNEITEM=i_rune_MIND_BLAST
 SCROLLITEM=i_scroll_MIND_BLAST
-FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_SM|spellflag_harm//SPELLFLAG_TARG_CHAR
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 EFFECT=0,12
 MANAUSE=20
-Requirements=50.0 Magery
+Requirements=500 Magery
+difficulty=500
 
 [DamageSpellDef 42]
 DEFNAME=s_energy_bolt
 NAME=Energy Bolt
-SOUND=snd_SPELL_ENERGY_BOLT
+SOUND=0x20A
 RUNES=CP
 CASTTIME=2.5
 //RESOURCES=i_reag_black_pearl,i_reag_nightshade
 RUNEITEM=i_rune_ENERGY_BOLT
 SCROLLITEM=i_scroll_ENERGY_BOLT
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-EFFECT=0,22
+DamageType = DamageType.MagicFire
+EFFECT=0,16
 MANAUSE=22
-Requirements=60.0 Magery
+Requirements=600 Magery
+difficulty=600
+
+on=@effectChar
+	EffectFactory.EffectFromTo(argo.Caster, this, 0x379F, 7, 0, false, true)
 
 [DamageSpellDef 43]//utocne
 DEFNAME=s_explosion
 NAME=Explosion
-SOUND=snd_SPELL_EXPLOSION
+SOUND=0x307
 RUNES=VOF
 CASTTIME=2.5
 //RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_sulfur_ash
 RUNEITEM=i_rune_EXPLOSION
 SCROLLITEM=i_scroll_EXPLOSION
-FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanTargetGround | SpellFlag.IsAreaSpell | SpellFlag.CanEffectChar | SpellFlag.CanEffectGround | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell
+DamageType = DamageType.MagicFire
 EFFECT=0,25
 MANAUSE=22
-Requirements=60.0 Magery
+Requirements=600 Magery
+difficulty=600
+
+on=@effectChar
+	EffectFactory.StationaryEffect(this, 0x36BD, 20, 10)
 
 [DamageSpellDef 49]//utocne
 DEFNAME=s_chain_lightning
@@ -120,9 +138,11 @@ CASTTIME=2.8
 RUNEITEM=i_rune_CHAIN_LIGHTNING
 SCROLLITEM=i_scroll_CHAIN_LIGHTNING
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful | SpellFlag.IsAreaSpell
+DamageType = DamageType.MagicElectric
 EFFECT=0,30
 MANAUSE=30
-Requirements=70.0 Magery
+Requirements=700 Magery
+difficulty=700
 
 on=@effectChar
 	EffectFactory.LightningEffect(this)
@@ -139,27 +159,32 @@ SCROLLITEM=i_scroll_FLAMESTRIKE
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
 DamageType = DamageType.MagicFire
 EFFECT=0,35
-
 MANAUSE=40
-Requirements=70.0 Magery
+Requirements=700 Magery
+difficulty=700
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x3709, 10, 30)
 
-[SpellDef 55]//utocne
+[DamageSpellDef 55]//utocne
 // NOTE: Does Meteor Swarm have a duration or does it just send out one blast of 'rocks' ??? IF a duration then certainly no more the 30secs IMO.
 DEFNAME=s_meteor_swarm
 NAME=Meteor Swarm
-SOUND=snd_SPELL_METEOR_swarm
+SOUND=0x160
 RUNES=FKDY
 CASTTIME=3.5
 //RESOURCES=i_reag_blood_moss,i_reag_mandrake_root,i_reag_spider_silk,i_reag_sulfur_ash
 RUNEITEM=i_rune_METEOR_swarm
 SCROLLITEM=i_scroll_METEOR_swarm
 FLAGS=SPELLFLAG_DIR_ANIM|spellflag_evil|SPELLFLAG_TARG_XYZ|spellflag_SM|spellflag_harmcaster|spellflag_harm
+DamageType = DamageType.MagicFire
 EFFECT=0,40
 MANAUSE=40
-Requirements=70.0 Magery
+Requirements=700 Magery
+difficulty=700
+
+on=@effectChar
+	EffectFactory.EffectFromTo(argo.Caster, this, 0x36D4, 7, 0, false, true)
 
 [DamageSpellDef 57]//utocne
 DEFNAME=s_earthquake
@@ -174,7 +199,11 @@ FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsL
 EFFECT=0,50
 //DURATION=30
 MANAUSE=50
-Requirements=80.0 Magery
+Requirements=800 Magery
+difficulty=800
+
+
+
 // NOTE: does Earthquake use a duration?? IF so, no more then 30secs. This spell is more like an irradiating wave thus should have a set distance/time it can be effective
 
 //[SpellDef 69]

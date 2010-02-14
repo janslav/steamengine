@@ -71,5 +71,9 @@ namespace SteamEngine.CompiledScripts {
 			p.Prepare(source, target, 0, effect, speed, duration, 0, fixedDirection, explodes, hue, renderMode);
 			GameServer.SendToClientsInRange(source, Globals.MaxUpdateRange, p);
 		}
+
+		public static void EffectFromTo(IPoint4D source, IPoint4D target, int effect, byte speed, byte duration, bool fixedDirection, bool explodes) {
+			EffectFromTo(source, target, effect, speed, duration, fixedDirection, explodes, 0, RenderModes.Opaque);
+		}
 	}
 }
