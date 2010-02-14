@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 				EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
 				if (durationPlugin != null) {
 					durationPlugin.Init(chr, EffectFlag.BeneficialEffect | EffectFlag.FromAbility,
-						this.EffectPower, TimeSpan.MinValue);
+						this.EffectPower * ab.ModifiedPoints, TimeSpan.MinValue); //the "power" formula is somewhat arbitrary, but this particular combination (points * effect) seems to be quite popular
 				}
 				chr.AddPlugin(this.PluginKey, plugin);
 			}

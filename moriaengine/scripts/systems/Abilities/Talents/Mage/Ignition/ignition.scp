@@ -2,7 +2,7 @@
 Name="Ignition"
 //MaxPoints=10
 ManaDrain=1
-EffectPower=1
+EffectPower=1 //hits drain per second when hit
 EffectDuration=60
 
 PluginKey = @@ignition
