@@ -1,0 +1,2 @@
+cantTeleport                    = Během trvání kouzla Energy shield nemůžeš používat teleportační kouzla
+cantMove                        = Během trvání kouzla Energy shield se nemůžeš pohybovat

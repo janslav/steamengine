@@ -281,6 +281,12 @@
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.Generated.cs">
       <Link>systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\EnergyShield\EnergyShieldPlugin.cs">
+      <Link>systems\Abilities\Talents\Mage\EnergyShield\EnergyShieldPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\EnergyShield\EnergyShieldPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\Mage\EnergyShield\EnergyShieldPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs">
       <Link>systems\Abilities\Talents\Mage\Ignition\IgnitionActivatedPlugin.cs</Link>
     </Compile>
@@ -1166,6 +1172,12 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.ct">
       <Link>systems\Abilities\Talents\Mage\ClearCast\ClearCastPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Mage\EnergyShield\energyShield.scp">
+      <Link>systems\Abilities\Talents\Mage\EnergyShield\energyShield.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Mage\EnergyShield\EnergyShieldPlugin.ct">
+      <Link>systems\Abilities\Talents\Mage\EnergyShield\EnergyShieldPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\Ignition\ignition.scp">
       <Link>systems\Abilities\Talents\Mage\Ignition\ignition.scp</Link>
