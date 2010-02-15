@@ -25,49 +25,52 @@ namespace SteamEngine.CompiledScripts {
 			int intDamageType = (int) damageType;
 
 			//phase 1
-			double hasResistMagic = ((intDamageType & 0x0001) == 0) ? 0.0 : 1;
-			double hasResistPhysical = ((intDamageType & 0x0002) == 0) ? 0.0 : 1;
+			double isMagic = ((intDamageType & 0x0001) == 0) ? 0.0 : 1;
+			double isPhysical = ((intDamageType & 0x0002) == 0) ? 0.0 : 1;
 
 			double modifier = 1;
-			double resistCount = hasResistMagic + hasResistPhysical;
+			double resistCount = isMagic + isPhysical;
 			modifier = modifier * resistCount;
+			Sanity.IfTrueThrow(resistCount == 0, "Attack of type '" + damageType + "' - neither magical nor physical");
 
-			modifier -= hasResistMagic * resistingChar.ResistMagic;
-			modifier -= hasResistPhysical * resistingChar.ResistPhysical;
+			modifier -= isMagic * resistingChar.ResistMagic;
+			modifier -= isPhysical * resistingChar.ResistPhysical;
 
 			//phase 2
-			double hasResistFire = ((intDamageType & (int) DamageType.Fire) == 0) ? 0.0 : 1;
-			double hasResistElectric = ((intDamageType & (int) DamageType.Electric) == 0) ? 0.0 : 1;
-			double hasResistAcid = ((intDamageType & (int) DamageType.Acid) == 0) ? 0.0 : 1;
-			double hasResistCold = ((intDamageType & (int) DamageType.Cold) == 0) ? 0.0 : 1;
-			double hasResistPoison = ((intDamageType & (int) DamageType.Poison) == 0) ? 0.0 : 1;
-			double hasResistMystical = ((intDamageType & (int) DamageType.Mystical) == 0) ? 0.0 : 1;
-			double hasResistSlashing = ((intDamageType & (int) DamageType.Slashing) == 0) ? 0.0 : 1;
-			double hasResistStabbing = ((intDamageType & (int) DamageType.Stabbing) == 0) ? 0.0 : 1;
-			double hasResistBlunt = ((intDamageType & (int) DamageType.Bleed) == 0) ? 0.0 : 1;
-			double hasResistArchery = ((intDamageType & (int) DamageType.Archery) == 0) ? 0.0 : 1;
-			double hasResistBleed = ((intDamageType & (int) DamageType.Bleed) == 0) ? 0.0 : 1;
-			double hasResistSummon = ((intDamageType & (int) DamageType.Summon) == 0) ? 0.0 : 1;
-			double hasResistDragon = ((intDamageType & (int) DamageType.Dragon) == 0) ? 0.0 : 1;
+			double isFire = ((intDamageType & (int) DamageType.Fire) == 0) ? 0.0 : 1;
+			double isElectric = ((intDamageType & (int) DamageType.Electric) == 0) ? 0.0 : 1;
+			double isAcid = ((intDamageType & (int) DamageType.Acid) == 0) ? 0.0 : 1;
+			double isCold = ((intDamageType & (int) DamageType.Cold) == 0) ? 0.0 : 1;
+			double isPoison = ((intDamageType & (int) DamageType.Poison) == 0) ? 0.0 : 1;
+			double isMystical = ((intDamageType & (int) DamageType.Mystical) == 0) ? 0.0 : 1;
+			double isSlashing = ((intDamageType & (int) DamageType.Slashing) == 0) ? 0.0 : 1;
+			double isStabbing = ((intDamageType & (int) DamageType.Stabbing) == 0) ? 0.0 : 1;
+			double isBlunt = ((intDamageType & (int) DamageType.Blunt) == 0) ? 0.0 : 1;
+			double isArchery = ((intDamageType & (int) DamageType.Archery) == 0) ? 0.0 : 1;
+			double isBleed = ((intDamageType & (int) DamageType.Bleed) == 0) ? 0.0 : 1;
+			double isSummon = ((intDamageType & (int) DamageType.Summon) == 0) ? 0.0 : 1;
+			double isDragon = ((intDamageType & (int) DamageType.Dragon) == 0) ? 0.0 : 1;
 
-			resistCount = hasResistFire + hasResistElectric + hasResistAcid + hasResistCold +
-				hasResistPoison + hasResistMystical + hasResistSlashing + hasResistStabbing +
-				hasResistBlunt + hasResistArchery + hasResistBleed + hasResistSummon + hasResistDragon;
+			resistCount = isFire + isElectric + isAcid + isCold +
+				isPoison + isMystical + isSlashing + isStabbing +
+				isBlunt + isArchery + isBleed + isSummon + isDragon;
+			Sanity.IfTrueThrow(resistCount == 0, "Attack of type '" + damageType + "' - has no resist subtype");
+			
 			modifier = modifier * resistCount;
 
-			modifier -= hasResistFire * resistingChar.ResistFire;
-			modifier -= hasResistElectric * resistingChar.ResistElectric;
-			modifier -= hasResistAcid * resistingChar.ResistAcid;
-			modifier -= hasResistCold * resistingChar.ResistCold;
-			modifier -= hasResistPoison * resistingChar.ResistPoison;
-			modifier -= hasResistMystical * resistingChar.ResistMystical;
-			modifier -= hasResistSlashing * resistingChar.ResistSlashing;
-			modifier -= hasResistStabbing * resistingChar.ResistStabbing;
-			modifier -= hasResistBlunt * resistingChar.ResistBlunt;
-			modifier -= hasResistArchery * resistingChar.ResistArchery;
-			modifier -= hasResistBleed * resistingChar.ResistBleed;
-			modifier -= hasResistSummon * resistingChar.ResistSummon;
-			modifier -= hasResistDragon * resistingChar.ResistDragon;
+			modifier -= isFire * resistingChar.ResistFire;
+			modifier -= isElectric * resistingChar.ResistElectric;
+			modifier -= isAcid * resistingChar.ResistAcid;
+			modifier -= isCold * resistingChar.ResistCold;
+			modifier -= isPoison * resistingChar.ResistPoison;
+			modifier -= isMystical * resistingChar.ResistMystical;
+			modifier -= isSlashing * resistingChar.ResistSlashing;
+			modifier -= isStabbing * resistingChar.ResistStabbing;
+			modifier -= isBlunt * resistingChar.ResistBlunt;
+			modifier -= isArchery * resistingChar.ResistArchery;
+			modifier -= isBleed * resistingChar.ResistBleed;
+			modifier -= isSummon * resistingChar.ResistSummon;
+			modifier -= isDragon * resistingChar.ResistDragon;
 
 			return modifier;
 		}
@@ -194,7 +197,7 @@ namespace SteamEngine.CompiledScripts {
 
 			double armor = swingArgs.ArmorClass * (1000 - swingArgs.Piercing) / 1000;
 			if (!isMvP) {
-				armor = ScriptUtil.GetRandInRange(settings.armorRandEffectMin, settings.armorRandEffectMin);
+				armor = ScriptUtil.GetRandInRange(settings.armorRandEffectMin, settings.armorRandEffectMax);
 			}
 
 			armor = Math.Max(0, armor);
