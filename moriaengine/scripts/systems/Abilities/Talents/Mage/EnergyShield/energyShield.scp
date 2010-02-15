@@ -9,3 +9,9 @@ PluginKey = @@energyShield
 PluginDef = p_energyShield
 
 [EnergyShieldPluginDef p_energyShield]
+
+[function energyshield]
+a_energy_shield.Activate(this)
+
+[function cancelenergyshield]
+a_energy_shield.Unactivate(this)
