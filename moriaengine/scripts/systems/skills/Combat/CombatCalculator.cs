@@ -246,20 +246,20 @@ namespace SteamEngine.CompiledScripts {
 			switch (weapType) {
 				case WeaponType.Bow:
 				case WeaponType.XBow:
-					return DamageType.Archery;
+					return DamageType.PhysicalArchery;
 				case WeaponType.OneHandSword:
 				case WeaponType.TwoHandSword:
-					return DamageType.Sharp;
+					return DamageType.PhysicalSharp;
 				case WeaponType.BareHands:
 				case WeaponType.OneHandBlunt:
 				case WeaponType.TwoHandBlunt:
-					return DamageType.Blunt;
+					return DamageType.PhysicalBlunt;
 				case WeaponType.OneHandSpike:
 				case WeaponType.TwoHandSpike:
-					return DamageType.Stabbing;
+					return DamageType.PhysicalStabbing;
 				case WeaponType.OneHandAxe:
 				case WeaponType.TwoHandAxe:
-					return DamageType.Slashing;
+					return DamageType.PhysicalSlashing;
 			}
 			throw new SEException("weapType out of range");
 		}
