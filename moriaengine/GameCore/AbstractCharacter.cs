@@ -690,7 +690,7 @@ namespace SteamEngine {
 
 				bool onStepCancelled = false;
 				try {
-					this.On_Step(dir, running);
+					onStepCancelled = this.On_Step(dir, running);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (onStepCancelled) {
 					return false;
