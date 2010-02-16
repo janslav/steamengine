@@ -59,16 +59,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			//cudlik a input field na zuzeni vyberu
-			dlg.AddTable(new GUTATable(1, 130, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, 140, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Vyhledávací kriterium").Build();
 			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(33).Build();
 			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
 			//cudlik na pridani nove ability
-			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.AddTable(new GUTATable(1, 120, 120, 100, 120, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Pøidat abilitu").Build();
-			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(8).Build();
+			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Ability defname").Build();
+			dlg.LastTable[0, 2] = GUTAInput.Builder.Id(6).Build();
+			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Poèet bodù").Build();
+			dlg.LastTable[0, 4] = GUTAInput.Builder.Id(7).Type(LeafComponentTypes.InputNumber).Build();
+			dlg.LastTable[0, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(8).Build();
 			dlg.MakeLastTableTransparent();
 
 			//popis sloupcu
@@ -174,25 +178,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.DefnameDesc);
 						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
-						break;
-					case 6: //running asc
-						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.RunningAsc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
-						DialogStacking.ResendAndRestackDialog(gi);
-						break;
-					case 7: //running desc
-						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.RunningDesc);
-						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
-						DialogStacking.ResendAndRestackDialog(gi);
-						break;
+						break;					
 					case 8: //pridat abilitu
-						DialogArgs newArgs = new DialogArgs();
-						newArgs.SetTag(D_CharsAbilitiesList.abiliterTK, (Character) gi.Focus); //komu budeme abilitu zakladat
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_NewAbility>.Instance, newArgs);
-						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
+						//nacteme obsah obou input fieldu
+						string abilityDefname = gr.GetTextResponse(6);
+						double abilityPoints = gr.GetNumberResponse(7);
+						AbilityDef abDef = AbilityDef.GetByDefname(abilityDefname);
+						if(abDef == null) {
+							//zadal neexistujici abilitydefname
+							Gump newGi = D_Display_Text.ShowError("Chybnì zadáno, neznámý abilitydefname: " + abilityDefname);
+							DialogStacking.EnstackDialog(gi, newGi);
+							return;
+						}
+						Character abiliter = (Character) gi.Focus;
+						abiliter.SetRealAbilityPoints(abDef, (int) abilityPoints); //zalozi novou / zmodifikuje hodnotu existujici ability
+
+						args.RemoveTag(D_CharsAbilitiesList.listTK); //promazeme seznam pro prenacteni
+						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 9: //Ulozit zmeny
-						Character abiliter = (Character)gi.Focus;
+						abiliter = (Character)gi.Focus;
 						string result = "Výsledek zmìn hodnot abilit: <br>";
 						for(int abId = firstOnPage; abId < imax; abId++) {
 							int inptID = 5 * abId + 11;
@@ -204,8 +209,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								abiliter.SetRealAbilityPoints(chgdAbility.AbilityDef, newAbilityValue);
 							}
 						}
-						newGi = D_Display_Text.ShowInfo(result);
-						DialogStacking.EnstackDialog(gi, newGi);
+						DialogStacking.ResendAndRestackDialog(gi);//hned znovuotevrit
+						D_Display_Text.ShowInfo(result);//a zobrazit vysledek (neni nutno stackovat je to jen pro info)
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, abList.Count, 1)) {//kliknuto na paging?
