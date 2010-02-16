@@ -251,9 +251,6 @@
     <Compile Include="..\..\scripts\systems\Abilities\Core\ImmediateAbilityDef.cs">
       <Link>systems\Abilities\Core\ImmediateAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\NewAbilityDialog.cs">
-      <Link>systems\Abilities\Core\NewAbilityDialog.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Core\PassiveAbilityDef.cs">
       <Link>systems\Abilities\Core\PassiveAbilityDef.cs</Link>
     </Compile>
