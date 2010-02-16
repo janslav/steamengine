@@ -50,10 +50,13 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
+			//zobrazovat budeme radsi napred defname a pak udaj o typu (v dialozich se to totiz casto nevejde)
 			if (string.IsNullOrEmpty(this.altdefname) || string.IsNullOrEmpty(this.Defname)) {
-				return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.PrettyDefname, "]");
+				return string.Concat("[", this.PrettyDefname, " : ", Tools.TypeToString(this.GetType()), "]");
+				//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.PrettyDefname, "]");
 			} else {
-				return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.altdefname, "]");
+				return string.Concat("[", this.Defname, "/", this.altdefname, " : ", Tools.TypeToString(this.GetType()), "]");
+				//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.altdefname, "]");
 			}
 		}
 

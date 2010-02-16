@@ -28,11 +28,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey listTK = TagKey.Acquire("_abilities_set_");
 		internal static readonly TagKey criteriumTK = TagKey.Acquire("_abilities_criterium_");
 		internal static readonly TagKey sortingTK = TagKey.Acquire("_abilities_sorting_");
+		internal static readonly TagKey abiliterTK = TagKey.Acquire("_abiliter_");
 
 		private static int width = 800;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			//vzit seznam roli
+			//vzit seznam abilit (je-li)
 			List<Ability> abList = args.GetTag(D_CharsAbilitiesList.listTK) as List<Ability>;
 
 			if (abList == null) {
@@ -64,46 +65,72 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(1).Build();
 			dlg.MakeLastTableTransparent();
 
+			//cudlik na pridani nove ability
+			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Pøidat abilitu").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(8).Build();
+			dlg.MakeLastTableTransparent();
+
 			//popis sloupcu
-			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 250, 50, 150, 40, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			dlg.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 250, 70, 150, ButtonMetrics.D_BUTTON_WIDTH, ButtonMetrics.D_BUTTON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Info").Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(2).Build(); //tridit podle name asc
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(3).Build(); //tridit podle name desc				
 			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Název").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
 			dlg.LastTable[0, 2] = GUTAText.Builder.TextLabel("Pts/Max pts").Build();
 			dlg.LastTable[0, 3] = GUTAText.Builder.TextLabel("Last usage").Build();
-			dlg.LastTable[0, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(6).Build(); //tridit podle running asc
-			dlg.LastTable[0, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(7).Build(); //tridit podle running desc							
-			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Run").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
-			dlg.LastTable[0, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(4).Build(); //tridit podle roledefname asc
-			dlg.LastTable[0, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(5).Build(); //tridit podle abilitydefname desc				
-			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Abilitydef").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
-			dlg.LastTable[0, 6] = GUTAText.Builder.TextLabel("Abilitydef info").Build();
+			dlg.LastTable[0, 4] = GUTAText.Builder.TextLabel("Run").Build();
+			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Stop").Build();
+			dlg.LastTable[0, 6] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(4).Build(); //tridit podle roledefname asc
+			dlg.LastTable[0, 6] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortDown).YPos(ButtonMetrics.D_SORTBUTTON_LINE_OFFSET).Id(5).Build(); //tridit podle abilitydefname desc				
+			dlg.LastTable[0, 6] = GUTAText.Builder.TextLabel("Abilitydef").XPos(ButtonMetrics.D_SORTBUTTON_COL_OFFSET).Build();
+			dlg.LastTable[0, 7] = GUTAText.Builder.TextLabel("Def info").Build();
 			dlg.MakeLastTableTransparent();
 
-			//seznam roli
+			//seznam abilit
 			dlg.AddTable(new GUTATable(imax - firstiVal));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
+			TimeSpan now = Globals.TimeAsSpan;
 			for (int i = firstiVal; i < imax; i++) {
 				Ability ab = abList[i];
-				Hues hue = ab.Running ? Hues.WriteColor2 : Hues.WriteColor;
-
+				
 				//infodialog
-				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + 2 * i).Build();
-				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ab.Name).Hue(hue).Build();
-				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(ab.ModifiedPoints + "/" + ab.MaxPoints).Hue(hue).Build();
-				TimeSpan ago = Globals.TimeAsSpan - ab.LastUsage;
-				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(ago.TotalSeconds + "secs ago").Hue(hue).Build();
-				dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text(ab.Running ? "Y" : "N").Hue(hue).Build();
-				dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text(ab.AbilityDef.Defname).Hue(hue).Build();
+				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((5 * i) + 10).Build();
+				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ab.Name).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((5 * i) + 11).Width(30).Text(""+ab.ModifiedPoints).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text("/" + ab.MaxPoints).XPos(30).Build();
+			
+				TimeSpan ago = now - ab.LastUsage;
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Math.Round(ago.TotalSeconds,1) + " secs ago").Build();
+				AbilityDef adef = ab.AbilityDef;
+				if (adef is PassiveAbilityDef) { //PassiveAbilityDef ability nebude mit vubec nic na mackani
+					dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text("").Build();
+					dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text("").Build();
+					//dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonNoOperation).Active(false).Id((5 * i) + 12).Build();
+					//dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonNoOperation).Active(false).Id((5 * i) + 13).Build();
+				} else if (adef is ActivableAbilityDef) { //activable ability budou mit tlacitka na zapnuti i vypnuti
+					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Active(!ab.Running).Id((5 * i) + 12).Build();
+					dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Active(ab.Running).Id((5 * i) + 13).Build();
+				} else if(adef is ImmediateAbilityDef) { //immediate ability def bude mit jen zapinaci tlacitko
+					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id((5 * i) + 12).Build();
+					dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text("").Build();
+					//dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonNoOperation).Active(false).Id((5 * i) + 13).Build();
+				}					
+				dlg.LastTable[rowCntr, 6] = GUTAText.Builder.Text(ab.AbilityDef.Defname).Build();
 				//abilitydef info dialog
-				dlg.LastTable[rowCntr, 6] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(11 + 2 * i).Build();
+				dlg.LastTable[rowCntr, 7] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((5 * i) + 14).Build();
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
+
+			//cudlik na ulozeni zmen v hodnotach
+			dlg.AddTable(new GUTATable(1, 130, ButtonMetrics.D_BUTTON_WIDTH, 0));
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Uložit zmìny").Build();
+			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(9).Build();
+			dlg.MakeLastTableTransparent();
 
 			//ted paging
 			dlg.CreatePaging(abList.Count, firstiVal, 1);
@@ -138,12 +165,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
-					case 4: //roledefname asc
+					case 4: //abilitydefname asc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.DefnameAsc);
 						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
-					case 5: //roledefname desc
+					case 5: //abilitydefname desc
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.DefnameDesc);
 						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
@@ -158,13 +185,35 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
+					case 8: //pridat abilitu
+						DialogArgs newArgs = new DialogArgs();
+						newArgs.SetTag(D_CharsAbilitiesList.abiliterTK, (Character) gi.Focus); //komu budeme abilitu zakladat
+						Gump newGi = gi.Cont.Dialog(SingletonScript<D_NewAbility>.Instance, newArgs);
+						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
+						break;
+					case 9: //Ulozit zmeny
+						Character abiliter = (Character)gi.Focus;
+						string result = "Výsledek zmìn hodnot abilit: <br>";
+						for(int abId = firstOnPage; abId < imax; abId++) {
+							int inptID = 5 * abId + 11;
+							Ability chgdAbility = abList[abId];
+							int newAbilityValue = (int) gr.GetNumberResponse(inptID);
+							int oldAbilityValue = abiliter.GetAbility(chgdAbility.AbilityDef);
+							if(oldAbilityValue != newAbilityValue) {
+								result = result + "Abilita '" + chgdAbility.Name + "' zmìnìna z " + oldAbilityValue + " na " + newAbilityValue + "<br>";
+								abiliter.SetRealAbilityPoints(chgdAbility.AbilityDef, newAbilityValue);
+							}
+						}
+						newGi = D_Display_Text.ShowInfo(result);
+						DialogStacking.EnstackDialog(gi, newGi);
+						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, abList.Count, 1)) {//kliknuto na paging?
 				return;
 			} else {
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.PressedButton - 10) / 2;
-				int buttNum = (int) (gr.PressedButton - 10) % 2;
+				int row = (int) (gr.PressedButton - 10) / 5;
+				int buttNum = (int) (gr.PressedButton - 10) % 5;
 				Ability ab = abList[row];
 				Gump newGi;
 				switch (buttNum) {
@@ -172,7 +221,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ab));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
-					case 1: //abilitydef info
+					case 2: //activate ability - pro Activable / Immediate Ability
+						ab.AbilityDef.Activate((Character) gi.Focus);
+						DialogStacking.ResendAndRestackDialog(gi);
+						break;
+					case 3: //de-activate ability (dostupne jen kdyz abilita bezela) - pro Activable Ability
+						((ActivableAbilityDef)ab.AbilityDef).UnActivate((Character) gi.Focus);
+						DialogStacking.ResendAndRestackDialog(gi);
+						break;
+					case 4: //abilitydef info
 						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ab.AbilityDef));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
