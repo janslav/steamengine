@@ -230,32 +230,29 @@
     <Compile Include="..\..\scripts\ItemClasses\Wearable.Generated.cs">
       <Link>ItemClasses\Wearable.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\AbilitiesEnumerator.cs">
-      <Link>systems\Abilities\Core\AbilitiesEnumerator.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\AbilitiesEnumerator.cs">
+      <Link>systems\Abilities\AbilitiesEnumerator.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\Ability.cs">
-      <Link>systems\Abilities\Core\Ability.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\Ability.cs">
+      <Link>systems\Abilities\Ability.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\AbilityDef.cs">
-      <Link>systems\Abilities\Core\AbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\AbilityDef.cs">
+      <Link>systems\Abilities\AbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\AbilityDialog.cs">
-      <Link>systems\Abilities\Core\AbilityDialog.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\AbilityDialog.cs">
+      <Link>systems\Abilities\AbilityDialog.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\ActivableAbilityDef.cs">
-      <Link>systems\Abilities\Core\ActivableAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\ActivableAbilityDef.cs">
+      <Link>systems\Abilities\ActivableAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\CharsAbilitiesDialog.cs">
-      <Link>systems\Abilities\Core\CharsAbilitiesDialog.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\CharsAbilitiesDialog.cs">
+      <Link>systems\Abilities\CharsAbilitiesDialog.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\ImmediateAbilityDef.cs">
-      <Link>systems\Abilities\Core\ImmediateAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\ImmediateAbilityDef.cs">
+      <Link>systems\Abilities\ImmediateAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\PassiveAbilityDef.cs">
-      <Link>systems\Abilities\Core\PassiveAbilityDef.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Core\StatDrainingAbilityDef.cs">
-      <Link>systems\Abilities\Core\StatDrainingAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\Abilities\PassiveAbilityDef.cs">
+      <Link>systems\Abilities\PassiveAbilityDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Regenerations\HitsRegenAbilityDef.cs">
       <Link>systems\Abilities\Regenerations\HitsRegenAbilityDef.cs</Link>
@@ -268,6 +265,9 @@
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.cs">
       <Link>systems\Abilities\Specials\Berserker\Berserker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\StatDrainingAbilityDef.cs">
+      <Link>systems\Abilities\StatDrainingAbilityDef.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.cs">
       <Link>systems\Abilities\Talents\Common\ManaSaving\ManaSavingPlugin.cs</Link>
@@ -1140,9 +1140,6 @@
     <None Include="..\..\scripts\ItemClasses\Wearable.ct">
       <Link>ItemClasses\Wearable.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Core\playerFunctions.scp">
-      <Link>systems\Abilities\Core\playerFunctions.scp</Link>
-    </None>
     <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
       <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
     </None>
@@ -1289,6 +1286,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="systems\Abilities\Core\" />
     <Folder Include="systems\Abilities\Talents\Priest\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
