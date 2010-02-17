@@ -39,9 +39,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static ResourcesList Parse(string input) {
+			object retVal;
 			Match m = re.Match(input);
 			if (processMatch(m, out retVal)) {
-				return retVal;
+				return (ResourcesList)retVal;
 			}
 			throw new SEException("Invalid resources string: " + input);
 		}
