@@ -29,8 +29,18 @@ namespace SteamEngine.CompiledScripts {
 		//sublist of other resources used usually only for "is present" check
 		private readonly List<IResourceListItemNonMultiplicable> nonMultiplicablesSubList = new List<IResourceListItemNonMultiplicable>();
 
-		[Summary("Add new ResourceListItem to the list")]
-		internal void Add(IResourceListItem newItem) {
+
+		public ResourcesList(IEnumerable<IResourceListItem> items) {
+			foreach (IResourceListItem item in items) {
+				this.Add(item);
+			}
+			//sort found resources by their required multiplicity (greater first)
+			//-it can help when checking the list's availability as the most required items will be checked first
+			this.multiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemMultiplicable>.instance);
+			this.nonMultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemNonMultiplicable>.instance);
+		}
+
+		private void Add(IResourceListItem newItem) {
 			if (!Contains(newItem)) {//check if the new resource is not present in the list					
 				resourceItemsList.Add(newItem);
 				//put the new item also to the special sublist
@@ -173,14 +183,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]
-		public List<IResourceListItemMultiplicable> MultiplicablesSublist {
+		public IEnumerable<IResourceListItemMultiplicable> MultiplicablesSublist {
 			get {
 				return multiplicablesSubList;
 			}
 		}
 
 		[Summary("Get all non-multiplicable resources from the list separated in their own sublist")]
-		public List<IResourceListItemNonMultiplicable> NonMultiplicablesSublist {
+		public IEnumerable<IResourceListItemNonMultiplicable> NonMultiplicablesSublist {
 			get {
 				return nonMultiplicablesSubList;
 			}

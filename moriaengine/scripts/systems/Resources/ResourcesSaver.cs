@@ -64,9 +64,8 @@ namespace SteamEngine.CompiledScripts {
 
 		//same method as in ResourcesParser...
 		private bool processMatch(Match m, out object retVal) {
-			retVal = null;
 			if (m.Success) {
-				ResourcesList resList = new ResourcesList();
+				List<IResourceListItem> resources = new List<IResourceListItem>();
 				int n = m.Groups["resource"].Captures.Count; //number of found resources
 				CaptureCollection numbers = m.Groups["number"].Captures;
 				CaptureCollection values = m.Groups["value"].Captures;
@@ -82,15 +81,12 @@ namespace SteamEngine.CompiledScripts {
 					}
 					string value = values[i].Value; //resource name (trimmed)
 					double nmr = ConvertTools.ParseDouble(number);
-					resList.Add(ResourcesParser.createResListItem(nmr, value));
+					resources.Add(ResourcesParser.createResListItem(nmr, value));
 				}
-				//sort found resources by their required multiplicity (greater first)
-				//-it can help when checking the list's availability as the most required items will be checked first
-				resList.MultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemMultiplicable>.instance);
-				resList.NonMultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemNonMultiplicable>.instance);
-				retVal = resList;
+				retVal = new ResourcesList(resources);
 				return true;
 			}
+			retVal = null;
 			return false;
 		}
 	}

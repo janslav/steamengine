@@ -38,22 +38,31 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public static ResourcesList Parse(string input) {
+			Match m = re.Match(input);
+			if (processMatch(m, out retVal)) {
+				return retVal;
+			}
+			throw new SEException("Invalid resources string: " + input);
+		}
+
 		public bool TryParse(string input, out object retVal) {
-			retVal = null;
+			return InternalTryParse(input, out retVal);
+		}
+
+		private static bool InternalTryParse(string input, out object retVal) {
 			//we dont have it yet, perform parsing, we expect sth. like this:
 			//3 i_apples, 1 i_spruce_log, t_light, 5 a_warcry, 35.6 hiding etc....
 			Match m = re.Match(input);
 			if (processMatch(m, out retVal)) {
 				return true;
-			} else {
-				throw new SEException("Unexpected resources string: " + input);
 			}
+			return false;
 		}
 
-		private bool processMatch(Match m, out object retVal) {
-			retVal = null;
+		private static bool processMatch(Match m, out object retVal) {
 			if (m.Success) {
-				ResourcesList resList = new ResourcesList();
+				List<IResourceListItem> resources = new List<IResourceListItem>();
 				int n = m.Groups["resource"].Captures.Count; //number of found resources
 				CaptureCollection numbers = m.Groups["number"].Captures;
 				CaptureCollection values = m.Groups["value"].Captures;
@@ -69,15 +78,12 @@ namespace SteamEngine.CompiledScripts {
 					}
 					string value = values[i].Value; //resource name (trimmed)
 					double nmr = ConvertTools.ParseDouble(number);
-					resList.Add(createResListItem(nmr, value));
+					resources.Add(ResourcesParser.createResListItem(nmr, value));
 				}
-				//sort found resources by their required multiplicity (greater first)
-				//-it can help when checking the list's availability as the most required items will be checked first
-				resList.MultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemMultiplicable>.instance);
-				resList.NonMultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemNonMultiplicable>.instance);
-				retVal = resList;
+				retVal = new ResourcesList(resources);
 				return true;
 			}
+			retVal = null;
 			return false;
 		}
 		#endregion
