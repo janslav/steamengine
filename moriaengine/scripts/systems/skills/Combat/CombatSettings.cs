@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 		public double armorClassM = 1.000; //nastaveni_global_Marmor
 
 		[SaveableData]
-		public double armorClassMvP = 5.000; //1000/nastaveni_global_MvP_armorfactor
+		public double armorClassMvP = 200; //nastaveni_global_MvP_armorfactor
 
 		[SaveableData]
 		[Summary("Every case other than (M is attacker, P is defender)")]

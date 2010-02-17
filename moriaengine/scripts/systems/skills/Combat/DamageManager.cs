@@ -92,9 +92,6 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				attack *= settings.weapAttackM;
 				armorClass = defender.ArmorClassVsM;
-				if (!defenderIsPlayer) {
-					armorClass *= settings.armorClassMvP;//damagecust_MvP
-				}
 			}
 			if (defenderIsPlayer) {
 				attack *= attacker.WeaponAttackVsP;
@@ -204,6 +201,10 @@ namespace SteamEngine.CompiledScripts {
 			swingArgs.Attack = Math.Max(0, swingArgs.Attack);
 			damageMod = Math.Max(0, damageMod);
 
+			//!!TODO!! ruznej vzorec pro pvm a pvm
+			//if (defenderIsPlayer && !attackerIsPlayer) { //damagecust_MvP 
+			//	armorClass *= settings.armorClassMvP; 
+			//}
 			swingArgs.DamageAfterAC = (swingArgs.Attack - armor) * damageMod;
 		}
 
