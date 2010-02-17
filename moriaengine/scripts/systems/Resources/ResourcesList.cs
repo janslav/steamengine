@@ -36,8 +36,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 			//sort found resources by their required multiplicity (greater first)
 			//-it can help when checking the list's availability as the most required items will be checked first
-			this.multiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemMultiplicable>.instance);
-			this.nonMultiplicablesSublist.Sort(ResourcesCountComparer<IResourceListItemNonMultiplicable>.instance);
+			this.multiplicablesSubList.Sort(ResourcesCountComparer<IResourceListItemMultiplicable>.instance);
+			this.nonMultiplicablesSubList.Sort(ResourcesCountComparer<IResourceListItemNonMultiplicable>.instance);
 		}
 
 		private void Add(IResourceListItem newItem) {
