@@ -1230,6 +1230,21 @@
     <None Include="..\..\scripts\systems\skills\Lockpicking\lockpicking.scp">
       <Link>systems\skills\Lockpicking\lockpicking.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\skills\Magery\magery.def">
+      <Link>systems\skills\Magery\magery.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\scrolls.def">
+      <Link>systems\skills\Magery\scrolls.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\SpellBook.ct">
+      <Link>systems\skills\Magery\SpellBook.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\spellbooks.def">
+      <Link>systems\skills\Magery\spellbooks.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\SpellScroll.ct">
+      <Link>systems\skills\Magery\SpellScroll.ct</Link>
+    </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\Dispell\dispellDefs.def">
       <Link>systems\skills\Magery\Spells\Dispell\dispellDefs.def</Link>
     </None>
