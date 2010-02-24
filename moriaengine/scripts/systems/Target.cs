@@ -219,7 +219,7 @@ namespace SteamEngine.CompiledScripts {
 
 				for (int i = 0; i < n; i++) {
 					TriggerSection trigger = input.GetTrigger(i);
-					switch (trigger.TriggerName.ToLower()) {
+					switch (trigger.TriggerName.ToLowerInvariant()) {
 						case "targon_ground":
 							td.targon_ground = new LScriptHolder(trigger);
 							break;

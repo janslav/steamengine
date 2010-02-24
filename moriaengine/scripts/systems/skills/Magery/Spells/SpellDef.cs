@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public string GetRuneWords() {
 			if (this.runeWords == null) {
-				string runes = this.Runes.ToLower();
+				string runes = this.Runes.ToLowerInvariant();
 				int n = runes.Length;
 				string[] arr = new string[n];
 				for (int i = 0; i < n; i++) {

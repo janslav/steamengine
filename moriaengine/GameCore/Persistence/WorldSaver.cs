@@ -164,11 +164,11 @@ namespace SteamEngine.Persistence {
 				HashSet<string> nameSet = new HashSet<string>();
 				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
 					string name = coordinator.FileNameToSave;
-					if (nameSet.Contains(name.ToLower(System.Globalization.CultureInfo.InvariantCulture))) {
+					if (nameSet.Contains(name.ToLowerInvariant())) {
 						//we already loaded this file.
 						continue;
 					} else {
-						nameSet.Add(name.ToLower(System.Globalization.CultureInfo.InvariantCulture));
+						nameSet.Add(name.ToLowerInvariant());
 					}
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
@@ -218,7 +218,7 @@ namespace SteamEngine.Persistence {
 			foreach (PropsSection section in PropsFileParser.Load(
 					filename, stream, new CanStartAsScript(StartsAsScript), true)) {
 
-				string type = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+				string type = section.HeaderType.ToLowerInvariant();
 				string name = section.HeaderName;
 				if (EOFMarked) {
 					Logger.WriteWarning(section.Filename, section.HeaderLine, "[EOF] reached. Skipping " + section);

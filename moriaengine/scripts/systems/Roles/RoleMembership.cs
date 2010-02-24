@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 
 					foreach (PropsLine p in input.PropsLines) {
 						try {
-							this.LoadLine(input.Filename, p.Line, p.Name.ToLower(), p.Value);
+							this.LoadLine(input.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 						} catch (FatalException) {
 							throw;
 						} catch (Exception ex) {

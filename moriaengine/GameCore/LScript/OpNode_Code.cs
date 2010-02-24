@@ -45,7 +45,7 @@ namespace SteamEngine.LScript {
 			int opIndex = -1;
 			for (int i = 1, n = children.Count; i < n; i += 2) {//step is 2, we are looking just for the operators
 				Node node = (Node) children[i];
-				string op = LScriptMain.GetString(node).Trim().ToLower(System.Globalization.CultureInfo.InvariantCulture);
+				string op = LScriptMain.GetString(node).Trim().ToLowerInvariant();
 				if (IsComparing(op)) {
 					opIndex = i;
 					break;

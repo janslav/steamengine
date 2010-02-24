@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		}
 
 		private void SetType(string typeName) {
-			switch (typeName.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
+			switch (typeName.ToLowerInvariant()) {
 				case "bool": {
 						typeName = "Boolean";
 						break;
@@ -141,7 +141,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
 		private static MemberAttributes ParseAccess(string s) {
 			MemberAttributes ret = MemberAttributes.Final;
-			switch (s.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
+			switch (s.ToLowerInvariant()) {
 				case "public":
 					ret |= MemberAttributes.Public;
 					break;

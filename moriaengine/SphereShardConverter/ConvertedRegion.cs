@@ -189,7 +189,7 @@ namespace SteamEngine.Converter {
 
 		private static string ParseFlags(ConvertedDef def, PropsLine line) {
 			string name = line.Name;
-			switch (line.Name.ToLower()) {
+			switch (line.Name.ToLowerInvariant()) {
 				case "flagsafe":
 					name = "Flag_safe";
 					break;

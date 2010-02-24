@@ -15,7 +15,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		public static void HandleCommand(ConsoleServer.ConsoleClient console, SphereServerClient sphere, string cmd) {
 			string[] split = cmd.Split(Tools.whitespaceChars);
 
-			switch (split[0].ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
+			switch (split[0].ToLowerInvariant()) {
 				case "filter":
 					FlipFilter(console, sphere);
 					return;

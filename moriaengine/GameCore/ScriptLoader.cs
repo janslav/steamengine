@@ -150,7 +150,7 @@ namespace SteamEngine {
 							file.FullName, stream, new CanStartAsScript(StartsAsScript), false)) {
 
 						try {
-							string type = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+							string type = section.HeaderType.ToLowerInvariant();
 							string name = section.HeaderName;
 							if ((string.IsNullOrEmpty(name)) && (type == "eof")) {
 								continue;
@@ -227,7 +227,7 @@ namespace SteamEngine {
 		}
 
 		internal static bool StartsAsScript(string headerType) {
-			switch (headerType.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
+			switch (headerType.ToLowerInvariant()) {
 				case "function":
 				case "dialog":
 				case "gump":

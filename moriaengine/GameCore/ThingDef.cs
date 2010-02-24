@@ -399,14 +399,14 @@ namespace SteamEngine {
 
 
 		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
-			string typeName = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			string typeName = section.HeaderType.ToLowerInvariant();
 			Type thingDefType = ThingDef.GetDefTypeByName(typeName);
 			if (thingDefType == null) {
 				throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
 			}
 
 			int defnum;
-			defname = section.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			defname = section.HeaderName.ToLowerInvariant();
 			if (ConvertTools.TryParseInt32(defname, out defnum)) {
 				if (thingDefType.IsSubclassOf(typeof(AbstractItemDef))) {
 					defname = "i_0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);

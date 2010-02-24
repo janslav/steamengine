@@ -157,6 +157,10 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue allowedSpells;
 		private FieldValue allowedAbilities;
 
+		private FieldValue ttb1; //ttb = TalentTreeBranch
+		private FieldValue ttb2;
+		private FieldValue ttb3;
+
 		private HashSet<AbilityDef> cachedAbilities;
 		private HashSet<SpellDef> cachedSpells;
 
@@ -217,6 +221,33 @@ namespace SteamEngine.CompiledScripts {
 			return this.GetCachedSpells().Contains(spell);
 		}
 
+		public TalentTreeBranchDef TTB1 {
+			get {
+				return (TalentTreeBranchDef) this.ttb1.CurrentValue;
+			}
+			set {
+				this.ttb1.CurrentValue = value;
+			}
+		}
+
+		public TalentTreeBranchDef TTB2 {
+			get {
+				return (TalentTreeBranchDef) this.ttb2.CurrentValue;
+			}
+			set {
+				this.ttb2.CurrentValue = value;
+			}
+		}
+
+		public TalentTreeBranchDef TTB3 {
+			get {
+				return (TalentTreeBranchDef) this.ttb3.CurrentValue;
+			}
+			set {
+				this.ttb3.CurrentValue = value;
+			}
+		}
+
 		public override void Unload() {
 			base.Unload();
 			this.cachedSpells = null;
@@ -243,7 +274,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Name, "]");
+			return string.Concat("[", this.Name, " ", Tools.TypeToString(this.GetType()), "]");
 		}
 		#endregion Accessors
 
@@ -255,6 +286,9 @@ namespace SteamEngine.CompiledScripts {
 			this.allowedSpells = this.InitTypedField("allowedSpells", new SpellDef[0], typeof(SpellDef[]));
 			this.allowedAbilities = this.InitTypedField("allowedAbilities", new AbilityDef[0], typeof(AbilityDef[]));
 
+			this.ttb1 = this.InitTypedField("ttb1", null, typeof(TalentTreeBranchDef));
+			this.ttb2 = this.InitTypedField("ttb2", null, typeof(TalentTreeBranchDef));
+			this.ttb3 = this.InitTypedField("ttb3", null, typeof(TalentTreeBranchDef));
 
 			skillSum = InitTypedField("skillSum", 0, typeof(int));
 			statSum = InitTypedField("statSum", 0, typeof(int));
@@ -406,7 +440,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Load from scripts
 
-		#region utilities
+		#region Static utility methods
 
 		public static ProfessionDef GetProfessionOfChar(Player player) {
 			ProfessionPlugin plugin = ProfessionPlugin.GetInstalledPlugin(player);
@@ -419,7 +453,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void SetProfessionOfChar(Player player, ProfessionDef value) {
 			ProfessionPlugin.InstallProfessionPlugin(player, value);
 		}
-		#endregion utilities
+		#endregion Static utility methods
 
 	}
 }

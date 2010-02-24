@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			ClassTemplateSubSection ss = null;
 
 			foreach (ClassTemplateSubSection entry in section.subsections.Values) {
-				switch (entry.name.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
+				switch (entry.name.ToLowerInvariant()) {
 					case "def":
 					case "defvars":
 					case "defs":
@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		//TODO? make this somehow generic if there's more than just things and plugins?
 		private static IEnumerable<ClassTemplateBase> GetImplementations(ClassTemplateSection section, ClassTemplateSubSection defss, ClassTemplateSubSection ss) {
-			switch (section.templateName.ToLower()) {
+			switch (section.templateName.ToLowerInvariant()) {
 				case "thingtemplate":
 				case "thing":
 					yield return new ThingDefTemplate(section, defss);

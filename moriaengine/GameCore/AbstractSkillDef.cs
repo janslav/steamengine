@@ -228,7 +228,7 @@ namespace SteamEngine {
 	public interface ISkill {
 		int RealValue { get; set;}
 		int ModifiedValue { get; }
-		int Cap { get; set;}
+		int Cap { get; }
 		SkillLockType Lock { get; set;}
 		int Id { get;}
 	}

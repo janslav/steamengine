@@ -214,7 +214,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 				load.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (valueName) {\n"));
 
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
-					load.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase \"" + ctif.uncapName.ToLower(System.Globalization.CultureInfo.InvariantCulture) + "\":"));
+					load.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase \"" + ctif.uncapName.ToLowerInvariant() + "\":"));
 					load.Statements.Add(LoadFieldStatement(ctif));
 					load.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tbreak;\n"));
 				}

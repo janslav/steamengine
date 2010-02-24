@@ -28,74 +28,12 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
-	public partial class CharacterDef {
-		private CharModelInfo charModelInfo;
 
-		private CorpseDef corpseDef;
-		public CorpseDef CorpseDef {
-			get {
-				if (corpseDef == null) {
-					corpseDef = ThingDef.FindItemDef(this.CorpseModel) as CorpseDef;
-				}
-				return corpseDef;
-			}
-		}
-
-		public CharModelInfo CharModelInfo {
-			get {
-				int model = this.Model;
-				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
-					this.charModelInfo = CharModelInfo.GetByModel(model);
-				}
-				return charModelInfo;
-			}
-		}
-
-		public bool IsHuman {
-			get {
-				return (this.CharModelInfo.charAnimType & CharAnimType.Human) == CharAnimType.Human;
-			}
-		}
-
-		public bool IsAnimal {
-			get {
-				return (this.CharModelInfo.charAnimType & CharAnimType.Animal) == CharAnimType.Animal;
-			}
-		}
-
-		public bool IsMonster {
-			get {
-				return (this.CharModelInfo.charAnimType & CharAnimType.Monster) == CharAnimType.Monster;
-			}
-		}
-
-		public Gender Gender {
-			get {
-				return this.CharModelInfo.gender;
-			}
-		}
-
-		public override bool IsMale {
-			get {
-				return this.CharModelInfo.isMale;
-			}
-		}
-
-		public override bool IsFemale {
-			get {
-				return this.CharModelInfo.isFemale;
-			}
-		}
-
-	}
-
-	[Flags]
-	public enum CharacterFlags : short {
-		None = 0, Zero = None,
-		Disconnected = 0x01,
-
-	}
+	//[Flags]
+	//public enum CharacterFlags : short {
+	//    None = 0, Zero = None,
+	//    Disconnected = 0x01,
+	//}
 
 	[Dialogs.ViewableClass]
 	public partial class Character : AbstractCharacter {
@@ -665,16 +603,8 @@ namespace SteamEngine.CompiledScripts {
 		#endregion status properties
 
 		public void AddHits(int howManyHits) {
-			int hits = this.Hits;
-			int maxHits = this.MaxHits;
-			if (hits < maxHits) {
-				hits += howManyHits;
-				if (hits > maxHits) {
-					this.Hits = (short) maxHits;
-				} else {
-					this.Hits = (short) hits;
-				}
-			}
+			int hits = this.Hits + howManyHits;
+			this.Hits = (short) Math.Min(0, Math.Max(this.MaxHits, hits));
 		}
 
 		#region resisty
@@ -1220,19 +1150,19 @@ namespace SteamEngine.CompiledScripts {
 			//Update();
 		}
 
-		public void Go(ushort x, ushort y) {
+		public void Go(int x, int y) {
 			P(x, y);
 			Fix();
 			//Update();
 		}
 
-		public void Go(ushort x, ushort y, sbyte z) {
+		public void Go(int x, int y, int z) {
 			P(x, y, z);
 			Fix();
 			//Update();
 		}
 
-		public void Go(ushort x, ushort y, sbyte z, byte m) {
+		public void Go(int x, int y, int z, byte m) {
 			P(x, y, z, m);
 			Fix();
 			//Update();
@@ -1304,98 +1234,55 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Dupe(Thing model) {
 			Character copyFrom = (Character) model;
 
-			//rewritten using dictionary of skills and abilities
-			foreach (Skill skl in copyFrom.Skills) {
-				Skill newSkill = new Skill(skl, this); //create a copy
-				this.SkillsAbilities.Add(SkillDef.GetById(newSkill.Id), newSkill);//add to the duped char's storage
-			}
-
-			//if (copyFrom.skills != null) {
-			//    skills = new Skill[copyFrom.skills.Length];
-			//    int n = skills.Length;
-			//    for (ushort i = 0; i<n; i++) {
-			//        skills[i] = new Skill(copyFrom.skills[i], this);
-			//    }
-			//}
-		}
-
-		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
-			foreach (Skill s in Skills) {
-				string defsKey = AbstractSkillDef.GetById(s.Id).Key;
-				int realValue = s.RealValue;
-				if (realValue != 0) {
-					output.WriteValue(defsKey, realValue);
-				}
-				//in sphere, the caps are done by Professions or some such... so this may change in the future
-				if (s.Cap != 1000) {
-					output.WriteValue("Cap." + defsKey, s.Cap);
-				}
-				if (s.Lock != SkillLockType.Increase) {
-					if (s.Lock == SkillLockType.Locked) {
-						output.WriteLine("SkillLock." + defsKey + "=Lock");
-					} else {//down
-						output.WriteLine("SkillLock." + defsKey + "=Down");
+			if (copyFrom.skillsabilities != null) {
+				foreach (object o in copyFrom.skillsabilities.Values) {
+					Ability a = o as Ability;
+					if (a != null) {
+						this.SkillsAbilities.Add(a.Def,
+							new Ability(a, this)); //add copy of the Ability object to the duped char's storage
+					} else {
+						Skill s = (Skill) o;
+						this.SkillsAbilities.Add(SkillDef.GetById(s.Id),
+							new Skill(s, this)); //add copy of the Skill object to the duped char's storage
 					}
 				}
 			}
+		}
 
-			//now abilities
-			foreach (Ability ab in Abilities) {
-				output.WriteLine(String.Concat(ab.AbilityDef.Defname, "=", ab.GetSaveString()));
+		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
+			if (this.skillsabilities != null) {
+				foreach (object o in this.skillsabilities.Values) {
+					Ability a = o as Ability;
+					if (a != null) {
+						output.WriteLine(String.Concat(a.Def.Name, "=", a.GetSaveString()));
+					} else {
+						Skill s = (Skill) o;
+						output.WriteLine(String.Concat(s.Def.Key, "=", s.GetSaveString()));
+					}
+				}
 			}
-
 			base.On_Save(output);
 		}
 
 		public override void On_Load(PropsSection input) {
-			int n = AbstractSkillDef.SkillsCount;
-			for (ushort i = 0; i < n; i++) {
-				AbstractSkillDef skillDef = AbstractSkillDef.GetById(i);
-				if (skillDef != null) {
-					string skillKey = skillDef.Key;
-					PropsLine ps = input.TryPopPropsLine(skillKey);
-					if (ps != null) {
-						int val;
-						if (TagMath.TryParseInt32(ps.Value, out val)) {
-							SetSkill(i, val);
-						} else {
-							Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
-						}
-					}
-
-					ps = input.TryPopPropsLine("Cap." + skillKey);
-					if (ps != null) {
-						ushort val;
-						if (TagMath.TryParseUInt16(ps.Value, out val)) {
-							SetSkillCap(i, val);
-						} else {
-							Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
-						}
-					}
-
-					ps = input.TryPopPropsLine("SkillLock." + skillKey);
-					if (ps != null) {
-						if (StringComparer.OrdinalIgnoreCase.Equals("Lock", ps.Value)) {
-							this.SetSkillLockType(i, SkillLockType.Locked);
-						} else if (StringComparer.OrdinalIgnoreCase.Equals("Down", ps.Value)) {
-							this.SetSkillLockType(i, SkillLockType.Down);
-						} else if (StringComparer.OrdinalIgnoreCase.Equals("Up", ps.Value)) {
-							this.SetSkillLockType(i, SkillLockType.Increase);
-						} else {
-							Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
-						}
+			foreach (SkillDef skillDef in SkillDef.AllSkillDefs) {
+				string skillKey = skillDef.Key;
+				PropsLine ps = input.TryPopPropsLine(skillKey);
+				if (ps != null) {
+					Skill skill = this.AcquireSkillObject(skillDef);
+					if (!skill.LoadSavedString(ps.Value)) {
+						Logger.WriteError(input.Filename, ps.Line, "Unrecognised skill value format.");
 					}
 				}
 			}
 
-			//now load abilities (they are saved by defnames)
 			foreach (AbilityDef abDef in AbilityDef.AllAbilities) {
-				string defName = abDef.Defname;
-				PropsLine ps = input.TryPopPropsLine(defName);
+				string abName = abDef.Name;
+				PropsLine ps = input.TryPopPropsLine(abName);
 				if (ps != null) {
 					Ability ab = this.AcquireAbilityObject(abDef);
 					if (!ab.LoadSavedString(ps.Value)) {
-						Logger.WriteError(input.Filename, ps.Line, "Unrecognised value format.");
+						Logger.WriteError(input.Filename, ps.Line, "Unrecognised ability value format.");
 					}
 				}
 			}
@@ -1411,117 +1298,116 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Find the appropriate Skill instance by given ID (look to the dictionary)")]
+		[Summary("Return the appropriate Skill instance by given ID, or null if given skill values are default (value 0 and lock up).")]
 		public override ISkill GetSkillObject(int id) {
 			if (this.skillsabilities != null) {
 				AbstractSkillDef def = SkillDef.GetById(id);
 				object retVal = null;
 				if (this.skillsabilities.TryGetValue(def, out retVal)) {
-					return (ISkill) retVal;//return either Skill or null if not present
+					return (ISkill) retVal;
 				}
 			}
 			return null;
 		}
 
-		[Summary("Check if character has the desired skill (according to the given ID) " +
-				"if yes it also instantiates the returning value")]
-		public bool HasSkill(int id) {
+		[Summary("Return the appropriate Skill instance by given def, or null if given skill values are default (value 0 and lock up).")]
+		public Skill GetSkillObject(AbstractSkillDef def) {
 			if (this.skillsabilities != null) {
-				AbstractSkillDef def = SkillDef.GetById(id);
-				return this.skillsabilities.ContainsKey(def);
+				object retVal = null;
+				if (this.skillsabilities.TryGetValue(def, out retVal)) {
+					return (Skill) retVal;
+				}
 			}
-			return false;
+			return null;
 		}
 
-		[Summary("Find the skill by given ID and set the prescribed value. If the skill is not present " +
-				"create a new instance on the character")]
-		public override void SetSkill(int id, int value) {
-			ISkill skl = GetSkillObject(id);
-			if (skl != null) {
-				skl.RealValue = value;
-			} else if (value > 0) { //we wont create a new skill with 0 or <0 number of points!
-				AddNewSkill(id, value);
-			}
+		public override void SetRealSkillValue(int id, int value) {
+			AbstractSkillDef def = SkillDef.GetById(id);
+			this.AcquireSkillObject(def).RealValue = value;
 		}
 
-		[Summary("Find the skill by given ID and set the prescribed lock type. If the skill is not present " +
-				"create a new instance on the character")]
 		public override void SetSkillLockType(int id, SkillLockType type) {
-			ISkill skl = GetSkillObject(id);
-			if (skl != null) {
-				skl.Lock = type;
-			} else if ((byte) type != 0) { //we wont create a new skill with default lock type
-				AddNewSkill(id, type);
-			}
+			AbstractSkillDef def = SkillDef.GetById(id);
+			this.AcquireSkillObject(def).Lock = type;
 		}
 
-		[Summary("Find the skill by given ID and set the prescribed skillcap. If the skill is not present " +
-				"create a new instance on the character")]
-		public void SetSkillCap(int id, ushort cap) {
-			ISkill skl = GetSkillObject(id);
-			if (skl != null) {
-				skl.Cap = cap;
-			} else if (cap < 1000) { //we wont create a new skill with default cap (1000)
-				AddNewSkill(id, 0, cap);
-			}
+		public void SetRealSkillValue(AbstractSkillDef def, int value) {
+			this.AcquireSkillObject(def).RealValue = value;
 		}
 
-		[Summary("Find the skill by given ID and add the prescribed value. If the skill is not present " +
-				"create a new instance on the character")]
-		public void AddSkill(int id, int value) {
-			ISkill skl = GetSkillObject(id);
-			if (skl != null) {
-				ushort resultValue = (ushort) Math.Max(0, skl.RealValue + value); //value can be negative!
-				skl.RealValue = resultValue;
-			} else if (value > 0) { //we wont create a new skill with 0 or <0 number of points!
-				AddNewSkill(id, (ushort) value);
-			}
+		[Summary("Change the 'modified' value of a skill.")]
+		public void ModifySkillValue(int id, int difference) {
+			AbstractSkillDef def = SkillDef.GetById(id);
+			this.AcquireSkillObject(def).ModifyValue(difference);
 		}
 
-		public void AddSkill(SkillName id, int value) {
-			this.AddSkill((int) id, value);
+		[Summary("Change the 'modified' value of a skill.")]
+		public void ModifySkillValue(SkillName id, int difference) {
+			this.ModifySkillValue((int) id, difference);
 		}
 
-		//instantiate new skill and set the specified points, used when the skill does not exist
-		private void AddNewSkill(int id, int value) {
-			AddNewSkill(id, value, 1000); //call the same method with default cap
+		[Summary("Change the 'modified' value of a skill.")]
+		public void ModifySkillValue(AbstractSkillDef def, int difference) {
+			this.AcquireSkillObject(def).ModifyValue(difference);
 		}
 
-		//instantiate new skill and set the specified lock type, used when the skill does not exist
-		private void AddNewSkill(int id, SkillLockType type) {
-			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
-			ISkill skl = new Skill((ushort) id, this);
-			this.SkillsAbilities[newSkillDef] = skl; //add to dict
-			skl.Lock = type; //set lock type
-		}
-
-		//instantiate new skill and set the specified value and cap, used when the skill does not exist
-		private void AddNewSkill(int id, int value, int cap) {
-			AbstractSkillDef newSkillDef = AbstractSkillDef.GetById(id);
-			ISkill skl = new Skill(id, this);
-			this.SkillsAbilities[newSkillDef] = skl; //add to dict
-			skl.RealValue = value; //set value
-			skl.Cap = cap; //set lock type
-		}
-
-		internal void InternalRemoveSkill(int id) {
-			CharSyncQueue.AboutToChangeSkill(this, id);
-			AbstractSkillDef aDef = AbstractSkillDef.GetById(id);
-			this.SkillsAbilities.Remove(aDef);
-		}
-
-		[Summary("Get value of skill with given ID, if the skill is not present return 0")]
+		[Summary("Get modified value of the skill.")]
 		public override int GetSkill(int id) {
-			ISkill skl = GetSkillObject(id);
+			ISkill skl = this.GetSkillObject(id);
 			if (skl != null) {
-				return skl.RealValue;
+				return skl.ModifiedValue;
 			} else {
 				return 0;
 			}
 		}
 
+		[Summary("Get modified value of the skill.")]
 		public int GetSkill(SkillName id) {
 			return this.GetSkill((int) id);
+		}
+
+		[Summary("Get modified value of the skill.")]
+		public int GetSkill(AbstractSkillDef skillDef) {
+			Skill skl = this.GetSkillObject(skillDef);
+			if (skl != null) {
+				return skl.ModifiedValue;
+			} else {
+				return 0;
+			}
+		}
+
+		public int GetModifiedSkillValue(int id) {
+			return this.GetSkill(id);
+		}
+
+		public int GetModifiedSkillValue(SkillName id) {
+			return this.GetSkill(id);
+		}
+
+		public int GetModifiedSkillValue(AbstractSkillDef skillDef) {
+			return this.GetSkill(skillDef);
+		}
+
+		public int GetRealSkillValue(int id) {
+			ISkill skl = GetSkillObject(id);
+			if (skl != null) {
+				return skl.ModifiedValue;
+			} else {
+				return 0;
+			}
+		}
+
+		public int GetRealSkillValue(SkillName id) {
+			return this.GetSkill((int) id);
+		}
+
+		public int GetRealSkillValue(AbstractSkillDef skillDef) {
+			Skill skl = GetSkillObject(skillDef);
+			if (skl != null) {
+				return skl.ModifiedValue;
+			} else {
+				return 0;
+			}
 		}
 
 		[Summary("Get value of the lock type of skill with given ID, if the skill is not present return default")]
@@ -1530,29 +1416,49 @@ namespace SteamEngine.CompiledScripts {
 			if (skl != null) {
 				return skl.Lock;
 			} else {
-				return SkillLockType.Increase; //default value
+				return SkillLockType.Up; //default value
 			}
 		}
 
-		[SteamFunction]
-		[Summary("Method for new skill storing testing purposes")]
-		public static void TrySkills() {
-			Character chr = (Character) Globals.SrcCharacter;
-			foreach (Skill skl in chr.Skills) {
-				chr.SysMessage(skl.Name + "-" + skl.RealValue);
+		public SkillLockType GetSkillLockType(SkillName id) {
+			return this.GetSkillLockType((int) id);
+		}
+
+		public SkillLockType GetSkillLockType(AbstractSkillDef skillDef) {
+			Skill skl = this.GetSkillObject(skillDef);
+			if (skl != null) {
+				return skl.Lock;
+			} else {
+				return SkillLockType.Up; //default value
 			}
 		}
 
-		private static TriggerKey skillChangeTK = TriggerKey.Acquire("skillChange");
-		public void Trigger_SkillChange(Skill skill, ushort oldValue) {
-			int newValue = skill.RealValue;
-			ScriptArgs sa = new ScriptArgs(skill.Id, oldValue, newValue, skill);
-			this.TryTrigger(skillChangeTK, sa);
-			On_SkillChange(skill, oldValue);
+		//instantiate new skill object, if needed
+		private Skill AcquireSkillObject(AbstractSkillDef skillDef) {
+			Sanity.IfTrueSay(skillDef == null, "skillDef == null");
+			Skill skill;
+			if (!this.HasSkill(skillDef, out skill)) {
+				skill = new Skill(skillDef.Id, this);
+				this.SkillsAbilities.Add(skillDef, skill);
+			}
+			return skill;
 		}
 
-		public override void On_Create() {
-			base.On_Create();
+		private bool HasSkill(AbstractSkillDef skillDef, out Skill skill) {
+			if (this.skillsabilities != null) {
+				object o;
+				if (this.skillsabilities.TryGetValue(skillDef, out o)) {
+					skill = (Skill) o;
+					return true;
+				}
+			}
+			skill = null;
+			return false;
+		}
+
+		internal void InternalRemoveSkill(int id) {
+			AbstractSkillDef aDef = AbstractSkillDef.GetById(id);
+			this.SkillsAbilities.Remove(aDef);
 		}
 
 		[Summary("Sphere's command for starting a skill")]
@@ -1658,18 +1564,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Check if character has the desired ability (according to the ability def)")]
-		public bool HasAbility(AbilityDef aDef, out Ability abil) {
-			abil = null;
-			object retVal = null;
-			bool has = false;
+		public bool HasAbility(AbilityDef aDef, out Ability ability) {
 			if (this.skillsabilities != null) {
-				has = this.skillsabilities.TryGetValue(aDef, out retVal);
-				if (has) {
-					abil = (Ability) retVal; //found ability, cast the return value
+				object o;
+				if (this.skillsabilities.TryGetValue(aDef, out o)) {
+					ability = (Ability) o; //found ability, cast the return value
+					return true;
 				}
 			}
-
-			return has;
+			ability = null;
+			return false;
 		}
 
 		public Ability GetAbilityObject(AbilityDef aDef) {
@@ -1699,6 +1603,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private Ability AcquireAbilityObject(AbilityDef def) {
+			Sanity.IfTrueSay(def == null, "def == null");
 			Ability ab;
 			if (!this.HasAbility(def, out ab)) {
 				ab = new Ability(def, this);
@@ -1993,8 +1898,8 @@ namespace SteamEngine.CompiledScripts {
 			WeaponSkillTargetQueuePlugin.AddTarget(this, (Character) target);
 		}
 
-		public virtual void On_SkillChange(Skill skill, ushort oldValue) {
-			switch ((SkillName) skill.Id) {
+		public virtual void On_SkillChange(Skill skill, int oldModifiedValue) {
+			switch (skill.Name) {
 				case SkillName.Parry: //Efficiency of shield
 					this.InvalidateCombatArmorValues();
 					break;
@@ -2438,6 +2343,68 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual void On_Dispell(SpellEffectArgs spellEffectArgs) {
 		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class CharacterDef {
+		private CharModelInfo charModelInfo;
+
+		private CorpseDef corpseDef;
+		public CorpseDef CorpseDef {
+			get {
+				if (corpseDef == null) {
+					corpseDef = ThingDef.FindItemDef(this.CorpseModel) as CorpseDef;
+				}
+				return corpseDef;
+			}
+		}
+
+		public CharModelInfo CharModelInfo {
+			get {
+				int model = this.Model;
+				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
+					this.charModelInfo = CharModelInfo.GetByModel(model);
+				}
+				return charModelInfo;
+			}
+		}
+
+		public bool IsHuman {
+			get {
+				return (this.CharModelInfo.charAnimType & CharAnimType.Human) == CharAnimType.Human;
+			}
+		}
+
+		public bool IsAnimal {
+			get {
+				return (this.CharModelInfo.charAnimType & CharAnimType.Animal) == CharAnimType.Animal;
+			}
+		}
+
+		public bool IsMonster {
+			get {
+				return (this.CharModelInfo.charAnimType & CharAnimType.Monster) == CharAnimType.Monster;
+			}
+		}
+
+		public Gender Gender {
+			get {
+				return this.CharModelInfo.gender;
+			}
+		}
+
+		public override bool IsMale {
+			get {
+				return this.CharModelInfo.isMale;
+			}
+		}
+
+		public override bool IsFemale {
+			get {
+				return this.CharModelInfo.isFemale;
+			}
+		}
+
 	}
 
 	internal class CharacterLoc : CompiledLocStringCollection {

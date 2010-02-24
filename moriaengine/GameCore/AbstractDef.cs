@@ -144,6 +144,9 @@ namespace SteamEngine {
 					fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
 					fieldValues[tk] = fv;
 					fieldValues[tagName] = fv;
+				} else {
+					Logger.WriteWarning("Unknown saved FieldValue line: " + fieldName + " = '" + resolvedObject.ToString() + "'");
+					return;
 				}
 			}
 
@@ -423,8 +426,8 @@ namespace SteamEngine {
 		}
 
 		private static void DefaultDefnameParser(PropsSection section, out string defname, out string altdefname) {
-			string typeName = section.HeaderType.ToLower(System.Globalization.CultureInfo.InvariantCulture);
-			defname = section.HeaderName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			string typeName = section.HeaderType.ToLowerInvariant();
+			defname = section.HeaderName.ToLowerInvariant();
 
 			bool defnameIsNum;
 			defname = DeNumerizeDefname(typeName, defname, out defnameIsNum);
@@ -499,7 +502,7 @@ namespace SteamEngine {
 		public virtual void LoadScriptLines(PropsSection ps) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					LoadScriptLine(ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
+					LoadScriptLine(ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {

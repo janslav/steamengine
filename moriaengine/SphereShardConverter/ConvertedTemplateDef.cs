@@ -57,7 +57,7 @@ namespace SteamEngine.Converter {
 					string value = gc["value"].Value;
 					string comment = gc["comment"].Value;
 
-					switch (name.ToLower()) {
+					switch (name.ToLowerInvariant()) {
 						case "defname":
 							if (hasNumericDefname) {
 								Info(linenum, "Ignoring the numeric defname of TemplateDef '" + value + "'.");
@@ -93,7 +93,7 @@ namespace SteamEngine.Converter {
 					string value = gc["value"].Value;
 					string comment = gc["comment"].Value;
 
-					switch (name.ToLower()) {
+					switch (name.ToLowerInvariant()) {
 						case "item":
 						case "itemnewbie":
 						case "buy":

@@ -59,7 +59,7 @@ namespace SteamEngine {
 					wrapper(this);
 				}
 			}
-			if (defname.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith("_global")) {
+			if (defname.ToLowerInvariant().EndsWith("_global")) {
 				Globals.Instance.AddTriggerGroup(this);
 			}
 		}
@@ -82,7 +82,7 @@ namespace SteamEngine {
 			foreach (AbstractScript script in AbstractScript.AllScripts) {
 				TriggerGroup tg = script as TriggerGroup;
 				if (tg != null) {
-					if (tg.Defname.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith("_global")) {
+					if (tg.Defname.ToLowerInvariant().EndsWith("_global")) {
 						Globals.Instance.AddTriggerGroup(tg);
 					}
 				}

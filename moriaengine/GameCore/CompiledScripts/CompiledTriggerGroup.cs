@@ -200,8 +200,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s = ((string) filterCriteria).ToLower(System.Globalization.CultureInfo.InvariantCulture);
-				return m.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture).StartsWith(s);
+				string s = ((string) filterCriteria).ToLowerInvariant();
+				return m.Name.ToLowerInvariant().StartsWith(s);
 			}
 		}
 	}

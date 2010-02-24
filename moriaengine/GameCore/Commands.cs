@@ -41,7 +41,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void PlayerCommand(GameState state, string command) {
-			string lower = command.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			string lower = command.ToLowerInvariant();
 			string noprefix;
 
 			AbstractCharacter commandSrc = state.CharacterNotNull;

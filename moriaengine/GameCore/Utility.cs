@@ -104,7 +104,7 @@ namespace SteamEngine {
 			if (s.Length > 1) {
 				s = Char.ToLower(s[0], System.Globalization.CultureInfo.InvariantCulture) + s.Substring(1);
 			} else if (s.Length == 1) {
-				s = s.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+				s = s.ToLowerInvariant();
 			}
 			return s;
 		}

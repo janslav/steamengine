@@ -57,7 +57,7 @@ namespace SteamEngine.LScript {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal override object Run(ScriptVars vars) {
-			string opString = LScriptMain.GetString(this.OrigNode).Trim().ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			string opString = LScriptMain.GetString(this.OrigNode).Trim().ToLowerInvariant();
 			leftResult = left.Run(vars);
 			rightResult = right.Run(vars);
 

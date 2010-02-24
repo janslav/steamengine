@@ -63,7 +63,7 @@ namespace SteamEngine.LScript {
 				sgd.UnUnload();
 				return sgd;
 			} else if (headers.Length == 2) {//buttons or texts section
-				string type = headers[1].ToLower(System.Globalization.CultureInfo.InvariantCulture);
+				string type = headers[1].ToLowerInvariant();
 				switch (type) {
 					case "text":
 					case "texts":
@@ -459,7 +459,7 @@ namespace SteamEngine.LScript {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal static bool IsMethodName(string name) {//used in OpNode_Lazy_Expresion for a little hack
-			switch (name.ToLower(System.Globalization.CultureInfo.InvariantCulture)) {
+			switch (name.ToLowerInvariant()) {
 				case "checkertrans":
 				case "resizepic":
 				case "button":

@@ -247,7 +247,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("@Death trigger - check if none of the skills goes above the maximal limit")]
 		public override void On_Death(Character killedBy) {
-			CheckSkillMaximums();
+			CheckSkillMaxima();
 			base.On_Death(killedBy);
 		}
 
@@ -281,17 +281,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private void CheckSkillMaximums() {
+		private void CheckSkillMaxima() {
 			//check all skills and fix any possible overlaps
-			short skillMaxValue;
-			int basicMaxSkill;
-			foreach (ISkill skl in this.Skills) {
-				basicMaxSkill = (profession == null) ? 1000 : profession.ProfessionDef.MaxSkill(skl.Id); //profession can be missing (GM's etc.)
-				skillMaxValue = (short) (basicMaxSkill + GetSkillMaxModifier(((Skill) skl).Name));
-				if (skl.RealValue > skillMaxValue) {
-					skl.RealValue = (ushort) Math.Min((ushort) 0, skillMaxValue); //don't allow to go over maximum or under 0
-				}
-			}
+			//short skillMaxValue;
+			//int basicMaxSkill;
+			//foreach (ISkill skl in this.Skills) {
+			//    basicMaxSkill = (profession == null) ? 1000 : profession.ProfessionDef.MaxSkill(skl.Id); //profession can be missing (GM's etc.)
+			//    skillMaxValue = (short) (basicMaxSkill + GetSkillMaxModifier(((Skill) skl).Name));
+			//    if (skl.RealValue > skillMaxValue) {
+			//        skl.RealValue = (ushort) Math.Min((ushort) 0, skillMaxValue); //don't allow to go over maximum or under 0
+			//    }
+			//}
 		}
 
 
