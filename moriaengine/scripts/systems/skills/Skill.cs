@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 				if (self != null) {
 					ProfessionDef prof = self.Profession;
 					if (prof != null) {
-						return prof.MaxSkill(this.id);
+						return prof.GetSkillCap(this.id);
 					}
 				}
 				return 0;

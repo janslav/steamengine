@@ -30,7 +30,7 @@ namespace SteamEngine {
 		static int uids;
 		private int uid;
 
-		internal readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase); //not dictionary because keys are both strings and tagkeys
+		private readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase); //not dictionary because keys are both strings and tagkeys
 		private readonly string filename;
 		private readonly int headerLine;
 		private string altdefname;
@@ -210,20 +210,28 @@ namespace SteamEngine {
 			return fieldValue;
 		}
 
-		public FieldValue GetFieldValue(string name) {
-			return (FieldValue) fieldValues[name];
+		protected bool HasFieldValue(string name) {
+			return this.fieldValues.ContainsKey(name);
 		}
 
-		public object GetDefaultFieldValue(string name) {
-			FieldValue fv = (FieldValue) fieldValues[name];
+		//public void SetDefaultFieldValue(string name, object value) {
+		//    ((FieldValue) this.fieldValues[name]).DefaultValue = value;
+		//}
+
+		protected virtual void SetCurrentFieldValue(string name, object value) {
+			((FieldValue) this.fieldValues[name]).CurrentValue = value;
+		}
+
+		protected object GetDefaultFieldValue(string name) {
+			FieldValue fv = (FieldValue) this.fieldValues[name];
 			if (fv != null) {
 				return fv.DefaultValue;
 			}
 			return null;
 		}
 
-		public object GetCurrentFieldValue(string name) {
-			FieldValue fv = (FieldValue) fieldValues[name];
+		protected object GetCurrentFieldValue(string name) {
+			FieldValue fv = (FieldValue) this.fieldValues[name];
 			if (fv != null) {
 				return fv.CurrentValue;
 			}
@@ -301,6 +309,8 @@ namespace SteamEngine {
 
 		private static Dictionary<Type, DefnameParser> defnameParsersByType_Registered = new Dictionary<Type, DefnameParser>();
 		private static Dictionary<Type, DefnameParser> defnameParsersByType_Inferred = new Dictionary<Type, DefnameParser>();
+
+		private List<PropsLine> postponedLines;
 
 		public static Type GetDefTypeByName(string name) {
 			ConstructorInfo ctor;
@@ -502,7 +512,16 @@ namespace SteamEngine {
 		public virtual void LoadScriptLines(PropsSection ps) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					LoadScriptLine(ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
+					string name = p.Name.ToLowerInvariant();
+
+					if (name.StartsWith("tag.") || (this.fieldValues.ContainsKey(name))) {
+						this.LoadScriptLine(ps.Filename, p.Line, name, p.Value);
+					} else {
+						if (this.postponedLines == null) {
+							this.postponedLines = new List<PropsLine>();
+						}
+						this.postponedLines.Add(p);
+					}
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
@@ -543,6 +562,34 @@ namespace SteamEngine {
 						return;
 					}
 					throw new ScriptException("Invalid data '" + LogStr.Ident(param) + "' = '" + LogStr.Number(args) + "'.");
+			}
+		}
+
+		private void LoadPostponedScriptLines() {
+			if (this.postponedLines != null) {
+				foreach (PropsLine p in this.postponedLines) {
+					try {
+						this.LoadScriptLine(this.filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
+					} catch (FatalException) {
+						throw;
+					} catch (Exception ex) {
+						Logger.WriteWarning(this.filename, p.Line, ex);
+					}
+				}
+				this.postponedLines = null;
+			}
+		}
+
+		internal static void LoadingFinished() {
+
+			//load postponed lines. That are those which are not initialised by the start of the loading.
+			//this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
+			//this way, for example ProfessionDef definition can list skills and abilities
+			foreach (AbstractScript script in AllScripts) {
+				AbstractDef def = script as AbstractDef;
+				if (def != null) {
+					def.LoadPostponedScriptLines();
+				}
 			}
 		}
 

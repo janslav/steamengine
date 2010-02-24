@@ -37,132 +37,20 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-		private FieldValue skillSum; //Max Sum of skills allowed
-		private FieldValue statSum; //Max Sum of stats allowed
-		#region Maximum skill values
-		private FieldValue maxAlchemy;
-		private FieldValue maxAnatomy;
-		private FieldValue maxAnimalLore;
-		private FieldValue maxItemID;
-		private FieldValue maxArmsLore;
-		private FieldValue maxParry;
-		private FieldValue maxBegging;
-		private FieldValue maxBlacksmith;
-		private FieldValue maxFletching;
-		private FieldValue maxPeacemaking;
-		private FieldValue maxCamping;
-		private FieldValue maxCarpentry;
-		private FieldValue maxCartography;
-		private FieldValue maxCooking;
-		private FieldValue maxDetectHidden;
-		private FieldValue maxDiscordance;
-		private FieldValue maxEvalInt;
-		private FieldValue maxHealing;
-		private FieldValue maxFishing;
-		private FieldValue maxForensics;
-		private FieldValue maxHerding;
-		private FieldValue maxHiding;
-		private FieldValue maxProvocation;
-		private FieldValue maxInscribe;
-		private FieldValue maxLockpicking;
-		private FieldValue maxMagery;
-		private FieldValue maxMagicResist;
-		private FieldValue maxTactics;
-		private FieldValue maxSnooping;
-		private FieldValue maxMusicianship;
-		private FieldValue maxPoisoning;
-		private FieldValue maxArchery;
-		private FieldValue maxSpiritSpeak;
-		private FieldValue maxStealing;
-		private FieldValue maxTailoring;
-		private FieldValue maxAnimalTaming;
-		private FieldValue maxTasteID;
-		private FieldValue maxTinkering;
-		private FieldValue maxTracking;
-		private FieldValue maxVeterinary;
-		private FieldValue maxSwords;
-		private FieldValue maxMacing;
-		private FieldValue maxFencing;
-		private FieldValue maxWrestling;
-		private FieldValue maxLumberjacking;
-		private FieldValue maxMining;
-		private FieldValue maxMeditation;
-		private FieldValue maxStealth;
-		private FieldValue maxRemoveTrap;
-		private FieldValue maxNecromancy;
-		private FieldValue maxMarksmanship;
-		private FieldValue maxChivalry;
-		private FieldValue maxBushido;
-		private FieldValue maxNinjitsu;
-		#endregion
-		#region Basic skill values
-		private FieldValue basicAlchemy;
-		private FieldValue basicAnatomy;
-		private FieldValue basicAnimalLore;
-		private FieldValue basicItemID;
-		private FieldValue basicArmsLore;
-		private FieldValue basicParry;
-		private FieldValue basicBegging;
-		private FieldValue basicBlacksmith;
-		private FieldValue basicFletching;
-		private FieldValue basicPeacemaking;
-		private FieldValue basicCamping;
-		private FieldValue basicCarpentry;
-		private FieldValue basicCartography;
-		private FieldValue basicCooking;
-		private FieldValue basicDetectHidden;
-		private FieldValue basicDiscordance;
-		private FieldValue basicEvalInt;
-		private FieldValue basicHealing;
-		private FieldValue basicFishing;
-		private FieldValue basicForensics;
-		private FieldValue basicHerding;
-		private FieldValue basicHiding;
-		private FieldValue basicProvocation;
-		private FieldValue basicInscribe;
-		private FieldValue basicLockpicking;
-		private FieldValue basicMagery;
-		private FieldValue basicMagicResist;
-		private FieldValue basicTactics;
-		private FieldValue basicSnooping;
-		private FieldValue basicMusicianship;
-		private FieldValue basicPoisoning;
-		private FieldValue basicArchery;
-		private FieldValue basicSpiritSpeak;
-		private FieldValue basicStealing;
-		private FieldValue basicTailoring;
-		private FieldValue basicAnimalTaming;
-		private FieldValue basicTasteID;
-		private FieldValue basicTinkering;
-		private FieldValue basicTracking;
-		private FieldValue basicVeterinary;
-		private FieldValue basicSwords;
-		private FieldValue basicMacing;
-		private FieldValue basicFencing;
-		private FieldValue basicWrestling;
-		private FieldValue basicLumberjacking;
-		private FieldValue basicMining;
-		private FieldValue basicMeditation;
-		private FieldValue basicStealth;
-		private FieldValue basicRemoveTrap;
-		private FieldValue basicNecromancy;
-		private FieldValue basicMarksmanship;
-		private FieldValue basicChivalry;
-		private FieldValue basicBushido;
-		private FieldValue basicNinjitsu;
-		#endregion
-		private FieldValue[] maxSkills;
-		private FieldValue[] basicSkills;
 		private FieldValue professionPluginDef;
 		private FieldValue allowedSpells;
-		private FieldValue allowedAbilities;
 
 		private FieldValue ttb1; //ttb = TalentTreeBranch
 		private FieldValue ttb2;
 		private FieldValue ttb3;
 
-		private HashSet<AbilityDef> cachedAbilities;
 		private HashSet<SpellDef> cachedSpells;
+
+		private ProfessionAbilityEntry[] sortedAbilityCache;
+		private Dictionary<AbilityDef, ProfessionAbilityEntry> abilityCache = new Dictionary<AbilityDef, ProfessionAbilityEntry>();
+
+		private SortedDictionary<int, ProfessionSkillEntry> skillsCache = new SortedDictionary<int, ProfessionSkillEntry>();
+		private bool skillsCacheComplete;
 
 		public string Name {
 			get {
@@ -177,27 +65,6 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				this.professionPluginDef.CurrentValue = value;
 			}
-		}
-
-		private HashSet<AbilityDef> GetCachedAbilities() {
-			if (this.cachedAbilities == null) {
-				HashSet<AbilityDef> hs = new HashSet<AbilityDef>();
-				foreach (AbilityDef def in (AbilityDef[]) this.allowedAbilities.CurrentValue) {
-					hs.Add(def);
-				}
-				this.cachedAbilities = hs;
-			}
-			return this.cachedAbilities;
-		}
-
-		public ICollection<AbilityDef> AllowedAbilities {
-			get {
-				return this.GetCachedAbilities();
-			}
-		}
-
-		public bool CanUseAbility(AbilityDef ability) {
-			return this.GetCachedAbilities().Contains(ability);
 		}
 
 		private HashSet<SpellDef> GetCachedSpells() {
@@ -248,30 +115,105 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void Unload() {
-			base.Unload();
-			this.cachedSpells = null;
-			this.cachedAbilities = null;
+		#region Skills
+		[Summary("Return the maximal value of the given skill for this profession")]
+		public int GetSkillCap(SkillDef skillDef) {
+			return this.GetSkillCap(skillDef.Id);
 		}
 
-
-		[Summary("Return the maximal value of the given skill (by name) for this profession")]
-		public int MaxSkill(SkillName skillName) {
-			return this.MaxSkill((int) skillName);
-		}
-		[Summary("Return the maximal value of the given skill (by id) for this profession")]
-		public int MaxSkill(int skillId) {
-			return (int) maxSkills[skillId].CurrentValue;
+		[Summary("Return the maximal value of the given skill for this profession")]
+		public int GetSkillCap(SkillName skillName) {
+			return this.GetSkillCap((int) skillName);
 		}
 
-		[Summary("Return the basic value of the given skill (by name) for this profession")]
-		public int BasicSkill(SkillName skillName) {
-			return this.BasicSkill((int) skillName);
+		[Summary("Return the maximal value of the given skill for this profession")]
+		public int GetSkillCap(int skillId) {
+			return this.GetSkillEntry(skillId).cap;
 		}
-		[Summary("Return the basic value of the given skill (by id) for this profession")]
-		public int BasicSkill(int skillId) {
-			return (int) basicSkills[skillId].CurrentValue;
+
+		[Summary("Return the value of the given skill at which this profession starts")]
+		public int GetSkillMinimum(SkillDef skillDef) {
+			return this.GetSkillMinimum(skillDef.Id);
 		}
+
+		[Summary("Return the value of the given skill at which this profession starts")]
+		public int GetSkillMinimum(SkillName skillName) {
+			return this.GetSkillMinimum((int) skillName);
+		}
+
+		[Summary("Return the value of the given skill at which this profession starts")]
+		public int GetSkillMinimum(int skillId) {
+			return this.GetSkillEntry(skillId).minimum;
+		}
+
+		public ProfessionSkillEntry GetSkillEntry(int skillId) {
+			ProfessionSkillEntry retVal;
+			if (!this.skillsCache.TryGetValue(skillId, out retVal)) {
+				string name = SkillDef.GetById(skillId).PrettyDefname;
+				retVal = new ProfessionSkillEntry(
+					Convert.ToInt32(this.GetCurrentFieldValue(skillMinimumPrefix + name)),
+					Convert.ToInt32(this.GetCurrentFieldValue(skillCapPrefix + name)));
+				this.skillsCache.Add(skillId, retVal);
+				this.skillsCacheComplete = false;
+			}
+			return retVal;
+		}
+
+		public IEnumerable<ProfessionSkillEntry> AllSkillsSorted {
+			get {
+				if (!this.skillsCacheComplete) {
+					foreach (SkillDef skill in SkillDef.AllSkillDefs) {
+						GetSkillEntry(skill.Id);
+					}
+				}
+				return this.skillsCache.Values;
+			}
+		}
+		#endregion Skills
+
+		#region Abilities
+		[Summary("Return the maximal value of the given ability for this profession")]
+		public int GetAbilityMaximumPoints(AbilityDef abilityDef) {
+			ProfessionAbilityEntry entry = this.GetAbilityEntry(abilityDef);
+			if (entry != null) {
+				return entry.maxPoints;
+			}
+			return 0;
+		}
+
+		public ProfessionAbilityEntry GetAbilityEntry(AbilityDef abilityDef) {
+			ProfessionAbilityEntry retVal;
+			if (!this.abilityCache.TryGetValue(abilityDef, out retVal)) {
+				string name = abilityDef.PrettyDefname;
+				string prefixed = abilityOrderPrefix + name;
+				if (this.HasFieldValue(prefixed)) {
+					retVal = new ProfessionAbilityEntry(abilityDef,
+						Convert.ToInt32(this.GetCurrentFieldValue(prefixed)),
+						Convert.ToInt32(this.GetCurrentFieldValue(abilityMaxPointsPrefix + name)));
+					this.abilityCache.Add(abilityDef, retVal);
+					this.sortedAbilityCache = null;
+				}
+			}
+			return retVal;
+		}
+
+		public IEnumerable<ProfessionAbilityEntry> AllAbilitiesSorted {
+			get {
+				if (this.sortedAbilityCache == null) {
+					foreach (AbilityDef def in AbilityDef.AllAbilities) {
+						this.GetAbilityEntry(def);
+					}
+					List<ProfessionAbilityEntry> list = new List<ProfessionAbilityEntry>(this.abilityCache.Values);
+					list.Sort(delegate(ProfessionAbilityEntry a, ProfessionAbilityEntry b) {
+						return Comparer<int>.Default.Compare(
+							a.order, b.order);
+					});
+					this.sortedAbilityCache = list.ToArray();
+				}
+				return this.sortedAbilityCache;
+			}
+		}
+		#endregion Abilities
 
 		public override string ToString() {
 			return string.Concat("[", this.Name, " ", Tools.TypeToString(this.GetType()), "]");
@@ -284,151 +226,15 @@ namespace SteamEngine.CompiledScripts {
 
 			this.professionPluginDef = this.InitTypedField("professionPluginDef", null, typeof(PluginDef));
 			this.allowedSpells = this.InitTypedField("allowedSpells", new SpellDef[0], typeof(SpellDef[]));
-			this.allowedAbilities = this.InitTypedField("allowedAbilities", new AbilityDef[0], typeof(AbilityDef[]));
 
 			this.ttb1 = this.InitTypedField("ttb1", null, typeof(TalentTreeBranchDef));
 			this.ttb2 = this.InitTypedField("ttb2", null, typeof(TalentTreeBranchDef));
 			this.ttb3 = this.InitTypedField("ttb3", null, typeof(TalentTreeBranchDef));
-
-			skillSum = InitTypedField("skillSum", 0, typeof(int));
-			statSum = InitTypedField("statSum", 0, typeof(int));
-			//max skills
-			maxAlchemy = InitTypedField("maxAlchemy", 1000, typeof(int));
-			maxAnatomy = InitTypedField("maxAnatomy", 1000, typeof(int));
-			maxAnimalLore = InitTypedField("maxAnimalLore", 1000, typeof(int));
-			maxItemID = InitTypedField("maxItemID", 1000, typeof(int));
-			maxArmsLore = InitTypedField("maxArmsLore", 1000, typeof(int));
-			maxParry = InitTypedField("maxParrying", 1000, typeof(int));
-			maxBegging = InitTypedField("maxBegging", 1000, typeof(int));
-			maxBlacksmith = InitTypedField("maxBlacksmithing", 1000, typeof(int));
-			maxFletching = InitTypedField("maxBowcraft", 1000, typeof(int));
-			maxPeacemaking = InitTypedField("maxPeacemaking", 1000, typeof(int));
-			maxCamping = InitTypedField("maxCamping", 1000, typeof(int));
-			maxCarpentry = InitTypedField("maxCarpentry", 1000, typeof(int));
-			maxCartography = InitTypedField("maxCartography", 1000, typeof(int));
-			maxCooking = InitTypedField("maxCooking", 1000, typeof(int));
-			maxDetectHidden = InitTypedField("maxDetectingHidden", 1000, typeof(int));
-			maxDiscordance = InitTypedField("maxDiscordance", 1000, typeof(int));
-			maxEvalInt = InitTypedField("maxEI", 1000, typeof(int));
-			maxHealing = InitTypedField("maxHealing", 1000, typeof(int));
-			maxFishing = InitTypedField("maxFishing", 1000, typeof(int));
-			maxForensics = InitTypedField("maxForensics", 1000, typeof(int));
-			maxHerding = InitTypedField("maxHerding", 1000, typeof(int));
-			maxHiding = InitTypedField("maxHiding", 1000, typeof(int));
-			maxProvocation = InitTypedField("maxProvocation", 1000, typeof(int));
-			maxInscribe = InitTypedField("maxInscription", 1000, typeof(int));
-			maxLockpicking = InitTypedField("maxLockpicking", 1000, typeof(int));
-			maxMagery = InitTypedField("maxMagery", 1000, typeof(int));
-			maxMagicResist = InitTypedField("maxResist", 1000, typeof(int));
-			maxTactics = InitTypedField("maxTactics", 1000, typeof(int));
-			maxSnooping = InitTypedField("maxSnooping", 1000, typeof(int));
-			maxMusicianship = InitTypedField("maxMusicianship", 1000, typeof(int));
-			maxPoisoning = InitTypedField("maxPoisoning", 1000, typeof(int));
-			maxArchery = InitTypedField("maxArchery", 1000, typeof(int));
-			maxSpiritSpeak = InitTypedField("maxSpiritSpeak", 1000, typeof(int));
-			maxStealing = InitTypedField("maxStealing", 1000, typeof(int));
-			maxTailoring = InitTypedField("maxTailoring", 1000, typeof(int));
-			maxAnimalTaming = InitTypedField("maxTaming", 1000, typeof(int));
-			maxTasteID = InitTypedField("maxTasteID", 1000, typeof(int));
-			maxTinkering = InitTypedField("maxTinkering", 1000, typeof(int));
-			maxTracking = InitTypedField("maxTracking", 1000, typeof(int));
-			maxVeterinary = InitTypedField("maxVeterinary", 1000, typeof(int));
-			maxSwords = InitTypedField("maxSwordsmanship", 1000, typeof(int));
-			maxMacing = InitTypedField("maxMacefighting", 1000, typeof(int));
-			maxFencing = InitTypedField("maxFencing", 1000, typeof(int));
-			maxWrestling = InitTypedField("maxWrestling", 1000, typeof(int));
-			maxLumberjacking = InitTypedField("maxLumberjacking", 1000, typeof(int));
-			maxMining = InitTypedField("maxMining", 1000, typeof(int));
-			maxMeditation = InitTypedField("maxMeditation", 1000, typeof(int));
-			maxStealth = InitTypedField("maxStealth", 1000, typeof(int));
-			maxRemoveTrap = InitTypedField("maxRemoveTrap", 1000, typeof(int));
-			maxNecromancy = InitTypedField("maxNecromancy", 1000, typeof(int));
-			maxMarksmanship = InitTypedField("maxMarksmanship", 1000, typeof(int));
-			maxChivalry = InitTypedField("maxChivalry", 1000, typeof(int));
-			maxBushido = InitTypedField("maxBushido", 1000, typeof(int));
-			maxNinjitsu = InitTypedField("maxNinjutsu", 1000, typeof(int));
-			//basic skills
-			basicAlchemy = InitTypedField("basicAlchemy", 0, typeof(int));
-			basicAnatomy = InitTypedField("basicAnatomy", 0, typeof(int));
-			basicAnimalLore = InitTypedField("basicAnimalLore", 0, typeof(int));
-			basicItemID = InitTypedField("basicItemID", 0, typeof(int));
-			basicArmsLore = InitTypedField("basicArmsLore", 0, typeof(int));
-			basicParry = InitTypedField("basicParrying", 0, typeof(int));
-			basicBegging = InitTypedField("basicBegging", 0, typeof(int));
-			basicBlacksmith = InitTypedField("basicBlacksmithing", 0, typeof(int));
-			basicFletching = InitTypedField("basicBowcraft", 0, typeof(int));
-			basicPeacemaking = InitTypedField("basicPeacemaking", 0, typeof(int));
-			basicCamping = InitTypedField("basicCamping", 0, typeof(int));
-			basicCarpentry = InitTypedField("basicCarpentry", 0, typeof(int));
-			basicCartography = InitTypedField("basicCartography", 0, typeof(int));
-			basicCooking = InitTypedField("basicCooking", 0, typeof(int));
-			basicDetectHidden = InitTypedField("basicDetectingHidden", 0, typeof(int));
-			basicDiscordance = InitTypedField("basicDiscordance", 0, typeof(int));
-			basicEvalInt = InitTypedField("basicEI", 0, typeof(int));
-			basicHealing = InitTypedField("basicHealing", 0, typeof(int));
-			basicFishing = InitTypedField("basicFishing", 0, typeof(int));
-			basicForensics = InitTypedField("basicForensics", 0, typeof(int));
-			basicHerding = InitTypedField("basicHerding", 0, typeof(int));
-			basicHiding = InitTypedField("basicHiding", 0, typeof(int));
-			basicProvocation = InitTypedField("basicProvocation", 0, typeof(int));
-			basicInscribe = InitTypedField("basicInscription", 0, typeof(int));
-			basicLockpicking = InitTypedField("basicLockpicking", 0, typeof(int));
-			basicMagery = InitTypedField("basicMagery", 0, typeof(int));
-			basicMagicResist = InitTypedField("basicResist", 0, typeof(int));
-			basicTactics = InitTypedField("basicTactics", 0, typeof(int));
-			basicSnooping = InitTypedField("basicSnooping", 0, typeof(int));
-			basicMusicianship = InitTypedField("basicMusicianship", 0, typeof(int));
-			basicPoisoning = InitTypedField("basicPoisoning", 0, typeof(int));
-			basicArchery = InitTypedField("basicArchery", 0, typeof(int));
-			basicSpiritSpeak = InitTypedField("basicSpiritSpeak", 0, typeof(int));
-			basicStealing = InitTypedField("basicStealing", 0, typeof(int));
-			basicTailoring = InitTypedField("basicTailoring", 0, typeof(int));
-			basicAnimalTaming = InitTypedField("basicTaming", 0, typeof(int));
-			basicTasteID = InitTypedField("basicTasteID", 0, typeof(int));
-			basicTinkering = InitTypedField("basicTinkering", 0, typeof(int));
-			basicTracking = InitTypedField("basicTracking", 0, typeof(int));
-			basicVeterinary = InitTypedField("basicVeterinary", 0, typeof(int));
-			basicSwords = InitTypedField("basicSwordsmanship", 0, typeof(int));
-			basicMacing = InitTypedField("basicMacefighting", 0, typeof(int));
-			basicFencing = InitTypedField("basicFencing", 0, typeof(int));
-			basicWrestling = InitTypedField("basicWrestling", 0, typeof(int));
-			basicLumberjacking = InitTypedField("basicLumberjacking", 0, typeof(int));
-			basicMining = InitTypedField("basicMining", 0, typeof(int));
-			basicMeditation = InitTypedField("basicMeditation", 0, typeof(int));
-			basicStealth = InitTypedField("basicStealth", 0, typeof(int));
-			basicRemoveTrap = InitTypedField("basicRemoveTrap", 0, typeof(int));
-			basicNecromancy = InitTypedField("basicNecromancy", 0, typeof(int));
-			basicMarksmanship = InitTypedField("basicMarksmanship", 0, typeof(int));
-			basicChivalry = InitTypedField("basicChivalry", 0, typeof(int));
-			basicBushido = InitTypedField("basicBushido", 0, typeof(int));
-			basicNinjitsu = InitTypedField("basicNinjutsu", 0, typeof(int));
-
-			//now prepare the array with skills indexed by numbers in SkillName enumeration
-			maxSkills = new FieldValue[] {maxAlchemy,maxAnatomy,maxAnimalLore,maxItemID,maxArmsLore,
-                            maxParry,maxBegging,maxBlacksmith,maxFletching,maxPeacemaking,maxCamping,
-                            maxCarpentry,maxCartography,maxCooking,maxDetectHidden,maxDiscordance,
-                            maxEvalInt,maxHealing,maxFishing,maxForensics,maxHerding,maxHiding,maxProvocation,
-                            maxInscribe,maxLockpicking,maxMagery,maxMagicResist,maxTactics,maxSnooping,
-                            maxMusicianship,maxPoisoning,maxArchery,maxSpiritSpeak,maxStealing,
-                            maxTailoring,maxAnimalTaming,maxTasteID,maxTinkering,maxTracking,
-                            maxVeterinary,maxSwords,maxMacing,maxFencing,maxWrestling,maxLumberjacking,
-                            maxMining,maxMeditation,maxStealth,maxRemoveTrap,maxNecromancy,
-                            maxMarksmanship,maxChivalry,maxBushido,maxNinjitsu};
-
-			//now prepare the array with basic skills indexed by numbers in SkillName enumeration
-			basicSkills = new FieldValue[] {basicAlchemy,basicAnatomy,basicAnimalLore,basicItemID,basicArmsLore,
-                            basicParry,basicBegging,basicBlacksmith,basicFletching,basicPeacemaking,basicCamping,
-                            basicCarpentry,basicCartography,basicCooking,basicDetectHidden,basicDiscordance,
-                            basicEvalInt,basicHealing,basicFishing,basicForensics,basicHerding,basicHiding,basicProvocation,
-                            basicInscribe,basicLockpicking,basicMagery,basicMagicResist,basicTactics,basicSnooping,
-                            basicMusicianship,basicPoisoning,basicArchery,basicSpiritSpeak,basicStealing,
-                            basicTailoring,basicAnimalTaming,basicTasteID,basicTinkering,basicTracking,
-                            basicVeterinary,basicSwords,basicMacing,basicFencing,basicWrestling,basicLumberjacking,
-                            basicMining,basicMeditation,basicStealth,basicRemoveTrap,basicNecromancy,
-                            basicMarksmanship,basicChivalry,basicBushido,basicNinjitsu};
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
+			this.ClearCache();
+
 			PropsLine p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
 
@@ -438,7 +244,110 @@ namespace SteamEngine.CompiledScripts {
 				Logger.WriteWarning("Triggers in a ProfessionDef aren't valid. Use the relevant PluginDef for that functionality");
 			}
 		}
+
+		protected override void LoadScriptLine(string filename, int line, string param, string args) {
+			//try recognizing an ability name or defname. The parameters means order of displaying and max points in that ability for this profession
+			AbilityDef ability = AbilityDef.GetByDefname(param);
+			if (ability == null) {
+				ability = AbilityDef.GetByName(param);
+			}
+			if (ability != null) {
+				string[] preparsed = Utility.SplitSphereString(args);
+				if (preparsed.Length < 2) {
+					throw new SEException("ProfessionDef ability entries need 2 numbers - order and maximum points");
+				}
+
+				string abilityName = ability.PrettyDefname;
+				this.InitOrSetFieldValue<int>(filename, line, abilityOrderPrefix + abilityName, preparsed[0]);
+				this.InitOrSetFieldValue<int>(filename, line, abilityMaxPointsPrefix + abilityName, preparsed[1]);
+				return;
+			}
+
+			//try recognizing a skill name or defname. The parameters then means starting and max (cap) points for this profession
+			AbstractSkillDef skillDef = SkillDef.GetByDefname(param);
+			if (skillDef == null) {
+				skillDef = SkillDef.GetByKey(param);
+			}
+			if (skillDef != null) {
+				string[] preparsed = Utility.SplitSphereString(args);
+				if (preparsed.Length < 2) {
+					throw new SEException("ProfessionDef skill entries need 2 numbers - minimum and cap");
+				}
+
+				string skillName = skillDef.PrettyDefname;
+				this.InitOrSetFieldValue<int>(filename, line, skillMinimumPrefix + skillName, preparsed[0]);
+				this.InitOrSetFieldValue<int>(filename, line, skillCapPrefix + skillName, preparsed[1]);
+				return;
+			}
+
+
+			base.LoadScriptLine(filename, line, param, args);
+		}
+
+		private void InitOrSetFieldValue<T>(string filename, int line, string fvName, string fvValue) {
+			if (!this.HasFieldValue(fvName)) {
+				this.InitTypedField(fvName, default(T), typeof(T))
+					.SetFromScripts(filename, line, fvValue);
+			} else {
+				base.LoadScriptLine(filename, line, fvName, fvValue);
+			}
+		}
+
+		public override void Unload() {
+			this.ClearCache();
+			base.Unload();
+		}
+
+		public override void UnUnload() {
+			this.ClearCache();
+			base.UnUnload();
+		}
+
+		protected override void Unregister() {
+			this.ClearCache();
+			base.Unregister();
+		}
+
+		public override AbstractScript Register() {
+			this.ClearCache();
+			return base.Register();
+		}
+
+		public void ClearCache() {
+			this.cachedSpells = null;
+			
+			this.abilityCache.Clear();
+			this.sortedAbilityCache = null;
+
+			this.skillsCache.Clear();
+			this.skillsCacheComplete = false;
+		}
+
 		#endregion Load from scripts
+
+		#region Load from saves
+		private const string abilityOrderPrefix = "AbilityOrder.";
+		private const string abilityMaxPointsPrefix = "AbilityMaxPoints.";		
+		private const string skillMinimumPrefix = "SkillMinimum.";
+		private const string skillCapPrefix = "SkillCap.";
+
+		public override void LoadFromSaves(PropsSection input) {
+			foreach (PropsLine line in input.PropsLines) {
+				string name = line.Name;
+				if (!this.HasFieldValue(name)) {
+					if (name.StartsWith(abilityMaxPointsPrefix) ||
+							name.StartsWith(abilityOrderPrefix) ||
+							name.StartsWith(skillMinimumPrefix) ||
+							name.StartsWith(skillCapPrefix)) {
+						this.InitTypedField(name, 0, typeof(int));
+					}
+				}
+			}
+
+			base.LoadFromSaves(input);
+		}
+
+		#endregion Load from saves
 
 		#region Static utility methods
 
@@ -454,6 +363,29 @@ namespace SteamEngine.CompiledScripts {
 			ProfessionPlugin.InstallProfessionPlugin(player, value);
 		}
 		#endregion Static utility methods
+	}
 
+
+	public class ProfessionSkillEntry {
+		public readonly SkillDef skillDef;
+		public readonly int minimum;
+		public readonly int cap;
+
+		public ProfessionSkillEntry(int minimum, int cap) {
+			this.minimum = minimum;
+			this.cap = cap;
+		}
+	}
+
+	public class ProfessionAbilityEntry {
+		public readonly AbilityDef abilityDef;
+		public readonly int order;		
+		public readonly int maxPoints;
+
+		public ProfessionAbilityEntry(AbilityDef def, int order, int maxPoints) {
+			this.abilityDef = def;
+			this.order = order;
+			this.maxPoints = maxPoints;
+		}
 	}
 }

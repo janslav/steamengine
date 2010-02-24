@@ -76,6 +76,7 @@ namespace SteamEngine {
 				Map.LoadingFinished();
 				//ObjectSaver.LoadingFinished();
 				AbstractSkillDef.LoadingFinished();
+				AbstractDef.LoadingFinished();
 
 				AbstractDefTriggerGroupHolder.LoadingFinished();
 				ScriptedGumpDef.LoadingFinished();
@@ -121,6 +122,7 @@ namespace SteamEngine {
 				ScriptedGumpDef.LoadingFinished();
 				ObjectSaver.LoadingFinished();
 
+				AbstractDef.LoadingFinished();
 				//foreach (Thing t in Thing.AllThings) {
 				//    t.region = null;
 				//}
