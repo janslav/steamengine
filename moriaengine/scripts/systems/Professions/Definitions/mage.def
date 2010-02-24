@@ -14,73 +14,69 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 [ProfessionDef profession_mage]
-Defname = class_mage
+Defname = class_mage //class_ as alternate prefix
 Name = "mag"
 professionPluginDef = plugin_profession_default
 
-//only listing those less than 1000
-maxAnimalLore=250
-maxAnatomy=750
-maxArchery=0
-maxArmsLore=0
-maxBegging=500
-maxBlacksmithing=0
-maxBowcraft=0
-maxCamping=500
-maxCarpentry=0
-maxDetectingHidden=500
-maxDiscordance=0
-maxFencing=0
-maxForensics=750
-maxHealing=500
-maxHerding=500
-maxHiding=500
-maxLockPicking=0
-maxMacefighting=500
-maxMusicianship=0
-maxParrying=0
-maxPeacemaking=0
-maxPoisoning=250
-maxProvocation=0
-maxRemoveTrap=500
-maxSnooping=0
-maxStealing=0
-maxStealth=500
-maxSwordsmanship=0
-maxTactics=500
-maxTailoring=0
-maxTaming=0
-maxTinkering=0
-maxTracking=250
-maxVeterinary=500
-maxWrestling=500
+//SkillNameOrDefname = starting value, cap value
+//not listed skills are considered 0, 0
+AnimalLore=0, 250
+Alchemy=300, 1000
+Anatomy=0, 750
+Begging=0, 500
+Camping=0, 500
+Cartography=300, 1000
+Cooking=0, 1000
+DetectingHidden=0, 500
+EvaluatingIntel=300, 1000
+Fishing=0, 1000
+Forensics=0, 750
+Healing=0, 500
+Herding=0, 500
+Hiding=0, 500
+Inscription=300, 1000
+ItemID=0, 1000
+Lumberjacking=0, 1000
+Macefighting=0, 500
+Magery=300, 1000
+MagicResistance=300, 1000
+Meditation=300, 1000
+Mining=0, 1000
+Poisoning=0, 250
+RemoveTrap=0, 500
+SpiritSpeak=0, 1000
+Stealth=0, 500
+Tactics=0, 500
+TasteID=0, 1000
+Tracking=0, 250
+Veterinary=0, 500
+Wrestling=0, 500
 
-//only listing those higher than 0
-basicAlchemy=300
-basicCartography=300
-basicEI=300
-basicInscription=300
-basicMagery=300
-basicResist=300
-basicMeditation=300
 
-//list allowed spells and abilities
+//AbilityNameOrDefname = display order, maximum points
+a_regen_hits = 0, 10
+a_regen_stam = 1, 10
+a_regen_mana = 2, 10
+
+
+//list allowed spells
 allowedSpells=s_nightsight,s_wall_of_stone
-//, s_harm
 
-allowedAbilities=a_regen_hits, a_regen_stam, a_regen_mana
 
+//3 talent tree branches
 ttb1 = ttb_mage_sorcerer
 ttb2 = ttb_mage_conjurer
 ttb3 = ttb_mage_magician
 
-//abilitynameordefname = Tier, TierPosition, MaxPoints, resourcelist
+
+//AbilityNameOrDefname = Tier, TierPosition, MaxPoints, resourcelist
 [TalentTreeBranchDef ttb_mage_sorcerer]
 Name = "Sorcerer"
 
 a_ignition = 3, 0, 5
 
 a_silence = 3, 2, 5
+
 
 [TalentTreeBranchDef ttb_mage_conjurer]
 Name = "Conjurer"

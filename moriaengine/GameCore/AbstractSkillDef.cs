@@ -199,7 +199,7 @@ namespace SteamEngine {
 
 		}
 
-		internal static void LoadingFinished() {
+		internal new static void LoadingFinished() {
 
 		}
 		#endregion Load from scripts

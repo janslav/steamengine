@@ -77,7 +77,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void LoadingFinished() {
+		internal new static void LoadingFinished() {
 			foreach (TGResolver resolver in tgResolvers) {
 				resolver.Resolve();
 			}

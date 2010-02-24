@@ -37,7 +37,8 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-		private Dictionary<AbilityDef, TalentTreeLeaf> cachedLeafs = new Dictionary<AbilityDef, TalentTreeLeaf>();
+		private Dictionary<AbilityDef, TalentTreeEntry> cachedLeafs = new Dictionary<AbilityDef, TalentTreeEntry>();
+		private bool cacheComplete;
 
 		public string Name {
 			get {
@@ -46,56 +47,69 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int GetTalentMaxPoints(AbilityDef def) {
-			TalentTreeLeaf leaf = this.GetLeaf(def);
+			TalentTreeEntry leaf = this.GetEntry(def);
 			if (leaf != null) {
-				return leaf.MaxPoints;
+				return leaf.maxPoints;
 			}
 			return 0;
 		}
 
 		public void SetTalentMaxPoints(AbilityDef def, int points) {
-			string fvName = "TalentMaxPoints." + def.PrettyDefname;
-			FieldValue fv = this.GetFieldValue(fvName);
-			if (fv == null) {
-				fv = this.InitTypedField(fvName, 0, typeof(int));
+			string fvName = talentMaxPointsPrefix + def.PrettyDefname;
+			if (!this.HasFieldValue(fvName)) {
+				this.InitTypedField(fvName, 0, typeof(int)).CurrentValue = points;
+			} else {
+				this.SetCurrentFieldValue(fvName, points);
 			}
-			fv.CurrentValue = points;
-			this.cachedLeafs.Remove(def); //remove from cache
+			this.ClearCache();
 		}
 
 		public ResourcesList GetTalentDependency(AbilityDef def) {
-			TalentTreeLeaf leaf = this.GetLeaf(def);
+			TalentTreeEntry leaf = this.GetEntry(def);
 			if (leaf != null) {
-				return leaf.Dependencies;
+				return leaf.dependencies;
 			}
 			return null;
 		}
 
 		public void SetTalentDependency(AbilityDef def, ResourcesList dependency) {
-			string fvName = "TalentDependency." + def.PrettyDefname;
-			FieldValue fv = this.GetFieldValue(fvName);
-			if (fv == null) {
-				fv = this.InitTypedField(fvName, 0, typeof(int));
+			string fvName = talentMaxPointsPrefix + def.PrettyDefname;
+			if (!this.HasFieldValue(fvName)) {
+				this.InitTypedField(fvName, 0, typeof(ResourcesList)).CurrentValue = dependency;
+			} else {
+				this.SetCurrentFieldValue(fvName, dependency);
 			}
-			fv.CurrentValue = dependency;
-			this.cachedLeafs.Remove(def); //remove from cache
+			this.ClearCache();
 		}
 
-		public TalentTreeLeaf GetLeaf(AbilityDef def) {
-			TalentTreeLeaf leaf;
+		public TalentTreeEntry GetEntry(AbilityDef def) {
+			TalentTreeEntry leaf;
 			if (!cachedLeafs.TryGetValue(def, out leaf)) {
 				string defname = def.PrettyDefname;
-				object tierObj = this.GetCurrentFieldValue("TalentTier." + defname);
-				if (tierObj != null) {
-					leaf = new TalentTreeLeaf(def,
-						Convert.ToInt32(tierObj),
-						Convert.ToInt32(this.GetCurrentFieldValue("TalentTierPosition." + defname)),
-						Convert.ToInt32(this.GetCurrentFieldValue("TalentMaxPoints." + defname)),
-						(ResourcesList) this.GetCurrentFieldValue("TalentDependency." + defname));
+				string fvName = talentTierPrefix + defname;
+				if (this.HasFieldValue(fvName)) {
+					leaf = new TalentTreeEntry(def,
+						Convert.ToInt32(this.GetCurrentFieldValue(fvName)),
+						Convert.ToInt32(this.GetCurrentFieldValue(talentTierPositionPrefix + defname)),
+						Convert.ToInt32(this.GetCurrentFieldValue(talentMaxPointsPrefix + defname)),
+						(ResourcesList) this.GetCurrentFieldValue(talentDependencyPrefix + defname));
 					cachedLeafs[def] = leaf;
+					this.cacheComplete = false;
 				}
 			}
 			return leaf;
+		}
+
+		public IEnumerable<TalentTreeEntry> AllTalents {
+			get {
+				if (!this.cacheComplete) {
+					foreach (AbilityDef abilityDef in AbilityDef.AllAbilities) {
+						this.GetEntry(abilityDef);
+					}
+					this.cacheComplete = true;
+				}
+				return this.cachedLeafs.Values;
+			}
 		}
 
 		public override string ToString() {
@@ -135,56 +149,72 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				string abilityName = ability.PrettyDefname;
-				this.InitTypedField("TalentTier." + abilityName, 0, typeof(int))
-					.SetFromScripts(filename, line, preparsed[0]);
-				this.InitTypedField("TalentTierPosition." + abilityName, 0, typeof(int))
-					.SetFromScripts(filename, line, preparsed[1]);
-				this.InitTypedField("TalentMaxPoints." + abilityName, 0, typeof(int))
-					.SetFromScripts(filename, line, preparsed[2]);
+
+				this.InitOrSetFieldValue<int>(filename, line, talentTierPrefix + abilityName, preparsed[0]);
+				this.InitOrSetFieldValue<int>(filename, line, talentTierPositionPrefix + abilityName, preparsed[1]);
+				this.InitOrSetFieldValue<int>(filename, line, talentMaxPointsPrefix + abilityName, preparsed[2]);
 
 				string reconstructedResList = "";
 				if (len > 3) {
 					reconstructedResList = String.Join(", ", preparsed, 3, len - 3);
 				}
-				this.InitTypedField("TalentDependency." + abilityName, null, typeof(ResourcesList))
-					.SetFromScripts(filename, line, reconstructedResList);
+				this.InitOrSetFieldValue<ResourcesList>(filename, line, talentDependencyPrefix + abilityName, reconstructedResList);
 
 			} else {
 				base.LoadScriptLine(filename, line, param, args);
 			}
 		}
 
+		private void InitOrSetFieldValue<T>(string filename, int line, string fvName, string fvValue) {
+			if (!this.HasFieldValue(fvName)) {
+				this.InitTypedField(fvName, default(T), typeof(T))
+					.SetFromScripts(filename, line, fvValue);
+			} else {
+				base.LoadScriptLine(filename, line, fvName, fvValue);
+			}
+		}
+
 		public override void Unload() {
-			this.cachedLeafs.Clear();
+			this.ClearCache();
 			base.Unload();
 		}
 
 		public override void UnUnload() {
-			this.cachedLeafs.Clear();
+			this.ClearCache();
 			base.UnUnload();
 		}
 
 		protected override void Unregister() {
-			this.cachedLeafs.Clear();
+			this.ClearCache();
 			base.Unregister();
 		}
 
 		public override AbstractScript Register() {
-			this.cachedLeafs.Clear();
+			this.ClearCache();
 			return base.Register();
+		}
+
+		public void ClearCache() {
+			this.cachedLeafs.Clear();
+			this.cacheComplete = false;
 		}
 		#endregion Load from scripts
 
 		#region Load from saves
+		private const string talentTierPrefix = "TalentTier.";
+		private const string talentTierPositionPrefix = "TalentTierPosition.";
+		private const string talentMaxPointsPrefix = "TalentMaxPoints.";
+		private const string talentDependencyPrefix = "TalentDependency.";
+
 		public override void LoadFromSaves(PropsSection input) {
 			foreach (PropsLine line in input.PropsLines) {
 				string name = line.Name;
-				if (this.GetFieldValue(name) == null) {
-					if (name.StartsWith("TalentTier.") ||
-							name.StartsWith("TalentTierPosition.") ||
-							name.StartsWith("TalentMaxPoints.")) {
+				if (!this.HasFieldValue(name)) {
+					if (name.StartsWith(talentTierPrefix) ||
+							name.StartsWith(talentTierPositionPrefix) ||
+							name.StartsWith(talentMaxPointsPrefix)) {
 						this.InitTypedField(name, 0, typeof(int));
-					} else if (name.StartsWith("TalentDependency.")) {
+					} else if (name.StartsWith(talentDependencyPrefix)) {
 						this.InitTypedField(name, "", typeof(ResourcesList));
 					}
 				}
@@ -196,49 +226,19 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	//represents the settings of 1 talent in 1 talenttree branch
-	public class TalentTreeLeaf {
-		private AbilityDef talent;
-		private int tier;
-		private int tierPosition;
-		private int maxPoints;
-		private ResourcesList dependencies;
+	public class TalentTreeEntry {
+		public readonly AbilityDef talent;
+		public readonly int tier;
+		public readonly int tierPosition;
+		public readonly int maxPoints;
+		public readonly ResourcesList dependencies;
 
-		public TalentTreeLeaf(AbilityDef talent, int tier, int tierPosition, int maxPoints, ResourcesList dependencies) {
+		public TalentTreeEntry(AbilityDef talent, int tier, int tierPosition, int maxPoints, ResourcesList dependencies) {
 			this.talent = talent;
 			this.tier = tier;
 			this.tierPosition = tierPosition;
 			this.maxPoints = maxPoints;
 			this.dependencies = dependencies;
-		}
-
-		public AbilityDef Talent {
-			get {
-				return this.talent;
-			}
-		}
-
-		public int Tier {
-			get {
-				return this.tier;
-			}
-		}
-
-		public int TierPosition {
-			get {
-				return this.tierPosition;
-			}
-		}
-
-		public int MaxPoints {
-			get {
-				return this.maxPoints;
-			}
-		}
-
-		public ResourcesList Dependencies {
-			get {
-				return this.dependencies;
-			}
 		}
 	}
 }
