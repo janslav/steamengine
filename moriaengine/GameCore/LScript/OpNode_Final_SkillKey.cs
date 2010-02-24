@@ -60,7 +60,7 @@ namespace SteamEngine.LScript {
 			try {
 				AbstractCharacter ch = (AbstractCharacter) oSelf;
 				//ch.SkillById(skillId).RealValue = Convert.ToUInt16(result);
-				ch.SetSkill(skillId, Convert.ToInt32(result, System.Globalization.CultureInfo.InvariantCulture));
+				ch.SetRealSkillValue(skillId, Convert.ToInt32(result, System.Globalization.CultureInfo.InvariantCulture));
 				//ch.Skills[skillId].RealValue = Convert.ToUInt16(result);
 				return null;
 			} catch (Exception e) {
@@ -71,7 +71,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			AbstractCharacter ch = (AbstractCharacter) vars.self;
-			ch.SetSkill(skillId, Convert.ToInt32(results[0], System.Globalization.CultureInfo.InvariantCulture));
+			ch.SetRealSkillValue(skillId, Convert.ToInt32(results[0], System.Globalization.CultureInfo.InvariantCulture));
 			//ch.Skills[skillId].RealValue = Convert.ToUInt16(results[0]);
 			return null;
 		}

@@ -266,7 +266,7 @@ namespace SteamEngine.Common {
 		public static bool ParseBoolean(string s) {
 			if (s == null)
 				return false;
-			switch (s.ToLower(invariantCulture)) {
+			switch (s.ToLowerInvariant()) {
 				case "true":
 				case "1":
 				case "on":
@@ -285,7 +285,7 @@ namespace SteamEngine.Common {
 				retVal = false;
 				return true;
 			}
-			switch (s.ToLower(invariantCulture)) {
+			switch (s.ToLowerInvariant()) {
 				case "true":
 				case "1":
 				case "on":

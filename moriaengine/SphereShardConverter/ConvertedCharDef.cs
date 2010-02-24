@@ -68,7 +68,7 @@ namespace SteamEngine.Converter {
 		public override void ThirdStage() {
 			base.ThirdStage();
 
-			switch (this.PrettyDefname.ToLower()) {
+			switch (this.PrettyDefname.ToLowerInvariant()) {
 				//case "c_man_gm":
 				case "c_man":
 				case "c_woman":

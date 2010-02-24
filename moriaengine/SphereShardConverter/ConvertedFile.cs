@@ -38,10 +38,10 @@ namespace SteamEngine.Converter {
 		private static string GetNewFilename(string fileName) {
 			string outFileName = Path.GetFileNameWithoutExtension(fileName);
 			string pathPart = Path.GetDirectoryName(fileName);
-			if (outFileName.ToLower().IndexOf("sphere_d_") == 0) {
+			if (outFileName.ToLowerInvariant().IndexOf("sphere_d_") == 0) {
 				outFileName = outFileName.Substring(9);
 			}
-			if (outFileName.ToLower().IndexOf("sphere") == 0) {
+			if (outFileName.ToLowerInvariant().IndexOf("sphere") == 0) {
 				outFileName = outFileName.Substring(6);
 			}
 			if (outFileName[0] == '_') {

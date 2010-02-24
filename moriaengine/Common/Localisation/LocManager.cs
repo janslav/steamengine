@@ -63,7 +63,7 @@ namespace SteamEngine.Common {
 		}
 
 		public static Language TranslateLanguageCode(string languageCode) {
-			languageCode = languageCode.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			languageCode = languageCode.ToLowerInvariant();
 			switch (languageCode) {
 				case "cz":
 				case "cze":

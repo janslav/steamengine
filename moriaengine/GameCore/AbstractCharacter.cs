@@ -1185,7 +1185,7 @@ namespace SteamEngine {
 
 		//public abstract ISkill[] Skills { get; }
 		public abstract IEnumerable<ISkill> Skills { get; }
-		public abstract void SetSkill(int id, int value);
+		public abstract void SetRealSkillValue(int id, int value);
 		public abstract void SetSkillLockType(int id, SkillLockType type);
 		public abstract ISkill GetSkillObject(int id);
 		public abstract int GetSkill(int id);

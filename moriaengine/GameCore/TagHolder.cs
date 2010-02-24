@@ -398,7 +398,7 @@ namespace SteamEngine {
 		internal void LoadSectionLines(PropsSection ps) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					this.LoadLine(ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
+					this.LoadLine(ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {

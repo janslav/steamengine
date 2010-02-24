@@ -180,7 +180,7 @@ namespace SteamEngine.Persistence {
 		protected void LoadSectionLines(PropsSection ps, object loadedObject) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLower(System.Globalization.CultureInfo.InvariantCulture), p.Value);
+					LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {

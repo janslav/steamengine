@@ -45,8 +45,8 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_Activate(Character chr, Ability ab) {
 			//TODO - taky nejak zarvat nebo co !
 
-			double power = ab.AbilityDef.EffectPower * ab.ModifiedPoints; //
-			TimeSpan duration = TimeSpan.FromSeconds(ab.AbilityDef.EffectDuration);
+			double power = ab.Def.EffectPower * ab.ModifiedPoints; //
+			TimeSpan duration = TimeSpan.FromSeconds(ab.Def.EffectDuration);
 
 			foreach (Player target in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort) ComputeRange(chr))) {
 				if (chr == target) {

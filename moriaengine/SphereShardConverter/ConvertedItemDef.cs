@@ -92,7 +92,7 @@ namespace SteamEngine.Converter {
 				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 		//resources list may need some number (counts) corrections
 		private static string HandleResourcesList(ConvertedDef def, PropsLine line) {
-			string args = line.Value.ToLower();
+			string args = line.Value.ToLowerInvariant();
 			string corrected = "";
 			string[] singleResources = args.Split(new string[] { "," }, StringSplitOptions.None); //split to single resources
 			foreach(string singleRes in singleResources) {
@@ -115,7 +115,7 @@ namespace SteamEngine.Converter {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.Set(line);
 
-			string args = line.Value.ToLower();
+			string args = line.Value.ToLowerInvariant();
 			def.type = args;
 
 			switch (args) {
@@ -196,7 +196,7 @@ namespace SteamEngine.Converter {
 		private static string HandleTwohanded(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.twoHandedSet = true;
-			string largs = line.Value.ToLower();
+			string largs = line.Value.ToLowerInvariant();
 			switch (largs) {
 				case "0":
 				case "n":
@@ -319,9 +319,9 @@ namespace SteamEngine.Converter {
 				MaterialType materialType = MaterialType.Metal;
 				WeaponType weaponType = WeaponType.BareHands;
 
-				switch (this.type.ToLower()) {
+				switch (this.type.ToLowerInvariant()) {
 					case "t_weapon_sword":
-						string prettyDefName = this.PrettyDefname.ToLower();
+						string prettyDefName = this.PrettyDefname.ToLowerInvariant();
 						if (prettyDefName.Contains("_axe_") || prettyDefName.EndsWith("_axe")) {
 							if (isTwoHanded) {
 								weaponType = WeaponType.TwoHandAxe;
@@ -438,7 +438,7 @@ namespace SteamEngine.Converter {
 		private WearableType GetWearableType(string prettyDefname) {
 			Match m = wearableTypeRE.Match(prettyDefname);
 			if (m.Success) {
-				switch (m.Groups["type"].Value.ToLower()) {
+				switch (m.Groups["type"].Value.ToLowerInvariant()) {
 					case "bone":
 						return WearableType.Bone;
 					case "studded":

@@ -173,7 +173,7 @@ namespace SteamEngine.Converter {
 
 					ConvertedDef cd = null;
 					try {
-						string type = input.HeaderType.ToLower();
+						string type = input.HeaderType.ToLowerInvariant();
 						string name = input.HeaderName;
 						if ((name == "") && (type == "eof")) {
 							continue;
@@ -240,7 +240,7 @@ namespace SteamEngine.Converter {
 		}
 
 		internal static bool StartsAsScript(string headerType) {
-			switch (headerType.ToLower()) {
+			switch (headerType.ToLowerInvariant()) {
 				case "function":
 				case "dialog":
 				case "template":

@@ -1075,7 +1075,7 @@ namespace SteamEngine.Networking {
 				realValue = 0;
 				modifiedValue = 0;
 				cap = 1000;
-				skillLock = SkillLockType.Increase;
+				skillLock = SkillLockType.Up;
 			} else {
 				realValue = skill.RealValue;
 				modifiedValue = skill.ModifiedValue;

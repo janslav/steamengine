@@ -84,7 +84,7 @@ namespace SteamEngine.ProcessRestarter {
 
 		private static void ExitBinDirectory() {
 			string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-			if (path.ToLower().EndsWith("bin")) {
+			if (path.ToLowerInvariant().EndsWith("bin")) {
 				Directory.SetCurrentDirectory(Path.GetDirectoryName(path));
 			} else {
 				Directory.SetCurrentDirectory(path);

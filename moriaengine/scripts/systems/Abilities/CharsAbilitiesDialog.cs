@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			
 				TimeSpan ago = now - ab.LastUsage;
 				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Math.Round(ago.TotalSeconds,1) + " secs ago").Build();
-				AbilityDef adef = ab.AbilityDef;
+				AbilityDef adef = ab.Def;
 				if (adef is PassiveAbilityDef) { //PassiveAbilityDef ability nebude mit vubec nic na mackani
 					dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text("").Build();
 					dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text("").Build();
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text("").Build();
 					//dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonNoOperation).Active(false).Id((5 * i) + 13).Build();
 				}					
-				dlg.LastTable[rowCntr, 6] = GUTAText.Builder.Text(ab.AbilityDef.Defname).Build();
+				dlg.LastTable[rowCntr, 6] = GUTAText.Builder.Text(ab.Def.Defname).Build();
 				//abilitydef info dialog
 				dlg.LastTable[rowCntr, 7] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((5 * i) + 14).Build();
 				rowCntr++;
@@ -203,10 +203,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							int inptID = 5 * abId + 11;
 							Ability chgdAbility = abList[abId];
 							int newAbilityValue = (int) gr.GetNumberResponse(inptID);
-							int oldAbilityValue = abiliter.GetAbility(chgdAbility.AbilityDef);
+							int oldAbilityValue = abiliter.GetAbility(chgdAbility.Def);
 							if(oldAbilityValue != newAbilityValue) {
 								result = result + "Abilita '" + chgdAbility.Name + "' zmìnìna z " + oldAbilityValue + " na " + newAbilityValue + "<br>";
-								abiliter.SetRealAbilityPoints(chgdAbility.AbilityDef, newAbilityValue);
+								abiliter.SetRealAbilityPoints(chgdAbility.Def, newAbilityValue);
 							}
 						}
 						DialogStacking.ResendAndRestackDialog(gi);//hned znovuotevrit
@@ -227,15 +227,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 2: //activate ability - pro Activable / Immediate Ability
-						ab.AbilityDef.Activate((Character) gi.Focus);
+						ab.Def.Activate((Character) gi.Focus);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //de-activate ability (dostupne jen kdyz abilita bezela) - pro Activable Ability
-						((ActivableAbilityDef)ab.AbilityDef).UnActivate((Character) gi.Focus);
+						((ActivableAbilityDef)ab.Def).UnActivate((Character) gi.Focus);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //abilitydef info
-						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ab.AbilityDef));
+						newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ab.Def));
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}
@@ -319,7 +319,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int Compare(Ability x, Ability y) {
-			return StringComparer.OrdinalIgnoreCase.Compare(x.AbilityDef.Defname, y.AbilityDef.Defname);
+			return StringComparer.OrdinalIgnoreCase.Compare(x.Def.Defname, y.Def.Defname);
 		}
 	}
 

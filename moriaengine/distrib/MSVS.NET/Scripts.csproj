@@ -470,6 +470,9 @@
     <Compile Include="..\..\scripts\systems\Professions\ProfessionPlugin.Generated.cs">
       <Link>systems\Professions\ProfessionPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\TalentTreeBranchDef.cs">
+      <Link>systems\Professions\TalentTreeBranchDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.cs">
       <Link>systems\Regeneration\RegenerationPlugin.cs</Link>
     </Compile>
@@ -1208,6 +1211,9 @@
     </None>
     <None Include="..\..\scripts\systems\PlayerCreation.scp">
       <Link>systems\PlayerCreation.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Professions\mage.def">
+      <Link>systems\Professions\mage.def</Link>
     </None>
     <None Include="..\..\scripts\systems\Professions\professions.def">
       <Link>systems\Professions\professions.def</Link>

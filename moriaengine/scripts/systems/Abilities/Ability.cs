@@ -25,8 +25,8 @@ namespace SteamEngine.CompiledScripts {
 	[Summary("This class holds information about one ability the user has - the number of ability points " +
 			 "and any additional info (such as timers connected with the ability running etc.)")]
 	public sealed class Ability {
-		private int realPoints;
-		private int modification;
+		private byte realPoints;
+		private sbyte modification;
 		private Character cont;
 		private AbilityDef def;
 		private TimeSpan lastUsage;
@@ -38,29 +38,31 @@ namespace SteamEngine.CompiledScripts {
 			this.def = def;
 		}
 
-		[Summary("Character's ability points. This is the real value, i.e. unmodified my temporary effect, equipped magic items, etc.")]
+		//copying constructor
+		internal Ability(Ability copyFrom, Character cont) {
+			this.realPoints = copyFrom.realPoints;
+			this.modification = copyFrom.modification;
+			this.def = copyFrom.def;
+			this.cont = cont;
+		}
+
+		[Summary("Character's ability points. This is the real value, i.e. unmodified by temporary effect, equipped magic items, etc.")]
 		public int RealPoints {
 			get {
 				return this.realPoints;
 			}
 			set {
-				int oldValue = this.realPoints;
 				int newValue = Math.Max(0, value);
-				int diff = newValue - oldValue;
-				if (diff != 0) {
+				if (newValue != this.realPoints) {
 					int oldModified = this.ModifiedPoints;
-					this.realPoints = newValue;
+					this.realPoints = (byte) newValue;
 					if (oldModified != this.ModifiedPoints) {
 						this.def.Trigger_ValueChanged(this.cont, this, oldModified); //call changetrigger with information about previous value
 					}
-
-					if ((newValue == 0) && (this.modification == 0)) { //removed last point(s)						
-						this.cont.InternalRemoveAbility(def);
-					}
+					this.DisposeIfEmpty();
 				}
 			}
 		}
-
 
 		[Summary("Character's ability points. This is the modified value, which can be different from RealPoints when some temporary effects take place. " +
 			"When character dies, this value should become equal to RealPoints.")]
@@ -75,22 +77,42 @@ namespace SteamEngine.CompiledScripts {
 		public void ModifyPoints(int difference) {
 			if (difference != 0) {
 				int oldValue = this.ModifiedPoints;
-				this.modification += difference;
+				this.modification += (sbyte) difference;
 				int newValue = this.ModifiedPoints;
 				if (oldValue != newValue) { //modified value may not have changed if we're still in negative numbers
 					this.def.Trigger_ValueChanged(this.cont, this, oldValue); //call changetrigger with information about previous value
 				}
+				this.DisposeIfEmpty();
 			}
 		}
 
-		[Summary("Obtain max points this ability can be assigned")]
+		//not to be used widely, it's just for possible quick reference for GMs etc.
 		public int MaxPoints {
 			get {
-				return 100; //TODO
+				int maxPoints = 0;
+				Player player = this.Cont as Player;
+				if (player != null) {
+					ProfessionDef prof = player.Profession;
+					if (prof != null) {						
+						TalentTreeBranchDef branch = prof.TTB1;
+						if (branch != null) {
+							maxPoints = branch.GetTalentMaxPoints(this.def);
+						}
+						branch = prof.TTB2;
+						if (branch != null) {
+							maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
+						}
+						branch = prof.TTB3;
+						if (branch != null) {
+							maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
+						}
+					}
+				}
+				return maxPoints;
 			}
 		}
 
-		[Summary("Is the ability actually running?")]
+		[Summary("If this is an activable ability, is it running?")]
 		public bool Running {
 			get {
 				ActivableAbilityDef activableAbility = this.def as ActivableAbilityDef;
@@ -114,7 +136,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public AbilityDef AbilityDef {
+		public AbilityDef Def {
 			get {
 				return this.def;
 			}
@@ -130,6 +152,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		private void DisposeIfEmpty() {
+			if ((this.realPoints == 0) && (this.modification == 0)) { //removed last point(s)						
+				this.cont.InternalRemoveAbility(def);
+			}
+		}
+
+		#region Load / Save
 		internal string GetSaveString() {
 			if (this.modification == 0) {
 				return this.realPoints.ToString();
@@ -140,16 +169,19 @@ namespace SteamEngine.CompiledScripts {
 
 		internal bool LoadSavedString(string p) {
 			string[] split = Utility.SplitSphereString(p);
-			if (!ConvertTools.TryParseInt32(split[0], out this.realPoints)) {
+			if (!ConvertTools.TryParseByte(split[0], out this.realPoints)) {
 				return false;
 			}
 			int len = split.Length;
 			if (len > 1) {
-				if (!ConvertTools.TryParseInt32(split[1], out this.modification)) {
+				if (!ConvertTools.TryParseSByte(split[1], out this.modification)) {
 					return false;
 				}
+			} else {
+				this.modification = 0;
 			}
 			return true;
 		}
+		#endregion Load / Save
 	}
 }

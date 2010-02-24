@@ -146,7 +146,7 @@ namespace SteamEngine.Converter {
 			BasicStageImpl(thirdStageImplementations);
 
 			foreach (PropsLine line in this.origData.PropsLines) {
-				if (line.Name.ToLower().StartsWith("tag.")) {
+				if (line.Name.ToLowerInvariant().StartsWith("tag.")) {
 					WriteAsIs(this, line);
 				} else {
 					WriteAsComment(this, line);

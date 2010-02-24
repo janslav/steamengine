@@ -116,8 +116,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 
 		internal static IUnloadable Load(PropsSection input) {
-			string typeName = input.HeaderType.ToLower();
-			string defname = input.HeaderName.ToLower();
+			string typeName = input.HeaderType.ToLowerInvariant();
+			string defname = input.HeaderName.ToLowerInvariant();
 
 			AbstractScript def = AbstractScript.GetByDefname(defname);
 

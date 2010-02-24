@@ -200,7 +200,7 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual bool On_Activate(Character chr, Ability ab) {
 			chr.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 				Loc<AbilityDefLoc>.Get(chr.Language).AbilityActivated,
-				ab.AbilityDef.Name));
+				ab.Def.Name));
 			return false; //no cancelling
 		}
 

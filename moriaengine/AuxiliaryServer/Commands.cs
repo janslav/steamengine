@@ -16,7 +16,7 @@ namespace SteamEngine.AuxiliaryServer {
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "conn"), 
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "cmd")]
 		public static void HandleCommand(TcpConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state, string cmd) {
-			cmd = cmd.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+			cmd = cmd.ToLowerInvariant();
 			switch (cmd) {
 				case "restart":
 					CmdRestart();
@@ -59,8 +59,8 @@ namespace SteamEngine.AuxiliaryServer {
 				try {
 					string file = prc.MainModule.FileName;
 
-					if (file.Contains(SphereServerSetup.sphereExeName) || 
-							file.ToLower(System.Globalization.CultureInfo.InvariantCulture).Contains("steamengine")) {
+					if (file.Contains(SphereServerSetup.sphereExeName) ||
+							file.ToLowerInvariant().Contains("steamengine")) {
 
 						message.Append(file)
 							.Append(" - running since ").Append(prc.StartTime.ToString(System.Globalization.CultureInfo.InvariantCulture))
