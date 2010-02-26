@@ -50,12 +50,25 @@ namespace SteamEngine.CompiledScripts {
 			return false; //continue to @success or @fail
 		}
 
+		//bonus talent 
+		private static PassiveAbilityDef a_meditation_bonus;
+		public static PassiveAbilityDef MeditationBonusDef {
+			get {
+				if (a_meditation_bonus == null) {
+					a_meditation_bonus = (PassiveAbilityDef) AbilityDef.GetByDefname("a_meditation_bonus");
+				}
+				return a_meditation_bonus;
+			}
+		}
+
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			self.ClilocSysMessage(501851);//You enter a meditative trance.
 			MeditationPlugin mpl = (MeditationPlugin) MeditationPlugin.defInstance.Create();
-			mpl.additionalManaRegenSpeed = this.GetEffectForChar(self);
+			double effect = this.GetEffectForChar(self);
+			effect += effect * MeditationBonusDef.EffectPower * self.GetAbility(MeditationBonusDef);
+			mpl.additionalManaRegenSpeed = effect;
 			self.AddPlugin(MeditationPlugin.meditationPluginKey, mpl);
 			return false;
 		}
@@ -104,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_Assign() {
 			//add the regeneration speed to character
-			((Character) Cont).ManaRegenSpeed += this.additionalManaRegenSpeed;
+			((Character) this.Cont).ManaRegenSpeed += this.additionalManaRegenSpeed;
 		}
 
 		public void On_UnAssign(Character formerCont) {
@@ -117,11 +130,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Step(ScriptArgs args) {
-			Delete();
+			this.Delete();
 		}
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
-			Delete();
+			this.Delete();
 		}
 
 		//TODO - other triggers such as ItemPickup, Speak, DClick, use another skill or ability etc...
