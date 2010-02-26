@@ -1173,6 +1173,9 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\Common\spellBoost.scp">
       <Link>systems\Abilities\Talents\Common\spellBoost.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Common\spellDamageBonus.scp">
+      <Link>systems\Abilities\Talents\Common\spellDamageBonus.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Mage\ClearCast\clearCast.scp">
       <Link>systems\Abilities\Talents\Mage\ClearCast\clearCast.scp</Link>
     </None>

@@ -28,7 +28,7 @@ CASTTIME=1.2
 RUNEITEM=i_rune_HARM
 SCROLLITEM=i_scroll_HARM
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-
+DamageType = DamageType.MagicAcid
 EFFECT=6,12
 MANAUSE=6 
 Requirements=200 Magery 

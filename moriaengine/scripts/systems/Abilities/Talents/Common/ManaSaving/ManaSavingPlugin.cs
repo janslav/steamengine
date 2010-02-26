@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class ManaSavingPlugin {
 
 		private static ActivableAbilityDef a_mana_saving;
-		private static ActivableAbilityDef ManaSavingDef {
+		public static ActivableAbilityDef ManaSavingDef {
 			get {
 				if (a_mana_saving == null) {
 					a_mana_saving = (ActivableAbilityDef) AbilityDef.GetByDefname("a_mana_saving");
@@ -38,19 +38,32 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		private static ActivableAbilityDef a_mana_saving_bonus;
+		public static ActivableAbilityDef ManaSavingBonusDef {
+			get {
+				if (a_mana_saving_bonus == null) {
+					a_mana_saving_bonus = (ActivableAbilityDef) AbilityDef.GetByDefname("a_mana_saving_bonus");
+				}
+				return a_mana_saving_bonus;
+			}
+		}
+
+		public override void On_Assign() {
+			base.On_Assign();
+			this.EffectPower += ((Character) this.Cont).GetAbility(ManaSavingBonusDef) * ManaSavingBonusDef.EffectPower;
+		}
+
 		public void On_SkillSuccess(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				Character self = (Character) this.Cont;
 				ActivableAbilityDef abilityDef = ManaSavingDef;
 
-				if (abilityDef.CheckSuccess(self) &&
-					(!ClearCastPlugin.ClearCastDef.IsActive(self)) && //clearcast makes manause 0 so in that case we don't return anything. Or should we?
-					(self.Mana < self.MaxMana)) {
-						SpellDef spell = (SpellDef) skillSeqArgs.Param1;
-						double manause = spell.GetManaUse(skillSeqArgs.Tool is SpellScroll);
-						int giveback = (int) Math.Round(manause * this.EffectPower);
-					
-						self.Mana = (short) Math.Min(self.Mana + giveback, self.MaxMana);
+				if (self.Mana < self.MaxMana) {
+					SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+					double manause = spell.GetManaUse(skillSeqArgs.Tool is SpellScroll);
+					double giveback = manause * this.EffectPower;
+				
+					self.Mana = (short) Math.Min(self.Mana + giveback, self.MaxMana);
 				}
 			}
 		}

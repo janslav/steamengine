@@ -1,7 +1,7 @@
 [function allSkills]
 if (argvcount)
 	foreach (sd in SkillDef.AllSkillDefs)
-		this.SetSkill(sd.Id, argv[0])
+		this.SetRealSkillValue(sd.Id, argv[0])
 	endforeach
 else
 	foreach (s in this.Skills)
