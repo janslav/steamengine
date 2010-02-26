@@ -114,6 +114,7 @@ namespace SteamEngine.CompiledScripts {
 			if (durationPlugin != null) {
 				int spellPower = spellEffectArgs.SpellPower;
 				durationPlugin.Init(spellEffectArgs.Caster, effectFlag, this.GetEffectForValue(spellPower), TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)));
+				durationPlugin.EffectName = this.Name;
 			}
 			target.AddPlugin(key, plugin);
 		}
