@@ -2129,10 +2129,32 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public int WeaponRange {
+		public int WeaponRangeVsM {
 			get {
 				this.CalculateCombatWeaponValues();
-				return this.combatWeaponValues.range;
+				return this.combatWeaponValues.rangeVsM;
+			}
+		}
+
+		public int WeaponRangeVsP {
+			get {
+				this.CalculateCombatWeaponValues();
+				return this.combatWeaponValues.rangeVsP;
+			}
+		}
+
+		private static TagKey weaponRangeModifierTK = TagKey.Acquire("_weaponRangeModifier_");
+		public int WeaponRangeModifier {
+			get {
+				return Convert.ToInt32(this.GetTag(weaponRangeModifierTK));
+			}
+			set {
+				this.InvalidateCombatWeaponValues();
+				if (value != 0) {
+					this.SetTag(weaponRangeModifierTK, value);
+				} else {
+					this.RemoveTag(weaponRangeModifierTK);
+				}
 			}
 		}
 

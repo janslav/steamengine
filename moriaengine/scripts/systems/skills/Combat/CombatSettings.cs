@@ -115,7 +115,9 @@ namespace SteamEngine.CompiledScripts {
 
 		public WeaponSpeedMassSetting weaponSpeeds = new WeaponSpeedMassSetting();
 
-		public WeaponRangeMassSetting weaponRanges = new WeaponRangeMassSetting();
+		public WeaponRangeVsMMassSetting weaponRangesVsM = new WeaponRangeVsMMassSetting();
+		public WeaponRangeVsPMassSetting weaponRangesVsP = new WeaponRangeVsPMassSetting();
+
 		public WeaponStrikeStartRangeMassSetting weaponStrikeStartRanges = new WeaponStrikeStartRangeMassSetting();
 		public WeaponStrikeStopRangeMassSetting weaponStrikeStopRanges = new WeaponStrikeStopRangeMassSetting();
 
@@ -188,29 +190,55 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	public class WeaponRangeMassSetting : MassSettings_ByModel<WeaponDef, int> {
+	public class WeaponRangeVsMMassSetting : MassSettings_ByModel<WeaponDef, int> {
 		public override string Name {
 			get {
-				return "Dostøely/dosahy zbraní";
+				return "Dostøely/dosahy zbraní vs M";
 			}
 		}
 
-		protected class WeaponRangeFieldView : FieldView_ByModel {
-			internal WeaponRangeFieldView(int index)
+		protected class WeaponRangeVsMFieldView : FieldView_ByModel {
+			internal WeaponRangeVsMFieldView(int index)
 				: base(index) {
 			}
 
 			internal override void SetValue(WeaponDef def, int value) {
-				def.Range = value;
+				def.RangeVsM = value;
 			}
 
 			internal override int GetValue(WeaponDef def) {
-				return def.Range;
+				return def.RangeVsM;
 			}
 		}
 
 		public override IDataFieldView GetFieldView(int index) {
-			return new WeaponRangeFieldView(index);
+			return new WeaponRangeVsMFieldView(index);
+		}
+	}
+
+	public class WeaponRangeVsPMassSetting : MassSettings_ByModel<WeaponDef, int> {
+		public override string Name {
+			get {
+				return "Dostøely/dosahy zbraní vs P";
+			}
+		}
+
+		protected class WeaponRangeVsPFieldView : FieldView_ByModel {
+			internal WeaponRangeVsPFieldView(int index)
+				: base(index) {
+			}
+
+			internal override void SetValue(WeaponDef def, int value) {
+				def.RangeVsP = value;
+			}
+
+			internal override int GetValue(WeaponDef def) {
+				return def.RangeVsP;
+			}
+		}
+
+		public override IDataFieldView GetFieldView(int index) {
+			return new WeaponRangeVsPFieldView(index);
 		}
 	}
 

@@ -92,54 +92,55 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				if (distance > self.WeaponStrikeStopRange) {
 					self.AbortSkill();
-				} else if ((((TimeSpan) skillSeqArgs.Param2) <= Globals.TimeAsSpan) &&
-						(distance <= self.WeaponRange)) {
-
-					Projectile projectile = self.WeaponProjectile;
-					if (projectile != null) {
-						switch (Globals.dice.Next(3)) {
-							case 0://arrow appears on ground
-								Projectile onGround = (Projectile) projectile.Dupe();
-								onGround.P(target);
-								onGround.Amount = 1;
-								break;
-							case 1://arrow appears in targets backpack
-								Projectile inPack = (Projectile) projectile.Dupe();
-								inPack.Cont = target.Backpack;
-								inPack.Amount = 1;
-								break;
-							//else arrow disappears
+				} else if (((TimeSpan) skillSeqArgs.Param2) <= Globals.TimeAsSpan) {
+					int range = target.IsPlayerForCombat ? self.WeaponRangeVsP : self.WeaponRangeVsM;
+					if (distance <= range) {
+						Projectile projectile = self.WeaponProjectile;
+						if (projectile != null) {
+							switch (Globals.dice.Next(3)) {
+								case 0://arrow appears on ground
+									Projectile onGround = (Projectile) projectile.Dupe();
+									onGround.P(target);
+									onGround.Amount = 1;
+									break;
+								case 1://arrow appears in targets backpack
+									Projectile inPack = (Projectile) projectile.Dupe();
+									inPack.Cont = target.Backpack;
+									inPack.Amount = 1;
+									break;
+								//else arrow disappears
+							}
+							int amount = projectile.Amount;
+							if (amount < 2) {
+								projectile.Delete();
+							} else {
+								projectile.Amount = amount - 1;
+							}
+						} else if (self.WeaponProjectileType != ProjectileType.None) {
+							self.SysMessage(Loc<WeaponSkillDefLoc>.Get(self.Language).YouHaveNoAmmo);
+							self.AbortSkill();
+							return true;
 						}
-						int amount = projectile.Amount;
-						if (amount < 2) {
-							projectile.Delete();
+
+						if (!self.Flag_Moving) {
+							self.Direction = Point2D.GetDirFromTo(self, target);
+						}
+
+						int projectileAnim = self.WeaponProjectileAnim;
+						if (projectileAnim >= 0) {
+							EffectFactory.EffectFromTo(self, target, projectileAnim, 10, 1, false, false, 0, 0);
+						}
+
+						skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
+
+						if (self.CanInteractWith(target)) {
+							WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
 						} else {
-							projectile.Amount = amount - 1;
+							WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);
 						}
-					} else if (self.WeaponProjectileType != ProjectileType.None) {
-						self.SysMessage(Loc<WeaponSkillDefLoc>.Get(self.Language).YouHaveNoAmmo);
-						self.AbortSkill();
-						return true;
+
+						return false;
 					}
-
-					if (!self.Flag_Moving) {
-						self.Direction = Point2D.GetDirFromTo(self, target);
-					}
-
-					int projectileAnim = self.WeaponProjectileAnim;
-					if (projectileAnim >= 0) {
-						EffectFactory.EffectFromTo(self, target, projectileAnim, 10, 1, false, false, 0, 0);
-					}
-
-					skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-
-					if (self.CanInteractWith(target)) {
-						WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
-					} else {
-						WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);
-					}
-
-					return false;
 				}
 			}
 
