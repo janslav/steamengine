@@ -767,6 +767,12 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs">
       <Link>systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.cs">
+      <Link>systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs</Link>
     </Compile>
@@ -1250,6 +1256,12 @@
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
       <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\paralyze.def">
+      <Link>systems\skills\Magery\Spells\Paralyze\paralyze.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.ct">
+      <Link>systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct">
       <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct</Link>

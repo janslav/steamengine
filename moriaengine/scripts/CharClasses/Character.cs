@@ -1087,9 +1087,9 @@ namespace SteamEngine.CompiledScripts {
 			this.RemoveTag(oModelTK);
 		}
 
-		private static TriggerKey disruptTK = TriggerKey.Acquire("disrupt");
+		private static TriggerKey disruptionTK = TriggerKey.Acquire("disruption");
 		public void Trigger_Disrupt() {
-			TryTrigger(disruptTK, null);
+			TryTrigger(disruptionTK, null);
 			On_Disruption();
 		}
 

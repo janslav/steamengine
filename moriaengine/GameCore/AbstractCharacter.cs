@@ -682,17 +682,7 @@ namespace SteamEngine {
 					return false;
 				}
 
-				//move char, and send 0x77 to players nearby
-
-				if (this.TryCancellableTrigger(TriggerKey.step, new ScriptArgs(dir, running))) {
-					return false;
-				}
-
-				bool onStepCancelled = false;
-				try {
-					onStepCancelled = this.On_Step(dir, running);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (onStepCancelled) {
+				if (Trigger_Step(dir, running)) {
 					return false;
 				}
 
@@ -714,10 +704,12 @@ namespace SteamEngine {
 				if (requested) {
 					mt |= MovementType.RequestedStep;
 				}
-				CharSyncQueue.AboutToChangePosition(this, mt);
+
+				//move char, and send 0x77 to players nearby
+				CharSyncQueue.AboutToChangePosition(this, mt); 
 
 				this.point4d.SetP(newX, newY, newZ);
-				ChangedP(oldPoint, mt);
+				this.ChangedP(oldPoint, mt);
 			} else { //just changing direction, no steps
 				CharSyncQueue.AboutToChangeDirection(this, requested);
 				this.Direction = dir;
@@ -752,6 +744,16 @@ namespace SteamEngine {
 			if (self != null) {
 				self.Trigger_NewPosition(oldP, movementType);
 			}
+		}
+
+
+		private bool Trigger_Step(Direction dir, bool running) {
+			if (this.TryCancellableTrigger(TriggerKey.step, new ScriptArgs(dir, running))) {
+				return true;
+			}
+			try {
+				return this.On_Step(dir, running);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]

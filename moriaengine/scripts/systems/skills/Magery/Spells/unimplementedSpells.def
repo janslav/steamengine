@@ -201,22 +201,6 @@
 //MANAUSE=15
 //Requirements=50.0 Magery
 //
-//[SpellDef 38]
-//// keep min duration a bit low here, paralyze is a killer in the hands of PK's. A powerful PK only needs a sec to kill you anyways.
-//DEFNAME=s_paralyze
-//NAME=Paralyze
-//SOUND=snd_SPELL_PARALYZE
-//RUNES=AEP
-//CASTTIME=2.5
-////RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_spider_silk
-//RUNEITEM=i_rune_PARALYZE
-//SCROLLITEM=i_scroll_PARALYZE
-//FLAGS=SPELLFLAG_DIR_ANIM|SPELLFLAG_FX_TARG|spellflag_evil|spellflag_harm//SPELLFLAG_TARG_CHAR
-////EFFECTID=i_fx_curse
-//EFFECT=0,0
-//DURATION=10.0,60.0
-//MANAUSE=12
-//Requirements=50.0 Magery
 //
 //[SpellDef 40]
 //// NOTE: This spell is the mages first true form of combat at low levels. One of the main uses is summoning a horse to travel. Don't set to low.
