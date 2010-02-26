@@ -21,7 +21,14 @@ using System.Collections;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class WeaponDef : DestroyableDef {
-
+		protected override void LoadScriptLine(string filename, int line, string param, string args) {
+			if (param.Equals("range", StringComparison.OrdinalIgnoreCase)) {
+				base.LoadScriptLine(filename, line, "rangevsm", args);
+				base.LoadScriptLine(filename, line, "rangevsp", args);
+			} else {
+				base.LoadScriptLine(filename, line, param, args);
+			}
+		}
 	}
 
 	[Dialogs.ViewableClass]

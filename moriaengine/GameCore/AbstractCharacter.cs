@@ -754,6 +754,7 @@ namespace SteamEngine {
 			try {
 				return this.On_Step(dir, running);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			return false;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
