@@ -275,7 +275,8 @@ namespace SteamEngine.CompiledScripts {
 			internal Weapon weapon;
 			internal WeaponType weaponType;
 			internal DamageType damageType;
-			internal int range;
+			internal int rangeVsP;
+			internal int rangeVsM;
 			internal int strikeStartRange;
 			internal int strikeStopRange;
 			internal TimeSpan delay;
@@ -331,7 +332,8 @@ namespace SteamEngine.CompiledScripts {
 				if (weapon != null) {
 					retVal.weaponType = weapon.WeaponType;
 					retVal.weaponAnimType = weapon.WeaponAnimType;
-					retVal.range = weapon.Range;
+					retVal.rangeVsM = weapon.RangeVsM;
+					retVal.rangeVsP = weapon.RangeVsP;
 					retVal.strikeStartRange = weapon.StrikeStartRange;
 					retVal.strikeStopRange = weapon.StrikeStopRange;
 					retVal.piercing = weapon.Piercing;
@@ -350,7 +352,8 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					retVal.weaponType = WeaponType.BareHands;
 					retVal.weaponAnimType = WeaponAnimType.BareHands;
-					retVal.range = CombatSettings.instance.bareHandsRange;
+					retVal.rangeVsM = CombatSettings.instance.bareHandsRange;
+					retVal.rangeVsP = retVal.rangeVsM;
 					retVal.strikeStartRange = CombatSettings.instance.bareHandsStrikeStartRange;
 					retVal.strikeStopRange = CombatSettings.instance.bareHandsStrikeStopRange;
 					retVal.piercing = CombatSettings.instance.bareHandsPiercing;
@@ -398,7 +401,8 @@ namespace SteamEngine.CompiledScripts {
 						retVal.weaponAnimType = WeaponAnimType.BareHands;
 						retVal.projectileAnim = npcDef.ProjectileAnim;
 					}
-					retVal.range = npcDef.WeaponRange;
+					retVal.rangeVsM = npcDef.WeaponRange;
+					retVal.rangeVsP = retVal.rangeVsM;
 					retVal.strikeStartRange = npcDef.StrikeStartRange;
 					retVal.strikeStopRange = npcDef.StrikeStopRange;
 					retVal.delay = TimeSpan.FromSeconds(npcDef.WeaponDelay);
@@ -413,6 +417,10 @@ namespace SteamEngine.CompiledScripts {
 					Logger.WriteError("Can't calculate combat values for '" + self + "'. It says it's a NPC but has no NPCDef.");
 				}
 			}
+
+			int rangeModifier = self.WeaponRangeModifier;
+			retVal.rangeVsM += rangeModifier;
+			retVal.rangeVsP += rangeModifier;
 
 			retVal.damageType = GetWeaponDamageType(retVal.weaponType);
 

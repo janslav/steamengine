@@ -79,9 +79,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public int Range {
+		public int RangeVsM {
 			get {
-				return this.TypeDef.Range;
+				return this.TypeDef.RangeVsM;
+			}
+		}
+
+		public int RangeVsP {
+			get {
+				return this.TypeDef.RangeVsP;
 			}
 		}
 
