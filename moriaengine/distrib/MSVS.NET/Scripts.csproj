@@ -1319,7 +1319,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="systems\Abilities\Core\" />
     <Folder Include="systems\Abilities\Talents\Priest\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
