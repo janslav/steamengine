@@ -78,6 +78,18 @@ namespace SteamEngine.CompiledScripts {
 				return this.flags;
 			}
 		}
+		
+		public string EffectName {
+			get {
+				if (this.effectName != null) {
+					return this.effectName;
+				}
+				return this.ToString();
+			}
+			set {
+				this.effectName = value;
+			}
+		}
 
 		public virtual void On_Death() {
 			this.Delete();
@@ -85,11 +97,15 @@ namespace SteamEngine.CompiledScripts {
 
 		//default "effect ended" message
 		public virtual void On_UnAssign(Character cont) {
+			this.EffectEndedMessage(cont);
+		}
+
+		protected virtual void EffectEndedMessage(Character cont) {
 			if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
 				if (cont == this.source) { //my own ability
 					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 						Loc<EffectDurationLoc>.Get(cont.Language).AbilityUnActivated,
-						this.ToString())); //TODO? better way to obtain the ability name. 
+						this.EffectName));
 				} else {
 					string msg;
 					if ((this.flags & EffectFlag.BeneficialEffect) == EffectFlag.BeneficialEffect) {
@@ -100,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 						msg = Loc<EffectDurationLoc>.Get(cont.Language).AbilityEffectEnded;
 					}
 					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
-						msg, this.ToString())); //TODO? better way to obtain the ability name. 
+						msg, this.EffectName));
 				}
 			} else if (((this.flags & EffectFlag.FromSpellBook) == EffectFlag.FromSpellBook) ||
 					((this.flags & EffectFlag.FromSpellScroll) == EffectFlag.FromSpellScroll)) {
@@ -113,9 +129,11 @@ namespace SteamEngine.CompiledScripts {
 					msg = Loc<EffectDurationLoc>.Get(cont.Language).SpellEffecEnded;
 				}
 				cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
-						msg, this.ToString())); //TODO? better way to obtain the ability name. 
+						msg, this.EffectName));
 			} else {
-				cont.SysMessage("Effect '"+this.ToString()+"' ended.");
+				cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						Loc<EffectDurationLoc>.Get(cont.Language).UnspecifiedEffectEnded,
+						this.EffectName));
 			}
 		}
 	}
@@ -130,5 +148,7 @@ namespace SteamEngine.CompiledScripts {
 		public string SpellEffecEnded = "Effect of spell '{0}' ended.";
 		public string EvilSpellEffecEnded = "The unpleasant effect of spell '{0}' ended.";
 		public string GoodSpellEffecEnded = "The pleasant effect of spell '{0}' ended.";
+
+		public string UnspecifiedEffectEnded = "Effect of '{0}' ended.";
 	}
 }
