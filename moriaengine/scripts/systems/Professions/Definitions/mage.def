@@ -72,16 +72,17 @@ ttb3 = ttb_mage_magician
 //AbilityNameOrDefname = Tier, TierPosition, MaxPoints, resourcelist
 [TalentTreeBranchDef ttb_mage_sorcerer]
 Name = "Sorcerer"
+a_spell_damage_bonus = 0, 0, 5
 
-a_ignition = 3, 0, 5
+a_ignition = 2, 0, 5
 
-a_silence = 3, 2, 5
+a_silence = 2, 2, 5
 
 
 [TalentTreeBranchDef ttb_mage_conjurer]
 Name = "Conjurer"
 
-a_ignition = 3, 2, 5
+a_ignition = 2, 2, 5
 
 
 [TalentTreeBranchDef ttb_mage_magician]
