@@ -30,13 +30,3 @@ endif
 
 [ScriptedLoc loc_ability_functions]
 NoSuchAbility = There's no such ability
-
-
-
-//TODO dialog, of course
-[function myabilities]
-echo("List of all abilities follows (further in the future, a dialog will in fact follow):")
-
-foreach (adef in AbilityDef.AllAbilities)
-	echo("<adef.Name>: <this.GetAbility(adef)>")
-endforeach

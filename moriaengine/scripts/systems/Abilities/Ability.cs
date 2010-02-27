@@ -59,8 +59,8 @@ namespace SteamEngine.CompiledScripts {
 					if (oldModified != this.ModifiedPoints) {
 						this.def.Trigger_ValueChanged(this.cont, this, oldModified); //call changetrigger with information about previous value
 					}
-					this.DisposeIfEmpty();
 				}
+				this.DisposeIfEmpty();
 			}
 		}
 
@@ -82,8 +82,8 @@ namespace SteamEngine.CompiledScripts {
 				if (oldValue != newValue) { //modified value may not have changed if we're still in negative numbers
 					this.def.Trigger_ValueChanged(this.cont, this, oldValue); //call changetrigger with information about previous value
 				}
-				this.DisposeIfEmpty();
 			}
+			this.DisposeIfEmpty();
 		}
 
 		//not to be used widely, it's just for possible quick reference for GMs etc.
@@ -180,6 +180,7 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				this.modification = 0;
 			}
+			this.DisposeIfEmpty();
 			return true;
 		}
 		#endregion Load / Save

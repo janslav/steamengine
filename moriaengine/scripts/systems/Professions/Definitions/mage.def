@@ -58,9 +58,24 @@ a_regen_hits = 0, 10
 a_regen_stam = 1, 10
 a_regen_mana = 2, 10
 
+a_weapon_dodge = 3, 20
+a_spell_absorption = 4, 40
+
+a_leech_hits = 5, 10
+a_leech_stam = 6, 10
+a_leech_mana = 7, 10
+
+//?longrange
+//?throwing
+
+a_standcast = 8, 10
+a_energy_shield = 9, 30
+
+
 
 //list allowed spells
-allowedSpells=s_clumsy, s_feeblemind, s_magic_arrow, s_nightsight, s_weaken, s_cunning, s_harm, s_protection, s_fireball, s_teleport, s_wall_of_stone, s_fire_field, s_lightning, s_mana_drain, s_recall, s_blade_spirits, s_dispel_field, s_magic_reflection, s_mind_blast, s_paralyze, s_summon_creature, s_dispel, s_energy_bolt, s_explosion, s_invisibility, s_mark, s_paralyze_field, s_reveal, s_chain_lightning, s_energy_field, s_flamestrike, s_gate_travel, s_mass_dispel, s_meteor_swarm, s_energy_vortex, s_resurrection, s_summon_air_elemental, s_summon_daemon, s_summon_earth_elemental, s_summon_fire_elemental, s_summon_water_elemental
+allowedSpells=s_clumsy, s_feeblemind, s_magic_arrow, s_nightsight, s_weaken, s_cunning, s_harm, s_protection, s_fireball, s_teleport, s_wall_of_stone
+//, s_fire_field, s_lightning, s_mana_drain, s_recall, s_blade_spirits, s_dispel_field, s_magic_reflection, s_mind_blast, s_paralyze, s_summon_creature, s_dispel, s_energy_bolt, s_explosion, s_invisibility, s_mark, s_paralyze_field, s_reveal, s_chain_lightning, s_energy_field, s_flamestrike, s_gate_travel, s_mass_dispel, s_meteor_swarm, s_energy_vortex, s_resurrection, s_summon_air_elemental, s_summon_daemon, s_summon_earth_elemental, s_summon_fire_elemental, s_summon_water_elemental
 
 
 //3 talent tree branches
@@ -78,9 +93,12 @@ a_mana_saving = 0, 1, 10
 a_meditation_bonus = 0, 2, 5
 a_regen_mana_bonus = 0, 3, 5
 a_protection_bonus = 0, 4, 5
+a_aptitude_inscription = 0, 5, 5
+a_aggro_lift = 0, 6, 5
 
-
-a_mana_saving_bonus = 1, 2, 5, a_mana_saving //is dependant on the basic mana saving
+a_standcast_bonus = 1, 0, 5, a_standcast
+a_leech_mana_bonus = 1, 1, 5, a_leech_mana
+a_mana_saving_bonus = 1, 2, 5, a_mana_saving
 
 
 a_ignition = 2, 0, 5

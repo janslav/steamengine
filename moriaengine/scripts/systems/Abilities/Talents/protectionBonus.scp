@@ -1,5 +1,5 @@
 [PassiveAbilityDef a_protection_bonus]
-Name="Passive Spell Damage Bonus"
+Name="Protection Bonus"
 EffectPower=0.04 // +20% spellpower when 5 points in this
 
 PluginKey = @@protection_bonus
