@@ -21,10 +21,10 @@ on=@effectChar
 
 [EffectDurationPluginDef p_protectionSpellEffect]
 on=@assign
-	this.Cont.ArmorClassModifier = this.Cont.ArmorClassModifier + this.Effect
+	this.Cont.ArmorClassModifier = this.Cont.ArmorClassModifier + this.EffectPower
 
 on=@unassign
-	argv[0].ArmorClassModifier = argv[0].ArmorClassModifier - this.Effect
+	argv[0].ArmorClassModifier = argv[0].ArmorClassModifier - this.EffectPower
 	
 	
 [DurableCharEffectSpellDef 26]

@@ -154,11 +154,12 @@ namespace SteamEngine.CompiledScripts {
 				this.InitOrSetFieldValue<int>(filename, line, talentTierPositionPrefix + abilityName, preparsed[1]);
 				this.InitOrSetFieldValue<int>(filename, line, talentMaxPointsPrefix + abilityName, preparsed[2]);
 
-				string reconstructedResList = "";
 				if (len > 3) {
-					reconstructedResList = String.Join(", ", preparsed, 3, len - 3);
+					string reconstructedResList = String.Join(", ", preparsed, 3, len - 3);
+					this.InitOrSetFieldValue<ResourcesList>(filename, line, talentDependencyPrefix + abilityName, reconstructedResList);
+				} else {
+					this.InitTypedField(talentDependencyPrefix + abilityName, null, typeof(ResourcesList));
 				}
-				this.InitOrSetFieldValue<ResourcesList>(filename, line, talentDependencyPrefix + abilityName, reconstructedResList);
 
 			} else {
 				base.LoadScriptLine(filename, line, param, args);
@@ -215,7 +216,7 @@ namespace SteamEngine.CompiledScripts {
 							name.StartsWith(talentMaxPointsPrefix)) {
 						this.InitTypedField(name, 0, typeof(int));
 					} else if (name.StartsWith(talentDependencyPrefix)) {
-						this.InitTypedField(name, "", typeof(ResourcesList));
+						this.InitTypedField(name, null, typeof(ResourcesList));
 					}
 				}
 			}

@@ -43,9 +43,9 @@ namespace SteamEngine.CompiledScripts {
 			Activate(ch); //activate the ability automatically
 		}
 
-		protected override void On_ValueChanged(Character ch, Ability ab, int previousValue) {
-			base.On_ValueChanged(ch, ab, previousValue);
+		//protected override void On_ValueChanged(Character ch, Ability ab, int previousValue) {
+		//    base.On_ValueChanged(ch, ab, previousValue);
 
-		}
+		//}
 	}
 }

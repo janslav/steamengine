@@ -65,9 +65,8 @@ namespace SteamEngine.CompiledScripts {
 					if (oldModified != this.ModifiedValue) { //this might not be true, if the modifier value is negative
 						SkillDef.Trigger_ValueChanged(this.cont, this, oldModified); //call changetrigger with information about previous value
 					}
-
-					this.DisposeIfEmpty();
 				}
+				this.DisposeIfEmpty();
 			}
 		}
 
@@ -91,8 +90,8 @@ namespace SteamEngine.CompiledScripts {
 				if (oldModified != this.ModifiedValue) { //modified value may not have changed if we're still in negative numbers
 					SkillDef.Trigger_ValueChanged(this.cont, this, oldModified); //call changetrigger with information about previous value
 				}
-				this.DisposeIfEmpty();
 			}
+			this.DisposeIfEmpty();
 		}
 
 		public int Cap {
@@ -202,6 +201,7 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				this.lockType = SkillLockType.Up;
 			}
+			this.DisposeIfEmpty();
 			return true;
 		}
 		#endregion Load / Save

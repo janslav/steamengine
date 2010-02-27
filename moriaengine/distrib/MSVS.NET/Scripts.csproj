@@ -1149,6 +1149,9 @@
     <None Include="..\..\scripts\ItemClasses\Wearable.ct">
       <Link>ItemClasses\Wearable.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\playerFunctions.scp">
+      <Link>systems\Abilities\playerFunctions.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
       <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
     </None>
@@ -1205,6 +1208,12 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\spellDamageBonus.scp">
       <Link>systems\Abilities\Talents\spellDamageBonus.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\unimplementedTalents.scp">
+      <Link>systems\Abilities\Talents\unimplementedTalents.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\unimplementedAbilities.scp">
+      <Link>systems\Abilities\unimplementedAbilities.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Warcry\Warcry.ct">
       <Link>systems\Abilities\Warcry\Warcry.ct</Link>

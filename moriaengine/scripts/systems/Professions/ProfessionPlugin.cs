@@ -58,9 +58,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private bool CheckCancelSkill(Player player, SkillSequenceArgs skillSeqArgs) {
-			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
+			if ((!player.IsGM)&& skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
-				return !this.profession.AllowedSpells.Contains(spell); //return true for cancel, if it doesn't contain this spell
+				if (this.profession.AllowedSpells.Contains(spell)) {
+					player.RedMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						Loc<ProfessionPluginLoc>.Get(player.Language).YouCantCastThis,
+						this.profession.Name));
+
+					return true; //return true for cancel, if it doesn't contain this spell
+				}
 			}
 			return false;
 		}
@@ -78,5 +84,9 @@ namespace SteamEngine.CompiledScripts {
 				player.DeletePlugin(professionKey); //null professiondef = no profession = no professionplugin
 			}
 		}
+	}
+
+	public class ProfessionPluginLoc : CompiledLocStringCollection {
+		public string YouCantCastThis = "You can't cast this spell, being {0} of profession.";
 	}
 }

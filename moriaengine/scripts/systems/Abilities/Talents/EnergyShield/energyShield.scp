@@ -8,6 +8,9 @@ ResourcesConsumed = 60 mana, 1 i_amethyst
 PluginKey = @@energyShield
 PluginDef = p_energyShield
 
+[PassiveAbilityDef a_energy_shield_bonus]
+Name="Energy Shield Bonus"
+
 [EnergyShieldPluginDef p_energyShield]
 
 [function energyshield]

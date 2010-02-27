@@ -1254,10 +1254,10 @@ namespace SteamEngine.CompiledScripts {
 				foreach (object o in this.skillsabilities.Values) {
 					Ability a = o as Ability;
 					if (a != null) {
-						output.WriteLine(String.Concat(a.Def.Name, "=", a.GetSaveString()));
+						output.WriteLine(String.Concat(a.Def.PrettyDefname, "=", a.GetSaveString()));
 					} else {
 						Skill s = (Skill) o;
-						output.WriteLine(String.Concat(s.Def.Key, "=", s.GetSaveString()));
+						output.WriteLine(String.Concat(s.Def.PrettyDefname, "=", s.GetSaveString()));
 					}
 				}
 			}
@@ -1265,28 +1265,26 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Load(PropsSection input) {
-			foreach (SkillDef skillDef in SkillDef.AllSkillDefs) {
-				string skillKey = skillDef.Key;
-				PropsLine ps = input.TryPopPropsLine(skillKey);
-				if (ps != null) {
-					Skill skill = this.AcquireSkillObject(skillDef);
-					if (!skill.LoadSavedString(ps.Value)) {
-						Logger.WriteError(input.Filename, ps.Line, "Unrecognised skill value format.");
-					}
-				}
-			}
-
-			foreach (AbilityDef abDef in AbilityDef.AllAbilities) {
-				string abName = abDef.Name;
-				PropsLine ps = input.TryPopPropsLine(abName);
-				if (ps != null) {
+			List<PropsLine> linesList = new List<PropsLine>(input.PropsLines); //can't iterate over the property itself, popping the lines would break the iteration
+			foreach (PropsLine line in linesList) {
+				AbilityDef abDef = AbilityDef.GetByDefname(line.Name);
+				if (abDef != null) {
+					input.PopPropsLine(line.Name);
 					Ability ab = this.AcquireAbilityObject(abDef);
-					if (!ab.LoadSavedString(ps.Value)) {
-						Logger.WriteError(input.Filename, ps.Line, "Unrecognised ability value format.");
+					if (!ab.LoadSavedString(line.Value)) {
+						Logger.WriteError(input.Filename, line.Line, "Unrecognised ability value format.");
+					}
+				} else {
+					AbstractSkillDef skillDef = AbstractSkillDef.GetByDefname(line.Name);
+					if (skillDef != null) {
+						input.PopPropsLine(line.Name);
+						Skill skill = this.AcquireSkillObject(skillDef);
+						if (!skill.LoadSavedString(line.Value)) {
+							Logger.WriteError(input.Filename, line.Line, "Unrecognised skill value format.");
+						}
 					}
 				}
 			}
-
 			base.On_Load(input);
 		}
 
