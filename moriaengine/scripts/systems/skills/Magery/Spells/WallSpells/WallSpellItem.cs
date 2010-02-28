@@ -28,6 +28,7 @@ using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class WallSpellItem {
 
 		public override bool BlocksFit {
@@ -41,5 +42,10 @@ namespace SteamEngine.CompiledScripts {
 			DispellDef.ShowDispellEffect(this);
 			this.Delete();
 		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class WallSpellItemDef {
+
 	}
 }

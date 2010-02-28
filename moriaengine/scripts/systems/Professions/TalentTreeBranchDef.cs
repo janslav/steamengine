@@ -154,11 +154,12 @@ namespace SteamEngine.CompiledScripts {
 				this.InitOrSetFieldValue<int>(filename, line, talentTierPositionPrefix + abilityName, preparsed[1]);
 				this.InitOrSetFieldValue<int>(filename, line, talentMaxPointsPrefix + abilityName, preparsed[2]);
 
+				string resListFieldName = talentDependencyPrefix + abilityName;
 				if (len > 3) {
 					string reconstructedResList = String.Join(", ", preparsed, 3, len - 3);
-					this.InitOrSetFieldValue<ResourcesList>(filename, line, talentDependencyPrefix + abilityName, reconstructedResList);
-				} else {
-					this.InitTypedField(talentDependencyPrefix + abilityName, null, typeof(ResourcesList));
+					this.InitOrSetFieldValue<ResourcesList>(filename, line, resListFieldName, reconstructedResList);
+				} else if (!this.HasFieldValue(resListFieldName)) {
+					this.InitTypedField(resListFieldName, null, typeof(ResourcesList));
 				}
 
 			} else {

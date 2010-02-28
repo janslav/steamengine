@@ -93,10 +93,11 @@ namespace SteamEngine.CompiledScripts {
 				Player player = this.Cont as Player;
 				if (player != null) {
 					ProfessionDef prof = player.Profession;
-					if (prof != null) {						
+					if (prof != null) {
+						maxPoints = prof.GetAbilityMaximumPoints(this.def);
 						TalentTreeBranchDef branch = prof.TTB1;
 						if (branch != null) {
-							maxPoints = branch.GetTalentMaxPoints(this.def);
+							maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
 						}
 						branch = prof.TTB2;
 						if (branch != null) {
