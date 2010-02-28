@@ -15,3 +15,5 @@
 
 
 [PluginTemplate ProfessionPlugin : Plugin]
+Var:
+	private ProfessionDef profession = null

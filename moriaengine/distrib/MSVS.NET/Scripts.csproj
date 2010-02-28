@@ -1167,6 +1167,9 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct">
       <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\energyFieldDiscount.scp">
+      <Link>systems\Abilities\Talents\energyFieldDiscount.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\energyShield.scp">
       <Link>systems\Abilities\Talents\EnergyShield\energyShield.scp</Link>
     </None>
@@ -1241,6 +1244,9 @@
     </None>
     <None Include="..\..\scripts\systems\Professions\Definitions\mage.def">
       <Link>systems\Professions\Definitions\mage.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Professions\ProfessionPlugin.ct">
+      <Link>systems\Professions\ProfessionPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\Professions\ProfessionPlugin.def">
       <Link>systems\Professions\ProfessionPlugin.def</Link>

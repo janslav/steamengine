@@ -21,13 +21,11 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[ViewableClass("Profession")]
+	[ViewableClass]
 	[Summary("This class holds the profession assigned to one character (cont field). " +
 			"it holds a reference to the ProfessionDef, dispatches all trigger calls etc.")]
 	public partial class ProfessionPlugin {
 		internal static PluginKey professionKey = PluginKey.Acquire("_profession_");
-
-		private ProfessionDef profession;
 
 		[Summary("Initialize the profession on the character")]
 		public virtual void On_Assign() {
@@ -84,6 +82,10 @@ namespace SteamEngine.CompiledScripts {
 				player.DeletePlugin(professionKey); //null professiondef = no profession = no professionplugin
 			}
 		}
+	}
+
+	[ViewableClass]
+	public partial class ProfessionPluginDef {
 	}
 
 	public class ProfessionPluginLoc : CompiledLocStringCollection {
