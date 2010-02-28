@@ -84,6 +84,7 @@ namespace SteamEngine.Networking {
 				case 0x73:
 					return Pool<PingPongInPacket>.Acquire();
 				case 0x83:
+					discardAfterReading = !isLoggedIn || hasChar; //discard if not yet logged into account, or if already logged in char
 					return Pool<DeleteCharacterInPacket>.Acquire();
 				case 0x91:
 					discardAfterReading = isLoggedIn; //discard if already logged in

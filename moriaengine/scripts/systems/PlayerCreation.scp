@@ -60,9 +60,9 @@ if (<argo.startInt> > 60)
 endif
 
 //TODO? check the skill values
-local.ch.SetSkill(argo.SkillId1, argo.SkillValue1)
-local.ch.SetSkill(argo.SkillId2, argo.SkillValue2)
-local.ch.SetSkill(argo.SkillId3, argo.SkillValue3)
+local.ch.SetRealSkillValue(argo.SkillId1, argo.SkillValue1)
+local.ch.SetRealSkillValue(argo.SkillId2, argo.SkillValue2)
+local.ch.SetRealSkillValue(argo.SkillId3, argo.SkillValue3)
 
 //add whatever you wish here :)
 
