@@ -1583,15 +1583,6 @@ namespace SteamEngine {
 			this.P((ushort) x, (ushort) y, this.Z);	//This won't change our Z coordinate, whereas P(x,y) would.
 		}
 
-		public virtual Direction Direction {
-			get {
-				return Direction.Default;
-			}
-			set {
-				throw new SEException("You can't set Direction to " + this.GetType());
-			}
-		}
-
 		/*
 			Method: Speech
 				Does the work of sending speech (of any type) to everyone within range, calling

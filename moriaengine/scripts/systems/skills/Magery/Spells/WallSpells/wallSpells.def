@@ -74,15 +74,27 @@ Requirements=60.0 Magery
 [WallSpellDef 50]
 DEFNAME=s_energy_field
 NAME=Energy Field
-SOUND=snd_SPELL_ENERGY_FIELD
+SOUND=0x20B
 RUNES=ISG
 CASTTIME=5.0
 //RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_spider_silk,i_reag_sulfur_ash
 RUNEITEM=i_rune_ENERGY_FIELD
 SCROLLITEM=i_scroll_ENERGY_FIELD
-FLAGS=SPELLFLAG_FIELD|SPELLFLAG_TARG_XYZ|spellflag_harm
-//EFFECTID=0
+FLAGS=SpellFlag.CanTargetAnything | SpellFlag.CanEffectGround | SpellFlag.EffectNeedsLOS
 EFFECT=0
 DURATION=2*60.0,3*60.0
 MANAUSE=40
 Requirements=70.0 Magery
+
+ItemDefWestEast=#i_energy_field_spellEffect_WE
+ItemDefNorthSouth=#i_energy_field_spellEffect_NS
+
+[WallSpellItemDef i_energy_field_spellEffect_WE]
+Model = 0x3946
+TYPE = T_WALL
+Light = LightType.Circle300
+
+[WallSpellItemDef i_energy_field_spellEffect_NS]
+Model = 0x3956
+TYPE = T_WALL
+Light = LightType.Circle300

@@ -745,7 +745,7 @@ namespace SteamEngine.Networking {
 			this.x = point.x;
 			this.y = point.y;
 			this.z = point.z;
-			this.dir = (byte) item.Direction;
+			this.dir = item.DirectionByte;
 			this.flagsToSend = item.FlagsToSend;
 			if (restrict == MoveRestriction.Movable) {
 				this.flagsToSend |= 0x20;

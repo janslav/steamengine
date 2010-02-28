@@ -22,4 +22,5 @@ Def:	//vars on the def
 	public Double[] strokes = new Double[] {4,2}
 	//how hard it is to craft this item (value compared against the skill (1000=100.0)
 	public int difficulty = 1000
+	public LightType light = (LightType) 0
 Vars:	//vars defined in the class, so they basically do what tags do, but better
