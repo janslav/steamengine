@@ -248,6 +248,18 @@ namespace SteamEngine.CompiledScripts {
 		public override void FixWeight() {
 		}
 
+		public override byte DirectionByte {
+			get {
+				return (byte) this.TypeDef.Light;
+			}
+		}
+
+		public virtual LightType Light {
+			get {
+				return this.TypeDef.Light;
+			}
+		}
+
 		public Item FindType(TriggerGroup type) {
 			ThrowIfDeleted();
 			foreach (Item i in this.EnumDeep()) {

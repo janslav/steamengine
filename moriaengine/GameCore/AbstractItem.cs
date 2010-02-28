@@ -118,6 +118,12 @@ namespace SteamEngine {
 			}
 		}
 
+		public virtual byte DirectionByte {
+			get {
+				return 0;
+			}
+		}
+
 		public bool IsStackable {
 			get {
 				return ((AbstractItemDef) this.Def).IsStackable;

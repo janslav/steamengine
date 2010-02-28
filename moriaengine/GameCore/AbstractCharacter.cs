@@ -112,7 +112,7 @@ namespace SteamEngine {
 		}
 
 		[Summary("The Direction this character is facing.")]
-		public override sealed Direction Direction {
+		public Direction Direction {
 			get {
 				return (Direction) this.DirectionByte;
 			}

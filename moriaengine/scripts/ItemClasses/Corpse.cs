@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 			this.Delete(); //TODO anim?
 		}
 
-		public override Direction Direction {
+		public Direction Direction {
 			get {
 				return this.direction;
 			}
@@ -134,6 +134,18 @@ namespace SteamEngine.CompiledScripts {
 					SteamEngine.Networking.ItemSyncQueue.AboutToChange(this);
 					this.direction = value;
 				}
+			}
+		}
+
+		public override byte DirectionByte {
+			get {
+				return (byte) this.direction;
+			}
+		}
+
+		public override LightType Light {
+			get {
+				throw new SEException("Light property is not valid for corpses");
 			}
 		}
 
