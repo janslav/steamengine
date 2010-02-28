@@ -1167,6 +1167,9 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct">
       <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\electricSchoolDiscount.scp">
+      <Link>systems\Abilities\Talents\electricSchoolDiscount.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\energyFieldDiscount.scp">
       <Link>systems\Abilities\Talents\energyFieldDiscount.scp</Link>
     </None>
@@ -1175,6 +1178,9 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.ct">
       <Link>systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\fireSchoolDiscount.scp">
+      <Link>systems\Abilities\Talents\fireSchoolDiscount.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\Ignition\ignition.scp">
       <Link>systems\Abilities\Talents\Ignition\ignition.scp</Link>
