@@ -44,10 +44,9 @@ endif
 return 0
 
 
-[StatDrainingAbilityDef a_silence_bonus]
-Name="Silence bonus"
-EffectPower=1
-EffectDuration=2
+[PassiveAbilityDef a_silence_bonus]
+Name="Silence duration bonus"
+EffectPower=1 //seconds per point
 
 
 [ScriptedLoc loc_silence]
