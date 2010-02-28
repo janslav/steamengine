@@ -37,34 +37,59 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		private static PassiveAbilityDef a_ignition_bonus;
+		private static PassiveAbilityDef IgnitionBonusDef {
+			get {
+				if (a_ignition_bonus == null) {
+					a_ignition_bonus = (PassiveAbilityDef) AbilityDef.GetByDefname("a_ignition_bonus");
+				}
+				return a_ignition_bonus;
+			}
+		}
+
+
+		private static SpellDef s_meteor_swarm;
+		private static SpellDef MeteorSwarmDef {
+			get {
+				if (s_meteor_swarm == null) {
+					s_meteor_swarm = SpellDef.GetByDefname("s_meteor_swarm");
+				}
+				return s_meteor_swarm;
+			}
+		}
+
 		static PluginKey pkIgnitionEffect = PluginKey.Acquire("_ignition_effect_");
 
+		public override void On_Assign() {
+			//apply effect of the bonus talent, if present
+			Character self = (Character) this.Cont;
+			this.EffectPower *= 1 + (self.GetAbility(IgnitionBonusDef) * IgnitionBonusDef.EffectPower);
+			base.On_Assign();
+		}
+
 		public void On_CauseSpellEffect(SpellEffectArgs spellEffectArgs) {
-			DamageSpellDef damageSpell = spellEffectArgs.SpellDef as DamageSpellDef;
-			if (damageSpell != null) {
-				if ((damageSpell.DamageType & DamageType.Fire) == DamageType.Fire) {
-					Character target = spellEffectArgs.CurrentTarget as Character;
-					if (target != null) {
-						ActivableAbilityDef def = IgnitionDef;
+			if (spellEffectArgs.SpellDef == MeteorSwarmDef) {
+				Character target = spellEffectArgs.CurrentTarget as Character;
+				if (target != null) {
+					ActivableAbilityDef ignition = IgnitionDef;
 
-						int points = spellEffectArgs.Caster.GetAbility(def);
-						if (points > 0) {
-							if (def.CheckSuccess(points)) {								
+					int points = spellEffectArgs.Caster.GetAbility(ignition);
+					if (points > 0) {
+						if (ignition.CheckSuccess(points)) {
 
-								double power = this.EffectPower;
-								power *= DamageManager.GetResistModifier(target, DamageType.MagicFire); //apply fire resist
+							double power = this.EffectPower;
+							power *= DamageManager.GetResistModifier(target, DamageType.MagicFire); //apply fire resist
 
-								IgnitionEffectPlugin ignitionPlugin = target.GetPlugin(pkIgnitionEffect) as IgnitionEffectPlugin;
-								if (ignitionPlugin != null) {
-									power += Math.Max(0, ignitionPlugin.EffectPower); //we add the power of previous ignition instance, if any
-								}
+							IgnitionEffectPlugin ignitionPlugin = target.GetPlugin(pkIgnitionEffect) as IgnitionEffectPlugin;
+							if (ignitionPlugin != null) {
+								power += Math.Max(0, ignitionPlugin.EffectPower); //we add the power of previous ignition instance, if any
+							}
 
-								if (power > IgnitionEffectPlugin.minimumIgnitionEffect) { //else it does nothing to this target, so it's effectively immune
-									ignitionPlugin = (IgnitionEffectPlugin) IgnitionEffectPluginDef.instance.Create();
-									ignitionPlugin.Init(spellEffectArgs.Caster, EffectFlag.FromAbility | EffectFlag.HarmfulEffect,
-										power, TimeSpan.FromSeconds(def.EffectDuration));
-									target.AddPlugin(pkIgnitionEffect, ignitionPlugin);
-								}
+							if (power > IgnitionEffectPlugin.minimumIgnitionEffect) { //else it does nothing to this target, so it's effectively immune
+								ignitionPlugin = (IgnitionEffectPlugin) IgnitionEffectPluginDef.instance.Create();
+								ignitionPlugin.Init(spellEffectArgs.Caster, EffectFlag.FromAbility | EffectFlag.HarmfulEffect,
+									power, TimeSpan.FromSeconds(ignition.EffectDuration));
+								target.AddPlugin(pkIgnitionEffect, ignitionPlugin);
 							}
 						}
 					}
