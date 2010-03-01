@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 			string constant = null;
 			while (parse) {
 				parse = false;
-				string[] args = Utility.SplitSphereString(s);
+				string[] args = Utility.SplitSphereString(s, true);
 				switch (args.Length) {
 					case 1: {
 							if (constant == null) {

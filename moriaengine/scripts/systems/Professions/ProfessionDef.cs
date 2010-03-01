@@ -252,7 +252,7 @@ namespace SteamEngine.CompiledScripts {
 				ability = AbilityDef.GetByName(param);
 			}
 			if (ability != null) {
-				string[] preparsed = Utility.SplitSphereString(args);
+				string[] preparsed = Utility.SplitSphereString(args, true);
 				if (preparsed.Length < 2) {
 					throw new SEException("ProfessionDef ability entries need 2 numbers - order and maximum points");
 				}
@@ -269,7 +269,7 @@ namespace SteamEngine.CompiledScripts {
 				skillDef = SkillDef.GetByKey(param);
 			}
 			if (skillDef != null) {
-				string[] preparsed = Utility.SplitSphereString(args);
+				string[] preparsed = Utility.SplitSphereString(args, true);
 				if (preparsed.Length < 2) {
 					throw new SEException("ProfessionDef skill entries need 2 numbers - minimum and cap");
 				}

@@ -109,8 +109,11 @@ a_silence = 2, 2, 5
 a_silence_bonus = 2, 3, 5
 a_energy_shield_bonus = 2, 4, 5
 
+a_mastery_magery = 3, 0, 5, 1000 magery
+
 
 a_spell_damage_bonus_greater = 3, 3, 5
+
 
 [TalentTreeBranchDef ttb_mage_conjurer]
 Name = "Conjurer"

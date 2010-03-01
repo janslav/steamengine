@@ -16,7 +16,7 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -36,14 +36,13 @@ namespace SteamEngine {
 			as {"foo", "bar", "moo"}. And a string like "foo,,,bar,\t moo" (if \t were a tab) would be
 			returned as {"foo","","","bar","moo"} - nothingness between commas is returned as "".
 		
-			Spaces, tabs, and commas inside ""s are {}s are disregarded.
+			Spaces, tabs, and commas inside ""s are disregarded.
 		*/
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public static string[] SplitSphereString(string input) {
-			ArrayList results = new ArrayList();
+		public static string[] SplitSphereString(string input, bool spaceSplits) {
+			List<string> results = new List<string>();
 			char lastChar = 'a';	//nothing meaningful
 			bool inQuote = false;
-			int inCurlyBraces = 0;
 			int startPos = 0;
 			for (int pos = 0; pos < input.Length; pos++) {
 				char c = input[pos];
@@ -51,22 +50,15 @@ namespace SteamEngine {
 				if (c == '\"') {
 					inQuote = !inQuote;
 				} else if (!inQuote) {
-					if (c == '{') {
-						inCurlyBraces++;
-					} else if (c == '}') {
-						inCurlyBraces--;
-						Sanity.IfTrueThrow(inCurlyBraces < 0, "Mismatched {}s.");
-					} else if (inCurlyBraces == 0) {
-						if (c == ',') {
-							if (lastChar != ' ') {
-								results.Add(input.Substring(startPos, pos - startPos).Trim());
-								startPos = pos + 1;
-							}
-						} else if (c == ' ') {
-							if (lastChar != ' ' && lastChar != ',') {
-								results.Add(input.Substring(startPos, pos - startPos).Trim());
-								startPos = pos + 1;
-							}
+					if (c == ',') {
+						if (lastChar != ' ') {
+							results.Add(input.Substring(startPos, pos - startPos).Trim());
+							startPos = pos + 1;
+						}
+					} else if ((spaceSplits) && (c == ' ')) {
+						if (lastChar != ' ' && lastChar != ',') {
+							results.Add(input.Substring(startPos, pos - startPos).Trim());
+							startPos = pos + 1;
 						}
 					}
 				}
@@ -77,7 +69,7 @@ namespace SteamEngine {
 			} else if (lastChar == ',') {
 				results.Add("");
 			}
-			return (string[]) results.ToArray(typeof(string));
+			return results.ToArray();
 		}
 
 		/**

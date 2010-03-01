@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//now load the parameters. it goes Tier, TierPosition, MaxPoints, resourcelist
 			if (ability != null) {
-				string[] preparsed = Utility.SplitSphereString(args);
+				string[] preparsed = Utility.SplitSphereString(args, false);
 				int len = preparsed.Length;
 				if (len < 3) {
 					throw new SEException("TalentTree entries need at least 3 numbers - Tier, TierPosition, MaxPoints");

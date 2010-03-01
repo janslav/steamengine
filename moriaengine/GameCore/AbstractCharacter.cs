@@ -850,7 +850,7 @@ namespace SteamEngine {
 			AbstractAccount acc = this.Account;
 			if (acc != null) {
 				GameState state = acc.GameState;
-				if (state != null) {
+				if ((state != null) && (state.Character == this)) {
 					state.Conn.Close("Character being deleted");
 				}
 
