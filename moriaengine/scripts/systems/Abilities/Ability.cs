@@ -169,7 +169,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal bool LoadSavedString(string p) {
-			string[] split = Utility.SplitSphereString(p);
+			string[] split = Utility.SplitSphereString(p, true);
 			if (!ConvertTools.TryParseByte(split[0], out this.realPoints)) {
 				return false;
 			}

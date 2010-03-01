@@ -130,7 +130,7 @@ namespace SteamEngine {
 									if (this.type.GetArrayRank() > 1) {
 										throw new SEException("Can't use a multirank array in a FieldValue");
 									}
-									string[] sourceArray = Utility.SplitSphereString(value); //
+									string[] sourceArray = Utility.SplitSphereString(value, false); //
 									Type elemType = this.type.GetElementType();
 									int n = sourceArray.Length;
 									Array resultArray = Array.CreateInstance(elemType, n);
@@ -551,7 +551,7 @@ namespace SteamEngine {
 								}
 								sourceArray = (Array) value;
 							} else if (value is String) {
-								sourceArray = Utility.SplitSphereString((string) value); //
+								sourceArray = Utility.SplitSphereString((string) value, false); //
 							} else {
 								sourceArray = new object[] { value }; //just wrap it in a 1-element array, gets converted in the next step
 							}

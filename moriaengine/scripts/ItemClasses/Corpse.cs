@@ -270,7 +270,9 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 
-					viewerConn.SendPacketGroup(this.equippedItemsPackets);
+					if (this.equippedItemsPackets != null) {
+						viewerConn.SendPacketGroup(this.equippedItemsPackets);
+					}
 				}
 			}
 

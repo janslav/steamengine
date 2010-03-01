@@ -61,7 +61,7 @@ namespace SteamEngine {
 					}
 					line = line.Trim();
 					if (line.Length > 0) {
-						string[] args = Utility.SplitSphereString(line);
+						string[] args = Utility.SplitSphereString(line, true);
 						if (args.Length != 4) {
 							Logger.WriteWarning("Bodyconv.def contains a line in an unexpected format. That line is '" + line + "'");
 							break;

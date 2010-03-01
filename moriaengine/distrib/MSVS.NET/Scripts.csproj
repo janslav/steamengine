@@ -296,6 +296,9 @@
     <Compile Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.Generated.cs">
       <Link>systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs">
+      <Link>systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
       <Link>systems\Abilities\Warcry\Warcry.cs</Link>
     </Compile>
@@ -1214,6 +1217,9 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\silence.scp">
       <Link>systems\Abilities\Talents\silence.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\skillMasteries.scp">
+      <Link>systems\Abilities\Talents\SkillMasteries\skillMasteries.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\spellBoost.scp">
       <Link>systems\Abilities\Talents\spellBoost.scp</Link>
