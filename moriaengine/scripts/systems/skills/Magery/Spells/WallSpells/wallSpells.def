@@ -1,7 +1,7 @@
 [WallSpellDef 24]
 DEFNAME=s_wall_of_stone
 NAME=Wall of Stone
-SOUND=snd_SPELL_WALL_OF_STONE
+SOUND=0x1F6
 RUNES=ISY
 CASTTIME=6.0
 //RESOURCES=i_reag_blood_moss,i_reag_garlic

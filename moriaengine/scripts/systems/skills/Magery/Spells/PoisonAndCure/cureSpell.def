@@ -1,7 +1,7 @@
 [SpellDef 11]
 DEFNAME=s_cure
 NAME=Cure
-SOUND=snd_SPELL_CURE
+SOUND=0x1E0
 RUNES=AN
 CASTTIME=1.5
 //RESOURCES=i_reag_garlic,i_reag_ginseng
@@ -20,7 +20,7 @@ on=@effectChar
 [SpellDef 25]
 DEFNAME=s_archcure
 NAME=Arch Cure
-SOUND=snd_SPELL_ARCHCURE
+SOUND=0x299
 RUNES=VAN
 CASTTIME=2.3
 //RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_mandrake_root
