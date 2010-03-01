@@ -115,6 +115,9 @@ a_mind_blast_discount = 3, 2, 5
 a_spell_damage_bonus_greater = 3, 3, 5
 
 
+a_chain_lightning_discount = 4, 2, 5
+a_standcast_freeze_reduction = 4, 3, 5
+
 [TalentTreeBranchDef ttb_mage_conjurer]
 Name = "Conjurer"
 

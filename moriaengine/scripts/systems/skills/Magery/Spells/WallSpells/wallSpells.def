@@ -86,8 +86,8 @@ DURATION=2*60.0,3*60.0
 MANAUSE=40
 Requirements=70.0 Magery
 
-ItemDefWestEast=#i_energy_field_spellEffect_WE
-ItemDefNorthSouth=#i_energy_field_spellEffect_NS
+ItemDefWestEast=i_energy_field_spellEffect_WE
+ItemDefNorthSouth=i_energy_field_spellEffect_NS
 
 [WallSpellItemDef i_energy_field_spellEffect_WE]
 Model = 0x3946

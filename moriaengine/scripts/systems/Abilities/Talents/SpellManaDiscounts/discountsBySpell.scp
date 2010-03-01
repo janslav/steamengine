@@ -1,0 +1,34 @@
+//sorcerer talent
+[PassiveAbilityDef a_mind_blast_discount]
+Name="Mind Blast Discount"
+EffectPower=0.03 // -15% manause at 5 points 
+
+PluginKey = @@mind_blast_discount
+PluginDef = p_mind_blast_discount
+
+[SpellManaDiscountPluginDef p_mind_blast_discount]
+Spell = s_mind_blast
+
+
+//sorcerer talent
+[PassiveAbilityDef a_energy_field_discount]
+Name="Energy Field Discount"
+EffectPower=0.04 // -20% manause at 5 points 
+
+PluginKey = @@energy_field_discount
+PluginDef = p_energy_field_discount
+
+[SpellManaDiscountPluginDef p_energy_field_discount]
+Spell = s_energy_field
+
+
+//sorcerer talent
+[PassiveAbilityDef a_chain_lightning_discount]
+Name="Chain Lightning Discount"
+EffectPower=0.04 // -20% manause at 5 points 
+
+PluginKey = @@chain_lightning_discount
+PluginDef = p_chain_lightning_discount
+
+[SpellManaDiscountPluginDef p_chain_lightning_discount]
+Spell = s_chain_lightning
