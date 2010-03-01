@@ -110,8 +110,8 @@ a_silence_bonus = 2, 3, 5
 a_energy_shield_bonus = 2, 4, 5
 
 a_mastery_magery = 3, 0, 5, 1000 magery
-
-
+a_mind_blast_enhancement = 3, 1, 5
+a_mind_blast_discount = 3, 2, 5
 a_spell_damage_bonus_greater = 3, 3, 5
 
 

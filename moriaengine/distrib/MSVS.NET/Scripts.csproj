@@ -1212,6 +1212,12 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\meditationBonus.scp">
       <Link>systems\Abilities\Talents\meditationBonus.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\mindBlastDiscount.scp">
+      <Link>systems\Abilities\Talents\mindBlastDiscount.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\mindBlastEnhancement.scp">
+      <Link>systems\Abilities\Talents\mindBlastEnhancement.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\protectionBonus.scp">
       <Link>systems\Abilities\Talents\protectionBonus.scp</Link>
     </None>

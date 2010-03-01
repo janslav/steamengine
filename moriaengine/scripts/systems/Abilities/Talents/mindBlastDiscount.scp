@@ -1,0 +1,17 @@
+[PassiveAbilityDef a_mind_blast_discount]
+Name="Mind Blast Discount"
+EffectPower=0.03 // -15% manause at 5 points 
+
+PluginKey = @@mind_blast_discount
+PluginDef = p_mind_blast_discount
+
+
+//todo? hardwire into protection spelldef, since it's so simpe and likely often used?
+[EffectDurationPluginDef p_mind_blast_discount]
+on=@SkillStart
+if (argv[0].SkillDef == skill_magery)
+	if (argv[0].Param1 == s_mind_blast)
+		arg.manause = s_energy_field.GetManaUse(argv[0].Tool is SpellScroll)
+		this.Cont.Mana = this.Cont.Mana + (arg.manause * this.EffectPower)
+	endif
+endif

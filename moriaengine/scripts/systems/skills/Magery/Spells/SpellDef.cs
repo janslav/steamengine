@@ -780,13 +780,35 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
 		}
 
-		public void MakeSound(Point4D place) {
+		public void MakeSound(IPoint4D place) {
 			int sound = (int) this.Sound;
 			if (sound != -1) {
 				Networking.PacketSequences.SendSound(place, sound, Globals.MaxUpdateRange);
 			}
 		}
 		#endregion Trigger methods
+
+		#region Methods for usage outside normal magery sequence
+		public void EffectChar(Character caster, Character target, EffectFlag sourceType) {
+			SpellFlag flags = this.Flags;
+			if ((flags & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial) {
+				sourceType &= ~EffectFlag.HarmfulEffect;
+				sourceType |= EffectFlag.BeneficialEffect;
+			} else if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
+				sourceType &= ~EffectFlag.BeneficialEffect;
+				sourceType |= EffectFlag.HarmfulEffect;
+			}
+
+			SpellEffectArgs sea = null;
+			this.GetSpellPowerAgainstChar(caster, target, target, sourceType, ref sea);
+			this.MakeSound(target);
+			if (this.CheckSpellPowerWithMessage(sea)) {
+				this.Trigger_EffectChar(target, sea);
+			}
+		}
+
+		//TODO:  versions for item and ground
+		#endregion Methods for usage outside normal magery sequence
 	}
 
 	public class SpellEffectArgs {
