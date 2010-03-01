@@ -1,7 +1,7 @@
 [DispellDef 34]
 DEFNAME=s_dispel_field
 NAME=Dispel Field
-SOUND=snd_SPELL_DISPEL_FIELD
+SOUND=0x201
 RUNES=AG
 CASTTIME=2.5
 //RESOURCES=i_reag_black_pearl,i_reag_garlic,i_reag_spider_silk,i_reag_sulfur_ash

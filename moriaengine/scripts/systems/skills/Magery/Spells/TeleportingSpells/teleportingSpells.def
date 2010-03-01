@@ -73,7 +73,7 @@ on=@effectItem //this = targetted item, argo = SpellEffectArgs
 [SpellDef 45]
 DEFNAME=s_mark
 NAME=Mark
-SOUND=snd_SPELL_MARK
+SOUND=0x1FA
 RUNES=KPY
 CASTTIME=3.0
 //RESOURCES=i_reag_black_pearl,i_reag_blood_moss,i_reag_mandrake_root

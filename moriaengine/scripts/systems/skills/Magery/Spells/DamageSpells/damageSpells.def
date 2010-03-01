@@ -157,7 +157,7 @@ on=@effectChar
 [DamageSpellDef 51]//utocne
 DEFNAME=s_flamestrike
 NAME=Flame Strike
-SOUND=snd_SPELL_FLAMESTRIKE
+SOUND=0x208
 RUNES=KVF
 CASTTIME=2.8
 //RESOURCES=i_reag_spider_silk,i_reag_sulfur_ash
@@ -174,7 +174,6 @@ on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x3709, 10, 30)
 
 [DamageSpellDef 55]//utocne
-// NOTE: Does Meteor Swarm have a duration or does it just send out one blast of 'rocks' ??? IF a duration then certainly no more the 30secs IMO.
 DEFNAME=s_meteor_swarm
 NAME=Meteor Swarm
 SOUND=0x160
@@ -197,7 +196,7 @@ on=@effectChar
 [DamageSpellDef 57]//utocne
 DEFNAME=s_earthquake
 NAME=Earthquake
-SOUND=snd_SPELL_EARTHQUAKE
+SOUND=0x2F3
 RUNES=IVP
 CASTTIME=4.0
 //RESOURCES=i_reag_blood_moss,i_reag_ginseng,i_reag_mandrake_root,i_reag_sulfur_ash
@@ -212,7 +211,7 @@ difficulty=800
 
 
 
-// NOTE: does Earthquake use a duration?? IF so, no more then 30secs. This spell is more like an irradiating wave thus should have a set distance/time it can be effective
+
 
 //[SpellDef 69]
 //DEFNAME=s_fire_bolt
