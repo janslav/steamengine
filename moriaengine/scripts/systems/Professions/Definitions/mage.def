@@ -79,14 +79,15 @@ allowedSpells=s_clumsy, s_feeblemind, s_magic_arrow, s_nightsight, s_weaken, s_c
 
 
 //3 talent tree branches
-ttb1 = ttb_mage_sorcerer
-ttb2 = ttb_mage_conjurer
+ttb1 = ttb_mage_magician //ttb_mage_sorcerer
+ttb2 = ttb_mage_magician //ttb_mage_conjurer
 ttb3 = ttb_mage_magician
 
 
 //AbilityNameOrDefname = Tier, TierPosition, MaxPoints, resourcelist
 [TalentTreeBranchDef ttb_mage_sorcerer]
 Name = "Sorcerer"
+//sorcerer = direct damage specialisation
 
 a_spell_damage_bonus = 0, 0, 5
 a_mana_saving = 0, 1, 10
@@ -118,18 +119,28 @@ a_spell_damage_bonus_greater = 3, 3, 5
 a_chain_lightning_discount = 4, 2, 5
 a_standcast_freeze_reduction = 4, 3, 5
 
+
+a_spell_boost = 5, 0, 1
+
 [TalentTreeBranchDef ttb_mage_conjurer]
 Name = "Conjurer"
+//Conjurer = summoning specialisation
 
 a_regen_hits_bonus = 0, 3, 5
-
+a_mana_deposit_bonus = 0, 4, 5
+a_aptitude_cartography = 0, 5, 5
 
 a_ignition = 2, 2, 5
-
+a_ignition_bonus = 2, 3, 5
 
 
 [TalentTreeBranchDef ttb_mage_magician]
 Name = "Magician"
+//Conjurer = support specialisation
+
+a_mana_deposit_bonus = 0, 0, 5
+
 
 a_regen_stam_bonus = 0, 3, 5
-
+a_leech_stam_bonus = 0, 4, 5
+a_aptitude_alchemy = 0, 5, 5
