@@ -28,14 +28,6 @@ namespace SteamEngine.Persistence {
 	public delegate bool CanStartAsScript(string data);
 
 	public static class WorldSaver {
-
-		//internal static string currentfile;
-		//public static string CurrentFile {
-		//    get {
-		//        return currentfile;
-		//    }
-		//}
-
 		internal static bool Save() {
 
 			using (StopWatch.StartAndDisplay("Saving world data...")) {
@@ -73,11 +65,22 @@ namespace SteamEngine.Persistence {
 
 			bool success = false;
 			try {
+
+				sa = new ScriptArgs(path, "globals");
+				Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
+				SaveStream saveStream = GetSaveStream(path, sa.Argv[1]);
+				saveStream.WriteComment("Textual SteamEngine save");
+				Globals.SaveGlobals(saveStream);
+				saveStream.WriteLine("[EOF]");
+				try {
+					saveStream.Close();
+				} catch { }
+
 				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
 					string name = coordinator.FileNameToSave;
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
-					SaveStream saveStream = GetSaveStream(path, sa.Argv[1]);
+					saveStream = GetSaveStream(path, sa.Argv[1]);
 					saveStream.WriteComment("Textual SteamEngine save");
 					coordinator.SaveAll(saveStream);
 					saveStream.WriteLine("[EOF]");
@@ -85,14 +88,6 @@ namespace SteamEngine.Persistence {
 						saveStream.Close();
 					} catch { }
 				}
-
-				sa = new ScriptArgs(path, "globals");
-				Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
-				globalsSaver = GetSaveStream(path, sa.Argv[1]);
-				//currentfile = "globals.sav";
-				Globals.SaveGlobals(globalsSaver);
-				//Region.SaveRegions(globalsSaver);
-				globalsSaver.WriteLine("[EOF]");
 				success = true;
 			} catch (FatalException) {
 				throw;
@@ -100,7 +95,6 @@ namespace SteamEngine.Persistence {
 				Logger.WriteCritical(e);
 			} finally {
 				Globals.Instance.TryTrigger(TriggerKey.afterSave, new ScriptArgs(path, success));
-				CloseSaveStreams();
 			}
 
 			ObjectSaver.SavingFinished();
@@ -123,18 +117,6 @@ namespace SteamEngine.Persistence {
 			string filepath = Path.Combine(path, filename + ".sav");
 			return new SaveStream(new StreamWriter(File.Create(filepath)));
 		}
-
-		private static SaveStream globalsSaver;
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		static void CloseSaveStreams() {
-			try {
-				globalsSaver.Close();
-			} catch (Exception e) {
-				Logger.WriteDebug(e);
-			}
-		}
-
 		////////////////////////////////////////////////////////////////////////////////
 
 		public static void Load() {
@@ -161,6 +143,14 @@ namespace SteamEngine.Persistence {
 				}
 				Tools.EnsureDirectory(path, true);
 
+				sa = new ScriptArgs(path, "globals");
+				Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
+				StreamReader loadStream = GetLoadStream(path, sa.Argv[1]);
+				InvokeLoad(loadStream, Path.Combine(path, "globals.sav"));
+				try {
+					loadStream.Close();
+				} catch { }
+
 				HashSet<string> nameSet = new HashSet<string>();
 				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
 					string name = coordinator.FileNameToSave;
@@ -172,17 +162,13 @@ namespace SteamEngine.Persistence {
 					}
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
-					StreamReader loadStream = GetLoadStream(path, sa.Argv[1]);
+					loadStream = GetLoadStream(path, sa.Argv[1]);
 					InvokeLoad(loadStream, Path.Combine(path, name + ".sav"));
 					try {
 						loadStream.Close();
 					} catch { }
 				}
 
-				sa = new ScriptArgs(path, "globals");
-				Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
-				globalsLoader = GetLoadStream(path, sa.Argv[1]);
-				InvokeLoad(globalsLoader, Path.Combine(path, "globals.sav"));
 				Globals.Instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, true));
 				Console.WriteLine("Loading successful");
 			} catch (FileNotFoundException e) {
@@ -200,8 +186,6 @@ namespace SteamEngine.Persistence {
 				TriggerGroup.ReAddGlobals();
 				Globals.Instance.TryTrigger(TriggerKey.afterLoad, new ScriptArgs(path, false));
 				return false;
-			} finally {
-				CloseLoadStreams();
 			}
 
 			ObjectSaver.LoadingFinished();
@@ -213,7 +197,6 @@ namespace SteamEngine.Persistence {
 		}
 
 		private static void InvokeLoad(StreamReader stream, string filename) {
-			//currentfile = filename;
 			EOFMarked = false;
 			foreach (PropsSection section in PropsFileParser.Load(
 					filename, stream, new CanStartAsScript(StartsAsScript), true)) {
@@ -269,17 +252,6 @@ namespace SteamEngine.Persistence {
 			string filename = string.Concat(file);
 			string filepath = Path.Combine(path, filename + ".sav");
 			return new StreamReader(File.OpenRead(filepath));
-		}
-
-		private static StreamReader globalsLoader;
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		static void CloseLoadStreams() {
-			try {
-				globalsLoader.Close();
-			} catch (Exception e) {
-				Logger.WriteDebug(e);
-			}
 		}
 	}
 }
