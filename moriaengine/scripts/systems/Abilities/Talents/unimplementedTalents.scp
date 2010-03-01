@@ -46,6 +46,10 @@ EffectPower=0.05 //-25% Aggro at 5 points
 Name="(Standcast Bonus)"
 EffectPower=0.04 //+20% standcast effect at 5 points
 
+[PassiveAbilityDef a_standcast_freeze_reduction]
+Name="(Standcast Freeze reduction)"
+EffectPower=0.20 //-1 sec standcast freeze duration at 5 points
+
 [PassiveAbilityDef a_leech_hits_bonus]
 Name = "(Hitpoints Leech Bonus)"
 EffectPower=0.01 //1% per point
