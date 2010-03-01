@@ -797,12 +797,12 @@ namespace SteamEngine.Networking {
 				conn.Close("Illegal name - More than one space in a row.");
 				return;
 			}
-			if (this.args.Gender < 0 || this.args.Gender > 1) {
+			if (this.args.gender < 0 || this.args.gender > 1) {
 				state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalGender,
-					this.args.Gender));
+					this.args.gender));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
-				conn.Close("Illegal gender=" + this.args.Gender);
+				conn.Close("Illegal gender=" + this.args.gender);
 				return;
 			}
 			if (this.args.SkinColor < 0x3ea || this.args.SkinColor > 0x422) {
@@ -907,9 +907,9 @@ namespace SteamEngine.Networking {
 			}
 
 			internal byte gender;
-			public byte Gender {
+			public bool IsFemale {
 				get {
-					return this.gender;
+					return this.gender != 0;
 				}
 			}
 
