@@ -28,8 +28,8 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
-	public class MindBlastDef : DamageSpellDef {
-		public MindBlastDef(string defname, string filename, int headerLine)
+	public class MindBlastSpellDef : DamageSpellDef {
+		public MindBlastSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
 
