@@ -461,6 +461,9 @@
     <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
       <Link>systems\PeriodicSave.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\PlayerCreation.cs">
+      <Link>systems\PlayerCreation.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Professions\ProfessionDef.cs">
       <Link>systems\Professions\ProfessionDef.cs</Link>
     </Compile>
@@ -1244,9 +1247,6 @@
     </None>
     <None Include="..\..\scripts\systems\PeriodicSave.scp">
       <Link>systems\PeriodicSave.scp</Link>
-    </None>
-    <None Include="..\..\scripts\systems\PlayerCreation.scp">
-      <Link>systems\PlayerCreation.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Professions\Definitions\mage.def">
       <Link>systems\Professions\Definitions\mage.def</Link>
