@@ -75,20 +75,25 @@ difficulty=400
 on=@effectChar
 	EffectFactory.LightningEffect(this)
 
-[SpellDef 37]//utocne
+[MindBlastSpellDef 37]//utocne
 DEFNAME=s_mind_blast
 NAME=Mind Blast
-SOUND=snd_SPELL_MIND_BLAST
+SOUND=0x213
 RUNES=PCW
 CASTTIME=2.5
 //RESOURCES=i_reag_black_pearl,i_reag_mandrake_root,i_reag_nightshade,i_reag_sulfur_ash
 RUNEITEM=i_rune_MIND_BLAST
 SCROLLITEM=i_scroll_MIND_BLAST
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-EFFECT=0,12
+DamageType = DamageType.MagicElectric
+EFFECT=0,70
 MANAUSE=20
 Requirements=500 Magery
 difficulty=500
+
+on=@effectChar
+	EffectFactory.StationaryEffect(this, 0x374A, 10, 15)
+	EffectFactory.StationaryEffect(argo.Caster, 0x374A, 10, 15)
 
 [DamageSpellDef 42]
 DEFNAME=s_energy_bolt
