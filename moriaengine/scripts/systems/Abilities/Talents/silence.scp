@@ -17,9 +17,15 @@ if (argv[0].SpellDef == s_lightning)
 		if (<arg.span> > 0)
 			arg.targ = argv[0].CurrentTarget
 			
-			arg.eff = p_silence_effect.Create()
-			arg.eff.Init(arg.self, EffectFlag.FromAbility | EffectFlag.HarmfulEffect, 0, System.TimeSpan.FromSeconds(<arg.span>))
-			arg.targ.AddPlugin(@@silence_effect, arg.eff)
+			arg.prevPlugin = arg.targ.GetPlugin(@@silence_effect)
+			if (<arg.prevPlugin>) 
+				//TODO ?check that it's silence?
+				arg.prevPlugin.Timer = arg.prevPlugin.Timer + arg.span //prolong the existing silence effect
+			else
+				arg.eff = p_silence_effect.Create()
+				arg.eff.Init(arg.self, EffectFlag.FromAbility | EffectFlag.HarmfulEffect, 0, System.TimeSpan.FromSeconds(<arg.span>))
+				arg.targ.AddPlugin(@@silence_effect, arg.eff)
+			endif
 			
 			arg.self.SysMessage(System.String.Format(LocManager.GetEntry("loc_silence", "YourTargetIsSilenced", arg.self.Language), arg.targ.Name, <arg.span>))
 			arg.targ.SysMessage(System.String.Format(LocManager.GetEntry("loc_silence", "YouHaveBeenSilenced", arg.targ.Language), <arg.span>))
