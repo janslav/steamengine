@@ -28,34 +28,14 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
-	public class DamageSpellDef : SpellDef {
-
-		#region FieldValues
-		private FieldValue damageType;
-
-		public DamageSpellDef(string defname, string filename, int headerLine)
+	public class MindBlastDef : DamageSpellDef {
+		public MindBlastDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-
-			this.damageType = this.InitTypedField("damageType", DamageType.Magic, typeof(DamageType));
 		}
 
-		public DamageType DamageType {
-			get {
-				return (DamageType) this.damageType.CurrentValue;
-			}
-			set {
-				this.damageType.CurrentValue = value;
-			}
-		}
-		#endregion FieldValues
-
-		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
-			double dam = this.CalculateDamage(target, spellEffectArgs);
-			DamageManager.CauseDamage(spellEffectArgs.Caster, target, this.DamageType, dam);
-		}
-
-		protected virtual double CalculateDamage(Character target, SpellEffectArgs spellEffectArgs) {
-			return this.GetEffectForValue(spellEffectArgs.SpellPower);
+		protected override double CalculateDamage(Character target, SpellEffectArgs spellEffectArgs) {
+			return base.CalculateDamage(target, spellEffectArgs) * 
+				(spellEffectArgs.Caster.Int - target.Int) / 1000; //taken from moria sphere script
 		}
 	}
 }
