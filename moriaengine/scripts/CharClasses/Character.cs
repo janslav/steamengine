@@ -2200,12 +2200,10 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public bool On_CauseDamage(DamageArgs args) {
-			return false;
+		public void On_CauseDamage(DamageArgs args) {
 		}
 
-		public bool On_Damage(DamageArgs args) {
-			return false;
+		public void On_Damage(DamageArgs args) {
 		}
 
 		public void On_AfterSwing(WeaponSwingArgs args) {

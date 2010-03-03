@@ -133,24 +133,17 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey causeDamageTK = TriggerKey.Acquire("causeDamage");
 		static TriggerKey damageTK = TriggerKey.Acquire("damage");
 
-		[Summary("Happens before applying armor, can be cancelled.")]
-		public static bool Trigger_Damage(DamageArgs damageArgs) {
-			if (!damageArgs.attacker.TryCancellableTrigger(causeDamageTK, damageArgs)) {
-				try {
-					if (damageArgs.attacker.On_CauseDamage(damageArgs)) {
-						return true;
-					}
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!damageArgs.defender.TryCancellableTrigger(damageTK, damageArgs)) {
-					try {
-						if (damageArgs.defender.On_Damage(damageArgs)) {
-							return true;
-						}
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-					return false;
-				}
-			}
-			return true;
+		[Summary("Happens before applying armor. If a script should want to negate or alter the damage, it should 'manually' alter Hits, and/or create a new damaging event altogether.")]
+		public static void Trigger_Damage(DamageArgs damageArgs) {
+			damageArgs.attacker.TryTrigger(causeDamageTK, damageArgs);
+			try {
+				damageArgs.attacker.On_CauseDamage(damageArgs);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+
+			damageArgs.defender.TryCancellableTrigger(damageTK, damageArgs);
+			try {
+				damageArgs.defender.On_Damage(damageArgs);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		static TriggerKey afterSwingTK = TriggerKey.Acquire("afterSwing");
@@ -215,22 +208,22 @@ namespace SteamEngine.CompiledScripts {
 
 				damage *= GetResistModifier(defender, flags);
 
+				int previousHits = defender.Hits;
+
 				DamageArgs damageArgs = new DamageArgs(attacker, defender, flags, damage);
-				if (!Trigger_Damage(damageArgs)) {
+				Trigger_Damage(damageArgs);
 
-					damage = damageArgs.Damage;
-					if (damage > 0.5) {//0.5 gets rounded to 0...
+				damage = damageArgs.damage;
+				int newHits = (int) Math.Round(defender.Hits - damage);
+				defender.Hits = (short) newHits;
 
-
-						defender.Hits = (short) (defender.Hits - damage);
-
-						//TODO create blood?
-						SoundCalculator.PlayHurtSound(defender);
-						AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
-
-						return damage;
-					}
+				if (previousHits > newHits) {
+					//TODO create blood?
+					SoundCalculator.PlayHurtSound(defender);
+					AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
 				}
+
+				return damage;
 			}
 
 			return 0;
@@ -259,21 +252,14 @@ namespace SteamEngine.CompiledScripts {
 		public readonly Character defender;
 		public readonly Character attacker;
 		public readonly DamageType flags;
+		public readonly double damage;
 
 		public DamageArgs(Character attacker, Character defender, DamageType flags, double damage)
 			: base(attacker, defender, flags, damage) {
 			this.defender = defender;
 			this.attacker = attacker;
 			this.flags = flags;
-		}
-
-		public double Damage {
-			get {
-				return Convert.ToDouble(this.Argv[3]);
-			}
-			set {
-				this.Argv[3] = value;
-			}
+			this.damage = damage;
 		}
 	}
 
