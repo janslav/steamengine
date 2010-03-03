@@ -37,7 +37,8 @@ namespace SteamEngine.CompiledScripts {
 					foreach (SpellDef spell in SpellDef.AllSpellDefs) {
 						SpellScrollDef ssd = spell.ScrollItem;
 						if (ssd != null) {
-							dict.Add(ssd, spell);
+							dict.Add(ssd, spell); //if there was more than 1 spells using 1 scroll, this line would throw an exception. 
+							//Which is good. That's why we use a dict here. So leave it alone.
 						}
 					}
 					dict.TryGetValue(this, out this.spellDef);

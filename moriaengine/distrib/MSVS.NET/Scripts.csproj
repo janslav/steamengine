@@ -788,6 +788,12 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs">
       <Link>systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.cs">
+      <Link>systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.cs">
       <Link>systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.cs</Link>
     </Compile>
@@ -1313,6 +1319,12 @@
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\Dispell\dispellDefs.def">
       <Link>systems\skills\Magery\Spells\Dispell\dispellDefs.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\manaShield.scp">
+      <Link>systems\skills\Magery\Spells\ManaShield\manaShield.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.ct">
+      <Link>systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
       <Link>systems\skills\Magery\Spells\nightSight.scp</Link>

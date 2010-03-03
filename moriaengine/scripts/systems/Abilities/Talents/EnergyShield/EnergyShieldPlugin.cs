@@ -37,20 +37,23 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public bool On_Damage(DamageArgs args) {
+		//TODO? Effectivity
+		public void On_Damage(DamageArgs args) {
 			if (!args.attacker.IsPlayer) {
-				this.EffectPower -= args.Damage;
-				if (this.EffectPower > 0) {
-					return true; //cancel damage effects
-				} else if (this.EffectPower == 0) {
-					this.Delete();
-					return true; //cancel damage effects
+				this.EffectPower -= args.damage;
+				
+				Character self = (Character) this.Cont;
+				if (Math.Round(this.EffectPower) > 0) {
+					//do no damage at all
+					self.Hits += (short) Math.Round(args.damage);
+					self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).shieldSavedYou);
 				} else {
-					args.Damage = -this.EffectPower;
+					//do some damage still (damage + effectpower, but the effectpower part is negative...)
+					self.Hits += (short) Math.Round(args.damage + this.EffectPower);
+					self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).shieldSavedYouPartially);
 					this.Delete();					
 				}
 			}
-			return false; //do not cancel damage effects
 		}
 
 		public bool On_SelectSkill(SkillSequenceArgs skillSeq) {
@@ -61,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			return CheckAllowedSpells(skillSeq);
 		}
 
-		private static bool CheckAllowedSpells(SkillSequenceArgs skillSeq) {
+		private bool CheckAllowedSpells(SkillSequenceArgs skillSeq) {
 			if (skillSeq.SkillDef.Id == (int) SkillName.Magery) {
 				SpellDef spell = (SpellDef) skillSeq.Param1;
 				switch (spell.Id) {
@@ -70,21 +73,36 @@ namespace SteamEngine.CompiledScripts {
 					case 52: //gate
 						Character self = skillSeq.Self;
 						self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).cantTeleport);
-						return true; //cancel
+						//return true; //cancel
+						this.Delete(); //cancel traveling spell, or cancel the shield?
+						break;
 				}
 			}
 			return false;
 		}
 
+		protected override void EffectEndedMessage(Character cont) {
+			if (this.EffectPower <= 0.5) {
+				cont.WriteLine(Loc<EnergyShieldLoc>.Get(cont.Language).shieldWasted);
+			} else {
+				base.EffectEndedMessage(cont);
+			}
+		}
+
 		public bool On_Step(Direction direction, bool running) {
 			Character self = (Character) this.Cont;
 			self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).cantMove);
-			return true;
+			//return true; //cancel
+			this.Delete(); //cancel movement, or cancel the shield?
+			return false;
 		}
 	}
 
 	public class EnergyShieldLoc : CompiledLocStringCollection {
 		public string cantTeleport = "Bìhem trvání kouzla Energy shield nemùžeš používat teleportaèní kouzla";
 		public string cantMove = "Bìhem trvání kouzla Energy shield se nemùžeš pohybovat";
+		public string shieldWasted = "Tvùj Energy shield se vyèerpal";
+		public string shieldSavedYou = "Energy shield tì uchránil pøed zranìním";
+		public string shieldSavedYouPartially = "Energy shield tì èásteènì ochránil pøed zranìním";
 	}
 }

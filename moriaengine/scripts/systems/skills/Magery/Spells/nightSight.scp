@@ -1,5 +1,5 @@
 [DurableCharEffectSpellDef 6]
-DEFNAME = s_nightSight
+DEFNAME = s_nightsight
 NAME = Night Sight
 SOUND = 483
 RUNES = IL
@@ -12,14 +12,14 @@ EFFECT = LightAndWeather.UndergroundLight
 DURATION = 15*60.0,40*60.0
 MANAUSE = 6
 Requirements = 10.0 Magery
-EffectPluginDef = p_nightSightSpellEffect
-EffectPluginKey_Spell = @@spellEffect_nightSight
-EffectPluginKey_Potion = @@potionEffect_nightSight
+EffectPluginDef = p_nightsight
+EffectPluginKey_Spell = @@spellEffect_nightsight
+EffectPluginKey_Potion = @@potionEffect_nightsight
 
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x376A, 9, 32)
 
-[EffectDurationPluginDef p_nightSightSpellEffect]
+[EffectDurationPluginDef p_nightsight]
 on=@assign
 	this.Cont.PersonalLightLevel = this.Cont.PersonalLightLevel + this.Effect
 

@@ -32,11 +32,11 @@ namespace SteamEngine.CompiledScripts {
 		public const int minResist = 0;
 
 		static StatModSpellsUtils() {
-			new StrModSpellEffectPluginDef("p_strModSpellEffect", "C# scripts", -1).Register();
-			new DexModSpellEffectPluginDef("p_dexModSpellEffect", "C# scripts", -1).Register(); ;
-			new IntModSpellEffectPluginDef("p_intModSpellEffect", "C# scripts", -1).Register(); ;
-			new CurseSpellEffectPluginDef("p_curseSpellEffect", "C# scripts", -1).Register(); ;
-			new BlessSpellEffectPluginDef("p_blessSpellEffect", "C# scripts", -1).Register(); ;
+			new StrModSpellEffectPluginDef("p_strMod", "C# scripts", -1).Register();
+			new DexModSpellEffectPluginDef("p_dexMod", "C# scripts", -1).Register(); ;
+			new IntModSpellEffectPluginDef("p_intMod", "C# scripts", -1).Register(); ;
+			new CurseSpellEffectPluginDef("p_curse", "C# scripts", -1).Register(); ;
+			new BlessSpellEffectPluginDef("p_bless", "C# scripts", -1).Register(); ;
 		}
 
 		public static void Bootstrap() { //ensure calling the static initialiser
