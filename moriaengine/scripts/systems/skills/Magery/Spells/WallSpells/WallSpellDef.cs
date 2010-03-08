@@ -35,6 +35,16 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public class WallSpellDef : DurableSpellDef {
+		private static PassiveAbilityDef a_field_duration_bonus;
+		public static PassiveAbilityDef FieldDurationBonusDef {
+			get {
+				if (a_field_duration_bonus == null) {
+					a_field_duration_bonus = (PassiveAbilityDef) AbilityDef.GetByDefname("a_field_duration_bonus");
+				}
+				return a_field_duration_bonus;
+			}
+		}
+
 
 		private FieldValue itemDefWestEast;
 		private FieldValue itemDefNorthSouth;
@@ -67,19 +77,23 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_EffectGround(IPoint3D target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectGround(target, spellEffectArgs);
 
+			Character caster = spellEffectArgs.Caster;
 			int targetX = target.X;
 			int targetY = target.Y;
 			int targetZ = target.Z;
-			Map map = spellEffectArgs.Caster.GetMap();
+			Map map = caster.GetMap();
 
-			int dx = (spellEffectArgs.Caster.X - targetX);
-			int dy = (spellEffectArgs.Caster.Y - targetY);
+			int dx = (caster.X - targetX);
+			int dy = (caster.Y - targetY);
 
 			int ax = Math.Abs(dx);
 			int ay = Math.Abs(dy);
 
 			int spellPower = spellEffectArgs.SpellPower;
-			TimeSpan duration = TimeSpan.FromSeconds(this.GetDurationForValue(spellEffectArgs.Caster.GetSkill(SkillName.Magery))); //Magery used instead of spellpower, because the power is designed for use for the field effect, not for it's duration
+			TimeSpan duration = TimeSpan.FromSeconds(this.GetDurationForValue(
+				caster.GetSkill(SkillName.Magery))); //Magery used instead of spellpower, because the power is designed for use for the field effect, not for it's duration
+			duration += duration * caster.GetAbility(FieldDurationBonusDef) * FieldDurationBonusDef.EffectPower;
+
 
 			if (ay > ax) {
 				ItemDef wallDef = this.ItemDefWestEast;
@@ -95,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY + 1, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY + 2, targetZ, map);
-			}			
+			}
 		}
 
 		private static void InitWallItem(SpellEffectArgs spellEffectArgs, ItemDef wallDef, int spellPower, TimeSpan duration, int x, int y, int z, Map map) {
