@@ -1,13 +1,13 @@
-[DurableCharEffectSpellDef 104] //104 taken from sphere but otherwise kind of random
+[DurableCharEffectSpellDef 104] //104 (taken from sphere) = Curse Weapon from necro book
 DEFNAME=s_mana_shield
 NAME="Mana Shield"
 SOUND=503 //archprotection
 RUNES=VJS //Beleg Del Tir
-CASTTIME=20
+CASTTIME=2
 //RESOURCES=i_reag_garlic,i_reag_ginseng,i_reag_sulfur_ash
 //RUNEITEM=i_rune_PROTECTION
 SCROLLITEM=i_scroll_manashield //i_customscroll_manashield
-FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.IsBeneficial
+FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.IsBeneficial | SpellFlag.AlwaysTargetSelf
 EFFECT=0
 DURATION=30,40
 MANAUSE=30

@@ -81,10 +81,10 @@ namespace SteamEngine.Common {
 
 		internal override void Clear() {
 			lock (pool) {
-				int count = queue.Count;
-				if (count > 0) {
-					Logger.WriteDebug("Memory Cleanup: " + Tools.TypeToString(typeof(T)) + " x" + count.ToString(System.Globalization.CultureInfo.InvariantCulture));
-				}
+				//int count = queue.Count;
+				//if (count > 0) {
+				//    Logger.WriteDebug("Memory Cleanup: " + Tools.TypeToString(typeof(T)) + " x" + count.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				//}
 				queue = new SimpleQueue<T>();
 			}
 		}

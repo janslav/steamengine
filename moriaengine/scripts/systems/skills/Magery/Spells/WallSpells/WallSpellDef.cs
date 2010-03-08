@@ -90,25 +90,26 @@ namespace SteamEngine.CompiledScripts {
 			int ay = Math.Abs(dy);
 
 			int spellPower = spellEffectArgs.SpellPower;
-			TimeSpan duration = TimeSpan.FromSeconds(this.GetDurationForValue(
-				caster.GetSkill(SkillName.Magery))); //Magery used instead of spellpower, because the power is designed for use for the field effect, not for it's duration
-			duration += duration * caster.GetAbility(FieldDurationBonusDef) * FieldDurationBonusDef.EffectPower;
-
+			double durationSecs = this.GetDurationForValue(caster.GetSkill(SkillName.Magery)); 
+			//Magery used instead of spellpower, because the power is designed for use for the field effect, not for it's duration
+			durationSecs += durationSecs * caster.GetAbility(FieldDurationBonusDef) * FieldDurationBonusDef.EffectPower;
+			//applied ability bonus
+			TimeSpan durationSpan = TimeSpan.FromSeconds(durationSecs);
 
 			if (ay > ax) {
 				ItemDef wallDef = this.ItemDefWestEast;
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX - 2, targetY, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX - 1, targetY, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX + 1, targetY, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX + 2, targetY, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX - 2, targetY, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX - 1, targetY, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX + 1, targetY, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX + 2, targetY, targetZ, map);
 			} else {
 				ItemDef wallDef = this.ItemDefNorthSouth;
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY - 2, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY - 1, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY + 1, targetZ, map);
-				InitWallItem(spellEffectArgs, wallDef, spellPower, duration, targetX, targetY + 2, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY - 2, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY - 1, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY + 1, targetZ, map);
+				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY + 2, targetZ, map);
 			}
 		}
 

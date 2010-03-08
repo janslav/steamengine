@@ -299,6 +299,12 @@
     <Compile Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs">
       <Link>systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs">
       <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs</Link>
     </Compile>
@@ -1242,11 +1248,17 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\spellDamageBonus.scp">
       <Link>systems\Abilities\Talents\spellDamageBonus.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsBySchool.scp">
       <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsBySchool.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsBySpell.scp">
       <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsBySpell.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct">
       <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct</Link>
@@ -1256,6 +1268,9 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\unimplementedTalents.scp">
       <Link>systems\Abilities\Talents\unimplementedTalents.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\wallSpellsDurationBonus.scp">
+      <Link>systems\Abilities\Talents\wallSpellsDurationBonus.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\unimplementedAbilities.scp">
       <Link>systems\Abilities\unimplementedAbilities.scp</Link>
