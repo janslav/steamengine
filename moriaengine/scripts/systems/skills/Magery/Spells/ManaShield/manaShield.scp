@@ -11,7 +11,7 @@ FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsL
 EFFECT=0
 DURATION=30,40
 MANAUSE=30
-Requirements=600 Magery
+Requirements=600 Magery, 1 a_mana_shield
 Difficulty=500
 
 EffectPluginDef = p_mana_shield
@@ -27,3 +27,11 @@ on=@Unassign
 
 on=@Damage
 	EffectFactory.StationaryEffect(self, 03779, 6, 15); //i_fx_sparkle_2 effect
+	
+	
+[PassiveAbilityDef a_mana_shield]
+Name="Mana Shield Spell"
+
+
+[PassiveAbilityDef a_mana_shield_bonus]
+Name="(Mana Shield Bonus)"

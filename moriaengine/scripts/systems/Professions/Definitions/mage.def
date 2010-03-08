@@ -139,8 +139,11 @@ Name = "Magician"
 //Conjurer = support specialisation
 
 a_mana_deposit_bonus = 0, 0, 5
-
-
+a_mana_shield = 0, 1, 1
+a_mana_shield_bonus = 0, 2, 5
 a_regen_stam_bonus = 0, 3, 5
 a_leech_stam_bonus = 0, 4, 5
 a_aptitude_alchemy = 0, 5, 5
+
+
+
