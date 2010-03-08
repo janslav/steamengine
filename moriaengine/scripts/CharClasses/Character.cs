@@ -1503,6 +1503,18 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public SkillSequenceArgs CurrentSkillArgs {
+			get {
+				return SkillSequenceArgs.GetSkillSequenceArgs(this);
+			}
+		}
+
+		public SkillSequenceArgs.SkillStrokeTimer CurrentSkillTimer {
+			get {
+				return SkillSequenceArgs.GetSkillSequenceTimer(this);
+			}
+		}
+
 		public SkillName CurrentSkillName {
 			get {
 				SkillSequenceArgs ssa = SkillSequenceArgs.GetSkillSequenceArgs(this);
@@ -1670,7 +1682,7 @@ namespace SteamEngine.CompiledScripts {
 				return owner;
 			}
 			set {
-				if (this.IsPlayer) {
+				if (!this.IsPlayer) {
 					//AboutToChange();
 					owner = value;	//always Character
 				} else {
@@ -1743,7 +1755,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool IsPet {
 			get {
-				return ((this.IsPlayer) && (this.Owner != null));
+				return ((!this.IsPlayer) && (this.Owner != null));
 			}
 		}
 

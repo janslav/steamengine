@@ -136,7 +136,7 @@ a_ignition_bonus = 2, 3, 5
 
 [TalentTreeBranchDef ttb_mage_magician]
 Name = "Magician"
-//Conjurer = support specialisation
+//Magician = support specialisation
 
 a_mana_deposit_bonus = 0, 0, 5
 a_mana_shield = 0, 1, 1
@@ -154,3 +154,4 @@ a_recall_discount = 1, 4, 5
 a_electric_school_discount_magician = 1, 5, 5
 
 
+a_paralyze_haste = 2, 0, 5

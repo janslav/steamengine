@@ -591,6 +591,11 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
+
+		public static SkillStrokeTimer GetSkillSequenceTimer(Character self) {
+			return (SkillStrokeTimer) self.GetTimer(skillTimerKey);
+		}
+
 		private static Timers.TimerKey skillTimerKey = Timers.TimerKey.Acquire("_skillTimer_");
 
 		[Persistence.SaveableClass]

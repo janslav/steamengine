@@ -19,3 +19,14 @@ on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x376A, 6, 1)
 	
 //todo para resist and/or mind defense effect
+
+//a_paralyze_haste implementation
+on=@start
+arg.seconds = this.GetAbility(a_paralyze_haste) * a_paralyze_haste.EffectPower
+if (arg.seconds > 0)
+	arg.skillTimer = this.CurrentSkillTimer
+	if (arg.skillTimer.skillSeqArgs == argo) //check if it's really our timer now
+		arg.skillTimer.DueInSeconds = System.Math.Max(arg.skillTimer.DueInSeconds - arg.seconds, 0.0)
+	endif
+endif
+
