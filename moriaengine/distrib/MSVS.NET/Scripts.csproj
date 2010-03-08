@@ -1230,6 +1230,9 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\mindBlastEnhancement.scp">
       <Link>systems\Abilities\Talents\mindBlastEnhancement.scp</Link>
     </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\paralyzeHaste.def">
+      <Link>systems\Abilities\Talents\paralyzeHaste.def</Link>
+    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\protectionBonus.scp">
       <Link>systems\Abilities\Talents\protectionBonus.scp</Link>
     </None>
