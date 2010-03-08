@@ -146,4 +146,11 @@ a_leech_stam_bonus = 0, 4, 5
 a_aptitude_alchemy = 0, 5, 5
 
 
+a_field_duration_bonus = 1, 0, 5
+a_field_mana_discount = 1, 1, 5
+a_mana_regen_boost = 1, 2, 5
+a_gate_travel_discount = 1, 3, 5
+a_recall_discount = 1, 4, 5
+a_electric_school_discount_magician = 1, 5, 5
+
 
