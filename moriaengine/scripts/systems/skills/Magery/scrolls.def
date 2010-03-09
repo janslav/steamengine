@@ -705,7 +705,7 @@ WEIGHT = 10
 DEFNAME = i_scroll_summon_elem_water
 
 
-[ITEMDEF i_scroll_manashield]
+[SpellScrollDef i_scroll_manashield]
 CATEGORY=Provisions - Alchemy & Magic
 SUBSECTION=Scrolls - Special
 DESCRIPTION=Mana Shield Scroll
