@@ -30,8 +30,8 @@ using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
 	public sealed class TcpClientFactory<TState> :
-		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>//,
-		//IClientFactory<TcpConnection<TState>, TState, IPEndPoint>
+		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>,
+		IClientFactory<TcpConnection<TState>, TState, IPEndPoint>
 		where TState : IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
 
 		public TcpClientFactory(IProtocol<TcpConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
