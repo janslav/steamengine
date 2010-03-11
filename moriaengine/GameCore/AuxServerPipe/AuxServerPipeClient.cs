@@ -73,7 +73,7 @@ namespace SteamEngine.AuxServerPipe {
 			new AnnounceStartupFinishedTimer(conn);
 		}
 
-		private class AnnounceStartupFinishedTimer : SteamEngine.Timers.Timer {
+		private class AnnounceStartupFinishedTimer : Timers.Timer {
 			NamedPipeConnection<AuxServerPipeClient> conn;
 
 			public AnnounceStartupFinishedTimer(NamedPipeConnection<AuxServerPipeClient> conn) {

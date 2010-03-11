@@ -28,25 +28,25 @@ using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
 
-//	public interface IClientFactory<TConnection, TState, TEndPoint> //:
-//		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
-//		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-//		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
-//
-//		TConnection Connect(TEndPoint endpoint);
-//	}
+	public interface IClientFactory<TConnection, TState, TEndPoint> //:
+		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
 
-//	public interface IServer<TConnection, TState, TEndPoint> //:
-//		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
-//		//where TProtocol : IProtocol<TConnection, TState, TEndPoint>, new()
-//		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
-//		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
-//
-//		void Bind(TEndPoint endpoint);
-//		TEndPoint BoundTo { get; }
-//		bool IsBound { get; }
-//		void UnBind();
-//	}
+		TConnection Connect(TEndPoint endpoint);
+	}
+
+	public interface IServer<TConnection, TState, TEndPoint> //:
+		//IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
+		//where TProtocol : IProtocol<TConnection, TState, TEndPoint>, new()
+		where TConnection : AbstractConnection<TConnection, TState, TEndPoint>, new()
+		where TState : IConnectionState<TConnection, TState, TEndPoint>, new() {
+
+		void Bind(TEndPoint endpoint);
+		TEndPoint BoundTo { get; }
+		bool IsBound { get; }
+		void UnBind();
+	}
 
 	//public interface IAsyncCore<TProtocol, TConnection, TState, TEndPoint>
 	//    where TProtocol : IProtocol<TProtocol, TConnection, TState, TEndPoint>, new()

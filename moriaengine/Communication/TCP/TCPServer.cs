@@ -29,8 +29,8 @@ using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
 	public class TcpServer<TState> :
-		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>//,
-		//IServer<TcpConnection<TState>, TState, IPEndPoint>
+		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>,
+		IServer<TcpConnection<TState>, TState, IPEndPoint>
 		where TState : IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
 
 		private AsyncCallback onAccept;
