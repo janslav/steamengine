@@ -29,8 +29,8 @@ using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
 	public class NamedPipeServer<TState> :
-		AsyncCore<NamedPipeConnection<TState>, TState, string>,
-		IServer<NamedPipeConnection<TState>, TState, string>
+		AsyncCore<NamedPipeConnection<TState>, TState, string>//,
+		//IServer<NamedPipeConnection<TState>, TState, string>
 		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
 		bool running = false;
