@@ -1,0 +1,148 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BEF05635-6277-4405-BBD1-9EA0093C1964}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SteamEngine.RemoteConsole</RootNamespace>
+    <AssemblyName>MSVS_RemoteConsole</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MSVS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\RemoteConsole\CommandLineDisplay.cs">
+      <Link>CommandLineDisplay.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\CommandLineDisplay.Designer.cs">
+      <Link>CommandLineDisplay.Designer.cs</Link>
+      <DependentUpon>CommandLineDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\ConnectionForm.cs">
+      <Link>ConnectionForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\ConnectionForm.designer.cs">
+      <Link>ConnectionForm.designer.cs</Link>
+      <DependentUpon>ConnectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\ConsoleClient.cs">
+      <Link>ConsoleClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\ExtendedRichTextBox.cs">
+      <Link>ExtendedRichTextBox.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\IncomingPackets.cs">
+      <Link>IncomingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\Logger.cs">
+      <Link>Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\LogStrDisplay.cs">
+      <Link>LogStrDisplay.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\LogStrDisplay.designer.cs">
+      <Link>LogStrDisplay.designer.cs</Link>
+      <DependentUpon>LogStrDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\MainClass.cs">
+      <Link>MainClass.cs</Link>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\MainForm.cs">
+      <Link>MainForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\MainForm.designer.cs">
+      <Link>MainForm.designer.cs</Link>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\OutgoingPackets.cs">
+      <Link>OutgoingPackets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\Settings.cs">
+      <Link>Settings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\StartGameForm.cs">
+      <Link>StartGameForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\..\RemoteConsole\StartGameForm.designer.cs">
+      <Link>StartGameForm.designer.cs</Link>
+      <DependentUpon>StartGameForm.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Common.csproj">
+      <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="Communication.csproj">
+      <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\RemoteConsole\CommandLineDisplay.resx">
+      <Link>CommandLineDisplay.resx</Link>
+      <DependentUpon>CommandLineDisplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\RemoteConsole\ConnectionForm.resx">
+      <Link>ConnectionForm.resx</Link>
+      <DependentUpon>ConnectionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\RemoteConsole\LogStrDisplay.resx">
+      <Link>LogStrDisplay.resx</Link>
+      <DependentUpon>LogStrDisplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\RemoteConsole\MainForm.resx">
+      <Link>MainForm.resx</Link>
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\RemoteConsole\StartGameForm.resx">
+      <Link>StartGameForm.resx</Link>
+      <DependentUpon>StartGameForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\RemoteConsole\Properties\DataSources\EndPointSetting.datasource">
+      <Link>Properties\DataSources\EndPointSetting.datasource</Link>
+    </None>
+    <None Include="Properties\DataSources\SendServersToStartPacket.GameServerEntry.datasource" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

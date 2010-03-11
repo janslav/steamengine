@@ -1,0 +1,1424 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{69DBC534-CB41-450F-AF83-0F95BD8762C4}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MSVS_Scripts</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SteamEngine.CompiledScripts</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;MSWIN</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <Name>ICSharpCode.SharpZipLib</Name>
+      <HintPath>..\..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
+    <Reference Include="SteamDoc">
+      <Name>SteamDoc</Name>
+      <HintPath>..\..\bin\SteamDoc.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+      <HintPath>..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data">
+      <HintPath>..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+      <HintPath>..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+      <HintPath>..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Management.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+      <HintPath>..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.XML.dll</HintPath>
+    </Reference>
+    <Reference Include="Zip">
+      <Name>Zip</Name>
+      <HintPath>..\..\bin\Zip.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\scripts\AI\dummy.cs">
+      <Link>AI\dummy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\Character.cs">
+      <Link>CharClasses\Character.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\Character.Generated.cs">
+      <Link>CharClasses\Character.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\NPC.cs">
+      <Link>CharClasses\NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\NPC.Generated.cs">
+      <Link>CharClasses\NPC.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\Player.cs">
+      <Link>CharClasses\Player.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\CharClasses\Player.Generated.cs">
+      <Link>CharClasses\Player.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\System\treasures\Treasures.cs">
+      <Link>inGameFeatures\System\treasures\Treasures.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\System\treasures\treasures.Generated.cs">
+      <Link>inGameFeatures\System\treasures\treasures.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\TargetMemory.cs">
+      <Link>inGameFeatures\TargetMemory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\GemBox.cs">
+      <Link>inGameFeatures\World\storageBoxes\GemBox.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\RegBox.cs">
+      <Link>inGameFeatures\World\storageBoxes\RegBox.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\inGameFeatures\World\storageBoxes\storageBoxes.Generated.cs">
+      <Link>inGameFeatures\World\storageBoxes\storageBoxes.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredArmor.cs">
+      <Link>ItemClasses\ColoredArmor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredArmor.Generated.cs">
+      <Link>ItemClasses\ColoredArmor.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredProjectile.cs">
+      <Link>ItemClasses\ColoredProjectile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredProjectile.Generated.cs">
+      <Link>ItemClasses\ColoredProjectile.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredStaff.cs">
+      <Link>ItemClasses\ColoredStaff.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredStaff.Generated.cs">
+      <Link>ItemClasses\ColoredStaff.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredWeapon.cs">
+      <Link>ItemClasses\ColoredWeapon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\ColoredWeapon.Generated.cs">
+      <Link>ItemClasses\ColoredWeapon.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Container.cs">
+      <Link>ItemClasses\Container.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Container.Generated.cs">
+      <Link>ItemClasses\Container.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Corpse.cs">
+      <Link>ItemClasses\Corpse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Corpse.Generated.cs">
+      <Link>ItemClasses\Corpse.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Destroyable.cs">
+      <Link>ItemClasses\Destroyable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Destroyable.Generated.cs">
+      <Link>ItemClasses\Destroyable.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Door.cs">
+      <Link>ItemClasses\Door.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Door.Generated.cs">
+      <Link>ItemClasses\Door.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Equippable.cs">
+      <Link>ItemClasses\Equippable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Equippable.Generated.cs">
+      <Link>ItemClasses\Equippable.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Item.cs">
+      <Link>ItemClasses\Item.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Item.Generated.cs">
+      <Link>ItemClasses\Item.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\MultiItem.cs">
+      <Link>ItemClasses\MultiItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\MultiItem.Generated.cs">
+      <Link>ItemClasses\MultiItem.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Musical.cs">
+      <Link>ItemClasses\Musical.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Musical.Generated.cs">
+      <Link>ItemClasses\Musical.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Projectile.cs">
+      <Link>ItemClasses\Projectile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Projectile.Generated.cs">
+      <Link>ItemClasses\Projectile.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Ship.cs">
+      <Link>ItemClasses\Ship.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Ship.Generated.cs">
+      <Link>ItemClasses\Ship.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Weapon.cs">
+      <Link>ItemClasses\Weapon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Weapon.Generated.cs">
+      <Link>ItemClasses\Weapon.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Wearable.cs">
+      <Link>ItemClasses\Wearable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\ItemClasses\Wearable.Generated.cs">
+      <Link>ItemClasses\Wearable.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\AbilitiesEnumerator.cs">
+      <Link>systems\Abilities\AbilitiesEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Ability.cs">
+      <Link>systems\Abilities\Ability.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\AbilityDef.cs">
+      <Link>systems\Abilities\AbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\AbilityDialog.cs">
+      <Link>systems\Abilities\AbilityDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\ActivableAbilityDef.cs">
+      <Link>systems\Abilities\ActivableAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\CharsAbilitiesDialog.cs">
+      <Link>systems\Abilities\CharsAbilitiesDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\ImmediateAbilityDef.cs">
+      <Link>systems\Abilities\ImmediateAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\PassiveAbilityDef.cs">
+      <Link>systems\Abilities\PassiveAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\HitsRegenAbilityDef.cs">
+      <Link>systems\Abilities\Regenerations\HitsRegenAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\ManaRegenAbilityDef.cs">
+      <Link>systems\Abilities\Regenerations\ManaRegenAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\StamRegenAbilityDef.cs">
+      <Link>systems\Abilities\Regenerations\StamRegenAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.cs">
+      <Link>systems\Abilities\Specials\Berserker\Berserker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\StatDrainingAbilityDef.cs">
+      <Link>systems\Abilities\StatDrainingAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.cs">
+      <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.cs">
+      <Link>systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionActivatedPlugin.cs">
+      <Link>systems\Abilities\Talents\Ignition\IgnitionActivatedPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionEffectPlugin.cs">
+      <Link>systems\Abilities\Talents\Ignition\IgnitionEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionPlugins.Generated.cs">
+      <Link>systems\Abilities\Talents\Ignition\IgnitionPlugins.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.cs">
+      <Link>systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs">
+      <Link>systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
+      <Link>systems\Abilities\Warcry\Warcry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.Generated.cs">
+      <Link>systems\Abilities\Warcry\Warcry.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\accounts\AccCharsList.cs">
+      <Link>systems\administration\accounts\AccCharsList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\accounts\AccCreate.cs">
+      <Link>systems\administration\accounts\AccCreate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\accounts\AccList.cs">
+      <Link>systems\administration\accounts\AccList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Admin\Admin.cs">
+      <Link>systems\administration\Admin\Admin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Commands.cs">
+      <Link>systems\administration\Commands.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\CommandsAuthorization.cs">
+      <Link>systems\administration\CommandsAuthorization.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\firewall\Firewall.cs">
+      <Link>systems\administration\Firewall\Firewall.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\firewall\FirewallDialog.cs">
+      <Link>systems\administration\Firewall\FirewallDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Functions\FunctionsList.cs">
+      <Link>systems\administration\Functions\FunctionsList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Pages\GMPage.cs">
+      <Link>systems\administration\Pages\GMPage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\plugins\PluginList.cs">
+      <Link>systems\administration\plugins\PluginList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\MutableRectangle.cs">
+      <Link>systems\administration\Regions\MutableRectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\NewRectangle.cs">
+      <Link>systems\administration\Regions\NewRectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\NewRegion.cs">
+      <Link>systems\administration\Regions\NewRegion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\RegionsList.cs">
+      <Link>systems\administration\Regions\RegionsList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\RegionsRects.cs">
+      <Link>systems\administration\Regions\RegionsRects.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Regions\SelectParent.cs">
+      <Link>systems\administration\Regions\SelectParent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Register\RegisterDialogs.cs">
+      <Link>systems\administration\Register\RegisterDialogs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Register\RegisterHandling.cs">
+      <Link>systems\administration\Register\RegisterHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\tags\TagCreate.cs">
+      <Link>systems\administration\tags\TagCreate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\tags\TagList.cs">
+      <Link>systems\administration\tags\TagList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\timers\TimerEdit.cs">
+      <Link>systems\administration\timers\TimerEdit.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\timers\TimerList.cs">
+      <Link>systems\administration\timers\TimerList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Triggers\TriggerGroupAdd.cs">
+      <Link>systems\administration\Triggers\TriggerGroupAdd.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\administration\Triggers\TriggerGroupList.cs">
+      <Link>systems\administration\Triggers\TriggerGroupList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\AI\PathFinding\AStar.cs">
+      <Link>systems\AI\Pathfinding\AStar.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\BackupsManager.cs">
+      <Link>systems\BackupsManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\CharModelInfo.cs">
+      <Link>systems\CharModelInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\db\DbManager.cs">
+      <Link>systems\db\DbManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\db\DbUtils.cs">
+      <Link>systems\db\DbUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\db\LoginLogsContainer.cs">
+      <Link>systems\db\LoginLogsContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\DialogStacking.cs">
+      <Link>systems\dialogs\DialogStacking.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\displaytext\DisplayText.cs">
+      <Link>systems\dialogs\displaytext\DisplayText.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\GumpComponents.cs">
+      <Link>systems\dialogs\GumpComponents.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\ImprovedDialog.cs">
+      <Link>systems\dialogs\ImprovedDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\info\Info.cs">
+      <Link>systems\dialogs\info\Info.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\info\InfoDetail.cs">
+      <Link>systems\dialogs\info\InfoDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\info\InfoDialogHandler.cs">
+      <Link>systems\dialogs\info\InfoDialogHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\Input.cs">
+      <Link>systems\dialogs\Input.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\ItemsDimensions.cs">
+      <Link>systems\dialogs\ItemsDimensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\LeafComponents.cs">
+      <Link>systems\dialogs\LeafComponents.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\dialogs\Paging.cs">
+      <Link>systems\dialogs\Paging.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\EffectDurationPlugin.cs">
+      <Link>systems\EffectDuration\EffectDurationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\EffectDurationPlugin.Generated.cs">
+      <Link>systems\EffectDuration\EffectDurationPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\StatDrainingEffectDurationPlugin.cs">
+      <Link>systems\EffectDuration\StatDrainingEffectDurationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\EffectDuration\StatDrainingEffectDurationPlugin.Generated.cs">
+      <Link>systems\EffectDuration\StatDrainingEffectDurationPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Enums.cs">
+      <Link>systems\Enums.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\GumpIDs.cs">
+      <Link>systems\GumpIDs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\LightAndWeather.cs">
+      <Link>systems\LightAndWeather.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\mailingsystem\MailingSystem.cs">
+      <Link>systems\mailingsystem\MailingSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\mailingsystem\MessagesDialog.cs">
+      <Link>systems\mailingsystem\MessagesDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Notoriety.cs">
+      <Link>systems\Notoriety.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\PeriodicSave.cs">
+      <Link>systems\PeriodicSave.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\PlayerCreation.cs">
+      <Link>systems\PlayerCreation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\ProfessionDef.cs">
+      <Link>systems\Professions\ProfessionDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\ProfessionPlugin.cs">
+      <Link>systems\Professions\ProfessionPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\ProfessionPlugin.Generated.cs">
+      <Link>systems\Professions\ProfessionPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Professions\TalentTreeBranchDef.cs">
+      <Link>systems\Professions\TalentTreeBranchDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.cs">
+      <Link>systems\Regeneration\RegenerationPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.Generated.cs">
+      <Link>systems\Regeneration\RegenerationPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Regions\FlaggedRegion.cs">
+      <Link>systems\Regions\FlaggedRegion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceCounters\ItemsCounter.cs">
+      <Link>systems\Resources\ResourceCounters\ItemsCounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceCounters\ResourceCounter.cs">
+      <Link>systems\Resources\ResourceCounters\ResourceCounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceCounters\TriggerGroupsCounter.cs">
+      <Link>systems\Resources\ResourceCounters\TriggerGroupsCounter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\AbilityResource.cs">
+      <Link>systems\Resources\ResourceListItems\AbilityResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\ItemResource.cs">
+      <Link>systems\Resources\ResourceListItems\ItemResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\LevelResource.cs">
+      <Link>systems\Resources\ResourceListItems\LevelResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\SkillResource.cs">
+      <Link>systems\Resources\ResourceListItems\SkillResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatDexResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatDexResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatIntResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatIntResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatStrResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatStrResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\StatVitResource.cs">
+      <Link>systems\Resources\ResourceListItems\StatVitResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourceListItems\TriggerGroupResource.cs">
+      <Link>systems\Resources\ResourceListItems\TriggerGroupResource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourcesList.cs">
+      <Link>systems\Resources\ResourcesList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourcesParser.cs">
+      <Link>systems\Resources\ResourcesParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\ResourcesSaver.cs">
+      <Link>systems\Resources\ResourcesSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Resources\Searching\ResourceItemFinder.cs">
+      <Link>systems\Resources\Searching\ResourceItemFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\CharsRolesDialog.cs">
+      <Link>systems\Roles\CharsRolesDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Guild\Guild.cs">
+      <Link>systems\Roles\Guild\Guild.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Guild\GuildMembership.cs">
+      <Link>systems\Roles\Guild\GuildMembership.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Party\Party.cs">
+      <Link>systems\Roles\Party\Party.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Party\PartyCommands.cs">
+      <Link>systems\Roles\Party\PartyCommands.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Party\PartyDef.cs">
+      <Link>systems\Roles\Party\PartyDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RankSystem.cs">
+      <Link>systems\Roles\RankSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\Role.cs">
+      <Link>systems\Roles\Role.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RoleDef.cs">
+      <Link>systems\Roles\RoleDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RoleKey.cs">
+      <Link>systems\Roles\RoleKey.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RoleMembership.cs">
+      <Link>systems\Roles\RoleMembership.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RolesDialog.cs">
+      <Link>systems\Roles\RolesDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Roles\RolesManagement.cs">
+      <Link>systems\Roles\RolesManagement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\ScriptedAccount.cs">
+      <Link>systems\ScriptedAccount.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\ScriptSector.cs">
+      <Link>systems\ScriptSector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\DataView.cs">
+      <Link>systems\settings\DataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\DictionaryDataView.cs">
+      <Link>systems\settings\Implementations\DataViews\DictionaryDataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\EnumDataView.cs">
+      <Link>systems\settings\Implementations\DataViews\EnumDataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\DataViews\ListDataView.cs">
+      <Link>systems\settings\Implementations\DataViews\ListDataView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\AbilityDefDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\AbilityDefDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\AccountDescriptors.cs">
+      <Link>systems\settings\Implementations\Descriptors\AccountDescriptors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\CharacterDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\CharacterDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\ItemDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\ItemDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\PluginDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\PluginDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\PluginHolderDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\PluginHolderDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\RectanglesDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\RectanglesDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\RegionsDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\RegionsDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\implementations\Descriptors\TagHolderDescriptor.cs">
+      <Link>systems\settings\Implementations\Descriptors\TagHolderDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\MassSettings.cs">
+      <Link>systems\settings\MassSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Settings\MetaSettings.cs">
+      <Link>systems\settings\MetaSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsInfo.cs">
+      <Link>systems\utilities\SettingsInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsProvider.cs">
+      <Link>systems\settings\SettingsProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\SettingsResult.cs">
+      <Link>systems\settings\SettingsResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\settings\ViewableClassGenerator.cs">
+      <Link>systems\settings\ViewableClassGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Anatomy.cs">
+      <Link>systems\skills\Anatomy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\AnimalLore.cs">
+      <Link>systems\skills\AnimalLore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\ArmsLore.cs">
+      <Link>systems\skills\ArmsLore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\CombatCalculator.cs">
+      <Link>systems\skills\Combat\CombatCalculator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\CombatSettings.cs">
+      <Link>systems\skills\Combat\CombatSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\DamageManager.cs">
+      <Link>systems\skills\Combat\DamageManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\Plugins.Generated.cs">
+      <Link>systems\skills\Combat\Plugins.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillDef.cs">
+      <Link>systems\skills\Combat\WeaponSkillDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillTargetQueuePlugin.cs">
+      <Link>systems\skills\Combat\WeaponSkillTargetQueuePlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs">
+      <Link>systems\skills\Combat\WeaponSkillTargetTrackerPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Alchemy.cs">
+      <Link>systems\skills\Crafting\Alchemy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Blacksmithing.cs">
+      <Link>systems\skills\Crafting\Blacksmithing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Bowcraft.cs">
+      <Link>systems\skills\Crafting\Bowcraft.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Carpentry.cs">
+      <Link>systems\skills\Crafting\Carpentry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Cooking.cs">
+      <Link>systems\skills\Crafting\Cooking.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\CraftingProcessPlugin.cs">
+      <Link>systems\skills\Crafting\CraftingProcessPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\CraftingProcessPlugin.Generated.cs">
+      <Link>systems\skills\Crafting\CraftingProcessPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\CraftingSkillDef.cs">
+      <Link>systems\skills\Crafting\CraftingSkillDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\Craftmenu.cs">
+      <Link>systems\skills\Crafting\Craftmenu\Craftmenu.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs">
+      <Link>systems\skills\Crafting\Craftmenu\CraftmenuDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\CraftmenuSettingsDialog.cs">
+      <Link>systems\skills\Crafting\Craftmenu\CraftmenuSettingsDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Craftmenu\ItemInfoDialog.cs">
+      <Link>systems\skills\Crafting\Craftmenu\ItemInfoDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Inscription.cs">
+      <Link>systems\skills\Crafting\Inscription.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Tailoring.cs">
+      <Link>systems\skills\Crafting\Tailoring.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Crafting\Tinkering.cs">
+      <Link>systems\skills\Crafting\Tinkering.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Discordance\Discordance.cs">
+      <Link>systems\skills\Discordance\Discordance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs">
+      <Link>systems\skills\Discordance\DiscordanceEffectPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Healing\Healing.cs">
+      <Link>systems\skills\Healing\Healing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Hiding\DetectHidden.cs">
+      <Link>systems\skills\Hiding\DetectHidden.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Hiding\HiddenHelperPlugin.Generated.cs">
+      <Link>systems\skills\Hiding\HiddenHelperPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Hiding\Hiding.cs">
+      <Link>systems\skills\Hiding\Hiding.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\ItemID.cs">
+      <Link>systems\skills\ItemID.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Lockpicking\ItemLockPlugin.cs">
+      <Link>systems\skills\Lockpicking\ItemLockPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Lockpicking\ItemLockPlugin.Generated.cs">
+      <Link>systems\skills\Lockpicking\ItemLockPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Lockpicking\Lockpicking.cs">
+      <Link>systems\skills\Lockpicking\Lockpicking.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Magery.cs">
+      <Link>systems\skills\Magery\Magery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\MagerySettings.cs">
+      <Link>systems\skills\Magery\MagerySettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\SpellBook.cs">
+      <Link>systems\skills\Magery\SpellBook.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\SpellBook.Generated.cs">
+      <Link>systems\skills\Magery\SpellBook.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\SpellScroll.cs">
+      <Link>systems\skills\Magery\SpellScroll.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\SpellScroll.Generated.cs">
+      <Link>systems\skills\Magery\SpellScroll.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\DamageSpells\DamageSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpells\MindBlastSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\DamageSpells\MindBlastSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\Dispell\Dispell.cs">
+      <Link>systems\skills\Magery\Spells\Dispell\Dispell.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\DurableSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\DurableSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.cs">
+      <Link>systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.cs">
+      <Link>systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellDef.cs">
+      <Link>systems\skills\Magery\Spells\SpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.cs">
+      <Link>systems\skills\Magery\Spells\SpellEffectItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.Generated.cs">
+      <Link>systems\skills\Magery\Spells\SpellEffectItem.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.cs">
+      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.Generated.cs">
+      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\RecallRune.cs">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\RecallRune.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\RecallRune.Generated.cs">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\RecallRune.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellDef.cs">
+      <Link>systems\skills\Magery\Spells\WallSpells\WallSpellDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.cs">
+      <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.Generated.cs">
+      <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Meditation\Meditation.cs">
+      <Link>systems\skills\Meditation\Meditation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Meditation\MeditationPlugin.Generated.cs">
+      <Link>systems\skills\Meditation\MeditationPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\ScriptedSkillDef.cs">
+      <Link>systems\skills\ScriptedSkillDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Skill.cs">
+      <Link>systems\skills\Skill.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\SkillDef.cs">
+      <Link>systems\skills\SkillDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\SkillName.cs">
+      <Link>systems\skills\SkillName.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\SkillsEnumerator.cs">
+      <Link>systems\skills\SkillsEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\SkillUtils.cs">
+      <Link>systems\skills\SkillUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Stealing\Snooping.cs">
+      <Link>systems\skills\Stealing\Snooping.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Stealing\SnoopingPlugin.Generated.cs">
+      <Link>systems\skills\Stealing\SnoopingPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Stealing\Stealing.cs">
+      <Link>systems\skills\Stealing\Stealing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\Tracking.cs">
+      <Link>systems\skills\Tracking\Tracking.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingCategoriesDialog.cs">
+      <Link>systems\skills\Tracking\TrackingCategoriesDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingCharactersDialog.cs">
+      <Link>systems\skills\Tracking\TrackingCharactersDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingPlugin.Generated.cs">
+      <Link>systems\skills\Tracking\TrackingPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackingPlugins.cs">
+      <Link>systems\skills\Tracking\TrackingPlugins.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Tracking\TrackPoint.cs">
+      <Link>systems\skills\Tracking\TrackPoint.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Speech.cs">
+      <Link>systems\Speech.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Target.cs">
+      <Link>systems\Target.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\TemplateDef.cs">
+      <Link>systems\TemplateDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\TimerPlugin.cs">
+      <Link>systems\TimerPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\types\SpawnInfo.cs">
+      <Link>systems\types\SpawnInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\utilities\ColorsDlg.cs">
+      <Link>systems\utilities\ColorsDlg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Temporary.cs">
+      <Link>Temporary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\CompoundDialog.cs">
+      <Link>Tests\CompoundDialog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\d_test.cs">
+      <Link>Tests\d_test.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\InputDefTest.cs">
+      <Link>Tests\InputDefTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\LScriptTest.cs">
+      <Link>Tests\LScriptTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\MemberWrapperTests.cs">
+      <Link>Tests\MemberWrapperTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\SaveLoadTests.cs">
+      <Link>Tests\SaveLoadTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\SettingsTest.cs">
+      <Link>Tests\SettingsTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\TargetDefTest.cs">
+      <Link>Tests\TargetDefTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\Test.cs">
+      <Link>Tests\Test.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Tests\TextColorTest.cs">
+      <Link>Tests\TextColorTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\E_test_all.cs">
+      <Link>types\E_test_all.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_animations.cs">
+      <Link>types\type_animations.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_armor.cs">
+      <Link>types\type_armor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_beers.cs">
+      <Link>types\type_beers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_buildings_doors.cs">
+      <Link>types\type_buildings_doors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_buildings_roofs.cs">
+      <Link>types\type_buildings_roofs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_buildings_walls.cs">
+      <Link>types\type_buildings_walls.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_by_profession.cs">
+      <Link>types\type_by_profession.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_character_icon.cs">
+      <Link>types\type_character_icon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_clothes.cs">
+      <Link>types\type_clothes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_crafting.cs">
+      <Link>types\type_crafting.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_decoration_banners_tapestries.cs">
+      <Link>types\type_decoration_banners_tapestries.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_decoration_dungeons.cs">
+      <Link>types\type_decoration_dungeons.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_decoration_furniture.cs">
+      <Link>types\type_decoration_furniture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_decoration_miscellaneous.cs">
+      <Link>types\type_decoration_miscellaneous.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_deeds.cs">
+      <Link>types\type_deeds.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_gm.cs">
+      <Link>types\type_gm.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_ground_tiles.cs">
+      <Link>types\type_ground_tiles.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_hair.cs">
+      <Link>types\type_hair.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_levers_switches.cs">
+      <Link>types\type_levers_switches.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_maps.cs">
+      <Link>types\type_maps.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_miscellaneous.cs">
+      <Link>types\type_miscellaneous.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_multis.cs">
+      <Link>types\type_multis.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_ore.cs">
+      <Link>types\type_ore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_potions.cs">
+      <Link>types\type_potions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_provisions_alchemy_magic.cs">
+      <Link>types\type_provisions_alchemy_magic.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_provisions_miscellaneous.cs">
+      <Link>types\type_provisions_miscellaneous.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_resources.cs">
+      <Link>types\type_resources.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_ship_parts.cs">
+      <Link>types\type_ship_parts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_spell_icon.cs">
+      <Link>types\type_spell_icon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_treas.cs">
+      <Link>types\type_treas.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_vegetation.cs">
+      <Link>types\type_vegetation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\types\type_weapons.cs">
+      <Link>types\type_weapons.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\AnimCalculator.cs">
+      <Link>Utils\AnimCalculator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\EffectFactory.cs">
+      <Link>Utils\EffectFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\ExportUtils.cs">
+      <Link>Utils\ExportUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\HuesCalculator.cs">
+      <Link>Utils\HuesCalculator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\LegacyUtils.cs">
+      <Link>Utils\LegacyUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\ArrayListSaver.cs">
+      <Link>Utils\Persistence\ArrayListSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\ArraySaver.cs">
+      <Link>Utils\Persistence\ArraySaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\DateSaver.cs">
+      <Link>Utils\Persistence\DateSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\DictionarySaver.cs">
+      <Link>Utils\Persistence\DictionarySaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\GenericListSaver.cs">
+      <Link>Utils\Persistence\GenericListSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\HashtableSaver.cs">
+      <Link>Utils\Persistence\HashtableSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\LinkedListSaver.cs">
+      <Link>Utils\Persistence\LinkedListSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\PointSaver.cs">
+      <Link>Utils\Persistence\PointSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\Persistence\StaticMemberSaver.cs">
+      <Link>Utils\Persistence\StaticMemberSaver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\PriorityQueue.cs">
+      <Link>Utils\PriorityQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\ScriptUtil.cs">
+      <Link>Utils\ScriptUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\SingletonScript.cs">
+      <Link>Utils\SingletonScript.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\SoundCalculator.cs">
+      <Link>Utils\SoundCalculator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Utils\SoundNames.cs">
+      <Link>Utils\SoundNames.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Common.csproj">
+      <Project>{AA8584B5-03B4-4EE0-9345-885D6CF550A8}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="Communication.csproj">
+      <Project>{7C4C818F-8E1E-4561-92D7-3F4A5A111C14}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="GameCore.csproj">
+      <Project>{BD9C1AF3-292B-401D-BA76-F9C2B6503E3F}</Project>
+      <Name>GameCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\remoteconsole\properties\datasources\endpointsetting.datasource">
+      <Link>DataSources\endpointsetting.datasource</Link>
+    </None>
+    <None Include="..\..\scripts\CharClasses\Character.ct">
+      <Link>CharClasses\Character.ct</Link>
+    </None>
+    <None Include="..\..\scripts\CharClasses\NPC.ct">
+      <Link>CharClasses\NPC.ct</Link>
+    </None>
+    <None Include="..\..\scripts\CharClasses\Player.ct">
+      <Link>CharClasses\Player.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredArmor.ct">
+      <Link>ItemClasses\ColoredArmor.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredProjectile.ct">
+      <Link>ItemClasses\ColoredProjectile.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredStaff.ct">
+      <Link>ItemClasses\ColoredStaff.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\ColoredWeapon.ct">
+      <Link>ItemClasses\ColoredWeapon.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Container.ct">
+      <Link>ItemClasses\Container.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Corpse.ct">
+      <Link>ItemClasses\Corpse.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Destroyable.ct">
+      <Link>ItemClasses\Destroyable.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Door.ct">
+      <Link>ItemClasses\Door.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Equippable.ct">
+      <Link>ItemClasses\Equippable.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Item.ct">
+      <Link>ItemClasses\Item.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\MultiItem.ct">
+      <Link>ItemClasses\MultiItem.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Musical.ct">
+      <Link>ItemClasses\Musical.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Projectile.ct">
+      <Link>ItemClasses\Projectile.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Ship.ct">
+      <Link>ItemClasses\Ship.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Weapon.ct">
+      <Link>ItemClasses\Weapon.ct</Link>
+    </None>
+    <None Include="..\..\scripts\ItemClasses\Wearable.ct">
+      <Link>ItemClasses\Wearable.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\playerFunctions.scp">
+      <Link>systems\Abilities\playerFunctions.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
+      <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.ct">
+      <Link>systems\Abilities\Specials\Berserker\Berserker.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Specials\Berserker\berserker.scp">
+      <Link>systems\Abilities\Specials\Berserker\berserker.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\ClearCast\clearCast.scp">
+      <Link>systems\Abilities\Talents\ClearCast\clearCast.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct">
+      <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\energyShield.scp">
+      <Link>systems\Abilities\Talents\EnergyShield\energyShield.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.ct">
+      <Link>systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Ignition\ignition.scp">
+      <Link>systems\Abilities\Talents\Ignition\ignition.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionPlugins.ct">
+      <Link>systems\Abilities\Talents\Ignition\IgnitionPlugins.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\manaDepositBonus.scp">
+      <Link>systems\Abilities\Talents\manaDepositBonus.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\manaRegenBoost.scp">
+      <Link>systems\Abilities\Talents\manaRegenBoost.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\manaSaving.scp">
+      <Link>systems\Abilities\Talents\ManaSaving\manaSaving.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.ct">
+      <Link>systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\meditationBonus.scp">
+      <Link>systems\Abilities\Talents\meditationBonus.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\mindBlastEnhancement.scp">
+      <Link>systems\Abilities\Talents\mindBlastEnhancement.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\paralyzeHaste.def">
+      <Link>systems\Abilities\Talents\paralyzeHaste.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\protectionBonus.scp">
+      <Link>systems\Abilities\Talents\protectionBonus.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\regenerationBonuses.scp">
+      <Link>systems\Abilities\Talents\regenerationBonuses.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\silence.scp">
+      <Link>systems\Abilities\Talents\silence.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\skillMasteries.scp">
+      <Link>systems\Abilities\Talents\SkillMasteries\skillMasteries.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\spellBoost.scp">
+      <Link>systems\Abilities\Talents\spellBoost.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\spellDamageBonus.scp">
+      <Link>systems\Abilities\Talents\spellDamageBonus.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsBySchool.scp">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsBySchool.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsBySpell.scp">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsBySpell.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct">
+      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\unimplementedTalents.scp">
+      <Link>systems\Abilities\Talents\unimplementedTalents.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\wallSpellsDurationBonus.scp">
+      <Link>systems\Abilities\Talents\wallSpellsDurationBonus.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\unimplementedAbilities.scp">
+      <Link>systems\Abilities\unimplementedAbilities.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Warcry\Warcry.ct">
+      <Link>systems\Abilities\Warcry\Warcry.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Warcry\warcry.scp">
+      <Link>systems\Abilities\Warcry\warcry.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\defs.scp">
+      <Link>systems\defs.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\EffectDuration\EffectDurationPlugin.ct">
+      <Link>systems\EffectDuration\EffectDurationPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\EffectDuration\StatDrainingEffectDurationPlugin.ct">
+      <Link>systems\EffectDuration\StatDrainingEffectDurationPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\mailingsystem\mailsending.scp">
+      <Link>systems\mailingsystem\mailsending.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\PeriodicSave.scp">
+      <Link>systems\PeriodicSave.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Professions\Definitions\mage.def">
+      <Link>systems\Professions\Definitions\mage.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Professions\ProfessionPlugin.ct">
+      <Link>systems\Professions\ProfessionPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Professions\ProfessionPlugin.def">
+      <Link>systems\Professions\ProfessionPlugin.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.ct">
+      <Link>systems\Regeneration\RegenerationPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Healing\healing.scp">
+      <Link>systems\skills\Healing\healing.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Lockpicking\ItemLockPlugin .ct">
+      <Link>systems\skills\Lockpicking\ItemLockPlugin .ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Lockpicking\lockpicking.scp">
+      <Link>systems\skills\Lockpicking\lockpicking.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\magery.def">
+      <Link>systems\skills\Magery\magery.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\scrolls.def">
+      <Link>systems\skills\Magery\scrolls.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\SpellBook.ct">
+      <Link>systems\skills\Magery\SpellBook.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\spellbooks.def">
+      <Link>systems\skills\Magery\spellbooks.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\SpellScroll.ct">
+      <Link>systems\skills\Magery\SpellScroll.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\Dispell\dispellDefs.def">
+      <Link>systems\skills\Magery\Spells\Dispell\dispellDefs.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\manaShield.scp">
+      <Link>systems\skills\Magery\Spells\ManaShield\manaShield.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.ct">
+      <Link>systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\nightSight.scp">
+      <Link>systems\skills\Magery\Spells\nightSight.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\paralyze.def">
+      <Link>systems\skills\Magery\Spells\Paralyze\paralyze.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.ct">
+      <Link>systems\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\SpellEffectItem.ct">
+      <Link>systems\skills\Magery\Spells\SpellEffectItem.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.ct">
+      <Link>systems\skills\Magery\Spells\StatModSpells\StatModSpellEffectPlugins.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\StatModSpells\statModSpells.def">
+      <Link>systems\skills\Magery\Spells\StatModSpells\statModSpells.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\RecallRune.ct">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\RecallRune.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct">
+      <Link>systems\skills\Magery\Spells\WallSpells\WallSpellItem.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Meditation\Meditation.scp">
+      <Link>systems\skills\Meditation\Meditation.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Meditation\MeditationPlugin.ct">
+      <Link>systems\skills\Meditation\MeditationPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Musicianship.scp">
+      <Link>systems\skills\Musicianship.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Skills.scp">
+      <Link>systems\skills\Skills.scp</Link>
+    </None>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\DamageSpells\damageSpells.def">
+      <Link>systems\skills\Magery\Spells\DamageSpells\damageSpells.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\healingSpells.def">
+      <Link>systems\skills\Magery\Spells\HealingSpells\healingSpells.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\cureSpell.def">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\cureSpell.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\PoisonAndCure\poisonSpell.def">
+      <Link>systems\skills\Magery\Spells\PoisonAndCure\poisonSpell.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\protection.def">
+      <Link>systems\skills\Magery\Spells\protection.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpell.def">
+      <Link>systems\skills\Magery\Spells\ResurrectionSpell\ResurrectionSpell.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def">
+      <Link>systems\skills\Magery\Spells\TeleportingSpells\teleportingSpells.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\unimplementedSpells.def">
+      <Link>systems\skills\Magery\Spells\unimplementedSpells.def</Link>
+    </Content>
+    <Content Include="..\..\scripts\systems\skills\Magery\Spells\WallSpells\wallSpells.def">
+      <Link>systems\skills\Magery\Spells\WallSpells\wallSpells.def</Link>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
