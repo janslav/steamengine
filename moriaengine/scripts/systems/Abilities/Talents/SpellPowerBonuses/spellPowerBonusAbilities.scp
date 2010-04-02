@@ -1,0 +1,10 @@
+//magician talent
+[PassiveAbilityDef a_cunning_bonus]
+Name="Cunning Bonus"
+EffectPower=0.05 // +25% power at 5 points
+
+PluginKey = @@cunning_bonus
+PluginDef = p_cunning_bonus
+
+[SpellPowerBonusPluginDef p_cunning_bonus]
+Spell = s_cunning
