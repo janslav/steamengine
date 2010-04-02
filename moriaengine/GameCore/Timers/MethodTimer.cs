@@ -27,23 +27,28 @@ using SteamEngine.Persistence;
 //will be alternative to Timer which runs triggers...
 //this runs "hardcoded" methods via MethodInfo
 namespace SteamEngine.Timers {
-	[DeepCopyableClass]
-	[SaveableClass]
+
+	[SaveableClass, DeepCopyableClass]
 	public class MethodTimer : BoundTimer {
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		public MethodInfo method;
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-		[SaveableData]
-		[CopyableData]
+		[SaveableData, CopyableData]
 		public object[] args;
 
 		protected sealed override void OnTimeout(TagHolder cont) {
 			method.Invoke(cont, BindingFlags.Default, null, args, null);
 		}
 
-		[LoadingInitializer]
-		[DeepCopyImplementation]
+		[LoadingInitializer]		
 		public MethodTimer() {
+		}
+
+		[DeepCopyImplementation]
+		public MethodTimer(MethodTimer copyFrom) {
+			this.method = copyFrom.method;
 		}
 
 		public MethodTimer(MethodInfo method, object[] args) {

@@ -279,35 +279,39 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[SaveableClass]
+	[SaveableClass, DeepCopyableClass]
 	[Dialogs.ViewableClass]
-	public class TreasureItemEntry {
-		[LoadingInitializer]
-		public TreasureItemEntry() {
-		}
-
-		[SaveableData]
+	public sealed class TreasureItemEntry {
+		[SaveableData, CopyableData]
 		public ItemDef itemID;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public int amount;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public int chance;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public int periodic;
 
+		[LoadingInitializer, DeepCopyImplementation]
+		public TreasureItemEntry() {
+		}
 	}
 
-	[SaveableClass]
+	[SaveableClass, DeepCopyableClass]
 	[Dialogs.ViewableClass]
-	public class TreasureSpawnEntry {
-		[LoadingInitializer]
+	public sealed class TreasureSpawnEntry {
+
+		[SaveableData, CopyableData]
+		public CharacterDef charDef;
+
+		[SaveableData, CopyableData]
+		public int amount;
+
+		[LoadingInitializer, DeepCopyImplementation]
 		public TreasureSpawnEntry() {
 		}
-
-		[SaveableData]
-		public CharacterDef charDef;
-		[SaveableData]
-		public int amount;
 	}
 }
 

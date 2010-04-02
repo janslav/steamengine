@@ -19,22 +19,28 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
-	[SaveableClass]
-	public class SpawnInfo {
-		[LoadingInitializer]
+	[SaveableClass, DeepCopyableClass]
+	public sealed class SpawnInfo {
+
+		[SaveableData, CopyableData]
+		public IThingFactory SpawnDef;
+
+		[SaveableData, CopyableData]
+		public short Amount;
+
+		[SaveableData, CopyableData]
+		public short MinTime;
+
+		[SaveableData, CopyableData]
+		public short MaxTime;
+
+		[SaveableData, CopyableData]
+		public short Homedist;
+
+
+		[LoadingInitializer, DeepCopyImplementation]
 		public SpawnInfo() {
 		}
-
-		[SaveableData]
-		public IThingFactory SpawnDef;
-		[SaveableData]
-		public short Amount;
-		[SaveableData]
-		public short MinTime;
-		[SaveableData]
-		public short MaxTime;
-		[SaveableData]
-		public short Homedist;
 
 		public SpawnInfo(short amount, IThingFactory spawnDef, short minTime, short maxTime, short homedist) {
 			this.Amount = amount;
@@ -43,6 +49,5 @@ namespace SteamEngine.CompiledScripts {
 			this.MaxTime = maxTime;
 			this.Homedist = homedist;
 		}
-
 	}
 }

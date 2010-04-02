@@ -28,19 +28,17 @@ using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
-	[DeepCopyableClass]
-	[SaveableClass]
-	public class FunctionTimer : BoundTimer {
+	[SaveableClass, DeepCopyableClass]
+	public sealed class FunctionTimer : BoundTimer {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		public ScriptHolder function;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-		[SaveableData]
-		[CopyableData]
+		[SaveableData, CopyableData]
 		public string formatString;
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-		[SaveableData]
-		[CopyableData]
+		[SaveableData, CopyableData]
 		public object[] args;
 
 		protected sealed override void OnTimeout(TagHolder cont) {
@@ -50,8 +48,12 @@ namespace SteamEngine.Timers {
 		}
 
 		[LoadingInitializer]
-		[DeepCopyImplementation]
 		public FunctionTimer() {
+		}
+
+		[DeepCopyImplementation]
+		public FunctionTimer(FunctionTimer copyFrom) {
+			this.function = copyFrom.function;
 		}
 
 		public FunctionTimer(ScriptHolder function, string formatString, object[] args) {
