@@ -94,6 +94,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
+	public partial class HiddenHelperPlugin {
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class HiddenHelperPluginDef {
+	}
+
 	public class HidingLoc : CompiledLocStringCollection {
 		internal readonly string HidingAborted = "Hiding aborted.";
 	}

@@ -24,6 +24,7 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
+
 	[ViewableClass]
 	[Summary("Plugin managing all characters regenerations, on timer periodically checks all regens" +
 			"and adds correct number of points to be regenerated")]
@@ -170,5 +171,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+	}
+
+	[ViewableClass]
+	public partial class RegenerationPluginDef {
 	}
 }

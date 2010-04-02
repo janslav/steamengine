@@ -25,7 +25,6 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 
-
 	[Dialogs.ViewableClass]
 	public partial class EffectDurationPlugin {
 
@@ -136,6 +135,10 @@ namespace SteamEngine.CompiledScripts {
 						this.EffectName));
 			}
 		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class EffectDurationPluginDef {
 	}
 
 	public class EffectDurationLoc : CompiledLocStringCollection {

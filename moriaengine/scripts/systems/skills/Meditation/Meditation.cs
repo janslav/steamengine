@@ -139,4 +139,8 @@ namespace SteamEngine.CompiledScripts {
 
 		//TODO - other triggers such as ItemPickup, Speak, DClick, use another skill or ability etc...
 	}
+
+	[Dialogs.ViewableClass]
+	public partial class MeditationPluginDef {
+	}
 }

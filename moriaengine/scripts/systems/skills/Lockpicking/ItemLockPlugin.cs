@@ -24,6 +24,7 @@ using SteamEngine.Common;
 
 
 namespace SteamEngine.CompiledScripts {
+	[Dialogs.ViewableClass]
 	public partial class ItemLockPlugin {
 
 		public static PluginKey pkItemLock = PluginKey.Acquire("_itemLock_");
@@ -36,9 +37,11 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-
 			return false;
 		}
+	}
 
+	[Dialogs.ViewableClass]
+	public partial class ItemLockPluginDef {
 	}
 }

@@ -98,6 +98,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
+	public partial class EnergyShieldPluginDef {
+	}
+
 	public class EnergyShieldLoc : CompiledLocStringCollection {
 		public string cantTeleport = "Bìhem trvání kouzla Energy shield nemùžeš používat teleportaèní kouzla";
 		public string cantMove = "Bìhem trvání kouzla Energy shield se nemùžeš pohybovat";

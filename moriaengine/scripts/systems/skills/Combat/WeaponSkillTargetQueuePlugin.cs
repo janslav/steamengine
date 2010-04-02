@@ -200,6 +200,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
 	partial class WeaponSkillTargetQueuePluginDef {
 		public static WeaponSkillTargetQueuePluginDef instance = (WeaponSkillTargetQueuePluginDef)
 			new WeaponSkillTargetQueuePluginDef("p_weaponSkillTargetQueue", "C# scripts", -1).Register();
