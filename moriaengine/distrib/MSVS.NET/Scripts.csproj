@@ -1140,6 +1140,18 @@
     <None Include="..\..\scripts\CharClasses\Player.ct">
       <Link>CharClasses\Player.ct</Link>
     </None>
+    <None Include="..\..\scripts\inGameFeatures\System\treasures\treasures.ct">
+      <Link>inGameFeatures\System\treasures\treasures.ct</Link>
+    </None>
+    <None Include="..\..\scripts\inGameFeatures\System\treasures\treasures.def">
+      <Link>inGameFeatures\System\treasures\treasures.def</Link>
+    </None>
+    <None Include="..\..\scripts\inGameFeatures\World\storageBoxes\storageBoxes.ct">
+      <Link>inGameFeatures\World\storageBoxes\storageBoxes.ct</Link>
+    </None>
+    <None Include="..\..\scripts\inGameFeatures\World\storageBoxes\storageBoxes.def">
+      <Link>inGameFeatures\World\storageBoxes\storageBoxes.def</Link>
+    </None>
     <None Include="..\..\scripts\ItemClasses\ColoredArmor.ct">
       <Link>ItemClasses\ColoredArmor.ct</Link>
     </None>
@@ -1323,8 +1335,29 @@
     <None Include="..\..\scripts\systems\Regeneration\RegenerationPlugin.ct">
       <Link>systems\Regeneration\RegenerationPlugin.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\skills\Combat\Plugins.ct">
+      <Link>systems\skills\Combat\Plugins.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Combat\WeaponSkills.scp">
+      <Link>systems\skills\Combat\WeaponSkills.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Crafting\CraftingProcessPlugin.ct">
+      <Link>systems\skills\Crafting\CraftingProcessPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Crafting\CraftingSkills.scp">
+      <Link>systems\skills\Crafting\CraftingSkills.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Discordance\DiscordanceEffectPlugin.ct">
+      <Link>systems\skills\Discordance\DiscordanceEffectPlugin.ct</Link>
+    </None>
     <None Include="..\..\scripts\systems\skills\Healing\healing.scp">
       <Link>systems\skills\Healing\healing.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Hiding\HiddenHelperPlugin.ct">
+      <Link>systems\skills\Hiding\HiddenHelperPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Hiding\Stealth.scp">
+      <Link>systems\skills\Hiding\Stealth.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Lockpicking\ItemLockPlugin .ct">
       <Link>systems\skills\Lockpicking\ItemLockPlugin .ct</Link>
@@ -1394,6 +1427,15 @@
     </None>
     <None Include="..\..\scripts\systems\skills\Skills.scp">
       <Link>systems\skills\Skills.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Stealing\SnoopingPlugin.ct">
+      <Link>systems\skills\Stealing\SnoopingPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Tracking\Tracking.scp">
+      <Link>systems\skills\Tracking\Tracking.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Tracking\TrackingPlugin.ct">
+      <Link>systems\skills\Tracking\TrackingPlugin.ct</Link>
     </None>
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>

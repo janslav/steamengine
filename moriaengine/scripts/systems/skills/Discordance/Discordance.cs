@@ -249,4 +249,8 @@ namespace SteamEngine.CompiledScripts {
 			this.Delete();
 		}
 	}
+
+	[Dialogs.ViewableClass]
+	public partial class DiscordanceEffectPluginDef {
+	}
 }

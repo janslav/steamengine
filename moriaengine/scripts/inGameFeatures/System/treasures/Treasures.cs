@@ -279,6 +279,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
+	public partial class TreasureChestDef {
+
+	}
+
 	[SaveableClass, DeepCopyableClass]
 	[Dialogs.ViewableClass]
 	public sealed class TreasureItemEntry {

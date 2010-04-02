@@ -50,6 +50,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[ViewableClass]
 	public partial class ParalyzeEffectPluginDef {
 		public static ParalyzeEffectPluginDef instance = (ParalyzeEffectPluginDef)
 			new ParalyzeEffectPluginDef("p_paralyze", "C# scripts", -1).Register();

@@ -21,7 +21,8 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
-	partial class CraftingProcessPlugin {
+	[Dialogs.ViewableClass]
+	public partial class CraftingProcessPlugin {
 		private static PluginKey craftingProcessPK = PluginKey.Acquire("_craftingProcess_");
 
 		public static void UnInstallCraftingPlugin(Character self) {
@@ -115,6 +116,10 @@ namespace SteamEngine.CompiledScripts {
 			p.craftingOrder = craftingOrder;
 			return p;
 		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class CraftingProcessPluginDef {
 	}
 
 	partial class CraftingProcessPluginDef {

@@ -299,6 +299,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	[Dialogs.ViewableClass]
+	public partial class PlayerTrackingPluginDef {
+	}
+
 	[ViewableClass]
 	public partial class NPCTrackingPlugin {
 		public static readonly NPCTrackingPluginDef defInstance = new NPCTrackingPluginDef("p_NPCtracking", "C#scripts", -1);
@@ -353,5 +357,9 @@ namespace SteamEngine.CompiledScripts {
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			Delete();
 		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class NPCTrackingPluginDef {
 	}
 }

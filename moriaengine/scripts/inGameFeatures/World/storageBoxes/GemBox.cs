@@ -43,6 +43,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 	}
+
+	[Dialogs.ViewableClass]
+	public partial class GemBoxDef {
+	}
 }
 
 namespace SteamEngine.CompiledScripts.Dialogs {

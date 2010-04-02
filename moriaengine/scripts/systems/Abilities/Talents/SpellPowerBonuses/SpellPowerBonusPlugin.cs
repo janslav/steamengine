@@ -35,4 +35,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 		}
 	}
+
+	[Dialogs.ViewableClass]
+	public partial class SpellPowerBonusPluginDef {
+	}
 }

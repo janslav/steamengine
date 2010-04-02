@@ -25,6 +25,7 @@ using SteamEngine.Timers;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
+
 	[Dialogs.ViewableClass]
 	public partial class ManaSavingPlugin {
 
@@ -69,5 +70,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class ManaSavingPluginDef {
 	}
 }

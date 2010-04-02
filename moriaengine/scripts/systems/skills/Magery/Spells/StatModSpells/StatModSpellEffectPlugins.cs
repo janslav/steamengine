@@ -78,6 +78,10 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[ViewableClass]
+	public partial class StrModSpellEffectPluginDef {
+	}
+
+	[ViewableClass]
 	public partial class DexModSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
@@ -88,6 +92,10 @@ namespace SteamEngine.CompiledScripts {
 			cont.Dex -= this.dexDifference;
 			base.On_UnAssign(cont);
 		}
+	}
+
+	[ViewableClass]
+	public partial class DexModSpellEffectPluginDef {
 	}
 
 	[ViewableClass]
@@ -111,6 +119,10 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[ViewableClass]
+	public partial class IntModSpellEffectPluginDef {
+	}
+
+	[ViewableClass]
 	public partial class BlessSpellEffectPlugin {
 		public void On_Assign() {
 			Character self = (Character) this.Cont;
@@ -130,6 +142,10 @@ namespace SteamEngine.CompiledScripts {
 			cont.Int -= this.intDifference;
 			base.On_UnAssign(cont);
 		}
+	}
+
+	[ViewableClass]
+	public partial class BlessSpellEffectPluginDef {
 	}
 
 	[ViewableClass]
@@ -209,5 +225,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			base.On_UnAssign(cont);
 		}
+	}
+
+	[ViewableClass]
+	public partial class CurseSpellEffectPluginDef {
 	}
 }

@@ -25,7 +25,6 @@ using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 
-
 	[Dialogs.ViewableClass]
 	public partial class StatDrainingEffectDurationPlugin {
 
@@ -78,5 +77,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			base.On_UnAssign(cont);
 		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class StatDrainingEffectDurationPluginDef {
 	}
 }
