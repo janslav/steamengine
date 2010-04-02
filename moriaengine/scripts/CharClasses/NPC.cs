@@ -27,23 +27,29 @@ using SteamEngine.Networking;
 namespace SteamEngine.CompiledScripts {
 
 	//temporary? Mozna to bude neco jako MovementBrain, kazdopadne to chci takhle na testovani
-	[SaveableClass]
 	[ViewableClass]
-	public class DynamicMovementSettings : IMovementSettings {
-		[SaveableData]
+	[SaveableClass, DeepCopyableClass]
+	public sealed class DynamicMovementSettings : IMovementSettings {
+
+		[SaveableData, CopyableData]
 		public bool canCrossLand;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public bool canSwim;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public bool canCrossLava;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public bool canFly;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public bool ignoreDoors;
-		[SaveableData]
+
+		[SaveableData, CopyableData]
 		public int climbPower;
 
-		[LoadingInitializer]
+		[LoadingInitializer, DeepCopyImplementation]
 		public DynamicMovementSettings() {
 			this.canCrossLand = true;
 			this.canSwim = false;

@@ -24,24 +24,23 @@ using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
-	[DeepCopyableClass]
-	[SaveableClass]
-	public class TriggerTimer : BoundTimer {
+
+	[SaveableClass, DeepCopyableClass]
+	public sealed class TriggerTimer : BoundTimer {
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-		[SaveableData]
-		[CopyableData]
+		[SaveableData, CopyableData]
 		public TriggerKey trigger;
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-		[SaveableData]
-		[CopyableData]
+		[SaveableData, CopyableData]
 		public string formatString;
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-		[SaveableData]
-		[CopyableData]
+		[SaveableData, CopyableData]
 		public object[] args;
 
-		[LoadingInitializer]
-		[DeepCopyImplementation]
+		[LoadingInitializer, DeepCopyImplementation]
 		public TriggerTimer() {
 		}
 
