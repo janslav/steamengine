@@ -317,6 +317,12 @@
     <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs">
       <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.cs">
+      <Link>systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.Generated.cs">
+      <Link>systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
       <Link>systems\Abilities\Warcry\Warcry.cs</Link>
     </Compile>
@@ -1245,12 +1251,6 @@
     <None Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\skillMasteries.scp">
       <Link>systems\Abilities\Talents\SkillMasteries\skillMasteries.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\spellBoost.scp">
-      <Link>systems\Abilities\Talents\spellBoost.scp</Link>
-    </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\spellDamageBonus.scp">
-      <Link>systems\Abilities\Talents\spellDamageBonus.scp</Link>
-    </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp">
       <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp</Link>
     </None>
@@ -1268,6 +1268,18 @@
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct">
       <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\spellBoost.scp">
+      <Link>systems\Abilities\Talents\SpellPowerBonuses\spellBoost.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\spellDamageBonus.scp">
+      <Link>systems\Abilities\Talents\SpellPowerBonuses\spellDamageBonus.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\spellPowerBonusAbilities.scp">
+      <Link>systems\Abilities\Talents\SpellPowerBonuses\spellPowerBonusAbilities.scp</Link>
+    </None>
+    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.ct">
+      <Link>systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\Abilities\Talents\unimplementedTalents.scp">
       <Link>systems\Abilities\Talents\unimplementedTalents.scp</Link>
