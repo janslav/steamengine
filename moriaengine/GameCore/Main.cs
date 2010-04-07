@@ -135,7 +135,7 @@ namespace SteamEngine {
 			CoreLogger.Init();
 
 			RunLevelManager.SetStartup();
-
+			
 			using (StopWatch.StartAndDisplay("Server Initialisation")) {
 				AuxServerPipeClient.Init();
 				System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
@@ -187,8 +187,11 @@ namespace SteamEngine {
 				Map.Init();   //Sectors are created and items sorted on startup. 
 				ClassManager.InitScripts();
 				PluginDef.Init();
-				Globals.UnPauseServerTime();
+
+				//Globals.UnPauseServerTime();
+				RunLevelManager.UnsetStartup();
 				RunLevelManager.SetRunning();
+
 				Logger.WriteDebug("triggering @startup");
 				Globals.Instance.TryTrigger(TriggerKey.startup, new ScriptArgs(true));
 
@@ -243,22 +246,19 @@ namespace SteamEngine {
 				Commands.commandRunning = false;
 
 				RunLevelManager.SetRecompiling();
-				Globals.PauseServerTime();
 
 				if (WorldSaver.Save()) {
 
 					PacketSequences.BroadCast("Server is pausing for script recompiling...");
-					RunLevelManager.SetShutdown();
 
 					Logger.WriteDebug("triggering @shutdown");
-					if (Globals.Instance != null) { //is null when first run (and writing steamengine.ini)
-						Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
-					}
+					Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(false));
 					OpenedContainers.SendRemoveAllOpenedContainersFromView();
 					GameServer.BackupLinksToCharacters();
+
 					ForgetAll();
 					if (!LoadAll()) {
-						//RunLevels.AwaitingRetry pauses everything except console connections & listening for console
+						//RunLevels.SetAwaitingRetry pauses everything except console connections & listening for console
 						//connections & native commands, though SE doesn't care what they type, and whatever it is,
 						//SE calls RetryRecompilingScripts. So, "retry", "recompile", "resync", "r", and "die you evil compiler"
 						//(and whatever else they try) would all make SE attempt to recompile. Except for "exit", which, well,
@@ -274,8 +274,7 @@ namespace SteamEngine {
 						ScriptRecompilingSucceeded();
 					}
 				} else {//saving failed
-					Globals.UnPauseServerTime();
-					RunLevelManager.SetRunning();
+					RunLevelManager.UnsetRecompiling();
 				}
 			}
 		}
@@ -287,14 +286,19 @@ namespace SteamEngine {
 			CollectGarbage();
 			//RunLevelManager.SetPaused();	//Switch to paused until relinking & garbage collection have completed.
 			GameServer.RemoveBackupLinks();
-			Globals.UnPauseServerTime();
-			//RunLevelManager.SetRunning();
+
+			RunLevelManager.UnsetRecompiling();
+
 			PacketSequences.BroadCast("Script recompiling finished.");		
 		}
 
 		internal static void RetryRecompilingScripts() {
+			Sanity.IfTrueThrow(!RunLevelManager.IsAwaitingRetry, "!RunLevelManager.IsAwaitingRetry in RetryRecompilingScripts()");
+			RunLevelManager.UnsetAwaitingRetry();
+
 			ForgetAll();
 			if (!LoadAll()) {
+
 				RunLevelManager.SetAwaitingRetry();
 				PacketSequences.BroadCast("Script recompiling failed, remaining paused.");
 			} else {
@@ -303,6 +307,8 @@ namespace SteamEngine {
 		}
 
 		private static void ForgetAll() {
+			RunLevelManager.SetShutdown();
+
 			ClearWorld();
 			Timers.Timer.Clear();
 			LocManager.ForgetInstancesFromAssembly(ClassManager.ScriptsAssembly);
@@ -328,6 +334,7 @@ namespace SteamEngine {
 			Map.ForgetScripts();
 			FieldValue.ForgetScripts();
 
+			RunLevelManager.UnsetShutdown();
 			Console.WriteLine("Scripts unloaded");
 		}
 
@@ -337,6 +344,7 @@ namespace SteamEngine {
 			RunLevelManager.SetStartup();
 			ObjectSaver.ClearJobs();
 			if (!CompilerInvoker.CompileScripts(false)) {
+				RunLevelManager.UnsetStartup();
 				return false;
 			}
 			//ExportImport.Init();
@@ -350,9 +358,12 @@ namespace SteamEngine {
 			Map.Init();
 			ClassManager.InitScripts();
 			PluginDef.Init();
+
+			RunLevelManager.UnsetStartup();
+			//Globals.UnPauseServerTime();
 			//Region.ResolveLoadedRegions();
-			Globals.UnPauseServerTime();
-			RunLevelManager.SetRunning();
+			
+
 			Logger.WriteDebug("triggering @startup");
 			Globals.Instance.TryTrigger(TriggerKey.startup, new ScriptArgs(false));
 			return true;

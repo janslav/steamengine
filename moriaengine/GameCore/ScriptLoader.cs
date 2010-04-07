@@ -93,9 +93,8 @@ namespace SteamEngine {
 			if (files.Count > 0) {
 				PacketSequences.BroadCast("Server is pausing for script resync...");
 
-				Sanity.IfTrueThrow(!RunLevelManager.IsRunning, "RunLevel != Running @ Resync");
+				Sanity.IfTrueThrow(!RunLevelManager.IsRunning, "!RunLevelManager.IsRunning @ Resync");
 
-				Globals.PauseServerTime();
 				RunLevelManager.SetStartup();
 
 				ObjectSaver.StartingLoading();
@@ -127,8 +126,7 @@ namespace SteamEngine {
 				//    t.region = null;
 				//}
 
-				Globals.UnPauseServerTime();
-				RunLevelManager.SetRunning();
+				RunLevelManager.UnsetStartup();
 
 				PacketSequences.BroadCast("Script resync finished.");
 			} else {
