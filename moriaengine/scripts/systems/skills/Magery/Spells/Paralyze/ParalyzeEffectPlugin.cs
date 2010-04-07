@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class ParalyzeEffectPluginDef {
-		public static ParalyzeEffectPluginDef instance = (ParalyzeEffectPluginDef)
+		public static readonly ParalyzeEffectPluginDef instance = (ParalyzeEffectPluginDef)
 			new ParalyzeEffectPluginDef("p_paralyze", "C# scripts", -1).Register();
 
 		private static DurableCharEffectSpellDef s_paralyze;

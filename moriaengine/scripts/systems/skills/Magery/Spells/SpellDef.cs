@@ -502,7 +502,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (!singleEffectDone && !isArea) {
 				throw new SEException(this + ": Invalid target and/or spell flag?!");
-			}			
+			}
 
 			if (isArea) {
 				bool canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
