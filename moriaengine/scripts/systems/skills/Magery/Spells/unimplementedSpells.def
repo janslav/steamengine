@@ -184,24 +184,6 @@
 //MANAUSE=20
 //Requirements=50.0 Magery
 //
-//[SpellDef 36]
-//// NOTE: This is a proactive type of protection that no one wants to see run out. Because of it's level and the amount of reagents I would think this spell last a bit longer in light of it only being a one time reflect as opposed to Reactive and protection. Should it have a duration at all or remain until dispel'ed or hit ???
-//DEFNAME=s_magic_reflection
-//NAME=Magic Reflect
-//SOUND=snd_SPELL_MAGIC_REFLECTION
-//RUNES=IJS
-//CASTTIME=2.5
-////RESOURCES=i_reag_garlic,i_reag_mandrake_root,i_reag_spider_silk
-//RUNEITEM=i_rune_MAGIC_REFLECTION
-//SCROLLITEM=i_scroll_MAGIC_REFLECTION
-//FLAGS=SPELLFLAG_FX_TARG|SPELLFLAG_GOOD//SPELLFLAG_TARG_CHAR
-////EFFECTID=i_fx_BLESS_EFFECT
-//EFFECT=0
-//DURATION=6*60.0,10*60.0
-//MANAUSE=15
-//Requirements=50.0 Magery
-//
-//
 //[SpellDef 40]
 //// NOTE: This spell is the mages first true form of combat at low levels. One of the main uses is summoning a horse to travel. Don't set to low.
 //DEFNAME=s_summon_creature

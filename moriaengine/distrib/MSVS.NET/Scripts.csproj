@@ -800,6 +800,12 @@
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs">
       <Link>systems\skills\Magery\Spells\HealingSpells\HealingSpellDef.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\MagicReflection\MagicReflectionPlugin.cs">
+      <Link>systems\skills\Magery\Spells\MagicReflection\MagicReflectionPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\systems\skills\Magery\Spells\MagicReflection\MagicReflectionPlugin.Generated.cs">
+      <Link>systems\skills\Magery\Spells\MagicReflection\MagicReflectionPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.cs">
       <Link>systems\skills\Magery\Spells\ManaShield\ManaShieldPlugin.cs</Link>
     </Compile>
@@ -1382,6 +1388,12 @@
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\Dispell\dispellDefs.def">
       <Link>systems\skills\Magery\Spells\Dispell\dispellDefs.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\MagicReflection\magicReflection.def">
+      <Link>systems\skills\Magery\Spells\MagicReflection\magicReflection.def</Link>
+    </None>
+    <None Include="..\..\scripts\systems\skills\Magery\Spells\MagicReflection\MagicReflectionPlugin.ct">
+      <Link>systems\skills\Magery\Spells\MagicReflection\MagicReflectionPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\systems\skills\Magery\Spells\ManaShield\manaShield.scp">
       <Link>systems\skills\Magery\Spells\ManaShield\manaShield.scp</Link>
