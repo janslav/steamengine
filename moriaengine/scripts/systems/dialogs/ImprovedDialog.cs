@@ -215,8 +215,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//    }
 		//}
 
-		[Summary("Add a last GUTAColumn to the dialog and set is as 'last'. This method is to be used instead of AddLastColumn.")]
-		internal void AddLastColumn(GUTAColumn col) {
+		private void AddLastColumn(GUTAColumn col) {
 			if (lastTable == null || lastTable.Components.Count == 0) {
 				throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
 			}
@@ -225,9 +224,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//the column will be added from the right side...
 			col.IsLast = true;
 
-			//space between the new(last) and one-before-last (former last) columns                                  
-			//now we can add, the size is recomputed, the new column will fit right to the end of the row                
+			//GUTATable headingTable = (GUTATable)background.Components[background.Components.IndexOf(lastTable) - 1];
+			//GUTAColumn newHeadsCol = new GUTAColumn(col.Width);
+			//mark thew new paging columns as "last" 
+			//newHeadsCol.IsLast = true;
+			//col.IsLast = true;
+			//add the paging column to the headings and to the data area
+			//headingTable.Components[0].AddComponent(newHeadsCol);
 			lastTable.Components[0].AddComponent(col);
+			//unmark the previous "last" columns
+			//((GUTAColumn) headingTable.Components[0].Components[headingTable.Components[0].Components.IndexOf(newHeadsCol) - 1]).IsLast = false;
+			//((GUTAColumn) lastTable.Components[0].Components[lastTable.Components[0].Components.IndexOf(col) - 1]).IsLast = false;
 			lastColumn = col;
 		}
 
