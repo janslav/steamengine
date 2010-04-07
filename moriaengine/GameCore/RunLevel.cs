@@ -46,10 +46,30 @@ namespace SteamEngine {
 		Recompiling = 0x40
 	}
 
-	//mutually exclusive states:
-	//Running, Dead, Shutdown, Startup, AwaitingRetry
-	//Running, Dead, Recompiling
-	//Running, Paused
+	//typical life cycle:
+	//	None
+	//	Paused //after ini is read
+	//	Paused | Startup
+	//	Running
+	//	...
+	//	Running | Paused //world save, or loading of single script file
+	//	Running
+	//	...
+	//	Running | Startup //resync
+	//	Running
+	//	...
+	//	Running | Paused | Recompiling //world save before recompiling
+	//	Running | Paused | Recompiling | Shutdown //clearing world before recompiling
+	//	Running | Paused | Recompiling | Startup //...successfuly recompile
+	//	Running
+	//	...
+	//	Running | Paused | Recompiling | Startup //fails somewhere
+	//	Running | Paused | Recompiling | Startup | IsAwaitingRetry //any key pressed
+	//	Running | Paused | Recompiling | Startup //succeeds this time
+	//	Running
+	//	...
+	//	Running | Paused | Shutdown
+	//	Dead
 
 	public static class RunLevelManager {
 		private static RunLevel currentLevel = RunLevel.None;
@@ -61,21 +81,42 @@ namespace SteamEngine {
 		}
 
 		internal static void SetStartup() {
+			ThrowIfDead();
 #if DEBUG
 			using (new MagicObject())
 #endif
  {
-				currentLevel = RunLevel.Startup | (currentLevel & ~(RunLevel.AwaitingRetry | RunLevel.Running | RunLevel.Shutdown | RunLevel.Dead));
+				currentLevel |= RunLevel.Startup;
 			}
+			Globals.PauseServerTime();
+		}
+
+		internal static void UnsetStartup() {
+			Sanity.IfTrueThrow((currentLevel & RunLevel.Startup) != RunLevel.Startup,
+				"currentLevel == " + currentLevel + " when UnsetStartup called");
+
+#if DEBUG
+			using (new MagicObject())
+#endif
+ {
+				currentLevel &= ~RunLevel.Startup;
+			}
+			Globals.UnPauseServerTime();
 		}
 
 		internal static void SetRunning() {
+			ThrowIfDead();
 #if DEBUG
 			using (new MagicObject())
 #endif
  {
-				currentLevel = RunLevel.Running;
+				currentLevel |= RunLevel.Running;
 			}
+		}
+
+		private static void ThrowIfDead() {
+			Sanity.IfTrueThrow((currentLevel & RunLevel.Dead) == RunLevel.Dead,
+				"currentLevel == " + currentLevel);
 		}
 
 		public static bool IsRunning {
@@ -84,31 +125,15 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void SetPaused() {
-#if DEBUG
-			using (new MagicObject())
-#endif
- {
-				currentLevel |= RunLevel.Paused;
-			}
-		}
-
-		internal static void UnsetPaused() {
-#if DEBUG
-			using (new MagicObject())
-#endif
- {
-				currentLevel &= ~RunLevel.Paused;
-			}
-		}
-
 		internal static void SetAwaitingRetry() {
+			ThrowIfDead();
 #if DEBUG
 			using (new MagicObject())
 #endif
  {
-				currentLevel = RunLevel.AwaitingRetry | (currentLevel & ~(RunLevel.Startup | RunLevel.Running | RunLevel.Shutdown | RunLevel.Dead));
+				currentLevel |= RunLevel.AwaitingRetry;
 			}
+			Globals.PauseServerTime();
 		}
 
 		public static bool IsAwaitingRetry {
@@ -119,11 +144,60 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UnsetAwaitingRetry() {
+			Sanity.IfTrueThrow((currentLevel & RunLevel.AwaitingRetry) != RunLevel.AwaitingRetry,
+				"currentLevel == " + currentLevel + " when UnsetAwaitingRetry called");
 #if DEBUG
 			using (new MagicObject())
 #endif
  {
 				currentLevel &= ~RunLevel.AwaitingRetry;
+			}
+			Globals.UnPauseServerTime();
+		}
+
+		internal static void SetRecompiling() {
+			ThrowIfDead();
+#if DEBUG
+			using (new MagicObject())
+#endif
+ {
+				currentLevel |= RunLevel.Recompiling;
+			}
+			Globals.PauseServerTime();
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		internal static void UnsetRecompiling() {
+			Sanity.IfTrueThrow((currentLevel & RunLevel.Recompiling) != RunLevel.Recompiling,
+				"currentLevel == " + currentLevel + " when UnsetRecompiling called");
+
+#if DEBUG
+			using (new MagicObject())
+#endif
+ {
+				currentLevel &= ~RunLevel.Recompiling;
+			}
+			Globals.UnPauseServerTime();
+		}
+
+		internal static void SetPaused() {
+			ThrowIfDead();
+#if DEBUG
+			using (new MagicObject())
+#endif
+ {
+				currentLevel |= RunLevel.Paused;
+			}
+		}
+
+		internal static void UnsetPaused() {
+			Sanity.IfTrueThrow((currentLevel & RunLevel.Paused) != RunLevel.Paused,
+				"currentLevel == " + currentLevel + " when UnsetPaused called");
+#if DEBUG
+			using (new MagicObject())
+#endif
+ {
+				currentLevel &= ~RunLevel.Paused;
 			}
 		}
 
@@ -132,11 +206,11 @@ namespace SteamEngine {
 			using (new MagicObject())
 #endif
  {
-				currentLevel = RunLevel.Shutdown | (currentLevel & ~(RunLevel.Startup | RunLevel.Running | RunLevel.AwaitingRetry | RunLevel.Dead));
+				currentLevel |= RunLevel.Shutdown;
 			}
+			Globals.PauseServerTime();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UnsetShutdown() {
 #if DEBUG
 			using (new MagicObject())
@@ -144,6 +218,7 @@ namespace SteamEngine {
  {
 				currentLevel &= ~RunLevel.Shutdown;
 			}
+			Globals.UnPauseServerTime();
 		}
 
 		internal static void SetDead() {
@@ -151,31 +226,9 @@ namespace SteamEngine {
 			using (new MagicObject())
 #endif
  {
-				currentLevel = RunLevel.Dead | (currentLevel & ~(RunLevel.Startup | RunLevel.Running | RunLevel.AwaitingRetry | RunLevel.Shutdown | RunLevel.Recompiling));
+				currentLevel = RunLevel.Dead;
 			}
-		}
-
-		//not needed probably. When you're dead, you're dead :)
-		//internal static void UnsetDead() {
-		//}
-
-		internal static void SetRecompiling() {
-#if DEBUG
-			using (new MagicObject())
-#endif
- {
-				currentLevel = RunLevel.Recompiling | (currentLevel & ~(RunLevel.Running | RunLevel.Dead));
-			}
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-		internal static void UnsetRecompiling() {
-#if DEBUG
-			using (new MagicObject())
-#endif
- {
-				currentLevel &= ~RunLevel.Recompiling;
-			}
+			Globals.PauseServerTime();
 		}
 
 		private class MagicObject : IDisposable {
