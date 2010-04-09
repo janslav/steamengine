@@ -230,104 +230,101 @@
     <Compile Include="..\..\scripts\ItemClasses\Wearable.Generated.cs">
       <Link>ItemClasses\Wearable.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\AbilitiesEnumerator.cs">
-      <Link>systems\Abilities\AbilitiesEnumerator.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\AbilitiesEnumerator.cs">
+      <Link>systems\AbilitiesAndTalents\AbilitiesEnumerator.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Ability.cs">
-      <Link>systems\Abilities\Ability.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Regenerations\HitsRegenAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\Abilities\Regenerations\HitsRegenAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\AbilityDef.cs">
-      <Link>systems\Abilities\AbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Regenerations\ManaRegenAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\Abilities\Regenerations\ManaRegenAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\AbilityDialog.cs">
-      <Link>systems\Abilities\AbilityDialog.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Regenerations\StamRegenAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\Abilities\Regenerations\StamRegenAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\ActivableAbilityDef.cs">
-      <Link>systems\Abilities\ActivableAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Warcry\Warcry.cs">
+      <Link>systems\AbilitiesAndTalents\Abilities\Warcry\Warcry.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\CharsAbilitiesDialog.cs">
-      <Link>systems\Abilities\CharsAbilitiesDialog.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Warcry\Warcry.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Abilities\Warcry\Warcry.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\ImmediateAbilityDef.cs">
-      <Link>systems\Abilities\ImmediateAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Ability.cs">
+      <Link>systems\AbilitiesAndTalents\Ability.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\PassiveAbilityDef.cs">
-      <Link>systems\Abilities\PassiveAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\AbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\AbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\HitsRegenAbilityDef.cs">
-      <Link>systems\Abilities\Regenerations\HitsRegenAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\AbilityDialog.cs">
+      <Link>systems\AbilitiesAndTalents\AbilityDialog.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\ManaRegenAbilityDef.cs">
-      <Link>systems\Abilities\Regenerations\ManaRegenAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\ActivableAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\ActivableAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Regenerations\StamRegenAbilityDef.cs">
-      <Link>systems\Abilities\Regenerations\StamRegenAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\CharsAbilitiesDialog.cs">
+      <Link>systems\AbilitiesAndTalents\CharsAbilitiesDialog.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.cs">
-      <Link>systems\Abilities\Specials\Berserker\Berserker.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\ImmediateAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\ImmediateAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\StatDrainingAbilityDef.cs">
-      <Link>systems\Abilities\StatDrainingAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\PassiveAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\PassiveAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.cs">
-      <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\StatDrainingAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\StatDrainingAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.Generated.cs">
-      <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.cs">
-      <Link>systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs">
-      <Link>systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionActivatedPlugin.cs">
-      <Link>systems\Abilities\Talents\Ignition\IgnitionActivatedPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionEffectPlugin.cs">
-      <Link>systems\Abilities\Talents\Ignition\IgnitionEffectPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\Ignition\IgnitionActivatedPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\Ignition\IgnitionActivatedPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionPlugins.Generated.cs">
-      <Link>systems\Abilities\Talents\Ignition\IgnitionPlugins.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\Ignition\IgnitionEffectPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\Ignition\IgnitionEffectPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.cs">
-      <Link>systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.Generated.cs">
-      <Link>systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs">
-      <Link>systems\Abilities\Talents\SkillMasteries\SkillMasteryAbilityDef.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SkillMasteries\SkillMasteryAbilityDef.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SkillMasteries\SkillMasteryAbilityDef.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.Generated.cs">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.cs">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.cs">
-      <Link>systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.Generated.cs">
-      <Link>systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.cs">
-      <Link>systems\Abilities\Warcry\Warcry.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\systems\Abilities\Warcry\Warcry.Generated.cs">
-      <Link>systems\Abilities\Warcry\Warcry.Generated.cs</Link>
+    <Compile Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.Generated.cs">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\systems\administration\accounts\AccCharsList.cs">
       <Link>systems\administration\accounts\AccCharsList.cs</Link>
@@ -1206,113 +1203,107 @@
     <None Include="..\..\scripts\ItemClasses\Wearable.ct">
       <Link>ItemClasses\Wearable.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\playerFunctions.scp">
-      <Link>systems\Abilities\playerFunctions.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Regenerations\regenAbilities.scp">
+      <Link>systems\AbilitiesAndTalents\Abilities\Regenerations\regenAbilities.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Regenerations\regenAbilities.scp">
-      <Link>systems\Abilities\Regenerations\regenAbilities.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Warcry\Warcry.ct">
+      <Link>systems\AbilitiesAndTalents\Abilities\Warcry\Warcry.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Specials\Berserker\Berserker.ct">
-      <Link>systems\Abilities\Specials\Berserker\Berserker.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Abilities\Warcry\warcry.scp">
+      <Link>systems\AbilitiesAndTalents\Abilities\Warcry\warcry.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Specials\Berserker\berserker.scp">
-      <Link>systems\Abilities\Specials\Berserker\berserker.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\playerFunctions.scp">
+      <Link>systems\AbilitiesAndTalents\playerFunctions.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\ClearCast\clearCast.scp">
-      <Link>systems\Abilities\Talents\ClearCast\clearCast.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ClearCast\clearCast.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\ClearCast\clearCast.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct">
-      <Link>systems\Abilities\Talents\ClearCast\ClearCastPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\energyShield.scp">
-      <Link>systems\Abilities\Talents\EnergyShield\energyShield.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\EnergyShield\energyShield.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\EnergyShield\energyShield.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.ct">
-      <Link>systems\Abilities\Talents\EnergyShield\EnergyShieldPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\Ignition\ignition.scp">
-      <Link>systems\Abilities\Talents\Ignition\ignition.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\Ignition\ignition.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\Ignition\ignition.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\Ignition\IgnitionPlugins.ct">
-      <Link>systems\Abilities\Talents\Ignition\IgnitionPlugins.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\manaDepositBonus.scp">
-      <Link>systems\Abilities\Talents\manaDepositBonus.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\manaDepositBonus.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\manaDepositBonus.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\manaRegenBoost.scp">
-      <Link>systems\Abilities\Talents\manaRegenBoost.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\manaRegenBoost.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\manaRegenBoost.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\manaSaving.scp">
-      <Link>systems\Abilities\Talents\ManaSaving\manaSaving.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ManaSaving\manaSaving.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\ManaSaving\manaSaving.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.ct">
-      <Link>systems\Abilities\Talents\ManaSaving\ManaSavingPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\meditationBonus.scp">
-      <Link>systems\Abilities\Talents\meditationBonus.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\meditationBonus.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\meditationBonus.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\mindBlastEnhancement.scp">
-      <Link>systems\Abilities\Talents\mindBlastEnhancement.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\mindBlastEnhancement.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\mindBlastEnhancement.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\paralyzeHaste.def">
-      <Link>systems\Abilities\Talents\paralyzeHaste.def</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\paralyzeHaste.def">
+      <Link>systems\AbilitiesAndTalents\Talents\paralyzeHaste.def</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\protectionBonus.scp">
-      <Link>systems\Abilities\Talents\protectionBonus.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\protectionBonus.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\protectionBonus.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\regenerationBonuses.scp">
-      <Link>systems\Abilities\Talents\regenerationBonuses.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\regenerationBonuses.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\regenerationBonuses.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\silence.scp">
-      <Link>systems\Abilities\Talents\silence.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\silence.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\silence.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SkillMasteries\skillMasteries.scp">
-      <Link>systems\Abilities\Talents\SkillMasteries\skillMasteries.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SkillMasteries\skillMasteries.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\SkillMasteries\skillMasteries.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsByClass.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\discountsByClass.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\discountsByClass.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsBySchool.scp">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsBySchool.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\discountsBySchool.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\discountsBySchool.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\discountsBySpell.scp">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\discountsBySpell.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\discountsBySpell.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\discountsBySpell.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellClassDiscountPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellManaDiscountPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct">
-      <Link>systems\Abilities\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellManaDiscounts\SpellSchoolManaDiscountPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\spellBoost.scp">
-      <Link>systems\Abilities\Talents\SpellPowerBonuses\spellBoost.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\spellBoost.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\spellBoost.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\spellDamageBonus.scp">
-      <Link>systems\Abilities\Talents\SpellPowerBonuses\spellDamageBonus.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\spellDamageBonus.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\spellDamageBonus.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\spellPowerBonusAbilities.scp">
-      <Link>systems\Abilities\Talents\SpellPowerBonuses\spellPowerBonusAbilities.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\spellPowerBonusAbilities.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\spellPowerBonusAbilities.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.ct">
-      <Link>systems\Abilities\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.ct</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.ct">
+      <Link>systems\AbilitiesAndTalents\Talents\SpellPowerBonuses\SpellPowerBonusPlugin.ct</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\unimplementedTalents.scp">
-      <Link>systems\Abilities\Talents\unimplementedTalents.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\unimplementedTalents.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\unimplementedTalents.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\Talents\wallSpellsDurationBonus.scp">
-      <Link>systems\Abilities\Talents\wallSpellsDurationBonus.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\wallSpellsDurationBonus.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\wallSpellsDurationBonus.scp</Link>
     </None>
-    <None Include="..\..\scripts\systems\Abilities\unimplementedAbilities.scp">
-      <Link>systems\Abilities\unimplementedAbilities.scp</Link>
-    </None>
-    <None Include="..\..\scripts\systems\Abilities\Warcry\Warcry.ct">
-      <Link>systems\Abilities\Warcry\Warcry.ct</Link>
-    </None>
-    <None Include="..\..\scripts\systems\Abilities\Warcry\warcry.scp">
-      <Link>systems\Abilities\Warcry\warcry.scp</Link>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\unimplementedAbilities.scp">
+      <Link>systems\AbilitiesAndTalents\unimplementedAbilities.scp</Link>
     </None>
     <None Include="..\..\scripts\systems\defs.scp">
       <Link>systems\defs.scp</Link>
