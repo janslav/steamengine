@@ -30,6 +30,13 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class MagicReflectionPlugin {
 
+		public void On_Assign() {
+			Player self = this.Cont as Player;
+			if (self != null) {
+				self.WriteLine(Loc<MagicReflectionLoc>.Get(self.Language).NextEvilSpellReflects);
+			}
+		}
+
 		public virtual bool On_SpellEffect(SpellEffectArgs effectArgs) {
 			SpellDef spell = effectArgs.SpellDef;
 			if ((spell.Flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
@@ -105,5 +112,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return null;
 		}
+	}
+
+	public class MagicReflectionLoc : LocStringCollection {
+		public string NextEvilSpellReflects = "Pøíští nepøátelské kouzlo se od tebe odrazí";
 	}
 }
