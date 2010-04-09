@@ -1233,6 +1233,9 @@
     <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.ct">
       <Link>systems\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.ct</Link>
     </None>
+    <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\magicReflectionBlessEnhancement.scp">
+      <Link>systems\AbilitiesAndTalents\Talents\magicReflectionBlessEnhancement.scp</Link>
+    </None>
     <None Include="..\..\scripts\systems\AbilitiesAndTalents\Talents\manaDepositBonus.scp">
       <Link>systems\AbilitiesAndTalents\Talents\manaDepositBonus.scp</Link>
     </None>
