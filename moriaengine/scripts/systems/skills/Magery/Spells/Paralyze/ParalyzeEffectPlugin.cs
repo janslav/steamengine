@@ -70,8 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void Paralyze(Character target, PluginKey key, TimeSpan duration, Thing source, EffectFlag type) {
 			type |= EffectFlag.HarmfulEffect;
 			ParalyzeEffectPlugin plugin = (ParalyzeEffectPlugin) instance.Create();
-			plugin.Init(source, type, 1, duration);
-			plugin.EffectName = ParalyzeSpellDef.Name;
+			plugin.Init(source, type, 1, duration, ParalyzeSpellDef);
 			target.AddPlugin(key, plugin);
 		}
 

@@ -17,6 +17,6 @@
 [PluginTemplate EffectDurationPlugin : TimerPlugin]
 Vars:
 	double effectPower = 0
-	Thing source = null
+	Thing sourceThing = null
 	EffectFlag flags = EffectFlag.Unknown
-	string effectName = null
+	AbstractDef sourceDef = null

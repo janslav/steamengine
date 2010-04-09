@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				WarcryEffectPlugin warcryEffect = (WarcryEffectPlugin) WarcryEffectPlugin.defInstance.Create();
-				warcryEffect.Init(chr, EffectFlag.FromAbility | EffectFlag.HarmfulEffect,	power, duration);
+				warcryEffect.Init(chr, EffectFlag.FromAbility | EffectFlag.HarmfulEffect, power, duration, this);
 				target.AddPlugin(WarcryEffectPlugin.warcyEffectPluginKey, warcryEffect);
 			}
 			return false; //no cancel needed
