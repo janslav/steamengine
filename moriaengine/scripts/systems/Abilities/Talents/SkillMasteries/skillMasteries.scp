@@ -1,4 +1,0 @@
-[SkillMasteryAbilityDef a_mastery_magery]
-Name="Magery Mastery"
-EffectPower=10 //1% skill per 1 talent point
-Skill=skill_magery
