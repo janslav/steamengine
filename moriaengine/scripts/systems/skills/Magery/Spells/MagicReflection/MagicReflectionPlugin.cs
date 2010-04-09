@@ -65,9 +65,9 @@ namespace SteamEngine.CompiledScripts {
 
 					ReflectionEyeCandy(origTarget);
 					ReflectionEyeCandy(origCaster);
-				}				
+				}
 			}
-			
+
 			return false; //nonharmful spell - do nothing			
 		}
 
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class MagicReflectionLoc : LocStringCollection {
+	public class MagicReflectionLoc : CompiledLocStringCollection {
 		public string NextEvilSpellReflects = "Pøíští nepøátelské kouzlo se od tebe odrazí";
 	}
 }
