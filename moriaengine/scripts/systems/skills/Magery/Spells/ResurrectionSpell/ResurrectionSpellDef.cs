@@ -61,24 +61,24 @@ namespace SteamEngine.CompiledScripts {
                         if (owner.CanReach(corp) == DenyResult.Allow) {
                             owner.Resurrect(corp);
                         } else {
-                            caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ResurrectionPlayerCantReachTheBody);
+                            caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).GhostCantReachTheBody);
                         }
                     } else {
                         caster.ClilocSysMessage(501041, -1); // Target is not dead.
                     }
                 } else {
-                    caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ResurrectionNotPlayersBody);
+                    caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ThisIsntPlayersBody);
                 }
             } else {
-                caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ResurrectionNotBody);
+                caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ThisIsntBody);
 
             }
         }
     }
     public class ResurrectionLoc : CompiledLocStringCollection {
-        internal readonly string ResurrectionNotBody = "Toto není tìlo!";
-        internal readonly string ResurrectionNotPlayersBody = "Toto není tìlo hráèe.";
-        internal readonly string ResurrectionPlayerIsntDead = "Hráè toho tìla není mrtvý.";
-        internal readonly string ResurrectionPlayerCantReachTheBody = "Duch nedosáhne na své tìlo.";
+		public string ThisIsntBody = "Toto není tìlo!";
+		public string ThisIsntPlayersBody = "Toto není tìlo hráèské postavy.";
+        //internal readonly string ResurrectionPlayerIsntDead = "Hráè toho tìla není mrtvý.";
+        public string GhostCantReachTheBody = "Duch nedosáhne na své tìlo.";
     }
 }

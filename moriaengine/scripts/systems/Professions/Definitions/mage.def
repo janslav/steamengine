@@ -160,4 +160,4 @@ a_cunning_bonus = 2, 1, 5
 a_magic_reflection_enhancement = 2, 2, 5
 //+1 summon
 
-
+a_mastery_magery_greater = 3, 0, 5, 1000 magery

@@ -12,7 +12,7 @@ MANAUSE=100
 Requirements=99.0 Magery
 
 on=@effectChar
-	EffectFactory.StationaryEffect(target, 0x376A, 10, 16)
+	EffectFactory.StationaryEffect(this, 0x376A, 10, 16)
 	
 on=@effectItem
 	EffectFactory.StationaryEffectAt(this, 0x376A, 10, 16)
