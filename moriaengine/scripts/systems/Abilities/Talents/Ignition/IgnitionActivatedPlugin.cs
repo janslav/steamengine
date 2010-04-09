@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 							if (power > IgnitionEffectPlugin.minimumIgnitionEffect) { //else it does nothing to this target, so it's effectively immune
 								ignitionPlugin = (IgnitionEffectPlugin) IgnitionEffectPluginDef.instance.Create();
 								ignitionPlugin.Init(spellEffectArgs.Caster, EffectFlag.FromAbility | EffectFlag.HarmfulEffect,
-									power, TimeSpan.FromSeconds(ignition.EffectDuration));
+									power, TimeSpan.FromSeconds(ignition.EffectDuration), IgnitionDef);
 								target.AddPlugin(pkIgnitionEffect, ignitionPlugin);
 							}
 						}

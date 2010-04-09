@@ -28,13 +28,18 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class EffectDurationPlugin {
 
-		public void Init(Thing source, EffectFlag sourceType, double power, TimeSpan duration) {
-			this.source = source;
+		public void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration) {
+			this.Init(sourceThing, sourceType, power, duration, null);
+		}
+
+		public void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration, AbstractDef sourceDef) {
+			this.sourceThing = sourceThing;
 			this.flags = sourceType;
 			this.effectPower = power;
 			if (duration >= TimeSpan.Zero) {
 				this.Timer = duration.TotalSeconds;
 			}
+			this.sourceDef = sourceDef;
 		}
 
 		public virtual void On_Timer() {
@@ -66,9 +71,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public Thing Source {
+		public Thing SourceThing {
 			get {
-				return this.source;
+				return this.sourceThing;
 			}
 		}
 
@@ -78,15 +83,18 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		
-		public string EffectName {
+		virtual public string EffectName {
 			get {
-				if (this.effectName != null) {
-					return this.effectName;
+				if (this.sourceDef != null) {
+					if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
+						return ((AbilityDef) this.sourceDef).Name;
+					} else if ((this.flags & (EffectFlag.FromSpellBook | EffectFlag.FromSpellScroll)) != EffectFlag.None) {
+						return ((SpellDef) this.sourceDef).Name;
+					} else {
+						return this.sourceDef.PrettyDefname;
+					}
 				}
 				return this.ToString();
-			}
-			set {
-				this.effectName = value;
 			}
 		}
 
@@ -101,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected virtual void EffectEndedMessage(Character cont) {
 			if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
-				if (cont == this.source) { //my own ability
+				if (cont == this.sourceThing) { //my own ability
 					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 						Loc<EffectDurationLoc>.Get(cont.Language).AbilityUnActivated,
 						this.EffectName));
@@ -117,8 +125,7 @@ namespace SteamEngine.CompiledScripts {
 					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 						msg, this.EffectName));
 				}
-			} else if (((this.flags & EffectFlag.FromSpellBook) == EffectFlag.FromSpellBook) ||
-					((this.flags & EffectFlag.FromSpellScroll) == EffectFlag.FromSpellScroll)) {
+			} else if ((this.flags & (EffectFlag.FromSpellBook | EffectFlag.FromSpellScroll)) != EffectFlag.None) {
 				string msg;
 				if ((this.flags & EffectFlag.BeneficialEffect) == EffectFlag.BeneficialEffect) {
 					msg = Loc<EffectDurationLoc>.Get(cont.Language).GoodSpellEffecEnded;

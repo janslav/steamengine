@@ -57,7 +57,8 @@ namespace SteamEngine.CompiledScripts {
 				if ((poisonPlugin == null) || (effect > poisonPlugin.EffectPower)) { //previous poison is not better than ours, or there is none
 
 					poisonPlugin = (PoisonEffectPlugin) this.EffectPluginDef.Create();
-					poisonPlugin.Init(spellEffectArgs.Caster, sourceType, effect, TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)));
+					poisonPlugin.Init(spellEffectArgs.Caster, sourceType, effect, 
+						TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)), this);
 					target.AddPlugin(key, poisonPlugin);
 				}
 			}

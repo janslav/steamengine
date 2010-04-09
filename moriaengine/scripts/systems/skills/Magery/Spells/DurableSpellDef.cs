@@ -113,8 +113,8 @@ namespace SteamEngine.CompiledScripts {
 			EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
 			if (durationPlugin != null) {
 				int spellPower = spellEffectArgs.SpellPower;
-				durationPlugin.Init(spellEffectArgs.Caster, effectFlag, this.GetEffectForValue(spellPower), TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)));
-				durationPlugin.EffectName = this.Name;
+				durationPlugin.Init(spellEffectArgs.Caster, effectFlag, this.GetEffectForValue(spellPower), 
+					TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)), this);
 			}
 			target.AddPlugin(key, plugin);
 		}
