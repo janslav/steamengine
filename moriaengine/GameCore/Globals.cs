@@ -985,8 +985,8 @@ namespace SteamEngine {
 
 		internal static void PauseServerTime() {
 			paused++;
-			Logger.WriteDebug("paused level raised to " + paused);
-			Logger.WriteDebug(new StackTrace());
+			//Logger.WriteDebug("paused level raised to " + paused);
+			//Logger.WriteDebug(new StackTrace());
 			if (paused == 1) {
 				DateTime current = DateTime.Now;
 
@@ -999,8 +999,8 @@ namespace SteamEngine {
 
 		internal static void UnPauseServerTime() {
 			paused--;
-			Logger.WriteDebug("paused level sank to " + paused);
-			Logger.WriteDebug(new StackTrace());
+			//Logger.WriteDebug("paused level sank to " + paused);
+			//Logger.WriteDebug(new StackTrace());
 			Sanity.IfTrueThrow(paused < 0, "Can't UnPause when not paused");
 			if (paused == 0) {
 				lastMarkRealTime = DateTime.Now;

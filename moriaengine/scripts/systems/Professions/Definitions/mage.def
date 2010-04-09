@@ -157,4 +157,7 @@ a_electric_school_discount_magician = 1, 5, 5
 a_paralyze_haste = 2, 0, 5
 //energyshield_bonus
 a_cunning_bonus = 2, 1, 5
+a_magic_reflection_enhancement = 2, 2, 5
+//+1 summon
+
 

@@ -28,10 +28,12 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class EffectDurationPlugin {
 
+		//sourcething = spell caster / ability user / trap item / etc
 		public void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration) {
 			this.Init(sourceThing, sourceType, power, duration, null);
 		}
 
+		//sourceDef = source spelldef / abilitydef / etc.
 		public void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration, AbstractDef sourceDef) {
 			this.sourceThing = sourceThing;
 			this.flags = sourceType;
@@ -74,6 +76,13 @@ namespace SteamEngine.CompiledScripts {
 		public Thing SourceThing {
 			get {
 				return this.sourceThing;
+			}
+		}
+
+		//source spelldef/abilitydef 
+		public AbstractDef SourceDef {
+			get {
+				return this.sourceDef;
 			}
 		}
 

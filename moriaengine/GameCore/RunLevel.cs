@@ -235,7 +235,7 @@ namespace SteamEngine {
 			private RunLevel runLevel = currentLevel;
 
 			public void Dispose() {
-				Logger.WriteDebug("Changing state: '" + runLevel + "' -> '" + currentLevel + "'");
+				//Logger.WriteDebug("Changing state: '" + runLevel + "' -> '" + currentLevel + "'");
 			}
 		}
 	}
