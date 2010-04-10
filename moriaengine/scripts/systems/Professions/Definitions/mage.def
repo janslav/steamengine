@@ -16,7 +16,7 @@
 [ProfessionDef profession_mage]
 Defname = class_mage //class_ as alternate prefix
 Name = "mag"
-professionPluginDef = plugin_profession_default
+professionPluginDef = p_profession_mage
 
 //SkillNameOrDefname = starting value, cap value
 //not listed skills are considered 0, 0
@@ -74,13 +74,13 @@ a_energy_shield = 9, 30
 
 
 //list allowed spells
-allowedSpells=s_clumsy, s_feeblemind, s_magic_arrow, s_nightsight, s_weaken, s_cunning, s_harm, s_protection, s_fireball, s_teleport, s_wall_of_stone, s_lightning, s_recall, s_dispel_field, s_mind_blast, s_paralyze, s_dispel, s_energy_bolt, s_explosion, s_chain_lightning, s_energy_field, s_flamestrike, s_gate_travel, s_mass_dispel, s_meteor_swarm, s_mana_shield
-//, s_fire_field, s_mana_drain, s_blade_spirits, s_magic_reflection, s_summon_creature, s_invisibility, s_mark, s_paralyze_field, s_reveal, s_energy_vortex, s_resurrection, s_summon_air_elemental, s_summon_daemon, s_summon_earth_elemental, s_summon_fire_elemental, s_summon_water_elemental
+allowedSpells=s_clumsy, s_feeblemind, s_magic_arrow, s_nightsight, s_weaken, s_cunning, s_harm, s_protection, s_fireball, s_teleport, s_wall_of_stone, s_lightning, s_recall, s_dispel_field, s_mind_blast, s_paralyze, s_dispel, s_energy_bolt, s_explosion, s_chain_lightning, s_energy_field, s_flamestrike, s_gate_travel, s_mass_dispel, s_meteor_swarm, s_mana_shield, s_resurrection
+//, s_fire_field, s_mana_drain, s_blade_spirits, s_magic_reflection, s_summon_creature, s_invisibility, s_mark, s_paralyze_field, s_reveal, s_energy_vortex, s_summon_air_elemental, s_summon_daemon, s_summon_earth_elemental, s_summon_fire_elemental, s_summon_water_elemental
 
 
 //3 talent tree branches
-ttb1 = ttb_mage_magician //ttb_mage_sorcerer
-ttb2 = ttb_mage_magician //ttb_mage_conjurer
+ttb1 = ttb_mage_sorcerer
+ttb2 = ttb_mage_conjurer
 ttb3 = ttb_mage_magician
 
 
@@ -115,10 +115,10 @@ a_mind_blast_enhancement = 3, 1, 5
 a_mind_blast_discount = 3, 2, 5
 a_spell_damage_bonus_greater = 3, 3, 5
 
-
+//TODO: tirednes/stun
 a_chain_lightning_discount = 4, 2, 5
 a_standcast_freeze_reduction = 4, 3, 5
-
+//TODO: shorter standcast freeze 
 
 a_spell_boost = 5, 0, 1
 
@@ -130,8 +130,11 @@ a_regen_hits_bonus = 0, 3, 5
 a_mana_deposit_bonus = 0, 4, 5
 a_aptitude_cartography = 0, 5, 5
 
-a_ignition = 2, 2, 5
-a_ignition_bonus = 2, 3, 5
+//TODO all summon-related talents
+
+a_ignition = 4, 1, 5
+a_ignition_bonus = 4, 2, 5
+a_spell_damage_bonus_fire = 4, 3, 5
 
 
 [TalentTreeBranchDef ttb_mage_magician]
@@ -155,9 +158,44 @@ a_electric_school_discount_magician = 1, 5, 5
 
 
 a_paralyze_haste = 2, 0, 5
-//energyshield_bonus
+//TODO: energyshield_bonus
 a_cunning_bonus = 2, 1, 5
 a_magic_reflection_enhancement = 2, 2, 5
-//+1 summon
+//TODO: +1 summon
 
 a_mastery_magery_greater = 3, 0, 5, 1000 magery
+a_resurrection nevim = 3, 1, 1 //jen 1 bod bo nevim co by to melo delat
+a_resurrection_discount = 3, 2, 5//, a_resurrection
+a_spell_damage_bonus_air = 3, 3, 5
+
+//TODO: mass fatigue
+a_chain_lightning_bonus = 4, 1, 5
+a_chain_lightning_discount = 4, 2, 5
+//TODO: shorter standcast freeze 
+
+a_clearcast = 5, 0, 1
+
+[AbilityDef a_resurrection]
+Name="Resurrection Spell Usage"
+//?
+
+
+[ProfessionPluginDef p_profession_mage]
+on=@SkillSelect
+return this.Cont.f_check_resurrection(argv[0])
+
+on=@SkillStart
+return this.Cont.f_check_resurrection(argv[0])		
+		
+[function f_check_resurrection] //this = player, 0 = SkillSeqArgs
+if ((!this.IsGM) && (argv[0].SkillDef == skill_magery))
+	if (argv[0].Param1 == s_resurrection)
+		if (this.GetAbility(a_resurrection) < 1)
+			this.RedMessage(LocManager.GetEntry("loc_mage", "ResurrectionTalentMissing", this.Language))
+			return 1 //cancel the skill
+		endif
+	endif
+endif
+			
+[ScriptedLoc loc_mage]
+ResurrectionTalentMissing = To cast the resurrection spell, you need the corresponding talent
