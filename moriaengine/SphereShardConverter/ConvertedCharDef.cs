@@ -52,6 +52,7 @@ namespace SteamEngine.Converter {
 		private static LineImplTask[] thirdStageImpl = new LineImplTask[] {
 			new LineImplTask("sound", new LineImpl(HandleSound)),
 			new LineImplTask("mountid", new LineImpl(HandleMountId)),
+			new LineImplTask("mountitem", new LineImpl(HandleMountId)),
 			new LineImplTask("tag.mountid", new LineImpl(HandleMountId)),
 																			  
 		};

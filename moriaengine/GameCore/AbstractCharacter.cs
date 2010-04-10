@@ -88,6 +88,12 @@ namespace SteamEngine {
 
 		internal CharSyncQueue.CharState syncState; //don't touch
 
+		public static int Instances {
+			get {
+				return instances;
+			}
+		}
+
 		protected AbstractCharacter(ThingDef myDef)
 			: base(myDef) {
 			instances++;
@@ -105,12 +111,119 @@ namespace SteamEngine {
 			Map.GetMap(this.point4d.m).Add(this);
 		}
 
-		public static int Instances {
+		//The client apparently doesn't want characters' uids to be flagged with anything.
+		[CLSCompliant(false)]
+		public sealed override uint FlaggedUid {
 			get {
-				return instances;
+				return (uint) this.Uid;
 			}
 		}
 
+		public AbstractCharacterDef TypeDef {
+			get {
+				return (AbstractCharacterDef) base.def;
+			}
+		}
+
+		public override bool IsPlayer {
+			get {
+				return (this.Account != null);
+			}
+		}
+
+		public bool IsLingering {
+			get {
+				return this.IsPlayer && !this.Flag_Disconnected && this.GameState == null;
+			}
+		}
+
+		public AbstractAccount Account {
+			get {
+				return this.account;
+			}
+		}
+
+		//public GameConn Conn {
+		//    get {
+		//        if (this.account != null) {
+		//            return this.account.Conn;
+		//        } else {
+		//            return null;
+		//        }
+		//    }
+		//}
+
+		public GameState GameState {
+			get {
+				if (this.account != null) {
+					return this.account.GameState;
+				} else {
+					return null;
+				}
+			}
+		}
+
+		public bool IsOnline {
+			get {
+				if (this.account != null) {
+					return this.account.IsOnline;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		public override sealed bool IsChar {
+			get {
+				return true;
+			}
+		}
+
+		public override sealed bool CanContain {
+			get {
+				return true;
+			}
+		}
+
+		public override string Name {
+			get {
+				return this.name;
+			}
+			set {
+				this.InvalidateProperties();
+				CharSyncQueue.AboutToChangeName(this);
+				this.name = value;
+			}
+		}
+
+		public int MountItem {
+			get {
+				return this.TypeDef.MountItem;
+			}
+		}
+
+		public abstract AbstractCharacter Mount { get; set; }
+
+		[Summary("This is the name that displays in one's Paperdoll, i.e. including his title(s)")]
+		public abstract string PaperdollName { get; }
+
+		public abstract bool IsFemale { get; }
+		public abstract bool IsMale { get; }
+
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public abstract bool Flag_Insubst {
+			get;
+			set;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public abstract bool Flag_WarMode { get; set; }
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public abstract bool Flag_Riding { get; }
+
+
+		#region Direction byte/Flags
 		[Summary("The Direction this character is facing.")]
 		public Direction Direction {
 			get {
@@ -131,37 +244,6 @@ namespace SteamEngine {
 				if (this.directionAndFlags != newValue) {
 					CharSyncQueue.AboutToChangeDirection(this, false);
 					this.directionAndFlags = newValue;
-				}
-			}
-		}
-
-		public AbstractCharacterDef TypeDef {
-			get {
-				return (AbstractCharacterDef) base.def;
-			}
-		}
-
-		public override bool IsPlayer {
-			get {
-				return (this.Account != null);
-			}
-		}
-
-		public abstract bool IsFemale { get; }
-		public abstract bool IsMale { get; }
-
-		//Used with NetState, but at present this should be set when the character moves (walk/run/fly), and should remain
-		//set for the rest of the cycle. Maybe there's a potential use for that in scripts, so this is public.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public bool Flag_Moving {
-			get {
-				return (this.directionAndFlags & DirectionAndFlag.DirFlagMoving) == DirectionAndFlag.DirFlagMoving;
-			}
-			set {
-				if (value) {
-					this.directionAndFlags |= DirectionAndFlag.DirFlagMoving;
-				} else {
-					this.directionAndFlags &= ~DirectionAndFlag.DirFlagMoving;
 				}
 			}
 		}
@@ -256,101 +338,9 @@ namespace SteamEngine {
 				}
 			}
 		}
-		//public override float Weight {
-		//	get {
-		//		if (recalculateWeight) FixWeight();
-		//		return calculatedWeight;
-		//	} set {
-		//		base.Weight=value;
-		//	}
-		//}
+		#endregion Direction byte/Flags
 
-		public int MountItem {
-			get {
-				return this.TypeDef.MountItem;
-			}
-		}
-
-		public abstract AbstractCharacter Mount { get; set; }
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public abstract bool Flag_WarMode { get; set; }
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public abstract bool Flag_Riding { get; }
-
-		public abstract string PaperdollName { get; }
-
-		public override string Name {
-			get {
-				return this.name;
-			}
-			set {
-				this.InvalidateProperties();
-				CharSyncQueue.AboutToChangeName(this);
-				this.name = value;
-			}
-		}
-
-		public AbstractAccount Account {
-			get {
-				return this.account;
-			}
-		}
-
-		//public GameConn Conn {
-		//    get {
-		//        if (this.account != null) {
-		//            return this.account.Conn;
-		//        } else {
-		//            return null;
-		//        }
-		//    }
-		//}
-
-		public GameState GameState {
-			get {
-				if (this.account != null) {
-					return this.account.GameState;
-				} else {
-					return null;
-				}
-			}
-		}
-
-		public bool IsOnline {
-			get {
-				if (this.account != null) {
-					return this.account.IsOnline;
-				} else {
-					return false;
-				}
-			}
-		}
-
-		public bool IsPlevelAtLeast(int plevel) {
-			return (this.account != null && this.account.PLevel >= plevel);
-		}
-
-		public bool IsMaxPlevelAtLeast(int plevel) {
-			return (this.account != null && this.account.MaxPLevel >= plevel);
-		}
-
-		public bool IsLingering {
-			get {
-				return this.IsPlayer && !this.Flag_Disconnected && this.GameState == null;
-			}
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public abstract bool Flag_Insubst {
-			get;
-			set;
-		}
-
-		public override sealed void Resend() {
-			CharSyncQueue.Resend(this);
-		}
-
+		#region Login/Logout
 		public override bool Flag_Disconnected {
 			get {
 				return ((this.directionAndFlags & DirectionAndFlag.DirFlagDisconnected) == DirectionAndFlag.DirFlagDisconnected);
@@ -466,7 +456,9 @@ namespace SteamEngine {
 		public virtual bool On_LogIn() {
 			return false;
 		}
+		#endregion Login/Logout
 
+		#region Persistence
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			if (this.account != null) {
@@ -535,52 +527,59 @@ namespace SteamEngine {
 					break;
 			}
 		}
+		#endregion Persistence
 
-		//TODO: abstract Damage methods
+		#region ISrc, plevels, messages sending
 
-		/*
-			Method: FixWeight
-			Call to recalculate the weight of this container. Anything holding this is corrected as well.
-		*/
-		//public override void FixWeight() {
-		//	calculatedWeight=CalculateWeight();
-		//	recalculateWeight=false;
-		//}
-		//
-		//internal override void IncreaseWeightBy(float adjust) {
-		//	calculatedWeight+=adjust;
-		//	Logger.WriteInfo(WeightTracingOn, "IncreaseWeightBy("+adjust+"), changed calculatedweight to "+calculatedWeight+".");
-		//	Sanity.StackTraceIf(WeightTracingOn);
-		//	recalculateWeight=false;
-		//}
-		//
-		//internal override void DecreaseWeightBy(float adjust) {
-		//	calculatedWeight-=adjust;
-		//	Logger.WriteInfo(WeightTracingOn, "DecreaseWeightBy("+adjust+"), changed calculatedweight to "+calculatedWeight+".");
-		//	Sanity.StackTraceIf(WeightTracingOn);
-		//	recalculateWeight=false;
-		//}
+		//ISrc implementation
+		public byte Plevel {
+			get {
+				AbstractAccount a = Account;
+				if (a != null) {
+					return a.PLevel;
+				} else {
+					return 0;
+				}
+			}
+			set {
+				AbstractAccount a = Account;
+				if (a != null) {
+					a.PLevel = value;
+				}//else ?
+			}
+		}
 
-		/*
-			Method: CalculateWeight
-			Returns the weight of this, including contents.
-		*/
-		//public float CalculateWeight() {
-		//	float w=0;
-		//	foreach (AbstractItem i in this) {
-		//		if (i!=null) {
-		//			w+=i.Weight;
-		//		}
-		//	}
-		//	w+=base.Weight;
-		//	return w;
-		//}
+		public byte MaxPlevel {
+			get {
+				AbstractAccount a = Account;
+				if (a != null) {
+					return a.MaxPLevel;
+				} else {
+					return 0;
+				}
+			}
+		}
+
+		public bool IsPlevelAtLeast(int plevel) {
+			return (this.account != null && this.account.PLevel >= plevel);
+		}
+
+		public bool IsMaxPlevelAtLeast(int plevel) {
+			return (this.account != null && this.account.MaxPLevel >= plevel);
+		}
+
+		//ISrc implementation
+		public AbstractCharacter Character {
+			get {
+				return this;
+			}
+		}
 
 		//ISrc implementation
 		public void WriteLine(string line) {
 			this.SysMessage(line);
 		}
-
+		
 		public Language Language {
 			get {
 				GameState state = this.GameState;
@@ -641,6 +640,24 @@ namespace SteamEngine {
 			GameState state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, args);
+			}
+		}
+		#endregion ISrc, messages sending
+
+		#region Movement
+		//Used with NetState, but at present this should be set when the character moves (walk/run/fly), and should remain
+		//set for the rest of the cycle. Maybe there's a potential use for that in scripts, so this is public.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public bool Flag_Moving {
+			get {
+				return (this.directionAndFlags & DirectionAndFlag.DirFlagMoving) == DirectionAndFlag.DirFlagMoving;
+			}
+			set {
+				if (value) {
+					this.directionAndFlags |= DirectionAndFlag.DirFlagMoving;
+				} else {
+					this.directionAndFlags &= ~DirectionAndFlag.DirFlagMoving;
+				}
 			}
 		}
 
@@ -796,102 +813,9 @@ namespace SteamEngine {
 		public virtual bool On_ItemStep(AbstractItem i, bool repeated, MovementType movementType) {
 			return false;
 		}
+		#endregion Movement
 
-		/**
-			Attaches this character to an account and makes them a player.
-			This could be used by the 'control' command.
-			Used by playercreation script
-				
-			@param acc The account to attach them to.
-		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public int MakeBePlayer(AbstractAccount acc) {
-			int slot;
-			if (acc.AttachCharacter(this, out slot)) {
-				CharSyncQueue.Resend(this);
-				this.account = acc;
-				this.GetMap().MadeIntoPlayer(this);
-			} else {
-				throw new SEException("That account (" + acc + ") is already full.");
-			}
-			return slot;
-		}
-
-		public void Resync() {
-			GameState state = this.GameState;
-			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
-
-				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-
-				//pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(this.Season, this.Cursor);
-				//pg.AcquirePacket<SetFacetOutPacket>().Prepare(this.GetMap().Facet);
-				//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, this);
-				//pg.AcquirePacket<ClientViewRangeOutPacket>().Prepare(state.UpdateRange);
-				////(Not To-do, or to-do much later on): 0xbf map patches (INI flag) (.. We don't need this on custom maps, and it makes it more complicated to load the maps/statics)
-				////(TODO): 0x4e and 0x4f personal and global light levels
-				//conn.SendPacketGroup(pg);
-
-				PreparedPacketGroups.SendWarMode(conn, this.Flag_WarMode);
-
-				PacketSequences.SendCharInfoWithPropertiesTo(this, state, conn, this);
-
-				this.SendNearbyStuffTo(state, conn);
-
-				foreach (AbstractItem con in OpenedContainers.GetOpenedContainers(this)) {
-					if (!con.IsEmpty) {
-						PacketSequences.SendContainerContentsWithPropertiesTo(this, state, conn, con);
-					}
-				}
-			}
-		}
-
-		internal sealed override void Trigger_Destroy() {
-			AbstractAccount acc = this.Account;
-			if (acc != null) {
-				GameState state = acc.GameState;
-				if ((state != null) && (state.Character == this)) {
-					state.Conn.Close("Character being deleted");
-				}
-
-				acc.DetachCharacter(this);
-			}
-
-			foreach (AbstractItem i in this) {
-				i.InternalDeleteNoRFV();//no updates, because it will disappear entirely
-			}
-
-			base.Trigger_Destroy();
-			instances--;
-
-			if (!this.IsLimbo) {
-				this.GetMap().Remove(this);
-				Thing.MarkAsLimbo(this);
-			}
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-		public abstract AbstractItem GetBackpack();
-
-		public void EmptyCont() {
-			ThrowIfDeleted();
-			foreach (AbstractItem i in this) {
-				i.InternalDelete();
-			}
-		}
-
-		public override sealed bool IsChar {
-			get {
-				return true;
-			}
-		}
-
-		public override sealed bool CanContain {
-			get {
-				return true;
-			}
-		}
-
+		#region Gump/Dialog sending
 		public Gump SendGump(Thing focus, GumpDef gumpDef, DialogArgs args) {
 			GameState state = this.GameState;
 			if (state != null) {
@@ -941,7 +865,9 @@ namespace SteamEngine {
 			}
 			return false;
 		}
+		#endregion Gump/Dialog sending
 
+		#region Click and Dclick
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal override sealed bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
 			//helper method for Trigger_Click
@@ -1000,10 +926,29 @@ namespace SteamEngine {
 			}
 		}
 
-		public virtual bool CanEquipItemsOn(AbstractCharacter target) {
-			return true;
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public virtual void On_ItemDClick(AbstractItem dClicked) {
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public virtual void On_CharDClick(AbstractCharacter dClicked) {
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public virtual bool On_DenyItemDClick(DenyClickArgs args) {
+			DenyResult result = args.ClickingChar.CanReach(args.Target);
+			args.Result = result;
+			return result != DenyResult.Allow;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public virtual bool On_DenyCharDClick(DenyClickArgs args) {
+			//default implementation only for item... char can be dclicked even if outa range (paperdoll)
+			return false;
+		}
+		#endregion Click and Dclick
+
+		#region Speech
 		//this method fires the [speech] triggers
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void Trigger_Hear(AbstractCharacter speaker, string speech, int clilocSpeech,
@@ -1063,79 +1008,9 @@ namespace SteamEngine {
 		public virtual bool On_Say(string speech, SpeechType type, int[] keywords) {
 			return false;
 		}
+		#endregion Speech
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_ItemDClick(AbstractItem dClicked) {
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_CharDClick(AbstractCharacter dClicked) {
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyItemDClick(DenyClickArgs args) {
-			DenyResult result = args.ClickingChar.CanReach(args.Target);
-			args.Result = result;
-			return result != DenyResult.Allow;
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyCharDClick(DenyClickArgs args) {
-			//default implementation only for item... char can be dclicked even if outa range (paperdoll)
-			return false;
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public abstract void Trigger_PlayerAttackRequest(AbstractCharacter target);
-
-		/*
-			Method: CanRename
-				Determines if this character can rename another character.
-			Parameters:
-				to - The character to be renamed
-			Returns:
-				True if 'to' is an NPC with an owner, and this is its owner.
-		*/
-		public abstract bool CanRename(AbstractCharacter to);
-
-		//The client apparently doesn't want characters' uids to be flagged with anything.
-		[CLSCompliant(false)]
-		public sealed override uint FlaggedUid {
-			get {
-				return (uint) this.Uid;
-			}
-		}
-
-		//Commands
-		public void Anim(int animId) {
-			this.Anim(animId, 1, false, false, 0x01);
-		}
-		public void Anim(int animId, byte frameDelay) {
-			this.Anim(animId, 1, false, false, frameDelay);
-		}
-
-		public void Anim(int animId, bool backwards) {
-			this.Anim(animId, 1, backwards, false, 0x01);
-		}
-
-		public void Anim(int animId, bool backwards, bool undo) {
-			this.Anim(animId, 1, backwards, undo, 0x01);
-		}
-
-		public void Anim(int animId, bool backwards, byte frameDelay) {
-			this.Anim(animId, 1, backwards, false, frameDelay);
-		}
-
-		public void Anim(int animId, bool backwards, bool undo, byte frameDelay) {
-			this.Anim(animId, 1, backwards, undo, frameDelay);
-		}
-
-		public void Anim(int animId, int numAnims, bool backwards, bool undo, byte frameDelay) {
-			CharacterAnimationOutPacket p = Pool<CharacterAnimationOutPacket>.Acquire();
-			p.Prepare(this, animId, numAnims, backwards, undo, frameDelay);
-			GameServer.SendToClientsWhoCanSee(this, p);
-		}
-
+		#region Status, skills, stats
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void ShowStatusBarTo(AbstractCharacter viewer, TcpConnection<GameState> viewerConn) {
 			StatusBarInfoOutPacket packet = Pool<StatusBarInfoOutPacket>.Acquire();
@@ -1156,34 +1031,6 @@ namespace SteamEngine {
 			SendSkillsOutPacket packet = Pool<SendSkillsOutPacket>.Acquire();
 			packet.PrepareAllSkillsUpdate(this.Skills, viewerState.Version.DisplaySkillCaps);
 			viewerConn.SendSinglePacket(packet);
-		}
-
-		//ISrc implementation
-		public byte Plevel {
-			get {
-				AbstractAccount a = Account;
-				if (a != null) {
-					return a.PLevel;
-				} else {
-					return 0;
-				}
-			}
-			set {
-				AbstractAccount a = Account;
-				if (a != null) {
-					a.PLevel = value;
-				}//else ?
-			}
-		}
-		public byte MaxPlevel {
-			get {
-				AbstractAccount a = Account;
-				if (a != null) {
-					return a.MaxPLevel;
-				} else {
-					return 0;
-				}
-			}
 		}
 
 		//public abstract ISkill[] Skills { get; }
@@ -1243,20 +1090,39 @@ namespace SteamEngine {
 		public virtual byte ExtendedStatusNum08 { get { return 0; } }
 		[Summary("Displays in client status as Stat cap by default")]
 		public virtual short ExtendedStatusNum09 { get { return 0; } }
+		#endregion Status, skills, stats
 
-		public abstract HighlightColor GetHighlightColorFor(AbstractCharacter viewer);
-
-		public virtual ICollection<AbstractCharacter> PartyMembers {
-			get {
-				return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
-			}
+		#region Resend/Resync/Update
+		public override sealed void Resend() {
+			CharSyncQueue.Resend(this);
 		}
 
-
-		public void CancelTarget() {
+		public void Resync() {
 			GameState state = this.GameState;
 			if (state != null) {
-				PreparedPacketGroups.SendCancelTargettingCursor(state.Conn);
+				TcpConnection<GameState> conn = state.Conn;
+
+				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+
+				//pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(this.Season, this.Cursor);
+				//pg.AcquirePacket<SetFacetOutPacket>().Prepare(this.GetMap().Facet);
+				//pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, this);
+				//pg.AcquirePacket<ClientViewRangeOutPacket>().Prepare(state.UpdateRange);
+				////(Not To-do, or to-do much later on): 0xbf map patches (INI flag) (.. We don't need this on custom maps, and it makes it more complicated to load the maps/statics)
+				////(TODO): 0x4e and 0x4f personal and global light levels
+				//conn.SendPacketGroup(pg);
+
+				PreparedPacketGroups.SendWarMode(conn, this.Flag_WarMode);
+
+				PacketSequences.SendCharInfoWithPropertiesTo(this, state, conn, this);
+
+				this.SendNearbyStuffTo(state, conn);
+
+				foreach (AbstractItem con in OpenedContainers.GetOpenedContainers(this)) {
+					if (!con.IsEmpty) {
+						PacketSequences.SendContainerContentsWithPropertiesTo(this, state, conn, con);
+					}
+				}
 			}
 		}
 
@@ -1300,14 +1166,129 @@ namespace SteamEngine {
 				}
 			}
 		}
+		#endregion Resend/Resync/Update
 
-		//ISrc implementation
-		public AbstractCharacter Character {
-			get {
-				return this;
+
+		//TODO?: abstract Damage methods
+
+		/**
+			Attaches this character to an account and makes them a player.
+			This could be used by the 'control' command.
+			Used by playercreation script
+				
+			@param acc The account to attach them to.
+		*/
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		public int MakeBePlayer(AbstractAccount acc) {
+			int slot;
+			if (acc.AttachCharacter(this, out slot)) {
+				CharSyncQueue.Resend(this);
+				this.account = acc;
+				this.GetMap().MadeIntoPlayer(this);
+			} else {
+				throw new SEException("That account (" + acc + ") is already full.");
+			}
+			return slot;
+		}
+
+		internal sealed override void Trigger_Destroy() {
+			AbstractAccount acc = this.Account;
+			if (acc != null) {
+				GameState state = acc.GameState;
+				if ((state != null) && (state.Character == this)) {
+					state.Conn.Close("Character being deleted");
+				}
+
+				acc.DetachCharacter(this);
+			}
+
+			foreach (AbstractItem i in this) {
+				i.InternalDeleteNoRFV();//no updates, because it will disappear entirely
+			}
+
+			base.Trigger_Destroy();
+			instances--;
+
+			if (!this.IsLimbo) {
+				this.GetMap().Remove(this);
+				Thing.MarkAsLimbo(this);
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		public abstract AbstractItem GetBackpack();
+
+		public void EmptyCont() {
+			ThrowIfDeleted();
+			foreach (AbstractItem i in this) {
+				i.InternalDelete();
+			}
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		public abstract void Trigger_PlayerAttackRequest(AbstractCharacter target);
+
+		/*
+			Method: CanRename
+				Determines if this character can rename another character.
+			Parameters:
+				to - The character to be renamed
+			Returns:
+				True if 'to' is an NPC with an owner, and this is its owner.
+		*/
+		public abstract bool CanRename(AbstractCharacter to);
+
+	
+		public void Anim(int animId) {
+			this.Anim(animId, 1, false, false, 0x01);
+		}
+		public void Anim(int animId, byte frameDelay) {
+			this.Anim(animId, 1, false, false, frameDelay);
+		}
+
+		public void Anim(int animId, bool backwards) {
+			this.Anim(animId, 1, backwards, false, 0x01);
+		}
+
+		public void Anim(int animId, bool backwards, bool undo) {
+			this.Anim(animId, 1, backwards, undo, 0x01);
+		}
+
+		public void Anim(int animId, bool backwards, byte frameDelay) {
+			this.Anim(animId, 1, backwards, false, frameDelay);
+		}
+
+		public void Anim(int animId, bool backwards, bool undo, byte frameDelay) {
+			this.Anim(animId, 1, backwards, undo, frameDelay);
+		}
+
+		public void Anim(int animId, int numAnims, bool backwards, bool undo, byte frameDelay) {
+			CharacterAnimationOutPacket p = Pool<CharacterAnimationOutPacket>.Acquire();
+			p.Prepare(this, animId, numAnims, backwards, undo, frameDelay);
+			GameServer.SendToClientsWhoCanSee(this, p);
+		}
+
+		public abstract HighlightColor GetHighlightColorFor(AbstractCharacter viewer);
+
+		public virtual ICollection<AbstractCharacter> PartyMembers {
+			get {
+				return EmptyReadOnlyGenericCollection<AbstractCharacter>.instance;
+			}
+		}
+
+		public void CancelTarget() {
+			GameState state = this.GameState;
+			if (state != null) {
+				PreparedPacketGroups.SendCancelTargettingCursor(state.Conn);
+			}
+		}
+
+		public sealed override void InvalidateProperties() {
+			CharSyncQueue.PropertiesChanged(this);
+			base.InvalidateProperties();
+		}
+
+		#region Equipped stuff
 		public int VisibleCount {
 			get {
 				if (this.visibleLayers == null) {
@@ -1328,11 +1309,6 @@ namespace SteamEngine {
 			}
 		}
 
-		public sealed override void InvalidateProperties() {
-			CharSyncQueue.PropertiesChanged(this);
-			base.InvalidateProperties();
-		}
-
 		public int InvisibleCount {
 			get {
 				int count = 0;
@@ -1349,10 +1325,16 @@ namespace SteamEngine {
 			}
 		}
 
+
+		public virtual bool CanEquipItemsOn(AbstractCharacter target) {
+			return true;
+		}
+
 		public override sealed IEnumerator<AbstractItem> GetEnumerator() {
 			ThrowIfDeleted();
 			return new EquipsEnumerator(this);
 		}
+		#endregion Equipped stuff
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]

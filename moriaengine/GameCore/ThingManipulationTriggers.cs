@@ -219,19 +219,6 @@ namespace SteamEngine {
 			ItemInCharArgs args = new ItemInCharArgs(this, cont, layer);
 
 			if (this.IsEquippable && this.Layer == layer) {
-				this.TryTrigger(TriggerKey.leaveChar, args);
-				ReturnIntoCharIfNeeded(cont, layer);
-				try {
-					this.On_LeaveChar(args);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
-				cont.TryTrigger(TriggerKey.itemLeave, args);
-				ReturnIntoCharIfNeeded(cont, layer);
-				try {
-					cont.On_ItemLeave(args);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
-			} else {
 				this.TryTrigger(TriggerKey.unEquip, args);
 				ReturnIntoCharIfNeeded(cont, layer);
 				try {
@@ -242,6 +229,19 @@ namespace SteamEngine {
 				ReturnIntoCharIfNeeded(cont, layer);
 				try {
 					cont.On_ItemUnequip(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);				
+			} else {
+				this.TryTrigger(TriggerKey.leaveChar, args);
+				ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					this.On_LeaveChar(args);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				ReturnIntoCharIfNeeded(cont, layer);
+				cont.TryTrigger(TriggerKey.itemLeave, args);
+				ReturnIntoCharIfNeeded(cont, layer);
+				try {
+					cont.On_ItemLeave(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				ReturnIntoCharIfNeeded(cont, layer);
 			}

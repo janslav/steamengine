@@ -216,7 +216,7 @@ namespace SteamEngine.Converter {
 			if (!def.armorOrDamHandled) {
 				def.armorOrDamHandled = true;
 				string value = null;
-				string[] strings = Utility.SplitSphereString(line.Value);
+				string[] strings = Utility.SplitSphereString(line.Value, true);
 				int n = strings.Length;
 				double sum = 0;
 				for (int i = 0; i < n; i++) {
