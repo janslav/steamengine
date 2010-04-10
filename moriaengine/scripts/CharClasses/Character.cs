@@ -50,6 +50,7 @@ namespace SteamEngine.CompiledScripts {
 		float weight;
 		private CharModelInfo charModelInfo;
 
+		#region Flags
 		public override sealed byte FlagsToSend {
 			get {
 				int ret = 0;
@@ -144,52 +145,14 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+		#endregion Flags
 
-		public bool IsAliveAndValid {
-			get {
-				//check if char isnt deleted, disconnected, dead and (insubst without being a GM)
-				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !(this.Flag_Insubst && !this.IsGM);
-			}
-		}
+		#region Mount/Rider stuff
+		//Flag_Riding = true, mountorrider must not be null -> I'm riding
+		//Flag_Riding = false, mountorrider != null -> someone's on my back (and I'm insubst)
+		//Flag_Riding = false, mountorrider == null -> I'm neither riding nor being ridden
 
-		public bool CheckAliveWithMessage() {
-			if ((this.Flag_Disconnected) || (this.IsDeleted)) {
-				return false;
-			} else if (this.Flag_Dead) {
-				this.ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.
-				return false;
-			} else if (this.Flag_Insubst && !this.IsGM) {
-				this.ClilocSysMessage(500590, 0x3B2);  //You're a ghost, and can't do that.
-				return false;
-			}
-			return true;
-		}
-
-		private static TriggerKey warModeChangeTK = TriggerKey.Acquire("warModeChange");
-		public void Trigger_WarModeChange() {
-			TryTrigger(warModeChangeTK, null);
-			On_WarModeChange();
-		}
-
-		public virtual void On_WarModeChange() {
-		}
-
-		private static TriggerKey visibilityChangeTK = TriggerKey.Acquire("visibilityChange");
-		public void Trigger_VisibilityChange() {
-			TryTrigger(visibilityChangeTK, null);
-			On_VisibilityChange();
-		}
-
-		public virtual void On_VisibilityChange() {
-		}
-
-		public override sealed bool IsNotVisible {
-			get {
-				return (this.Flag_InvisByMagic || this.Flag_Hidden || this.Flag_Insubst || this.Flag_Disconnected);
-			}
-		}
-
-		//Flag_Riding is split into two properties because scripts should not be able to set it,
+		//Flag_Riding is readonly and has a setter method,s because scripts should not be able to set it,
 		//(they should set Mount instead) but it needs to be settable from within Character itself.
 		public override bool Flag_Riding {
 			get {
@@ -201,89 +164,165 @@ namespace SteamEngine.CompiledScripts {
 			this.ProtectedFlag6 = value;
 		}
 
+		public virtual bool IsMountable {
+			get {
+				return this.MountItem > 0;
+			}
+		}
 
-		/**
-			The character riding this one, or null if this character doesn't have a rider.
-		*/
+		public virtual bool IsMountableBy(Character chr) {
+			return !this.IsPlayer && //players are never mountable
+				this.IsMountable &&
+				chr.CanReach(this) == DenyResult.Allow &&
+				this.IsPetOf(chr);
+		}
+
+		[Summary("The character riding this one, or null if this character doesn't have a rider.")]
 		public AbstractCharacter Rider {
 			get {
-				if (mountorrider != null) {
-					if (!Flag_Riding) {
-						if (mountorrider.IsDeleted) {
-							CharSyncQueue.AboutToChangeMount(this);
-							mountorrider = null;
-						} else {
-							return mountorrider;
-						}
-					}
+				if (!this.Flag_Riding) { //otherwise I'm the rider
+					return this.mountorrider;
 				}
 				return null;
 			}
 		}
 
-		/**
-			The mount this character is riding, or null if this character isn't riding a mount.
-		*/
+		[Summary("The mount this character is riding, or null if this character isn't riding a mount.")]
 		public override sealed AbstractCharacter Mount {
 			get {
-				if (mountorrider != null) {
-					if (Flag_Riding) {
-						if (mountorrider.IsDeleted) {
-							CharSyncQueue.AboutToChangeMount(this);
-							this.SetFlag_Riding(false);
-							mountorrider = null;
-						}
-					}
+				if (this.Flag_Riding) {
+					return this.mountorrider;
 				}
-				return mountorrider;
+				return null;
 			}
 			set {
-				CharSyncQueue.AboutToChangeMount(this);
-				if (value == null) {	//automatically call Dismount if 'mount=null;' is done.
-					if (mountorrider != null && !mountorrider.IsDeleted) {
-						Dismount();
-					} else {
-						CharSyncQueue.AboutToChangeMount(this);
-						this.SetFlag_Riding(false);
-						mountorrider = null;
-					}
-					return;
+				if ((this.mountorrider != null) && (!this.Flag_Riding)) {
+					throw new SEException("You can't set Mount of something that's being ridden!");
 				}
-				if (mountorrider != null) {
-					if (!mountorrider.IsDeleted) {
-						Dismount();
-					}
-				}
-				if (value.Flag_Riding) {
-					throw new SEException("You can't ride something that's riding something else!");
+				if (value == null || value.IsDeleted) {
+					//automatically call Dismount if 'mount=null;' is done.
+					this.Dismount();
 				} else {
-					mountorrider = (Character) value;
-					this.SetFlag_Riding(true);
-					mountorrider.mountorrider = this;
-					mountorrider.Disconnect();
+
+					Character newMount = (Character) value;
+					if ((newMount.mountorrider != null) && (!newMount.Flag_Riding)) {
+						throw new SEException("You can't set Mount to something that's being ridden!");
+					}
+					if (newMount.IsPlayer) {
+						throw new SEException("Players can't be mounted!");
+					}
+
+					if (this.mountorrider != newMount) {
+						if (this.mountorrider != null) {
+							this.Dismount();
+						} else {
+							CharSyncQueue.AboutToChangeMount(this);
+						}
+
+						newMount.Dismount();
+
+						this.mountorrider = newMount;
+						this.SetFlag_Riding(true);
+						newMount.mountorrider = this;
+						this.mountorrider.Disconnect();
+					} //else nothing changes
 				}
 			}
 		}
 
 		public void Dismount() {
-			CharSyncQueue.AboutToChangeMount(this);
-			if (Flag_Riding && mountorrider != null) {
-				if (mountorrider.mountorrider == this) {
-					//mountorrider.AboutToChange();
+			if (this.mountorrider != null) {
+				if (this.Flag_Riding) {
+					CharSyncQueue.AboutToChangeMount(this);
 
 					//move it to where we are
-					mountorrider.P(this);
-					mountorrider.Direction = Direction;
+					this.mountorrider.P(this);
+					this.mountorrider.Direction = Direction;
+
+					Sanity.IfTrueThrow(this.mountorrider.mountorrider != this, "this.mountorrider.mountorrider != this");
+					Sanity.IfTrueThrow(this.mountorrider.Flag_Riding, "this.mountorrider.Flag_Riding on Dismount()");
 
 					//set it's rider to null
-					mountorrider.mountorrider = null;
-					mountorrider.Reconnect();
+					this.mountorrider.mountorrider = null;
+					this.mountorrider.Reconnect();
+
+					this.SetFlag_Riding(false);
+					this.mountorrider = null;
 				} else {
-					Logger.WriteCritical("Dismount(): Mounted character doesn't know who's riding it or thinks the wrong person is ([" + this + "] is, but the mount thinks [" + mountorrider.mountorrider + "] is)!");
+					throw new SEException("You can't call Dismount() on a char that's being ridden. Call it on it's Rider.");
 				}
 			}
+
+			Sanity.IfTrueThrow(this.Flag_Riding, "Flag_Riding and this.mountorrider == null");
+		}
+
+		public override void On_AfterLoad() {
+			//try to fix mounts
+			if (this.mountorrider != null) {
+				if (this.mountorrider.mountorrider == this) {
+					if (this.Flag_Riding == this.mountorrider.Flag_Riding) { //both riders or both mounts = wrong
+						if (this.IsPlayer) { //I am the rider
+							if (!this.mountorrider.IsPlayer) {
+								this.SetFlag_Riding(true);
+								this.mountorrider.SetFlag_Riding(false);
+								this.mountorrider.Disconnect();
+							} else { //mount would be a player. Not gonna happen
+								this.ForgetMountValues();
+							}
+						} else if (!this.mountorrider.IsPlayer) { //both are NPCs
+							//we use flag-disconnected as clue
+							if (this.Flag_Disconnected != this.mountorrider.Flag_Disconnected) {
+								Logger.WriteWarning("Fixed mount states of 2 NPCs ('" + this + "' and '" + this.mountorrider + "') according to their Flag_Disconnected");
+								this.SetFlag_Riding(!this.Flag_Disconnected);
+								this.mountorrider.SetFlag_Riding(!this.mountorrider.Flag_Disconnected);
+							} else { //disconnected state the same, i.e. useless for us
+								//this is an error
+								this.ForgetMountValues(); //the other side should get fied in their own instance of this method
+							}
+						}
+					}
+				} else { //other side is not pointing to us. They might be in fact not broken so we leave them alone.
+					this.ForgetMountValues();
+				}
+			} else if (this.Flag_Riding) {
+				Logger.WriteWarning("Fixed mistakenly positive Flag_Riding of '" + this + "'.");
+				this.SetFlag_Riding(false);
+			}
+
+			base.On_AfterLoad();
+		}
+
+		private void ForgetMountValues() {
+			Logger.WriteError("Unfixable mount persistence error of '" + this + "'. Set as dismounted and reconnected.");
 			this.SetFlag_Riding(false);
-			mountorrider = null;
+			this.mountorrider = null;
+			if (!this.IsPlayer) {
+				this.Reconnect();
+			}
+		}
+
+		public override void On_Destroy() {
+			if (this.mountorrider != null) {
+				if (this.Flag_Riding) {//I am the rider, riding a NPC - delete it
+					this.mountorrider.Delete();
+					this.SetFlag_Riding(false);
+					this.mountorrider = null;
+				} else {//I am the mount
+					this.mountorrider.Dismount();
+				}
+			}
+			base.On_Destroy();
+		}
+		#endregion Mount/Rider stuff
+
+		#region Visibility
+		public virtual void On_VisibilityChange() {
+		}
+
+		public override sealed bool IsNotVisible {
+			get {
+				return (this.Flag_InvisByMagic || this.Flag_Hidden || this.Flag_Insubst || this.Flag_Disconnected);
+			}
 		}
 
 		public override bool CanSeeVisibility(Thing target) {
@@ -347,6 +386,42 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return true;
 		}
+		#endregion Visibility
+
+		public bool IsAliveAndValid {
+			get {
+				//check if char isnt deleted, disconnected, dead and (insubst without being a GM)
+				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !(this.Flag_Insubst && !this.IsGM);
+			}
+		}
+
+		public bool CheckAliveWithMessage() {
+			if ((this.Flag_Disconnected) || (this.IsDeleted)) {
+				return false;
+			} else if (this.Flag_Dead) {
+				this.ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.
+				return false;
+			} else if (this.Flag_Insubst && !this.IsGM) {
+				this.ClilocSysMessage(500590, 0x3B2);  //You're a ghost, and can't do that.
+				return false;
+			}
+			return true;
+		}
+
+		private static TriggerKey warModeChangeTK = TriggerKey.Acquire("warModeChange");
+		public void Trigger_WarModeChange() {
+			TryTrigger(warModeChangeTK, null);
+			On_WarModeChange();
+		}
+
+		public virtual void On_WarModeChange() {
+		}
+
+		private static TriggerKey visibilityChangeTK = TriggerKey.Acquire("visibilityChange");
+		public void Trigger_VisibilityChange() {
+			TryTrigger(visibilityChangeTK, null);
+			On_VisibilityChange();
+		}
 
 		public bool CanInteractWith(Thing target) {
 			if (this.Flag_Dead) {
@@ -365,6 +440,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
+		#region StatLock
 		public override sealed byte StatLockByte {
 			get {
 				return this.statLockByte;
@@ -406,6 +482,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+		#endregion StatLock
 
 		#region status properties
 		public override short Hits {
@@ -925,6 +1002,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		#region Death/Resurrection
 		public void Kill() {
 			//TODO effect?
 			this.CauseDeath((Character) Globals.SrcCharacter);
@@ -1086,6 +1164,7 @@ namespace SteamEngine.CompiledScripts {
 		private void ReleaseOModelTag() {
 			this.RemoveTag(oModelTK);
 		}
+		#endregion Death/Resurrection
 
 		private static TriggerKey disruptionTK = TriggerKey.Acquire("disruption");
 		public void Trigger_Disrupt() {
@@ -1108,6 +1187,7 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
+		#region Go() overrides
 		public void Go(Region reg) {
 			P(reg.P);
 			Fix();
@@ -1167,6 +1247,7 @@ namespace SteamEngine.CompiledScripts {
 			Fix();
 			//Update();
 		}
+		#endregion Go() overrides
 
 		private static ContainerDef backpackDef = null;
 
@@ -1222,15 +1303,6 @@ namespace SteamEngine.CompiledScripts {
 			throw new SEException(factory + " did not create an equippable item.");
 		}
 
-		private Dictionary<AbstractDef, object> SkillsAbilities {
-			get {
-				if (this.skillsabilities == null) {
-					this.skillsabilities = new Dictionary<AbstractDef, object>();
-				}
-				return this.skillsabilities;
-			}
-		}
-
 		public override void On_Dupe(Thing model) {
 			Character copyFrom = (Character) model;
 
@@ -1249,6 +1321,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		#region Persistence
 		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
 			if (this.skillsabilities != null) {
 				foreach (object o in this.skillsabilities.Values) {
@@ -1286,6 +1359,16 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			base.On_Load(input);
+		}
+		#endregion Persistence
+
+		private Dictionary<AbstractDef, object> SkillsAbilities {
+			get {
+				if (this.skillsabilities == null) {
+					this.skillsabilities = new Dictionary<AbstractDef, object>();
+				}
+				return this.skillsabilities;
+			}
 		}
 
 		#region Skills
@@ -1677,20 +1760,6 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public Character Owner {
-			get {
-				return owner;
-			}
-			set {
-				if (!this.IsPlayer) {
-					//AboutToChange();
-					owner = value;	//always Character
-				} else {
-					throw new ScriptException("You cannot give a player an owner.");
-				}
-			}
-		}
-
 		/*
 			Method: GM
 		
@@ -1748,26 +1817,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//for pets
 		public bool IsOwnerOf(Character cre) {
-			return ((cre.IsPlayer) && cre.Owner != null && cre.owner.Equals(this));
+			return cre.IsPetOf(this);
 		}
 
-		public bool IsPet {
-			get {
-				return ((!this.IsPlayer) && (this.Owner != null));
-			}
-		}
-
-		//also for pets
 		public bool IsPetOf(Character cre) {
-			//return (IsNPC && Owner!=null && Owner.Equals(cre));
 			return true;
 		}
 
 		public override bool CanEquipItemsOn(AbstractCharacter chr) {
 			Character target = (Character) chr;
-			return (IsPlevelAtLeast(Globals.PlevelOfGM) || (target.Owner == this && CanReach(chr) == DenyResult.Allow));
+			return (this.IsPetOf(target)) && (this.CanReach(target) == DenyResult.Allow);
 		}
 
 		//public override bool CanEquip(AbstractItem i) {
@@ -1775,39 +1835,22 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		public override bool CanRename(AbstractCharacter to) {
-			Character target = (Character) to;
-			Character targetOwner = target.owner;
-			return ((to.IsPlayer) && targetOwner != null && targetOwner.Equals(this));
-		}
-
-		public virtual bool IsMountable {
-			get {
-				return MountItem != 0;
-			}
-		}
-
-		public virtual bool IsMountableBy(AbstractCharacter chr) {
-			if (IsMountable && chr.CanReach(this) == DenyResult.Allow) {
-				if (IsPetOf((Character) chr))
-					return true;
-				if (!IsPet && chr.IsPlevelAtLeast(Globals.PlevelOfGM))
-					return true;
-			}
-			return false;
+			return (this.IsGM) || 
+				((this.IsPlayer) && (to != this) && this.IsOwnerOf((Character) to)); //can't rename self
 		}
 
 		//method: On_DClick
 		//Character`s implementation of @Dclick trigger, 
-		//paperdoll raising and mounting is/will be handled here
+		//basic implementation = paperdoll sending and horse mounting
 		public override void On_DClick(AbstractCharacter from) {
 			if (from != null && from.IsPlayer) {
 				//PC
 				if (from == this && this.Mount != null) {
 					this.Dismount();
 				} else {
-					if (from != this && this.IsMountableBy(from)) {
+					if (from != this && this.IsMountableBy((Character) from)) {
 						from.Mount = this;
-					} else {
+					} else { //TODO? paperdoll only for humanoids? show backpack of pets?
 						this.ShowPaperdollTo(from);
 					}
 				}
@@ -1827,6 +1870,7 @@ namespace SteamEngine.CompiledScripts {
 			return HighlightColor.NoColor;
 		}
 
+		#region Weight
 		public override float Weight {
 			get {
 				return weight;
@@ -1849,21 +1893,7 @@ namespace SteamEngine.CompiledScripts {
 			CharSyncQueue.AboutToChangeStats(this);
 			this.weight += adjust;
 		}
-
-		public override void On_Destroy() {
-			if (mountorrider != null) {
-				if (Flag_Riding) {//I am the rider
-					if (!mountorrider.IsDeleted) {
-						mountorrider.Delete();
-					}
-					this.SetFlag_Riding(false);
-					mountorrider = null;
-				} else {//I am the mount
-					mountorrider.Dismount();
-				}
-			}
-			base.On_Destroy();
-		}
+		#endregion Weight
 
 		[Summary("Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)")]
 		public void RedMessage(string arg) {

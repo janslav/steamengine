@@ -63,6 +63,6 @@ Vars:	//vars defined in the class, so they basically do what tags do, but better
 	double stamRegenSpeed=0.0
 	short tithingPoints=0
 	byte statLockByte=0
-	Character owner = null
+	//Character owner = null
 	string title = null
 	Character mountorrider = null
