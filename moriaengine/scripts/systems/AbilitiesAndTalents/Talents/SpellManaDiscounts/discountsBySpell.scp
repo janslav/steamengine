@@ -56,3 +56,14 @@ PluginDef = p_recall_discount
 
 [SpellManaDiscountPluginDef p_recall_discount]
 Spell = s_recall
+
+//magician talent
+[PassiveAbilityDef a_resurrection_discount]
+Name="Resurrection Discount"
+EffectPower=0.04 // -20% manause at 5 points 
+
+PluginKey = @@resurrection_discount
+PluginDef = p_resurrection_discount
+
+[SpellManaDiscountPluginDef p_resurrection_discount]
+Spell = s_resurrection
