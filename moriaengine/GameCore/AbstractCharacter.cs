@@ -520,7 +520,7 @@ namespace SteamEngine {
 					this.name = ConvertTools.LoadSimpleQuotedString(valueString);
 					break;
 				case "directionandflags":
-					this.directionAndFlags = (DirectionAndFlag) TagMath.ParseByte(valueString);
+					this.directionAndFlags = (DirectionAndFlag) TagMath.ParseInt16(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
