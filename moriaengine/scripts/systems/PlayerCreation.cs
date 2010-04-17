@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[SteamFunction]
+		[SteamFunction("f_createPlayerCharacter")]
 		public static Character CreatePlayerCharacter(Globals globals, CreateCharacterInPacket.CreateCharArguments argo) {
 			//we are supposed to create a character and return it
 
@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 				pants = ch.NewEquip(SkirtDef);
 			} else {
 				ch = (Character) MaleDef.Create(startingPosition);
-				pants = ch.NewEquip(i_pants_long);
+				pants = ch.NewEquip(PantsDef);
 			}
 
 			ch.Name = argo.Charname;

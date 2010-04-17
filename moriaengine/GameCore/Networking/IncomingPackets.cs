@@ -869,7 +869,7 @@ namespace SteamEngine.Networking {
 			//TODO: check skills and stats? Can't be bothered for moria, for now... -tar
 
 			ScriptArgs sa = new ScriptArgs(this.args);
-			object o = CreatePlayerCharacterFunction.Run(Globals.Instance, sa);//creates the character
+			object o = CreatePlayerCharacterFunction.TryRun(Globals.Instance, sa);//creates the character
 
 			AbstractCharacter cre = o as AbstractCharacter;
 			if (cre == null) {
@@ -884,16 +884,16 @@ namespace SteamEngine.Networking {
 			state.LoginCharacter(charSlot);
 		}
 
-		private static ScriptHolder createPlayerCharacterFunction;
+		private static ScriptHolder f_createPlayerCharacter;
 		public static ScriptHolder CreatePlayerCharacterFunction {
 			get {
-				if (createPlayerCharacterFunction == null) {
-					createPlayerCharacterFunction = ScriptHolder.GetFunction("CreatePlayerCharacter");
-					if (createPlayerCharacterFunction == null) {
-						throw new SEException("CreatePlayerCharacter function not declared! It needs to have 1 parameter of type CreateCharArguments, and return an AbstractCharacter instance");
+				if (f_createPlayerCharacter == null) {
+					f_createPlayerCharacter = ScriptHolder.GetFunction("f_createPlayerCharacter");
+					if (f_createPlayerCharacter == null) {
+						throw new SEException("f_createPlayerCharacter function not declared! It needs to have 1 parameter of type CreateCharArguments, and return an AbstractCharacter instance");
 					}
 				}
-				return createPlayerCharacterFunction;
+				return f_createPlayerCharacter;
 			}
 		}
 
