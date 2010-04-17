@@ -129,8 +129,6 @@ namespace SteamEngine.CompiledScripts {
 
 		public MetaMassSetting<WeaponAttackVsPMassSetting, ColoredWeaponDef, double> weaponsAttackVsP = new MetaMassSetting<WeaponAttackVsPMassSetting, ColoredWeaponDef, double>();
 
-		public WearableTypeMassSetting wearableTypes = new WearableTypeMassSetting();
-
 		public WearableLayerMassSetting wearableLayers = new WearableLayerMassSetting();
 
 		public ArmorVsPMassSetting armorVsP = new ArmorVsPMassSetting();
@@ -451,32 +449,6 @@ namespace SteamEngine.CompiledScripts {
 
 		public override IDataFieldView GetFieldView(int index) {
 			return new WeaponAttackVsMFieldView(index);
-		}
-	}
-
-	public class WearableTypeMassSetting : MassSettings_ByModel<WearableDef, WearableType> {
-		public override string Name {
-			get {
-				return "Typy brnìní/obleèení";
-			}
-		}
-
-		protected class WearableTypeFieldView : FieldView_ByModel {
-			internal WearableTypeFieldView(int index)
-				: base(index) {
-			}
-
-			internal override void SetValue(WearableDef def, WearableType value) {
-				def.WearableType = value;
-			}
-
-			internal override WearableType GetValue(WearableDef def) {
-				return def.WearableType;
-			}
-		}
-
-		public override IDataFieldView GetFieldView(int index) {
-			return new WearableTypeFieldView(index);
 		}
 	}
 
