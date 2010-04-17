@@ -219,8 +219,10 @@ namespace SteamEngine.CompiledScripts {
 
 				if (previousHits > newHits) {
 					//TODO create blood?
-					SoundCalculator.PlayHurtSound(defender);
-					AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
+					if (newHits > 0) {
+						SoundCalculator.PlayHurtSound(defender);
+						AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
+					} //otherwise death sound+anim, is done elsewhere
 				}
 
 				return damage;
