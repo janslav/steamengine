@@ -134,7 +134,6 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		//oldMapPoint can be null if checkPreviousVisibility is false
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private static void UpdateItemAndProperties(AbstractItem item) {
 			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItem " + item);
@@ -177,19 +176,7 @@ namespace SteamEngine.Networking {
 
 						if (viewer.CanSeeForUpdate(item)) {
 							if (isOnGround) {
-								if (viewer.IsPlevelAtLeast(Globals.PlevelOfGM)) {
-									if (allmoveItemInfo == null) {
-										allmoveItemInfo = PacketGroup.AcquireMultiUsePG();
-										allmoveItemInfo.AcquirePacket<ObjectInfoOutPacket>().Prepare(item, MoveRestriction.Movable); //0x1a
-									}
-									conn.SendPacketGroup(allmoveItemInfo);
-								} else {
-									if (pg == null) {
-										pg = PacketGroup.AcquireMultiUsePG();
-										pg.AcquirePacket<ObjectInfoOutPacket>().Prepare(item, MoveRestriction.Normal); //0x1a
-									}
-									conn.SendPacketGroup(pg);
-								}
+								item.GetOnGroundUpdater().SendTo(viewer, state, conn); //0x1a + corpseitems or some such stuff, when needed
 							} else if (isEquippedAndVisible) {
 								if (pg == null) {
 									pg = PacketGroup.AcquireMultiUsePG();
