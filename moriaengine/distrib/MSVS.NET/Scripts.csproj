@@ -116,6 +116,9 @@
     <Compile Include="..\..\scripts\Basic\CharClasses\Player.Generated.cs">
       <Link>Basic\CharClasses\Player.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Basic\utilities\ColoredItems.cs">
+      <Link>Basic\utilities\ColoredItems.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\Optional\Treasures\Treasures.cs">
       <Link>Optional\treasures\Treasures.cs</Link>
     </Compile>
@@ -648,7 +651,7 @@
       <Link>Basic\settings\MetaSettings.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Basic\settings\SettingsInfo.cs">
-      <Link>Basic\utilities\SettingsInfo.cs</Link>
+      <Link>Basic\settings\SettingsInfo.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Basic\settings\SettingsProvider.cs">
       <Link>Basic\settings\SettingsProvider.cs</Link>
@@ -1135,13 +1138,16 @@
       <Link>DataSources\endpointsetting.datasource</Link>
     </None>
     <None Include="..\..\scripts\Basic\CharClasses\Character.ct">
-      <Link>CharClasses\Character.ct</Link>
+      <Link>Basic\CharClasses\Character.ct</Link>
     </None>
     <None Include="..\..\scripts\Basic\CharClasses\NPC.ct">
-      <Link>CharClasses\NPC.ct</Link>
+      <Link>Basic\CharClasses\NPC.ct</Link>
     </None>
     <None Include="..\..\scripts\Basic\CharClasses\Player.ct">
-      <Link>CharClasses\Player.ct</Link>
+      <Link>Basic\CharClasses\Player.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\Professions\Definitions\thief.def">
+      <Link>Basic\Professions\Definitions\thief.def</Link>
     </None>
     <None Include="..\..\scripts\Optional\System\treasures\treasures.ct">
       <Link>Optional\System\treasures\treasures.ct</Link>
@@ -1442,6 +1448,9 @@
     </None>
     <None Include="..\..\scripts\Basic\skills\Tracking\TrackingPlugin.ct">
       <Link>Basic\skills\Tracking\TrackingPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Temporary\publicTest.scp">
+      <Link>Temporary\publicTest.scp</Link>
     </None>
     <None Include="..\..\scripts\Temporary\temporary.scp">
       <Link>Temporary\temporary.scp</Link>
