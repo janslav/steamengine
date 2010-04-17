@@ -184,9 +184,13 @@ namespace SteamEngine {
 					if (containersByChar.TryGetValue(onlineChar, out conts)) {
 						foreach (AbstractItem cont in conts) {
 							Networking.PacketSequences.SendRemoveFromView(state.Conn, cont.FlaggedUid);
-							Networking.WornItemOutPacket packet = Pool<Networking.WornItemOutPacket>.Acquire();
-							packet.PrepareItem(onlineChar.FlaggedUid, cont);
-							state.Conn.SendSinglePacket(packet);
+							if (cont.IsOnGround) {
+								cont.GetOnGroundUpdater().SendTo(onlineChar, state, state.Conn);
+							} else if (cont.IsEquipped) {
+								Networking.WornItemOutPacket packet = Pool<Networking.WornItemOutPacket>.Acquire();
+								packet.PrepareItem(onlineChar.FlaggedUid, cont);
+								state.Conn.SendSinglePacket(packet);
+							} //else it's in some other container, which gets closed too so we don't want it automatically visible
 						}
 					}
 				}
