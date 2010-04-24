@@ -410,8 +410,10 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TriggerKey warModeChangeTK = TriggerKey.Acquire("warModeChange");
 		public void Trigger_WarModeChange() {
-			TryTrigger(warModeChangeTK, null);
-			On_WarModeChange();
+			this.TryTrigger(warModeChangeTK, null);			
+			try {
+				this.On_WarModeChange();
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		public virtual void On_WarModeChange() {
@@ -1959,21 +1961,21 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ArmorClassVsP {
 			get {
-				this.CalculateCombatArmorValues();
+				this.AcquireCombatArmorValues();
 				return this.combatArmorValues.armorVsP;
 			}
 		}
 
 		public int ArmorClassVsM {
 			get {
-				this.CalculateCombatArmorValues();
+				this.AcquireCombatArmorValues();
 				return this.combatArmorValues.armorVsM;
 			}
 		}
 
 		public override short StatusArmorClass {
 			get {
-				this.CalculateCombatArmorValues();
+				this.AcquireCombatArmorValues();
 				return (short) ((this.combatArmorValues.armorVsP + this.combatArmorValues.armorVsM) / 2);
 			}
 		}
@@ -1995,21 +1997,21 @@ namespace SteamEngine.CompiledScripts {
 
 		public int MindDefenseVsP {
 			get {
-				this.CalculateCombatArmorValues();
+				this.AcquireCombatArmorValues();
 				return this.combatArmorValues.mindDefenseVsP;
 			}
 		}
 
 		public int MindDefenseVsM {
 			get {
-				this.CalculateCombatArmorValues();
+				this.AcquireCombatArmorValues();
 				return this.combatArmorValues.mindDefenseVsM;
 			}
 		}
 
 		public override short StatusMindDefense {
 			get {
-				this.CalculateCombatArmorValues();
+				this.AcquireCombatArmorValues();
 				return (short) ((this.combatArmorValues.mindDefenseVsP + this.combatArmorValues.mindDefenseVsM) / 2);
 			}
 		}
@@ -2043,14 +2045,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private void CalculateCombatWeaponValues() {
+		private void AcquireCombatWeaponValues() {
 			if (this.combatWeaponValues == null) {
 				CharSyncQueue.AboutToChangeStats(this);
 				this.combatWeaponValues = CombatCalculator.CalculateCombatWeaponValues(this);
 			}
 		}
 
-		private void CalculateCombatArmorValues() {
+		private void AcquireCombatArmorValues() {
 			if (this.combatArmorValues == null) {
 				CharSyncQueue.AboutToChangeStats(this);
 				this.combatArmorValues = CombatCalculator.CalculateCombatArmorValues(this);
@@ -2091,49 +2093,49 @@ namespace SteamEngine.CompiledScripts {
 
 		public Weapon Weapon {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.weapon;
 			}
 		}
 
 		public int WeaponAttackVsP {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return (int) this.combatWeaponValues.attackVsP;
 			}
 		}
 
 		public int WeaponAttackVsM {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return (int) this.combatWeaponValues.attackVsM;
 			}
 		}
 
 		public int WeaponPiercing {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return (int) this.combatWeaponValues.piercing;
 			}
 		}
 
 		public WeaponType WeaponType {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.weaponType;
 			}
 		}
 
 		public DamageType WeaponDamageType {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.damageType;
 			}
 		}
 
 		public WeaponAnimType WeaponAnimType {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.weaponAnimType;
 			}
 		}
@@ -2150,35 +2152,35 @@ namespace SteamEngine.CompiledScripts {
 						(this.combatWeaponValues.projectileType != ProjectileType.None)) {
 					this.InvalidateCombatWeaponValues();//we have no ammo but we should, let's look for it
 				}
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.weaponProjectile;
 			}
 		}
 
 		public int WeaponProjectileAnim {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.projectileAnim;
 			}
 		}
 
 		public ProjectileType WeaponProjectileType {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.projectileType;
 			}
 		}
 
 		public int WeaponRangeVsM {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.rangeVsM;
 			}
 		}
 
 		public int WeaponRangeVsP {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.rangeVsP;
 			}
 		}
@@ -2200,14 +2202,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public int WeaponStrikeStartRange {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.strikeStartRange;
 			}
 		}
 
 		public int WeaponStrikeStopRange {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.strikeStopRange;
 			}
 		}
@@ -2215,21 +2217,21 @@ namespace SteamEngine.CompiledScripts {
 		public TimeSpan WeaponDelay {
 			get {
 				//TODO: mana-dependant for mystic
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return this.combatWeaponValues.delay;
 			}
 		}
 
 		public int MindPowerVsP {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return (int) this.combatWeaponValues.mindPowerVsP;
 			}
 		}
 
 		public int MindPowerVsM {
 			get {
-				this.CalculateCombatWeaponValues();
+				this.AcquireCombatWeaponValues();
 				return (int) this.combatWeaponValues.mindPowerVsM;
 			}
 		}

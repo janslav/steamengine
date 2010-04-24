@@ -40,5 +40,19 @@ namespace SteamEngine.CompiledScripts {
 				return this.TypeDef.Piercing;
 			}
 		}
+
+		private static TriggerKey coupledWithWeaponTK = TriggerKey.Acquire("coupledWithWeapon");
+		internal void Trigger_CoupledWithWeapon(Character self, Weapon weapon) {
+			this.TryTrigger(coupledWithWeaponTK, new ScriptArgs(self, weapon));
+			try {
+				this.On_CoupledWithWeapon(self, weapon);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+		}
+
+		//called when this is found at the given char and is going to be used with the given weapon as projectile
+		//there's no "uncouple" trigger and it can be called at any time and any number of times, so implement accordingly
+		protected virtual void On_CoupledWithWeapon(Character self, Weapon weapon) {
+			
+		}
 	}
 }
