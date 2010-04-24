@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 
 			int spellPower = spellEffectArgs.SpellPower;
 			double effect = this.GetEffectForValue(spellPower); //initial regen penalty
-			effect *= DamageManager.GetResistModifier(target, damageType); //apply magic and poison 
+			effect *= DamageManager.GetResistModifier(target, damageType); //apply magic and/or poison resistance
 
 			if (effect > PoisonEffectPlugin.minimumPoisonEffect) { //else it does nothing to this target, so it's effectively immune
 				PoisonEffectPlugin poisonPlugin = target.GetPlugin(key) as PoisonEffectPlugin;
