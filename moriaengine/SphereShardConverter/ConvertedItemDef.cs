@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Reflection;
@@ -87,27 +88,34 @@ namespace SteamEngine.Converter {
 			this.headerType = "ItemDef";
 		}
 
-		//regexp for checking if the string is something like this: "blacksmithing 40.3" - we must switch the number and the string
-		private static readonly Regex re = new Regex(@"^ \s*(?<resource>([a-z_][a-z0-9_]*))\s*(?<number>(\d+(\.\d+)?))\s* $",
-				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 		//resources list may need some number (counts) corrections
 		private static string HandleResourcesList(ConvertedDef def, PropsLine line) {
 			string args = line.Value.ToLowerInvariant();
-			string corrected = "";
-			string[] singleResources = args.Split(new string[] { "," }, StringSplitOptions.None); //split to single resources
+			StringBuilder corrected = new StringBuilder(args.Length);
+			string commentary = "";
+
+			string[] singleResources = args.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries); //split to single resources
 			foreach(string singleRes in singleResources) {
-				Match m = re.Match(singleRes);
-				if (m.Success) {
-					//the resource was in the wrong format! (name and value switched)
-					string res = m.Groups["resource"].Value;
-					string val = m.Groups["number"].Value;
-					corrected += val + " " + res + ", ";//switch the number and the value in the resources definition
+				string[] split = singleRes.Split(Tools.whitespaceChars, StringSplitOptions.RemoveEmptyEntries);
+				if (split.Length == 2) {
+					object ignored;
+					if (ConvertTools.TryParseAnyNumber(split[1], out ignored)) {
+						corrected.Append(split[1]).Append(" ").Append(split[0]).Append(", "); //switch the number and the value in the resources definition
+						commentary = "some resources were fixed by converter";
+					} else {
+						corrected.Append(split[0]).Append(" ").Append(split[1]).Append(", ");
+					}
+				} else if (split.Length == 1) {
+					corrected.Append("1 ").Append(split[0]).Append(", "); //number 1 prepended
+					commentary = "some resources were fixed by converter";
 				} else {
-					corrected += singleRes + ", ";
+					def.Warning(line.Line, "Unknown resource string '"+singleRes+"'");
+					corrected.Append(singleRes).Append(", ");
 				}
 			}
-			//from the corrected string also remove the last ", "
-			def.Set(line.Name, corrected.Substring(0, corrected.Length - 2), "some resources were fixed by converter");
+			corrected.Length -= 2; //remove the last ", "
+
+			def.Set(line.Name, corrected.ToString(), commentary);
 			return line.Value;
 		}
 
