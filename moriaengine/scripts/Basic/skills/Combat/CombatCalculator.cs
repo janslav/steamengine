@@ -315,7 +315,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static bool CheckProjectile(Projectile projectile, ProjectileType type) {
 			ProjectileType actualType = projectile.ProjectileType;
-			return ((type & actualType) == actualType);
+			return ((type & actualType) == type);
 		}
 
 		internal static CombatWeaponValues CalculateCombatWeaponValues(Character self) {
@@ -342,6 +342,7 @@ namespace SteamEngine.CompiledScripts {
 					if (self.weaponProjectile != null) {
 						retVal.piercing += self.weaponProjectile.Piercing;
 						retVal.projectileAnim = weapon.ProjectileAnim;
+						self.weaponProjectile.Trigger_CoupledWithWeapon(self, weapon);
 					}
 
 					weapSpeed = weapon.Speed;
