@@ -250,7 +250,7 @@ namespace SteamEngine.CompiledScripts {
 		None = 0x00,
 		Bolt = 0x01, JaggedBolt = Jagged | Bolt,
 		Arrow = 0x02, JaggedArrow = Jagged | Arrow, 
-		Posioned = 0x04, //?
+		//Posioned = 0x04, //?
 		Jagged = 0x08
 		//?
 	}
