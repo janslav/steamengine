@@ -25,7 +25,7 @@ using SteamEngine.Common;
 using System.Configuration;
 
 namespace SteamEngine.Converter {
-	public delegate string LineImpl(ConvertedDef def, PropsLine line);
+	public delegate void LineImpl(ConvertedDef def, PropsLine line);
 
 	public class LineImplTask {
 		public readonly string fieldName;
@@ -39,9 +39,9 @@ namespace SteamEngine.Converter {
 
 	public class ConvertedDef {
 		protected PropsSection origData;
-		protected string origFile;
+		//protected string origFile;
 		protected List<string> writtenData = new List<string>();
-		private ConvertedFile convertFile;
+		private ConvertedFile convertedFile;
 		public string headerType = null;
 		public string headerName = null;
 
@@ -51,25 +51,21 @@ namespace SteamEngine.Converter {
 		protected List<LineImplTask[]> secondStageImplementations = new List<LineImplTask[]>();
 		protected List<LineImplTask[]> thirdStageImplementations = new List<LineImplTask[]>();
 
-		public ConvertedDef(PropsSection input) {
+		public ConvertedDef(PropsSection input, ConvertedFile convertedFile) {
 			this.origData = input;
-			this.origFile = input.Filename;
-			this.convertFile = ConverterMain.currentIFile;
+			//this.origFile = input.Filename;
+			this.convertedFile = convertedFile;
 
 			this.headerType = input.HeaderType;
-			headerName = input.HeaderName;
+			this.headerName = input.HeaderName;
 		}
 
 		public void Set(PropsLine line) {
-			if ((line.Comment == null) || (line.Comment.Length == 0)) {
-				this.writtenData.Add(String.Format("{0} = {1}", line.Name, line.Value));
-			} else {
-				this.writtenData.Add(String.Format("{0} = {1} //{2} ", line.Name, line.Value, line.Comment));
-			}
+			this.Set(line.Name, line.Value, line.Comment);
 		}
 
 		public void Set(string key, string value, string comment) {
-			if ((comment == null) || (comment.Length == 0)) {
+			if (string.IsNullOrEmpty(comment)) {
 				this.writtenData.Add(String.Format("{0} = {1}", key, value));
 			} else {
 				this.writtenData.Add(String.Format("{0} = {1} //{2} ", key, value, comment));
@@ -78,18 +74,18 @@ namespace SteamEngine.Converter {
 
 		public virtual void Dump(TextWriter writer) {
 			writer.WriteLine();
-			string header = String.Concat("[", this.headerType, " ", headerName, "]");
+			string header = String.Concat("[", this.headerType, " ", this.headerName, "]");
 
 			if (this.origData.HeaderComment.Length > 0) {
 				header = header + " //" + this.origData.HeaderComment;
 			}
-			if (dontDump) {
+			if (this.dontDump) {
 				header = "//" + header + " //(commented out by Converter) ";
 			}
 			writer.WriteLine(header);
 
 			foreach (string line in this.writtenData) {
-				writer.WriteLine(dontDump ? ("//" + line) : line);
+				writer.WriteLine(this.dontDump ? ("//" + line) : line);
 			}
 		}
 
@@ -113,29 +109,29 @@ namespace SteamEngine.Converter {
 		}
 
 		public void DontDump() {
-			dontDump = true;
+			this.dontDump = true;
 		}
 
 		public virtual void FirstStage() {
 			bool needspace = false;
 			PropsLine line = this.origData.TryPopPropsLine("category");
 			if (line != null) {
-				Set(line); needspace = true;
+				this.Set(line); needspace = true;
 			}
 			line = this.origData.TryPopPropsLine("subsection");
 			if (line != null) {
-				Set(line); needspace = true;
+				this.Set(line); needspace = true;
 			}
 			line = this.origData.TryPopPropsLine("description");
 			if (line != null) {
-				Set(line); needspace = true;
+				this.Set(line); needspace = true;
 			}
 			if (needspace) {
 				this.writtenData.Add("");
 			}
 
 
-			BasicStageImpl(firstStageImplementations);
+			BasicStageImpl(this.firstStageImplementations);
 		}
 
 		public virtual void SecondStage() {
@@ -143,7 +139,7 @@ namespace SteamEngine.Converter {
 		}
 
 		public virtual void ThirdStage() {
-			BasicStageImpl(thirdStageImplementations);
+			BasicStageImpl(this.thirdStageImplementations);
 
 			foreach (PropsLine line in this.origData.PropsLines) {
 				if (line.Name.ToLowerInvariant().StartsWith("tag.")) {
@@ -160,16 +156,16 @@ namespace SteamEngine.Converter {
 
 		public void Info(int linenum, string message) {
 			if (ConverterMain.AdditionalConverterMessages) {
-				Console.WriteLine("Info: " + LogStr.FileLine(this.convertFile.origPath, linenum) + LogStr.Highlight(message));
+				Console.WriteLine("Info: " + LogStr.FileLine(this.convertedFile.origPath, linenum) + LogStr.Highlight(message));
 			}
 		}
 
 		public void Warning(int linenum, string message) {
-			Logger.WriteWarning(this.convertFile.origPath, linenum, message);
+			Logger.WriteWarning(this.convertedFile.origPath, linenum, message);
 		}
 
 		public void Error(int linenum, string message) {
-			Logger.WriteError(this.convertFile.origPath, linenum, message);
+			Logger.WriteError(this.convertedFile.origPath, linenum, message);
 		}
 
 		//generic line implementations
@@ -178,7 +174,7 @@ namespace SteamEngine.Converter {
 			return line.Value;
 		}
 
-		protected static string WriteInQuotes(ConvertedDef def, PropsLine line) {
+		protected static void WriteInQuotes(ConvertedDef def, PropsLine line) {
 			string value;
 			Match ma = TagMath.stringRE.Match(line.Value);
 			if (ma.Success) {
@@ -188,7 +184,7 @@ namespace SteamEngine.Converter {
 			}
 			value = "\"" + value + "\"";
 			def.Set(line.Name, value, line.Comment);
-			return value;
+			//return value;
 		}
 
 		//protected static void WriteAsBool(ConvertedDef def, PropsLine line) {
@@ -203,32 +199,40 @@ namespace SteamEngine.Converter {
 		//    def.Set(line.name, value, line.comment);
 		//}
 
-		protected static string WriteAsComment(ConvertedDef def, PropsLine line) {
+		protected static void WriteAsComment(ConvertedDef def, PropsLine line) {
 			def.Set("//" + line.Name, line.Value, line.Comment + " commented out by Converter");
-			return line.Value;
+			//return line.Value;
 		}
 
-		protected static string MayBeInt_IgnorePoint(ConvertedDef def, PropsLine line) {
-			string retVal = line.Value;
+		protected static void MayBeInt_IgnorePoint(ConvertedDef def, PropsLine line) {
+			string retVal = TryNormalizeNumber(line.Value.Replace(".", ""));
+			def.Set(line.Name, retVal, line.Comment);
+			//return retVal;
+		}
+
+		protected static void MayBeHex_IgnorePoint(ConvertedDef def, PropsLine line) {
+			string retVal = TryNormalizeNumberAsHex(line.Value.Replace(".", ""));
+			def.Set(line.Name, retVal, line.Comment);
+			//return retVal;
+		}
+
+		public static string TryNormalizeNumber(string input) {
 			try {
-				object number = ConvertTools.ParseAnyNumber(line.Value.Replace(".", ""));
-				retVal = number.ToString();
+				object number = ConvertTools.ParseAnyNumber(input);
+				input = number.ToString();
 			} catch (Exception) {
 			}
-			def.Set(line.Name, retVal, line.Comment);
-			return retVal;
+			return input;
 		}
 
-		protected static string MayBeHex_IgnorePoint(ConvertedDef def, PropsLine line) {
-			string retVal = line.Value;
+		public static string TryNormalizeNumberAsHex(string input) {
 			try {
-				object number = ConvertTools.ParseAnyNumber(line.Value.Replace(".", ""));
+				object number = ConvertTools.ParseAnyNumber(input);
 				long i = Convert.ToInt64(number);
-				retVal = "0x" + i.ToString("x");
+				input = "0x" + i.ToString("x");
 			} catch (Exception) {
 			}
-			def.Set(line.Name, retVal, line.Comment);
-			return retVal;
+			return input;
 		}
 	}
 }

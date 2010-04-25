@@ -16,6 +16,8 @@
 */
 
 using System;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
@@ -51,7 +53,7 @@ namespace SteamEngine.Converter {
 				} else {
 					return this.modelNum;
 				}
-				Error(this.origData.HeaderLine, "ThingDef " + headerName + " has no model set...?");
+				Error(this.origData.HeaderLine, "ThingDef " + this.headerName + " has no model set...?");
 				return -1;
 			}
 		}
@@ -64,8 +66,8 @@ namespace SteamEngine.Converter {
 				new LineImplTask("name", new LineImpl(WriteInQuotes))
 			};
 
-		public ConvertedThingDef(PropsSection input)
-			: base(input) {
+		public ConvertedThingDef(PropsSection input, ConvertedFile convertedFile)
+			: base(input, convertedFile) {
 			this.firstStageImplementations.Add(firstStageImpl);
 		}
 
@@ -81,8 +83,8 @@ namespace SteamEngine.Converter {
 			this.dupeItemLine = this.origData.TryPopPropsLine("dupeitem");
 			if (this.dupeItemLine != null) {
 				int headerNum;
-				if (ConvertTools.TryParseInt32(headerName, out headerNum)) {
-					headerName = "0x" + headerNum.ToString("x");
+				if (ConvertTools.TryParseInt32(this.headerName, out headerNum)) {
+					this.headerName = "0x" + headerNum.ToString("x");
 					this.modelNum = headerNum;
 				}
 			} else {
@@ -90,7 +92,7 @@ namespace SteamEngine.Converter {
 				this.idLine = this.origData.TryPopPropsLine("id");
 
 				int headerNum;
-				if (ConvertTools.TryParseInt32(headerName, out headerNum)) {
+				if (ConvertTools.TryParseInt32(this.headerName, out headerNum)) {
 					if (this.idLine != null) {//it does not mean model...
 						needsHeader = true;
 					} else {
@@ -98,16 +100,16 @@ namespace SteamEngine.Converter {
 						//ownModel = true;
 						this.modelNum = headerNum;
 						this.byModel[headerNum] = this;
-						headerName = "0x" + headerNum.ToString("x");
+						this.headerName = "0x" + headerNum.ToString("x");
 					}
 				} else {
-					this.byDefname[headerName] = this;
+					this.byDefname[this.headerName] = this;
 				}
 
 				this.defname1 = this.origData.TryPopPropsLine("defname");
 				if (this.defname1 != null) {
 					if (needsHeader) {
-						headerName = this.defname1.Value;
+						this.headerName = this.defname1.Value;
 						needsHeader = false;
 					}
 					this.byDefname[this.defname1.Value] = this;
@@ -116,7 +118,7 @@ namespace SteamEngine.Converter {
 				this.defname2 = this.origData.TryPopPropsLine("defname2");
 				if (this.defname2 != null) {
 					if (needsHeader) {
-						headerName = this.defname2.Value;
+						this.headerName = this.defname2.Value;
 						needsHeader = false;
 					}
 					this.byDefname[this.defname2.Value] = this;
@@ -124,7 +126,7 @@ namespace SteamEngine.Converter {
 
 				if (needsHeader) {
 					//what now? :)
-					headerName = "i_hadnodefname_0x" + headerNum.ToString("x");
+					this.headerName = "i_hadnodefname_0x" + headerNum.ToString("x");
 					Info(this.origData.HeaderLine, "Has no defname except a number, and model defined elsewhere...");
 				}
 			}
@@ -136,14 +138,14 @@ namespace SteamEngine.Converter {
 				int idNum;
 				if (ConvertTools.TryParseInt32(this.idLine.Value, out idNum)) {
 					if (this.byModel.TryGetValue(idNum, out this.modelDef)) {
-						Set("model", this.modelDef.PrettyDefname, this.idLine.Comment);
+						this.Set("model", this.modelDef.PrettyDefname, this.idLine.Comment);
 						//Info(idLine.line, "ID Written as "+modelDef.PrettyDefname);
 					} else {
-						Set("model", "0x" + idNum.ToString("x"), this.idLine.Comment);
+						this.Set("model", "0x" + idNum.ToString("x"), this.idLine.Comment);
 						this.modelNum = idNum;
 					}
 				} else {
-					Set("model", this.idLine.Value, this.idLine.Comment);
+					this.Set("model", this.idLine.Value, this.idLine.Comment);
 					this.byDefname.TryGetValue(this.idLine.Value, out this.modelDef);
 				}
 			}
@@ -154,7 +156,7 @@ namespace SteamEngine.Converter {
 				if (ConvertTools.TryParseInt32(this.dupeItemLine.Value, out dupeItemNum)) {
 					ConvertedThingDef dupeItemDef;
 					if (this.byModel.TryGetValue(dupeItemNum, out dupeItemDef)) {
-						Set(this.dupeItemLine.Name, dupeItemDef.PrettyDefname, this.dupeItemLine.Comment);
+						this.Set(this.dupeItemLine.Name, dupeItemDef.PrettyDefname, this.dupeItemLine.Comment);
 						dupeItemSet = true;
 						//Info(dupeItemLine.line, "DupeItem Written as "+dupeItemDef.PrettyDefname);
 					}
@@ -168,26 +170,67 @@ namespace SteamEngine.Converter {
 		public override void ThirdStage() {
 			bool defnameWritten = false;
 			if (this.defname1 != null) {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(headerName, this.defname1.Value)) {
+				if (!StringComparer.OrdinalIgnoreCase.Equals(this.headerName, this.defname1.Value)) {
 					defnameWritten = true;
-					Set(this.defname1);
+					this.Set(this.defname1);
 				}
 			}
 			if (this.defname2 != null) {
 				if (defnameWritten) {
 					Warning(this.defname2.Line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
 				} else if (!StringComparer.OrdinalIgnoreCase.Equals(this.headerType, this.defname2.Value)) {
-					Set("defname", this.defname2.Value, this.defname2.Comment);
+					this.Set("defname", this.defname2.Value, this.defname2.Comment);
 				}
 			}
 
 			base.ThirdStage();
+
+			TriggerSection createTrigger = this.origData.GetTrigger("create");
+			if (createTrigger != null) {
+				int lineNum = createTrigger.StartLine;
+				using (StringReader reader = new StringReader(createTrigger.Code.ToString())) {
+					string line;
+					while ((line = reader.ReadLine()) != null) {
+						string lowered = line.ToLowerInvariant();
+						if (lowered.StartsWith("item ") || lowered.StartsWith("item=") || lowered.StartsWith("item(") ||
+							lowered.StartsWith("itemnewbie ") || lowered.StartsWith("itemnewbie=") || lowered.StartsWith("itemnewbie(")) {
+							break; //start of loot section, probably
+						}
+						lineNum++;
+						Match m = nameValueRE.Match(line);
+						if (m.Success) {
+							this.ProcessCreateTriggerLine(m.Groups["name"].Value.ToLowerInvariant(),
+								m.Groups["value"].Value, m.Groups["comment"].Value, lineNum);
+						} else {
+							m = tagRE.Match(line);
+							if (m.Success) {
+								this.ProcessCreateTriggerLine("tag."+m.Groups["name"].Value.ToLowerInvariant(),
+									m.Groups["value"].Value, m.Groups["comment"].Value, lineNum);
+							} //else ignore (?)
+						}
+					}
+				}
+			}
+		}
+
+		private static readonly Regex nameValueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		private static Regex tagRE = new Regex(@"tag(\.)|(\()(?<name>\w+)\s*(=)|(,)\s*(?<value>.*?)\s*\)?\s*(//(?<comment>.*))?$",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		protected virtual void ProcessCreateTriggerLine(string name, string value, string comment, int lineNum) {
+			switch (name) {
+				case "color":
+					this.Set("Color", value, comment);
+					break;
+			}
 		}
 
 		public string PrettyDefname {
 			get {
 				if (!this.hasNumericalHeader) {
-					return headerName;
+					return this.headerName;
 				}
 				if (this.defname1 != null) {
 					return this.defname1.Value;
@@ -197,7 +240,7 @@ namespace SteamEngine.Converter {
 				}
 
 				//it's numeric, so...
-				return "0x" + ConvertTools.ParseInt64(headerName).ToString("x");
+				return "0x" + ConvertTools.ParseInt64(this.headerName).ToString("x");
 			}
 		}
 	}

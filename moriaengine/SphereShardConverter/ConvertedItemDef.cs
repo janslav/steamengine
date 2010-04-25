@@ -49,17 +49,14 @@ namespace SteamEngine.Converter {
 				new LineImplTask("type", new LineImpl(HandleType)), 
 				new LineImplTask("dupelist", new LineImpl(WriteAsComment)), 
 				new LineImplTask("weight", new LineImpl(MayBeInt_IgnorePoint)), 
-//TODO
 				new LineImplTask("resources", new LineImpl(HandleResourcesList)),
 				new LineImplTask("resources2", new LineImpl(HandleResourcesList)),
 				new LineImplTask("skillmake", new LineImpl(HandleResourcesList)),
 				new LineImplTask("skillmake2", new LineImpl(HandleResourcesList)),
+//TODO
 				new LineImplTask("flip", new LineImpl(WriteAsComment)),
 				new LineImplTask("reqstr", new LineImpl(WriteAsComment)),
 				new LineImplTask("dye", new LineImpl(WriteAsComment)),
-				new LineImplTask("tdata1", new LineImpl(WriteAsComment)),
-				new LineImplTask("tdata2", new LineImpl(WriteAsComment)),
-				new LineImplTask("tdata3", new LineImpl(WriteAsComment)),
 				new LineImplTask("skill", new LineImpl(WriteAsComment)),
 				new LineImplTask("speed", new LineImpl(WriteAsComment))
 			};
@@ -68,6 +65,9 @@ namespace SteamEngine.Converter {
 				new LineImplTask("layer", new LineImpl(HandleLayer)), 
 				new LineImplTask("twohanded", new LineImpl(HandleTwohanded)),
 				new LineImplTask("twohands", new LineImpl(HandleTwohanded)),
+				new LineImplTask("tdata1", new LineImpl(HandleTData1)),
+				new LineImplTask("tdata2", new LineImpl(HandleTData2)),
+				new LineImplTask("tdata3", new LineImpl(HandleTData3)),
 			};
 
 		private static LineImplTask[] thirdStageImpl = new LineImplTask[] {
@@ -76,8 +76,8 @@ namespace SteamEngine.Converter {
 			};
 
 
-		public ConvertedItemDef(PropsSection input)
-			: base(input) {
+		public ConvertedItemDef(PropsSection input, ConvertedFile convertedFile)
+			: base(input, convertedFile) {
 			this.byModel = itemsByModel;
 			this.byDefname = itemsByDefname;
 
@@ -89,13 +89,14 @@ namespace SteamEngine.Converter {
 		}
 
 		//resources list may need some number (counts) corrections
-		private static string HandleResourcesList(ConvertedDef def, PropsLine line) {
+		private static void HandleResourcesList(ConvertedDef def, PropsLine line) {
 			string args = line.Value.ToLowerInvariant();
 			StringBuilder corrected = new StringBuilder(args.Length);
 			string commentary = "";
 
 			string[] singleResources = args.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries); //split to single resources
-			foreach(string singleRes in singleResources) {
+			foreach(string s in singleResources) {
+				string singleRes = s.Replace(".", ""); //sphere scripts weirdly have skill numbers with a dot sometimes. Hope this won't break something else than skills
 				string[] split = singleRes.Split(Tools.whitespaceChars, StringSplitOptions.RemoveEmptyEntries);
 				if (split.Length == 2) {
 					object ignored;
@@ -116,10 +117,10 @@ namespace SteamEngine.Converter {
 			corrected.Length -= 2; //remove the last ", "
 
 			def.Set(line.Name, corrected.ToString(), commentary);
-			return line.Value;
+			//return line.Value;
 		}
 
-		private static string HandleType(ConvertedDef d, PropsLine line) {
+		private static void HandleType(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.Set(line);
 
@@ -188,6 +189,14 @@ namespace SteamEngine.Converter {
 					}
 
 					break;
+				case "t_potion":
+				case "t_allpotions":
+				case "t_drink":
+				case "T_potion_shrink":
+				case "t_speedpotions":
+				case "t_potion_bomba":
+					def.headerType = "PotionDef";
+					break;
 				default:
 					if (args.StartsWith("t_weapon")) {
 						def.isWeapon = true;
@@ -198,10 +207,10 @@ namespace SteamEngine.Converter {
 			//TODO: Implement args=="t_sign_gump" || "t_board", which have gumps too in sphere scripts,
 			//but aren't containers.
 			//TODO: Detect if item with 'resmake' isn't craftable.
-			return line.Value;
+			//return line.Value;
 		}
 
-		private static string HandleTwohanded(ConvertedDef d, PropsLine line) {
+		private static void HandleTwohanded(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.twoHandedSet = true;
 			string largs = line.Value.ToLowerInvariant();
@@ -210,16 +219,16 @@ namespace SteamEngine.Converter {
 				case "n":
 				case "false":
 					def.Set("TwoHanded", "false", line.Comment);
-					return "false";
+					break; //return "false";
 				default:
 					def.Set("TwoHanded", "true", line.Comment);
 					def.isTwoHanded = true;
-					return "true";
+					break; //return "true";
 			}
 
 		}
 
-		private static string HandleArmorOrDam(ConvertedDef d, PropsLine line) {
+		private static void HandleArmorOrDam(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			if (!def.armorOrDamHandled) {
 				def.armorOrDamHandled = true;
@@ -250,20 +259,36 @@ namespace SteamEngine.Converter {
 				if (def.isWeapon) {
 					def.Set("attackVsP", value, line.Comment);
 					def.Set("attackVsM", value, line.Comment);
-					def.Set("piercing", "100", "");
-					def.Set("speed", "100", "");
-					def.Set("range", "1", "");
-					def.Set("strikeStartRange", "5", "");
-					def.Set("strikeStopRange", "10", "");
+					def.Set("piercing", "100", "default value set by Converter");
+					def.Set("speed", "100", "default value set by Converter");
+					def.Set("range", "1", "default value set by Converter");
+					def.Set("strikeStartRange", "5", "default value set by Converter");
+					def.Set("strikeStopRange", "10", "default value set by Converter");
 				} else if (def.isWearable) {
 					def.Set("armorVsP", value, line.Comment);
 					def.Set("mindDefenseVsP", value, "");
 					def.Set("armorVsM", value, "");
 					def.Set("mindDefenseVsM", value, "");
 				}
-				return value;
+				//return value;
 			}
-			return "";
+			//return "";
+		}
+
+		private static void HandleTData1(ConvertedDef def, PropsLine line) {
+			if (def.headerType.Equals("PotionDef", StringComparison.OrdinalIgnoreCase)) {
+				def.Set("EmptyFlask", line.Value, "converted from 'TDATA1'");
+			} else {
+				WriteAsComment(def, line);
+			}
+		}
+
+		private static void HandleTData2(ConvertedDef def, PropsLine line) {
+			WriteAsComment(def, line);
+		}
+
+		private static void HandleTData3(ConvertedDef def, PropsLine line) {
+			WriteAsComment(def, line);
 		}
 
 		public static void SecondStageFinished() {
@@ -308,11 +333,11 @@ namespace SteamEngine.Converter {
 				ItemDispidInfo info = ItemDispidInfo.GetByModel(model);
 				if (info != null) {
 					this.layer = info.Quality.ToString();
-					Set("layer", this.layer, "Set by Converter");
+					this.Set("layer", this.layer, "Set by Converter");
 					layerSet = true;
 				} else {
-					Set("//layer", "unknown", "");
-					Info(this.origData.HeaderLine, "Unknown layer for ItemDef " + headerName);
+					this.Set("//layer", "unknown", "");
+					Info(this.origData.HeaderLine, "Unknown layer for ItemDef " + this.headerName);
 				}
 			}
 
@@ -369,59 +394,69 @@ namespace SteamEngine.Converter {
 					case "t_weapon_bow":
 						weaponType = WeaponType.Bow;
 						materialType = MaterialType.Wood;
-						Set("ProjectileType", "ProjectileType.Arrow", "guessed by Converter");
-						Set("ProjectileAnim", "0xf42", "guessed by Converter");
+						this.Set("ProjectileType", "ProjectileType.Arrow", "guessed by Converter");
+						this.Set("ProjectileAnim", "0xf42", "guessed by Converter");
 						break;
 					case "t_weapon_xbow":
 						weaponType = WeaponType.XBow;
 						materialType = MaterialType.Wood;
-						Set("ProjectileType", "ProjectileType.Bolt", "guessed by Converter");
-						Set("ProjectileAnim", "0x1bfe", "guessed by Converter");
+						this.Set("ProjectileType", "ProjectileType.Bolt", "guessed by Converter");
+						this.Set("ProjectileAnim", "0x1bfe", "guessed by Converter");
 						break;
 					case "t_weapon_xbow_run":
 						weaponType = WeaponType.XBow;
 						materialType = MaterialType.Wood;
-						Set("ProjectileType", "ProjectileType.Bolt", "guessed by Converter");
-						Set("ProjectileAnim", "0x1bfe", "guessed by Converter");
+						this.Set("ProjectileType", "ProjectileType.Bolt", "guessed by Converter");
+						this.Set("ProjectileAnim", "0x1bfe", "guessed by Converter");
 						break;
 					case "t_weapon_bow_run":
 						weaponType = WeaponType.Bow;
 						materialType = MaterialType.Wood;
-						Set("ProjectileType", "ProjectileType.Arrow", "guessed by Converter");
-						Set("ProjectileAnim", "0xf42", "guessed by Converter");
+						this.Set("ProjectileType", "ProjectileType.Arrow", "guessed by Converter");
+						this.Set("ProjectileAnim", "0xf42", "guessed by Converter");
 						break;
 				}
-				Set("WeaponType", "WeaponType." + weaponType, "guessed by Converter");
+				this.Set("WeaponType", "WeaponType." + weaponType, "guessed by Converter");
 
 				WeaponAnimType animType = WeaponAnimTypeSetting.TranslateAnimType(weaponType);
 				if (animType != WeaponAnimType.Undefined) {
-					Set("WeaponAnimType", "WeaponAnimType." + animType, "guessed by Converter");
+					this.Set("WeaponAnimType", "WeaponAnimType." + animType, "guessed by Converter");
 				}
 
 				if (isColored) {
-					Set("MaterialType", "MaterialType." + materialType, "guessed by Converter");
+					this.Set("MaterialType", "MaterialType." + materialType, "guessed by Converter");
 				}
 			} else if (isWearable) {
 				bool isColored = IsColoredMetal();
 				if (isColored) {
 					this.headerType = "ColoredArmorDef";
-					Set("MaterialType", "MaterialType.Metal", "guessed by Converter");
+					this.Set("MaterialType", "MaterialType.Metal", "guessed by Converter");
 				} else {
 					this.headerType = "WearableDef";
 				}
 				if (!wearableTypeSet) {
-					Set("WearableType", "WearableType." + GetWearableType(this.PrettyDefname), "guessed by Converter");
+					this.Set("WearableType", "WearableType." + GetWearableType(this.PrettyDefname), "guessed by Converter");
 
 				}
 			}
-
 			base.ThirdStage();
+		}
+
+		//called on the very end of 3rd stage
+		protected override void ProcessCreateTriggerLine(string name, string value, string comment, int lineNum) {
+			switch (name) {
+				case "tag.jed_typ":
+					this.headerType = "PoisonPotionDef";
+					this.Set("PoisonType", "p_"+value, comment);
+					break;
+			}
+			base.ProcessCreateTriggerLine(name, value, comment, lineNum);
 		}
 
 		private bool IsColoredMetal() {
 			string material = GetMaterialFromDefname(this.PrettyDefname);
 			if (material != null) {
-				Set("Material", "Material." + Utility.Capitalize(material), "guessed by Converter");
+				this.Set("Material", "Material." + Utility.Capitalize(material), "guessed by Converter");
 				return true;
 			}
 			return false;
@@ -464,12 +499,13 @@ namespace SteamEngine.Converter {
 			return WearableType.Plate;
 		}
 
-		private static string HandleLayer(ConvertedDef d, PropsLine line) {
+		private static void HandleLayer(ConvertedDef d, PropsLine line) {
 			ConvertedItemDef def = (ConvertedItemDef) d;
 			def.MakeEquippable();
 			def.layerSet = true;
-			def.layer = MayBeInt_IgnorePoint(def, line);
-			return def.layer;
+			def.layer = TryNormalizeNumber(line.Value);
+			def.Set("layer", def.layer, line.Comment);
+			//return def.layer;
 		}
 	}
 }
