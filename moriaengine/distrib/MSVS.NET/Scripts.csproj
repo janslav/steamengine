@@ -116,6 +116,42 @@
     <Compile Include="..\..\scripts\Basic\CharClasses\Player.Generated.cs">
       <Link>Basic\CharClasses\Player.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Basic\ItemClasses\Potion.cs">
+      <Link>Basic\ItemClasses\Potion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\ItemClasses\Potion.Generated.cs">
+      <Link>Basic\ItemClasses\Potion.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Destroyable.cs">
+      <Link>Basic\skills\Combat\Destroyable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Destroyable.Generated.cs">
+      <Link>Basic\skills\Combat\Destroyable.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Projectile.cs">
+      <Link>Basic\skills\Combat\Projectile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Projectile.Generated.cs">
+      <Link>Basic\skills\Combat\Projectile.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Weapon.cs">
+      <Link>Basic\skills\Combat\Weapon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Weapon.Generated.cs">
+      <Link>Basic\skills\Combat\Weapon.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Wearable.cs">
+      <Link>Basic\skills\Combat\Wearable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Combat\Wearable.Generated.cs">
+      <Link>Basic\skills\Combat\Wearable.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.cs">
+      <Link>Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.Generated.cs">
+      <Link>Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonEffectPlugin.cs">
       <Link>Basic\skills\Poisoning\PoisonEffectPlugin.cs</Link>
     </Compile>
@@ -124,6 +160,12 @@
     </Compile>
     <Compile Include="..\..\scripts\Basic\skills\Poisoning\Poisoning.cs">
       <Link>Basic\skills\Poisoning\Poisoning.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonPotion.cs">
+      <Link>Basic\skills\Poisoning\PoisonPotion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonPotion.Generated.cs">
+      <Link>Basic\skills\Poisoning\PoisonPotion.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Basic\utilities\ColoredItems.cs">
       <Link>Basic\utilities\ColoredItems.cs</Link>
@@ -182,12 +224,6 @@
     <Compile Include="..\..\scripts\Basic\ItemClasses\Corpse.Generated.cs">
       <Link>Basic\ItemClasses\Corpse.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Destroyable.cs">
-      <Link>Basic\ItemClasses\Destroyable.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Destroyable.Generated.cs">
-      <Link>Basic\ItemClasses\Destroyable.Generated.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\Basic\ItemClasses\Door.cs">
       <Link>Basic\ItemClasses\Door.cs</Link>
     </Compile>
@@ -218,29 +254,11 @@
     <Compile Include="..\..\scripts\Basic\ItemClasses\Musical.Generated.cs">
       <Link>Basic\ItemClasses\Musical.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Projectile.cs">
-      <Link>Basic\ItemClasses\Projectile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Projectile.Generated.cs">
-      <Link>Basic\ItemClasses\Projectile.Generated.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\Basic\ItemClasses\Ship.cs">
       <Link>Basic\ItemClasses\Ship.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Basic\ItemClasses\Ship.Generated.cs">
       <Link>Basic\ItemClasses\Ship.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Weapon.cs">
-      <Link>Basic\ItemClasses\Weapon.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Weapon.Generated.cs">
-      <Link>Basic\ItemClasses\Weapon.Generated.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Wearable.cs">
-      <Link>Basic\ItemClasses\Wearable.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Basic\ItemClasses\Wearable.Generated.cs">
-      <Link>Basic\ItemClasses\Wearable.Generated.cs</Link>
     </Compile>
     <Compile Include="..\..\scripts\Basic\AbilitiesAndTalents\AbilitiesEnumerator.cs">
       <Link>Basic\AbilitiesAndTalents\AbilitiesEnumerator.cs</Link>
@@ -827,12 +845,6 @@
     <Compile Include="..\..\scripts\Basic\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.Generated.cs">
       <Link>Basic\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.Generated.cs</Link>
     </Compile>
-    <Compile Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs">
-      <Link>Basic\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.cs</Link>
-    </Compile>
-    <Compile Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.Generated.cs">
-      <Link>Basic\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.Generated.cs</Link>
-    </Compile>
     <Compile Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs">
       <Link>Basic\skills\Magery\Spells\PoisonAndCure\PoisonSpellDef.cs</Link>
     </Compile>
@@ -1155,11 +1167,32 @@
     <None Include="..\..\scripts\Basic\CharClasses\Player.ct">
       <Link>Basic\CharClasses\Player.ct</Link>
     </None>
+    <None Include="..\..\scripts\Basic\ItemClasses\Potion.ct">
+      <Link>Basic\ItemClasses\Potion.ct</Link>
+    </None>
     <None Include="..\..\scripts\Basic\Professions\Definitions\thief.def">
       <Link>Basic\Professions\Definitions\thief.def</Link>
     </None>
+    <None Include="..\..\scripts\Basic\skills\Combat\Destroyable.ct">
+      <Link>Basic\skills\Combat\Destroyable.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\skills\Combat\Projectile.ct">
+      <Link>Basic\skills\Combat\Projectile.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\skills\Combat\Weapon.ct">
+      <Link>Basic\skills\Combat\Weapon.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\skills\Combat\Wearable.ct">
+      <Link>Basic\skills\Combat\Wearable.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.ct">
+      <Link>Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.ct</Link>
+    </None>
     <None Include="..\..\scripts\Basic\skills\Poisoning\PoisonEffectPlugin.ct">
       <Link>Basic\skills\Poisoning\PoisonEffectPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\skills\Poisoning\PoisonPotion.ct">
+      <Link>Basic\skills\Poisoning\PoisonPotion.ct</Link>
     </None>
     <None Include="..\..\scripts\Optional\System\treasures\treasures.ct">
       <Link>Optional\System\treasures\treasures.ct</Link>
@@ -1191,9 +1224,6 @@
     <None Include="..\..\scripts\Basic\ItemClasses\Corpse.ct">
       <Link>Basic\ItemClasses\Corpse.ct</Link>
     </None>
-    <None Include="..\..\scripts\Basic\ItemClasses\Destroyable.ct">
-      <Link>Basic\ItemClasses\Destroyable.ct</Link>
-    </None>
     <None Include="..\..\scripts\Basic\ItemClasses\Door.ct">
       <Link>Basic\ItemClasses\Door.ct</Link>
     </None>
@@ -1209,17 +1239,8 @@
     <None Include="..\..\scripts\Basic\ItemClasses\Musical.ct">
       <Link>Basic\ItemClasses\Musical.ct</Link>
     </None>
-    <None Include="..\..\scripts\Basic\ItemClasses\Projectile.ct">
-      <Link>Basic\ItemClasses\Projectile.ct</Link>
-    </None>
     <None Include="..\..\scripts\Basic\ItemClasses\Ship.ct">
       <Link>Basic\ItemClasses\Ship.ct</Link>
-    </None>
-    <None Include="..\..\scripts\Basic\ItemClasses\Weapon.ct">
-      <Link>Basic\ItemClasses\Weapon.ct</Link>
-    </None>
-    <None Include="..\..\scripts\Basic\ItemClasses\Wearable.ct">
-      <Link>Basic\ItemClasses\Wearable.ct</Link>
     </None>
     <None Include="..\..\scripts\Basic\AbilitiesAndTalents\Abilities\Regenerations\regenAbilities.scp">
       <Link>Basic\AbilitiesAndTalents\Abilities\Regenerations\regenAbilities.scp</Link>
@@ -1421,9 +1442,6 @@
     </None>
     <None Include="..\..\scripts\Basic\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.ct">
       <Link>Basic\skills\Magery\Spells\Paralyze\ParalyzeEffectPlugin.ct</Link>
-    </None>
-    <None Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct">
-      <Link>Basic\skills\Magery\Spells\PoisonAndCure\PoisonEffectPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\Basic\skills\Magery\Spells\SpellEffectItem.ct">
       <Link>Basic\skills\Magery\Spells\SpellEffectItem.ct</Link>
