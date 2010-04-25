@@ -29,16 +29,16 @@ namespace SteamEngine.Converter {
 
 		bool hasNumericDefname = false;
 
-		public ConvertedTemplateDef(PropsSection input)
-			: base(input) {
+		public ConvertedTemplateDef(PropsSection input, ConvertedFile convertedFile)
+			: base(input, convertedFile) {
 
 			this.headerType = "TemplateDef";
 		}
 
 		public override void FirstStage() {
 			int defnum;
-			if (ConvertTools.TryParseInt32(headerName, out defnum)) {
-				headerName = "td_0x" + defnum.ToString("x");
+			if (ConvertTools.TryParseInt32(this.headerName, out defnum)) {
+				this.headerName = "td_0x" + defnum.ToString("x");
 				hasNumericDefname = true;
 			}
 		}
@@ -61,16 +61,16 @@ namespace SteamEngine.Converter {
 						case "defname":
 							if (hasNumericDefname) {
 								Info(linenum, "Ignoring the numeric defname of TemplateDef '" + value + "'.");
-								headerName = value;
+								this.headerName = value;
 								//origData.headerComment = origData.headerComment+" // "+comment;
 							} else {
-								Set(name, value, comment);
+								this.Set(name, value, comment);
 							}
 							break;
 						case "category":
 						case "subsection":
 						case "description":
-							Set(name, value, comment);
+							this.Set(name, value, comment);
 							break;
 						default:
 							writer.WriteLine(line);
@@ -99,7 +99,7 @@ namespace SteamEngine.Converter {
 						case "buy":
 						case "sell":
 
-							Set(name, FixRandomExpression(value), comment);
+							this.Set(name, FixRandomExpression(value), comment);
 							break;
 					}
 				}

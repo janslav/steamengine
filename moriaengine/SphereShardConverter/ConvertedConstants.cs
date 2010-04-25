@@ -26,8 +26,8 @@ using System.Text.RegularExpressions;
 
 namespace SteamEngine.Converter {
 	public class ConvertedConstants : ConvertedDef {
-		public ConvertedConstants(PropsSection input)
-			: base(input) {
+		public ConvertedConstants(PropsSection input, ConvertedFile convertedFile)
+			: base(input, convertedFile) {
 			this.headerType = "Constants";
 		}
 

@@ -57,8 +57,8 @@ namespace SteamEngine.Converter {
 																			  
 		};
 
-		public ConvertedCharDef(PropsSection input)
-			: base(input) {
+		public ConvertedCharDef(PropsSection input, ConvertedFile convertedFile)
+			: base(input, convertedFile) {
 			this.byModel = charsByModel;
 			this.byDefname = charsByDefname;
 
@@ -81,7 +81,7 @@ namespace SteamEngine.Converter {
 			}
 		}
 
-		private static string HandleMountId(ConvertedDef def, PropsLine line) {
+		private static void HandleMountId(ConvertedDef def, PropsLine line) {
 			int num = -1;
 			if (!ConvertTools.TryParseInt32(line.Value, out num)) {
 				ConvertedThingDef i;
@@ -92,15 +92,15 @@ namespace SteamEngine.Converter {
 			if (num != -1) {
 				string retVal = "0x" + num.ToString("x");
 				def.Set("MountItem", retVal, line.Comment);
-				return retVal;
+				//return retVal;
 			} else {
 				def.Warning(line.Line, "Unresolvable MountItem model");
 			}
-			return "";
+			//return "";
 		}
 
 
-		private static string HandleSound(ConvertedDef def, PropsLine line) {
+		private static void HandleSound(ConvertedDef def, PropsLine line) {
 			string retVal = line.Value;
 			int num;
 			if (ConvertTools.TryParseInt32(line.Value, out num)) {
@@ -117,7 +117,7 @@ namespace SteamEngine.Converter {
 				def.Set("HurtSound", retVal + " + 3", "");
 				def.Set("DeathSound", retVal + " + 4", "");
 			}
-			return retVal;
+			//return retVal;
 		}
 	}
 }

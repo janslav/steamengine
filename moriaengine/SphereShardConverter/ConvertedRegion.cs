@@ -86,14 +86,14 @@ namespace SteamEngine.Converter {
 
 		static Regex nonCharacterSplitRE = new Regex(@"[^\w]+", RegexOptions.Compiled);
 
-		public ConvertedRegion(PropsSection input)
-			: base(input) {
+		public ConvertedRegion(PropsSection input, ConvertedFile convertedFile)
+			: base(input, convertedFile) {
 			this.firstStageImplementations.Add(firstStageImpl);
 
-			Set("createdat", Persistence.ObjectSaver.Save(DateTime.Now), "");
+			this.Set("createdat", Persistence.ObjectSaver.Save(DateTime.Now), "");
 
 			string name = input.HeaderName;
-			Set("Name", "\"" + name + "\"", "");
+			this.Set("Name", "\"" + name + "\"", "");
 			if (StringComparer.OrdinalIgnoreCase.Equals(name, "%servname%")) {
 				//headerType = "WorldRegion";
 				hierarchyIndex = 0;
@@ -112,7 +112,7 @@ namespace SteamEngine.Converter {
 				toAdd++;
 			}
 			regionsByDefname[defname] = this;
-			headerName = defname;
+			this.headerName = defname;
 			allRegions.Add(this);
 
 			PropsLine defnameLine = input.TryPopPropsLine("defname");
@@ -121,13 +121,13 @@ namespace SteamEngine.Converter {
 					//headerType = "Worldregion";
 					hierarchyIndex = 0;
 				}
-				regionsByDefname.Remove(headerName);
-				headerName = defnameLine.Value;
+				regionsByDefname.Remove(this.headerName);
+				this.headerName = defnameLine.Value;
 				regionsByDefname[defnameLine.Value] = this;//this could overwrite something, but that is not our fault I think :)
 			}
 		}
 
-		private static string ParseRect(ConvertedDef def, PropsLine line) {
+		private static void ParseRect(ConvertedDef def, PropsLine line) {
 			Match m = Region.rectRE.Match(line.Value);
 			if (m.Success) {
 				GroupCollection gc = m.Groups;
@@ -159,24 +159,24 @@ namespace SteamEngine.Converter {
 				string retVal = string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY);
 				def.Set("Rect", retVal, line.Comment);
 				((ConvertedRegion) def).rectangles.Add(new ImmutableRectangle(minX, minY, maxX, maxY));
-				return retVal;
+				//return retVal;
 			} else {
 				def.Warning(line.Line, "Unrecognized Rectangle format ('" + line.Value + "')");
 			}
-			return "";
+			//return "";
 		}
 
-		private static string ParseMapplane(ConvertedDef def, PropsLine line) {
+		private static void ParseMapplane(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
 			r.mapplane = TagMath.ParseByte(line.Value);
 			r.mapplaneSet = true;
 			r.mapplaneLine = line;
-			return "";
+			//return "";
 		}
 
 		private static SteamEngine.CompiledScripts.Point4DSaveImplementor pImplementor = new SteamEngine.CompiledScripts.Point4DSaveImplementor();
 
-		private static string ParseP(ConvertedDef def, PropsLine line) {
+		private static void ParseP(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
 			Point4D p = Point4D.Parse(line.Value);
 			if (!r.mapplaneSet) {
@@ -184,10 +184,10 @@ namespace SteamEngine.Converter {
 			}
 			string retVal = pImplementor.Save(p);
 			def.Set("Spawnpoint", retVal, line.Comment);
-			return retVal;
+			//return retVal;
 		}
 
-		private static string ParseFlags(ConvertedDef def, PropsLine line) {
+		private static void ParseFlags(ConvertedDef def, PropsLine line) {
 			string name = line.Name;
 			switch (line.Name.ToLowerInvariant()) {
 				case "flagsafe":
@@ -218,9 +218,9 @@ namespace SteamEngine.Converter {
 				def.headerType = "FlaggedRegion";
 				//}
 				def.Set(name, line.Value, line.Comment);
-				return line.Value;
+				//return line.Value;
 			}
-			return "";
+			//return "";
 		}
 
 		public override void SecondStage() {
@@ -278,9 +278,9 @@ namespace SteamEngine.Converter {
 
 		public override void ThirdStage() {
 			if (mapplaneLine != null) {
-				Set("Mapplane", mapplane.ToString(), mapplaneLine.Comment);
+				this.Set("Mapplane", mapplane.ToString(), mapplaneLine.Comment);
 			} else {
-				Set("Mapplane", mapplane.ToString(), "");
+				this.Set("Mapplane", mapplane.ToString(), "");
 			}
 		}
 
@@ -327,7 +327,7 @@ namespace SteamEngine.Converter {
 			ConvertedRegion definitiveParent = parents[highestHierarchyIndexAt];
 			parents = new ConvertedRegion[] { definitiveParent };
 			hierarchyIndex = definitiveParent.hierarchyIndex + 1;
-			Set("Parent", "(" + definitiveParent.headerName + ")", "calculated by Converter");
+			this.Set("Parent", "(" + definitiveParent.headerName + ")", "calculated by Converter");
 			//Console.WriteLine("Parent for "+this.headerName+"set to "+definitiveParent.headerName);
 			return true;
 		}
@@ -363,7 +363,7 @@ namespace SteamEngine.Converter {
 		}
 		//		
 		public override string ToString() {
-			return "ConvertedRegion " + headerName + "(" + hierarchyIndex + ")";
+			return "ConvertedRegion " + this.headerName + "(" + hierarchyIndex + ")";
 		}
 	}
 }

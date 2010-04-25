@@ -29,11 +29,8 @@ namespace SteamEngine.Converter {
 	public static class ConverterMain {
 		public static bool AdditionalConverterMessages = true; //AdditionalConverterMessages = TagMath.ToBoolean(ConfigurationSettings.AppSettings["Additional converter Messages"]);
 		//private static ArrayList convertedDefs = new ArrayList();
-		public static List<ConvertedFile> memFiles = new List<ConvertedFile>();
 		public static string convertToPath = null;
 		public static string convertPath = null;
-
-		public static ConvertedFile currentIFile;
 
 		private static StringToSendEventHandler consoleDelegate;
 
@@ -91,17 +88,18 @@ namespace SteamEngine.Converter {
 				CreateFolders();
 				string origCurDir = Path.GetFullPath(Directory.GetCurrentDirectory());
 				Directory.SetCurrentDirectory(convertPath);
-				CreateFileList(".");
+				List<ConvertedFile> filesList = new List<ConvertedFile>();
+				CreateFileList(".", filesList);
 				Directory.SetCurrentDirectory(origCurDir);
-				Console.WriteLine("Converting " + memFiles.Count + " Sphere script files.");
+				Console.WriteLine("Converting " + filesList.Count + " Sphere script files.");
 
-				foreach (ConvertedFile file in memFiles) {
+				foreach (ConvertedFile file in filesList) {
 					//Logger.WriteDebug("Reading file "+file.origPath);
 					ConvertFile(file);
 				}
 				Console.WriteLine("Files loaded and parsed.");
 
-				foreach (ConvertedFile file in memFiles) {
+				foreach (ConvertedFile file in filesList) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
 					foreach (ConvertedDef def in file.defs) {
 						def.FirstStage();
@@ -110,7 +108,7 @@ namespace SteamEngine.Converter {
 				InvokeStaticMethodOnDefClasses("FirstStageFinished");
 				Console.WriteLine("First stage finished.");
 
-				foreach (ConvertedFile file in memFiles) {
+				foreach (ConvertedFile file in filesList) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
 					foreach (ConvertedDef def in file.defs) {
 						def.SecondStage();
@@ -119,7 +117,7 @@ namespace SteamEngine.Converter {
 				InvokeStaticMethodOnDefClasses("SecondStageFinished");
 				Console.WriteLine("Second stage finished.");
 
-				foreach (ConvertedFile file in memFiles) {
+				foreach (ConvertedFile file in filesList) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
 					foreach (ConvertedDef def in file.defs) {
 						def.ThirdStage();
@@ -128,7 +126,7 @@ namespace SteamEngine.Converter {
 				InvokeStaticMethodOnDefClasses("ThirdStageFinished");
 				Console.WriteLine("Third stage finished.");
 
-				foreach (ConvertedFile mf in memFiles) {
+				foreach (ConvertedFile mf in filesList) {
 					mf.Flush();
 				}
 				Console.WriteLine("Files written to disk.");
@@ -150,26 +148,25 @@ namespace SteamEngine.Converter {
 			}
 		}
 
-		private static void CreateFileList(string folder) {
+		private static void CreateFileList(string folder, List<ConvertedFile> list) {
 			//Console.WriteLine("converting from folder "+LogStr.File(folder));
 
 			foreach (string subfolder in Directory.GetDirectories(folder)) {
-				CreateFileList(subfolder);
+				CreateFileList(subfolder, list);
 			}
 
 			string[] filenames = Directory.GetFiles(folder, "*.scp");
 			foreach (string filename in filenames) {
 				ConvertedFile file = new ConvertedFile(filename);
-				memFiles.Add(file);
+				list.Add(file);
 			}
 		}
 
-		public static void ConvertFile(ConvertedFile f) {
-			currentIFile = f;
+		public static void ConvertFile(ConvertedFile convertedFile) {
 
-			using (StreamReader stream = File.OpenText(f.origPath)) {
+			using (StreamReader stream = File.OpenText(convertedFile.origPath)) {
 				foreach (PropsSection input in
-						PropsFileParser.Load(f.origPath, stream, StartsAsScript, false)) {
+						PropsFileParser.Load(convertedFile.origPath, stream, StartsAsScript, false)) {
 
 					ConvertedDef cd = null;
 					try {
@@ -181,20 +178,20 @@ namespace SteamEngine.Converter {
 
 						switch (type) {
 							case "itemdef":
-								cd = new ConvertedItemDef(input);
+								cd = new ConvertedItemDef(input, convertedFile);
 								break;
 							case "chardef":
-								cd = new ConvertedCharDef(input);
+								cd = new ConvertedCharDef(input, convertedFile);
 								break;
 							case "area":
-								cd = new ConvertedRegion(input);
+								cd = new ConvertedRegion(input, convertedFile);
 								break;
 							case "template":
-								cd = new ConvertedTemplateDef(input);
+								cd = new ConvertedTemplateDef(input, convertedFile);
 								break;
 							case "defname":
 							case "defnames":
-								cd = new ConvertedConstants(input);
+								cd = new ConvertedConstants(input, convertedFile);
 								break;
 						}
 					} catch (FatalException) {
@@ -208,11 +205,11 @@ namespace SteamEngine.Converter {
 						continue;
 					}
 					if (cd == null) {
-						cd = new ConvertedDef(input);
+						cd = new ConvertedDef(input, convertedFile);
 						cd.DontDump();
 						//Logger.WriteWarning(WorldSaver.currentfile, input.headerLine, "Unknown section "+LogStr.Ident(input));
 					}
-					currentIFile.AddDef(cd);
+					convertedFile.AddDef(cd);
 					//convertedDefs.Add(cd);
 					continue;
 
