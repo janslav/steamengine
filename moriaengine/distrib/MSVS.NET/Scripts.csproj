@@ -116,6 +116,15 @@
     <Compile Include="..\..\scripts\Basic\CharClasses\Player.Generated.cs">
       <Link>Basic\CharClasses\Player.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonEffectPlugin.cs">
+      <Link>Basic\skills\Poisoning\PoisonEffectPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonEffectPlugin.Generated.cs">
+      <Link>Basic\skills\Poisoning\PoisonEffectPlugin.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Poisoning\Poisoning.cs">
+      <Link>Basic\skills\Poisoning\Poisoning.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\Basic\utilities\ColoredItems.cs">
       <Link>Basic\utilities\ColoredItems.cs</Link>
     </Compile>
@@ -1148,6 +1157,9 @@
     </None>
     <None Include="..\..\scripts\Basic\Professions\Definitions\thief.def">
       <Link>Basic\Professions\Definitions\thief.def</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\skills\Poisoning\PoisonEffectPlugin.ct">
+      <Link>Basic\skills\Poisoning\PoisonEffectPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\Optional\System\treasures\treasures.ct">
       <Link>Optional\System\treasures\treasures.ct</Link>
