@@ -609,6 +609,13 @@ namespace SteamEngine {
 			}
 		}
 
+		public void ClilocSysMessage(int msg) {
+			GameState state = this.GameState;
+			if (state != null) {
+				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, "");
+			}
+		}
+
 		public void ClilocSysMessage(int msg, string args) {
 			GameState state = this.GameState;
 			if (state != null) {

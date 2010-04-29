@@ -123,8 +123,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void BuildAosToolTips(AosToolTips opc, Language language) {
-			base.BuildAosToolTips(opc, language);
+		public override void On_BuildAosToolTips(AosToolTips opc, Language language) {
+			base.On_BuildAosToolTips(opc, language);
 
 			opc.AddNameColonValue(Loc<ColoredStaffLoc>.Get(language).manaInStaff,
 				String.Concat(this.mana.ToString(), "/", this.TypeDef.MaxMana.ToString()));

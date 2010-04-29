@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class Projectile {
+	public partial class Projectile : IPoisonableItem {
 
 		public ProjectileType ProjectileType {
 			get {
@@ -55,6 +55,18 @@ namespace SteamEngine.CompiledScripts {
 		//there's no "uncouple" trigger and it can be called at any time and any number of times, so implement accordingly
 		protected virtual void On_CoupledWithWeapon(Character self, Weapon weapon) {
 			
+		}
+
+		public int PoisoningDifficulty {
+			get {
+				return this.TypeDef.PoisoningDifficulty;
+			}
+		}
+
+		public double PoisoningEfficiency {
+			get {
+				return this.TypeDef.PoisoningEfficiency;
+			}
 		}
 	}
 }

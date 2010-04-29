@@ -31,56 +31,56 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class DamagingPoisonEffectPlugin {
-		public const double minimumPoisonEffect = 0.1; //plugin gets removed when the regen modifier goes below this
+		//public const double minimumPoisonEffect = 0.1; //plugin gets removed when the regen modifier goes below this
 
 
-		static TimerKey tickTimerKey = TimerKey.Acquire("_poisonTickTimer_");
+		//static TimerKey tickTimerKey = TimerKey.Acquire("_poisonTickTimer_");
 
-		public void On_Assign() {
-			Character self = (Character) this.Cont;
+		//public void On_Assign() {
+		//    Character self = (Character) this.Cont;
 
-			double effect = this.EffectPower;
-			this.AddTimer(tickTimerKey, new PoisonTickTimer(this.TimerObject.DueInSpan, effect));
-			self.HitsRegenSpeed -= effect;
-			self.Flag_GreenHealthBar = true;
-		}
+		//    double effect = this.EffectPower;
+		//    this.AddTimer(tickTimerKey, new PoisonTickTimer(this.TimerObject.DueInSpan, effect));
+		//    self.HitsRegenSpeed -= effect;
+		//    self.Flag_GreenHealthBar = true;
+		//}
 
-		public override void On_UnAssign(Character cont) {
-			cont.HitsRegenSpeed += this.EffectPower;
+		//public override void On_UnAssign(Character cont) {
+		//    cont.HitsRegenSpeed += this.EffectPower;
 
-			PoisonSpellDef poisonSpell = SingletonScript<PoisonSpellDef>.Instance;
-			cont.Flag_GreenHealthBar = //
-				cont.HasPlugin(poisonSpell.EffectPluginKey_Potion) || cont.HasPlugin(poisonSpell.EffectPluginKey_Spell);
-			base.On_UnAssign(cont);
-		}
+		//    PoisonSpellDef poisonSpell = SingletonScript<PoisonSpellDef>.Instance;
+		//    cont.Flag_GreenHealthBar = //
+		//        cont.HasPlugin(poisonSpell.EffectPluginKey_Potion) || cont.HasPlugin(poisonSpell.EffectPluginKey_Spell);
+		//    base.On_UnAssign(cont);
+		//}
 
-		public void ModifyEffect(double difference) {
-			Character self = (Character) this.Cont;
-			if (self != null) {
-				double newEffect = this.EffectPower + difference;
-				if (newEffect < minimumPoisonEffect) {
-					this.Delete();
-				} else {
-					self.HitsRegenSpeed -= difference;
-					this.EffectPower = newEffect;
-				}
-			}
-		}
+		//public void ModifyEffect(double difference) {
+		//    Character self = (Character) this.Cont;
+		//    if (self != null) {
+		//        double newEffect = this.EffectPower + difference;
+		//        if (newEffect < minimumPoisonEffect) {
+		//            this.Delete();
+		//        } else {
+		//            self.HitsRegenSpeed -= difference;
+		//            this.EffectPower = newEffect;
+		//        }
+		//    }
+		//}
 
-		public void AnnouncePoisonStrength() {
-			Character self = this.Cont as Character;
-			if (self != null) {
-				int roundedEffect = (int) this.EffectPower;
-				if (roundedEffect < 0) {
-					roundedEffect = 0;
-				} else if (roundedEffect > 4) {
-					roundedEffect = 4;
-				}
+		//public void AnnouncePoisonStrength() {
+		//    Character self = this.Cont as Character;
+		//    if (self != null) {
+		//        int roundedEffect = (int) this.EffectPower;
+		//        if (roundedEffect < 0) {
+		//            roundedEffect = 0;
+		//        } else if (roundedEffect > 4) {
+		//            roundedEffect = 4;
+		//        }
 
-				self.ClilocEmote(1042858 + (roundedEffect * 2), 0x21, self.Name); //shouldn't see one's own cliloc emote?
-				self.ClilocSysMessage(1042857 + (roundedEffect * 2), 0x21);
-			}
-		}
+		//        self.ClilocEmote(1042858 + (roundedEffect * 2), 0x21, self.Name); //shouldn't see one's own cliloc emote?
+		//        self.ClilocSysMessage(1042857 + (roundedEffect * 2), 0x21);
+		//    }
+		//}
 
 		//1042857	*You feel a bit nauseous*
 		//1042858	*~1_PLAYER_NAME~ looks ill.*

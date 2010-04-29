@@ -177,6 +177,9 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
 		public DenyResult CanReach(Thing target) {
+			if (target.IsDeleted) {
+				return DenyResult.Deny_RemoveFromView;
+			}
 			return this.CanReachFromAt(this, target.TopPoint, target, true);
 		}
 

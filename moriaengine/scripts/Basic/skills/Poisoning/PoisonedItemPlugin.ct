@@ -13,9 +13,11 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ThingTemplate Projectile : Item]
-Def:	//vars on the def
-	double piercing = 0
-	ProjectileType projectileType = ProjectileType.Bolt
-	int poisoningDifficulty = 0
-	double poisoningEfficiency = 1.0
+
+[PluginTemplate PoisonedItemPlugin : Plugin]
+Vars:
+	private PoisonEffectPluginDef poisonType  = null
+	private int poisonPower = 0
+	private TimeSpan poisonTickInterval = TimeSpan.Zero
+	private int poisonDuration = 0
+	private int poisonDoses = 0

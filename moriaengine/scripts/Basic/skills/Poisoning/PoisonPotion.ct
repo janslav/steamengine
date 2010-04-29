@@ -16,6 +16,6 @@
 [ThingTemplate PoisonPotion : Potion]
 Def:	//vars on the def
 	PoisonEffectPluginDef poisonType  = null
-	int poisonPower = 1000
+	System.Int32[] poisonPower = new int[] {0, 1000}
 	TimeSpan poisonTickInterval = TimeSpan.FromSeconds(5)
-	TimeSpan poisonDuration = TimeSpan.FromSeconds(2*60)
+	int poisonDuration = 24

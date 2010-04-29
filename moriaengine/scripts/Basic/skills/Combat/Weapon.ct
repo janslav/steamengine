@@ -29,3 +29,6 @@ Def:	//vars on the def
 	int strikeStopRange = 10
 	double mindPowerVsM = -1
 	double mindPowerVsP = -1
+	int poisoningDifficulty = 0
+	double poisoningEfficiency = 1.0
+	int poisonCapacity = 5
