@@ -60,16 +60,16 @@ Stealth=0, 1000
 RemoveTrap=0, 1000
 
 //AbilityNameOrDefname = display order, maximum points
-a_regen_hits = 0, 10
-a_regen_stam = 1, 10
-a_regen_mana = 2, 10
+a_regen_hits = 0, 20
+a_regen_stam = 1, 20
+a_regen_mana = 2, 20
 
-a_weapon_dodge = 3, 20
-a_spell_absorption = 4, 40
+a_weapon_dodge = 3, 40
+a_spell_absorption = 4, 20
 
-a_leech_hits = 5, 10
-a_leech_stam = 6, 10
-a_leech_mana = 7, 10
+a_leech_hits = 5, 20
+a_leech_stam = 6, 20
+a_leech_mana = 7, 20
 
 //TODO longrange
 //TODO? throwing
