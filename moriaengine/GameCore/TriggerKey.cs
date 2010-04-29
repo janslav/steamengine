@@ -134,6 +134,8 @@ namespace SteamEngine {
 		internal static readonly TriggerKey clientAttach = Acquire("ClientAttach");
 
 		internal static readonly TriggerKey containerOpen = Acquire("containerOpen");
+
+		internal static readonly TriggerKey buildAosToolTips = Acquire("buildAosToolTips");
 	}
 
 

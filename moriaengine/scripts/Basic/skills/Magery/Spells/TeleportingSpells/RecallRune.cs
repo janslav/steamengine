@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void BuildAosToolTips(AosToolTips opc, Language language) {
+		public override void On_BuildAosToolTips(AosToolTips opc, Language language) {
 			RecallRuneLoc loc = Loc<RecallRuneLoc>.Get(language);
 			if (string.IsNullOrEmpty(this.targetDescription)) {
 				opc.AddNameColonValue(loc.target, loc.anUnknownDestination);

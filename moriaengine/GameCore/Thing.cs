@@ -1205,7 +1205,11 @@ namespace SteamEngine {
 			this.GetNameCliloc(out id, out argument);
 			toolTips.AddLine(id, argument);
 
-			this.BuildAosToolTips(toolTips, language);
+			this.TryTrigger(TriggerKey.buildAosToolTips, new ScriptArgs(toolTips, language));
+			try {
+				this.On_BuildAosToolTips(toolTips, language);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+
 			toolTips.InitDone(this);
 
 			return toolTips;//new or changed
@@ -1217,7 +1221,7 @@ namespace SteamEngine {
 			argument = this.Name;
 		}
 
-		public virtual void BuildAosToolTips(AosToolTips opc, Language language) {
+		public virtual void On_BuildAosToolTips(AosToolTips opc, Language language) {
 		}
 
 		public virtual void InvalidateProperties() {

@@ -20,29 +20,45 @@ using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class PoisonPotion : IPoisonSource {
-		#region IPoisonSource Members
+	public partial class PoisonPotion {
 
 		public PoisonEffectPluginDef PoisonType {
 			get { return this.TypeDef.PoisonType; }
 		}
 
 		public int PoisonPower {
-			get { return this.TypeDef.PoisonPower; }
+			get {
+				int[] arr = this.TypeDef.PoisonPower;
+				if (arr == null) {
+					return 0;
+				} else {
+					switch (arr.Length) {
+						case 0:
+							return 0;
+						case 1:
+							return arr[0];
+						case 2:
+							return Globals.dice.Next(arr[0], arr[1]);
+						default:
+							Common.Logger.WriteWarning("Poison potion " + this.TypeDef.PrettyDefname +
+								" has > 2 numbers set as PoisonPower. Only 2 are supported, for randomization");
+							goto case 2;
+					}
+				}
+			}
 		}
 
 		public TimeSpan PoisonTickInterval {
 			get { return this.TypeDef.PoisonTickInterval; }
 		}
 
-		public TimeSpan PoisonDuration {
+		public int PoisonDuration {
 			get { return this.TypeDef.PoisonDuration; }
 		}
-
-		#endregion
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class PoisonPotionDef : IPoisonSource {
+	public partial class PoisonPotionDef {
+
 	}
 }

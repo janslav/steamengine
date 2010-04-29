@@ -138,12 +138,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected virtual bool On_TargonChar(Player self, Character targetted, object parameter) {
-			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
+			self.ClilocSysMessage(1046439);//That is not a valid target.
 			return true;
 		}
 
 		protected virtual bool On_TargonItem(Player self, Item targetted, object parameter) {
-			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
+			self.ClilocSysMessage(1046439);//That is not a valid target.
 			return true;
 		}
 
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected virtual bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
-			self.ClilocSysMessage(1046439, 0);//That is not a valid target.
+			self.ClilocSysMessage(1046439);//That is not a valid target.
 			return true;
 		}
 	}

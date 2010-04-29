@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
             if (target.Flag_Dead) {
                 target.Resurrect();
             } else {
-                spellEffectArgs.Caster.ClilocSysMessage(501041, -1); // Target is not dead.
+                spellEffectArgs.Caster.ClilocSysMessage(501041); // Target is not dead.
             }
 
         }
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
                             caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).GhostCantReachTheBody);
                         }
                     } else {
-                        caster.ClilocSysMessage(501041, -1); // Target is not dead.
+                        caster.ClilocSysMessage(501041); // Target is not dead.
                     }
                 } else {
                     caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ThisIsntPlayersBody);

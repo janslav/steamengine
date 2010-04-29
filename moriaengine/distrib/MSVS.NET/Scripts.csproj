@@ -152,6 +152,12 @@
     <Compile Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.Generated.cs">
       <Link>Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.Generated.cs</Link>
     </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonedItemPlugin.cs">
+      <Link>Basic\skills\Poisoning\PoisonedItemPlugin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonedItemPlugin.Generated.cs">
+      <Link>Basic\skills\Poisoning\PoisonedItemPlugin.Generated.cs</Link>
+    </Compile>
     <Compile Include="..\..\scripts\Basic\skills\Poisoning\PoisonEffectPlugin.cs">
       <Link>Basic\skills\Poisoning\PoisonEffectPlugin.cs</Link>
     </Compile>
@@ -1187,6 +1193,9 @@
     </None>
     <None Include="..\..\scripts\Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.ct">
       <Link>Basic\skills\Magery\Spells\PoisonAndCure\DamagingPoisonPlugin.ct</Link>
+    </None>
+    <None Include="..\..\scripts\Basic\skills\Poisoning\PoisonedItemPlugin.ct">
+      <Link>Basic\skills\Poisoning\PoisonedItemPlugin.ct</Link>
     </None>
     <None Include="..\..\scripts\Basic\skills\Poisoning\PoisonEffectPlugin.ct">
       <Link>Basic\skills\Poisoning\PoisonEffectPlugin.ct</Link>

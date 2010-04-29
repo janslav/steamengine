@@ -20,7 +20,7 @@ using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class WeaponDef : DestroyableDef {
+	public partial class WeaponDef {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			if (param.Equals("range", StringComparison.OrdinalIgnoreCase)) {
 				base.LoadScriptLine(filename, line, "rangevsm", args);
@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class Weapon : Destroyable {
+	public partial class Weapon : IPoisonableItem {
 
 		//at durability 0, attacknumber is halved
 		public double AttackVsM {
@@ -131,6 +131,24 @@ namespace SteamEngine.CompiledScripts {
 		public int ProjectileAnim {
 			get {
 				return this.TypeDef.ProjectileAnim;
+			}
+		}
+
+		public int PoisoningDifficulty {
+			get {
+				return this.TypeDef.PoisoningDifficulty;
+			}
+		}
+
+		public double PoisoningEfficiency {
+			get {
+				return this.TypeDef.PoisoningEfficiency;
+			}
+		}
+
+		public int PoisonCapacity {
+			get {
+				return this.TypeDef.PoisonCapacity;
 			}
 		}
 	}

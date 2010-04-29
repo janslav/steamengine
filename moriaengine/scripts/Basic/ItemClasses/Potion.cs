@@ -21,6 +21,21 @@ using System.Collections;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class Potion {
+		public override void On_DClick(AbstractCharacter dclicker) {
+			this.Consume(1);
+			this.CreateEmptyFlask(((Character) dclicker).Backpack);
+			//TODO? some sound and/or visual effect?
+
+			base.On_DClick(dclicker);
+		}
+
+		public Item CreateEmptyFlask(Container container) {
+			ItemDef emptyFlaskDef = this.TypeDef.EmptyFlask;
+			if (emptyFlaskDef != null) {
+				return (Item) container.NewItem(emptyFlaskDef);
+			}
+			return null;
+		}
 	}
 
 	[Dialogs.ViewableClass]
