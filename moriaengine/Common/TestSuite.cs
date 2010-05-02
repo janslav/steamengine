@@ -17,8 +17,6 @@
 
 using System;
 //using System.Windows.Forms;
-using System.Net.Sockets;
-using System.Net;
 using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
