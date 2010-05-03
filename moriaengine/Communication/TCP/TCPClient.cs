@@ -29,7 +29,10 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public sealed class TcpClientFactory<TState> :
+#if MSVS
+	sealed
+#endif
+	public class TcpClientFactory<TState> :
 		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>,
 		IClientFactory<TcpConnection<TState>, TState, IPEndPoint>
 		where TState : IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
@@ -49,7 +52,5 @@ namespace SteamEngine.Communication.TCP {
 
 			return newConn;
 		}
-
-		//public static void AcquireEndpoint(
 	}
 }

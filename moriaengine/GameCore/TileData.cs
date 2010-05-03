@@ -97,12 +97,6 @@ namespace SteamEngine {
 		public static void Init() {
 			string mulFileP = Path.Combine(Globals.MulPath, "tiledata.mul");
 			Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - terrain tile info.");
-			// Kemoc - filenames will be solved later
-			//#if MONO
-			//if (!mulReader.Exists(tileDataFile)) {
-			//	tileDataFile="tiledata.mul";
-			//}
-			//#endif
 			if (File.Exists(mulFileP)) {
 				landFlags = new TileFlag[numLandTiles];
 

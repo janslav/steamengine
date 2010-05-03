@@ -104,7 +104,8 @@
 			output="${commonFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 			
 			<sources>
 				<include name="Common/**/*.cs" />
@@ -127,7 +128,9 @@
 			output="${communicationFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
+			
 			
 			<sources>
 				<include name="Communication/**/*.cs" />
@@ -135,7 +138,7 @@
 			<references>
 				<include name="${commonFileName}" />
 				<include name="bin/SteamDoc.dll" />
-				<include name="bin/NAnt.Core.dll" />
+				<include name="System.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -147,7 +150,8 @@
 			output="${remoteConsoleFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 			
 			<sources>
 				<include name="RemoteConsole/**/*.cs" />
@@ -157,6 +161,9 @@
 				<include name="${communicationFileName}" />
 				<include name="${commonFileName}" />
 				<include name="bin/NAnt.Core.dll" />
+				<include name="System.dll" />
+				<include name="System.Drawing.dll" />
+				<include name="System.Windows.Forms.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -168,7 +175,8 @@
 			output="${gameCoreFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 			
 			<sources>
 				<include name="GameCore/**/*.cs" />
@@ -180,6 +188,7 @@
 				<include name="bin/EQATECProfilerRuntime.dll" />
 				<include name="${communicationFileName}" />
 				<include name="${commonFileName}" />
+				<include name="System.dll" />
 				<!--include name="Microsoft.JScript.dll" / -->
 			</references>
 			<arg line="${cmdLineParams}" />
@@ -195,7 +204,8 @@
 			output="${auxiliaryServerFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 			
 			<sources>
 				<include name="AuxiliaryServer/**/*.cs" />
@@ -205,6 +215,7 @@
 				<include name="bin/SteamDoc.dll" />
 				<include name="${communicationFileName}" />
 				<include name="${commonFileName}" />
+				<include name="System.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -219,7 +230,8 @@
 			output="${scriptsFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 
 			<sources>
 				<includesfile name="${scriptsSourcesListPath}" />
@@ -243,7 +255,8 @@
 			output="${generatedCodeFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 
 			<sources>
 				<include name="bin/Generated/**/*.cs" />
@@ -267,7 +280,8 @@
 			output="${converterFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 			
 			<sources>
 				<include name="SphereShardConverter/**/*.cs" />
@@ -289,7 +303,8 @@
 			output="${restarterFileName}" 
 			debug="${debug}" 
 			define="${defineSymbols}" 
-			optimize="${optimize} ">
+			optimize="${optimize} "
+			noconfig="true">
 			
 			<sources>
 				<include name="ProcessRestarter/**/*.cs" />

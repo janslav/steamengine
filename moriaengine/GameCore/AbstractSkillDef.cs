@@ -32,9 +32,6 @@ namespace SteamEngine {
 		//private static List<AbstractSkillDef> byId = new List<AbstractSkillDef>();
 		//Skilldef instances by their ID
 
-		private static Dictionary<string, ConstructorInfo> skillDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
-		//string-ConstructorInfo pairs  ("CombatSkillDef" - CombatSkillDef.ctor)
-
 
 		private FieldValue key;
 		//private int id;

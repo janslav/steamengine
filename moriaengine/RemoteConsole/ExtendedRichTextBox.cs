@@ -1,5 +1,3 @@
-#region Using directives
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,10 +9,15 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-#endregion
-
 namespace SteamEngine.RemoteConsole {
-	public class ExtendedRichTextBox : RichTextBox {
+	public class ExtendedRichTextBox : RichTextBox
+#if !MSWIN
+	{
+		public void ScrollToBottom() {
+		}
+	}
+#else
+	{
 		#region Private fields and constructors
 		private int _Updating = 0;
 		private int _OldEventMask = 0;
@@ -541,7 +544,8 @@ namespace SteamEngine.RemoteConsole {
 				SCROLLINFO info = new SCROLLINFO();
 				info.cbSize = Marshal.SizeOf(info);
 				info.fMask = SIF_ALL;
-				int ret = GetScrollInfo(new HandleRef(this, Handle), SBS_VERT, ref info);
+				//int ret = 
+					GetScrollInfo(new HandleRef(this, Handle), SBS_VERT, ref info);
 				return new ScrollBarInformation(info.nMin, info.nMax, info.nPage, info.nPos, info.nTrackPos);
 			}
 		}
@@ -1048,7 +1052,8 @@ namespace SteamEngine.RemoteConsole {
 
 				// A call to EmfToWmfBits with a valid buffer copies the bits into the
 				// buffer an returns the number of bits in the WMF.  
-				uint _convertedSize = GdipEmfToWmfBits(_hEmf, _bufferSize, _buffer, MM_ANISOTROPIC,
+				//uint _convertedSize = 
+					GdipEmfToWmfBits(_hEmf, _bufferSize, _buffer, MM_ANISOTROPIC,
 				 EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
 
 				// Append the bits to the RTF string
@@ -1407,7 +1412,8 @@ namespace SteamEngine.RemoteConsole {
 			IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
 			Marshal.StructureToPtr(cf, lpar, false);
 
-			IntPtr res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
+			//IntPtr res = 
+				SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
 
 			Marshal.FreeCoTaskMem(lpar);
 		}
@@ -1643,4 +1649,5 @@ namespace SteamEngine.RemoteConsole {
 		Red, Lime, Yellow, Blue, Fuchsia, Aqua, White
 	}
 	#endregion
+#endif
 }

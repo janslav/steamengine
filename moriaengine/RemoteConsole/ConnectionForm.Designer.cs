@@ -252,7 +252,7 @@ namespace SteamEngine.RemoteConsole {
 			// chkKeepReconnecting
 			// 
 			this.chkKeepReconnecting.AutoSize = true;
-			this.chkKeepReconnecting.DataBindings.Add(new System.Windows.Forms.Binding("CheckState", this.endPointSettingBindingSource, "KeepReconnecting", true));
+			this.chkKeepReconnecting.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.endPointSettingBindingSource, "KeepReconnecting", true));
 			this.chkKeepReconnecting.Location = new System.Drawing.Point(311, 146);
 			this.chkKeepReconnecting.Name = "chkKeepReconnecting";
 			this.chkKeepReconnecting.Size = new System.Drawing.Size(15, 14);

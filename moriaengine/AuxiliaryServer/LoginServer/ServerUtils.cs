@@ -43,6 +43,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				new byte[] { 255, 255, 255, 255 }
 				));
 
+#if !MONO
 			foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces()) {
 				IPInterfaceProperties properties = adapter.GetIPProperties();
 				foreach (UnicastIPAddressInformation info in properties.UnicastAddresses) {
@@ -57,6 +58,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 					}
 				}
 			}
+#endif
 
 			list.Sort();
 			return list.ToArray();

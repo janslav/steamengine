@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime;
@@ -94,6 +93,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void TryContract(int prevLen) {
+#if MSWIN
 			int textLength = this.txtBox.TextLength;
 			int currentLine = this.txtBox.GetLineFromCharIndex(prevLen);
 			int firstNextLine = this.txtBox.GetFirstCharIndexFromLine(currentLine + 1);
@@ -108,9 +108,11 @@ namespace SteamEngine.RemoteConsole {
 					this.txtBox.AppendText(Environment.NewLine);
 				}
 			}
+#endif
 		}
 
 		private bool TryUncontract(string linkText) {
+#if MSWIN
 			if (linkText.StartsWith(contractedSign+"#")) {
 				string indexStr = linkText.Substring(4);
 				int i = int.Parse(indexStr);
@@ -128,6 +130,7 @@ namespace SteamEngine.RemoteConsole {
 				}
 				return true;
 			}
+#endif
 			return false;
 		}
 
@@ -161,8 +164,13 @@ namespace SteamEngine.RemoteConsole {
 
 				this.txtBox.SelectionFont = style.Font;
 				this.txtBox.SelectionColor = style.TextColor;
+
 				if (style.IsLink) {
+#if MSWIN
 					this.txtBox.InsertLink(data);
+#else
+					this.txtBox.AppendText(data);
+#endif
 				} else {
 					this.txtBox.AppendText(data);
 				}

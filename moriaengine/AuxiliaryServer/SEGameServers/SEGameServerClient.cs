@@ -9,7 +9,12 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
 	public class SEGameServerClient : SteamEngine.AuxiliaryServer.GameServer,
+#if MSWIN
 		IConnectionState<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> {
+#else
+		IConnectionState<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, System.Net.IPEndPoint> {
+#endif
+
 
 		NamedPipeConnection<SEGameServerClient> conn;
 

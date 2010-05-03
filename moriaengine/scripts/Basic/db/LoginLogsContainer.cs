@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using SteamEngine.Networking;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 
 namespace SteamEngine.CompiledScripts {
 	public static class DbMethods {

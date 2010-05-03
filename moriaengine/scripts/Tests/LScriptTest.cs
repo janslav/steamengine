@@ -91,7 +91,7 @@ namespace SteamEngine.LScript {
 				"calling one string param method with = with multiple params");
 
 			//returning value
-			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return 5"), 5), "Error while return integer");
+			Sanity.IfTrueThrow(5 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return 5")), "Error while return integer");
 			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return \"some test string 7hgf456\""), "some test string 7hgf456"),
 				"Error while returning quoted string");
 			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return \" \\\" \""), " \" "),
@@ -100,13 +100,13 @@ namespace SteamEngine.LScript {
 			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return some test string 7hgf456"), "some test string 7hgf456"),
 				"Error while returning nonquoted string");
 
-			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return GetInteger"), 564),
+			Sanity.IfTrueThrow(564 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return GetInteger")),
 				"Error while returning integer from a method");
-			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return <GetInteger>"), 564),
+			Sanity.IfTrueThrow(564 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return <GetInteger>")),
 				"Error while returning integer from a <method>");
-			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return <GetInteger()>"), 564),
+			Sanity.IfTrueThrow(564 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return <GetInteger()>")),
 				"Error while returning integer from a <method()>");
-			Sanity.IfTrueThrow(!int.Equals(LScriptMain.RunSnippet(testObj, "return <?GetInteger?>"), 564),
+			Sanity.IfTrueThrow(564 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return <?GetInteger?>")),
 				"Error while returning integer from a <method>");
 
 			TestSnippet(2, "TestMethod_NoParams;TestMethod_NoParams", "calling two expressions in a row, syntax 1");

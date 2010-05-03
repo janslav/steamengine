@@ -115,10 +115,6 @@ namespace SteamEngine.Communication.TCP {
 			}
 		}
 
-		//protected virtual bool On_NewClient(TState newSS) {
-		//    return true;
-		//}
-
 		public void UnBind() {
 			if (this.IsBound) {
 				Console.WriteLine("Stopped listening on port " + this.BoundTo.Port);

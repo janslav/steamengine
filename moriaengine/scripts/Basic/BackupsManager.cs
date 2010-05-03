@@ -311,8 +311,14 @@ namespace SteamEngine.CompiledScripts {
 					return (bytesFree < (-maxSavesSize));
 #else
 
-#error In MONO version the device free space detection is not implemented
-					//I dont say MONO can't do this, it's me who doesn't and I do not care that much :P
+					DriveInfo[] drives = DriveInfo.GetDrives();
+					foreach (DriveInfo drive in drives) {
+						if (path.StartsWith(drive.RootDirectory.FullName, StringComparison.Ordinal)) {
+							long bytesFree = drive.AvailableFreeSpace;
+							return (bytesFree < (-maxSavesSize));
+						}
+					}
+					throw new SEException("Can't decide about free space. Disable counting backups size, or something.");
 #endif
 				} else if (maxSavesSize > 0) {
 					RefreshSize();

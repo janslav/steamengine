@@ -8,14 +8,21 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
+#if MSWIN
 	public class SEGameServerProtocol : IProtocol<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> {
+#else
+	public class SEGameServerProtocol : IProtocol<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, System.Net.IPEndPoint> {
+#endif
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly SEGameServerProtocol instance = new SEGameServerProtocol();
 
-
+#if MSWIN
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> GetPacketImplementation(byte id, NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state, out bool discardAfterReading) {
+#else
+		public IncomingPacket<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, System.Net.IPEndPoint> GetPacketImplementation(byte id, NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state, out bool discardAfterReading) {
+#endif
 			discardAfterReading = false;
 			switch (id) {
 				case 0x01:
@@ -38,8 +45,11 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 	}
 
+#if MSWIN
 	public abstract class SEGameServerIncomingPacket : IncomingPacket<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> {
-
+#else
+	public abstract class SEGameServerIncomingPacket : IncomingPacket<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, System.Net.IPEndPoint> {
+#endif	
 	}
 
 	public class IdentifyGameServerPacket : SEGameServerIncomingPacket {
