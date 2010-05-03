@@ -25,13 +25,13 @@ using System.Security.Cryptography;
 
 
 namespace SteamEngine.Common {
-	public sealed class ReadOnlyCollection<T> : ICollection<T>, ICollection {
+	public sealed class ReadOnlyCollection<T> : ICollection<T> /*, ICollection */ {
 		ICollection<T> genericCollection;
-		ICollection collection;
+		IEnumerable nonGenericEnumerable;
 
 		public ReadOnlyCollection(ICollection<T> collection) {
 			this.genericCollection = collection;
-			this.collection = (ICollection) collection;
+			this.nonGenericEnumerable = (IEnumerable) collection;
 		}
 
 		public bool Contains(T item) {
@@ -43,7 +43,7 @@ namespace SteamEngine.Common {
 		}
 
 		public int Count {
-			get { return this.collection.Count; }
+			get { return this.genericCollection.Count; }
 		}
 
 		public IEnumerator<T> GetEnumerator() {
@@ -51,20 +51,20 @@ namespace SteamEngine.Common {
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
-			return this.collection.GetEnumerator();
+			return this.nonGenericEnumerable.GetEnumerator();
 		}
 
-		public void CopyTo(Array array, int index) {
-			this.collection.CopyTo(array, index);
-		}
+		//public void CopyTo(Array array, int index) {
+		//    this.nonGenericEnumerable.CopyTo(array, index);
+		//}
 
-		bool ICollection.IsSynchronized {
-			get { return false; }
-		}
+		//bool ICollection.IsSynchronized {
+		//    get { return false; }
+		//}
 
-		object ICollection.SyncRoot {
-			get { throw new SEException("The method or operation is not implemented."); }
-		}
+		//object ICollection.SyncRoot {
+		//    get { throw new SEException("The method or operation is not implemented."); }
+		//}
 
 		bool ICollection<T>.IsReadOnly {
 			get { return true; }
@@ -75,7 +75,7 @@ namespace SteamEngine.Common {
 		}
 
 		void ICollection<T>.Clear() {
-			if (this.collection.Count > 0) {
+			if (this.genericCollection.Count > 0) {
 				throw new SEException("This Collection is read only.");
 			}
 		}

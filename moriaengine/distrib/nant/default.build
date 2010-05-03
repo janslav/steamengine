@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <project name="steamengine" default="runCore" basedir="../..">
+	<property name="nant.settings.currentframework" value="net-3.5" />
+
 	<property name="outputFilePrefix" value="Sane." overwrite="false"  />
 	
 	<property name="debug" value="true" overwrite="false"  />
@@ -118,6 +120,7 @@
 				<include name="System.Drawing.dll" />
 				<include name="System.Windows.Forms.dll" />
 				<include name="System.Xml.dll" />
+				<include name="System.Core.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -140,6 +143,7 @@
 				<include name="${commonFileName}" />
 				<include name="bin/SteamDoc.dll" />
 				<include name="System.dll" />
+				<include name="System.Core.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -190,6 +194,7 @@
 				<include name="${communicationFileName}" />
 				<include name="${commonFileName}" />
 				<include name="System.dll" />
+				<include name="System.Core.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -216,6 +221,7 @@
 				<include name="${communicationFileName}" />
 				<include name="${commonFileName}" />
 				<include name="System.dll" />
+				<include name="System.Core.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -291,7 +297,7 @@
 				<include name="${commonFileName}" />
 				<include name="${gameCoreFileName}" />
 				<include name="${scriptsFileName}" />
-				<include name="Microsoft.JScript.dll" />
+				<include name="System.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -309,7 +315,9 @@
 			<sources>
 				<include name="ProcessRestarter/**/*.cs" />
 			</sources>
-
+			<references>
+				<include name="System.dll" />
+			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
 	</target>

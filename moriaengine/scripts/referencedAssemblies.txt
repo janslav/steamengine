@@ -8,3 +8,5 @@ System.Data.dll
 System.Management.dll
 System.Configuration.dll
 System.Diagnostics.dll
+
+System.Core.dll

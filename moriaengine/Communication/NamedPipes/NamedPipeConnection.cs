@@ -18,11 +18,11 @@
 using System;
 using System.Text;
 using System.IO;
+using System.IO.Pipes;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 using SteamEngine.Common;
 using SteamEngine.Communication;
@@ -130,80 +130,92 @@ namespace SteamEngine.Communication.NamedPipes {
 #else
 		AbstractConnection<NamedPipeConnection<TState>, TState, string>
 		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
-		
-		private string pipename;
-		private SafeFileHandle handle;
-		private FileStream stream;
-		private bool isConnected = false;
 
-		private AsyncCallback onWrite;
-		private AsyncCallback onRead;
+		private PipeStream pipe;
+		private string pipeName;
+
+		private AsyncCallback onSend;
+		private AsyncCallback onReceieve;
+
 
 		public NamedPipeConnection() {
-			this.onWrite = this.OnWrite;
-			this.onRead = this.OnRead;
+			this.onSend = this.OnSend;
+			this.onReceieve = this.OnReceieve;
 		}
 
-		internal void SetFields(string pipename, SafeFileHandle handle) {
-			this.pipename = pipename;
-			this.handle = handle;
-			this.stream = new FileStream(handle, FileAccess.ReadWrite, Buffer.bufferLen, true);
-		}
-
-		public override bool IsConnected {
-			get {
-				return this.isConnected;
-			}
-		}
-
-		public override string EndPoint {
-			get {
-				return this.pipename;
-			}
+		internal void SetFields(string pipeName, PipeStream pipe) {
+			this.pipeName = pipeName;
+			this.pipe = pipe;
 		}
 
 		protected override void On_Init() {
-			this.isConnected = true;
 			base.On_Init();
 			this.BeginReceive();
 		}
 
-		private void BeginReceive() {
+		public override string EndPoint {
+			get {
+				return this.pipeName;
+			}
+		}
 
+		public override bool IsConnected {
+			get {
+				if (this.pipe != null) {
+					return this.pipe.IsConnected;
+				}
+				return false;
+			}
+		}
+
+		private void BeginReceive() {
 			int offset = this.receivedDataLength;
 			byte[] buffer = this.receivingBuffer.bytes;
 
-			this.stream.BeginRead(buffer, offset,
-				buffer.Length - offset, onRead, null);
+			this.pipe.BeginRead(buffer, offset,
+				buffer.Length - offset, this.onReceieve, null);
 		}
 
-		private void OnRead(IAsyncResult asyncResult) {
+		private void OnReceieve(IAsyncResult asyncResult) {
 			try {
-				int length = this.stream.EndRead(asyncResult);
-				if (length > 0) {//we have new data, but still possibly have some old data.
-					base.ProcessReceievedData(length);
-				} else {
-					this.Close("Other side closed the pipe.");
-				}
+				if (this.pipe != null) {
+					int length = this.pipe.EndRead(asyncResult);
 
-				if (this.IsConnected) {
-					this.BeginReceive();
+					if (length > 0) {
+						//we have new data, but still possibly have some old data.
+						base.ProcessReceievedData(length);
+					} else {
+						this.Close("Connection lost");
+					}
+
+					if (this.IsConnected) {
+						this.BeginReceive();
+					}
 				}
 			} catch (Exception e) {
-				Logger.WriteError(e);
+				Logger.WriteDebug(e);
 				this.Close(e.Message);
 			}
 		}
 
-		protected override void BeginSend(BufferToSend toSend) {
-			this.stream.BeginWrite(toSend.buffer.bytes, toSend.offset, toSend.len, this.onWrite, toSend.buffer);
+		protected override void On_DisposeUnmanagedResources() {
+			try {
+				this.pipe.Close();
+			} catch { }
+			this.pipe = null;
+
+			base.On_DisposeUnmanagedResources();
 		}
 
-		private void OnWrite(IAsyncResult asyncResult) {
+		protected override void BeginSend(BufferToSend toSend) {
+			this.pipe.BeginWrite(toSend.buffer.bytes, toSend.offset, toSend.len, this.onSend, toSend.buffer);
+		}
+
+		private void OnSend(IAsyncResult asyncResult) {
 			Buffer toDispose = (Buffer) asyncResult.AsyncState;
 
 			try {
-				this.stream.EndWrite(asyncResult);
+				this.pipe.EndWrite(asyncResult);
 			} catch (Exception e) {
 				this.Close(e.Message);
 			} finally {
@@ -211,18 +223,6 @@ namespace SteamEngine.Communication.NamedPipes {
 			}
 		}
 
-		protected override void On_DisposeUnmanagedResources() {
-			this.isConnected = false;
-			try {
-				this.stream.Close();
-				this.stream = null;
-			} catch { }
-			try {
-				this.handle.Close();
-			} catch { }
-
-			base.On_DisposeUnmanagedResources();
-		}
 #endif
 	}
 }
