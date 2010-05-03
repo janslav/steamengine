@@ -18,12 +18,12 @@
 using System;
 using System.Text;
 using System.IO;
+using System.IO.Pipes;
 using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 using SteamEngine.Common;
 using SteamEngine.Communication;
@@ -56,53 +56,22 @@ namespace SteamEngine.Communication.NamedPipes {
 		IClientFactory<NamedPipeConnection<TState>, TState, string>
 		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
-
-
 		public NamedPipeClientFactory(IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject)
 			: base(protocol, lockObject) {
 		}
-
-
+		
 		public NamedPipeConnection<TState> Connect(string pipeName) {
-			SafeFileHandle handle =
-			   ClientKernelFunctions.CreateFile(
-				  pipeName,
-				  ClientKernelFunctions.GENERIC_READ | ClientKernelFunctions.GENERIC_WRITE,
-				  0,
-				  IntPtr.Zero,
-				  ClientKernelFunctions.OPEN_EXISTING,
-				  ClientKernelFunctions.FILE_FLAG_OVERLAPPED,
-				  IntPtr.Zero);
 
-			if (handle.IsInvalid) {
-				return null;
-			}
-
+			NamedPipeClientStream pipe = new NamedPipeClientStream(".", pipeName, 
+				PipeDirection.InOut, PipeOptions.Asynchronous);
+			pipe.Connect();
 
 			NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();
-			newConn.SetFields(pipeName, handle);
-			InitNewConnection(newConn);
+			newConn.SetFields(pipeName, pipe);
+			this.InitNewConnection(newConn);
 
 			return newConn;
 		}
-	}
-
-	internal static class ClientKernelFunctions {
-
-		[DllImport("kernel32.dll", SetLastError = true)]
-		internal static extern SafeFileHandle CreateFile(
-		   String pipeName,
-		   uint dwDesiredAccess,
-		   uint dwShareMode,
-		   IntPtr lpSecurityAttributes,
-		   uint dwCreationDisposition,
-		   uint dwFlagsAndAttributes,
-		   IntPtr hTemplate);
-
-		internal const uint GENERIC_READ = (0x80000000);
-		internal const uint GENERIC_WRITE = (0x40000000);
-		internal const uint OPEN_EXISTING = 3;
-		internal const uint FILE_FLAG_OVERLAPPED = (0x40000000);
 #endif
 	}
 }
