@@ -30,7 +30,7 @@ using SteamEngine.Communication.TCP;
 using System.Diagnostics;
 using System.ComponentModel;
 using SharpSvn;
-#if !MONO
+#if MSWIN
 using Microsoft.Win32;	//for RegistryKey
 #endif
 
@@ -101,7 +101,7 @@ namespace SteamEngine {
 			get { return Globals.mulPath; }
 		}
 
-		private readonly static string scriptsPath = Path.GetFullPath(".\\scripts\\");
+		private readonly static string scriptsPath = Path.GetFullPath("./scripts/");
 		public static string ScriptsPath {
 			get { return Globals.scriptsPath; }
 		}
@@ -111,11 +111,13 @@ namespace SteamEngine {
 			get { return Globals.docsPath; }
 		}
 
+#if MSWIN
 		private static string ndocExe;
 		public static string NdocExe {
 			get { return Globals.ndocExe; }
 		}
-
+#endif
+		
 		private static bool logToFiles;
 		public static bool LogToFiles {
 			get { return Globals.logToFiles; }
@@ -399,7 +401,7 @@ namespace SteamEngine {
 			}
 		}
 
-		private static Process ndocProcess;
+//		private static Process ndocProcess;
 
 		private Globals() {
 			LoadIni();
@@ -411,6 +413,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void LoadIni() {
 			try {
+				Logger.WriteDebug("Loading steamengine.ini");
 				IniFile iniH = new IniFile("steamengine.ini");
 				IniFileSection setup = iniH.GetNewOrParsedSection("setup");
 
@@ -423,15 +426,13 @@ namespace SteamEngine {
 				allowUnencryptedClients = setup.GetValue<bool>("allowUnencryptedClients", true, "Allow clients with no encryption to connect. There's no problem with that, except for lower security.");
 
 				IniFileSection files = iniH.GetNewOrParsedSection("files");
-				logPath = Path.GetFullPath(files.GetValue<string>("logPath", ".\\logs\\", "Path to the log files"));
+				logPath = Path.GetFullPath(files.GetValue<string>("logPath", "./logs/", "Path to the log files"));
 				CoreLogger.Init();
-				savePath = Path.GetFullPath(files.GetValue<string>("savePath", ".\\saves\\", "Path to the save files"));
+				savePath = Path.GetFullPath(files.GetValue<string>("savePath", "./saves/", "Path to the save files"));
 #if MSWIN
 				ndocExe = Path.GetFullPath(files.GetValue<string>("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc)."));
-#elif LINUX
-				ndocExe= Path.GetFullPath(files.GetValue<string>("ndocExe","","NDoc cannot be used under Linux"));
 #endif
-				docsPath = Path.GetFullPath(files.GetValue<string>("docsPath", ".\\docs\\", "Path to the docs (Used when writing out some information from MUL files, like map tile info)"));
+				docsPath = Path.GetFullPath(files.GetValue<string>("docsPath", "./docs/", "Path to the docs (Used when writing out some information from MUL files, like map tile info)"));
 
 				logToFiles = files.GetValue<bool>("logToFiles", true, "Whether to log console output to a file");
 				useMap = files.GetValue<bool>("useMap", true, "Whether to load map0.mul and statics0.mul and use them or not.");
@@ -599,7 +600,7 @@ namespace SteamEngine {
 		*/
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static string GetMulsPath() {
-#if !MONO
+#if MSWIN
 			RegistryKey rk = Registry.LocalMachine;
 			rk = rk.OpenSubKey("SOFTWARE");
 			if (rk != null) {
@@ -828,7 +829,6 @@ namespace SteamEngine {
 			}
 			ndocProcess = null;
 		}
-#endif
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), 
 		Summary("First documentation in Steamengine.")]
@@ -860,7 +860,6 @@ namespace SteamEngine {
 
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-#if MSWIN
 			if (ndocExe.Length != 0) {
 				Console.WriteLine("Invoking NDOC, documentation will be generated to docs/sourceDoc");
 				try {
@@ -872,7 +871,7 @@ namespace SteamEngine {
 					string project="optimized.ndoc";
 #endif
 					ProcessStartInfo info = new ProcessStartInfo(ndocExe, "-project=" + project);
-					info.WorkingDirectory = ".\\distrib\\";
+					info.WorkingDirectory = "./distrib/";
 					info.WindowStyle = ProcessWindowStyle.Normal;
 					info.UseShellExecute = true;
 					ndocProcess = new Process();
@@ -882,10 +881,8 @@ namespace SteamEngine {
 					ndocProcess.Start();
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			}
-#elif LINUX
-			Console.WriteLine ("NDoc is not supported under Linux.");
-#endif
 		}
+#endif
 
 		public static void Load(string filename) {
 			ScriptLoader.LoadNewFile(filename);

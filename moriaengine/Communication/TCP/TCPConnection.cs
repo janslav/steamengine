@@ -28,7 +28,10 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-	public sealed class TcpConnection<TState> :
+#if MSVS
+	sealed
+#endif
+	public class TcpConnection<TState> :
 		AbstractConnection<TcpConnection<TState>, TState, IPEndPoint>
 		where TState : IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
 
@@ -73,7 +76,7 @@ namespace SteamEngine.Communication.TCP {
 
 		private void OnReceieve(IAsyncResult asyncResult) {
 			try {
-				if ((this.socket != null) && (this.socket.Handle != null)) {
+				if ((this.socket != null) && (this.socket.Handle != IntPtr.Zero)) {
 					int length = this.socket.EndReceive(asyncResult);
 
 					if (length > 0) {

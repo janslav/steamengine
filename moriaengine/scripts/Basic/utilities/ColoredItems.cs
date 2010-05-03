@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private static BaseType[] InitBasicItems<BaseType, ColoredType>()
 			where BaseType : ItemDef
-			where ColoredType : BaseType, IObjectWithMaterial {
+			where ColoredType : ItemDef, BaseType, IObjectWithMaterial {
 
 			Dictionary<int, BaseType> dict = new Dictionary<int, BaseType>();
 			foreach (AbstractScript script in AbstractScript.AllScripts) {

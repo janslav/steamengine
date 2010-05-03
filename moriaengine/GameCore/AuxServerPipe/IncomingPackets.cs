@@ -8,14 +8,23 @@ using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
+#if MSWIN
 	public class AuxServerPipeProtocol : IProtocol<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
+#else
+	public class AuxServerPipeProtocol : IProtocol<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, System.Net.IPEndPoint> {
+#endif
+	
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly AuxServerPipeProtocol instance = new AuxServerPipeProtocol();
 
 
+#if MSWIN
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> GetPacketImplementation(byte id, NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state, out bool discardAfterReading) {
+#else
+		public IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, System.Net.IPEndPoint> GetPacketImplementation(byte id, NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state, out bool discardAfterReading) {
+#endif
 			discardAfterReading = false;
 			switch (id) {
 				case 0x01:
@@ -32,9 +41,12 @@ namespace SteamEngine.AuxServerPipe {
 			return null;
 		}
 	}
-
+	
+#if MSWIN
 	public abstract class AuxServerPipeIncomingPacket : IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
-
+#else
+	public abstract class AuxServerPipeIncomingPacket : IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, System.Net.IPEndPoint> {
+#endif
 	}
 
 	public class RequestSendingLogStringsPacket : AuxServerPipeIncomingPacket {

@@ -35,7 +35,8 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private static void ScheduleConnect(object state, int ms) {
-			Timer t = new Timer(ScheduledBeginConnect, state, ms, Timeout.Infinite);
+			//Timer t = 
+			new Timer(ScheduledBeginConnect, state, ms, Timeout.Infinite);
 		}
 
 		private static void ScheduledBeginConnect(object state) {
@@ -55,7 +56,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private static void BeginConnectCallBack(IAsyncResult result) {
 			object[] arr = (object[]) result.AsyncState;
 			Socket socket = (Socket) arr[0];
-			IPEndPoint endpoint = (IPEndPoint) arr[1];
+			//IPEndPoint endpoint = (IPEndPoint) arr[1];
 			SphereServerSetup setup = (SphereServerSetup) arr[2];
 
 			try {
@@ -67,7 +68,8 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				return;
 			}
 
-			SphereServerConnection newConn = new SphereServerConnection(socket, setup);
+			//SphereServerConnection newConn = 
+			new SphereServerConnection(socket, setup);
 		}
 	}
 }

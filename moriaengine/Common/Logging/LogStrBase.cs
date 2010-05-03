@@ -16,10 +16,8 @@
 */
 
 using System;
-#if !MONO
 using System.Drawing;
 using System.Drawing.Text;
-#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;

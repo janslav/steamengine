@@ -1,5 +1,5 @@
 namespace SteamEngine.RemoteConsole {
-	partial class LogStrDisplay {
+	public partial class LogStrDisplay {
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>

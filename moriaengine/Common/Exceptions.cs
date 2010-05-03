@@ -17,10 +17,7 @@
 
 using System;
 using SteamEngine.Common;
-// TODO: exceptions shouldn't use System.Windows.Forms namespace
-#if !MONO
 using System.Windows.Forms;
-#endif
 
 namespace SteamEngine {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"),
@@ -396,39 +393,31 @@ namespace SteamEngine {
 	*/
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class ShowMessageAndExitException : FatalException {
-#if !MONO
 		private string msg;
 		private string title;
-#endif
 
 		public ShowMessageAndExitException()
 			: base() {
 		}
 		public ShowMessageAndExitException(string s, string t)
 			: base(s) {
-#if !MONO
 			msg = s; title = t;
-#endif
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public ShowMessageAndExitException(LogStr s, string t)
 			: base(s) {
-#if !MONO
 			msg = s.RawString; title = t;
-#endif
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
 		public void Show() {
-#if !MONO
 			IWin32Window window = Form.ActiveForm;
 			if (window != null) {
 				MessageBox.Show(window, msg, title);
 			} else {
 				MessageBox.Show(msg, title);
 			}
-#endif
 		}
 	}
 

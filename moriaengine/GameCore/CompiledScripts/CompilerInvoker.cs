@@ -24,9 +24,6 @@ using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
-//#if !MONO
-//using Microsoft.JScript;
-//#endif
 using Microsoft.VisualBasic;
 using System.Text;
 using System.Globalization;

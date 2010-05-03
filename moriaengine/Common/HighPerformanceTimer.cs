@@ -44,20 +44,21 @@ namespace SteamEngine.Common {
 		private static double dmFrequency;
 
 		private static double timeSpanTicksFrequency;
-		//private static bool fallback=false;
+		private static bool fallback=false;
 
 		static HighPerformanceTimer() {
-			bool success = NativeMethods.QueryPerformanceFrequency(out frequency);
-			if (success) {
-				dFrequency = (double) frequency;
-				dmFrequency = dFrequency / 1000.0;
-				timeSpanTicksFrequency = frequency / 10000000.0;
-			} else {
-				throw new FatalException("Unable to access high performance timer.");
-				//fallback=true;
-				//Debug.WriteLine("Unable to access high performance timer. Using a less accurate timing mechanism instead.");
-				//Sanity.IfTrueSay(true, "Unable to access high performance timer.");
-			}
+			try {
+				bool success = NativeMethods.QueryPerformanceFrequency(out frequency);
+				if (success) {
+					dFrequency = (double) frequency;
+					dmFrequency = dFrequency / 1000.0;
+					timeSpanTicksFrequency = frequency / 10000000.0;
+					return;
+				} 
+			} catch { }
+
+			fallback=true;
+			Logger.WriteWarning("Unable to access high performance timer. Using a less accurate timing mechanism instead.");
 		}
 
 		public static void Init() {
@@ -66,76 +67,78 @@ namespace SteamEngine.Common {
 
 		public static long TickCount {
 			get {
-				//if (fallback) {
-				//    return Environment.TickCount;
-				//} else {
-				long count;
-				bool success = NativeMethods.QueryPerformanceCounter(out count);
-				if (success) {
-					return count;
+				if (fallback) {
+				    return Environment.TickCount;
 				} else {
-					throw new FatalException("Unable to access high performance timer.");
-					//Debug.WriteLine("Attempt to read the high performance timer failed.");
-					//Sanity.IfTrueSay(true, "Attempt to read the high performance timer failed.");
-					//return Environment.TickCount;
+					long count;
+					bool success = NativeMethods.QueryPerformanceCounter(out count);
+					if (success) {
+						return count;
+					} else {
+						throw new FatalException("Unable to access high performance timer.");
+						//Debug.WriteLine("Attempt to read the high performance timer failed.");
+						//Sanity.IfTrueSay(true, "Attempt to read the high performance timer failed.");
+						//return Environment.TickCount;
+					}
 				}
-				//}
 			}
 		}
 
 		public static double TicksToSeconds(long count) {
-			//if (fallback) {
-			//    return count/1000.0;
-			//} else {
-			return count / dFrequency;
-			//}
+			if (fallback) {
+			    return count/1000.0;
+			} else {
+				return count / dFrequency;
+			}
 		}
+		
 		public static long TicksToMilliseconds(long count) {
-			//if (fallback) {
-			//    return count;
-			//} else {
-			return (long) (count / dmFrequency);
-			//}
+			if (fallback) {
+			    return count;
+			} else {
+				return (long) (count / dmFrequency);
+			}
 		}
+		
 		public static double TicksToDMilliseconds(long count) {
-			//if (fallback) {
-			//    return count;
-			//} else {
-			return (count / dmFrequency);
-			//}
+			if (fallback) {
+			    return count;
+			} else {
+				return (count / dmFrequency);
+			}
 		}
 
 		//TimeSpan ticks have 100 nanoseconds, that means frequency 10 000 000 ticks per second
 		//our ticks probably have the same
 		public static TimeSpan TicksToTimeSpan(long count) {
-			//if (fallback) {
-			//    return new TimeSpan(count);
-			//} else {
-			return new TimeSpan((long) (count / timeSpanTicksFrequency));
-			//}
+			if (fallback) {
+			    return new TimeSpan(count);
+			} else {
+				return new TimeSpan((long) (count / timeSpanTicksFrequency));
+			}
 		}
+		
 		public static long TimeSpanToTicks(TimeSpan span) {
-			//if (fallback) {
-			//    return span.Ticks;
-			//} else {
+			if (fallback) {
+			    return span.Ticks;
+			} else {
 			return (long) (span.Ticks * timeSpanTicksFrequency);
-			//}
+			}
 		}
-
 
 		public static long SecondsToTicks(double count) {
-			//if (fallback) {
-			//    return count*1000;
-			//} else {
-			return (long) (count * dFrequency);
-			//}
+			if (fallback) {
+			    return (long) (count*1000);
+			} else {
+				return (long) (count * dFrequency);
+			}
 		}
 		public static long MillisecondsToTicks(long count) {
-			//if (fallback) {
-			//    return count;
-			//} else {
-			return (long) (count * dmFrequency);	//(count/1000.0)*dFrequency);
-			//}
+			if (fallback) {
+			    return count;
+			} else {
+				return (long) (count * dmFrequency);	//(count/1000.0)*dFrequency);
+			}
 		}
 	}
 
@@ -167,5 +170,4 @@ namespace SteamEngine.Common {
 			}
 		}
 	}
-
 }

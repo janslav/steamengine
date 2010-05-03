@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 
 	//it's not a typical def, but then again, who cares :P
 	public sealed class TemplateDef : AbstractDef, IThingFactory {
-		public static bool TemplateTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Template Trace Messages"]);
+		public const bool TemplateTracingOn = false;
 
 		private FieldValue container;
 		private LScriptHolder holder;

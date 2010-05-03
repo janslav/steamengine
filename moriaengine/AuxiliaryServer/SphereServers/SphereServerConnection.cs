@@ -95,7 +95,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private void BeginReceieveCallback(IAsyncResult asyncResult) {
 			try {
-				if ((this.socket != null) && (this.socket.Handle != null)) {
+				if ((this.socket != null) && (this.socket.Handle != IntPtr.Zero)) {
 					int length = this.socket.EndReceive(asyncResult);
 
 					if (length > 0) {

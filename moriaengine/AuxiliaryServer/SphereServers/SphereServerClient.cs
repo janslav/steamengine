@@ -136,7 +136,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private void ConsoleAuthTimeout(object o) {
 			Console.WriteLine("ConsoleAuthTimeout in");
 			try {
-				ConsoleCredentials state = (ConsoleCredentials) o;
+				//ConsoleCredentials state = (ConsoleCredentials) o;
 				this.Conn.Close("Console user auth sequence timed out.");
 			} catch (Exception e) {
 				Logger.WriteError("Unexpected error in timer callback method", e);

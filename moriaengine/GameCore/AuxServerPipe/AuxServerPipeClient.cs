@@ -10,7 +10,12 @@ using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
 	public class AuxServerPipeClient : //Disposable,
+#if MSWIN
 		IConnectionState<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
+#else
+		IConnectionState<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, System.Net.IPEndPoint> {
+#endif
+
 
 		private static NamedPipeClientFactory<AuxServerPipeClient> clientFactory;
 		private static AuxServerPipeClient connectedInstance;
@@ -43,15 +48,20 @@ namespace SteamEngine.AuxServerPipe {
 		}
 
 		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {
+			NamedPipeConnection<AuxServerPipeClient> c = null;
 			try {
-				NamedPipeConnection<AuxServerPipeClient> c =
-					clientFactory.Connect(Common.Tools.commonPipeName);
-
-				if (c == null) {
-					StartTryingToConnect();
-				}
-			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				
+#if MSWIN
+				c =	clientFactory.Connect(Common.Tools.commonPipeName);
+#else
+				c = clientFactory.Connect(new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, Common.Tools.commonPort));
+#endif
+			//} catch (Exception e) {
+				//Logger.WriteError("Unexpected error in timer callback method", e);
+			} catch { }
+			
+			if (c == null) {
+				StartTryingToConnect();
 			}
 		}));
 

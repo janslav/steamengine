@@ -272,9 +272,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 				return "MultiRegion wihout MultiItem";
 			}
-			set {
-				throw new SEException("Renaming MultiRegions is not supported");
-			}
+//			set {
+//				throw new SEException("Renaming MultiRegions is not supported");
+//			}
 		}
 	}
 }
