@@ -29,7 +29,7 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
-#if MSVS
+#if MSWIN
 	sealed
 #endif
 	public class TcpClientFactory<TState> :

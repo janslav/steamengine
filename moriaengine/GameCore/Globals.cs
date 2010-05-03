@@ -401,7 +401,9 @@ namespace SteamEngine {
 			}
 		}
 
-//		private static Process ndocProcess;
+#if MSWIN
+		private static Process ndocProcess;
+#endif
 
 		private Globals() {
 			LoadIni();

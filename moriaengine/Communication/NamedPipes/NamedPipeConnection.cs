@@ -29,7 +29,7 @@ using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
 	public sealed class NamedPipeConnection<TState> :
-#if !MSVS
+#if !MSWIN
 		//temporarily, we fake named pipes via tcp in MONO
 		AbstractConnection<NamedPipeConnection<TState>, TState, System.Net.IPEndPoint>
 		where TState : IConnectionState<NamedPipeConnection<TState>, TState, System.Net.IPEndPoint>, new() {
