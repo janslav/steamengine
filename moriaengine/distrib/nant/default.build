@@ -117,6 +117,7 @@
 				<include name="System.dll" />
 				<include name="System.Drawing.dll" />
 				<include name="System.Windows.Forms.dll" />
+				<include name="System.Xml.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>
@@ -189,7 +190,6 @@
 				<include name="${communicationFileName}" />
 				<include name="${commonFileName}" />
 				<include name="System.dll" />
-				<!--include name="Microsoft.JScript.dll" / -->
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>

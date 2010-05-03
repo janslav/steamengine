@@ -32,7 +32,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>MSWIN;DEBUG;TRACE;MSVS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MSWIN</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -53,7 +53,9 @@
     <Reference Include="Microsoft.JScript">
       <Name>Microsoft.JScript</Name>
     </Reference>
-    <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral" />
+    <Reference Include="NAnt.Core, Version=0.85.2344.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="SharpSvn, Version=1.5006.1231.36280, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
