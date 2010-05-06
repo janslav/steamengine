@@ -40,7 +40,6 @@ namespace SteamEngine.CompiledScripts {
 			PoisonedItemPlugin plugin = (PoisonedItemPlugin) PoisonedItemPluginDef.instance.Create();
 			plugin.poisonTickCount = potion.PoisonTickCount;
 			plugin.poisonPower = potion.PoisonPower;
-			plugin.poisonTickInterval = potion.PoisonTickInterval;
 			plugin.poisonType = potion.PoisonType;
 			return plugin;
 		}
@@ -58,12 +57,6 @@ namespace SteamEngine.CompiledScripts {
 		public int PoisonPower {
 			get {
 				return this.poisonPower;
-			}
-		}
-
-		public TimeSpan PoisonTickInterval {
-			get {
-				return this.poisonTickInterval;
 			}
 		}
 
@@ -165,8 +158,7 @@ namespace SteamEngine.CompiledScripts {
 
 			PoisonEffectPlugin effect = (PoisonEffectPlugin) this.poisonType.Create();
 			effect.Init(source, sourceType, this.poisonPower,
-				TimeSpan.FromTicks(this.poisonTickInterval.Ticks * this.poisonTickCount));
-			effect.StartTicking(this.poisonTickInterval, this.poisonTickCount);
+				TimeSpan.FromTicks(effect.TypeDef.TickInterval.Ticks * this.poisonTickCount));
 			target.AddPlugin(key, effect);
 		}
 
@@ -287,8 +279,6 @@ namespace SteamEngine.CompiledScripts {
 
 		private Int32 poisonPower = 0;
 
-		private TimeSpan poisonTickInterval = TimeSpan.Zero;
-
 		private Int32 poisonTickCount = 0;
 
 		private Int32 poisonDoses = 0;
@@ -299,7 +289,6 @@ namespace SteamEngine.CompiledScripts {
 
 			this.poisonType = copyFrom.poisonType;
 			this.poisonPower = copyFrom.poisonPower;
-			this.poisonTickInterval = copyFrom.poisonTickInterval;
 			this.poisonTickCount = copyFrom.poisonTickCount;
 			this.poisonDoses = copyFrom.poisonDoses / 2;
 			copyFrom.poisonDoses -= this.poisonDoses;
@@ -323,9 +312,6 @@ namespace SteamEngine.CompiledScripts {
 			if ((this.poisonPower != 0)) {
 				output.WriteValue("poisonPower", this.poisonPower);
 			}
-			if ((this.poisonTickInterval != TimeSpan.Zero)) {
-				output.WriteValue("poisonTickInterval", this.poisonTickInterval);
-			}
 			if ((this.poisonTickCount != 0)) {
 				output.WriteValue("poisonTickCount", this.poisonTickCount);
 			}
@@ -339,10 +325,6 @@ namespace SteamEngine.CompiledScripts {
 			this.poisonType = ((PoisonEffectPluginDef) (resolvedObject));
 		}
 
-		private void DelayedLoad_PoisonTickInterval(object resolvedObject, string filename, int line) {
-			this.poisonTickInterval = ((System.TimeSpan) (resolvedObject));
-		}
-
 		[SteamEngine.Persistence.LoadLineAttribute()]
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
@@ -353,10 +335,6 @@ namespace SteamEngine.CompiledScripts {
 
 				case "poisonpower":
 					this.poisonPower = SteamEngine.Common.ConvertTools.ParseInt32(valueString);
-					break;
-
-				case "poisontickinterval":
-					SteamEngine.Persistence.ObjectSaver.Load(valueString, new SteamEngine.Persistence.LoadObject(this.DelayedLoad_PoisonTickInterval), filename, line);
 					break;
 
 				case "poisontickcount":

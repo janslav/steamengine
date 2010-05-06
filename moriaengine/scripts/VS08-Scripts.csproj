@@ -38,14 +38,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\bin\</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DefineConstants>DEBUG;TRACE;MSWIN</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AI\dummy.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Regenerations\HitsRegenAbilityDef.cs" />

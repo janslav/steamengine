@@ -60,7 +60,6 @@ namespace SteamEngine.CompiledScripts {
 				poisonPlugin = (DamagingPoisonEffectPlugin) this.EffectPluginDef.Create();
 				poisonPlugin.Init(spellEffectArgs.Caster, sourceType, effect,
 					TimeSpan.FromSeconds(durationInSeconds), this);
-				poisonPlugin.StartTicking(poisonTickInterval, ticksCount);
 
 				target.AddPlugin(key, poisonPlugin);
 			}

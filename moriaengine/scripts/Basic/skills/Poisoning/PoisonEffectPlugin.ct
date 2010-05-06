@@ -15,4 +15,7 @@
 
 
 [PluginTemplate PoisonEffectPlugin : EffectDurationPlugin]
-
+Def:
+	TimeSpan tickInterval = TimeSpan.Zero
+	int maxTicks = 60
+	int maxPower = 1000
