@@ -190,7 +190,7 @@ namespace SteamEngine {
 				return this.name;
 			}
 			set {
-				this.InvalidateProperties();
+				this.InvalidateAosToolTips();
 				CharSyncQueue.AboutToChangeName(this);
 				this.name = value;
 			}
@@ -1290,9 +1290,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public sealed override void InvalidateProperties() {
+		public sealed override void InvalidateAosToolTips() {
 			CharSyncQueue.PropertiesChanged(this);
-			base.InvalidateProperties();
+			base.InvalidateAosToolTips();
 		}
 
 		#region Equipped stuff

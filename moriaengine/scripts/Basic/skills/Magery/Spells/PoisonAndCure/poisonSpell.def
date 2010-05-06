@@ -9,7 +9,7 @@ CASTTIME=2.0
 RUNEITEM=i_rune_POISON
 SCROLLITEM=i_scroll_POISON
 FLAGS=SpellFlag.CanTargetChar | SpellFlag.CanEffectChar | SpellFlag.EffectNeedsLOS | SpellFlag.UseMindPower | SpellFlag.IsHarmful
-EFFECT=0,1 //negative hitsregenspeed penalty
+EFFECT=0,5 //damage per tick. Tick interval hardcoded in PoisonSpellDef
 DURATION=0,100.0
 MANAUSE=10
 Requirements=30.0 Magery
@@ -20,4 +20,4 @@ EffectPluginKey_Potion = @@potionEffect_poison
 on=@effectChar
 	EffectFactory.StationaryEffect(this, 0x374A, 10, 15)
 
-[PoisonEffectPluginDef p_poison]
+[DamagingPoisonEffectPluginDef p_poison]

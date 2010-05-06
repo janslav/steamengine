@@ -24,27 +24,19 @@ using SteamEngine.Common;
 namespace SteamEngine {
 	public class CoreLogger : Logger {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-		private static CoreLogger initInstance = PrivateInit();
+		private static CoreLogger initInstance;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		private static CoreLogger PrivateInit() {
-			CoreLogger retval;
+		internal static void Init() {
 			try {
-				retval = new CoreLogger();
+				initInstance = new CoreLogger();
 			} catch (Exception globalexp) {
 				Logger.WriteFatal(globalexp);
 				MainClass.signalExit.Set();
-				return null;
 			}
 
 			if (Globals.LogToFiles) {
 				Logger.OpenFile();
 			}
-			return retval;
-		}
-
-		internal static void Init() {
-
 		}
 
 		protected override string GetFilepath() {

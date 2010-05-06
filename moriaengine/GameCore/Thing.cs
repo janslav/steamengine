@@ -1224,7 +1224,7 @@ namespace SteamEngine {
 		public virtual void On_BuildAosToolTips(AosToolTips opc, Language language) {
 		}
 
-		public virtual void InvalidateProperties() {
+		public virtual void InvalidateAosToolTips() {
 			AosToolTips.RemoveFromCache(this);
 		}
 

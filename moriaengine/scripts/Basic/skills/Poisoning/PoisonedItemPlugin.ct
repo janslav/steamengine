@@ -14,10 +14,10 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate PoisonedItemPlugin : Plugin]
-Vars:
-	private PoisonEffectPluginDef poisonType  = null
-	private int poisonPower = 0
-	private TimeSpan poisonTickInterval = TimeSpan.Zero
-	private int poisonDuration = 0
-	private int poisonDoses = 0
+//[PluginTemplate PoisonedItemPlugin : Plugin]
+//Vars:
+//	private PoisonEffectPluginDef poisonType  = null
+//	private int poisonPower = 0
+//	private TimeSpan poisonTickInterval = TimeSpan.Zero
+//	private int poisonTickCount = 0
+//	private int poisonDoses = 0

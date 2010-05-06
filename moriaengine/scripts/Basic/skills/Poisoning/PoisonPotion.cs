@@ -22,6 +22,13 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class PoisonPotion {
 
+		public override void On_DClick(AbstractCharacter dclicker) {
+			SkillSequenceArgs args = SkillSequenceArgs.Acquire((Character) dclicker, SkillName.Poisoning, this);
+			args.PhaseSelect();
+
+			//base.On_DClick(dclicker); //empties flask
+		}
+
 		public PoisonEffectPluginDef PoisonType {
 			get { return this.TypeDef.PoisonType; }
 		}
@@ -52,8 +59,8 @@ namespace SteamEngine.CompiledScripts {
 			get { return this.TypeDef.PoisonTickInterval; }
 		}
 
-		public int PoisonDuration {
-			get { return this.TypeDef.PoisonDuration; }
+		public int PoisonTickCount {
+			get { return this.TypeDef.PoisonTickCount; }
 		}
 	}
 

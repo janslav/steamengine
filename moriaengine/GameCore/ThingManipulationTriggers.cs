@@ -327,7 +327,7 @@ namespace SteamEngine {
 		}
 
 		internal void InternalItemEnter(AbstractItem i) {
-			this.InvalidateProperties();
+			this.InvalidateAosToolTips();
 			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				tll = new ThingLinkedList(this);
@@ -612,7 +612,7 @@ namespace SteamEngine {
 
 			ThingLinkedList tll = (ThingLinkedList) i.contOrTLL;
 			tll.Remove(i);
-			this.InvalidateProperties();//changing Count
+			this.InvalidateAosToolTips();//changing Count
 			this.AdjustWeight(-i.Weight);
 		}
 
@@ -1419,22 +1419,22 @@ namespace SteamEngine {
 	}
 
 	public class ItemStackArgs : ScriptArgs {
-		private readonly Thing manipulatedItem;
-		private readonly Thing waitingStack;
+		private readonly AbstractItem manipulatedItem;
+		private readonly AbstractItem waitingStack;
 
-		public ItemStackArgs(Thing manipulatedItem, Thing waitingStack)
+		public ItemStackArgs(AbstractItem manipulatedItem, AbstractItem waitingStack)
 			: base(manipulatedItem, waitingStack) {
 			this.manipulatedItem = manipulatedItem;
 			this.waitingStack = waitingStack;
 		}
 
-		public Thing ManipulatedItem {
+		public AbstractItem ManipulatedItem {
 			get { 
 				return manipulatedItem;
 			}
 		}
 
-		public Thing WaitingStack {
+		public AbstractItem WaitingStack {
 			get { 
 				return waitingStack; 
 			}

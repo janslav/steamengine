@@ -1899,22 +1899,27 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)")]
 		public void RedMessage(string arg) {
-			SysMessage(arg, (int) Hues.Red);
+			this.SysMessage(arg, (int) Hues.Red);
+		}
+
+		[Summary("Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)")]
+		public void RedMessageCliloc(int arg) {
+			this.ClilocSysMessage(arg, (int) Hues.Red);
 		}
 
 		[Summary("Message displayed in blue - used for ingame purposes")]
 		public void BlueMessage(string arg) {
-			SysMessage(arg, (int) Hues.Blue);
+			this.SysMessage(arg, (int) Hues.Blue);
 		}
 
 		[Summary("Message displayed in green - used for ingame purposes")]
 		public void GreenMessage(string arg) {
-			SysMessage(arg, (int) Hues.Green);
+			this.SysMessage(arg, (int) Hues.Green);
 		}
 
 		[Summary("Message displayed in green - used for ingame purposes")]
 		public void InfoMessage(string arg) {
-			SysMessage(arg, (int) Hues.Info);
+			this.SysMessage(arg, (int) Hues.Info);
 		}
 
 		public Item Hair {

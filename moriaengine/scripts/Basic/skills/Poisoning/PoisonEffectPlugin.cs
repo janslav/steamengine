@@ -36,35 +36,30 @@ namespace SteamEngine.CompiledScripts {
 
 		static TimerKey tickTimerKey = TimerKey.Acquire("_poisonTickTimer_");
 
-		public void On_Assign() {
-			Character self = (Character) this.Cont;
+		//supposed to be called after base.Init
+		internal void StartTicking(TimeSpan tickSpan, int tickCount) {
+			double differencePerTick = this.EffectPower / tickCount;
+			this.AddTimer(tickTimerKey, new PoisonTickTimer(tickSpan, differencePerTick));
+		}
 
-			double effect = this.EffectPower;
-			this.AddTimer(tickTimerKey, new PoisonTickTimer(this.TimerObject.DueInSpan, effect));
-			self.HitsRegenSpeed -= effect;
+		public virtual void On_Assign() {
+			Character self = (Character) this.Cont;
 			self.Flag_GreenHealthBar = true;
 		}
 
-		public override void On_UnAssign(Character cont) {
-			cont.HitsRegenSpeed += this.EffectPower;
+		public virtual void On_PoisonTick() {
+			if (this.EffectPower < minimumPoisonEffect) {
+				this.Delete();
+			}
+			//or throw unimplemented exception?
+			this.AnnouncePoisonStrength();
+		}
 
+		public override void On_UnAssign(Character cont) {
 			PoisonSpellDef poisonSpell = SingletonScript<PoisonSpellDef>.Instance;
 			cont.Flag_GreenHealthBar = //
 				cont.HasPlugin(poisonSpell.EffectPluginKey_Potion) || cont.HasPlugin(poisonSpell.EffectPluginKey_Spell);
 			base.On_UnAssign(cont);
-		}
-
-		public void ModifyEffect(double difference) {
-			Character self = (Character) this.Cont;
-			if (self != null) {
-				double newEffect = this.EffectPower + difference;
-				if (newEffect < minimumPoisonEffect) {
-					this.Delete();
-				} else {
-					self.HitsRegenSpeed -= difference;
-					this.EffectPower = newEffect;
-				}
-			}
 		}
 
 		public void AnnouncePoisonStrength() {
@@ -96,8 +91,9 @@ namespace SteamEngine.CompiledScripts {
 
 	[SaveableClass, DeepCopyableClass]
 	public class PoisonTickTimer : BoundTimer {
-		private static TimeSpan tickSpan = TimeSpan.FromSeconds(5);
 
+		[SaveableData, CopyableData]
+		public TimeSpan tickSpan;
 		[SaveableData, CopyableData]
 		public double differencePerTick;
 
@@ -105,17 +101,18 @@ namespace SteamEngine.CompiledScripts {
 		public PoisonTickTimer() {
 		}
 
-		public PoisonTickTimer(TimeSpan totalTime, double totalEffect) {
+		public PoisonTickTimer(TimeSpan tickSpan, double differencePerTick) {
 			this.DueInSpan = tickSpan;
 			this.PeriodSpan = tickSpan;
 
-			this.differencePerTick = -((tickSpan.Ticks * totalEffect) / totalTime.Ticks);
+			this.differencePerTick = differencePerTick;
 		}
 
 		protected override void OnTimeout(TagHolder cont) {
 			PoisonEffectPlugin poison = (PoisonEffectPlugin) cont;
-			poison.ModifyEffect(differencePerTick);
-			poison.AnnouncePoisonStrength();
+
+			poison.On_PoisonTick();
+			poison.EffectPower -= this.differencePerTick;
 		}
 	}
 }

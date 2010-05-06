@@ -31,56 +31,26 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class DamagingPoisonEffectPlugin {
-		//public const double minimumPoisonEffect = 0.1; //plugin gets removed when the regen modifier goes below this
 
+		public override void On_PoisonTick() {
 
-		//static TimerKey tickTimerKey = TimerKey.Acquire("_poisonTickTimer_");
+			DamageType damageType = DamageType.Poison;
+			if ((this.Flags & EffectFlag.FromPotion) == EffectFlag.FromPotion) {
+				damageType |= DamageType.Physical; //poison in potions/on weapons is not magic, maybe...?
+			} else {
+				damageType |= DamageType.Magic; //poison in potions/on weapons is not magic, maybe...?
+			}
 
-		//public void On_Assign() {
-		//    Character self = (Character) this.Cont;
+			Character self = this.Cont as Character;
+			if (self != null) {
 
-		//    double effect = this.EffectPower;
-		//    this.AddTimer(tickTimerKey, new PoisonTickTimer(this.TimerObject.DueInSpan, effect));
-		//    self.HitsRegenSpeed -= effect;
-		//    self.Flag_GreenHealthBar = true;
-		//}
+				DamageManager.CauseDamage(this.SourceThing as Character, self, damageType, this.EffectPower);
 
-		//public override void On_UnAssign(Character cont) {
-		//    cont.HitsRegenSpeed += this.EffectPower;
-
-		//    PoisonSpellDef poisonSpell = SingletonScript<PoisonSpellDef>.Instance;
-		//    cont.Flag_GreenHealthBar = //
-		//        cont.HasPlugin(poisonSpell.EffectPluginKey_Potion) || cont.HasPlugin(poisonSpell.EffectPluginKey_Spell);
-		//    base.On_UnAssign(cont);
-		//}
-
-		//public void ModifyEffect(double difference) {
-		//    Character self = (Character) this.Cont;
-		//    if (self != null) {
-		//        double newEffect = this.EffectPower + difference;
-		//        if (newEffect < minimumPoisonEffect) {
-		//            this.Delete();
-		//        } else {
-		//            self.HitsRegenSpeed -= difference;
-		//            this.EffectPower = newEffect;
-		//        }
-		//    }
-		//}
-
-		//public void AnnouncePoisonStrength() {
-		//    Character self = this.Cont as Character;
-		//    if (self != null) {
-		//        int roundedEffect = (int) this.EffectPower;
-		//        if (roundedEffect < 0) {
-		//            roundedEffect = 0;
-		//        } else if (roundedEffect > 4) {
-		//            roundedEffect = 4;
-		//        }
-
-		//        self.ClilocEmote(1042858 + (roundedEffect * 2), 0x21, self.Name); //shouldn't see one's own cliloc emote?
-		//        self.ClilocSysMessage(1042857 + (roundedEffect * 2), 0x21);
-		//    }
-		//}
+				base.On_PoisonTick();
+			} else {
+				this.Delete();
+			}			
+		}
 
 		//1042857	*You feel a bit nauseous*
 		//1042858	*~1_PLAYER_NAME~ looks ill.*
@@ -93,31 +63,6 @@ namespace SteamEngine.CompiledScripts {
 		//1042865	* You are in extreme pain, and require immediate aid! *
 		//1042866	* ~1_PLAYER_NAME~ begins to spasm uncontrollably. *
 	}
-
-	//[SaveableClass, DeepCopyableClass]
-	//public class PoisonTickTimer : BoundTimer {
-	//    private static TimeSpan tickSpan = TimeSpan.FromSeconds(5);
-
-	//    [SaveableData, CopyableData]
-	//    public double differencePerTick;
-
-	//    [DeepCopyImplementation, LoadingInitializer]
-	//    public PoisonTickTimer() {
-	//    }
-
-	//    public PoisonTickTimer(TimeSpan totalTime, double totalEffect) {
-	//        this.DueInSpan = tickSpan;
-	//        this.PeriodSpan = tickSpan;
-
-	//        this.differencePerTick = -((tickSpan.Ticks * totalEffect) / totalTime.Ticks);
-	//    }
-
-	//    protected override void OnTimeout(TagHolder cont) {
-	//        PoisonEffectPlugin poison = (PoisonEffectPlugin) cont;
-	//        poison.ModifyEffect(differencePerTick);
-	//        poison.AnnouncePoisonStrength();
-	//    }
-	//}
 }
 
 

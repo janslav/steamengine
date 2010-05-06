@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private void ManaSwapped(Player self) {
 			this.SoundTo(250, self);
-			this.InvalidateProperties();
+			this.InvalidateAosToolTips();
 		}
 
 		public void ShowMana(Player self) {
@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 				ushort newValue = (ushort) value;
 				if (this.mana != newValue) {
 					this.mana = (ushort) newValue;
-					this.InvalidateProperties();
+					this.InvalidateAosToolTips();
 				}
 			}
 		}
