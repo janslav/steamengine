@@ -110,13 +110,28 @@ namespace SteamEngine.CompiledScripts {
 				return true;
 			}
 
-
+			PoisonedItemPlugin plugin = (PoisonedItemPlugin) skillSeqArgs.Param1;
+			Projectile asProjectile = target as Projectile;
+			if (asProjectile != null) {
+				plugin.BindToProjectile(asProjectile);
+			} else {
+				plugin.BindToWeapon((Weapon) target);
+			}
+			self.ClilocSysMessage(1010517); //You apply the poison
 
 			return false;
 		}
 
 		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
+
+			if ((1200 - self.GetSkill(this)) > Globals.dice.Next(12000)) {
+				self.RedMessageCliloc(502148); //You make a grave mistake while applying the poison.
+				PoisonedItemPlugin plugin = (PoisonedItemPlugin) skillSeqArgs.Param1;
+				plugin.Apply(self, self, EffectFlag.FromPotion | EffectFlag.HarmfulEffect);
+				plugin.Delete();
+			}
+
 			return false;
 		}
 
@@ -176,8 +191,10 @@ namespace SteamEngine.CompiledScripts {
 				skillSeq.Tool = targetted;
 				skillSeq.PhaseStart();
 				return false;
+			} else {
+				self.ClilocSysMessage(502139); //That is not a poison potion.
+				return true; //re-raise target
 			}
-			return true; //re-raise target
 		}
 	}
 
@@ -194,7 +211,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!self.CanReachWithMessage(targetted)) {
 				return true;
 			} else if (PoisoningSkillDef.CanPoisonWithMessage(self, (PoisonPotion) skillSeq.Tool, targetted)) {				
-				skillSeq.Tool = targetted;
+				skillSeq.Target1 = targetted;
 				skillSeq.PhaseStart();
 				return false;
 			}

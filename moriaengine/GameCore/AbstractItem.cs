@@ -152,7 +152,7 @@ namespace SteamEngine {
 			}
 			set {
 				if (value != this.amount) {
-					this.InvalidateProperties();
+					this.InvalidateAosToolTips();
 					ItemSyncQueue.AboutToChange(this);
 					Thing c = this.Cont;
 					if (c != null) {
@@ -408,7 +408,7 @@ namespace SteamEngine {
 				}
 			}
 			set {
-				this.InvalidateProperties();
+				this.InvalidateAosToolTips();
 				if (!string.IsNullOrEmpty(value)) {
 					this.name = String.Intern(value);
 				} else {
@@ -643,9 +643,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public sealed override void InvalidateProperties() {
+		public sealed override void InvalidateAosToolTips() {
 			ItemSyncQueue.PropertiesChanged(this);
-			base.InvalidateProperties();
+			base.InvalidateAosToolTips();
 		}
 
 		//if true, this is mutually exclusive with other items that return true here, to fit on the same map spot (Map.CanFit)

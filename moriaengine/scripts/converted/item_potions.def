@@ -222,7 +222,7 @@ EmptyFlask = i_bottle_empty //converted from 'TDATA1'
 model = i_bottle_empty
 Color = 0b0
 
-[PotionDef i_potion_Poison]
+[PoisonPotionDef i_potion_Poison]
 NAME = "Poison"
 TYPE = T_POTION
 RESOURCES = 4 i_reag_nightshade, 1 i_bottle_empty //some resources were fixed by converter 
@@ -230,6 +230,7 @@ SKILLMAKE = 400 alchemy //some resources were fixed by converter
 EmptyFlask = i_bottle_empty //converted from 'TDATA1' 
 model = i_bottle_empty
 Color = 0b2
+PoisonType = p_poison
 
 [PotionDef i_potion_PoisonGreat]
 NAME = "Greater Poison"

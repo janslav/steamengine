@@ -298,6 +298,7 @@
 				<include name="${gameCoreFileName}" />
 				<include name="${scriptsFileName}" />
 				<include name="System.dll" />
+				<include name="System.Core.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>

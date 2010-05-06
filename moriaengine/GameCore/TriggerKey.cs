@@ -79,7 +79,7 @@ namespace SteamEngine {
 		internal static readonly TriggerKey enterRegion = Acquire("enterRegion");
 
 		internal static readonly TriggerKey stackOnItem = Acquire("stackOnItem");
-		internal static readonly TriggerKey itemStackOn = Acquire("stackon_Item");
+		internal static readonly TriggerKey itemStackOn = Acquire("itemStackOn");
 
 		internal static readonly TriggerKey denyPickup = Acquire("denyPickup");
 		internal static readonly TriggerKey denyPickupItem = Acquire("denyPickupItem");

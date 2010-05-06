@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VS08-Scripts", "..\..\scrip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NantLauncher", "NantLauncher.csproj", "{329F75B7-76DE-4579-84F2-F781BE550FD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VS08-SphereShardConverter", "..\..\SphereShardConverter\VS08-SphereShardConverter.csproj", "{56E0D551-7D1D-4529-B355-B1C70B063526}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{329F75B7-76DE-4579-84F2-F781BE550FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{329F75B7-76DE-4579-84F2-F781BE550FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{329F75B7-76DE-4579-84F2-F781BE550FD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56E0D551-7D1D-4529-B355-B1C70B063526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56E0D551-7D1D-4529-B355-B1C70B063526}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56E0D551-7D1D-4529-B355-B1C70B063526}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56E0D551-7D1D-4529-B355-B1C70B063526}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

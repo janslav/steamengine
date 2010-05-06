@@ -31,6 +31,8 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class PoisonSpellDef : DurableCharEffectSpellDef {
 
+		public static readonly TimeSpan poisonTickInterval = TimeSpan.FromSeconds(5); //or should be settable?
+
 		public PoisonSpellDef(String defname, String filename, Int32 headerLine)
 			: base(defname, filename, headerLine) {
 		}
@@ -39,28 +41,28 @@ namespace SteamEngine.CompiledScripts {
 			target.Trigger_HostileAction(spellEffectArgs.Caster);
 
 			EffectFlag sourceType = spellEffectArgs.EffectFlag;
-			DamageType damageType = DamageType.Poison;
 			PluginKey key;
 			if (sourceType == EffectFlag.FromPotion) {
 				key = this.EffectPluginKey_Potion;
 			} else {
 				key = this.EffectPluginKey_Spell;
-				damageType |= DamageType.Magic; //poison in potions/on weapons is not magic, maybe...?
 			}
 
 			int spellPower = spellEffectArgs.SpellPower;
 			double effect = this.GetEffectForValue(spellPower); //initial regen penalty
-			effect *= DamageManager.GetResistModifier(target, damageType); //apply magic and/or poison resistance
 
-			if (effect > PoisonEffectPlugin.minimumPoisonEffect) { //else it does nothing to this target, so it's effectively immune
-				PoisonEffectPlugin poisonPlugin = target.GetPlugin(key) as PoisonEffectPlugin;
-				if ((poisonPlugin == null) || (effect > poisonPlugin.EffectPower)) { //previous poison is not better than ours, or there is none
+			DamagingPoisonEffectPlugin poisonPlugin = target.GetPlugin(key) as DamagingPoisonEffectPlugin;
+			if ((poisonPlugin == null) || (effect > poisonPlugin.EffectPower)) { 
+				//previous poison is not better than ours, or there is none (or is of different type which we ignore too)
+				double durationInSeconds = this.GetDurationForValue(spellPower);
+				int ticksCount = (int) (durationInSeconds / poisonTickInterval.TotalSeconds);
 
-					poisonPlugin = (PoisonEffectPlugin) this.EffectPluginDef.Create();
-					poisonPlugin.Init(spellEffectArgs.Caster, sourceType, effect, 
-						TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)), this);
-					target.AddPlugin(key, poisonPlugin);
-				}
+				poisonPlugin = (DamagingPoisonEffectPlugin) this.EffectPluginDef.Create();
+				poisonPlugin.Init(spellEffectArgs.Caster, sourceType, effect,
+					TimeSpan.FromSeconds(durationInSeconds), this);
+				poisonPlugin.StartTicking(poisonTickInterval, ticksCount);
+
+				target.AddPlugin(key, poisonPlugin);
 			}
 		}
 	}

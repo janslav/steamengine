@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 					Region targetRegion = value.GetMap().GetRegionFor(value);
 					this.targetDescription = targetRegion.Name;
 				}
-				this.InvalidateProperties();
+				this.InvalidateAosToolTips();
 			}
 		}
 

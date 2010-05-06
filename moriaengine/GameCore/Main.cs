@@ -132,8 +132,6 @@ namespace SteamEngine {
 
 			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			CoreLogger.Init();
-
 			RunLevelManager.SetStartup();
 			
 			using (StopWatch.StartAndDisplay("Server Initialisation")) {
@@ -152,7 +150,7 @@ namespace SteamEngine {
 				Console.WriteLine("http://kec.cz:8008/trac");
 				Console.WriteLine("Running under " + Environment.OSVersion + ", Framework version: " + Environment.Version + ".");
 
-				Globals.Init();
+				Globals.Init(); //reads .ini
 				if (signalExit.WaitOne(0, false)) {
 					return false;
 				}

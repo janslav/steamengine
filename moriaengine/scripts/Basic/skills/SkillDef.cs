@@ -392,6 +392,10 @@ namespace SteamEngine.CompiledScripts {
 			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), null, null, tool, null, null);
 		}
 
+		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef, Item tool) {
+			return Acquire(self, skillDef, null, null, tool, null, null);
+		}
+
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, Item tool, object param1) {
 			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), null, null, tool, param1, null);
 		}
