@@ -17,5 +17,4 @@
 Def:	//vars on the def
 	PoisonEffectPluginDef poisonType  = null
 	System.Int32[] poisonPower = new int[] {0, 1000}
-	TimeSpan poisonTickInterval = TimeSpan.FromSeconds(5)
 	int poisonTickCount = 24

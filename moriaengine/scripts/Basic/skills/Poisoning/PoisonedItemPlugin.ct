@@ -18,6 +18,5 @@
 //Vars:
 //	private PoisonEffectPluginDef poisonType  = null
 //	private int poisonPower = 0
-//	private TimeSpan poisonTickInterval = TimeSpan.Zero
 //	private int poisonTickCount = 0
 //	private int poisonDoses = 0

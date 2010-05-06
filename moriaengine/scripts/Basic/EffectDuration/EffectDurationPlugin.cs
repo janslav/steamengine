@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//sourceDef = source spelldef / abilitydef / etc.
-		public void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration, AbstractDef sourceDef) {
+		public virtual void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration, AbstractDef sourceDef) {
 			this.sourceThing = sourceThing;
 			this.flags = sourceType;
 			this.effectPower = power;

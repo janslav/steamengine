@@ -216,7 +216,7 @@ namespace SteamEngine.Converter {
 		private static readonly Regex nameValueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		private static Regex tagRE = new Regex(@"tag(\.)|(\()(?<name>\w+)\s*(=)|(,)\s*(?<value>.*?)\s*\)?\s*(//(?<comment>.*))?$",
+		private static Regex tagRE = new Regex(@"^tag((\.)|(\())(?<name>.+?)\s*((=)|(,))\s*(?<value>.+?)\s*\)?\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		protected virtual void ProcessCreateTriggerLine(string name, string value, string comment, int lineNum) {

@@ -31,13 +31,16 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class PoisonEffectPlugin {
-		public const double minimumPoisonEffect = 0.1; //plugin gets removed when the regen modifier goes below this
+		public const double minimumPoisonEffect = 0.1;
 
 
 		static TimerKey tickTimerKey = TimerKey.Acquire("_poisonTickTimer_");
 
-		//supposed to be called after base.Init
-		internal void StartTicking(TimeSpan tickSpan, int tickCount) {
+		public override void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration, AbstractDef sourceDef) {
+			base.Init(sourceThing, sourceType, power, duration, sourceDef);
+
+			TimeSpan tickSpan = this.TypeDef.TickInterval;
+			double tickCount = duration.TotalSeconds / tickSpan.TotalSeconds;
 			double differencePerTick = this.EffectPower / tickCount;
 			this.AddTimer(tickTimerKey, new PoisonTickTimer(tickSpan, differencePerTick));
 		}

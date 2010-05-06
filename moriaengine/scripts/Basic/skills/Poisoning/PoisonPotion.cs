@@ -55,10 +55,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public TimeSpan PoisonTickInterval {
-			get { return this.TypeDef.PoisonTickInterval; }
-		}
-
 		public int PoisonTickCount {
 			get { return this.TypeDef.PoisonTickCount; }
 		}

@@ -36,17 +36,9 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>.</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MSWIN</DefineConstants>
+    <DefineConstants>DEBUG;MSWIN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>.</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DefineConstants>DEBUG;TRACE;MSWIN</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CompiledScriptHolders.Generated.cs" />
