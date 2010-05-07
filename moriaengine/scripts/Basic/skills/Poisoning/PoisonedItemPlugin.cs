@@ -85,12 +85,20 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_BuildAosToolTips(AosToolTips opc, Language language) {
+			if (this.poisonDoses <= 0) {
+				this.Delete();
+				return;
+			}
 			PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(language);
 			opc.AddNameColonValue(loc.DosesLeft, this.poisonDoses.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			opc.AddNameColonValue(loc.Power, this.poisonPower.ToString(System.Globalization.CultureInfo.InvariantCulture));
 		}
 
 		public void On_Click(Character clicker) {
+			if (this.poisonDoses <= 0) {
+				this.Delete();
+				return;
+			}
 			GameState state = clicker.GameState;
 			if (state != null) {
 				PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(clicker.Language);

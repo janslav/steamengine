@@ -1194,7 +1194,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public virtual void On_Disruption() {
-
+			if (this.CurrentSkillName == SkillName.Magery) {
+				this.AbortSkill();
+			}
 		}
 
 		private static TriggerKey hostileActionTK = TriggerKey.Acquire("hostileAction");
