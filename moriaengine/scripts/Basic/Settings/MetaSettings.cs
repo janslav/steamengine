@@ -60,6 +60,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
+		[InfoField("Poisons Settings")]
+		public PoisoningSettings PoisoningSettings {
+			get {
+				return PoisoningSettings.instance;
+			}
+		}
+
 		[InfoField("Abilities")]
 		public AllAbilitiesMassSetting allAbilities = new AllAbilitiesMassSetting();
 	}

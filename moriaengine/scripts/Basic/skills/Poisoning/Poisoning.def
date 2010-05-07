@@ -10,3 +10,6 @@ ADVRATE=2.5,50.0,200.0
 
 //ON=@Fail
 //	src.message "You fail to apply a sufficient dose of poison to it."
+
+
+

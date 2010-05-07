@@ -163,6 +163,7 @@ namespace SteamEngine.CompiledScripts {
 									return false;
 								} else if (poison.PoisonDoses >= asProjectile.Amount) {
 									self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).AllProjectilesPoisoned);
+									return false;
 								}
 							}
 						}

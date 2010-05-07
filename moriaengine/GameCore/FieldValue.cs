@@ -361,12 +361,32 @@ namespace SteamEngine {
 				return false;
 			}
 			if (this.isChangedManually) {//it was loaded/changed , so it should be also saved :)
-				return !object.Equals(CurrentValue, DefaultValue);
+				return !CurrentAndDefaultEquals(CurrentValue, DefaultValue);
 			}
 			if ((this.currentValue is TemporaryValueImpl) && (this.defaultValue is TemporaryValueImpl)) {
 				return false;//unresolved, no need of touching
 			}
-			return !object.Equals(this.CurrentValue, this.DefaultValue);
+			return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
+		}
+
+		private static bool CurrentAndDefaultEquals(object a, object b) {
+			if ((a is Array) && (b is Array)) { //or should we equal Collection? Arrays should be the typical collection type here tho
+				Array arrA = (Array) a;
+				Array arrB = (Array) b;
+				int n = arrA.Length;
+				if ((n == arrB.Length) &&
+					(arrA.GetType().GetElementType() == arrB.GetType().GetElementType())) {
+					for (int i = 0; i<n; i++) {
+						if (!CurrentAndDefaultEquals(arrA.GetValue(i), arrB.GetValue(i))) {
+							return false;
+						}
+					}
+					return true;
+				}
+				return false;
+			}
+
+			return object.Equals(a, b);
 		}
 
 		[Summary("If true, it has not been set from scripts nor from saves nor manually")]

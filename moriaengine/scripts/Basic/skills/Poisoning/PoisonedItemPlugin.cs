@@ -52,11 +52,17 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return this.poisonType;
 			}
+			set {
+				this.poisonType = value;
+			}
 		}
 
-		public int PoisonPower {
+		public double PoisonPower {
 			get {
 				return this.poisonPower;
+			}
+			set {
+				this.poisonPower = value;
 			}
 		}
 
@@ -64,11 +70,17 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return this.poisonTickCount;
 			}
+			set {
+				this.poisonTickCount = value;
+			}
 		}
 
 		public int PoisonDoses {
 			get {
 				return this.poisonDoses;
+			}
+			set {
+				this.poisonDoses = value;
 			}
 		}
 
@@ -82,13 +94,17 @@ namespace SteamEngine.CompiledScripts {
 			GameState state = clicker.GameState;
 			if (state != null) {
 				PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(clicker.Language);
-				string msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+				string msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(System.Globalization.CultureInfo.InvariantCulture) + 
+					Environment.NewLine +
 					loc.Power + ": " + this.poisonPower.ToString(System.Globalization.CultureInfo.InvariantCulture);
 				PacketSequences.SendOverheadMessageFrom(state.Conn, (Thing) this.Cont, msg, -1);
 			}
 		}
 
 		public void BindToProjectile(Projectile projectile) {
+			this.poisonDoses = projectilesPerPotion;
+			this.poisonPower *= projectile.PoisoningEfficiency;
+
 			PoisonedItemPlugin previous = projectile.GetPlugin(poisonPK) as PoisonedItemPlugin;
 			if (previous != null) {
 				Sanity.IfTrueThrow(previous == this, "previous == this");
@@ -101,6 +117,8 @@ namespace SteamEngine.CompiledScripts {
 					this.poisonPower * projectilesPerPotion) / newDoses;
 				previous.poisonTickCount = (previous.poisonTickCount * prevDoses +
 					this.poisonTickCount * projectilesPerPotion) / newDoses;
+				projectile.InvalidateAosToolTips();
+				previous.poisonDoses = newDoses;
 
 				this.Delete(); //probably does nothing, but to be sure...
 			} else {
@@ -109,6 +127,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void BindToWeapon(Weapon weapon) {
+			this.poisonPower *= weapon.PoisoningEfficiency;
+			this.poisonDoses = weapon.PoisonCapacity; //full capacity every time?
+
 			weapon.AddPlugin(poisonPK, this);
 		}
 
@@ -120,6 +141,8 @@ namespace SteamEngine.CompiledScripts {
 				if (topChar != null) {
 					this.InstallCharacterTG(topChar);
 				}
+
+				thing.InvalidateAosToolTips(); //we display the poison stats
 			}
 		}
 
@@ -137,35 +160,15 @@ namespace SteamEngine.CompiledScripts {
 			topChar.AddTriggerGroup(SingletonScript<E_Poisoned_Weapon_User>.Instance);
 		}
 
-		internal void Apply(Thing source, Character target, EffectFlag sourceType) {
-			//install the poison under one of 2 possible pluginnames - spell or potion. 
-			//Or maybe there should also be slots for each different type?
-
-			PluginKey key;
-			if ((sourceType & EffectFlag.FromSpellBook) == EffectFlag.FromSpellBook) {
-				key = SingletonScript<PoisonSpellDef>.Instance.EffectPluginKey_Spell;
-			} else { //everything that's not a spell is a potion, right? :)
-				key = SingletonScript<PoisonSpellDef>.Instance.EffectPluginKey_Potion;
-			}
-
-			PoisonEffectPlugin previous = target.GetPlugin(key) as PoisonEffectPlugin;
-			if (previous != null) {
-				if ((previous.Def == this.Def) && (previous.EffectPower > this.poisonPower)) {
-					//previous poison is of the same type, and stronger, so we leave it alone
-					return;
-				}
-			}
-
-			PoisonEffectPlugin effect = (PoisonEffectPlugin) this.poisonType.Create();
-			effect.Init(source, sourceType, this.poisonPower,
-				TimeSpan.FromTicks(effect.TypeDef.TickInterval.Ticks * this.poisonTickCount));
-			target.AddPlugin(key, effect);
+		public void Apply(Thing source, Character target, EffectFlag sourceType) {
+			this.poisonType.Apply(source, target, sourceType, this.poisonPower, this.poisonTickCount);
 		}
 
 		internal void WipeSingleDoseFromWeapon() {
 			if (this.poisonDoses > 0 && this.poisonPower > 0) {
 				this.poisonPower -= (this.poisonPower / this.poisonDoses); //poison on weapon weakens by use
 				this.poisonDoses--;
+				((Item) this.Cont).InvalidateAosToolTips(); //we refresh the displayed poison stats
 			} else {
 				this.Delete();
 			}
@@ -175,12 +178,14 @@ namespace SteamEngine.CompiledScripts {
 			this.poisonDoses--;
 			if (this.poisonDoses <= 0) {
 				this.Delete();
+			} else {
+				((Item) this.Cont).InvalidateAosToolTips(); //we refresh the displayed poison stats
 			}
 		}
 
 		//this.Cont is being stacked onto another item (projectile) 
 		public virtual bool On_StackOnItem(ItemStackArgs args) {
-			//this == args.ManipulatedItem
+			Sanity.IfTrueThrow(this.Cont != args.ManipulatedItem, "this != args.ManipulatedItem");
 
 			PoisonedItemPlugin otherPoison = args.WaitingStack.GetPlugin(poisonPK) as PoisonedItemPlugin;
 			if (otherPoison == null) {
@@ -195,7 +200,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//another item (projectile) is being stacked onto this.Cont
 		public virtual bool On_ItemStackOn(ItemStackArgs args) {
-			//this == args.WaitingStack
+			Sanity.IfTrueThrow(this.Cont != args.WaitingStack, "this != args.WaitingStack");
 
 			PoisonedItemPlugin otherPoison = args.ManipulatedItem.GetPlugin(poisonPK) as PoisonedItemPlugin;
 			if ((otherPoison != null) && (otherPoison.poisonType == this.poisonType)) {
@@ -207,11 +212,18 @@ namespace SteamEngine.CompiledScripts {
 					this.poisonPower * this.poisonDoses) / summedDoses;
 				this.poisonTickCount = (otherPoison.poisonTickCount * otherDoses +
 					this.poisonTickCount * this.poisonDoses) / summedDoses;
-			}
+				this.poisonDoses = summedDoses;
 
-			otherPoison.Delete(); //probably does nothing, but to be sure...
+				args.WaitingStack.InvalidateAosToolTips();
+
+				otherPoison.Delete(); //probably doesn't matter, because it's parent is gonna be deleted anyway
+			}		
 			
 			return false;
+		}
+
+		public void On_Unassign(Item cont) {
+			cont.InvalidateAosToolTips();
 		}
 	}
 
@@ -254,7 +266,7 @@ namespace SteamEngine.CompiledScripts {
 		public string Power = "Poison Power";
 	}
 
-	//we do not use generated code because we want a customised copy constructor
+	//we do not use generated code because we want a customised copy constructor where the doses count is halved
 	#region Originally generated
 	public partial class PoisonedItemPluginDef : PluginDef {
 
@@ -277,7 +289,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private PoisonEffectPluginDef poisonType = null;
 
-		private Int32 poisonPower = 0;
+		private double poisonPower = 0;
 
 		private Int32 poisonTickCount = 0;
 
@@ -334,7 +346,7 @@ namespace SteamEngine.CompiledScripts {
 					break;
 
 				case "poisonpower":
-					this.poisonPower = SteamEngine.Common.ConvertTools.ParseInt32(valueString);
+					this.poisonPower = SteamEngine.Common.ConvertTools.ParseDouble(valueString);
 					break;
 
 				case "poisontickcount":

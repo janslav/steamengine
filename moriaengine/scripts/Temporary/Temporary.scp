@@ -407,3 +407,15 @@ return 0
 on=8
 src.sysmessage("Tinkering")
 return 0
+
+
+[function lp]
+	echo("NonSimple Plugins:")
+	foreach nsp in this.GetNonSimplePlugins()
+		echo(<nsp>)
+	endforeach
+
+	echo("All Plugins:")
+	foreach nsp in this.GetAllPlugins()
+		echo(<nsp>)
+	endforeach

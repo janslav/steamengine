@@ -32,8 +32,8 @@ namespace SteamEngine {
 
 	public partial class Thing {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_Dupe(Thing model) {
-
+		public virtual void On_Dupe(Thing original) {
+			original.InvalidateAosToolTips();
 		}
 
 		public Thing Dupe() {
@@ -60,7 +60,7 @@ namespace SteamEngine {
 				}
 			}
 
-			Trigger_Dupe(this);
+			copy.Trigger_Dupe(this);
 
 			return copy;
 		}
@@ -78,16 +78,16 @@ namespace SteamEngine {
 				copy.Trigger_EnterItem(contItem, this.point4d.x, this.point4d.y);
 			}
 
-			Trigger_Dupe(this);
+			copy.Trigger_Dupe(this);
 
 			return copy;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		private void Trigger_Dupe(Thing model) {
-			this.TryTrigger(TriggerKey.dupe, new ScriptArgs(model));
+		private void Trigger_Dupe(Thing original) {
+			this.TryTrigger(TriggerKey.dupe, new ScriptArgs(original));
 			try {
-				this.On_Dupe(model);
+				this.On_Dupe(original);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 

@@ -38,31 +38,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
-			target.Trigger_HostileAction(spellEffectArgs.Caster);
-
-			EffectFlag sourceType = spellEffectArgs.EffectFlag;
-			PluginKey key;
-			if (sourceType == EffectFlag.FromPotion) {
-				key = this.EffectPluginKey_Potion;
-			} else {
-				key = this.EffectPluginKey_Spell;
-			}
+			Character caster = spellEffectArgs.Caster;
+			target.Trigger_HostileAction(caster);
 
 			int spellPower = spellEffectArgs.SpellPower;
-			double effect = this.GetEffectForValue(spellPower); //initial regen penalty
+			double effect = (int) this.GetEffectForValue(spellPower);
+			double durationInSeconds = this.GetDurationForValue(spellPower);
+			int ticksCount = (int) (durationInSeconds / poisonTickInterval.TotalSeconds);
 
-			DamagingPoisonEffectPlugin poisonPlugin = target.GetPlugin(key) as DamagingPoisonEffectPlugin;
-			if ((poisonPlugin == null) || (effect > poisonPlugin.EffectPower)) { 
-				//previous poison is not better than ours, or there is none (or is of different type which we ignore too)
-				double durationInSeconds = this.GetDurationForValue(spellPower);
-				int ticksCount = (int) (durationInSeconds / poisonTickInterval.TotalSeconds);
-
-				poisonPlugin = (DamagingPoisonEffectPlugin) this.EffectPluginDef.Create();
-				poisonPlugin.Init(spellEffectArgs.Caster, sourceType, effect,
-					TimeSpan.FromSeconds(durationInSeconds), this);
-
-				target.AddPlugin(key, poisonPlugin);
-			}
+			((PoisonEffectPluginDef) this.EffectPluginDef).Apply(caster, target, spellEffectArgs.EffectFlag, 
+				effect, ticksCount);
 		}
 	}
 }

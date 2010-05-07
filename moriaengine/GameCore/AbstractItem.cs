@@ -51,8 +51,6 @@ namespace SteamEngine {
 
 		private int amount;
 		private string name;
-		//Important: cont should only be changed through calls to BeingDroppedFromContainer or BeingPutInContainer,
-		//and coords of an item inside a container should only be changed through MoveInsideContainer
 
 		private enum InternalFlag : byte {
 			SyncMask = (ItemSyncQueue.ItemSyncFlags.Resend | ItemSyncQueue.ItemSyncFlags.ItemUpdate | ItemSyncQueue.ItemSyncFlags.Property),
