@@ -43,7 +43,7 @@ namespace SteamEngine.Timers {
 				}
 				this.OnTimeout(cont);
 			} else {
-				this.Delete();
+				this.DeleteFrom(cont);
 			}
 		}
 

@@ -311,6 +311,7 @@
     <Compile Include="Basic\skills\Magery\SpellScroll.Generated.cs" />
     <Compile Include="Basic\skills\Meditation\Meditation.cs" />
     <Compile Include="Basic\skills\Meditation\MeditationPlugin.Generated.cs" />
+    <Compile Include="Basic\skills\Poisoning\PoisoningSettings.cs" />
     <Compile Include="Basic\skills\Poisoning\PoisonedItemPlugin.cs" />
     <Compile Include="Basic\skills\Poisoning\PoisonedItemPlugin.Generated.cs" />
     <Compile Include="Basic\skills\Poisoning\PoisonEffectPlugin.cs" />
@@ -505,6 +506,7 @@
     <None Include="Basic\skills\Magery\SpellScroll.ct" />
     <None Include="Basic\skills\Meditation\Meditation.scp" />
     <None Include="Basic\skills\Meditation\MeditationPlugin.ct" />
+    <None Include="Basic\skills\Poisoning\poisonPotions.def" />
     <None Include="Basic\skills\Poisoning\PoisonedItemPlugin.ct" />
     <None Include="Basic\skills\Poisoning\PoisonEffectPlugin.ct" />
     <None Include="Basic\skills\Poisoning\Poisoning.def" />

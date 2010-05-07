@@ -145,6 +145,25 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+
+		//use these counter methods to properly set the greenhealthbar flag from multiple sources
+
+		private static TagKey poisonCounterTK = TagKey.Acquire("_poison_counter_");
+		public void AddPoisonCounter() {
+			this.SetTag(poisonCounterTK, Convert.ToInt32(this.GetTag(poisonCounterTK)) + 1);
+			this.Flag_GreenHealthBar = true;
+		}
+
+		public void RemovePoisonCounter() {
+			int val = Convert.ToInt32(this.GetTag(poisonCounterTK)) - 1;
+			if (val <= 0) {
+				this.Flag_GreenHealthBar = false;
+				this.RemoveTag(poisonCounterTK);
+			} else {
+				this.SetTag(poisonCounterTK, val);
+			}
+		}
+
 		#endregion Flags
 
 		#region Mount/Rider stuff

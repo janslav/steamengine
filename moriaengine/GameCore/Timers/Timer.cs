@@ -97,7 +97,7 @@ namespace SteamEngine.Timers {
 				if (timer.fireAt < now) {
 					timer = priorityQueue.Dequeue();
 					TimeSpan fireAt = timer.fireAt;
-					if (!timer.isInChangesQueue) {
+					if ((!timer.isInChangesQueue) && (!timer.isDeleted)) {
 						lock (timer) {
 							if (timer.period >= TimeSpan.Zero) {
 								timer.fireAt = fireAt + timer.period;

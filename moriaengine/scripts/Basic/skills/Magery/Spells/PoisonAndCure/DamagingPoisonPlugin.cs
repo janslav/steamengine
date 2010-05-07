@@ -33,35 +33,24 @@ namespace SteamEngine.CompiledScripts {
 	public partial class DamagingPoisonEffectPlugin {
 
 		public override void On_PoisonTick() {
-
-			DamageType damageType = DamageType.Poison;
-			if ((this.Flags & EffectFlag.FromPotion) == EffectFlag.FromPotion) {
-				damageType |= DamageType.Physical; //poison in potions/on weapons is not magic, maybe...?
-			} else {
-				damageType |= DamageType.Magic; //poison in potions/on weapons is not magic, maybe...?
-			}
-
 			Character self = this.Cont as Character;
 			if (self != null) {
 
-				DamageManager.CauseDamage(this.SourceThing as Character, self, damageType, this.EffectPower);
+				double damage = DamageManager.CauseDamage(this.SourceThing as Character, self,
+					DamageType.MagicPoison, this.EffectPower);
 
-				base.On_PoisonTick();
+				if (damage < 1) { //this is how we check immunity - in the first tick
+					this.Delete();
+					return;
+				}
 			} else {
 				this.Delete();
-			}			
-		}
+				return;
+			}
 
-		//1042857	*You feel a bit nauseous*
-		//1042858	*~1_PLAYER_NAME~ looks ill.*
-		//1042859	* You feel disoriented and nauseous! *
-		//1042860	* ~1_PLAYER_NAME~ looks extremely ill. *
-		//1042861	* You begin to feel pain throughout your body! *
-		//1042862	* ~1_PLAYER_NAME~ stumbles around in confusion and pain. *
-		//1042863	* You feel extremely weak and are in severe pain! *
-		//1042864	* ~1_PLAYER_NAME~ is wracked with extreme pain. *
-		//1042865	* You are in extreme pain, and require immediate aid! *
-		//1042866	* ~1_PLAYER_NAME~ begins to spasm uncontrollably. *
+			//0-4 are valid messages
+			this.AnnouncePoisonStrength((PoisonStrengthMessage) (this.EffectPower / 2));
+		}
 	}
 }
 
