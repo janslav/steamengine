@@ -72,10 +72,13 @@ namespace SteamEngine {
 		public PluginHolder() {
 		}
 
+		#region Copying constructor
 		public PluginHolder(PluginHolder copyFrom)
 			: base(copyFrom) { //copying constuctor
 			if (copyFrom.firstTGListNode != null) {
 				EnsureTagsTable();
+
+				//copy triggergroups
 				TGListNode curNode = new TGListNode(copyFrom.firstTGListNode.storedTG);
 				firstTGListNode = curNode;
 				TGListNode copiedNode = copyFrom.firstTGListNode.nextNode;
@@ -87,7 +90,38 @@ namespace SteamEngine {
 					copiedNode = copiedNode.nextNode;
 				}
 			}
+
+			//copy plugins
+			if (copyFrom.tags != null) {
+				foreach (DictionaryEntry entry in copyFrom.tags) {
+					PluginKey pk = entry.Key as PluginKey;
+					if (pk != null) {
+						DeepCopyFactory.GetCopyDelayed(entry.Value, DelayedGetCopy_Plugin, pk);
+					}
+				}
+
+				//now set nondelayed ones. If all works well, they shouldn't be copied twice
+				Plugin curPlugin = copyFrom.firstPlugin;
+				while (curPlugin != null) {
+					DeepCopyFactory.GetCopyDelayed(curPlugin, DelayedGetCopy_SetPluginAsNonSimple);
+					curPlugin = curPlugin.nextInList;
+				}
+			}
 		}
+
+		private void DelayedGetCopy_SetPluginAsNonSimple(object resolvedObject) {
+			Plugin plugin = (Plugin) resolvedObject;
+			if (firstPlugin != null) {
+				firstPlugin.prevInList = plugin;
+				plugin.nextInList = firstPlugin;
+			}
+			firstPlugin = plugin;
+		}
+
+		private void DelayedGetCopy_Plugin(object resolvedObject, object pluginKey) {
+			AddPluginImpl((PluginKey) pluginKey, (Plugin) resolvedObject);
+		}
+		#endregion Copying constructor
 
 		public override void Delete() {
 			this.DeletePlugins();
@@ -268,7 +302,7 @@ namespace SteamEngine {
 			Plugin curPlugin = firstPlugin;
 			while (curPlugin != null) {
 				object scriptedRetVal, compiledRetVal;
-				curPlugin.Run(tk, sa, out scriptedRetVal, out compiledRetVal);
+				curPlugin.TryRun(tk, sa, out scriptedRetVal, out compiledRetVal);
 				if (TagMath.Is1(scriptedRetVal) || TagMath.Is1(compiledRetVal)) {
 					return true;
 				}
