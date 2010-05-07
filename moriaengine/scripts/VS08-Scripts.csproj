@@ -52,6 +52,8 @@
     <Compile Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionActivatedPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionEffectPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.Generated.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Talents\LongRange\LongRangePlugin.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Talents\LongRange\LongRangePlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\SkillMasteries\SkillMasteryAbilityDef.cs" />
@@ -399,10 +401,12 @@
     <None Include="Basic\AbilitiesAndTalents\Abilities\Warcry\warcry.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\clearCast.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.ct" />
+    <None Include="Basic\AbilitiesAndTalents\Talents\LongRange\longRange.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\energyShield.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.ct" />
     <None Include="Basic\AbilitiesAndTalents\Talents\Ignition\ignition.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.ct" />
+    <None Include="Basic\AbilitiesAndTalents\Talents\LongRange\LongRangePlugin.ct" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\manaSaving.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.ct" />
     <None Include="Basic\AbilitiesAndTalents\Talents\SkillMasteries\skillMasteries.scp" />

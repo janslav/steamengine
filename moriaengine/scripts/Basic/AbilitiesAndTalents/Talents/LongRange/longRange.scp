@@ -1,0 +1,11 @@
+[ActivableAbilityDef a_longrange]
+Name="Longrange"
+EffectPower=0.2 // +2 tiles at 10 points
+EffectDuration=10
+Cooldown = 15 * 60
+
+PluginKey = @@longrange
+PluginDef = p_longrange
+
+
+[LongRangePluginDef p_longrange]
