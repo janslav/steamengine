@@ -27,15 +27,17 @@ namespace SteamEngine {
 		private static CoreLogger initInstance;
 
 		internal static void Init() {
-			try {
-				initInstance = new CoreLogger();
-			} catch (Exception globalexp) {
-				Logger.WriteFatal(globalexp);
-				MainClass.signalExit.Set();
-			}
+			if (!(initInstance is CoreLogger)) {
+				try {
+					initInstance = new CoreLogger();
+				} catch (Exception globalexp) {
+					Logger.WriteFatal(globalexp);
+					MainClass.signalExit.Set();
+				}
 
-			if (Globals.LogToFiles) {
-				Logger.OpenFile();
+				if (Globals.LogToFiles) {
+					Logger.OpenFile();
+				}
 			}
 		}
 
