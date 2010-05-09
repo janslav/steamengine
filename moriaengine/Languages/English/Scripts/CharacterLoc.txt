@@ -1,2 +1,3 @@
 GMModeOn            = GM mode on (Plevel {0}).
 GMModeOff           = GM mode off (Plevel 1).
+TargetIsDead                    = The target is dead.

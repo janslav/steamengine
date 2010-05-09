@@ -1004,9 +1004,14 @@ namespace SteamEngine {
 				int amountToPick = args.Amount;
 				int amountSum = item.Amount;
 				if (!item.IsEquipped && amountToPick < amountSum) {
-					AbstractItem dupedItem = (AbstractItem) item.Dupe();
-					dupedItem.Amount = (amountSum - amountToPick);
-					item.Amount = amountToPick;
+					try {
+						item.Amount = amountToPick; //dupe triggers shall see the new amount
+						AbstractItem dupedItem = (AbstractItem) item.Dupe();
+						dupedItem.Amount = (amountSum - amountToPick);						
+					} catch { //unprobable but still...
+						item.Amount = amountSum; //restore original amount
+						throw;
+					}
 				}
 
 				item.MakeLimbo();

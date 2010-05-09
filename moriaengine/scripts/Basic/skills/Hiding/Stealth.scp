@@ -87,6 +87,8 @@ switch (argo.Skilldef.Id)
 		break
 endswitch
 
+On=@ActivateAbiliy
+	Cont.UnHide()
 	
 On=@Step
 if (Cont.Flag_Hidden)

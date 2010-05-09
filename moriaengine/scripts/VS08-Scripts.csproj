@@ -47,6 +47,7 @@
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Warcry\Warcry.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.Generated.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Talents\Throwing\ThrowingAbilityDef.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionActivatedPlugin.cs" />
@@ -401,6 +402,7 @@
     <None Include="Basic\AbilitiesAndTalents\Abilities\Warcry\warcry.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\clearCast.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.ct" />
+    <None Include="Basic\AbilitiesAndTalents\Talents\Throwing\throwing.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\LongRange\longRange.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\energyShield.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.ct" />

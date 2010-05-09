@@ -71,7 +71,7 @@ a_leech_hits = 5, 20
 a_leech_stam = 6, 20
 a_leech_mana = 7, 20
 
-//TODO longrange
+a_longrange = 8, 10
 //TODO? throwing
 
 a_standcast = 8, 10
