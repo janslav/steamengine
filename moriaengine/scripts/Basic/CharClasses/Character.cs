@@ -370,7 +370,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (target.Flag_Insubst) {//ghosts, insubst GMs
 				if (this.IsGM) {
-					return this.Plevel > target.Plevel; //can see other GMs only if they have lowe plevel
+					return this.Plevel > target.Plevel; //can see other GMs only if they have lower plevel
 				}
 				return false;
 			}
@@ -445,17 +445,42 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CanInteractWith(Thing target) {
-			if (this.Flag_Dead) {
+			if (!this.IsAliveAndValid) {
 				return false;
 			}
 
-			bool canSee = this.CanSeeVisibility(target);
-			if (!canSee) {
+			if ((target == null) || (target.IsDeleted)) {
+				return false;
+			}
+
+			if (!this.CanSeeForUpdate(target)) {
 				return false;
 			}
 
 			Character targetAsChar = target as Character;
 			if (targetAsChar != null) {
+				return !targetAsChar.Flag_Dead;
+			}
+			return true;
+		}
+
+		public bool CanInteractWithMessage(Thing target) {
+			if (!this.CheckAliveWithMessage()) {
+				return false;
+			}
+
+			if ((target == null) || (target.IsDeleted)) {
+				return false;
+			}
+
+			if (!this.CanSeeForUpdate(target)) {
+				this.ClilocSysMessage(3000269);	//That is out of sight.
+				return false;
+			}
+
+			Character targetAsChar = target as Character;
+			if (targetAsChar != null) {
+				this.SysMessage(Loc<CharacterLoc>.Get(this.Language).TargetIsDead);
 				return !targetAsChar.Flag_Dead;
 			}
 			return true;
@@ -1985,6 +2010,13 @@ namespace SteamEngine.CompiledScripts {
 		CombatCalculator.CombatArmorValues combatArmorValues;
 		internal Projectile weaponProjectile;
 
+		public double ArmorMaterial {
+			get {
+				this.AcquireCombatArmorValues();
+				return this.combatArmorValues.material;
+			}
+		}
+
 		public int ArmorClassVsP {
 			get {
 				this.AcquireCombatArmorValues();
@@ -2498,5 +2530,6 @@ namespace SteamEngine.CompiledScripts {
 	internal class CharacterLoc : CompiledLocStringCollection {
 		public string GMModeOn = "GM mode on (Plevel {0}).";
 		public string GMModeOff = "GM mode off (Plevel 1).";
+		public string TargetIsDead = "The target is dead.";
 	}
 }

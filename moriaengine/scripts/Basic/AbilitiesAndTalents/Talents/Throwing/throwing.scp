@@ -1,0 +1,12 @@
+[ThrowingAbilityDef a_throwing]
+Name="Throwing"
+EffectPower=30 //stamloss per tile
+Cooldown = 4 * 60
+//ResourcesConsumed = 60 mana, 1 i_amethyst
+
+on=@Activate
+//	this.Sound(530)
+//	EffectFactory.StationaryEffect(this, 02EEA, 6, 20)
+
+[function throw]
+a_throwing.Activate(this)

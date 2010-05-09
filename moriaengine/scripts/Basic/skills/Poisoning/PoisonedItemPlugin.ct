@@ -14,9 +14,9 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-//[PluginTemplate PoisonedItemPlugin : Plugin]
-//Vars:
-//	private PoisonEffectPluginDef poisonType  = null
-//	private double poisonPower = 0
-//	private int poisonTickCount = 0
-//	private int poisonDoses = 0
+[PluginTemplate PoisonedItemPlugin : Plugin]
+Vars:
+	private PoisonEffectPluginDef poisonType  = null
+	private double poisonPower = 0
+	private int poisonTickCount = 0
+	private int poisonDoses = 0

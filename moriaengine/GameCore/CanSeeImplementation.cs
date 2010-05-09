@@ -126,7 +126,7 @@ namespace SteamEngine {
 					}
 				}
 				return false;
-			} else {
+			} else { //in container - we must be able to reach the container
 				return DenyResult.Allow ==
 					this.CanReachFromAt(fromCoordinates, targetMapCoordinates, target, true);
 			}

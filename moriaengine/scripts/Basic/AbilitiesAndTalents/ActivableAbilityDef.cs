@@ -84,17 +84,22 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("C# based @activate trigger method, Overriden from parent - add Plugin to ability holder")]
+		[Summary("Add Plugin to ability holder, if specified for this AbilityDef")]
 		protected override bool On_Activate(Character chr, Ability ab) {
 			PluginDef def = this.PluginDef;
-			if (def != null) {
+			PluginKey key = this.PluginKey;
+			Sanity.IfTrueThrow((def == null) != (key == null), 
+				"Both PluginDef and PluginKey must be defined for " + 
+				this + ", or neither."); //could not hold in some curious cases, we'll see
+			
+			if ((def != null) && (key != null)) {
 				Plugin plugin = def.Create();
 				EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
 				if (durationPlugin != null) {
 					durationPlugin.Init(chr, EffectFlag.BeneficialEffect | EffectFlag.FromAbility,
 						this.EffectPower * ab.ModifiedPoints, TimeSpan.MinValue, this); //the "power" formula is somewhat arbitrary, but this particular combination (points * effect) seems to be quite popular
 				}
-				chr.AddPlugin(this.PluginKey, plugin);
+				chr.AddPlugin(key, plugin);
 			}
 			return base.On_Activate(chr, ab);
 		}

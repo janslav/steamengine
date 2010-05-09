@@ -33,6 +33,8 @@ namespace SteamEngine.CompiledScripts {
 			armorClassVsP = self.DefForCombat.ArmorVsP;
 			armorClassVsM = self.DefForCombat.ArmorVsM;
 
+			double materialTotal = 0;
+
 			//we calculate worn armor only for players
 			if (self.IsPlayerForCombat) {
 				double armorVsPHead = 0;
@@ -71,6 +73,15 @@ namespace SteamEngine.CompiledScripts {
 				double mindDefVsMLegs = 0;
 				double mindDefVsMFeet = 0;
 
+				double materialHead = 0;
+				double materialNeck = 0;
+				double materialBack = 0;
+				double materialChest = 0;
+				double materialArms = 0;
+				double materialHands = 0;
+				double materialLegs = 0;
+				double materialFeet = 0;
+
 				double armorVsPTotal = 0;
 				double armorVsMTotal = 0;
 
@@ -82,6 +93,13 @@ namespace SteamEngine.CompiledScripts {
 						int mindDefVsP = wearable.MindDefenseVsP;
 						int armorVsM = wearable.ArmorVsM;
 						int mindDefVsM = wearable.MindDefenseVsM;
+						
+						int material = 0;
+						ColoredArmor colored = wearable as ColoredArmor;
+						if (colored != null) {
+							material = (int) colored.TypeDef.Material;
+						}
+
 						if ((armorVsP > 0) || (mindDefVsP > 0) || (armorVsM > 0) || (mindDefVsM > 0)) {
 							switch (layer) {
 								case LayerNames.Helmet:
@@ -89,12 +107,14 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsPHead = Math.Max(mindDefVsPHead, mindDefVsP);
 									armorVsMHead = Math.Max(armorVsMHead, armorVsM);
 									mindDefVsMHead = Math.Max(mindDefVsMHead, mindDefVsM);
+									materialHead = Math.Max(materialHead, material);
 									break;
 								case LayerNames.Collar:
 									armorVsPNeck = Math.Max(armorVsPNeck, armorVsP);
 									mindDefVsPNeck = Math.Max(mindDefVsPNeck, mindDefVsP);
 									armorVsMNeck = Math.Max(armorVsMNeck, armorVsM);
 									mindDefVsMNeck = Math.Max(mindDefVsMNeck, mindDefVsM);
+									materialHead = Math.Max(materialHead, material);
 									break;
 								case LayerNames.Shirt:
 								case LayerNames.Chest:       // 13 = armor chest
@@ -107,12 +127,15 @@ namespace SteamEngine.CompiledScripts {
 									armorVsMChest = Math.Max(armorVsMChest, armorVsM);
 									mindDefVsMBack = Math.Max(mindDefVsMBack, mindDefVsM);
 									mindDefVsMChest = Math.Max(mindDefVsMChest, mindDefVsM);
+									materialBack = Math.Max(materialBack, material);
+									materialChest = Math.Max(materialChest, material);
 									break;
 								case LayerNames.Arms:                // 19 = armor
 									armorVsPArms = Math.Max(armorVsPArms, armorVsP);
 									mindDefVsPArms = Math.Max(mindDefVsPArms, mindDefVsP);
 									armorVsMArms = Math.Max(armorVsMArms, armorVsM);
 									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM);
+									materialArms = Math.Max(materialArms, material);
 									break;
 								case LayerNames.Pants:
 								case LayerNames.Skirt:
@@ -121,18 +144,21 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsPLegs = Math.Max(mindDefVsPLegs, mindDefVsM);
 									armorVsMLegs = Math.Max(armorVsMLegs, armorVsM);
 									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM);
+									materialLegs = Math.Max(materialLegs, material);
 									break;
 								case LayerNames.Shoes:
 									armorVsPFeet = Math.Max(armorVsPFeet, armorVsP);
 									mindDefVsPFeet = Math.Max(mindDefVsPFeet, mindDefVsP);
 									armorVsMFeet = Math.Max(armorVsMFeet, armorVsM);
 									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM);
+									materialFeet = Math.Max(materialFeet, material);
 									break;
 								case LayerNames.Gloves:      // 7
 									armorVsPHands = Math.Max(armorVsPHands, armorVsP);
 									mindDefVsPHands = Math.Max(mindDefVsPHands, mindDefVsP);
 									armorVsMHands = Math.Max(armorVsMHands, armorVsM);
 									mindDefVsMHands = Math.Max(mindDefVsMHands, mindDefVsM);
+									materialHands = Math.Max(materialHands, material);
 									break;
 								case LayerNames.Cape:                // 20 = cape
 									armorVsPBack = Math.Max(armorVsPBack, armorVsP);
@@ -143,6 +169,8 @@ namespace SteamEngine.CompiledScripts {
 									armorVsMArms = Math.Max(armorVsMArms, armorVsM);
 									mindDefVsMBack = Math.Max(mindDefVsMBack, mindDefVsM);
 									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM);
+									materialBack = Math.Max(materialBack, material);
+									materialArms = Math.Max(materialArms, material);
 									break;
 								case LayerNames.Robe:                // 22 = robe over all.
 									armorVsPBack = Math.Max(armorVsPBack, armorVsP);
@@ -161,6 +189,10 @@ namespace SteamEngine.CompiledScripts {
 									mindDefVsMChest = Math.Max(mindDefVsMChest, mindDefVsM);
 									mindDefVsMArms = Math.Max(mindDefVsMArms, mindDefVsM);
 									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM);
+									materialBack = Math.Max(materialBack, material);
+									materialChest = Math.Max(materialChest, material);
+									materialArms = Math.Max(materialArms, material);
+									materialLegs = Math.Max(materialLegs, material);
 									break;
 								case LayerNames.Leggins:
 									armorVsPLegs = Math.Max(armorVsPLegs, armorVsP);
@@ -171,12 +203,15 @@ namespace SteamEngine.CompiledScripts {
 									armorVsMFeet = Math.Max(armorVsMFeet, armorVsM);
 									mindDefVsMLegs = Math.Max(mindDefVsMLegs, mindDefVsM);
 									mindDefVsMFeet = Math.Max(mindDefVsMFeet, mindDefVsM);
+									materialLegs = Math.Max(materialLegs, material);
+									materialFeet = Math.Max(materialFeet, material);
 									break;
 								case LayerNames.Hand2: //shield
 									int parrying = SkillDef.SkillValueOfChar(self, SkillName.Parry);
 									armorVsPTotal = (armorVsP * parrying) / 1000;
 									armorVsMTotal = (armorVsP * parrying) / 1000;
 									//no mindDef with shield
+									materialTotal = material;
 									break;
 							}
 						}
@@ -224,12 +259,23 @@ namespace SteamEngine.CompiledScripts {
 					(mindDefVsMHands * 0.1) +
 					(mindDefVsMLegs * 0.2) +
 					(mindDefVsMFeet * 0.05));
+
+				materialTotal +=
+					(materialHead * 0.1) +
+					(materialNeck * 0.05) +
+					(materialBack * 0.1) +
+					(materialChest * 0.3) +
+					(materialArms * 0.1) +
+					(materialHands * 0.1) +
+					(materialLegs * 0.2) +
+					(materialFeet * 0.05);
 			}
 			CombatArmorValues retVal = new CombatArmorValues();
 			retVal.armorVsP = armorClassVsP;
 			retVal.armorVsM = armorClassVsM;
 			retVal.mindDefenseVsP = mindDefenseVsP;
 			retVal.mindDefenseVsM = mindDefenseVsM;
+			retVal.material = materialTotal;
 
 			int acModifier = self.ArmorClassModifier;
 			int mdModifier = self.MindDefenseModifier;
@@ -269,6 +315,7 @@ namespace SteamEngine.CompiledScripts {
 			internal int mindDefenseVsP;
 			internal int armorVsM;
 			internal int mindDefenseVsM;
+			internal double material;
 		}
 
 		internal class CombatWeaponValues {

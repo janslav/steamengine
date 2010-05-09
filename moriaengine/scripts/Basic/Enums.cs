@@ -139,7 +139,8 @@ namespace SteamEngine.CompiledScripts {
 		Deny_WasSwitchedOff = 4, //the ability was currently running (for ActivableAbilities only) so we switched it off
 		Deny_NotEnoughResourcesToConsume = 5,//missing some resources from "to consume" list
 		Deny_NotEnoughResourcesPresent = 6, //missing some resources from "has present" list
-		Deny_NotAllowedToHaveThisAbility = 7 //other reason why not allow to have the ability (e.g. wrong profession etc.)
+		Deny_NotAllowedToHaveThisAbility = 7, //other reason why not allow to have the ability (e.g. wrong profession etc.)
+		Deny_NoMessage
 	}
 
 	[Summary("Roles member adding/removing possible results")]

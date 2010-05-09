@@ -1,3 +1,25 @@
+Starting SteamEngine
+
+The server part of SE consists of 2 executables/processes - GameCore and AuxiliaryServer. GameCore is the one where all the UO stuff is happening, while Auxiliary is for secondary tasks - it server connections from remote consoles (the third major SE executable) and it serves as login server for the gamecore(s) running on the same server computer. It can also update sources from SVN and restart both itself and the nearby gameserver(s) when commanded so from remote console(s).
+
+
+Running SE for the first time, start by launching gamecore (Sane_ or Debug_) - it will create steamengine.ini config file. Look at the file, fix the settings if needed (theyre commented inside) and then run both GameCore and AuxiliaryServer (most likely Sane_). Then you can connect with either UO client or remoteconsole - in both cases, using any username/password will result in creating the first account - with admin priviledges.
+
+RemoteConsole - the GUI program - supports adding buttons as shortcuts for simple commands. For the basic set of recommendes buttons, look in steamrc.example.ini, where you can directly copy the buttons from.
+
+
+-tar
+
+
+
+
+
+
+
+now this is a little outdated, so don't believe everything:
+
+
+
 About the different builds
 
 There are three builds, Debug, Sane, and Optimized. 
@@ -8,22 +30,8 @@ The Sane build prints understandable error messages, and does sanity-checking to
 
 This means that if you make a script which does something which shouldn't be done, if you are using the Sane (or Debug) build, then you will probably be told so right away, and if not, then you will be told when a sanity check somewhere else detects a problem, which should be fairly soon in most cases.
 
-For example, if you write a script which attempts to set dir=8 on a character, then when you run that script, you will see something like "Bug in script (probably): Invalid value 8 for Whoever's direction" on the console. With an LScript script, you should see a filename and line number, which should be wheere your script tried to set dir (or where it called something which did). With a compiled script, you should instead get a stack trace, which should include the filename and the name of the method or property in the compiled script which tried to do the illegal thing (It will also include many other filenames and methods/properties, since a stack trace is a listing of what called what called what called the code that detected a problem). P.S. Values of 0-7 are valid for dir, other values are not, which is why attempting to set it to 8 would cause that error message to be shown.
-
-Rarely you may see a "Bug in script (probably)" which isn't actually a bug in a script - it may be a bug in the core which only got exposed when your script ran. A good way to tell is if the error message has absolutely nothing to do with what your script was doing. In any case, if the error message makes no sense to you, you should report that as a bug. But if you're using the Optimized build, and something does something it shouldn't, well, you are more likely than not to get an error message which makes no sense (Most of the sanity checks are not included in the Optimized build in order to increase its speed, which is why you should not use it if you are doing development on scripts or the core).
-
 The Debug build acts like the Sane build, but it will tend to print more information than the Sane build when something goes wrong. If you do see something go wrong, you're encouraged to see if it is repeatable, firstly, and secondly, see if the Debug build will print more information. If you're reporting it as a bug, it would be best if you included the information the Debug build prints, instead of what the Sane build prints, because the greater amount of information given by the Debug build will make it easier to find the source of the problem. If the bug is in a compiled script (not LScript), then the Debug build may help you find the problem faster. With LScript scripts, the Debug build may be more useful in some situations, but not necessarily in others (If the problem is in an LScript script, you are encouraged to try the Debug build if you are having trouble figuring out the problem, but otherwise it may not be necessary).
 
-If you've been running SteamEngine for a while without any problems, and you want better performance, you could try the Optimized build. It is faster than the Sane build, but you shouldn't use the Optimized build if you are writing or modifying scripts (or if you are modifying the core!), because the Optimized build will NOT detect many problems that the Sane or Debug builds detect. However, these kinds of problems are never detected and silently ignored in the Debug or Sane builds, so if you haven't been seeing any "bug in script" or "error" messages (or "fatal" or "critical" messages), and you've been running the Sane (or Debug) build for long enough to be satisfied that everything is working properly, then it is probably safe to run the Optimized build.
-
-Lastly, it is important to note that in the majority of cases, when something is done that shouldn't be, the currently running script will usually be terminated immediately (unless it is a compiled script and 'catches' the exception which is 'thrown' when something wrong happens). Not all exceptions are errors, however - for instance, TagMath.ConvertTo will throw exceptions when conversion fails, but if you expect it may, you can catch them and respond appropriately. However, any FatalException (including SanityCheckException), or ScriptException, should only always occur in response to an error or bug. SanityCheckException is how the core usually detects and reports if something goes wrong, unless it uses a ScriptException, which is done only when it is known that the problem is definitely from a script. FYI, you see the "Bug in script (probably)" message when a SanityCheckException was thrown while a script was running - the "(probably)" will be absent if a ScriptException was thrown instead.
-
-If a SanityCheckException is thrown while no script is running, then it is assumed to be a bug in the core, and in that case, the server will be STOPPED immediately. The same happens if a fatal or critical error occurs. This is to prevent corruption of data which could occur if the server were allowed to continue - Since the purpose of sanity checks is to detect when something happens which isn't supposed to happen, we feel that the best way to detect and deal with such occurances is to immediately stop SteamEngine and print a bug message with the information needed to report the bug. Ideally this should only happen in versions of SteamEngine from CVS, or possibly publically released test versions, but one may slip in and be missed, and if that happens we feel that it is important to detect it and stop SteamEngine immediately to prevent data corruption.
-
-If SteamEngine were not stopped when such an error/bug occured*, data corruption could occur, and if that happened then a short while later save files would be written with the corrupt data. When the admin finally discovered that something was wrong, perhaps days or weeks later, he would have a very difficult time trying to figure out what originally caused the problem, and he would also have to roll back to an earlier save - perhaps MUCH earlier. You see this problem on Sphere shards, for instance, and we feel that it is far better to immediately stop the server than to allow it to continue with possible data corruption. Additionally, printing an error/bug message helps ensure that bugs will actually be found, will be far easier to track down, and will not cause rollbacks of several days, weeks, or even months.
-
-* = It isn't stopped in the Optimized build, which does not include the majority of the sanity checks, which is why we keep warning you that you shouldn't use it if you are doing anything which might trip one of the sanity checks, like, say, scripting :P.
-
-We should test performance versus Sphere and RunUO later on, when we have more finished (this is being written on Oct 18, 2004), but I am hopeful that we can beat RunUO in performance and efficiency, and I doubt that we would have much trouble beating Sphere. I'm not certain, but I think the Sane build's checks are similar to the level of checks that RunUO normally performs.
+If you've been running SteamEngine for a while without any problems, and you want better performance, you could try the Optimized build. It is faster than the Sane build, but you shouldn't use the Optimized build if you are writing or modifying scripts (or if you are modifying the core!), because the Optimized build will NOT detect many problems that the Sane or Debug builds detect. However, these kinds of problems are never detected and silently ignored in the Debug or Sane builds, so if you haven't been seeing any "error" messages (or "fatal" or "critical" messages), and you've been running the Sane (or Debug) build for long enough to be satisfied that everything is working properly, then it is probably safe to run the Optimized build.
 
 -SL

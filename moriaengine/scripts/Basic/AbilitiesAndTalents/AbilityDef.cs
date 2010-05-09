@@ -258,6 +258,11 @@ namespace SteamEngine.CompiledScripts {
 		        }
 		    }
 
+			if (!args.abiliter.CheckAliveWithMessage()) {
+				args.Result = DenyResultAbilities.Deny_NoMessage;
+				return true;
+			}
+
 		    return false; //all ok, continue
 		}
 

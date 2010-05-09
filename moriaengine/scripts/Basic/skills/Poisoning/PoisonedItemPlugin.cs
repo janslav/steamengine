@@ -48,6 +48,24 @@ namespace SteamEngine.CompiledScripts {
 			return item.GetPlugin(poisonPK) as PoisonedItemPlugin;
 		}
 
+		public void On_Dupe(Item origItem) {
+			if (origItem is Projectile) {
+				PoisonedItemPlugin original = (PoisonedItemPlugin) origItem.GetPlugin(poisonPK);
+				Sanity.IfTrueThrow(original.Def != this.Def, "original.Def != this.Def");
+				Sanity.IfTrueThrow(original.poisonDoses != this.poisonDoses, "original.poisonDoses != this.poisonDoses");
+				Sanity.IfTrueThrow(original.poisonPower != this.poisonPower, "original.poisonPower != this.poisonPower");
+				Sanity.IfTrueThrow(original.poisonType != this.poisonType, "original.poisonType != this.poisonType");
+
+				int newDoses = original.poisonDoses - origItem.Amount;
+				if (newDoses > 0) {
+					original.poisonDoses -= newDoses;
+					this.poisonDoses = newDoses;
+				} else {
+					this.Delete(); //all of the poison did stay in the other stack
+				}
+			}
+		}
+
 		public PoisonEffectPluginDef PoisonType {
 			get {
 				return this.poisonType;
@@ -273,106 +291,6 @@ namespace SteamEngine.CompiledScripts {
 		public string DosesLeft = "Poison Doses";
 		public string Power = "Poison Power";
 	}
-
-	//we do not use generated code because we want a customised copy constructor where the doses count is halved
-	#region Originally generated
-	public partial class PoisonedItemPluginDef : PluginDef {
-
-		public PoisonedItemPluginDef(String defname, String filename, Int32 headerLine) :
-			base(defname, filename, headerLine) {
-		}
-
-		protected override SteamEngine.Plugin CreateImpl() {
-			return new PoisonedItemPlugin();
-		}
-
-		public new static void Bootstrap() {
-			SteamEngine.PluginDef.RegisterPluginDef(typeof(PoisonedItemPluginDef), typeof(PoisonedItemPlugin));
-		}
-	}
-
-	[SteamEngine.DeepCopyableClassAttribute()]
-	[SteamEngine.Persistence.SaveableClassAttribute()]
-	public partial class PoisonedItemPlugin : Plugin {
-
-		private PoisonEffectPluginDef poisonType = null;
-
-		private double poisonPower = 0;
-
-		private Int32 poisonTickCount = 0;
-
-		private Int32 poisonDoses = 0;
-
-		[SteamEngine.DeepCopyImplementationAttribute()]
-		public PoisonedItemPlugin(PoisonedItemPlugin copyFrom) :
-			base(copyFrom) {
-
-			this.poisonType = copyFrom.poisonType;
-			this.poisonPower = copyFrom.poisonPower;
-			this.poisonTickCount = copyFrom.poisonTickCount;
-			this.poisonDoses = copyFrom.poisonDoses / 2;
-			copyFrom.poisonDoses -= this.poisonDoses;
-		}
-
-		[SteamEngine.Persistence.LoadingInitializerAttribute()]
-		public PoisonedItemPlugin() {
-		}
-
-		public new PoisonedItemPluginDef TypeDef {
-			get {
-				return ((PoisonedItemPluginDef) (base.Def));
-			}
-		}
-
-		[SteamEngine.Persistence.SaveAttribute()]
-		public override void Save(SaveStream output) {
-			if ((this.poisonType != null)) {
-				output.WriteValue("poisonType", this.poisonType);
-			}
-			if ((this.poisonPower != 0)) {
-				output.WriteValue("poisonPower", this.poisonPower);
-			}
-			if ((this.poisonTickCount != 0)) {
-				output.WriteValue("poisonTickCount", this.poisonTickCount);
-			}
-			if ((this.poisonDoses != 0)) {
-				output.WriteValue("poisonDoses", this.poisonDoses);
-			}
-			base.Save(output);
-		}
-
-		private void DelayedLoad_PoisonType(object resolvedObject, string filename, int line) {
-			this.poisonType = ((PoisonEffectPluginDef) (resolvedObject));
-		}
-
-		[SteamEngine.Persistence.LoadLineAttribute()]
-		public override void LoadLine(string filename, int line, string valueName, string valueString) {
-			switch (valueName) {
-
-				case "poisontype":
-					SteamEngine.Persistence.ObjectSaver.Load(valueString, new SteamEngine.Persistence.LoadObject(this.DelayedLoad_PoisonType), filename, line);
-					break;
-
-				case "poisonpower":
-					this.poisonPower = SteamEngine.Common.ConvertTools.ParseDouble(valueString);
-					break;
-
-				case "poisontickcount":
-					this.poisonTickCount = SteamEngine.Common.ConvertTools.ParseInt32(valueString);
-					break;
-
-				case "poisondoses":
-					this.poisonDoses = SteamEngine.Common.ConvertTools.ParseInt32(valueString);
-					break;
-
-				default:
-
-					base.LoadLine(filename, line, valueName, valueString);
-					break;
-			}
-		}
-	}
-	#endregion Originally generated
 }
 
 
