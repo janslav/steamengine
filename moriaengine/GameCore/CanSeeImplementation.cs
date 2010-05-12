@@ -94,18 +94,18 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
 		public virtual DenyResult CanSeeForUpdate(Thing target) {
-			return this.CanSeeImpl(this, target.TopPoint, target);
+			return this.CanSeeForUpdateImpl(this, target.TopPoint, target);
 		}
 
 		internal DenyResult CanSeeForUpdateFrom(IPoint4D fromCoordinates, Thing target) {
-			return this.CanSeeImpl(fromCoordinates, target.TopPoint, target);
+			return this.CanSeeForUpdateImpl(fromCoordinates, target.TopPoint, target);
 		}
 
 		internal DenyResult CanSeeForUpdateAt(IPoint4D targetMapCoordinates, Thing target) {
-			return this.CanSeeImpl(this, targetMapCoordinates, target);
+			return this.CanSeeForUpdateImpl(this, targetMapCoordinates, target);
 		}
 
-		private DenyResult CanSeeImpl(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target) {
+		private DenyResult CanSeeForUpdateImpl(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target) {
 			if (target.IsOnGround) {
 				if (!this.CanSeeCoordinatesFrom(fromCoordinates, targetMapCoordinates)) {
 					return DenyResultMessages.Deny_ThatIsTooFarAway;
@@ -114,23 +114,24 @@ namespace SteamEngine {
 				if (!this.CanSeeVisibility(target)) {
 					return DenyResultMessages.Deny_ThatIsInvisible;
 				}
-
-				return DenyResultMessages.Allow;
 			} else if (target.IsEquipped) {
 				if (target.Z < AbstractCharacter.sentLayers) {
-					Thing container = target.TopObj();//the char that has this item equipped
-					DenyResult canSeeContainer = this.CanSeeImpl(fromCoordinates, targetMapCoordinates, container);
+					Thing container = target.TopObj(); //the char that has this item equipped
+					DenyResult canSeeContainer = this.CanSeeForUpdateImpl(fromCoordinates, targetMapCoordinates, container);
 
 					if (canSeeContainer.Allow) {
 						if (!this.CanSeeVisibility(target)) {
 							return DenyResultMessages.Deny_ThatIsInvisible;
 						}
 					}
+				} else {
+					return DenyResultMessages.Deny_ThatIsInvisible; //invis layer
 				}
-				return DenyResultMessages.Deny_ThatIsInvisible; //or removefromview?
 			} else { //in container - we must be able to reach the container
 				return this.CanReachFromAt(fromCoordinates, targetMapCoordinates, target, true);
 			}
+
+			return DenyResultMessages.Allow;
 		}
 
 		public virtual bool CanSeeVisibility(Thing target) {

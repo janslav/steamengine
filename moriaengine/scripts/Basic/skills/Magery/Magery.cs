@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 		//checking and consuming resources
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			if (CanSeeTargetWithMessage(skillSeqArgs, self)) {
+			if (self.CanInteractWithMessage(skillSeqArgs.Target1)) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 
 				bool isFromScroll = skillSeqArgs.Tool is SpellScroll;
@@ -161,42 +161,6 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		private static bool CanSeeTargetWithMessage(SkillSequenceArgs skillSeqArgs, Character self) {
-			IPoint3D target = skillSeqArgs.Target1;
-			IPoint3D targetTop = target.TopPoint;
-
-			int selfM = self.M;
-			IPoint4D targetAs4D = targetTop as IPoint4D;
-			if ((targetAs4D != null) && (targetAs4D.M != selfM)) {
-			} else {				
-				Regions.Map map = Regions.Map.GetMap(selfM);
-				Thing targetAsThing = target as Thing;
-				if (targetAsThing != null) {
-					if ((!targetAsThing.IsDeleted) && (!targetAsThing.Flag_Disconnected)) {
-						DenyResult canSee = self.CanSeeForUpdate(targetAsThing);
-						if (!canSee.Allow) {
-							canSee.SendDenyMessage(self);
-							return false;
-						}
-						if (map.CanSeeLosFromTo(self, targetTop)) {
-							return true;
-						}
-					}
-				} else if (target != null) {
-					if (Point2D.GetSimpleDistance(self, targetTop) > Globals.MaxUpdateRange) {
-						self.ClilocSysMessage(3000268);	//That is too far away.
-						return false;
-					}
-					if (map.CanSeeLosFromTo(self, targetTop)) {
-						return true;
-					}
-				}
-			}
-
-			self.ClilocSysMessage(3000269);	//That is out of sight.
-			return false;
-		}
-
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
@@ -223,7 +187,7 @@ namespace SteamEngine.CompiledScripts {
 				throw new SEBugException("No magery tool - not implemented");
 			}
 
-			if (!CanSeeTargetWithMessage(skillSeqArgs, self)) {
+			if (!self.CanInteractWithMessage(skillSeqArgs.Target1)) {
 				return false;
 			}
 
