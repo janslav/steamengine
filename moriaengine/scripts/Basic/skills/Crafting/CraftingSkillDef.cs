@@ -118,13 +118,13 @@ namespace SteamEngine.CompiledScripts {
 			bool canMake = true;
 			//first check the necessary resources to have (GM needn't have anything) (if any resources are needed)
 			if (!self.IsGM && iDefToMake.SkillMake != null && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
-				ResourcesList.SendResourceMissingMsg(self, missingResource);
+				missingResource.SendMissingMessage(self);		            
 				canMake = false;
 			}
 
 			if (canMake) {//if still OK try to consume the consumable resources (if any) otherwise step over this block
 				if (!self.IsGM && iDefToMake.Resources != null && !iDefToMake.Resources.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingResource)) {
-					ResourcesList.SendResourceMissingMsg(self, missingResource);
+					missingResource.SendMissingMessage(self);
 					canMake = false;
 				} else {//resources consumed or we are GM or no resources needed, create the item and place it to the pre-defined (or default) location
 					Item newItem = (Item) iDefToMake.Create(self.ReceivingContainer);

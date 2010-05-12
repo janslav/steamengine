@@ -240,7 +240,7 @@ namespace SteamEngine.CompiledScripts {
 		    if (resPresent != null) {
 		        IResourceListItem missingItem;
 		        if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-		            ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
+		            missingItem.SendMissingMessage(args.abiliter);
 		            args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesPresent;
 					return true; //cancel
 		        }
@@ -252,7 +252,7 @@ namespace SteamEngine.CompiledScripts {
 		        //look to the backpack and among the items that we are wearing
 		        IResourceListItem missingItem;
 		        if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-		            ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
+		            missingItem.SendMissingMessage(args.abiliter);
 		            args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesToConsume;
 					return true; //cancel
 		        }

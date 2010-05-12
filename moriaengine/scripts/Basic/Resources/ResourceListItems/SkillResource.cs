@@ -69,6 +69,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+
+		public void SendMissingMessage(Character toWho) {
+			toWho.SysMessage("Je vyžadována výše skillu " + this.Name + " alespoò " + this.DesiredCount);
+		}
 		#endregion
 
 		#region IResourceListItemNonMultiplicable Members

@@ -165,23 +165,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("In case some resource is missing, the mising item can be used for sending some informational message...")]
-		public static void SendResourceMissingMsg(Character toWho, IResourceListItem missingItem) {
-			if (missingItem is AbilityResource) {
-				toWho.SysMessage("Je potřeba mít " + missingItem.DesiredCount + " bodů v abilitě " + missingItem.Name);
-			} else if (missingItem is ItemResource) {
-				toWho.SysMessage("Je potřeba mít u sebe " + missingItem.DesiredCount + " x " + missingItem.Name);
-			} else if (missingItem is SkillResource) {
-				toWho.SysMessage("Je vyžadována výše skillu " + missingItem.Name + " alespoň " + missingItem.DesiredCount);
-			} else if (missingItem is StatDexResource || missingItem is StatIntResource || missingItem is StatStrResource || missingItem is StatVitResource) {
-				toWho.SysMessage("Je vyžadováno alespoň " + missingItem.DesiredCount + " " + missingItem.Name);
-			} else if (missingItem is TriggerGroupResource) {
-				toWho.SysMessage("Je vyžadována přítomnost typu " + missingItem.Name + " (počet alespoň " + missingItem.DesiredCount + ")");
-			} else if (missingItem is LevelResource) {
-				toWho.SysMessage("Je potřeba mít alespoň " + missingItem.DesiredCount + " " + missingItem.Name);
-			}
-		}
-
 		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]
 		public IEnumerable<IResourceListItemMultiplicable> MultiplicablesSublist {
 			get {
@@ -243,10 +226,14 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Make a string containing counts and names of all resource list items")]
 		public override string ToString() {
 			string retVal = "";
+			double numero = 0;
+			bool isPercent;
+			IResourceListItem rli = null;
 			for(int i = 0; i < resourceItemsList.Count; i++) {
-				IResourceListItem rli = resourceItemsList[i];
-				double numero = rli.DesiredCount;
-				retVal += numero + " " + ((numero > 1 && (rli is ItemResource)) ? ((ItemResource)rli).ItemDef.PluralName : rli.Name);
+				rli = resourceItemsList[i];
+				numero = rli.DesiredCount;
+				isPercent = (rli is IResourceListItemMultiplicable && ((IResourceListItemMultiplicable) rli).IsPercent());
+				retVal += numero + " " + (isPercent ? "%" : "") + ((numero > 1 && (rli is ItemResource)) ? ((ItemResource)rli).ItemDef.PluralName : rli.Name);
 				if (i < resourceItemsList.Count - 1) {
 					retVal += ", ";
 				}
@@ -257,10 +244,14 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Make a string containing counts and (pretty)defnames of all resource list items")]
 		public string ToDefsString() {
 			string retVal = "";
+			double numero = 0;
+			bool isPercent;
+			IResourceListItem rli = null;
 			for (int i = 0; i < resourceItemsList.Count; i++) {
-				IResourceListItem rli = resourceItemsList[i];
-				double numero = rli.DesiredCount;
-				retVal += numero + " " + (rli is ItemResource ? ((ItemResource) rli).ItemDef.PrettyDefname : rli.Name);
+				rli = resourceItemsList[i];
+				numero = rli.DesiredCount;
+				isPercent = (rli is IResourceListItemMultiplicable && ((IResourceListItemMultiplicable) rli).IsPercent());
+				retVal += numero + " " + (isPercent ? "%" : "") + (rli is ItemResource ? ((ItemResource) rli).ItemDef.PrettyDefname : rli.Name);
 				if (i < resourceItemsList.Count - 1) {
 					retVal += ", ";
 				}
@@ -328,6 +319,9 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Check if the 'newOne' is the same resource as the actual one.")]
 		bool IsSameResource(IResourceListItem newOne);
+
+		[Summary("In case some resource is missing, the mising item can be used for sending some informational message...")]
+		void SendMissingMessage(Character toWho);
 	}
 
 	[Summary("Interface for resource list items that cannot be multiplicated (e.g. Ability - if the resourcelist " +
@@ -345,6 +339,47 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Return the resource counter object for this resource, we are using the Object Pool pattern " +
 			" for acquiring and storing desired instances")]
 		ResourceCounter GetCounter();
+
+		[Summary("Determines whether the resource shall be checked / consumed as precents of all available (true) or only"+
+				 " in absolute values specified (false)")]
+		bool IsPercent();
+	}
+
+	[Summary("Class unifying the handling of all multiplicable (i.e. consumable) resources.")]
+	public abstract class AbstractResourceListItemMultiplicable : IResourceListItemMultiplicable {
+		protected double number;
+		protected bool isPercent;
+
+		protected AbstractResourceListItemMultiplicable(double number, bool isPercent) {
+			this.number = number;
+			this.isPercent = isPercent;
+		}
+
+		#region IResourceListItemMultiplicable Members
+		public bool IsPercent() {
+			return isPercent;
+		}
+		#endregion
+
+		#region IResourceListItem Members
+		public double DesiredCount {
+			get {
+				return number;
+			}
+			set {
+				number = value;
+			}
+		}
+		#endregion
+
+		#region Abstract members
+
+		public abstract ResourceCounter GetCounter();
+		public abstract string Definition {	get; }
+		public abstract string Name { get; }
+		public abstract bool IsSameResource(IResourceListItem newOne);
+		public abstract void SendMissingMessage(Character toWho);
+		#endregion
 	}
 
 	[Summary("Comparator serving for sorting the list of resources by their desired count (greater comes first)")]

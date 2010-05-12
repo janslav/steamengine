@@ -22,40 +22,29 @@ using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as TriggerGroup (used only for 'type' checking of char's items), we dont use " +
 			"resource triggergroups for checking character's available triggergroups!")]
-	public class TriggerGroupResource : IResourceListItemMultiplicable {
+	public class TriggerGroupResource : AbstractResourceListItemMultiplicable {
 		private TriggerGroup triggerGroup;
-		private double number;
 		private string definition;
 
-		internal TriggerGroupResource(TriggerGroup triggerGroup, double number, string definition) {
-			this.number = number;
+		internal TriggerGroupResource(TriggerGroup triggerGroup, double number, string definition, bool isPercent) : base(number, isPercent) {
 			this.triggerGroup = triggerGroup;
 			this.definition = definition;
 		}
 
 		#region IResourceListItem Members
-		public double DesiredCount {
-			get {
-				return number;
-			}
-			set {
-				number = value;
-			}
-		}
-
-		public string Definition {
+		public override string Definition {
 			get {
 				return definition;
 			}
 		}
 
-		public string Name {
+		public override string Name {
 			get {
 				return triggerGroup.PrettyDefname;
 			}
 		}
 
-		public bool IsSameResource(IResourceListItem newOne) {
+		public override bool IsSameResource(IResourceListItem newOne) {
 			TriggerGroupResource newResource = newOne as TriggerGroupResource;
 			if (newResource != null) {
 				if (triggerGroup == newResource.triggerGroup) {
@@ -64,10 +53,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+
+		public override void SendMissingMessage(Character toWho) {
+			toWho.SysMessage("Je vyžadována pøítomnost typu " + this.Name + " (poèet alespoò " + this.DesiredCount + ")");
+		}
 		#endregion
 
 		#region IResourceListItemMultiplicable Members
-		public ResourceCounter GetCounter() {
+		public override ResourceCounter GetCounter() {
 			TriggerGroupsCounter tgc = Pool<TriggerGroupsCounter>.Acquire();//get from pool
 			tgc.SetParameters(triggerGroup, number, this);//initialize
 			return tgc;
