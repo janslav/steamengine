@@ -1550,7 +1550,7 @@ namespace SteamEngine.Networking {
 		byte denyResult;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "denyResult")]
-		public void Prepare(DenyResult denyResult) {
+		public void Prepare(PickupItemResult denyResult) {
 			this.denyResult = (byte) denyResult;
 		}
 

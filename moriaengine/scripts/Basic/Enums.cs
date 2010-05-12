@@ -131,27 +131,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 	#endregion Dialog enums
 
-	//abilities running possible results
-	public enum DenyResultAbilities : int {
-		Allow = 1, //we can use the ability
-		Deny_DoesntHaveAbility = 2, //we dont have the ability (no points in it)
-		Deny_TimerNotPassed = 3, //the ability usage timer has not yet passed
-		Deny_WasSwitchedOff = 4, //the ability was currently running (for ActivableAbilities only) so we switched it off
-		Deny_NotEnoughResourcesToConsume = 5,//missing some resources from "to consume" list
-		Deny_NotEnoughResourcesPresent = 6, //missing some resources from "has present" list
-		Deny_NotAllowedToHaveThisAbility = 7, //other reason why not allow to have the ability (e.g. wrong profession etc.)
-		Deny_NoMessage
-	}
-
-	[Summary("Roles member adding/removing possible results")]
-	public enum DenyResultRoles : int {
-		Allow = 1, //we can add/remove the member
-
-		//specific problem for particular role (e.g. "wrong moon position for becoming the friend of house XY :-)")
-		//it will be accompanied by the role specific failure message
-		Deny_NoMessage = 100
-	}
-
 	[Flags]
 	[Summary("specification of various localities where to look for resources")]
 	public enum ResourcesLocality : int {
@@ -217,8 +196,8 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	#region Weapons enums
-	//Jednorucni (Broad Sword, Cutlass, Katana, Kryss, Long Sword, Scimitar, Short Spear, Spear, Viking Sword, War Fork) - Fencing
-	//Obourucni (Dagger, Axe, Bardiche, Battle Axe, Battle Large Axe, Executioner"s Axe, Double Axe, Halberd, Spear, Two Handed Axe, War Axe)- Swordsmanship
+	//Jednorucni (Broad Sword, Cutlass, Dagger, Katana, Kryss, Long Sword, Scimitar, Short Spear, Spear, Viking Sword, War Fork) - Fencing
+	//Obourucni (Axe, Bardiche, Battle Axe, Battle Large Axe, Executioner"s Axe, Double Axe, Halberd, Spear, Two Handed Axe, War Axe)- Swordsmanship
 	//Tupe (Mace, War Mace, Hammer Pick, War Hammer, Maul)- Macefighting
 	//Strelne (Bow, Crossbow, Heavy crossbow)- Archery
 	//Hole (Gnarled staff, Quarter staff, Black staff) - Magery
@@ -251,7 +230,7 @@ namespace SteamEngine.CompiledScripts {
 		None = 0x00,
 		Bolt = 0x01, JaggedBolt = Jagged | Bolt,
 		Arrow = 0x02, JaggedArrow = Jagged | Arrow, 
-		//Posioned = 0x04, //?
+		Throwable = 0x04, //?
 		Jagged = 0x08
 		//?
 	}

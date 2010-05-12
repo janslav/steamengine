@@ -173,12 +173,21 @@ namespace SteamEngine.CompiledScripts {
 				Thing targetAsThing = target as Thing;
 				if (targetAsThing != null) {
 					if ((!targetAsThing.IsDeleted) && (!targetAsThing.Flag_Disconnected)) {
-						if (self.CanSeeForUpdate(targetAsThing) && (map.CanSeeLosFromTo(self, targetTop))) {
+						DenyResult canSee = self.CanSeeForUpdate(targetAsThing);
+						if (!canSee.Allow) {
+							canSee.SendDenyMessage(self);
+							return false;
+						}
+						if (map.CanSeeLosFromTo(self, targetTop)) {
 							return true;
 						}
 					}
 				} else if (target != null) {
-					if ((Point2D.GetSimpleDistance(self, targetTop) <= Globals.MaxUpdateRange) && (map.CanSeeLosFromTo(self, targetTop))) {
+					if (Point2D.GetSimpleDistance(self, targetTop) > Globals.MaxUpdateRange) {
+						self.ClilocSysMessage(3000268);	//That is too far away.
+						return false;
+					}
+					if (map.CanSeeLosFromTo(self, targetTop)) {
 						return true;
 					}
 				}

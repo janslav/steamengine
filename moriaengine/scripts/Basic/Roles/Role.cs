@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		internal DenyResultRoles Trigger_DenyAddMember(Character chr) {
+		internal DenyResult Trigger_DenyAddMember(Character chr) {
 			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, null, this);
 			bool cancel = this.def.TryCancellableTrigger(this, RoleDef.tkDenyAddMember, args);
 			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		internal DenyResultRoles Trigger_DenyRemoveMember(Character chr, IRoleMembership membership) {
+		internal DenyResult Trigger_DenyRemoveMember(Character chr, IRoleMembership membership) {
 			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, membership, this);
 			bool cancel = this.def.TryCancellableTrigger(this, RoleDef.tkDenyRemoveMember, args);
 			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue

@@ -731,6 +731,20 @@ namespace SteamEngine {
 		public virtual bool On_DenyEquip(DenyEquipArgs args) {
 			return false;
 		}
+
+		//should we add reference to the player?
+		internal void Trigger_SplitFromStack(AbstractItem stack) {
+
+			ScriptArgs args = new ScriptArgs(stack);
+			this.TryTrigger(TriggerKey.splitFromStack, args);
+
+			try {
+				this.On_SplitFromStack(stack);
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+		}
+
+		public virtual void On_SplitFromStack(AbstractItem leftOverStack) {
+		}
 	}
 
 	public partial class AbstractCharacter {
@@ -895,20 +909,20 @@ namespace SteamEngine {
 			AbstractItem i = this.draggingLayer;
 			if (i != null) {
 				DenyResult result = this.TryPutItemOnItem(this.GetBackpack());
-				if (result != DenyResult.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
+				if (!result.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
 					GameState state = this.GameState;
 					SteamEngine.Communication.TCP.TcpConnection<GameState> conn = null;
 					if (state != null) {
 						conn = state.Conn;
-						PacketSequences.SendDenyResultMessage(conn, i, result);
+						result.SendDenyMessage(this, state, conn);
 					}
 
 					MutablePoint4D point = this.point4d;
 					result = this.TryPutItemOnGround(point.x, point.y, point.z);
 
-					if (result != DenyResult.Allow && this.draggingLayer == i) {//can't even put item on ground?
+					if (!result.Allow && this.draggingLayer == i) {//can't even put item on ground?
 						if (state != null) {
-							PacketSequences.SendDenyResultMessage(conn, i, result);
+							result.SendDenyMessage(this, state, conn);
 						}
 						//The player is not allowed to put the item anywhere. 
 						//Too bad we can't tell the client
@@ -935,13 +949,53 @@ namespace SteamEngine {
 			item.ThrowIfDeleted();
 
 			if (!this.TryGetRidOfDraggedItem()) {
-				return DenyResult.Deny_YouAreAlreadyHoldingAnItem;
+				return DenyResultMessages.Deny_YouAreAlreadyHoldingAnItem;
 			}
 
-			//@deny triggers
-			DenyPickupArgs args = new DenyPickupArgs(this, item, amt);
+			DenyPickupArgs args;
+			bool cancel;
+			DenyResult retVal;
+			this.Trigger_DenyPickupItem(item, amt, out args, out cancel, out retVal);
 
-			bool cancel = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
+			//default implementation
+			if ((!cancel) && (retVal.Allow)) {
+				retVal = this.CanReach(item);
+			}
+
+			//equip into dragging layer
+			if (retVal.Allow) {
+				IPoint4D oldPoint = item.TopObj();
+				if (oldPoint != this) {
+					if (oldPoint == item) {
+						oldPoint = item.P();
+					}
+				} else {
+					oldPoint = null;
+				}
+
+				int amountToPick = args.Amount;
+				int amountSum = item.Amount;
+				if (!item.IsEquipped && amountToPick < amountSum) {
+					AbstractItem dupedItem = (AbstractItem) item.Dupe();
+					dupedItem.Amount = (amountSum - amountToPick);	
+					item.Amount = amountToPick;
+					item.Trigger_SplitFromStack(dupedItem);
+				}
+
+				item.MakeLimbo();
+				item.Trigger_EnterChar(this, (int) LayerNames.Dragging);
+				if (oldPoint != null) {
+					this.SendMovingItemAnimation(oldPoint, this, item);
+				}
+			}
+			return retVal;
+		}
+
+		private void Trigger_DenyPickupItem(AbstractItem item, int amt, out DenyPickupArgs args, out bool cancel, out DenyResult retVal) {
+			//@deny triggers
+			args = new DenyPickupArgs(this, item, amt);
+
+			cancel = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
 			if (!cancel) {
 				try {
 					cancel = this.On_DenyPickupItem(args);
@@ -983,44 +1037,7 @@ namespace SteamEngine {
 				}
 			}
 
-			DenyResult retVal = args.Result;
-
-			//default implementation
-			if ((!cancel) && (retVal == DenyResult.Allow)) {
-				retVal = this.CanReach(item);
-			}
-
-			//equip into dragging layer
-			if (retVal == DenyResult.Allow) {
-				IPoint4D oldPoint = item.TopObj();
-				if (oldPoint != this) {
-					if (oldPoint == item) {
-						oldPoint = item.P();
-					}
-				} else {
-					oldPoint = null;
-				}
-
-				int amountToPick = args.Amount;
-				int amountSum = item.Amount;
-				if (!item.IsEquipped && amountToPick < amountSum) {
-					try {
-						item.Amount = amountToPick; //dupe triggers shall see the new amount
-						AbstractItem dupedItem = (AbstractItem) item.Dupe();
-						dupedItem.Amount = (amountSum - amountToPick);						
-					} catch { //unprobable but still...
-						item.Amount = amountSum; //restore original amount
-						throw;
-					}
-				}
-
-				item.MakeLimbo();
-				item.Trigger_EnterChar(this, (int) LayerNames.Dragging);
-				if (oldPoint != null) {
-					this.SendMovingItemAnimation(oldPoint, this, item);
-				}
-			}
-			return retVal;
+			retVal = args.Result;
 		}
 
 		//typically called from InPackets. (I am the src)
@@ -1063,15 +1080,15 @@ namespace SteamEngine {
 
 				DenyResult retVal = args.Result;
 
-				if ((!cancel) && (retVal == DenyResult.Allow)) {
+				if ((!cancel) && (retVal.Allow)) {
 					retVal = OpenedContainers.HasContainerOpen(this, targetCont);
 
-					if (retVal != DenyResult.Allow) {//we don't have it open, let's check if we could
-						retVal = this.CanOpenContainer(targetCont);//we check if targetCont could be openable (it also does canreach checks)
+					if (!retVal.Allow) {//we don't have it open, let's check if we could
+						retVal = this.CanPutItemsInContainer(targetCont);//we check if targetCont could be openable (it also does canreach checks)
 					}
 				}
 
-				if (retVal == DenyResult.Allow) {
+				if (retVal.Allow) {
 					int minX, minY, maxX, maxY;
 					targetCont.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
 					if (x < minX) {
@@ -1122,31 +1139,34 @@ namespace SteamEngine {
 					if (contAsItem != null) {
 						MutablePoint4D point = target.point4d;
 						DenyResult result = this.TryPutItemInItem(contAsItem, point.x, point.y, false);
-						if (result == DenyResult.Allow) {
+						if (result.Allow) {
 							if (!contAsItem.Trigger_StackInCont(item, target)) {
 								//couldn't stack, let's see if there's some script for the stacking
-								goto trigger;
+								this.Trigger_TryPutItemOnItem(target, item);
+								return DenyResultMessages.Allow;
 							}
 						}
 						return result;
 					} else {
 						//we're stacking something on an equipped item? that's pretty weird.
-						return DenyResult.Deny_NoMessage;
+						return DenyResultMessages.Deny_NoMessage;
 					}
 				} else {
 					MutablePoint4D point = target.point4d;
 					DenyResult result = this.TryPutItemOnGround(point.x, point.y, point.z);
-					if (result == DenyResult.Allow) {
+					if (result.Allow) {
 						if (!AbstractItem.Trigger_StackOnGround(item, target)) {
 							//couldn't stack, let's see if there's some script for the stacking
-							goto trigger;
+							this.Trigger_TryPutItemOnItem(target, item);
+							return DenyResultMessages.Allow;
 						}
 					}
 					return result;
 				}
 			}
+		}
 
-		trigger:
+		private void Trigger_TryPutItemOnItem(AbstractItem target, AbstractItem item) {
 			ItemOnItemArgs args = new ItemOnItemArgs(this, item, target);
 			bool cancel = item.TryCancellableTrigger(TriggerKey.putOnItem, args);
 			if (!cancel) {
@@ -1158,13 +1178,11 @@ namespace SteamEngine {
 					if (!cancel) {
 						try {
 							cancel = target.On_PutItemOn(args);
-							//we do nothing...
+							//we do nothing anyway...
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
-			}
-
-			return DenyResult.Allow;
+			}			
 		}
 
 		//typically called from InPackets. (I am the src)
@@ -1205,12 +1223,11 @@ namespace SteamEngine {
 			point = args.Point.TopPoint;
 
 			//default implementation
-			if ((!cancel) && (retVal == DenyResult.Allow)) {
+			if ((!cancel) && (retVal.Allow)) {
 				retVal = this.CanReachCoordinates(point);
 			}
 
-
-			if (retVal == DenyResult.Allow) {
+			if (retVal.Allow) {
 				item.MakeLimbo();
 				item.Trigger_EnterRegion(point.X, point.Y, point.Z, point.M);
 				this.SendMovingItemAnimation(this, point, item);
@@ -1263,7 +1280,7 @@ namespace SteamEngine {
 				}
 			}
 
-			return DenyResult.Allow;
+			return DenyResultMessages.Allow;
 		}
 
 		//typically called from InPackets. drops the held item on target (I am the src)
@@ -1307,7 +1324,7 @@ namespace SteamEngine {
 					}
 
 					if (!succeededUnequipping) {
-						return DenyResult.Deny_YouAreAlreadyHoldingAnItem;
+						return DenyResultMessages.Deny_YouAreAlreadyHoldingAnItem;
 					}
 
 					DenyEquipArgs args = new DenyEquipArgs(this, item, target, layer);
@@ -1337,13 +1354,13 @@ namespace SteamEngine {
 
 					DenyResult result = args.Result;
 
-					if (result == DenyResult.Allow) {
+					if (result.Allow) {
 						if (this != target) {
 							result = this.CanReach(target);
 						}
 					}
 
-					if (result == DenyResult.Allow) {
+					if (result.Allow) {
 						item.MakeLimbo();
 						item.Trigger_EnterChar(target, layer);
 						if (this != target) {
@@ -1360,7 +1377,7 @@ namespace SteamEngine {
 
 		private bool TryUnequip(AbstractItem i) {
 			DenyResult dr = this.TryPickupItem(i, 1);
-			if (dr == DenyResult.Allow) {
+			if (dr.Allow) {
 				return this.TryGetRidOfDraggedItem();
 			}
 			return false;
@@ -1539,7 +1556,7 @@ namespace SteamEngine {
 
 		public DenyResult Result {
 			get {
-				return (DenyResult) ConvertTools.ToInt32(this.Argv[0]);
+				return (DenyResult) this.Argv[0];
 			}
 			set {
 				this.Argv[0] = value;
@@ -1552,7 +1569,7 @@ namespace SteamEngine {
 		private readonly AbstractItem manipulatedItem;
 
 		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, int amount)
-			: base(DenyResult.Allow, pickingChar, manipulatedItem, amount) {
+			: base(DenyResultMessages.Allow, pickingChar, manipulatedItem, amount) {
 			this.pickingChar = pickingChar;
 			this.manipulatedItem = manipulatedItem;
 		}
@@ -1585,7 +1602,7 @@ namespace SteamEngine {
 		private readonly AbstractItem container;
 
 		public DenyPutInItemArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, AbstractItem container)
-			: base(DenyResult.Allow, pickingChar, manipulatedItem, container) {
+			: base(DenyResultMessages.Allow, pickingChar, manipulatedItem, container) {
 			this.pickingChar = pickingChar;
 			this.manipulatedItem = manipulatedItem;
 			this.container = container;
@@ -1616,7 +1633,7 @@ namespace SteamEngine {
 		private readonly AbstractItem manipulatedItem;
 
 		public DenyPutOnGroundArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, IPoint4D point)
-			: base(DenyResult.Allow, puttingChar, manipulatedItem, point) {
+			: base(DenyResultMessages.Allow, puttingChar, manipulatedItem, point) {
 			this.puttingChar = puttingChar;
 			this.manipulatedItem = manipulatedItem;
 		}
@@ -1672,9 +1689,7 @@ namespace SteamEngine {
 				return this.waitingItem; 
 			}
 		} 
-
 	}
-
 
 	public class ItemOnCharArgs : ScriptArgs {
 		private readonly AbstractCharacter puttingChar;
@@ -1714,7 +1729,7 @@ namespace SteamEngine {
 		private readonly int layer;
 
 		public DenyEquipArgs(AbstractCharacter puttingChar, AbstractItem manipulatedItem, AbstractCharacter cont, int layer)
-			: base(DenyResult.Allow, puttingChar, manipulatedItem, cont, layer) {
+			: base(DenyResultMessages.Allow, puttingChar, manipulatedItem, cont, layer) {
 
 			this.puttingChar = puttingChar;
 			this.cont = cont;

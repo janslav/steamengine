@@ -83,13 +83,10 @@ namespace SteamEngine.CompiledScripts {
 
 			DenyResult result = args.Result;
 
-			if (result == DenyResult.Allow) {
+			if (result.Allow) {
 				this.SetOpen();
 			} else {
-				GameState state = user.GameState;
-				if (state != null) {
-					PacketSequences.SendDenyResultMessage(state.Conn, this, result);
-				}
+				result.SendDenyMessage(user);
 			}
 		}
 
@@ -113,13 +110,10 @@ namespace SteamEngine.CompiledScripts {
 
 			DenyResult result = args.Result;
 
-			if (result == DenyResult.Allow) {
+			if (result.Allow) {
 				this.SetClose();
 			} else {
-				GameState state = user.GameState;
-				if (state != null) {
-					PacketSequences.SendDenyResultMessage(state.Conn, this, result);
-				}
+				result.SendDenyMessage(user);
 			}
 		}
 
@@ -307,7 +301,7 @@ namespace SteamEngine.CompiledScripts {
 		public readonly Door door;
 
 		public DenySwitchDoorArgs(Character user, Door door)
-			: base(DenyResult.Allow, user, door) {
+			: base(DenyResultMessages.Allow, user, door) {
 
 			this.user = user;
 			this.door = door;

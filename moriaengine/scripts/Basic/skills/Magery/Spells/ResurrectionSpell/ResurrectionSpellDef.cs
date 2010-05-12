@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
                 if (corp.Owner != null) {
                     owner = corp.Owner;
                     if (owner.Flag_Dead) {
-                        if (owner.CanReach(corp) == DenyResult.Allow) {
+                        if (owner.CanReach(corp).Allow) {
                             owner.Resurrect(corp);
                         } else {
                             caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).GhostCantReachTheBody);

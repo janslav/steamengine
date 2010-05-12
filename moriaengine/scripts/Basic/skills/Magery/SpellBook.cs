@@ -43,8 +43,8 @@ namespace SteamEngine.CompiledScripts {
 				return base.On_DenyDClick(args);
 			}
 
-			ch.ClilocSysMessage(500207);//The spellbook must be in your backpack (and not in a container within) to open.
-			args.Result = DenyResult.Deny_NoMessage;
+			//necessary since DisplayTo implies this is in a client-visible and known container.
+			args.Result = DenyResultMessages_SpellBook.Deny_MustBeInYourBackPack;
 			return true;
 		}
 
@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 			SpellBook book = targetted as SpellBook;
 			if (book != null) {
 				DenyResult canReach = self.CanReach(targetted);
-				if (canReach == DenyResult.Allow) {
+				if (canReach.Allow) {
 					Container cont = targetted.Cont as Container;
 					if (cont == null) {
 						cont = self.Backpack;
@@ -182,10 +182,15 @@ namespace SteamEngine.CompiledScripts {
 					}
 					return false;
 				}
-				PacketSequences.SendDenyResultMessage(self.GameState.Conn, targetted, canReach);
+				canReach.SendDenyMessage(self);
 			}
 			return true;
 		}
+	}
+
+	public static class DenyResultMessages_SpellBook {
+		public static readonly DenyResult Deny_MustBeInYourBackPack =
+			new DenyResult_ClilocSysMessage(500207); //The spellbook must be in your backpack (and not in a container within) to open.
 	}
 
 	public class SpellBookLoc : CompiledLocStringCollection {

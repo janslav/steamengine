@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts {
 				//stealing.Dispose();
 
 				if (!success) {
-					args.Result = DenyResult.Deny_ThatDoesNotBelongToYou;
+					args.Result = DenyResultMessages.Deny_ThatDoesNotBelongToYou;
 					return true;
 				}
 			}
@@ -140,7 +140,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_Timer() {
 			foreach (Container cont in this.snoopedBackpacks) {
-				if (OpenedContainers.HasContainerOpen((Character) this.Cont, cont) == DenyResult.Allow) {
+				if (OpenedContainers.HasContainerOpen((Character) this.Cont, cont).Allow) {
 					this.Timer = duration;
 					return;
 				}

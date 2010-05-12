@@ -30,37 +30,39 @@ namespace SteamEngine.CompiledScripts {
 		internal static Dictionary<Character, Dictionary<RoleKey, Role>> charactersRoles = new Dictionary<Character, Dictionary<RoleKey, Role>>();
 
 		[Summary("Try assign chr to role. Runs and obeys @deny triggers.")]
-		[Return("true = chr is now member of role, false = it's not")]
-		public static bool TryAssign(Character chr, Role role) {
+		[Return("Allow = true: chr is now member of role, otherwise it's not")]
+		public static DenyResult TryAssign(Character chr, Role role) {
 			RoleKey key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 				Role prevRole;
 				if (rolesByKey.TryGetValue(key, out prevRole)) {
 					if (role == prevRole) {
-						return true; // we're already in place, all is ok
+						return DenyResultMessages.Allow; // we're already in place, all is ok
 					} else {
-						if (role.Trigger_DenyAddMember(chr) == DenyResultRoles.Allow) {
-							if (!TryUnAssign(chr, prevRole)) {//the previous role occupies our spot. Let's try to kick it
-								return false; //removing was denied, can't proceed
+						DenyResult result = role.Trigger_DenyAddMember(chr); //check if we can enter this role
+						if (result.Allow) {
+							result = TryUnAssign(chr, prevRole); //check if we can leave the previous role
+							if (!result.Allow) {
+								return result; //can't leave previous one => can't enter new one
 							}
-						} else { //else message?
-							return false;
 						}
+						return result;
 					}
 				}
 			} else {
-				if (role.Trigger_DenyAddMember(chr) == DenyResultRoles.Allow) {
-					rolesByKey = new Dictionary<RoleKey, Role>();
+				DenyResult result = role.Trigger_DenyAddMember(chr);
+				if (result.Allow) {
+					rolesByKey = new Dictionary<RoleKey, Role>(); //check if we can enter this role
 					charactersRoles[chr] = rolesByKey;
-				} else { //else message?
-					return false;
+				} else {
+					return result;
 				}
 			}
 
 			rolesByKey[key] = role;
 			role.InternalAddMember(chr);
-			return true;
+			return DenyResultMessages.Allow;
 		}
 
 		[Summary("Assign chr to role. Ignores @deny triggers.")]
@@ -93,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Find a list of characters for given role and remove the specified character from it " +
 				"then remove the role from the character's roles list ")]
 		[Return("true = chr is not member of role, false = it is")]
-		public static bool TryUnAssign(Character chr, Role role) {
+		public static DenyResult TryUnAssign(Character chr, Role role) {
 			RoleKey key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
@@ -101,21 +103,20 @@ namespace SteamEngine.CompiledScripts {
 				if (rolesByKey.TryGetValue(key, out prevRole)) {
 					if (role == prevRole) {
 						Role.IRoleMembership membership = role.GetMembership(chr);
-						if (role.Trigger_DenyRemoveMember(chr, membership) == DenyResultRoles.Allow) {
+						DenyResult result = role.Trigger_DenyRemoveMember(chr, membership);
+						if (result.Allow) {
 							if (rolesByKey.Count == 1) { //last role of that char
 								charactersRoles.Remove(chr);
 							} else {
 								rolesByKey.Remove(key);
 							}
 							role.InternalRemoveMember(chr, membership);
-							return true; //unassign succesful
-						} else {
-							return false; //unassign denied
 						}
+						return result;
 					}
 				}
 			}
-			return true; //wasn't member in the first place
+			return DenyResultMessages.Allow; //wasn't member in the first place
 		}
 
 		public static void UnAssign(Character chr, Role role) {
@@ -193,17 +194,6 @@ namespace SteamEngine.CompiledScripts {
 				return rolesByKey.Values;
 			}
 			return EmptyReadOnlyGenericCollection<Role>.instance;
-		}
-
-		[Summary("Method for sending clients messages about the role adding/removing result")]
-		private static void SendRoleMemberManipulationMessage(Character whom, Role role, DenyResultRoles res) {
-			//first send the common message
-			switch (res) {
-				//...any possibilities here :-)
-				case DenyResultRoles.Deny_NoMessage:
-					//no message here
-					break;
-			}
 		}
 	}
 }

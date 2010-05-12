@@ -946,7 +946,7 @@ namespace SteamEngine {
 			GameState clickerState = clicker.GameState;
 			if (clickerState != null) {
 				TcpConnection<GameState> clickerConn = clickerState.Conn;
-				if (!clicker.CanSeeForUpdate(this)) {
+				if (!clicker.CanSeeForUpdate(this).Allow) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
 					bool cancel = false;
@@ -973,7 +973,7 @@ namespace SteamEngine {
 			GameState clickerState = clicker.GameState;
 			if (clickerState != null) {
 				TcpConnection<GameState> clickerConn = clickerState.Conn;
-				if (!clicker.CanSeeForUpdate(this)) {
+				if (!clicker.CanSeeForUpdate(this).Allow) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
 					bool cancel = false;
@@ -1029,9 +1029,38 @@ namespace SteamEngine {
 				return;
 
 			//deny triggers first
+			bool isItem = this.IsItem;
+			DenyResult result = this.Trigger_DenyDClick(dclicker, isItem);
+
+			if (!result.Allow) {
+				result.SendDenyMessage(dclicker);
+
+			} else {//action triggers
+				ScriptArgs sa = new ScriptArgs(dclicker, this);
+
+				if (isItem) {
+					dclicker.TryTrigger(TriggerKey.itemDClick, sa);
+					try {
+						dclicker.On_ItemDClick((AbstractItem) this);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} else {
+					dclicker.TryTrigger(TriggerKey.charDClick, sa);
+					try {
+						dclicker.On_CharDClick((AbstractCharacter) this);
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				}
+
+				this.TryTrigger(TriggerKey.dClick, sa);
+				try {
+					this.On_DClick(dclicker);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			}
+		}
+
+		private DenyResult Trigger_DenyDClick(AbstractCharacter dclicker, bool isItem) {
 			DenyClickArgs denyArgs = new DenyClickArgs(dclicker, this);
 			bool cancel = false;
-			bool isItem = this.IsItem;
+
 			if (isItem) {
 				cancel = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
 				if (!cancel) {
@@ -1056,34 +1085,7 @@ namespace SteamEngine {
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
-
-			DenyResult result = denyArgs.Result;
-
-			if (result != DenyResult.Allow) {
-				GameState dclickerState = dclicker.GameState;
-				if (dclickerState != null) {
-					PacketSequences.SendDenyResultMessage(dclickerState.Conn, this, result);
-				}
-			} else {//action triggers
-				ScriptArgs sa = new ScriptArgs(dclicker, this);
-
-				if (isItem) {
-					dclicker.TryTrigger(TriggerKey.itemDClick, sa);
-					try {
-						dclicker.On_ItemDClick((AbstractItem) this);
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				} else {
-					dclicker.TryTrigger(TriggerKey.charDClick, sa);
-					try {
-						dclicker.On_CharDClick((AbstractCharacter) this);
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				}
-
-				this.TryTrigger(TriggerKey.dClick, sa);
-				try {
-					this.On_DClick(dclicker);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			}
+			return denyArgs.Result;
 		}
 
 		//method:On_DClick
@@ -1720,7 +1722,7 @@ namespace SteamEngine {
 
 
 		public DenyClickArgs(AbstractCharacter clickingChar, Thing target)
-			: base(DenyResult.Allow, clickingChar, target) {
+			: base(DenyResultMessages.Allow, clickingChar, target) {
 
 			this.clickingChar = clickingChar;
 			this.target = target;

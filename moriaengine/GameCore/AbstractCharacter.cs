@@ -945,7 +945,7 @@ namespace SteamEngine {
 		public virtual bool On_DenyItemDClick(DenyClickArgs args) {
 			DenyResult result = args.ClickingChar.CanReach(args.Target);
 			args.Result = result;
-			return result != DenyResult.Allow;
+			return !result.Allow;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
@@ -1159,13 +1159,13 @@ namespace SteamEngine {
 		private void ProcessSendNearbyThing(GameState state, TcpConnection<GameState> conn, Thing t) {
 			AbstractItem item = t as AbstractItem;
 			if (item != null) {
-				if (this.CanSeeForUpdate(item)) {
+				if (this.CanSeeForUpdate(item).Allow) {
 					item.GetOnGroundUpdater().SendTo(this, state, conn);
 					PacketSequences.TrySendPropertiesTo(state, conn, item);
 				}
 			} else {
 				AbstractCharacter ch = (AbstractCharacter) t;
-				if ((this != ch) && this.CanSeeForUpdate(ch)) {
+				if ((this != ch) && this.CanSeeForUpdate(ch).Allow) {
 					PacketSequences.SendCharInfoWithPropertiesTo(this, state, conn, ch);
 					UpdateCurrentHealthOutPacket packet = Pool<UpdateCurrentHealthOutPacket>.Acquire();
 					packet.Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);

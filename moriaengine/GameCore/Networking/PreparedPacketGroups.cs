@@ -125,16 +125,17 @@ namespace SteamEngine.Networking {
 		private static PacketGroup[] pickUpFailed = InitPickupFailed();
 
 		private static PacketGroup[] InitPickupFailed() {
-			PacketGroup[] retVal = new PacketGroup[7];
-			for (int i = 0, n = retVal.Length; i < n; i++) {
+			int n = Tools.GetEnumLength<PickupItemResult>();
+			PacketGroup[] retVal = new PacketGroup[n];
+			for (int i = 0; i < n; i++) {
 				retVal[i] = PacketGroup.CreateFreePG();
-				retVal[i].AcquirePacket<RejectMoveItemRequestOutPacket>().Prepare((DenyResult) i);
+				retVal[i].AcquirePacket<RejectMoveItemRequestOutPacket>().Prepare((PickupItemResult) i);
 			}
 			return retVal;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-		public static void SendRejectMoveItemRequest(TcpConnection<GameState> conn, DenyResult msg) {
+		public static void SendRejectMoveItemRequest(TcpConnection<GameState> conn, PickupItemResult msg) {
 			conn.SendPacketGroup(pickUpFailed[(int) msg]);
 		}
 		#endregion RejectMoveItemRequest
