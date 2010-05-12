@@ -192,7 +192,7 @@ namespace SteamEngine.CompiledScripts {
 		public virtual bool IsMountableBy(Character chr) {
 			return !this.IsPlayer && //players are never mountable
 				this.IsMountable &&
-				chr.CanReach(this) == DenyResult.Allow &&
+				chr.CanReach(this).Allow &&
 				this.IsPetOf(chr);
 		}
 
@@ -407,24 +407,76 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Visibility
 
+		public DenyResult CanSeeLOS(IPoint3D target) {
+			IPoint3D targetTop = target.TopPoint;
+
+			int thisM = this.M;
+			IPoint4D targetAs4D = targetTop as IPoint4D;
+
+			if ((targetAs4D != null) && (targetAs4D.M != thisM)) { //different M
+				return DenyResultMessages.Deny_ThatIsTooFarAway;
+			} else {
+				Regions.Map map = Regions.Map.GetMap(thisM);
+				Thing targetAsThing = target as Thing;
+				if (targetAsThing != null) {
+					if ((targetAsThing.IsDeleted) || (targetAsThing.Flag_Disconnected)) {
+						return DenyResultMessages.Deny_ThatDoesntExist;
+					}
+					DenyResult canSee = this.CanSeeForUpdate(targetAsThing);
+					if (!canSee.Allow) {
+						return canSee;
+					}
+					if (!map.CanSeeLosFromTo(this, targetTop)) {
+						return DenyResultMessages.Deny_ThatIsOutOfLOS;
+					}
+				} else if (target != null) {
+					if (Point2D.GetSimpleDistance(this, targetTop) > Globals.MaxUpdateRange) {
+						return DenyResultMessages.Deny_ThatIsTooFarAway;
+					}
+					if (map.CanSeeLosFromTo(this, targetTop)) {
+						//if it's really an IPoint3D, we assume it exists on all mapplanes. 
+						//TODO? Could be wrong with statics on multiple facets, but we'll get there when we get there
+						return DenyResultMessages.Deny_ThatIsOutOfLOS;
+					}
+				}
+			}
+
+			return DenyResultMessages.Allow;
+		}
+
+		public bool CanSeeLOSMessage(IPoint3D target) {
+			DenyResult result = this.CanSeeLOS(target);
+			if (result.Allow) {
+				return true;
+			}
+			result.SendDenyMessage(this);
+			return false;
+		}
+
 		public bool IsAliveAndValid {
 			get {
-				//check if char isnt deleted, disconnected, dead and (insubst without being a GM)
-				return !this.IsDeleted && !this.Flag_Disconnected && !this.Flag_Dead && !(this.Flag_Insubst && !this.IsGM);
+				return this.CheckAlive().Allow;
 			}
 		}
 
-		public bool CheckAliveWithMessage() {
+		public DenyResult CheckAlive() {
 			if ((this.Flag_Disconnected) || (this.IsDeleted)) {
-				return false;
+				return DenyResultMessages.Deny_NoMessage;
 			} else if (this.Flag_Dead) {
-				this.ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.
-				return false;
+				return DenyResultMessages_Character.Deny_IAmDeadAndCannotDoThat;
 			} else if (this.Flag_Insubst && !this.IsGM) {
-				this.ClilocSysMessage(500590, 0x3B2);  //You're a ghost, and can't do that.
-				return false;
+				return DenyResultMessages_Character.Deny_YoureAGhostAndCantDoThat;
 			}
-			return true;
+			return DenyResultMessages.Allow;
+		}
+
+		public bool CheckAliveWithMessage() {
+			DenyResult result = this.CheckAlive();
+			if (result.Allow) {
+				return true;
+			}
+			result.SendDenyMessage(this);
+			return false;
 		}
 
 		private static TriggerKey warModeChangeTK = TriggerKey.Acquire("warModeChange");
@@ -444,46 +496,41 @@ namespace SteamEngine.CompiledScripts {
 			On_VisibilityChange();
 		}
 
-		public bool CanInteractWith(Thing target) {
-			if (!this.IsAliveAndValid) {
-				return false;
+		public DenyResult CanInteractWith(Thing target) {
+			DenyResult result = this.CheckAlive();
+			if (!result.Allow) {
+				return result;
 			}
 
-			if ((target == null) || (target.IsDeleted)) {
-				return false;
+			if ((target == null) || (target.IsDeleted) || target.Flag_Disconnected) {
+				return DenyResultMessages.Deny_ThatDoesntExist;
 			}
 
-			if (!this.CanSeeForUpdate(target)) {
-				return false;
+			result = this.CanSeeForUpdate(target);
+			if (!result.Allow) {
+				return result;
 			}
 
 			Character targetAsChar = target as Character;
 			if (targetAsChar != null) {
-				return !targetAsChar.Flag_Dead;
+				if (targetAsChar.Flag_Dead) {
+					return DenyResultMessages_Character.Deny_TargetIsDead;
+				}
+				if (targetAsChar.Flag_Insubst) {
+					return DenyResultMessages_Character.Deny_TargetIsInsubst;
+				}
 			}
-			return true;
+
+			return DenyResultMessages.Allow;
 		}
 
 		public bool CanInteractWithMessage(Thing target) {
-			if (!this.CheckAliveWithMessage()) {
-				return false;
+			DenyResult result = this.CanInteractWith(target);
+			if (result.Allow) {
+				return true;
 			}
-
-			if ((target == null) || (target.IsDeleted)) {
-				return false;
-			}
-
-			if (!this.CanSeeForUpdate(target)) {
-				this.ClilocSysMessage(3000269);	//That is out of sight.
-				return false;
-			}
-
-			Character targetAsChar = target as Character;
-			if (targetAsChar != null) {
-				this.SysMessage(Loc<CharacterLoc>.Get(this.Language).TargetIsDead);
-				return !targetAsChar.Flag_Dead;
-			}
-			return true;
+			result.SendDenyMessage(this);
+			return false;
 		}
 
 		#region StatLock
@@ -1875,7 +1922,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool CanEquipItemsOn(AbstractCharacter chr) {
 			Character target = (Character) chr;
-			return (this.IsPetOf(target)) && (this.CanReach(target) == DenyResult.Allow);
+			return (this.IsPetOf(target)) && (this.CanReach(target).Allow);
 		}
 
 		//public override bool CanEquip(AbstractItem i) {
@@ -2385,30 +2432,27 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CanReachWithMessage(Thing target) {
-			DenyResult result = CanReach(target);
-			if (result == DenyResult.Allow) {
+			DenyResult result = this.CanReach(target);
+			if (result.Allow) {
 				return true;
 			} else {
-				GameState state = this.GameState;
-				if (state != null) {
-					PacketSequences.SendDenyResultMessage(state.Conn, target, result);
-				}
+				result.SendDenyMessage(this);
 				return false;
 			}
 		}
 
-		public override DenyResult CanOpenContainer(AbstractItem targetContainer) {
+		public override DenyResult CanPutItemsInContainer(AbstractItem targetContainer) {
 			if (this.IsGM) {
-				return DenyResult.Allow;
+				return DenyResultMessages.Allow;
 			}
 
-			if (!this.IsOnline) {
-				return DenyResult.Deny_NoMessage;
+			if (this.Flag_Disconnected) {
+				return DenyResultMessages.Deny_NoMessage;
 			}
 
 			//TODO zamykani kontejneru
 
-			DenyResult result = DenyResult.Allow;
+			DenyResult result = DenyResultMessages.Allow;
 
 			Thing c = targetContainer.Cont;
 			if (c != null) {
@@ -2417,10 +2461,10 @@ namespace SteamEngine.CompiledScripts {
 					return OpenedContainers.HasContainerOpen(this, contAsItem);
 				} else if (c != this) {
 					result = this.CanReach(c);
-					if (result == DenyResult.Allow) {
+					if (result.Allow) {
 						Character contAsChar = (Character) c;
 						if (!contAsChar.IsPetOf(this)) {//not my pet or myself
-							return DenyResult.Deny_ThatDoesNotBelongToYou;
+							return DenyResultMessages.Deny_ThatDoesNotBelongToYou;
 						}
 					}
 				}
@@ -2430,7 +2474,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//equipped in visible layer?
 			if (targetContainer.Z > (int) LayerNames.Mount) {
-				return DenyResult.Deny_RemoveFromView;
+				return DenyResultMessages.Deny_ThatIsInvisible;
 			}
 
 			return result;
@@ -2527,9 +2571,24 @@ namespace SteamEngine.CompiledScripts {
 
 	}
 
-	internal class CharacterLoc : CompiledLocStringCollection {
+	public static class DenyResultMessages_Character {
+		public static readonly DenyResult Deny_IAmDeadAndCannotDoThat =
+			new DenyResult_ClilocSysMessage(1019048, 0x3B2); // I am dead and cannot do that.
+
+		public static readonly DenyResult Deny_YoureAGhostAndCantDoThat =
+			new DenyResult_ClilocSysMessage(500590, 0x3B2);  //You're a ghost, and can't do that.
+
+		public static readonly DenyResult Deny_TargetIsDead =
+			new CompiledLocDenyResult<CharacterLoc>("TargetIsDead");
+
+		public static readonly DenyResult Deny_TargetIsInsubst =
+			new CompiledLocDenyResult<CharacterLoc>("TargetIsInsubst");
+	}
+
+	public class CharacterLoc : CompiledLocStringCollection {
 		public string GMModeOn = "GM mode on (Plevel {0}).";
 		public string GMModeOff = "GM mode off (Plevel 1).";
 		public string TargetIsDead = "The target is dead.";
+		public string TargetIsInsubst = "The target is insubstantial.";
 	}
 }

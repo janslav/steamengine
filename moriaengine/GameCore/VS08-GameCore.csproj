@@ -96,6 +96,7 @@
     <Compile Include="CompiledScripts\CompiledTriggerGroup.cs" />
     <Compile Include="CompiledScripts\CompilerInvoker.cs" />
     <Compile Include="CompiledScripts\GeneratedCodeUtil.cs" />
+    <Compile Include="DenyResult.cs" />
     <Compile Include="LScript\Exceptions.cs" />
     <Compile Include="LScript\IntrinsicMethods.cs" />
     <Compile Include="LScript\LocalVarKey.cs" />

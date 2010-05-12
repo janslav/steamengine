@@ -42,6 +42,8 @@ namespace SteamEngine.CompiledScripts {
 		public void On_Assign() {
 			this.Timer = LongRangeDef.EffectDuration;
 
+			this.EffectPower = LongRangeDef.EffectPower; //ignore points in ability
+
 			Character self = (Character) this.Cont;
 			self.WeaponRangeModifier += (int) this.EffectPower;
 		}

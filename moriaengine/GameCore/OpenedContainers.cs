@@ -37,30 +37,30 @@ namespace SteamEngine {
 			if (containersByChar.TryGetValue(ch, out conts)) {
 				if (conts.Contains(container)) {
 					DenyResult retVal = ch.CanReach(container);
-					if (retVal != DenyResult.Allow) {
+					if (!retVal.Allow) {
 						SetContainerClosed(ch, container);
 					}
 					return retVal;
 				}
 			}
-			return DenyResult.Deny_ContainerClosed;
+			return DenyResultMessages.Deny_ContainerClosed;
 		}
 
 		internal static DenyResult HasContainerOpenFromAt(AbstractCharacter ch, IPoint4D fromPoint, IPoint4D targetPoint, AbstractItem container, bool checkTopobj) {
 			HashSet<AbstractItem> conts;
 			if (containersByChar.TryGetValue(ch, out conts)) {
 				if (conts.Contains(container)) {
-					DenyResult retVal = DenyResult.Deny_NoMessage;
+					DenyResult retVal = DenyResultMessages.Deny_ContainerClosed;
 					if (ch != null) {
 						retVal = ch.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj);
 					}
-					if (retVal != DenyResult.Allow) {
+					if (!retVal.Allow) {
 						SetContainerClosed(ch, container);
 					}
 					return retVal;
 				}
 			}
-			return DenyResult.Deny_ContainerClosed;
+			return DenyResultMessages.Deny_ContainerClosed;
 		}
 
 		public static void SetContainerOpened(AbstractCharacter ch, AbstractItem container) {
@@ -125,7 +125,7 @@ namespace SteamEngine {
 				List<AbstractItem> toRemove = null;
 
 				foreach (AbstractItem con in conts) {
-					if (ch.CanReach(con) != DenyResult.Allow) {
+					if (!ch.CanReach(con).Allow) {
 						if (toRemove == null) {
 							toRemove = new List<AbstractItem>();
 						}
@@ -151,7 +151,7 @@ namespace SteamEngine {
 				List<AbstractCharacter> toRemove = null;
 
 				foreach (AbstractCharacter ch in openedBy) {
-					if (ch.CanReach(container) != DenyResult.Allow) {
+					if (!ch.CanReach(container).Allow) {
 						if (toRemove == null) {
 							toRemove = new List<AbstractCharacter>();
 						}

@@ -464,7 +464,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.receivingContainer == null) {//set the default
 				} else if (this.receivingContainer.IsDeleted) {
 					this.receivingContainer = null;
-				} else if (this.CanOpenContainer(this.receivingContainer) == DenyResult.Allow) {
+				} else if (this.CanPutItemsInContainer(this.receivingContainer).Allow) {
 					return this.receivingContainer;
 				}
 				return this.Backpack;

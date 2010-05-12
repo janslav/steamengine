@@ -84,6 +84,29 @@ namespace SteamEngine {
 		Allow = 7
 	}
 
+	public enum PickupItemResult {
+		//item manipulation denials
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Deny_YouCannotPickThatUp = 0,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Deny_ThatIsTooFarAway = 1,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Deny_ThatIsOutOfSight = 2,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Deny_ThatDoesNotBelongToYou = 3,	//you will have to steal it
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Deny_YouAreAlreadyHoldingAnItem = 4,
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Deny_RemoveFromView = 5,	//remove from view
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		Deny_NoMessage = 6,
+		Allow = 7,
+		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		//Deny_ThatIsLocked = 8,
+		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		//Deny_ContainerClosed = 9, //You cannot peek into the container.
+	}
+
 	public enum LoginDeniedReason {
 		NoAccount = 0,
 		SomeoneIsAlreadyUsingThisAccount = 1,
@@ -155,40 +178,6 @@ namespace SteamEngine {
 		RequestedStep = 4,
 		Teleporting = 8,
 	}
-
-	public enum DenyResult {
-		//item manipulation denials
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_YouCannotPickThatUp = 0,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_ThatIsTooFarAway = 1,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_ThatIsOutOfSight = 2,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_ThatDoesNotBelongToYou = 3,	//you will have to steal it
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_YouAreAlreadyHoldingAnItem = 4,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_RemoveFromView = 5,	//remove from view
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_NoMessage = 6,
-		Allow = 7,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_ThatIsLocked = 8,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		Deny_ContainerClosed = 9, //You cannot peek into the container.
-	}
-
-	//for testing purposes
-	//internal static class DenyResultGenerator {
-	//    static int i;
-
-	//    internal static DenyResult GetResultAndPrintIt() {
-	//        DenyResult retVal = (DenyResult) ((i++) % 9);
-	//        Console.WriteLine("Generated DenyResult:" + retVal);
-	//        return retVal;
-	//    }
-	//}
 
 	public enum Season {
 		Spring = 0,

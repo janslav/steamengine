@@ -952,7 +952,7 @@ namespace SteamEngine.Regions {
 #if !NOLINQ
 			return from sector in this.GetSectorsInRectangle(rectangle)
 				   from player in sector.Players
-				   where player.GameState != null && rectangle.Contains(player) && player.CanSeeForUpdate(thing)
+				   where player.GameState != null && rectangle.Contains(player) && player.CanSeeForUpdate(thing).Allow
 				   select player.GameState.Conn;
 #else
 			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {

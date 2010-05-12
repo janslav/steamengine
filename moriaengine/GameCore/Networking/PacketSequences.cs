@@ -391,41 +391,6 @@ namespace SteamEngine.Networking {
 			return PrepareMessagePacket(null, msg, "System", SpeechType.Server, ClientFont.Server, -1, null);
 		}
 
-		public static void SendDenyResultMessage(TcpConnection<GameState> c, Thing t, DenyResult denyResult) {
-			switch (denyResult) {
-				case DenyResult.Deny_RemoveFromView:
-					if ((t != null) && (!t.IsDeleted)) {
-						SendRemoveFromView(c, t.FlaggedUid);
-					}
-					break;
-				case DenyResult.Deny_ThatDoesNotBelongToYou:
-					SendClilocSysMessage(c, 500364, 0);		//You can't use that, it belongs to someone else.
-					break;
-				case DenyResult.Deny_ThatIsOutOfSight:
-					SendClilocSysMessage(c, 3000269, 0);	//That is out of sight.
-					break;
-				case DenyResult.Deny_ThatIsTooFarAway:
-					SendClilocSysMessage(c, 3000268, 0);	//That is too far away.
-					break;
-				case DenyResult.Deny_YouAreAlreadyHoldingAnItem:
-					SendClilocSysMessage(c, 3000271, 0);	//You are already holding an item.
-					break;
-				case DenyResult.Deny_YouCannotPickThatUp:
-					SendClilocSysMessage(c, 3000267, 0);	//You cannot pick that up.
-					break;
-				case DenyResult.Deny_ThatIsLocked:
-					SendClilocSysMessage(c, 501283, 0);		//That is locked.
-					break;
-				case DenyResult.Deny_ContainerClosed:
-					SendClilocSysMessage(c, 500209, 0);		//You cannot peek into the container.
-					//SendSystemMessage(c, "Tento kontejner není otevøený.", 0);
-					break;
-				//case TryReachResult.Failed_NoMessage:
-				//case TryReachResult.Succeeded:
-				//default:
-			}
-		}
-
 		/*
 			Method: BroadCast
 				Broadcast a message to all clients (as a server message).

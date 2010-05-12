@@ -48,24 +48,6 @@ namespace SteamEngine.CompiledScripts {
 			return item.GetPlugin(poisonPK) as PoisonedItemPlugin;
 		}
 
-		public void On_Dupe(Item origItem) {
-			if (origItem is Projectile) {
-				PoisonedItemPlugin original = (PoisonedItemPlugin) origItem.GetPlugin(poisonPK);
-				Sanity.IfTrueThrow(original.Def != this.Def, "original.Def != this.Def");
-				Sanity.IfTrueThrow(original.poisonDoses != this.poisonDoses, "original.poisonDoses != this.poisonDoses");
-				Sanity.IfTrueThrow(original.poisonPower != this.poisonPower, "original.poisonPower != this.poisonPower");
-				Sanity.IfTrueThrow(original.poisonType != this.poisonType, "original.poisonType != this.poisonType");
-
-				int newDoses = original.poisonDoses - origItem.Amount;
-				if (newDoses > 0) {
-					original.poisonDoses -= newDoses;
-					this.poisonDoses = newDoses;
-				} else {
-					this.Delete(); //all of the poison did stay in the other stack
-				}
-			}
-		}
-
 		public PoisonEffectPluginDef PoisonType {
 			get {
 				return this.poisonType;
@@ -208,6 +190,27 @@ namespace SteamEngine.CompiledScripts {
 				((Item) this.Cont).InvalidateAosToolTips(); //we refresh the displayed poison stats
 			}
 		}
+
+		//we have been split from leftOverStack (in other words, leftOverStack is now an exact copy of us, only with correctly set amounts)
+		public void On_SplitFromStack(Item leftOverStack) {
+			if (leftOverStack is Projectile) {
+				PoisonedItemPlugin original = (PoisonedItemPlugin) leftOverStack.GetPlugin(poisonPK);
+				Sanity.IfTrueThrow(original.Def != this.Def, "original.Def != this.Def");
+				Sanity.IfTrueThrow(original.poisonDoses != this.poisonDoses, "original.poisonDoses != this.poisonDoses");
+				Sanity.IfTrueThrow(original.poisonPower != this.poisonPower, "original.poisonPower != this.poisonPower");
+				Sanity.IfTrueThrow(original.poisonType != this.poisonType, "original.poisonType != this.poisonType");
+
+				int newDoses = original.poisonDoses - leftOverStack.Amount;
+				if (newDoses > 0) {
+					original.poisonDoses -= newDoses;
+					this.poisonDoses = newDoses;
+				} else {
+					this.Delete(); //all of the poison did stay in the other stack
+				}
+			}
+		}
+
+
 
 		//this.Cont is being stacked onto another item (projectile) 
 		public virtual bool On_StackOnItem(ItemStackArgs args) {

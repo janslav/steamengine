@@ -506,7 +506,7 @@ namespace SteamEngine.Networking {
 					if ((t != null) && (!t.IsDeleted)) {
 						AosToolTips toolTips = t.GetAosToolTips(state.Language);
 						if (toolTips != null) {
-							if (curChar.CanSeeForUpdate(t)) {
+							if (curChar.CanSeeForUpdate(t).Allow) {
 								toolTips.SendDataPacket(conn);
 							}
 						}
@@ -715,7 +715,7 @@ namespace SteamEngine.Networking {
 				thing = ch;
 			} else {
 				thing = Thing.UidGetThing(this.uid);
-				if ((thing == null) || (!ch.CanSeeForUpdate(thing))) {
+				if ((thing == null) || (!ch.CanSeeForUpdate(thing).Allow)) {
 					PacketSequences.SendRemoveFromView(conn, this.uid);
 					return;
 				}
@@ -1089,17 +1089,34 @@ namespace SteamEngine.Networking {
 			if (item != null) {
 				AbstractCharacter cre = state.CharacterNotNull;
 				DenyResult result = cre.TryPickupItem(item, this.amount);
-				if (result != DenyResult.Allow) {
-					if (result < DenyResult.Allow) {
-						PreparedPacketGroups.SendRejectMoveItemRequest(conn, result);
+				if (!result.Allow) {
+					PickupItemResult numeric;
+					if (resultsTable.TryGetValue(result, out numeric)) {
+						PreparedPacketGroups.SendRejectMoveItemRequest(conn, numeric);
 					} else {
-						PacketSequences.SendDenyResultMessage(conn, item, result);
-						PreparedPacketGroups.SendRejectMoveItemRequest(conn, DenyResult.Deny_NoMessage);
+						result.SendDenyMessage(conn, state);
+						PreparedPacketGroups.SendRejectMoveItemRequest(conn, PickupItemResult.Deny_NoMessage);
 					}
 				}
 			} else {
-				PacketSequences.SendRemoveFromView(conn, this.uid);
+				PreparedPacketGroups.SendRejectMoveItemRequest(conn, PickupItemResult.Deny_RemoveFromView);
+				//PacketSequences.SendRemoveFromView(conn, this.uid);
 			}
+		}
+
+		private static Dictionary<DenyResult, PickupItemResult> resultsTable = InitTable();
+		private static Dictionary<DenyResult, PickupItemResult> InitTable() {
+			Dictionary<DenyResult, PickupItemResult> retVal = new Dictionary<DenyResult, PickupItemResult>();
+			retVal.Add(DenyResultMessages.Allow, PickupItemResult.Allow);
+			retVal.Add(DenyResultMessages.Deny_NoMessage, PickupItemResult.Deny_NoMessage);
+			retVal.Add(DenyResultMessages.Deny_ThatDoesNotBelongToYou, PickupItemResult.Deny_ThatDoesNotBelongToYou);
+			retVal.Add(DenyResultMessages.Deny_ThatDoesntExist, PickupItemResult.Deny_RemoveFromView);
+			retVal.Add(DenyResultMessages.Deny_ThatIsInvisible, PickupItemResult.Deny_RemoveFromView);
+			retVal.Add(DenyResultMessages.Deny_ThatIsOutOfLOS, PickupItemResult.Deny_ThatIsOutOfSight);
+			retVal.Add(DenyResultMessages.Deny_ThatIsTooFarAway, PickupItemResult.Deny_ThatIsTooFarAway);
+			retVal.Add(DenyResultMessages.Deny_YouAreAlreadyHoldingAnItem, PickupItemResult.Deny_YouAreAlreadyHoldingAnItem);
+			retVal.Add(DenyResultMessages.Deny_YouCannotPickThatUp, PickupItemResult.Deny_YouCannotPickThatUp);
+			return retVal;
 		}
 	}
 
@@ -1143,13 +1160,12 @@ namespace SteamEngine.Networking {
 							result = cre.TryPutItemOnChar((AbstractCharacter) co);
 						}
 					} else {
-						PacketSequences.SendRemoveFromView(conn, this.contUid);
-						result = DenyResult.Deny_ThatIsOutOfSight;
+						result = DenyResultMessages.Deny_ThatDoesntExist;
 					}
 				}
 
-				if (result != DenyResult.Allow) {
-					PacketSequences.SendDenyResultMessage(conn, i, result);
+				if (!result.Allow) {
+					result.SendDenyMessage(cre, state, conn);
 					cre.TryGetRidOfDraggedItem();
 				}
 			} else {
@@ -1178,8 +1194,8 @@ namespace SteamEngine.Networking {
 				}
 				DenyResult result = cre.TryEquipItemOnChar(contChar);
 
-				if (result != DenyResult.Allow && cre.HasPickedUp(i)) {//we check if the player still has it in hand after the triggers
-					PacketSequences.SendDenyResultMessage(conn, contChar, result);
+				if ((!result.Allow) && cre.HasPickedUp(i)) { //we check if the player still has it in hand after the triggers
+					result.SendDenyMessage(cre, state, conn);
 					cre.TryGetRidOfDraggedItem();
 				}
 			} else {
@@ -1382,7 +1398,7 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractCharacter c = Thing.UidGetCharacter(this.uid);
-			if ((c != null) && (state.CharacterNotNull.CanSeeForUpdate(c))) {
+			if ((c != null) && (state.CharacterNotNull.CanSeeForUpdate(c).Allow)) {
 				AllNamesOutPacket p = Pool<AllNamesOutPacket>.Acquire();
 				p.Prepare(this.uid, c.Name);
 				conn.SendSinglePacket(p);

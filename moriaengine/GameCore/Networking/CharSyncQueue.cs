@@ -490,7 +490,7 @@ namespace SteamEngine.Networking {
 					if (viewer != ch) {
 						GameState viewerState = viewer.GameState;
 						if (viewerState != null) {
-							if (viewer.CanSeeForUpdate(ch)) {
+							if (viewer.CanSeeForUpdate(ch).Allow) {
 								HighlightColor highlightColor = ch.GetHighlightColorFor(viewer);
 								int highlight = (int) highlightColor;
 								PacketGroup pg = charInfoPackets[highlight];
@@ -673,8 +673,8 @@ namespace SteamEngine.Networking {
 							}
 							foreach (Thing thingInRange in chMap.GetThingsInRange(chX, chY, updateRange)) {
 								if (thingInRange != ch) {//it isn't me
-									if (ch.CanSeeForUpdate(thingInRange) && (mapChanged ||
-									!ch.CanSeeForUpdateFrom(this.point, thingInRange))) {//I can see it now, but couldn't see it before
+									if (ch.CanSeeForUpdate(thingInRange).Allow && (mapChanged ||
+									!ch.CanSeeForUpdateFrom(this.point, thingInRange).Allow)) {//I can see it now, but couldn't see it before
 										Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending thing (" + thingInRange + ") to self");
 										AbstractCharacter newChar = thingInRange as AbstractCharacter;
 										if (newChar != null) {
@@ -727,11 +727,11 @@ namespace SteamEngine.Networking {
 
 								if ((!teleported) && (invisChanged || posChanged)) { //if teleported, we're already done
 									if (!invisChanged) {
-										viewerCanSeeForUpdateAtPoint = viewer.CanSeeForUpdateAt(this.point, ch);
+										viewerCanSeeForUpdateAtPoint = viewer.CanSeeForUpdateAt(this.point, ch).Allow;
 										viewerCanSeeForUpdateAtPointChecked = true;
 									}
 									if (invisChanged || viewerCanSeeForUpdateAtPoint) {
-										viewerCanSeeForUpdate = viewer.CanSeeForUpdate(ch);
+										viewerCanSeeForUpdate = viewer.CanSeeForUpdate(ch).Allow;
 										viewerCanSeeForUpdateChecked = true;
 										if (!viewerCanSeeForUpdate) {//they did see us, but now they dont. RemoveFromView.
 											if (pgDeleteObject == null) {
@@ -744,7 +744,7 @@ namespace SteamEngine.Networking {
 									}
 								}
 								if (!viewerCanSeeForUpdateChecked) {
-									viewerCanSeeForUpdate = viewer.CanSeeForUpdate(ch);
+									viewerCanSeeForUpdate = viewer.CanSeeForUpdate(ch).Allow;
 								}
 								if (viewerCanSeeForUpdate) {
 									bool hitsSent = false;
@@ -752,7 +752,7 @@ namespace SteamEngine.Networking {
 									if (invisChanged || posChanged) {
 										if (!invisChanged) {
 											if (!viewerCanSeeForUpdateAtPointChecked) {
-												viewerCanSeeForUpdateAtPoint = viewer.CanSeeForUpdateAt(this.point, ch);
+												viewerCanSeeForUpdateAtPoint = viewer.CanSeeForUpdateAt(this.point, ch).Allow;
 											}
 										}
 										if (invisChanged || !viewerCanSeeForUpdateAtPoint) {
@@ -919,7 +919,7 @@ namespace SteamEngine.Networking {
 				foreach (AbstractCharacter viewer in map.GetPlayersInRectangle(rect)) {
 					GameState state = viewer.GameState;
 					if (state != null) {
-						if ((viewer.CanSeeForUpdateAt(this.point, this.thing)) && (!viewer.CanSeeForUpdate(this.thing))) {
+						if ((viewer.CanSeeForUpdateAt(this.point, this.thing).Allow) && (!viewer.CanSeeForUpdate(this.thing).Allow)) {
 							if (pg == null) {
 								pg = PacketGroup.AcquireMultiUsePG();
 								pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(this.thing);

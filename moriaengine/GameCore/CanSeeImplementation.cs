@@ -93,51 +93,49 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
-		public virtual bool CanSeeForUpdate(Thing target) {
+		public virtual DenyResult CanSeeForUpdate(Thing target) {
 			return this.CanSeeImpl(this, target.TopPoint, target);
 		}
 
-		internal bool CanSeeForUpdateFrom(IPoint4D fromCoordinates, Thing target) {
+		internal DenyResult CanSeeForUpdateFrom(IPoint4D fromCoordinates, Thing target) {
 			return this.CanSeeImpl(fromCoordinates, target.TopPoint, target);
 		}
 
-		internal bool CanSeeForUpdateAt(IPoint4D targetMapCoordinates, Thing target) {
+		internal DenyResult CanSeeForUpdateAt(IPoint4D targetMapCoordinates, Thing target) {
 			return this.CanSeeImpl(this, targetMapCoordinates, target);
 		}
 
-		private bool CanSeeImpl(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target) {
+		private DenyResult CanSeeImpl(IPoint4D fromCoordinates, IPoint4D targetMapCoordinates, Thing target) {
 			if (target.IsOnGround) {
-				bool success = this.CanSeeCoordinatesFrom(fromCoordinates, targetMapCoordinates);
-				if (!success) {
-					return false;
+				if (!this.CanSeeCoordinatesFrom(fromCoordinates, targetMapCoordinates)) {
+					return DenyResultMessages.Deny_ThatIsTooFarAway;
 				}
 
-				success = this.CanSeeVisibility(target);
-				if (!success) {
-					return false;
+				if (!this.CanSeeVisibility(target)) {
+					return DenyResultMessages.Deny_ThatIsInvisible;
 				}
 
-				return success;
+				return DenyResultMessages.Allow;
 			} else if (target.IsEquipped) {
 				if (target.Z < AbstractCharacter.sentLayers) {
 					Thing container = target.TopObj();//the char that has this item equipped
-					if (this.CanSeeImpl(fromCoordinates, targetMapCoordinates, container)) {
-						return this.CanSeeVisibility(target);
+					DenyResult canSeeContainer = this.CanSeeImpl(fromCoordinates, targetMapCoordinates, container);
+
+					if (canSeeContainer.Allow) {
+						if (!this.CanSeeVisibility(target)) {
+							return DenyResultMessages.Deny_ThatIsInvisible;
+						}
 					}
 				}
-				return false;
+				return DenyResultMessages.Deny_ThatIsInvisible; //or removefromview?
 			} else { //in container - we must be able to reach the container
-				return DenyResult.Allow ==
-					this.CanReachFromAt(fromCoordinates, targetMapCoordinates, target, true);
+				return this.CanReachFromAt(fromCoordinates, targetMapCoordinates, target, true);
 			}
 		}
 
 		public virtual bool CanSeeVisibility(Thing target) {
 			this.ThrowIfDeleted();
-			if (target == null) {
-				return false;
-			}
-			if (target.IsDeleted) {
+			if (target == null || target.IsDeleted) {
 				return false;
 			}
 			if (target.IsNotVisible) {
@@ -177,8 +175,8 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
 		public DenyResult CanReach(Thing target) {
-			if (target.IsDeleted) {
-				return DenyResult.Deny_RemoveFromView;
+			if (target == null || target.IsDeleted) {
+				return DenyResultMessages.Deny_ThatDoesntExist;
 			}
 			return this.CanReachFromAt(this, target.TopPoint, target, true);
 		}
@@ -188,23 +186,23 @@ namespace SteamEngine {
 
 			if (checkTopObj) {
 				if (!CanReachMapRangeFrom(fromCoordinates, targetMapCoordinates)) {
-					return DenyResult.Deny_ThatIsTooFarAway;
+					return DenyResultMessages.Deny_ThatIsTooFarAway;
 				}
 
 				Map map = fromCoordinates.GetMap();
 				if (!map.CanSeeLosFromTo(fromCoordinates, targetMapCoordinates)) {
-					return DenyResult.Deny_ThatIsOutOfSight;
+					return DenyResultMessages.Deny_ThatIsOutOfLOS;
 				}
 
 				topobj = target.TopObj();
 				if (!this.CanSeeVisibility(topobj)) {
-					return DenyResult.Deny_RemoveFromView;
+					return DenyResultMessages.Deny_ThatIsInvisible;
 				}
 			}
 
 			if (target != topobj) {
 				if (!this.CanSeeVisibility(target)) {
-					return DenyResult.Deny_RemoveFromView;
+					return DenyResultMessages.Deny_ThatIsInvisible;
 				}
 			} //else we already checked it
 
@@ -213,24 +211,24 @@ namespace SteamEngine {
 				if (this.IsOnline) {
 					return OpenedContainers.HasContainerOpenFromAt(this, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
 				} else {
-					return DenyResult.Deny_NoMessage; //only logged-in players can reach stuff in containers
+					return DenyResultMessages.Deny_NoMessage; //only logged-in players can reach stuff in containers
 				}
 			}
 
-			return DenyResult.Allow;
+			return DenyResultMessages.Allow;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public DenyResult CanReachCoordinates(IPoint4D target) {
 			target = target.TopPoint;
 			if (!CanReachMapRangeFrom(this, target)) {
-				return DenyResult.Deny_ThatIsTooFarAway;
+				return DenyResultMessages.Deny_ThatIsTooFarAway;
 			}
 			Map m = this.GetMap();
 			if (!m.CanSeeLosFromTo(this, target)) {
-				return DenyResult.Deny_ThatIsOutOfSight;
+				return DenyResultMessages.Deny_ThatIsOutOfLOS;
 			}
-			return DenyResult.Allow;
+			return DenyResultMessages.Allow;
 		}
 
 		internal bool CanReachMapRangeFrom(IPoint4D fromCoordinates, IPoint4D target) {
@@ -246,8 +244,8 @@ namespace SteamEngine {
 			return dist <= Globals.ReachRange;
 		}
 
-		public virtual DenyResult CanOpenContainer(AbstractItem targetContainer) {
-			return DenyResult.Allow;
+		public virtual DenyResult CanPutItemsInContainer(AbstractItem targetContainer) {
+			return DenyResultMessages.Allow;
 		}
 	}
 }
@@ -256,6 +254,13 @@ namespace SteamEngine.Regions {
 	public partial class Map {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "to"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "from"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		public bool CanSeeLosFromTo(IPoint3D from, IPoint3D to) {
+#if TRACE
+			int distance = Point2D.GetSimpleDistance(from, to);
+			if (distance > Globals.MaxUpdateRange) {
+				Logger.WriteWarning("CanSeeLosFromTo for 2 points outside update range...?", new System.Diagnostics.StackTrace());
+			}
+#endif
+			//TODO, obviously
 			return true;
 		}
 	}

@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
-			if (!self.CanInteractWith(target)) {
+			if (!self.CanInteractWith(target).Allow) {
 				WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 				self.AbortSkill();
 				return true;
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 
 						skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 
-						if (self.CanInteractWith(target)) {
+						if (self.CanInteractWith(target).Allow) {
 							WeaponSkillTargetQueuePlugin.AddTarget(self, target);//we're not really adding the target, just restarting the attack, most probably
 						} else {
 							WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);

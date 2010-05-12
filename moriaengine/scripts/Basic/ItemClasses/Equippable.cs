@@ -50,14 +50,11 @@ namespace SteamEngine.CompiledScripts {
 				
 				if ((this.Cont != from) || (this.Z != this.Layer)) { //we only try the equipping if not already equipped
 					DenyResult dr = from.TryPickupItem(this, 1);
-					if (dr == DenyResult.Allow) {
+					if (dr.Allow) {
 						dr = from.TryEquipItemOnChar(from);
 					}
-					if (dr != DenyResult.Allow) {
-						GameState state = from.GameState;
-						if (state != null) {
-							PacketSequences.SendDenyResultMessage(state.Conn, this, dr);
-						}
+					if (!dr.Allow) {
+						dr.SendDenyMessage(from);
 					}
 				}
 			}

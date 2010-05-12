@@ -23,7 +23,7 @@ namespace SteamEngine.Common {
 		protected LocStringCollection() {
 		}
 
-		public virtual string GetEntry(string entryName) {
+		public string GetEntry(string entryName) {
 			string value;
 			if (this.entriesByName.TryGetValue(entryName, out value)) {
 				return value;

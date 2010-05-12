@@ -31,11 +31,21 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue range;
 		private FieldValue immunityDuration;
 
+		private static ProjectileDef i_kudla;
+		public static ProjectileDef ThrowingKnifeDef {
+			get {
+				if (i_kudla == null) {
+					i_kudla = (ProjectileDef) ThingDef.GetByDefname("i_kudla");
+				}
+				return i_kudla;
+			}
+		}
+
 		public ThrowingAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.range = InitTypedField("range", 0, typeof(int));
-			this.immunityDuration = InitTypedField("immunityDuration", 0, typeof(double));
+			this.range = InitTypedField("range", 5, typeof(int));
+			this.immunityDuration = InitTypedField("immunityDuration", 10, typeof(double));
 		}
 
 		public int Range {
@@ -57,13 +67,46 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_DenyActivate(DenyAbilityArgs args) {
-			//caninteractwithmessage
+			Character self = args.abiliter;
+			if (self.Backpack.FindById(ThrowingKnifeDef) == null) {
+				args.Result = DenyMessages_Throwing.Deny_YouNeedThrowingKnife;
+				return true;
+			}
+
+			SkillSequenceArgs seq = self.CurrentSkillArgs;
+			if ((seq != null) && (seq.SkillDef is WeaponSkillDef)) {
+				Character target = (Character) seq.Target1;
+				int distance = Point2D.GetSimpleDistance(self, target);
+				//if (!self.CanSeeVisibility
+			} else {
+				args.Result = DenyMessages_Throwing.Deny_OnlyWorksWhenFighting;
+				return true;
+			}
+
 			return base.On_DenyActivate(args);
 		}
 
-		protected override bool On_Activate(Character ch, Ability ab) {
+		protected override bool On_Activate(Character self, Ability ab) {
+			Projectile knife = (Projectile) self.Backpack.FindById(ThrowingKnifeDef);
+			int range = this.Range + self.WeaponRangeModifier;
+
+			Character target = (Character) self.CurrentSkillArgs.Target1;
+			int distance = Point2D.GetSimpleDistance(self, target);
 
 			return false; //do not cancel
 		}
+	}
+
+	public static class DenyMessages_Throwing {
+		public static readonly DenyResult Deny_YouNeedThrowingKnife =
+			new CompiledLocDenyResult<AbilityDefLoc>("youNeedThrowingKnife");
+
+		public static readonly DenyResult Deny_OnlyWorksWhenFighting =
+			new CompiledLocDenyResult<AbilityDefLoc>("onlyWorksWhenFighting");
+	}
+
+	public class ThrowingLoc : CompiledLocStringCollection {
+		public string youNeedThrowingKnife = "Nemáš žádný házecí nùž.";
+		public string onlyWorksWhenFighting = "Házecí nože lze použít jen bìhem boje.";
 	}
 }

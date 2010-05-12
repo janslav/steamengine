@@ -174,7 +174,7 @@ namespace SteamEngine.Networking {
 					if (state != null) {
 						TcpConnection<GameState> conn = state.Conn;
 
-						if (viewer.CanSeeForUpdate(item)) {
+						if (viewer.CanSeeForUpdate(item).Allow) {
 							if (isOnGround) {
 								item.GetOnGroundUpdater().SendTo(viewer, state, conn); //0x1a + corpseitems or some such stuff, when needed
 							} else if (isEquippedAndVisible) {

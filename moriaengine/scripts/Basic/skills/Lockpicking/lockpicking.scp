@@ -17,7 +17,7 @@ DEFNAME = i_lockpick
 [ItemLockPluginDef p_lockedItem]
 on=@DenyDClick //argv(0) == denyresult; argv(1) == dclicker; argv(2) == this
 argv(1).sysMessage("woe nesmis")
-argv(0) = denyResult.deny_noMessage
+argv(0) = DenyResultMessages.Deny_NoMessage
 return 1
 
 

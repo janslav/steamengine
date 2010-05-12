@@ -358,6 +358,7 @@
     <Compile Include="Basic\Target.cs" />
     <Compile Include="Basic\TemplateDef.cs" />
     <Compile Include="Basic\TimerPlugin.cs" />
+    <Compile Include="Basic\LocDenyResult.cs" />
     <Compile Include="Optional\StorageBoxes\GemBox.cs" />
     <Compile Include="Optional\StorageBoxes\RegBox.cs" />
     <Compile Include="Optional\StorageBoxes\storageBoxes.Generated.cs" />

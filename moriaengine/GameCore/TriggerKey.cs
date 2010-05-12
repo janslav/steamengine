@@ -73,6 +73,8 @@ namespace SteamEngine {
 		internal static readonly TriggerKey leaveChar = Acquire("leaveChar");
 		internal static readonly TriggerKey leaveRegion = Acquire("leaveRegion");
 
+		internal static readonly TriggerKey splitFromStack = Acquire("splitFromStack");		
+
 		internal static readonly TriggerKey itemEnter = Acquire("itemEnter");
 		internal static readonly TriggerKey enterItem = Acquire("enterItem");
 		internal static readonly TriggerKey enterChar = Acquire("enterChar");

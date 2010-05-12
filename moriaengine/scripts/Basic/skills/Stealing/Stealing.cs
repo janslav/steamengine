@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 			Item item = (Item) skillSeqArgs.Target1;
 
-			if (self.CanReach(item) == DenyResult.Allow) {
+			if (self.CanReach(item).Allow) {
 				int diff = (int) (700 + 100 * Math.Log(item.Weight + 1));
 				skillSeqArgs.Success = SkillDef.CheckSuccess(self.GetSkill(SkillName.Stealing), diff);
 			} else {

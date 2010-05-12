@@ -102,12 +102,8 @@ namespace SteamEngine.CompiledScripts {
 		
 		public override bool On_DenyDClick(DenyClickArgs args) {
 			DenyResult dr = args.ClickingChar.CanReach(this);
-			if (dr == DenyResult.Allow) {
-				return false;
-			} else {
-				args.Result = dr;
-				return true;
-			}
+			args.Result = dr;
+			return !dr.Allow;
 		}
 
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
@@ -205,7 +201,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Enumerates every item in this item and items in all subcontainers, recurses into infinite deep.")]
+		[Summary("Enumerates every item in this item and items in all subcontainers, recurses into infinite depth.")]
 		public IEnumerable<Item> EnumDeep() {
 			this.ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();
@@ -222,7 +218,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Enumerates every item in this item and items in all subcontainers, does not recurse.")]
+		[Summary("Enumerates every item in this item and items in all subcontainers, but does not recurse deeper.")]
 		public IEnumerable<Item> EnumShallow() {
 			ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();
@@ -273,6 +269,24 @@ namespace SteamEngine.CompiledScripts {
 		public Item FindByClass(Type type) {
 			foreach (Item i in this.EnumDeep()) {
 				if (i.GetType() == type) {
+					return i;
+				}
+			}
+			return null;
+		}
+
+		public Item FindById(ItemDef def) {
+			foreach (Item i in this.EnumDeep()) {
+				if (i.Def == def) {
+					return i;
+				}
+			}
+			return null;
+		}
+
+		public Item FindByShallow(ItemDef def) {
+			foreach (Item i in this.EnumShallow()) {
+				if (i.Def == def) {
 					return i;
 				}
 			}

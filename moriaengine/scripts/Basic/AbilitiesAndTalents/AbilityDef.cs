@@ -145,20 +145,16 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability" +
 				"and in case he has, it runs the protected activation method")]
 		public virtual void Activate(Character chr) {
-			Ability ab = chr.GetAbilityObject(this);
-			if (ab == null || ab.ModifiedPoints == 0) {
-				this.SendAbilityResultMessage(DenyResultAbilities.Deny_DoesntHaveAbility);
-			} else {
+					Ability ab = chr.GetAbilityObject(this);
 
-				DenyResultAbilities retVal = this.Trigger_DenyActivate(chr, ab); //return value means only that the trigger has been cancelled
+				DenyResult retVal = this.Trigger_DenyActivate(chr, ab); //return value means only that the trigger has been cancelled
 
-				if (retVal == DenyResultAbilities.Allow) {
+				if (retVal.Allow) {
 					this.Trigger_Activate(chr, ab);
 					ab.LastUsage = Globals.TimeAsSpan; //set the last usage time
+				} else {
+					retVal.SendDenyMessage(chr); //send result(message) of the "activate" call to the client
 				}
-
-				this.SendAbilityResultMessage(retVal); //send result(message) of the "activate" call to the client
-			}
 		}
 		#endregion Factory methods
 
@@ -206,7 +202,11 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("This method fires the @denyUse triggers. "
 		        + "Their purpose is to check if all requirements for running the ability have been met")]
-		protected DenyResultAbilities Trigger_DenyActivate(Character chr, Ability ab) {
+		protected DenyResult Trigger_DenyActivate(Character chr, Ability ab) {
+			if (ab == null || ab.ModifiedPoints == 0) {
+				return DenyResultMessages_Abilities.Deny_DoesntHaveAbility;
+			}
+
 			DenyAbilityArgs denyArgs = new DenyAbilityArgs(chr, this, ab);
 
 			bool cancel = chr.TryCancellableTrigger(tkDenyActivateAbility, denyArgs);
@@ -231,7 +231,7 @@ namespace SteamEngine.CompiledScripts {
 		    Ability ab = args.ranAbility;
 		    //check cooldown
 		    if (((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) && !args.abiliter.IsGM) { //check the timing if OK
-		        args.Result = DenyResultAbilities.Deny_TimerNotPassed;
+		        args.Result = DenyResultMessages_Abilities.Deny_NotYetCooledDown;
 		        return true;//same as "return 1" from LScript - cancel trigger sequence
 		    }
 
@@ -241,8 +241,8 @@ namespace SteamEngine.CompiledScripts {
 		        IResourceListItem missingItem;
 		        if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
 		            ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
-		            args.Result = DenyResultAbilities.Deny_NotEnoughResourcesPresent;
-		            return true;
+		            args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesPresent;
+					return true; //cancel
 		        }
 		    }
 
@@ -253,14 +253,15 @@ namespace SteamEngine.CompiledScripts {
 		        IResourceListItem missingItem;
 		        if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
 		            ResourcesList.SendResourceMissingMsg(args.abiliter, missingItem);
-		            args.Result = DenyResultAbilities.Deny_NotEnoughResourcesToConsume;
-		            return true;
+		            args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesToConsume;
+					return true; //cancel
 		        }
 		    }
 
-			if (!args.abiliter.CheckAliveWithMessage()) {
-				args.Result = DenyResultAbilities.Deny_NoMessage;
-				return true;
+			DenyResult result = args.abiliter.CheckAlive();
+			args.Result = result;
+			if (!result.Allow) {
+				return true; //cancel
 			}
 
 		    return false; //all ok, continue
@@ -371,63 +372,44 @@ namespace SteamEngine.CompiledScripts {
 			base.Unload();
 		}
 		#endregion Loading from scripts
-
-		#region utilities
-		[Summary("Method for sending clients messages about their attempt of ability usage")]
-		internal void SendAbilityResultMessage(DenyResultAbilities res) {
-			switch (res) {
-				//case DenyResultAbilities.Allow:								
-				case DenyResultAbilities.Deny_DoesntHaveAbility:
-					Globals.SrcWriteLine("O abilitì " + this.Name + " nevíš vùbec nic");
-					break;
-				case DenyResultAbilities.Deny_TimerNotPassed:
-					Globals.SrcWriteLine("Abilitu nelze použít tak brzy po pøedchozím použití");
-					break;
-				case DenyResultAbilities.Deny_WasSwitchedOff:
-					Globals.SrcWriteLine("Abilita " + this.Name + " byla vypnuta");
-					break;
-				case DenyResultAbilities.Deny_NotEnoughResourcesToConsume:
-					Globals.SrcWriteLine("Nedostatek zdrojù ke spotøebì pro spuštìní ability " + this.Name);
-					break;
-				case DenyResultAbilities.Deny_NotEnoughResourcesPresent:
-					Globals.SrcWriteLine("Nedostatek zdrojù pro spuštìní ability " + this.Name);
-					break;
-				case DenyResultAbilities.Deny_NotAllowedToHaveThisAbility:
-					Globals.SrcWriteLine("Nejsi oprávnìn mít abilitu " + this.Name);
-					break;
-			}
-		}
-		#endregion utilities
 	}
 
-	public class DenyAbilityArgs : ScriptArgs {
+	public class DenyAbilityArgs : DenyTriggerArgs {
 		public readonly Character abiliter;
 		public readonly AbilityDef ranAbilityDef;
 		public readonly Ability ranAbility;
 
-		public DenyAbilityArgs(params object[] argv)
-			: base(argv) {
-			Sanity.IfTrueThrow(!(argv[0] is DenyResultAbilities), "argv[0] is not DenyResultAbilities");
-		}
-
 		public DenyAbilityArgs(Character abiliter, AbilityDef ranAbilityDef, Ability ranAbility)
-			: this(DenyResultAbilities.Allow, abiliter, ranAbilityDef, ranAbility) {
+			: base(DenyResultMessages.Allow, abiliter, ranAbilityDef, ranAbility) {
 			this.abiliter = abiliter;
 			this.ranAbilityDef = ranAbilityDef;
 			this.ranAbility = ranAbility; //this can be null (if we dont have the ability)
 		}
+	}
 
-		public DenyResultAbilities Result {
-			get {
-				return (DenyResultAbilities) Convert.ToInt32(this.Argv[0]);
-			}
-			set {
-				this.Argv[0] = value;
-			}
-		}
+	//abilities running possible results
+	public static class DenyResultMessages_Abilities {
+		public static readonly DenyResult Deny_DoesntHaveAbility = 
+			new CompiledLocDenyResult<AbilityDefLoc>("YouDontHaveThisAbility"); //we don't have the ability (no points in it)
+		public static readonly DenyResult Deny_NotYetCooledDown =
+			new CompiledLocDenyResult<AbilityDefLoc>("NotYetCooledDown"); //the ability usage timer has not yet passed
+		public static readonly DenyResult Deny_HasBeenSwitchedOff =
+			new CompiledLocDenyResult<AbilityDefLoc>("HasBeenSwitchedOff"); //the ability was currently running (for ActivableAbilities only) so we switched it off
+		public static readonly DenyResult Deny_NotEnoughResourcesToConsume =
+			new CompiledLocDenyResult<AbilityDefLoc>("NotEnoughResourcesToConsume"); //missing some resources from "to consume" list
+		public static readonly DenyResult Deny_NotEnoughResourcesPresent =
+			new CompiledLocDenyResult<AbilityDefLoc>("NotEnoughResourcesPresent"); //missing some resources from "has present" list
+		public static readonly DenyResult Deny_NotAllowedToHaveThisAbility =
+			new CompiledLocDenyResult<AbilityDefLoc>("NotAllowedToHaveAbility"); //other reason why not allow to have the ability (e.g. wrong profession etc.)
 	}
 
 	public class AbilityDefLoc : CompiledLocStringCollection {
-		public string AbilityActivated = "Abilita {0} aktivována";
+		public string AbilityActivated = "Abilita {0} aktivována.";
+		public string YouDontHaveThisAbility = "O této abilitì nevíš vùbec nic.";
+		public string NotYetCooledDown = "Abilitu nelze použít tak brzy po pøedchozím použití.";
+		public string HasBeenSwitchedOff = "Abilita deaktivována.";
+		public string NotEnoughResourcesToConsume = "Nedostatek zdrojù ke spotøebì pro aktivaci ability.";
+		public string NotEnoughResourcesPresent = "Nedostatek zdrojù pro aktivaci ability.";
+		public string NotAllowedToHaveAbility = "Nejsi oprávnìn mít tuto abilitu.";
 	}
 }

@@ -381,7 +381,7 @@ namespace SteamEngine.Networking {
 					if (!targGround) {
 						Thing thing = Thing.UidGetThing(targetUid);
 						if (thing != null) {
-							if (self.CanSeeForUpdate(thing)) {
+							if (self.CanSeeForUpdate(thing).Allow) {
 								targ(this, thing, parameter);
 								return;
 							}

@@ -212,8 +212,10 @@ namespace SteamEngine.CompiledScripts {
 
 		internal bool Trigger_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			if (!self.CheckAliveWithMessage())
+			if (!self.CheckAliveWithMessage()) {
 				return true;
+			}
+
 			bool cancel = self.TryCancellableTrigger(tkSkillSelect, skillSeqArgs.scriptArgs);
 			if (!cancel) {
 				try {
