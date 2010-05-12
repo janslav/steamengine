@@ -139,14 +139,16 @@ namespace SteamEngine.CompiledScripts {
             GameState stateTarget = target.GameState;
 
             //nevidi na cil
-            if (target != self) {
-                if (self.GetMap() != target.GetMap() || !self.GetMap().CanSeeLosFromTo(self, target) || Point2D.GetSimpleDistance(self, target) > 6) {
-                    if (stateSelf != null) {
-                        stateSelf.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-							Loc<HealingLoc>.Get(stateSelf.Language).TargetOut, target.Name));
-                    }
-                    return true;
+			if (Point2D.GetSimpleDistance(self, target) > 6) {
+                if (stateSelf != null) {
+                    stateSelf.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+						Loc<HealingLoc>.Get(stateSelf.Language).TargetOut, target.Name));
                 }
+                return true;
+			}
+
+			if (!self.CanInteractWithMessage(target)) {
+				return true;
             }
 
             //pokud ma cil stejne nebo vic zivotu
@@ -161,12 +163,6 @@ namespace SteamEngine.CompiledScripts {
 							Loc<HealingLoc>.Get(stateTarget.Language).TargetFull, target.Name));
                     }
                 }
-                return true;
-            }
-
-            //cilem je gm, provede okamzite vyhealovani 
-            if (self.IsGM) {
-                target.Hits = target.MaxHits;
                 return true;
             }
 

@@ -438,6 +438,8 @@ namespace SteamEngine.CompiledScripts {
 						//TODO? Could be wrong with statics on multiple facets, but we'll get there when we get there
 						return DenyResultMessages.Deny_ThatIsOutOfLOS;
 					}
+				} else { //target == null
+					return DenyResultMessages.Deny_ThatDoesntExist;
 				}
 			}
 
@@ -496,17 +498,13 @@ namespace SteamEngine.CompiledScripts {
 			On_VisibilityChange();
 		}
 
-		public DenyResult CanInteractWith(Thing target) {
+		public DenyResult CanInteractWith(IPoint3D target) {
 			DenyResult result = this.CheckAlive();
 			if (!result.Allow) {
 				return result;
 			}
 
-			if ((target == null) || (target.IsDeleted) || target.Flag_Disconnected) {
-				return DenyResultMessages.Deny_ThatDoesntExist;
-			}
-
-			result = this.CanSeeForUpdate(target);
+			result = this.CanSeeLOS(target);
 			if (!result.Allow) {
 				return result;
 			}
@@ -524,7 +522,7 @@ namespace SteamEngine.CompiledScripts {
 			return DenyResultMessages.Allow;
 		}
 
-		public bool CanInteractWithMessage(Thing target) {
+		public bool CanInteractWithMessage(IPoint3D target) {
 			DenyResult result = this.CanInteractWith(target);
 			if (result.Allow) {
 				return true;
