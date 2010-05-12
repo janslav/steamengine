@@ -53,6 +53,10 @@ namespace SteamEngine.CompiledScripts {
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as StatIntResource) != null);
 		}
+
+		public void SendMissingMessage(Character toWho) {
+			toWho.SysMessage("Je vyžadováno alespoò " + this.DesiredCount + " " + this.Name);
+		}
 		#endregion
 
 		#region IResourceListItemNonMultiplicable Members

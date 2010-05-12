@@ -92,8 +92,8 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Check if the given string defines some Item. If so, return the def")]
 		internal static bool IsItemResource(string definition, out ItemDef idef) {
 			if ((idef = ItemDef.GetByDefname(definition) as ItemDef) != null) {
-				//this resource is an item
-				return true;
+				return true;//this resource is an item
+				
 			}
 			return false;
 		}
@@ -101,8 +101,7 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Check if the given string defines some TriggerGroup. If so, return it")]
 		internal static bool IsTriggerGroupResource(string definition, out TriggerGroup tgr) {
 			if ((tgr = TriggerGroup.GetByDefname(definition)) != null) {
-				//this resource is a trigger group
-				return true;
+				return true;//this resource is a trigger group
 			}
 			return false;
 		}
@@ -111,8 +110,7 @@ namespace SteamEngine.CompiledScripts {
 		internal static bool IsSkillResource(string definition, out SkillDef skl) {
 			if (((skl = SkillDef.GetByKey(definition) as SkillDef) != null) ||  //"hiding", "anatomy" etc.
 				 ((skl = SkillDef.GetByDefname(definition) as SkillDef) != null)) {//"skill_hiding, "skill_anatomy" etc.
-				//this resource is a skill
-				return true;
+				return true;//this resource is a skill
 			}
 			return false;
 		}
@@ -120,57 +118,61 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Check if the given string defines some Ability. If so, return the def")]
 		internal static bool IsAbilityResource(string definition, out AbilityDef abl) {
 			if ((abl = AbilityDef.GetByDefname(definition)) != null) {
-				//this resource is an ability
-				return true;
+				return true;//this resource is an ability
 			}
 			return false;
 		}
 
 		internal static IResourceListItem createResListItem(double number, string definition) {
+			//first check if the definition begins with '%' (this means that we want to consume in percents not in absolute values
+			bool isPercent = definition.Substring(1, 1).Equals("%");
+			string realDefinition = definition;
+			if(isPercent) {
+				realDefinition = definition.Substring(2); //omit the starting '%' character
+			}
+
 			//we will try to find what does the 'definition' define
 			//try ItemDef (i_apple)
 			ItemDef idef;
-			if(IsItemResource(definition, out idef)) {
+			if(IsItemResource(realDefinition, out idef)) {
 				//this resource is item
-				return new ItemResource(idef, number, definition);
+				return new ItemResource(idef, number, realDefinition, isPercent);
 			}
 			//try TriggerGroup (t_light)
 			TriggerGroup tgr;
-			if (IsTriggerGroupResource(definition, out tgr)) {
-				//we dont specify the number here, we know that for trigger groups their presence in the
-				//resource list always means '1' (just to 'have it')
-				return new TriggerGroupResource(tgr, number, definition);
+			if(IsTriggerGroupResource(realDefinition, out tgr)) {
+				return new TriggerGroupResource(tgr, number, realDefinition, isPercent);
 			}
 			//try Skilldef
 			SkillDef skl;
-			if (IsSkillResource(definition, out skl)) {
-				return new SkillResource(skl, number, definition);
+			if(IsSkillResource(realDefinition, out skl)) {
+				return new SkillResource(skl, number, realDefinition);
 			}
 			//try AbilityDef
 			AbilityDef abl;
-			if (IsAbilityResource(definition, out abl)) {
-				return new AbilityResource(abl, number, definition);
+			if(IsAbilityResource(realDefinition, out abl)) {
+				return new AbilityResource(abl, number, realDefinition);
 			}
 			
 			//try stats
-			if (definition.Equals("str", StringComparison.InvariantCultureIgnoreCase)) {
+			if(realDefinition.Equals("str", StringComparison.InvariantCultureIgnoreCase)) {
 				return new StatStrResource(number);
 			}
-			if (definition.Equals("dex", StringComparison.InvariantCultureIgnoreCase)) {
+			if(realDefinition.Equals("dex", StringComparison.InvariantCultureIgnoreCase)) {
 				return new StatDexResource(number);
 			}
-			if (definition.Equals("int", StringComparison.InvariantCultureIgnoreCase)) {
+			if(realDefinition.Equals("int", StringComparison.InvariantCultureIgnoreCase)) {
 				return new StatIntResource(number);
 			}
-			if (definition.Equals("vit", StringComparison.InvariantCultureIgnoreCase)) {
+			if(realDefinition.Equals("vit", StringComparison.InvariantCultureIgnoreCase)) {
 				return new StatVitResource(number);
 			}
 
 			//try the level resource
-			if (definition.Equals("level", StringComparison.InvariantCultureIgnoreCase)) {
+			if(realDefinition.Equals("level", StringComparison.InvariantCultureIgnoreCase)) {
 				return new LevelResource((int)number);
 			}
-			throw new SEException(LogStr.Error("Unresolved resource: " + number + " " + definition));
+			throw new SEException(LogStr.Error("Unresolved resource: " + number + " " + realDefinition));
 		}
 	}
 }

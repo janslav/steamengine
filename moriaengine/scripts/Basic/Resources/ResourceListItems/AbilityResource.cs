@@ -63,6 +63,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+
+		public void SendMissingMessage(Character toWho) {
+			toWho.SysMessage("Je potøeba mít " + this.DesiredCount + " bodù v abilitì " + this.Name);
+		}
 		#endregion
 
 		#region IResourceListItemNonMultiplicable Members

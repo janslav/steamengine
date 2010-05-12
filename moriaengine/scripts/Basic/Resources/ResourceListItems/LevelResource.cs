@@ -53,6 +53,11 @@ namespace SteamEngine.CompiledScripts {
 		public bool IsSameResource(IResourceListItem newOne) {
 			return ((newOne as LevelResource) != null);
 		}
+
+		public void SendMissingMessage(Character toWho) {
+			toWho.SysMessage("Je potøeba mít alespoò " + this.DesiredCount + " " + this.Name);
+		}
+
 		#endregion
 
 		#region IResourceListItemNonMultiplicable Members
@@ -61,6 +66,7 @@ namespace SteamEngine.CompiledScripts {
 			return ((Player) chr).Level >= DesiredCount;
 		}
 
-		#endregion
+		#endregion	
+		
 	}
 }

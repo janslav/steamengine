@@ -21,18 +21,16 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Summary("Resource as ItemDef")]
-	public class ItemResource : IResourceListItemMultiplicable {
+	public class ItemResource : AbstractResourceListItemMultiplicable {
 		private ItemDef itemDef;
-		private double number;
 		private string definition;
 
-		internal ItemResource(ItemDef itemDef, double number, string definition) {
-			this.number = number;
+		internal ItemResource(ItemDef itemDef, double number, string definition, bool isPercent) : base(number, isPercent) {
 			this.itemDef = itemDef;
-			this.definition = definition;
+			this.definition = definition;			
 		}
 
-		public string Name {
+		public override string Name {
 			get {
 				return itemDef.Name;
 			}
@@ -45,22 +43,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region IResourceListItem Members
-		public double DesiredCount {
-			get {
-				return number;
-			}
-			set {
-				number = value;
-			}
-		}
-
-		public string Definition {
+		public override string Definition {
 			get {
 				return definition;
 			}
 		}
 
-		public bool IsSameResource(IResourceListItem newOne) {
+		public override bool IsSameResource(IResourceListItem newOne) {
 			ItemResource newResource = newOne as ItemResource;
 			if (newResource != null) {
 				if (itemDef == newResource.itemDef) {
@@ -69,10 +58,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return false;
 		}
+
+		public override void SendMissingMessage(Character toWho) {
+			toWho.SysMessage("Je potøeba mít u sebe " + this.DesiredCount + " x " + this.Name);
+		}
 		#endregion
 
 		#region IResourceListItemMultiplicable Members
-		public ResourceCounter GetCounter() {
+		public override ResourceCounter GetCounter() {
 			ItemsCounter ic = Pool<ItemsCounter>.Acquire();//get from pool
 			ic.SetParameters(itemDef, number, this);//initialize
 			return ic;
