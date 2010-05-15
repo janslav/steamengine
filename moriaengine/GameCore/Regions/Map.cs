@@ -724,36 +724,52 @@ namespace SteamEngine.Regions {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
-				from player in sector.Players
-				where player.GameState != null && rectangle.Contains(player)
-				select player.GameState.Conn;
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
+				   from player in sector.Players
+				   where player.GameState != null && rectangle.Contains(player)
+				   select player.GameState.Conn;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-			    foreach (AbstractCharacter player in sector.Players) {
-			        GameState state = player.GameState;
-			        if ((state != null) && (rectangle.Contains(player))) {
-			            yield return state.Conn;
-			        }
-			    }
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (AbstractCharacter player in sector.Players) {
+						GameState state = player.GameState;
+						if ((state != null) && (rectangle.Contains(player))) {
+							yield return state.Conn;
+						}
+					}
+				}
 			}
 #endif
 		}
 
 		public IEnumerable<AbstractCharacter> GetPlayersInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from player in sector.Players
 				   where rectangle.Contains(player)
 				   select player;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-			    foreach (AbstractCharacter player in sector.Players) {
-			        if (rectangle.Contains(player)) {
-			            yield return player;
-			        }
-			    }
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (AbstractCharacter player in sector.Players) {
+						if (rectangle.Contains(player)) {
+							yield return player;
+						}
+					}
+				}
 			}
 #endif
 		}
@@ -762,18 +778,26 @@ namespace SteamEngine.Regions {
 			you to explicitly specify a rectangle to look in.
 		*/
 		public IEnumerable<Thing> GetThingsInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from thing in sector.Things
 				   where rectangle.Contains(thing)
 				   select thing;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-			    foreach (Thing thing in sector.Things) {
-			        if (rectangle.Contains(thing)) {
-			            yield return thing;
-			        }
-			    }
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (Thing thing in sector.Things) {
+						if (rectangle.Contains(thing)) {
+							yield return thing;
+						}
+					}
+				}
 			}
 #endif
 		}
@@ -782,17 +806,25 @@ namespace SteamEngine.Regions {
 			you to explicitly specify a rectangle to look in.
 		*/
 		public IEnumerable<AbstractItem> GetItemsInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from thing in sector.Things
 				   where thing is AbstractItem && rectangle.Contains(thing)
 				   select (AbstractItem) thing;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.Things) {
-					AbstractItem i = thing as AbstractItem;
-					if ((i != null) && (rectangle.Contains(i))) {
-						yield return i;
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (Thing thing in sector.Things) {
+						AbstractItem i = thing as AbstractItem;
+						if ((i != null) && (rectangle.Contains(i))) {
+							yield return i;
+						}
 					}
 				}
 			}
@@ -803,17 +835,25 @@ namespace SteamEngine.Regions {
 			you to explicitly specify a rectangle to look in.
 		*/
 		public IEnumerable<AbstractCharacter> GetCharsInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from thing in sector.Things
 				   where thing is AbstractCharacter && rectangle.Contains(thing)
 				   select (AbstractCharacter) thing;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.Things) {
-					AbstractCharacter ch = thing as AbstractCharacter;
-					if ((ch != null) && (rectangle.Contains(ch))) {
-						yield return ch;
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (Thing thing in sector.Things) {
+						AbstractCharacter ch = thing as AbstractCharacter;
+						if ((ch != null) && (rectangle.Contains(ch))) {
+							yield return ch;
+						}
 					}
 				}
 			}
@@ -824,18 +864,26 @@ namespace SteamEngine.Regions {
 			you to explicitly specify a rectangle to look in.
 		*/
 		public IEnumerable<AbstractCharacter> GetNPCsInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from thing in sector.Things
 				   where thing is AbstractCharacter && !thing.IsPlayer && rectangle.Contains(thing)
 				   select (AbstractCharacter) thing;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.Things) {
-					AbstractCharacter ch = thing as AbstractCharacter;
-					//Account == null is from "IsPlayer" property (but the property also Logs the query - who knows why...?)
-					if ((ch != null) && (ch.Account == null) && (rectangle.Contains(ch))) {
-						yield return ch;
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (Thing thing in sector.Things) {
+						AbstractCharacter ch = thing as AbstractCharacter;
+						//Account == null is from "IsPlayer" property (but the property also Logs the query - who knows why...?)
+						if ((ch != null) && (ch.Account == null) && (rectangle.Contains(ch))) {
+							yield return ch;
+						}
 					}
 				}
 			}
@@ -846,55 +894,52 @@ namespace SteamEngine.Regions {
 			you to explicitly specify a rectangle to look in.
 		*/
 		public IEnumerable<AbstractInternalItem> GetStaticsAndMultiComponentsInRectangle(ImmutableRectangle rectangle) {
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (StaticItem s in sector.Statics) {
-					if (rectangle.Contains(s)) {
-						yield return s;
-					}
-				}
-				if (sector.MultiComponents != null) {
-					foreach (MultiItemComponent s in sector.MultiComponents) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
+
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (StaticItem s in sector.Statics) {
 						if (rectangle.Contains(s)) {
 							yield return s;
+						}
+					}
+					if (sector.MultiComponents != null) {
+						foreach (MultiItemComponent s in sector.MultiComponents) {
+							if (rectangle.Contains(s)) {
+								yield return s;
+							}
 						}
 					}
 				}
 			}
 		}
 
-		public IEnumerable<AbstractInternalItem> GetStaticsAndMultiComponentsOnCoords(int x, int y) {
-			int sx = x >> sectorFactor;
-			int sy = y >> sectorFactor;
-			Sector sector = this.GetSector(sx, sy);
-
-			foreach (StaticItem s in sector.Statics) {
-				if ((s.X == x) && (s.Y == y)) {
-					yield return s;
-				}
-			}
-			if (sector.MultiComponents != null) {
-				foreach (MultiItemComponent s in sector.MultiComponents) {
-					if ((s.X == x) && (s.Y == y)) {
-						yield return s;
-					}
-				}
-			}
-		}
 		/**
 			This is used by Thing's similarly named methods, but this version allows
 			you to explicitly specify a rectangle to look in.
 		*/
 		public IEnumerable<Thing> GetDisconnectsInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
+
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from thing in sector.Disconnects
 				   where rectangle.Contains(thing)
 				   select thing;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (Thing thing in sector.Disconnects) {
-					if (rectangle.Contains(thing)) {
-						yield return thing;
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (Thing thing in sector.Disconnects) {
+						if (rectangle.Contains(thing)) {
+							yield return thing;
+						}
 					}
 				}
 			}
@@ -906,16 +951,24 @@ namespace SteamEngine.Regions {
 			you to explicitly specify a rectangle to look in.
 		*/
 		public IEnumerable<MultiItemComponent> GetMultiComponentsInRectangle(ImmutableRectangle rectangle) {
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from mic in sector.MultiComponents
 				   where rectangle.Contains(mic)
 				   select mic;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (MultiItemComponent mic in sector.MultiComponents) {
-					if (rectangle.Contains(mic)) {
-						yield return mic;
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (MultiItemComponent mic in sector.MultiComponents) {
+						if (rectangle.Contains(mic)) {
+							yield return mic;
+						}
 					}
 				}
 			}
@@ -949,17 +1002,25 @@ namespace SteamEngine.Regions {
 			Thing top = thing.TopObj();
 			ImmutableRectangle rectangle = new ImmutableRectangle(top.X, top.Y, Globals.MaxUpdateRange);
 
+			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in this.GetSectorsInRectangle(rectangle)
+			return from sector in
+					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+						select this.GetSector(sx, sy))
 				   from player in sector.Players
 				   where player.GameState != null && rectangle.Contains(player) && player.CanSeeForUpdate(thing).Allow
 				   select player.GameState.Conn;
 #else
-			foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-				foreach (AbstractCharacter player in sector.Players) {
-					GameState state = player.GameState;
-					if ((state != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing))) {
-						yield return state.Conn;
+			for (int sx = xSectorStart; sx <= xSectorEnd; sx++) {
+				for (int sy = ySectorStart; sy <= ySectorEnd; sy++) {
+					Sector sector = this.GetSector(sx, sy);
+					foreach (AbstractCharacter player in sector.Players) {
+						GameState state = player.GameState;
+						if ((state != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing).Allow)) {
+							yield return state.Conn;
+						}
 					}
 				}
 			}
@@ -967,16 +1028,8 @@ namespace SteamEngine.Regions {
 		}
 
 		private IEnumerable<Sector> GetSectorsInRectangle(ImmutableRectangle rectangle) {
-			//rectangle.Crop(0, 0, (ushort) (map.sizeX - 1), (ushort) (map.sizeY - 1));
-			int startX = rectangle.MinX;
-			int startY = rectangle.MinY;
-			int endX = rectangle.MaxX;
-			int endY = rectangle.MaxY;
-
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
-			this.GetSectorXY(Math.Min(startX, endX), Math.Min(startY, endY), out xSectorStart, out ySectorStart);
-			this.GetSectorXY(Math.Max(startX, endX), Math.Max(startY, endY), out xSectorEnd, out ySectorEnd);
-
+			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
 			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
 				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
@@ -988,6 +1041,38 @@ namespace SteamEngine.Regions {
 				}
 			}
 #endif
+		}
+
+		private void GetSectorCoordsInRectangle(ImmutableRectangle rectangle,
+				out int xSectorStart, out int ySectorStart, out int xSectorEnd, out int ySectorEnd) {
+
+			int startX = rectangle.MinX;
+			int startY = rectangle.MinY;
+			int endX = rectangle.MaxX;
+			int endY = rectangle.MaxY;
+
+			this.GetSectorXY(Math.Min(startX, endX), Math.Min(startY, endY), out xSectorStart, out ySectorStart);
+			this.GetSectorXY(Math.Max(startX, endX), Math.Max(startY, endY), out xSectorEnd, out ySectorEnd);
+		}
+
+
+		public IEnumerable<AbstractInternalItem> GetStaticsAndMultiComponentsOnCoords(int x, int y) {
+			int sx = x >> sectorFactor;
+			int sy = y >> sectorFactor;
+			Sector sector = this.GetSector(sx, sy);
+
+			foreach (StaticItem s in sector.Statics) {
+				if ((s.X == x) && (s.Y == y)) {
+					yield return s;
+				}
+			}
+			if (sector.MultiComponents != null) {
+				foreach (MultiItemComponent s in sector.MultiComponents) {
+					if ((s.X == x) && (s.Y == y)) {
+						yield return s;
+					}
+				}
+			}
 		}
 
 		/**

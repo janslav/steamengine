@@ -1738,7 +1738,6 @@ namespace SteamEngine {
 			get { 
 				return this.target; 
 			}
-		} 
-
+		}
 	}
 }

@@ -146,6 +146,10 @@ namespace SteamEngine.LScript {
 			}
 			chain = newChain;
 		}
+
+		internal int GetChildIndex(OpNode possibleChild) {
+			return Array.IndexOf(this.chain, possibleChild);
+		}
 	}
 
 	internal abstract class NameRef {
