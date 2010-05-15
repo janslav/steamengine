@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
 				if (distance > self.WeaponStrikeStopRange) {
 					self.AbortSkill();
 				} else if (((TimeSpan) skillSeqArgs.Param2) <= Globals.TimeAsSpan) {
-					int range = target.IsPlayerForCombat ? self.WeaponRangeVsP : self.WeaponRangeVsM;
+					int range = Math.Min(target.IsPlayerForCombat ? self.WeaponRangeVsP : self.WeaponRangeVsM, self.VisionRange);
 					if (distance <= range) {
 						Projectile projectile = self.WeaponProjectile;
 						if (projectile != null) {

@@ -430,7 +430,7 @@ namespace SteamEngine.CompiledScripts {
 						return DenyResultMessages.Deny_ThatIsOutOfLOS;
 					}
 				} else if (target != null) {
-					if (Point2D.GetSimpleDistance(this, targetTop) > Globals.MaxUpdateRange) {
+					if (Point2D.GetSimpleDistance(this, targetTop) > this.VisionRange) {
 						return DenyResultMessages.Deny_ThatIsTooFarAway;
 					}
 					if (map.CanSeeLosFromTo(this, targetTop)) {
