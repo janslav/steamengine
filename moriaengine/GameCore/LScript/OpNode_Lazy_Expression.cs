@@ -295,7 +295,10 @@ namespace SteamEngine.LScript {
 
 			//arg/local
 			if (this.args.Length == 0) {
-				if (this.ParentScriptHolder.ContainsLocalVarName(this.name)) {
+				OpNode_Lazy_ExpressionChain chainAsParent = this.parent as OpNode_Lazy_ExpressionChain;
+				if ((chainAsParent != null) && chainAsParent.GetChildIndex(this) > 0) {
+					//we can only resolve as local variable if we're the leftmost string
+				} else if (this.ParentScriptHolder.ContainsLocalVarName(this.name)) {
 					finalOpNode = new OpNode_GetArg(this.parent, this.filename, this.line, this.column, this.OrigNode, this.name);
 					goto runit;
 				}
