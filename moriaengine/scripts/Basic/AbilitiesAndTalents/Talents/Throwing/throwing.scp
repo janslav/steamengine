@@ -23,6 +23,9 @@ RESOURCES=2 i_ingot_iron
 //DAM=3
 SKILLMAKE=BLACKSMITHING 40.0, TINKERING 35.0
 
+PoisoningDifficulty = 250
+PoisoningEfficiency = 0.75
+
 Material = Material.Iron
 MaterialType = MaterialType.Metal
 ProjectileType = ProjectileType.Throwable

@@ -139,7 +139,7 @@ namespace SteamEngine.CompiledScripts {
             GameState stateTarget = target.GameState;
 
             //nevidi na cil
-			if (Point2D.GetSimpleDistance(self, target) > 6) {
+			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange)) {
                 if (stateSelf != null) {
                     stateSelf.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 						Loc<HealingLoc>.Get(stateSelf.Language).TargetOut, target.Name));

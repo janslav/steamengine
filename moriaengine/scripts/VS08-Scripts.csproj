@@ -648,6 +648,7 @@
     <None Include="Temporary\publicTest.scp" />
     <None Include="Temporary\Temporary.scp" />
     <None Include="Tests\CharacterConnectionStateInvariants.scp" />
+    <None Include="Tests\CanSeeLOSTest.scp" />
     <None Include="Tests\craftCat-test.scp" />
     <None Include="Tests\d_test2.scp" />
     <None Include="Tests\InputDefTest.scp" />

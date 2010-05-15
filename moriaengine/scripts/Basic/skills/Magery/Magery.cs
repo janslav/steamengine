@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 						IResourceListItem missingItem;
 						if (((req != null) && (!req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) ||
 								((res != null) && (!res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem)))) {
-							ResourcesList.SendResourceMissingMsg(self, missingItem);
+							missingItem.SendMissingMessage(self);
 							//? self.ClilocSysMessage(502630); // More reagents are needed for this spell.
 							return true;
 						}

@@ -339,7 +339,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private bool TryRunTrigger(LScriptHolder script, AbstractCharacter self, params object[] parameters) {
-			object retVal = script.Run(self, parameters);
+			object retVal = script.TryRun(self, parameters);
 			try {
 				int retInt = Convert.ToInt32(retVal);
 				if (retInt == 1) {
