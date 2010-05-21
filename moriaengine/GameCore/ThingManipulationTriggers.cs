@@ -339,7 +339,8 @@ namespace SteamEngine {
 		}
 
 		//try to add item to some stack inside
-		internal bool TryStackToAnyInside(AbstractItem toStack) {
+		public bool TryStackToAnyInside(AbstractItem toStack) {
+			Sanity.IfTrueThrow(!this.IsContainer, "TryStackToAnyInside can only be called on a container");
 			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				AbstractItem stackWith = (AbstractItem) tll.firstThing;
