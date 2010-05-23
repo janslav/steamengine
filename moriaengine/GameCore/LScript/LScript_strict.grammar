@@ -149,12 +149,6 @@ ForHeaderCode = ForeachHeaderLocalName ArgsSeparator SimpleCode ArgsSeparator Si
 	//we use the same LocalName syntax as foreach
 ForHeaderInParens = LEFT_PAREN ForHeader RIGHT_PAREN;
 
-
-//TODO:
-//FOR varname 3 200 
-//SYSMESSAGE Now we are at <LOCAL.varname> 
-//ENDFOR 
-
 WhileBlock = WHILE Code COMEOL [Script] ENDWHILE COMEOL;
 
 SwitchBlock = SWITCH SimpleCode COMEOL (CaseBlock)+ ENDSWITCH;

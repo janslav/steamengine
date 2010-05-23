@@ -2,9 +2,107 @@
 this.Target(targ_lostest)
 
 
+
+
 //experimental implementation. 
 //If successful, then it shall be hardcoded in core, but is gonna be left here for later optimisation etc.
+//settable width, + diagonal tiles next to edges
 [function f_create_los_path] //argv0 = origin, argv1 = destination
+arg.path = CreateList(typeof(Point3D))
+
+
+arg.org = <argv[0]>
+arg.dest = <argv[1]>
+
+arg.diffx = (dest.x - org.x)
+arg.diffy = (dest.y - org.y)
+
+arg.absdiffx = System.Math.Abs(arg.diffx) 
+arg.absdiffy = System.Math.Abs(arg.diffy) 
+
+if (absdiffx > absdiffy)
+	arg.dx = diffx / absdiffx
+	arg.dy = diffy / absdiffx
+	arg.useX = true
+else
+	arg.dx = diffx / absdiffy
+	arg.dy = diffy / absdiffy
+	arg.useX = false
+endif
+
+//echo("dx:<dx>, dy:<dy>, useX:<useX>")
+
+if (usex)
+	arg.a = org.x
+	arg.da = dx
+	arg.destA = dest.x
+	
+	arg.b = org.y
+	arg.db = dy
+else
+	arg.a = org.y
+	arg.da = dy
+	arg.destA = dest.y
+	
+	arg.b = org.x
+	arg.db = dx
+endif
+
+arg.threshold = 0.2 //can be 0..<0.5 - the closer to 0.5, the wider the path
+
+for i 0 30
+	//echo("a:<a>, b:<b>")
+
+	arg.b1 = System.Math.Round(arg.b + arg.threshold)
+	arg.b2 = System.Math.Round(arg.b - arg.threshold)
+	
+	//echo("b1:<b1>, b2:<b2>")
+	
+	arg.p1 = f_los_test_point3d(a, b1, usex)
+	path.Add(p1)
+
+	if (<b1> != <b2>)
+		path.Add(f_los_test_point3d(a, b2, usex))
+		arg.p1 = null
+		arg.last = null
+	elseif (<arg.last>)
+		arg.lastdx = p1.x - last.x
+		arg.lastdy = p1.y - last.y
+		
+		//echo("lastdx:<lastdx>, lastdy:<lastdy>")
+		
+		if ((System.math.abs(lastdx) == 1) && (System.math.abs(lastdy) == 1))
+			//add 2 diagonal points, we don't want to see through
+			path.Add(Point3D(last.x + lastdx, last.y, src.z))
+			path.Add(Point3D(last.x, last.y + lastdy, src.z))
+		endif
+		arg.last=p1
+	else
+		arg.last=p1
+	endif	
+	
+	if (a == desta)
+		return path
+	endif
+	
+	arg.a = a + da
+	arg.b = b + db
+endfor
+
+throw SEException("LOS check boundary fail")
+
+[function f_los_test_point3d] //a, b, usex
+if (argv[2])
+	arg.point = Point3D(argv[0], argv[1], src.z)
+else 
+	arg.point = Point3D(argv[1], argv[0], src.z)
+endif
+//echo("point:<point>")
+return point
+
+
+//ported from runuo. works - kind of - but the path is always only 1 tile "wide". Not optimal me thinks.
+[function f_create_los_path_runuo] //argv0 = origin, argv1 = destination
 arg.path = CreateList(typeof(Point3D))
 
 
@@ -98,11 +196,30 @@ return false
 message="Target LOS test point/object..."
 
 on=@targon_point
-	//sysmessage("You targetted <argv(0)>, parameter <argv(1)>")
+	sysmessage("You targetted <argv(0)>")
 	
-	arg.path = f_create_los_path(<src>, <argv[0]>)
+	//arg.path = f_create_los_path(<src>, <argv[0]>)
+	//arg.path = f_create_los_path_runuo(<src>, <argv[0]>)
+	arg.path = Map.CreateLosPath(<src>, <argv[0]>)
+	
+	//display conflicts with existing Things as fire columns
+	arg.minX = System.Math.Min(src.X, argv[0].X) - 1
+	arg.maxX = System.Math.Max(src.X, argv[0].X) + 1
+	arg.minY = System.Math.Min(src.Y, argv[0].Y) - 1
+	arg.maxY = System.Math.Max(src.Y, argv[0].Y) + 1
+	
+	arg.rect = ImmutableRectangle(minX, minY, maxX, maxY)
+	
+	foreach (t in src.GetMap().GetThingsInRectangle(rect))
+		if (path.Contains(t))
+			i_fire_column.Create(t.P).AddTimer(%decay, 5, delete)
+		endif
+	endforeach
+	
+	//display the whole path as wooden tiles
 	f_display_los_path(arg.path)
-	
+
+	path.Dispose()
 
 	return 0
 

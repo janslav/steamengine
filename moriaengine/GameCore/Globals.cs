@@ -429,14 +429,13 @@ namespace SteamEngine {
 
 				IniFileSection files = iniH.GetNewOrParsedSection("files");
 				logPath = Path.GetFullPath(files.GetValue<string>("logPath", "./logs/", "Path to the log files"));
+				logToFiles = files.GetValue<bool>("logToFiles", true, "Whether to log console output to a file");
 				CoreLogger.Init();
 				savePath = Path.GetFullPath(files.GetValue<string>("savePath", "./saves/", "Path to the save files"));
 #if MSWIN
 				ndocExe = Path.GetFullPath(files.GetValue<string>("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc)."));
 #endif
 				docsPath = Path.GetFullPath(files.GetValue<string>("docsPath", "./docs/", "Path to the docs (Used when writing out some information from MUL files, like map tile info)"));
-
-				logToFiles = files.GetValue<bool>("logToFiles", true, "Whether to log console output to a file");
 				useMap = files.GetValue<bool>("useMap", true, "Whether to load map0.mul and statics0.mul and use them or not.");
 				generateMissingDefs = files.GetValue<bool>("generateMissingDefs", false, "Whether to generate missing scripts based on tiledata.");
 				useMultiItems = files.GetValue<bool>("useMultiItems", true, "Whether to use multi items...");

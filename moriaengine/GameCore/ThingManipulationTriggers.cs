@@ -102,8 +102,7 @@ namespace SteamEngine {
 		}
 
 		static internal void MarkAsLimbo(Thing t) {
-			t.point4d.x = 0xffff;
-			t.point4d.y = 0xffff;
+			t.point4d.SetXY(0xffff, 0xffff);
 		}
 
 		internal abstract void ItemMakeLimbo(AbstractItem i);
@@ -308,8 +307,7 @@ namespace SteamEngine {
 #endif
 
 			cont.InternalItemEnter(this);
-			this.point4d.x = (ushort) x;
-			this.point4d.y = (ushort) y;
+			this.point4d.SetXY(x, y);
 
 			ItemInItemArgs args = new ItemInItemArgs(this, cont);
 			this.TryTrigger(TriggerKey.enterItem, args);
@@ -341,6 +339,8 @@ namespace SteamEngine {
 		//try to add item to some stack inside
 		public bool TryStackToAnyInside(AbstractItem toStack) {
 			Sanity.IfTrueThrow(!this.IsContainer, "TryStackToAnyInside can only be called on a container");
+			Sanity.IfTrueThrow(toStack.Cont != this, "TryStackToAnyInside parameter item must be in the container it's called on");
+
 			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				AbstractItem stackWith = (AbstractItem) tll.firstThing;
@@ -509,7 +509,7 @@ namespace SteamEngine {
 		internal void Trigger_EnterRegion(int x, int y, int z, byte m) {
 			Sanity.IfTrueThrow(!this.IsLimbo, "Item is supposed to be in Limbo state when Trigger_Enter* called");
 
-			this.point4d.SetP(x, y, z, m);
+			this.point4d.SetXYZM(x, y, z, m);
 
 			Map map = Map.GetMap(m);
 			Region region = map.GetRegionFor(x, y);
@@ -636,8 +636,7 @@ namespace SteamEngine {
 				if ((this.point4d.x != x) || (this.point4d.y != y)) {
 					OpenedContainers.SetContainerClosed(this);//if I am a container too, I get closed also
 					ItemSyncQueue.AboutToChange(this);
-					this.point4d.x = (ushort) x;
-					this.point4d.y = (ushort) y;
+					this.point4d.SetXY(x, y);
 				}
 			}//else throw? Probably not so important...
 		}
@@ -649,16 +648,22 @@ namespace SteamEngine {
 
 				int minX, minY, maxX, maxY;
 				i.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
-				if (p.x < minX) {
-					p.x = (ushort) minX;
+
+				int newX = p.x;
+				int newY = p.y;
+
+				if (newX < minX) {
+					newX = minX;
 				} else if (p.x > maxX) {
-					p.x = (ushort) maxX;
+					newX = maxX;
 				}
-				if (p.y < minY) {
-					p.y = (ushort) minY;
-				} else if (p.y > maxY) {
-					p.y = (ushort) maxY;
+				if (newY < minY) {
+					newY = minY;
+				} else if (newY > maxY) {
+					newY = maxY;
 				}
+
+				this.point4d.SetXY(newX, newY);
 			}
 		}
 
@@ -819,9 +824,7 @@ namespace SteamEngine {
 				i.contOrTLL = this.invisibleLayers;
 			}
 
-			i.point4d.x = 7000;
-			i.point4d.y = 0;
-			i.point4d.z = (sbyte) layer;
+			i.point4d.SetXYZ(7000, 0, layer);
 			this.AdjustWeight(i.Weight);
 		}
 

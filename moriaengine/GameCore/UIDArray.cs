@@ -221,8 +221,11 @@ namespace SteamEngine {
 			return new Enumerator(this);
 		}
 
+		public IEnumerable<T> AsEnumerable() {
+			return new Enumerator(this);
+		}
 
-		private class Enumerator : IEnumerator<T> {
+		private class Enumerator : IEnumerator<T>, IEnumerable<T> {
 			private T current;
 			private int currIdx;
 			private UIDArray<T> source;
@@ -262,6 +265,18 @@ namespace SteamEngine {
 				}
 				return false;
 			}
+
+			#region IEnumerable<T> Members
+
+			IEnumerator<T> IEnumerable<T>.GetEnumerator() {
+				return this;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator() {
+				return this;
+			}
+
+			#endregion
 		}
 	}
 }

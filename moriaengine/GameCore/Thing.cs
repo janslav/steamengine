@@ -42,12 +42,15 @@ namespace SteamEngine {
 		private ushort color;
 		private ushort model;
 		internal ThingDef def; //tis is changed even from outside the constructor in case of dupeitems...
-		internal readonly MutablePoint4D point4d; //made this internal because SetPosImpl is now abstract... -tar
+
+		internal MutablePoint4D point4d; //made this internal because SetPosImpl is now abstract... -tar
+
 		private int uid = -2;
 		//internal Region region;
 		//internal NetState netState;//No one is to touch this but the NetState class itself!
 
-		internal object contOrTLL; //internal cos of ThingLinkedList
+		internal object contOrTLL; //parent TLL or parent Thing (in fact it's a Thing only if it's a char we're being dragged by)
+		//internal because of ThingLinkedList implementation
 
 		private static int savedCharacters;
 		private static int savedItems;
@@ -139,7 +142,7 @@ namespace SteamEngine {
 			this.def = myDef;
 			this.model = (ushort) myDef.Model;
 			this.color = (ushort) myDef.Color;
-			this.point4d = new MutablePoint4D(0xffff, 0xffff, 0, 0);
+			this.point4d.SetXYZM(0xffff, 0xffff, 0, 0);
 			if (uidBeingLoaded == -1) {
 				things.Add(this);//sets uid
 				this.Resend();
@@ -154,12 +157,65 @@ namespace SteamEngine {
 
 			this.Resend();
 			things.Add(this);//sets uid
-			this.point4d = new MutablePoint4D(copyFrom.point4d);
+			this.point4d.SetXYZM(copyFrom.point4d);
 			this.def = copyFrom.def;
 			this.color = copyFrom.color;
 			this.model = copyFrom.model;
 			//SetSectorPoint4D();
 			Globals.LastNew = this;
+		}
+
+
+		#region static UidGet methods
+		public static int UidClearFlags(int uid) {
+			return (int) (((uint) uid) & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
+		}
+
+		[CLSCompliant(false)]
+		public static int UidClearFlags(uint uid) {
+			return (int) (uid & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
+		}
+
+		public static AbstractCharacter UidGetCharacter(int uid) {
+			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
+		}
+
+		[CLSCompliant(false)]
+		public static AbstractCharacter UidGetCharacter(uint uid) {
+			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
+		}
+
+		public static AbstractItem UidGetContainer(int uid) {
+			AbstractItem i = things.Get(UidClearFlags(uid)) as AbstractItem;
+			if ((i != null) && (i.IsContainer)) {
+				return i;
+			}
+			return null;
+		}
+
+		public static AbstractItem UidGetItem(int uid) {
+			return things.Get(UidClearFlags(uid)) as AbstractItem;
+		}
+
+		[CLSCompliant(false)]
+		public static AbstractItem UidGetItem(uint uid) {
+			return things.Get(UidClearFlags(uid)) as AbstractItem;
+		}
+
+		public static Thing UidGetThing(int uid) {
+			return things.Get(UidClearFlags(uid));
+		}
+
+		[CLSCompliant(false)]
+		public static Thing UidGetThing(uint uid) {
+			return things.Get(UidClearFlags(uid));
+		}
+		#endregion static UidGet methods
+
+		public static void RegisterTriggerGroup(TriggerGroup tg) {
+			if (!registeredTGs.Contains(tg)) {
+				registeredTGs.Add(tg);
+			}
 		}
 
 		internal void CheckAfterLoad() {
@@ -176,9 +232,9 @@ namespace SteamEngine {
 
 		//Property: Enumerable
 		//An IEnumerable for the Things represented by this class
-		public static IEnumerable AllThings {
+		public static IEnumerable<Thing> AllThings {
 			get {
-				return things;
+				return things.AsEnumerable();
 			}
 		}
 
@@ -217,6 +273,8 @@ namespace SteamEngine {
 		//WarMode = 0x40, - used as such in scripts
 		//Hidden = 0x80
 
+
+		#region Position accessors
 		//Property: x
 		//The x coordinate of this Thing. To change something's position, it's generally recommended that you set P
 		//or use Go instead.
@@ -333,19 +391,6 @@ namespace SteamEngine {
 			this.SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
-		public virtual Thing Cont {
-			get {
-				return this;
-			}
-			set {
-				throw new SanityCheckException("You can't give a Character a Cont");
-			}
-		}
-
-		public Map GetMap() {
-			return Map.GetMap(M);
-		}
-
 		public void NudgeUp() {
 			NudgeUp(1);
 		}
@@ -373,6 +418,20 @@ namespace SteamEngine {
 				//OverheadMessage("This cannot be nudged that much (It would make its z coordinate too low).");
 				Z = sbyte.MinValue;
 			}
+		}
+		#endregion P
+
+		public virtual Thing Cont {
+			get {
+				return this;
+			}
+			set {
+				throw new SanityCheckException("You can't give a Character a Cont");
+			}
+		}
+
+		public Map GetMap() {
+			return Map.GetMap(this.point4d.m);
 		}
 
 		public void Update() {
@@ -446,59 +505,6 @@ namespace SteamEngine {
 		public override bool IsDeleted { 
 			get { 
 				return (this.uid == -1); 
-			}
-		}
-
-		//------------------------
-		//Static Thing methods
-
-		public static int UidClearFlags(int uid) {
-			return (int) (((uint) uid) & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
-		}
-
-		[CLSCompliant(false)]
-		public static int UidClearFlags(uint uid) {
-			return (int) (uid & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
-		}
-
-		public static AbstractCharacter UidGetCharacter(int uid) {
-			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
-		}
-
-		[CLSCompliant(false)]
-		public static AbstractCharacter UidGetCharacter(uint uid) {
-			return things.Get(UidClearFlags(uid)) as AbstractCharacter;
-		}
-
-		public static AbstractItem UidGetContainer(int uid) {
-			AbstractItem i = things.Get(UidClearFlags(uid)) as AbstractItem;
-			if ((i != null) && (i.IsContainer)) {
-				return i;
-			}
-			return null;
-		}
-
-		public static AbstractItem UidGetItem(int uid) {
-			return things.Get(UidClearFlags(uid)) as AbstractItem;
-		}
-
-		[CLSCompliant(false)]
-		public static AbstractItem UidGetItem(uint uid) {
-			return things.Get(UidClearFlags(uid)) as AbstractItem;
-		}
-
-		public static Thing UidGetThing(int uid) {
-			return things.Get(UidClearFlags(uid));
-		}
-
-		[CLSCompliant(false)]
-		public static Thing UidGetThing(uint uid) {
-			return things.Get(UidClearFlags(uid));
-		}
-
-		public static void RegisterTriggerGroup(TriggerGroup tg) {
-			if (!registeredTGs.Contains(tg)) {
-				registeredTGs.Add(tg);
 			}
 		}
 
@@ -579,7 +585,7 @@ namespace SteamEngine {
 
 		public virtual Region Region {
 			get {
-				return Map.GetMap(this.point4d.m).GetRegionFor(this.point4d);
+				return this.GetMap().GetRegionFor(this.point4d);
 			}
 		}
 
@@ -707,9 +713,9 @@ namespace SteamEngine {
 					object o = ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(Point4D));
 					Point4D asPoint = o as Point4D;
 					if (asPoint != null) {
-						this.point4d.SetP(asPoint);
+						this.point4d.SetXYZM(asPoint);
 					} else {
-						MutablePoint4D.Parse(this.point4d, (string) o);
+						this.point4d.SetParsedP((string) o);
 					}
 					//it will be put in world later by map or Cont
 					break;
@@ -1586,7 +1592,7 @@ namespace SteamEngine {
 
 			}
 
-			this.P((ushort) x, (ushort) y, this.Z);	//This won't change our Z coordinate, whereas P(x,y) would.
+			this.P(x, y, this.point4d.z);	//This won't change our Z coordinate, whereas P(x,y) would.
 		}
 
 		/*

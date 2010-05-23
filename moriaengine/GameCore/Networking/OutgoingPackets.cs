@@ -24,6 +24,8 @@ using SteamEngine.Common;
 using System.IO;
 using System.Net;
 
+using SteamEngine.Regions;
+
 namespace SteamEngine.Networking {
 
 	//ushort size at the beginning of the packet
