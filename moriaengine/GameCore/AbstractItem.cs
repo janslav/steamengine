@@ -311,7 +311,7 @@ namespace SteamEngine {
 		public override Region Region {
 			get {
 				Thing top = this.TopObj();
-				return Map.GetMap(top.point4d.m).GetRegionFor(top.point4d);
+				return this.GetMap().GetRegionFor(top.point4d);
 			}
 		}
 

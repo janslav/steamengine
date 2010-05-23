@@ -108,7 +108,7 @@ namespace SteamEngine {
 			this.name = copyFrom.name;
 			this.directionAndFlags = copyFrom.directionAndFlags;
 			Globals.LastNewChar = this;
-			Map.GetMap(this.point4d.m).Add(this);
+			this.GetMap().Add(this);			
 		}
 
 		//The client apparently doesn't want characters' uids to be flagged with anything.
@@ -732,7 +732,7 @@ namespace SteamEngine {
 				//move char, and send 0x77 to players nearby
 				CharSyncQueue.AboutToChangePosition(this, mt); 
 
-				this.point4d.SetP(newX, newY, newZ);
+				this.point4d.SetXYZ(newX, newY, newZ);
 				this.ChangedP(oldPoint, mt);
 			} else { //just changing direction, no steps
 				CharSyncQueue.AboutToChangeDirection(this, requested);
@@ -755,7 +755,7 @@ namespace SteamEngine {
 				if (oldRegion != newRegion) {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
 				}
-				this.point4d.SetP(x, y, z, m);
+				this.point4d.SetXYZM(x, y, z, m);
 				ChangedP(oldP, MovementType.Teleporting);
 			} else {
 				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");

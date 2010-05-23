@@ -33,7 +33,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MSWIN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -171,6 +171,9 @@
     <Compile Include="Persistence\ExportImport.cs" />
     <Compile Include="Persistence\ObjectSaver.cs" />
     <Compile Include="Persistence\WorldSaver.cs" />
+    <Compile Include="Regions\MutablePoint.cs" />
+    <Compile Include="Regions\PointsInLine.cs" />
+    <Compile Include="Regions\LineOfSightImpl.cs" />
     <Compile Include="Regions\DynamicRegion.cs" />
     <Compile Include="Regions\Map.cs" />
     <Compile Include="Regions\MapCalculations.cs" />

@@ -234,7 +234,7 @@ namespace SteamEngine {
 			if (item != null) {
 				item.Trigger_EnterRegion(x, y, z, m);
 			} else {
-				t.point4d.SetP(x, y, z, m);
+				t.point4d.SetXYZM(x, y, z, m);
 				Map.GetMap(m).Add(t);
 			}
 		}

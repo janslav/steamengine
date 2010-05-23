@@ -250,19 +250,3 @@ namespace SteamEngine {
 		}
 	}
 }
-
-namespace SteamEngine.Regions {
-	public partial class Map {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "to"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "from"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-		public bool CanSeeLosFromTo(IPoint3D from, IPoint3D to) {
-#if TRACE
-			int distance = Point2D.GetSimpleDistance(from, to);
-			if (distance > Globals.MaxUpdateRange) {
-				Logger.WriteWarning("CanSeeLosFromTo for 2 points outside update range...?", new System.Diagnostics.StackTrace());
-			}
-#endif
-			//TODO, obviously
-			return true;
-		}
-	}
-}

@@ -383,7 +383,7 @@ namespace SteamEngine.Regions {
 			MultiItemComponent[] components = multiItem.contentsOrComponents as MultiItemComponent[];
 			Sanity.IfTrueThrow(components != null, "MultiItem being added to map when it already has it's components instantiated!");
 			MultiData data = multiItem.Def.multiData;
-			Sanity.IfTrueThrow(data == null, "MultiItem wihtout MultiData on it's Def?!");
+			Sanity.IfTrueThrow(data == null, "MultiItem without MultiData on it's Def?!");
 			MutablePoint4D p = multiItem.point4d;
 			Sanity.IfTrueThrow(p.m != this.m, "p.m != this.m");
 			components = data.Create(p.x, p.y, p.z, this);
@@ -583,13 +583,13 @@ namespace SteamEngine.Regions {
 					foreach (MultiItemComponent mic in components) {
 						int oldX = mic.X, oldY = mic.Y;
 						mic.SetRelativePos(newP.x, newP.y, newP.z);
-						this.ChangedMultiCOmponentPImpl(mic, oldX, oldY);
+						this.ChangedMultiComponentPImpl(mic, oldX, oldY);
 					}
 				}
 			}
 		}
 
-		private void ChangedMultiCOmponentPImpl(MultiItemComponent mic, int oldX, int oldY) {
+		private void ChangedMultiComponentPImpl(MultiItemComponent mic, int oldX, int oldY) {
 			Logger.WriteInfo(Globals.MapTracingOn, this + ".ChangedMultiCOmponentPImpl(" + mic + "," + oldX + "," + oldY + ")");
 			int oldXPre = oldX & sectorAnd;
 			int newXPre = mic.X & sectorAnd;
