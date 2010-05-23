@@ -86,15 +86,16 @@ namespace SteamEngine.AuxiliaryServer {
 		internal static void RemoveGameServer(GameServer gameServer) {
 			LinkedList<ConsoleServer.ConsoleClient> consoleList;
 			if (consoles.TryGetValue(gameServer, out consoleList)) {
-				
-
 				foreach (ConsoleServer.ConsoleClient console in consoleList) {
 					gameServers[console].Remove(gameServer);
-
-					console.CloseCmdWindow(gameServer.ServerUid);
 				}
 
 				consoles.Remove(gameServer);
+			}
+
+			//not just logged in ones, because all consoles see gameservers at startup
+			foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				console.CloseCmdWindow(gameServer.ServerUid);
 			}
 
 			if (gameServer.Setup != null) {
