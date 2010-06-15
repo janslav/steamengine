@@ -88,18 +88,17 @@ namespace SteamEngine.CompiledScripts {
 		private class GeneratedInstance {
 			internal List<MethodInfo> triggerMethods = new List<MethodInfo>();
 			Type pluginType;
-			CodeTypeDeclaration codeTypeDeclatarion;
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_" + pluginType.Name);
-				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				codeTypeDeclatarion.BaseTypes.Add(typeof(PluginDef.PluginTriggerGroup));
-				codeTypeDeclatarion.IsClass = true;
+				CodeTypeDeclaration codeTypeDeclaration = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_" + pluginType.Name);
+				codeTypeDeclaration.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+				codeTypeDeclaration.BaseTypes.Add(typeof(PluginDef.PluginTriggerGroup));
+				codeTypeDeclaration.IsClass = true;
 
-				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
-				codeTypeDeclatarion.Members.Add(GenerateBootstrapMethod());
+				codeTypeDeclaration.Members.Add(GenerateRunMethod());
+				codeTypeDeclaration.Members.Add(GenerateBootstrapMethod(codeTypeDeclaration.Name));
 
-				return codeTypeDeclatarion;
+				return codeTypeDeclaration;
 			}
 
 			internal GeneratedInstance(Type pluginType) {
@@ -155,7 +154,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 
-			private CodeMemberMethod GenerateBootstrapMethod() {
+			private CodeMemberMethod GenerateBootstrapMethod(string typeName) {
 				CodeMemberMethod retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Static;
 				retVal.Name = "Bootstrap";
@@ -165,7 +164,7 @@ namespace SteamEngine.CompiledScripts {
 						new CodeTypeReferenceExpression(typeof(PluginDef)),
 						"RegisterPluginTG",
 						new CodeTypeOfExpression(pluginType.Name + "Def"),
-						new CodeObjectCreateExpression(this.codeTypeDeclatarion.Name)
+						new CodeObjectCreateExpression(typeName)
 					));
 
 				return retVal;

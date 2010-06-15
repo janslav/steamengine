@@ -296,7 +296,7 @@ namespace SteamEngine.CompiledScripts {
 								this.mountorrider.SetFlag_Riding(!this.mountorrider.Flag_Disconnected);
 							} else { //disconnected state the same, i.e. useless for us
 								//this is an error
-								this.ForgetMountValues(); //the other side should get fied in their own instance of this method
+								this.ForgetMountValues(); //the other side should get fixed in their own instance of this method
 							}
 						}
 					}
