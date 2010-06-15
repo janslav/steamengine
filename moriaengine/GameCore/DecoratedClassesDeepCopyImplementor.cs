@@ -110,8 +110,6 @@ namespace SteamEngine {
 			List<FieldInfo> copyableDataFields = new List<FieldInfo>();
 			List<PropertyInfo> copyableDataProperties = new List<PropertyInfo>();
 
-			CodeTypeDeclaration codeTypeDeclatarion;
-
 			internal GeneratedInstance(Type decoratedClass) {
 				this.decoratedClass = decoratedClass;
 				foreach (MemberInfo mi in decoratedClass.GetMembers()) {
@@ -181,14 +179,14 @@ namespace SteamEngine {
 				}
 			}
 
-			private CodeMemberMethod GenerateDeepCopyMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
-				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Final;
-				retVal.Name = "DeepCopy";
-				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "copyFrom"));
-				retVal.ReturnType = new CodeTypeReference(typeof(object));
+			private void GenerateDeepCopyMethod(CodeTypeMemberCollection methods) {
+				CodeMemberMethod deepCopyMethod = new CodeMemberMethod();
+				deepCopyMethod.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+				deepCopyMethod.Name = "DeepCopy";
+				deepCopyMethod.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "copyFrom"));
+				deepCopyMethod.ReturnType = new CodeTypeReference(typeof(object));
 
-				retVal.Statements.Add(new CodeVariableDeclarationStatement(
+				deepCopyMethod.Statements.Add(new CodeVariableDeclarationStatement(
 					this.decoratedClass,
 					"copyFromConverted",
 					new CodeCastExpression(this.decoratedClass,
@@ -215,27 +213,27 @@ namespace SteamEngine {
 						parameters);
 				}
 
-				retVal.Statements.Add(new CodeVariableDeclarationStatement(
+				deepCopyMethod.Statements.Add(new CodeVariableDeclarationStatement(
 					this.decoratedClass,
 					"copy",
 					initExpression));
 
 				foreach (FieldInfo fi in this.copyableDataFields) {
 					string name = fi.Name;
-					retVal.Statements.Add(GenerateCopyOperation(name, fi.FieldType, false));
+					deepCopyMethod.Statements.Add(GenerateCopyOperation(methods, name, fi.FieldType, false));
 				}
 				foreach (PropertyInfo pi in this.copyableDataProperties) {
 					string name = pi.Name;
-					retVal.Statements.Add(GenerateCopyOperation(name, pi.PropertyType, true));
+					deepCopyMethod.Statements.Add(GenerateCopyOperation(methods, name, pi.PropertyType, true));
 				}
 
-				retVal.Statements.Add(
+				deepCopyMethod.Statements.Add(
 					new CodeMethodReturnStatement(
 						new CodeVariableReferenceExpression("copy")));
-				return retVal;
+				methods.Add(deepCopyMethod);
 			}
 
-			private CodeStatement GenerateCopyOperation(string name, Type type, bool isProperty) {
+			private CodeStatement GenerateCopyOperation(CodeTypeMemberCollection methods, string name, Type type, bool isProperty) {
 				if (DeepCopyFactory.IsNotCopied(type)) {
 					CodeExpression from, to;
 					if (isProperty) {
@@ -283,7 +281,7 @@ namespace SteamEngine {
 					method.Statements.Add(new CodeAssignStatement(to,
 						new CodeCastExpression(type,
 							new CodeArgumentReferenceExpression("copiedValue"))));
-					this.codeTypeDeclatarion.Members.Add(method);
+					methods.Add(method);
 
 					return new CodeExpressionStatement(new CodeMethodInvokeExpression(
 						new CodeTypeReferenceExpression(typeof(DeepCopyFactory)),
@@ -315,15 +313,16 @@ namespace SteamEngine {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				this.codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_" + this.decoratedClass.Name);
-				this.codeTypeDeclatarion.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
-				this.codeTypeDeclatarion.BaseTypes.Add(typeof(IDeepCopyImplementor));
-				this.codeTypeDeclatarion.IsClass = true;
+				CodeTypeDeclaration codeTypeDeclaration = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_" + this.decoratedClass.Name);
+				codeTypeDeclaration.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
+				codeTypeDeclaration.BaseTypes.Add(typeof(IDeepCopyImplementor));
+				codeTypeDeclaration.IsClass = true;
 
-				this.codeTypeDeclatarion.Members.Add(GenerateDeepCopyMethod());
-				this.codeTypeDeclatarion.Members.Add(GenerateHandledTypeProperty());
 
-				return this.codeTypeDeclatarion;
+				this.GenerateDeepCopyMethod(codeTypeDeclaration.Members);
+				codeTypeDeclaration.Members.Add(this.GenerateHandledTypeProperty());
+
+				return codeTypeDeclaration;
 			}
 		}
 	}

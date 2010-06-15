@@ -55,7 +55,7 @@ namespace SteamEngine {
 
 		public PluginHolder Cont {
 			get {
-				return cont;
+				return this.cont;
 			}
 		}
 
@@ -100,8 +100,8 @@ namespace SteamEngine {
 		}
 
 		public override void Delete() {
-			if (cont != null) {
-				cont.RemovePlugin(this);
+			if (this.cont != null) {
+				this.cont.RemovePlugin(this);
 			}
 			if (!isDeleted) {
 				object scriptedRetVal, compiledRetVal;
@@ -128,6 +128,21 @@ namespace SteamEngine {
 				this.def = (PluginDef) ObjectSaver.OptimizedLoad_Script(valueString);
 			} else {
 				base.LoadLine(filename, line, valueName, valueString);
+			}
+		}
+
+		[LoadingFinalizer]
+		public virtual void LoadingFinished() {
+			if (this.def == null) {
+
+				//Delete() calls @destroy triggers, which require def. 
+				//This is an emergency deleting of an object in wrong state, so there's no real correct solution anyway...
+				if (this.cont != null) {
+					this.cont.RemovePlugin(this);
+				}
+				base.Delete();
+
+				throw new SEException("No PluginDef reference loaded for this "+this.GetType().Name+". Deleting.");
 			}
 		}
 		#endregion save/load

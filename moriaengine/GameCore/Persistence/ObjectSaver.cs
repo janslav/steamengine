@@ -16,15 +16,13 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
-using SteamEngine.Timers;
 
 namespace SteamEngine.Persistence {
 
@@ -561,6 +559,13 @@ namespace SteamEngine.Persistence {
 					}
 				} catch (FatalException) {
 					throw;
+				} catch (SEException sex) {
+					//if it already contains exception location, do not display another one
+					if (sex.NiceMessage.NiceString.StartsWith("(" + LogStr.GetStyleStartPrefix(LogStyles.FileLine))) {
+						Logger.WriteError(sex);
+					} else {
+						Logger.WriteError(input.Filename, input.HeaderLine, sex);
+					}
 				} catch (Exception e) {
 					Logger.WriteError(input.Filename, input.HeaderLine, e);
 				}
