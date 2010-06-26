@@ -31,7 +31,7 @@ namespace SteamEngine.Common {
 			return defaultText;
 		}
 
-		internal virtual void InternalSetEntry(string entryName, string entry) {
+		protected virtual void ProtectedSetEntry(string entryName, string entry) {
 			if (this.entriesByName.ContainsKey(entryName)) {
 				this.entriesByName[entryName] = String.Intern(entry); ;
 			}
@@ -99,7 +99,7 @@ namespace SteamEngine.Common {
 							string name = gc["name"].Value;
 							if (this.HasEntry(name)) {
 								if (helperList.ContainsKey(name)) {
-									this.InternalSetEntry(name, gc["value"].Value);
+									this.ProtectedSetEntry(name, gc["value"].Value);
 									helperList.Remove(name);
 								} else {
 									Logger.WriteWarning(path, lineNum, "Duplicate value name '" + name + "'. Ignoring.");

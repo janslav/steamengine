@@ -313,10 +313,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Target(AbstractTargetDef def) {
-			def.Assign(this);
+			def.Assign(this, null);
 		}
 
 		public void Target(AbstractTargetDef def, object parameter) {
+			def.Assign(this, parameter);
+		}
+
+		public void Menu(AbstractMenuDef def) {
+			def.Assign(this, null);
+		}
+		
+		public void Menu(AbstractMenuDef def, object parameter) {
 			def.Assign(this, parameter);
 		}
 

@@ -16,8 +16,8 @@ namespace SteamEngine.Common {
 		protected CompiledLocStringCollection() {
 		}
 
-		internal override void InternalSetEntry(string entryName, string entry) {
-			base.InternalSetEntry(entryName, entry);
+		protected override void ProtectedSetEntry(string entryName, string entry) {
+			base.ProtectedSetEntry(entryName, entry);
 			FieldInfo field = this.GetType().GetField(entryName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);
 			if ((field != null) || (field.DeclaringType.IsAbstract)) {
 				field.SetValue(this, String.Intern(entry));

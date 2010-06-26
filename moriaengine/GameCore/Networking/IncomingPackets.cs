@@ -1493,6 +1493,26 @@ namespace SteamEngine.Networking {
 			conn.SendSinglePacket(p);
 		}
 	}
+	
+	public sealed class ResponseToDialogBox : GameIncomingPacket {
+		int menuUid;
+		int index;
+
+		protected override ReadPacketResult Read() {
+			this.menuUid = this.DecodeInt();
+			this.SeekFromCurrent(2); //second uid, we ignore it
+			this.index = this.DecodeUShort(); //1-based index of choice 
+			this.SeekFromCurrent(4);
+			//BYTE[2] model # of choice 
+			//BYTE[2] color
+			return ReadPacketResult.Success;
+		}
+
+		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
+			state.HandleMenu(this.menuUid, this.index);
+		}
+	}
+
 
 	internal class IncomingPacketsLoc : CompiledLocStringCollection {
 		public string NotANumber = "'{0}' is not a number!";
