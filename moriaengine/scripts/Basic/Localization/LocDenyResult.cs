@@ -14,10 +14,9 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using System;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	public class LocDenyResult : DenyResult {

@@ -30,13 +30,51 @@ namespace SteamEngine.Networking {
 	public delegate void OnTargon(GameState state, IPoint3D getback, object parameter);
 	public delegate void OnTargonCancel(GameState state, object parameter);
 
+	public delegate void MenuRespose(GameState state, int index, object parameter);
+	public delegate void MenuCancel(GameState state, object parameter);
+
 	public class GameState : TagHolder, //IDisposable, 
 		IConnectionState<TcpConnection<GameState>, GameState, IPEndPoint> {
 
+		internal readonly MovementState movementState;
+
+		public GameState() {
+			this.movementState = new MovementState(this);
+
+			this.encryption = new GameEncryption();
+			this.uid = uids++;
+		}
+		
+		#region Uid
 		private static int uids;
 		private int uid;
 
-		private bool isDeleted;
+		public int Uid {
+			get {
+				return this.uid;
+			}
+		}
+		#endregion Uid
+
+		#region AllShow
+		private bool allShow;
+
+		public bool AllShow {
+			get {
+				return this.allShow;
+			}
+			set {
+				if (value != this.allShow) {
+					this.allShow = value;
+					if (this.character != null) {
+						this.character.Resync();
+					}
+				}
+			}
+		}
+		#endregion AllShow
+
+		#region Character, Account, Login, IConnection
 
 		private IEncryption encryption;
 
@@ -45,38 +83,15 @@ namespace SteamEngine.Networking {
 		private IPEndPoint ip;
 		private TcpConnection<GameState> conn;
 
-		private int lastSentUpdateRange = Globals.MaxUpdateRange;
-		private byte requestedUpdateRange = Globals.MaxUpdateRange;
 
-		private ClientVersion clientVersion = ClientVersion.nullValue;
+		internal void SetLoggedIn(AbstractAccount acc) {
+			this.account = acc;
+		}
 
-		private bool allShow;
-
-		private OnTargon targonDeleg;
-		private OnTargonCancel targonCancelDeleg;
-		private object targonParameters;
-
-		internal readonly MovementState movementState;
-
-		private string languageString = "enu";
-		private Language language = Language.English;
-
-		private int lastSkillMacroId;
-		private int lastSpellMacroId;
-
-		private int lastSentGlobalLightLevel;
-		private int lastSentPersonalLightLevel;
-
-		private Dictionary<int, Gump> gumpInstancesByUid = new Dictionary<int, Gump>();
-		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
-
-		internal int charBackupUid;
-
-		public GameState() {
-			this.movementState = new MovementState(this);
-
-			this.encryption = new GameEncryption();
-			this.uid = uids++;
+		public AbstractAccount Account {
+			get {
+				return this.account;
+			}
 		}
 
 		public IEncryption Encryption {
@@ -95,16 +110,6 @@ namespace SteamEngine.Networking {
 			get {
 				return this.conn;
 			}
-		}
-
-		public int LastSkillMacroId {
-			get { return lastSkillMacroId; }
-			internal set { lastSkillMacroId = value; }
-		}
-
-		public int LastSpellMacroId {
-			get { return lastSpellMacroId; }
-			internal set { lastSpellMacroId = value; }
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
@@ -134,58 +139,6 @@ namespace SteamEngine.Networking {
 			if (this.account != null) {
 				this.account.SetLoggedOut();
 				this.account = null;
-			}
-		}
-
-		public override string ToString() {
-			StringBuilder sb = new StringBuilder("Client (uid=");
-			sb.Append(this.uid);
-			if (this.account != null) {
-				sb.Append(", acc='").Append(this.account.Name).Append("'");
-			}
-			if (this.ip != null) {
-				sb.Append(", IP=").Append(this.ip.ToString());
-			}
-			return sb.Append(")").ToString();
-		}
-
-		public override int GetHashCode() {
-			return this.uid;
-		}
-
-		public override bool Equals(object obj) {
-			return Object.ReferenceEquals(this, obj);
-		}
-
-		//public override void Handle(IncomingPacket packet) {
-		//    ConsoleServerPacketGroup pg = Pool<ConsoleServerPacketGroup>.Acquire();
-
-		//    pg.AddPacket(Pool<ConsoleServerOutgoingPacket>.Acquire());
-
-		//    //MainClass.server.SendPacketGroup(this, pg);
-		//}
-
-		internal void SetLoggedIn(AbstractAccount acc) {
-			this.account = acc;
-		}
-
-		public AbstractAccount Account {
-			get {
-				return this.account;
-			}
-		}
-
-		public bool AllShow {
-			get {
-				return this.allShow;
-			}
-			set {
-				if (value != this.allShow) {
-					this.allShow = value;
-					if (this.character != null) {
-						this.character.Resync();
-					}
-				}
 			}
 		}
 
@@ -251,6 +204,16 @@ namespace SteamEngine.Networking {
 				return this.character;
 			}
 		}
+		
+		public bool PacketGroupsJoiningAllowed {
+			get {
+				return false;
+			}
+		}
+		#endregion Character, Account, Login, IConnection
+
+		#region ClientVersion
+		private ClientVersion clientVersion = ClientVersion.nullValue;
 
 		public ClientVersion Version {
 			get {
@@ -261,12 +224,11 @@ namespace SteamEngine.Networking {
 		internal void InternalSetClientVersion(ClientVersion value) {
 			this.clientVersion = value;
 		}
+		#endregion ClientVersion
 
-		public int Uid {
-			get {
-				return this.uid;
-			}
-		}
+		#region Update/Vision Range
+		private int lastSentUpdateRange = Globals.MaxUpdateRange;
+		private byte requestedUpdateRange = Globals.MaxUpdateRange;
 
 		internal byte RequestedUpdateRange {
 			get {
@@ -317,7 +279,13 @@ namespace SteamEngine.Networking {
 			} else {
 				this.lastSentUpdateRange = this.requestedUpdateRange;
 			}
-		}		
+		}
+		#endregion Update/Vision Range
+
+		#region Target
+		private OnTargon targonDeleg;
+		private OnTargonCancel targonCancelDeleg;
+		private object targonParameters;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
 		public void Target(bool ground, OnTargon targonDeleg, OnTargonCancel targonCancelDeleg, object targonParameters) {
@@ -335,28 +303,6 @@ namespace SteamEngine.Networking {
 			GiveBoatOrHousePlacementViewOutPacket packet = Pool<GiveBoatOrHousePlacementViewOutPacket>.Acquire();
 			packet.Prepare(model);
 			this.conn.SendSinglePacket(packet);
-		}
-
-		public string ClientLanguage {
-			get {
-				return this.languageString;
-			}
-			set {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(value, this.languageString)) {
-					this.languageString = value;
-					this.language = LocManager.TranslateLanguageCode(value);
-				}
-			}
-		}
-
-		public Language Language {
-			get {
-				return this.language;
-			}
-		}
-
-		public void WriteLine(string msg) {
-			PacketSequences.SendSystemMessage(this.conn, msg, -1);
 		}
 
 		internal void HandleTarget(bool targGround, uint targetUid, ushort x, ushort y, sbyte z, ushort model) {
@@ -413,7 +359,85 @@ namespace SteamEngine.Networking {
 			}
 			PacketSequences.SendClilocSysMessage(this.conn, 1046439, 0);//That is not a valid target.
 		}
+		#endregion Target
 
+		#region Menu
+		private Dictionary<int, MenuResponseEntry> menuEntries = new Dictionary<int, MenuResponseEntry>();
+
+		private struct MenuResponseEntry {
+			internal MenuRespose response;
+			internal MenuCancel cancel;
+			internal object parameter;
+		}
+		
+		public void Menu(IEnumerable<string> allTexts, MenuRespose response, MenuCancel cancel, object parameter) {
+			int menuUid = this.PrepareMenu(response, cancel, parameter);
+
+			OpenDialogBoxPacket packet = Pool<OpenDialogBoxPacket>.Acquire();
+			packet.Prepare(menuUid, allTexts);
+			this.conn.SendSinglePacket(packet);
+		}
+
+		public void Menu(string header, IEnumerable<string> choices, MenuRespose response, MenuCancel cancel, object parameter) {
+			int menuUid = this.PrepareMenu(response, cancel, parameter);
+
+			OpenDialogBoxPacket packet = Pool<OpenDialogBoxPacket>.Acquire();
+			packet.Prepare(menuUid, header, choices);
+			this.conn.SendSinglePacket(packet);
+		}
+
+		private int PrepareMenu(MenuRespose response, MenuCancel cancel, object parameter) {
+			int menuUid;
+			do {
+				menuUid = Globals.dice.Next();
+			} while (this.menuEntries.ContainsKey(menuUid));
+
+			this.menuEntries[menuUid] = new MenuResponseEntry() {
+				response = response,
+				cancel = cancel,
+				parameter = parameter
+			};
+			return menuUid;
+		}
+		
+		internal void HandleMenu(int menuUid, int oneBasedIndex) {
+			MenuResponseEntry entry;
+			if (this.menuEntries.TryGetValue(menuUid, out entry)) {
+				if (oneBasedIndex == 0) {
+					entry.cancel(this, entry.parameter);
+				} else {
+					entry.response(this, oneBasedIndex - 1, entry.parameter);
+				}
+			}
+		}
+		#endregion Menu
+
+		#region Language
+		private string languageString = "enu";
+		private Language language = Language.English;
+
+		public string ClientLanguage {
+			get {
+				return this.languageString;
+			}
+			set {
+				if (!StringComparer.OrdinalIgnoreCase.Equals(value, this.languageString)) {
+					this.languageString = value;
+					this.language = LocManager.TranslateLanguageCode(value);
+				}
+			}
+		}
+
+		public Language Language {
+			get {
+				return this.language;
+			}
+		}
+		#endregion Language
+
+		#region Gump
+		private Dictionary<int, Gump> gumpInstancesByUid = new Dictionary<int, Gump>();
+		private Dictionary<GumpDef, LinkedList<Gump>> gumpInstancesByGump = new Dictionary<GumpDef, LinkedList<Gump>>();
 
 		internal void SentGump(Gump gi) {
 			this.gumpInstancesByUid[gi.Uid] = gi;
@@ -451,7 +475,10 @@ namespace SteamEngine.Networking {
 			}
 			return null;
 		}
+		#endregion Gump
 
+		#region Recompiling 
+		internal int charBackupUid;
 
 		internal void BackupLinksToCharacters() {
 			if (this.character != null) {
@@ -481,12 +508,11 @@ namespace SteamEngine.Networking {
 		internal void RemoveBackupLinks() {
 			this.charBackupUid = -1;
 		}
+		#endregion Recompiling
 
-		public bool PacketGroupsJoiningAllowed {
-			get {
-				return false;
-			}
-		}
+		#region LightLevel
+		private int lastSentGlobalLightLevel;
+		private int lastSentPersonalLightLevel;
 
 		public void SendPersonalLightLevel(int personalLight) {
 			if (personalLight != this.lastSentPersonalLightLevel) {
@@ -503,14 +529,25 @@ namespace SteamEngine.Networking {
 				this.lastSentGlobalLightLevel = globalLight;
 			}
 		}
+		#endregion LightLevel
 
-		public override string Name {
-			get {
-				return this.ToString();
-			}
-			set {
-			}
+		#region Last Macro Spell/Skill
+		private int lastSkillMacroId;
+		private int lastSpellMacroId;
+
+		public int LastSkillMacroId {
+			get { return lastSkillMacroId; }
+			internal set { lastSkillMacroId = value; }
 		}
+
+		public int LastSpellMacroId {
+			get { return lastSpellMacroId; }
+			internal set { lastSpellMacroId = value; }
+		}
+		#endregion Last Macro Spell/Skill
+
+		#region IDeletable
+		private bool isDeleted;
 
 		public sealed override void Delete() {
 			this.isDeleted = true;
@@ -521,6 +558,40 @@ namespace SteamEngine.Networking {
 			get {
 				return this.isDeleted;
 			}
+		}
+		#endregion IDeletable
+
+
+		public override string ToString() {
+			StringBuilder sb = new StringBuilder("Client (uid=");
+			sb.Append(this.uid);
+			if (this.account != null) {
+				sb.Append(", acc='").Append(this.account.Name).Append("'");
+			}
+			if (this.ip != null) {
+				sb.Append(", IP=").Append(this.ip.ToString());
+			}
+			return sb.Append(")").ToString();
+		}
+
+		public override string Name {
+			get {
+				return this.ToString();
+			}
+			set {
+			}
+		}
+
+		public override int GetHashCode() {
+			return this.uid;
+		}
+
+		public override bool Equals(object obj) {
+			return Object.ReferenceEquals(this, obj);
+		}
+		
+		public void WriteLine(string msg) {
+			PacketSequences.SendSystemMessage(this.conn, msg, -1);
 		}
 	}
 }

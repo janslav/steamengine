@@ -140,6 +140,8 @@
     <Compile Include="Basic\CharClasses\NPC.Generated.cs" />
     <Compile Include="Basic\CharClasses\Player.cs" />
     <Compile Include="Basic\CharClasses\Player.Generated.cs" />
+    <Compile Include="Basic\Localization\LocDenyResult.cs" />
+    <Compile Include="Basic\Localization\NumberedLocStringCollection.cs" />
     <Compile Include="Basic\db\DbManager.cs" />
     <Compile Include="Basic\db\DbUtils.cs" />
     <Compile Include="Basic\db\LoginLogsContainer.cs" />
@@ -187,6 +189,9 @@
     <Compile Include="Basic\ItemClasses\Ship.Generated.cs" />
     <Compile Include="Basic\mailingsystem\MailingSystem.cs" />
     <Compile Include="Basic\mailingsystem\MessagesDialog.cs" />
+    <Compile Include="Basic\Menu\AbstractMenuDef.cs" />
+    <Compile Include="Basic\Menu\CompiledMenuDef.cs" />
+    <Compile Include="Basic\Menu\ScriptedMenuDef.cs" />
     <Compile Include="Basic\Professions\ProfessionDef.cs" />
     <Compile Include="Basic\Professions\ProfessionPlugin.cs" />
     <Compile Include="Basic\Professions\ProfessionPlugin.Generated.cs" />
@@ -342,6 +347,9 @@
     <Compile Include="Basic\skills\SkillsEnumerator.cs" />
     <Compile Include="Basic\skills\SkillUtils.cs" />
     <Compile Include="Basic\Spawning\SpawnInfo.cs" />
+    <Compile Include="Basic\Target\AbstractTargetDef.cs" />
+    <Compile Include="Basic\Target\CompiledTargetDef.cs" />
+    <Compile Include="Basic\Target\ScriptedTargetDef.cs" />
     <Compile Include="Basic\utilities\ColoredItems.cs" />
     <Compile Include="Basic\utilities\ColorsDlg.cs" />
     <Compile Include="Basic\BackupsManager.cs" />
@@ -355,10 +363,8 @@
     <Compile Include="Basic\ScriptedAccount.cs" />
     <Compile Include="Basic\ScriptSector.cs" />
     <Compile Include="Basic\Speech.cs" />
-    <Compile Include="Basic\Target.cs" />
     <Compile Include="Basic\TemplateDef.cs" />
     <Compile Include="Basic\TimerPlugin.cs" />
-    <Compile Include="Basic\LocDenyResult.cs" />
     <Compile Include="Optional\StorageBoxes\GemBox.cs" />
     <Compile Include="Optional\StorageBoxes\RegBox.cs" />
     <Compile Include="Optional\StorageBoxes\storageBoxes.Generated.cs" />

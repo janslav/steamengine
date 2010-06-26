@@ -17,13 +17,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
-using System.IO;
-using System.Net;
-
+using SteamEngine.Communication;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
@@ -2230,6 +2225,77 @@ namespace SteamEngine.Networking {
 			this.EncodeBool(this.active);
 			this.EncodeUShort(this.xPos);
 			this.EncodeUShort(this.yPos);
+		}
+	}
+
+	public sealed class OpenDialogBoxPacket : DynamicLengthOutPacket {
+		int uid;
+		string header;
+		List<Entry> entries = new List<Entry>();
+
+		private struct Entry {
+			internal ushort color, model;
+			internal string text;
+		}
+
+		public override byte Id {
+			get { return 0x7C; }
+		}
+
+
+		public void Prepare(int uid, IEnumerable<string> allTexts) {
+			Sanity.IfTrueThrow(header.Length > byte.MaxValue, "Header text length 256 exceeded");
+			this.uid = uid;
+			
+			this.entries.Clear();
+			bool headerDone = false;
+			foreach (string str in allTexts) {
+				Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
+				if (headerDone) {
+					this.entries.Add(new Entry() { text = str });
+				} else {
+					this.header = str;
+					headerDone = true;
+				}
+			}
+
+			Sanity.IfTrueThrow(this.entries.Count > byte.MaxValue, "Choices count 256 exceeded");
+		}
+
+		public void Prepare(int uid, string header, IEnumerable<string> choices) {
+			Sanity.IfTrueThrow(header.Length > byte.MaxValue, "Header text length 256 exceeded");
+			this.uid = uid;
+			this.header = header;
+
+			this.entries.Clear();
+			foreach (string str in choices) {
+				Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
+				this.entries.Add(new Entry() { text = str });
+			}
+
+			Sanity.IfTrueThrow(this.entries.Count > byte.MaxValue, "Choices count 256 exceeded");
+		}
+
+		//TODO prepare as itemlist?
+
+		protected override void WriteDynamicPart() {
+			this.EncodeInt(this.uid);
+			this.EncodeShort((short) Globals.dice.Next(short.MaxValue));
+						
+			this.EncodeByte((byte) this.header.Length);
+			this.EncodeASCIIString(this.header);
+
+			int n = this.entries.Count;
+			this.EncodeByte((byte) n);
+
+			for (int i = 0; i < n; i++) {
+				Entry entry = this.entries[i];
+				this.EncodeUShort(entry.model);
+				this.EncodeUShort(entry.color);
+
+				this.EncodeByte((byte) entry.text.Length);
+				this.EncodeASCIIString(entry.text);
+			}
 		}
 	}
 }
