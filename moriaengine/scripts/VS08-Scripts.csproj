@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C70C4C3E-FEC0-47BB-BB30-608951B723D5}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -655,6 +655,7 @@
     <None Include="Temporary\Temporary.scp" />
     <None Include="Tests\CharacterConnectionStateInvariants.scp" />
     <None Include="Tests\CanSeeLOSTest.scp" />
+    <None Include="Tests\MenuDefTest.scp" />
     <None Include="Tests\craftCat-test.scp" />
     <None Include="Tests\d_test2.scp" />
     <None Include="Tests\InputDefTest.scp" />

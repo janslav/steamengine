@@ -175,6 +175,14 @@ namespace SteamEngine.Communication {
 			this.EncodeZeros(maxlen - written);
 		}
 
+		protected void EncodeASCIIStringWithLenByte(string value) {
+			value = String.Concat(value);
+			int len = value.Length;
+			this.EncodeByte((byte) len);
+			Encoding.ASCII.GetBytes(value, 0, len, this.buffer, this.position);
+			this.SeekFromCurrent(len);
+		}
+
 		static readonly byte[] zeroBytes = new byte[Buffer.bufferLen];
 
 		//This method is used to encode more than one zeros. You should use this instead of any of the other
