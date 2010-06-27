@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 			for (int i = 0; i < n; i++) {
 				TriggerSection ts = ps.GetTrigger(i);
 				this.triggers[i] = new LScriptHolder(ts);
-				locEntries[i] = ts.TriggerName;
+				locEntries[i+1] = ts.TriggerName;
 			}
 
 			int langCount = Tools.GetEnumLength<Language>();
@@ -85,10 +85,13 @@ namespace SteamEngine.CompiledScripts {
 			
 			LScriptHolder scp = this.triggers[index];
 			if (scp != null) {
-				//Character self = state.
-
-				//scp.TryRun(self, parameters);
-			} //else warning?
+				AbstractCharacter self = state.Character;
+				if (self != null) {
+					scp.TryRun(self, parameter);
+				}
+			} else {
+				Logger.WriteWarning("Unknown trigger number '" + index + "' in MenuDef " + this.PrettyDefname);					
+			}
 		}
 
 		protected override void On_Cancel(GameState state, object parameter) {

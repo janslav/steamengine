@@ -2243,18 +2243,18 @@ namespace SteamEngine.Networking {
 		}
 
 
-		public void Prepare(int uid, IEnumerable<string> allTexts) {
-			Sanity.IfTrueThrow(header.Length > byte.MaxValue, "Header text length 256 exceeded");
+		public void Prepare(int uid, IEnumerable<string> allTexts) {			
 			this.uid = uid;
 			
 			this.entries.Clear();
 			bool headerDone = false;
-			foreach (string str in allTexts) {
-				Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
+			foreach (string str in allTexts) {				
 				if (headerDone) {
+					Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
 					this.entries.Add(new Entry() { text = str });
 				} else {
-					this.header = str;
+					Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Header text length 256 exceeded");
+					this.header = str;					
 					headerDone = true;
 				}
 			}
@@ -2276,14 +2276,39 @@ namespace SteamEngine.Networking {
 			Sanity.IfTrueThrow(this.entries.Count > byte.MaxValue, "Choices count 256 exceeded");
 		}
 
+		public interface IItemMenuEntry {
+			int Model { get; }
+			int Color { get; }
+			string Text { get; }
+		}
+
+		//untested
+		public void Prepare(int uid, string header, IEnumerable<IItemMenuEntry> choices) {
+			Sanity.IfTrueThrow(header.Length > byte.MaxValue, "Header text length 256 exceeded");
+			this.uid = uid;
+			this.header = header;
+
+			this.entries.Clear();
+			foreach (IItemMenuEntry entry in choices) {
+				string str = entry.Text;
+				Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
+				this.entries.Add(new Entry() {
+					text = str,
+					model = (ushort) entry.Model,
+					color = (ushort) entry.Color
+				});
+			}
+
+			Sanity.IfTrueThrow(this.entries.Count > byte.MaxValue, "Choices count 256 exceeded");
+		}
+
 		//TODO prepare as itemlist?
 
 		protected override void WriteDynamicPart() {
 			this.EncodeInt(this.uid);
 			this.EncodeShort((short) Globals.dice.Next(short.MaxValue));
 						
-			this.EncodeByte((byte) this.header.Length);
-			this.EncodeASCIIString(this.header);
+			this.EncodeASCIIStringWithLenByte(this.header);
 
 			int n = this.entries.Count;
 			this.EncodeByte((byte) n);
@@ -2292,9 +2317,7 @@ namespace SteamEngine.Networking {
 				Entry entry = this.entries[i];
 				this.EncodeUShort(entry.model);
 				this.EncodeUShort(entry.color);
-
-				this.EncodeByte((byte) entry.text.Length);
-				this.EncodeASCIIString(entry.text);
+				this.EncodeASCIIStringWithLenByte(entry.text);
 			}
 		}
 	}
