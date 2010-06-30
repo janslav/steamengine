@@ -1,16 +1,5 @@
 
 
-
-DIRNAME_ORIGINALS = "originals"
-DIRNAME_RELEASES = "releases"
-DIRNAME_PATCHES = "patches"
-
-FILENAME_UPDATEINFO = "updateinfo.xml"
-
-UPDATER = "Updater"
-ARCHIVENAME = "moriapack"
-
-
 class UpdateInfo: #this is the class that gets serialized in the meta file (updateinfo.xml)
 	def __init__(self, name):
 		self.name = name
