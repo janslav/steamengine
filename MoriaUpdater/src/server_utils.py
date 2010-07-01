@@ -69,8 +69,7 @@ def diff(oldfilename, newfilename, patchfilename):
 	_commandline('bsdiff ' + oldfilename + ' ' + newfilename + ' ' + patchfilename)
 
 def _commandline(command):
-	#print "commandline:", command
-	print command
+	print "	cmd:", command
 	inpipe, outpipe = os.popen4(command)
 	for line in outpipe.readlines():
 		sys.stdout.write(line)
@@ -89,18 +88,19 @@ def delete_archive_of(filename):
 		os.remove(checksumfile)
 
 def compress_and_checksum(filename, arcname=None):
-	print "	zipping:", filename
-	
 	archivename = filename+utils.EXTENSION_ARCHIVE
-	if not arcname:
-		arcname = os.path.basename(filename)
 	
-	archive = ZipFile(archivename, mode="w", compression=ZIP_DEFLATED)
-	try:
-		archive.write(filename, arcname=arcname)	
-		return get_checksum(archivename)		
-	finally:
-		archive.close()
+	if is_newer_file(filename, archivename):	
+		print "	zipping:", filename
+		
+		if not arcname:
+			arcname = os.path.basename(filename)
+		archive = ZipFile(archivename, mode="w", compression=ZIP_DEFLATED)
+		try:
+			archive.write(filename, arcname=arcname)	
+			return get_checksum(archivename)		
+		finally:
+			archive.close()
 	
 
 def listfiles_recursive(basedir, currentdir, filelist): #makes a recursive file list, with paths starting from currentdir
