@@ -57,7 +57,7 @@ def main(arg=None):
 	
 def list_releases(uiobj):
 	dirs_releases = os.listdir(_releasesdir)
-	uiobj.lastversion = dirs_releases[0]
+	uiobj.lastversion = dirs_releases[-1]
 	for directory in dirs_releases:
 		release_path = os.path.join(_releasesdir, directory)
 		release_name = os.path.join(utils.DIRNAME_RELEASES, directory)
@@ -84,7 +84,7 @@ def list_originals(uiobj):
 				checksum = server_utils.get_checksum(filepath)
 				version = ui.FileVersionInfo(original_name, checksum)
 				version.isoriginal = True
-				fi.addversion(version)
+				ui.fi_addversion(fi, version)
 
 def create_patches_successive(uiobj):	
 	for fi in uiobj.files.values():
@@ -107,10 +107,11 @@ def create_patches_fromoriginals(uiobj):
 					#delete possible old patches first
 					if len(fi.versions_sorted) > 1: #at least 2 release versions = there could be old patch
 						for i in range(0, len(fi.versions_sorted) - 1): #all but the last one
-							server_utils.delete_patch(fi.filename, origver, fi.versions_sorted[i])
+							server_utils.delete_patch(_patchesdir, fi.filename, origver, fi.versions_sorted[i])
 							
 					#create patch to latest release
-					patchfilename = server_utils.create_patch_if_needed(fi.filename, origver, latestver)				
+					patchfilename = server_utils.create_patch_if_needed(_ftproot, _patchesdir, \
+																	fi.filename, origver, latestver)				
 					origver.patchchecksum = server_utils.get_checksum(patchfilename)
 
 def compress_latest(uiobj):
@@ -129,6 +130,10 @@ def compress_latest(uiobj):
 			
 def create_pack(uiobj):
 	packname = os.path.join(_ftproot, FILENAME_PACK+utils.EXTENSION_ARCHIVE)
+	
+	#if moriapack is newer than the release directory, it probably doesn't need  
+	if not server_utils.is_newer_file(_releasesdir, packname):
+		return
 	
 	archive = ZipFile(packname, mode="w", compression=ZIP_DEFLATED)
 	try:				
