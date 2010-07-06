@@ -16,9 +16,8 @@
 */
 
 using System;
+using System.Collections.Generic;
 using PerCederberg.Grammatica.Parser;
-using System.Collections;
-using System.Globalization;
 
 namespace SteamEngine.LScript {
 	//internal class DebugAnalyzer : StrictAnalyzer {
@@ -38,32 +37,32 @@ namespace SteamEngine.LScript {
 	internal class LScriptAnalyzer : StrictAnalyzer {
 		private int flag;
 		private bool isInQuotes;
-		private Stack quotes = new Stack();
+		private Stack<bool> quotes = new Stack<bool>();
 
 		public override Node Analyze(Node node) {
-			flag = 0;
+			this.flag = 0;
 			node = base.Analyze(node);
-			flag = 1;
+			this.flag = 1;
 			node = base.Analyze(node);
-			flag = 2;
+			this.flag = 2;
 			return base.Analyze(node);
 		}
 
 		public override void Enter(Node node) {
-			if (flag == 1) {
+			if (this.flag == 1) {
 				base.Enter(node);
 			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override Node Exit(Node node) {
-			if (flag == 0) {
+			if (this.flag == 0) {
 				if (node.GetId() != (int) StrictConstants.ARGS_LIST) {
 					if (node.GetChildCount() == 1) {
 						return node.GetChildAt(0);
 					}
 				}
-			} else if (flag == 1) {
+			} else if (this.flag == 1) {
 				base.Exit(node);
 			} else {
 				if (node.GetChildCount() == 1) {
@@ -74,32 +73,32 @@ namespace SteamEngine.LScript {
 		}
 
 		public override void EnterQuotedString(Production node) {
-			quotes.Push(isInQuotes);
-			isInQuotes = true;
+			this.quotes.Push(this.isInQuotes);
+			this.isInQuotes = true;
 		}
 
 		public override Node ExitQuotedString(Production node) {
-			isInQuotes = (bool) quotes.Pop();
+			this.isInQuotes = this.quotes.Pop();
 			return node;
 		}
 
 		public override void EnterEvalExpression(Production node) {
-			quotes.Push(isInQuotes);
-			isInQuotes = false;
+			this.quotes.Push(this.isInQuotes);
+			this.isInQuotes = false;
 		}
 
 		public override Node ExitEvalExpression(Production node) {
-			isInQuotes = (bool) quotes.Pop();
+			this.isInQuotes = this.quotes.Pop();
 			return node;
 		}
 
 		public override void EnterStrongEvalExpression(Production node) {
-			quotes.Push(isInQuotes);
-			isInQuotes = false;
+			this.quotes.Push(this.isInQuotes);
+			this.isInQuotes = false;
 		}
 
 		public override Node ExitStrongEvalExpression(Production node) {
-			isInQuotes = (bool) quotes.Pop();
+			this.isInQuotes = this.quotes.Pop();
 			return node;
 		}
 

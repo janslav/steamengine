@@ -1,17 +1,12 @@
 //This software is released under GNU public license. See details in the URL: 
 //http://www.gnu.org/copyleft/gpl.html 
 
+using System;
+using System.Collections;
+using System.Text;
+using PerCederberg.Grammatica.Parser;
+
 namespace SteamEngine.LScript {
-	using System;
-	using System.Net;
-	using System.Net.Sockets;
-	using System.Text;
-	using System.IO;
-	using System.Collections;
-	using System.Reflection;
-	using System.Globalization;
-	using PerCederberg.Grammatica.Parser;
-	using SteamEngine.Common;
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Script : OpNode, IOpNodeHolder {

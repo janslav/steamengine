@@ -438,12 +438,6 @@ namespace SteamEngine.LScript {
                                        "[ \\t]*@[ \\t]*");
             AddPattern(pattern);
 
-            pattern = new TokenPattern((int) StrictConstants.COMEOL,
-                                       "COMEOL",
-                                       TokenPattern.PatternType.REGEXP,
-                                       "([ \\t]*;[ \\t]*(//.*)?[\\n\\r]*)|([ \\t]*(//.*)?[\\n\\r]+)");
-            AddPattern(pattern);
-
             pattern = new TokenPattern((int) StrictConstants.QUERYMARK,
                                        "QUERYMARK",
                                        TokenPattern.PatternType.REGEXP,
@@ -460,6 +454,12 @@ namespace SteamEngine.LScript {
                                        "OTHERSYMBOLS",
                                        TokenPattern.PatternType.REGEXP,
                                        "[^a-zA-Z_0-9]");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) StrictConstants.COMEOL,
+                                       "COMEOL",
+                                       TokenPattern.PatternType.REGEXP,
+                                       "([ \\t]*;[ \\t]*(//.*)?[\\n\\r]*)|([ \\t]*(//.*)?[\\n\\r]+)");
             AddPattern(pattern);
         }
     }

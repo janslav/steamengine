@@ -16,16 +16,10 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using SteamEngine;
-using SteamEngine.Common;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 
@@ -236,6 +230,12 @@ namespace SteamEngine.LScript {
 					case StrictConstants.CODE_BODY_PARENS:
 					case StrictConstants.SIMPLE_CODE_BODY_PARENS:
 						return CompileNode(parent, code.GetChildAt(1), true);
+
+					case StrictConstants.SCRIPT_LINE:
+						if (code.GetChildCount() > 1) {
+							return CompileNode(parent, code.GetChildAt(0));
+						}
+						return OpNode_Object.Construct(parent, (object) null);
 				}
 
 
@@ -329,13 +329,19 @@ namespace SteamEngine.LScript {
 				case StrictConstants.QUOTED_STRING:
 					return OpNode_Lazy_QuotedString.Construct(parent, code);
 
+				case StrictConstants.SCRIPT_LINE:
+					if (code.GetChildCount() > 1) {
+						return CompileNode(parent, code.GetChildAt(0));
+					}
+					return OpNode_Object.Construct(parent, (object) null);
+
 				case StrictConstants.STRONG_EVAL_EXPRESSION:
 				case StrictConstants.EVAL_EXPRESSION:
 					return OpNode_Lazy_EvalExpression.Construct(parent, code);
 
 				case StrictConstants.DOTTED_EXPRESSION_CHAIN:
 					return OpNode_Lazy_ExpressionChain.Construct(parent, code);
-
+					
 				case StrictConstants.STRING:
 				case StrictConstants.SIMPLE_EXPRESSION:
 					return OpNode_Lazy_Expression.Construct(parent, code);

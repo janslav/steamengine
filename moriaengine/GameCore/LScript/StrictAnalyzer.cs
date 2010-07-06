@@ -24,8 +24,7 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-		public override void Enter(Node node) {
+        public override void Enter(Node node) {
             switch (node.GetId()) {
             case (int) StrictConstants.IF:
                 EnterIf((Token) node);
@@ -225,9 +224,6 @@ namespace SteamEngine.LScript {
             case (int) StrictConstants.AT:
                 EnterAt((Token) node);
                 break;
-            case (int) StrictConstants.COMEOL:
-                EnterComeol((Token) node);
-                break;
             case (int) StrictConstants.QUERYMARK:
                 EnterQuerymark((Token) node);
                 break;
@@ -237,8 +233,14 @@ namespace SteamEngine.LScript {
             case (int) StrictConstants.OTHERSYMBOLS:
                 EnterOthersymbols((Token) node);
                 break;
+            case (int) StrictConstants.COMEOL:
+                EnterComeol((Token) node);
+                break;
             case (int) StrictConstants.SCRIPT:
                 EnterScript((Production) node);
+                break;
+            case (int) StrictConstants.SCRIPT_LINE:
+                EnterScriptLine((Production) node);
                 break;
             case (int) StrictConstants.IF_BLOCK:
                 EnterIfBlock((Production) node);
@@ -416,8 +418,7 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-		public override Node Exit(Node node) {
+        public override Node Exit(Node node) {
             switch (node.GetId()) {
             case (int) StrictConstants.IF:
                 return ExitIf((Token) node);
@@ -551,16 +552,18 @@ namespace SteamEngine.LScript {
                 return ExitCrosshash((Token) node);
             case (int) StrictConstants.AT:
                 return ExitAt((Token) node);
-            case (int) StrictConstants.COMEOL:
-                return ExitComeol((Token) node);
             case (int) StrictConstants.QUERYMARK:
                 return ExitQuerymark((Token) node);
             case (int) StrictConstants.ESCAPEDCHAR:
                 return ExitEscapedchar((Token) node);
             case (int) StrictConstants.OTHERSYMBOLS:
                 return ExitOthersymbols((Token) node);
+            case (int) StrictConstants.COMEOL:
+                return ExitComeol((Token) node);
             case (int) StrictConstants.SCRIPT:
                 return ExitScript((Production) node);
+            case (int) StrictConstants.SCRIPT_LINE:
+                return ExitScriptLine((Production) node);
             case (int) StrictConstants.IF_BLOCK:
                 return ExitIfBlock((Production) node);
             case (int) StrictConstants.IF_BEGIN:
@@ -683,11 +686,13 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-		public override void Child(Production node, Node child) {
+        public override void Child(Production node, Node child) {
             switch (node.GetId()) {
             case (int) StrictConstants.SCRIPT:
                 ChildScript(node, child);
+                break;
+            case (int) StrictConstants.SCRIPT_LINE:
+                ChildScriptLine(node, child);
                 break;
             case (int) StrictConstants.IF_BLOCK:
                 ChildIfBlock(node, child);
@@ -2578,32 +2583,6 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterComeol(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         * 
-         * <param name='node'>the node being exited</param>
-         * 
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         * 
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitComeol(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         * 
-         * <param name='node'>the node being entered</param>
-         * 
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterQuerymark(Token node) {
         }
 
@@ -2682,6 +2661,32 @@ namespace SteamEngine.LScript {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
+        public virtual void EnterComeol(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being exited</param>
+         * 
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitComeol(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being entered</param>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
         public virtual void EnterScript(Production node) {
         }
 
@@ -2711,6 +2716,46 @@ namespace SteamEngine.LScript {
          * discovered errors</exception>
          */
         public virtual void ChildScript(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being entered</param>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterScriptLine(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         * 
+         * <param name='node'>the node being exited</param>
+         * 
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitScriptLine(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         * 
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         * 
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildScriptLine(Production node, Node child) {
             node.AddChild(child);
         }
 

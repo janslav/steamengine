@@ -1412,9 +1412,17 @@ namespace SteamEngine.Networking {
 			return ReadPacketResult.Success;
 		}
 
+		private static ScriptHolder help;
+		
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			//TODO
-			state.WriteLine("Sorry, there isn't a help menu yet.");
+			if (help == null) {
+				help = ScriptHolder.GetFunction("help");
+				if (help == null) {
+					state.WriteLine("Sorry, there isn't a help menu yet.");
+					return;
+				}
+			}
+			help.TryRun(state.CharacterNotNull);
 		}
 	}
 

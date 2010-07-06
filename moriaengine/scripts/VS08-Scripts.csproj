@@ -468,6 +468,7 @@
     <None Include="Basic\ItemClasses\Potion.ct" />
     <None Include="Basic\ItemClasses\Ship.ct" />
     <None Include="Basic\mailingsystem\mailsending.scp" />
+    <None Include="Basic\stuckHelp.scp" />
     <None Include="Basic\Professions\Definitions\mage.def" />
     <None Include="Basic\Professions\Definitions\thief.def" />
     <None Include="Basic\Professions\ProfessionPlugin.ct" />
@@ -647,6 +648,7 @@
     <None Include="converted\resources.def" />
     <None Include="converted\speech.def" />
     <None Include="defaults\chardefs\newCharDefsFromMuls.def" />
+    <None Include="Optional\playerHelp.scp" />
     <None Include="Optional\StorageBoxes\storageBoxes.ct" />
     <None Include="Optional\StorageBoxes\storageBoxes.def" />
     <None Include="Optional\Treasures\treasures.ct" />
