@@ -2309,8 +2309,6 @@ namespace SteamEngine.Networking {
 			this.EncodeShort((short) Globals.dice.Next(short.MaxValue));
 						
 			this.EncodeASCIIStringWithLenByte(this.header);
-<<<<<<< .mine			this.EncodeASCIIStringTerminated(this.header);
-=======>>>>>>> .theirs
 			int n = this.entries.Count;
 			this.EncodeByte((byte) n);
 
@@ -2319,9 +2317,7 @@ namespace SteamEngine.Networking {
 				this.EncodeUShort(entry.model);
 				this.EncodeUShort(entry.color);
 				this.EncodeASCIIStringWithLenByte(entry.text);
-<<<<<<< .mine				this.EncodeByte((byte) entry.text.Length);
-				this.EncodeASCIIStringTerminated(entry.text);
-=======>>>>>>> .theirs			}
+			}
 		}
 	}
 
