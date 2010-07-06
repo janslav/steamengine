@@ -16,11 +16,10 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -40,7 +39,7 @@ namespace SteamEngine {
 		//"triggerkey=@triggername//comment"
 		//"triggerkey @triggername//comment"
 		//triggerkey can be "ON", "ONTRIGGER", "ONBUTTON", or ""
-		internal static readonly Regex triggerRE = new Regex(@"^\s*(?<triggerkey>(on|ontrigger|onbutton))((\s*=\s*)|(\s+))@?\s*(?<triggername>\w*)\s*(//(?<comment>.*))?(?<ignored>.*)$",
+		internal static readonly Regex triggerRE = new Regex(@"^\s*(?<triggerkey>(on|ontrigger|onbutton))((\s*=\s*)|(\s+))@?\s*(?<triggername>.+?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		//private static int line;
@@ -107,8 +106,9 @@ namespace SteamEngine {
 						curTrigger = new TriggerSection(filename, line, gc["triggerkey"].Value, gc["triggername"].Value, gc["comment"].Value);
 						if (curSection == null) {
 							//a trigger section without real section?
-							Logger.WriteWarning(filename, line, "No section for this trigger section...?");
+							Logger.WriteWarning(filename, line, "No section for this trigger...?");
 						} else {
+							//Console.WriteLine("Trigger section: " + curTrigger.TriggerName);
 							curSection.AddTrigger(curTrigger);
 						}
 						continue;

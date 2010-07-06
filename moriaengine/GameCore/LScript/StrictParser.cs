@@ -129,7 +129,17 @@ namespace SteamEngine.LScript {
             pattern = new ProductionPattern((int) StrictConstants.SCRIPT,
                                             "Script");
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_2, 1, -1);
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_1, 1, -1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) StrictConstants.SCRIPT_LINE,
+                                            "ScriptLine");
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_2, 1, 1);
+            pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddToken((int) StrictConstants.COMEOL, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
@@ -692,15 +702,6 @@ namespace SteamEngine.LScript {
                                             "Subproduction1");
             pattern.SetSyntetic(true);
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) StrictConstants.DOTTED_EXPRESSION_CHAIN, 0, 1);
-            alt.AddToken((int) StrictConstants.COMEOL, 1, 1);
-            pattern.AddAlternative(alt);
-            AddPattern(pattern);
-
-            pattern = new ProductionPattern((int) SynteticPatterns.SUBPRODUCTION_2,
-                                            "Subproduction2");
-            pattern.SetSyntetic(true);
-            alt = new ProductionPatternAlternative();
             alt.AddProduction((int) StrictConstants.WHILE_BLOCK, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
@@ -716,7 +717,16 @@ namespace SteamEngine.LScript {
             alt.AddProduction((int) StrictConstants.SWITCH_BLOCK, 1, 1);
             pattern.AddAlternative(alt);
             alt = new ProductionPatternAlternative();
-            alt.AddProduction((int) SynteticPatterns.SUBPRODUCTION_1, 1, 1);
+            alt.AddProduction((int) StrictConstants.SCRIPT_LINE, 1, 1);
+            pattern.AddAlternative(alt);
+            AddPattern(pattern);
+
+            pattern = new ProductionPattern((int) SynteticPatterns.SUBPRODUCTION_2,
+                                            "Subproduction2");
+            pattern.SetSyntetic(true);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction((int) StrictConstants.DOTTED_EXPRESSION_CHAIN, 1, 1);
+            alt.AddToken((int) StrictConstants.COMEOL, 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 

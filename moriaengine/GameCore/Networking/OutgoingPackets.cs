@@ -1242,7 +1242,7 @@ namespace SteamEngine.Networking {
 			this.EncodeUShort(this.color);
 			this.EncodeUShort(this.font);
 			this.EncodeASCIIString(this.sourceName, 30);
-			this.EncodeASCIIString(this.message);
+			this.EncodeASCIIStringTerminated(this.message);
 		}
 	}
 
@@ -1380,7 +1380,7 @@ namespace SteamEngine.Networking {
 			this.EncodeInt(this.message);
 			this.EncodeByte(this.flags);
 			this.EncodeASCIIString(this.sourceName, 30);
-			this.EncodeASCIIString(this.affix);
+			this.EncodeASCIIStringTerminated(this.affix);
 			this.EncodeBigEndianUnicodeString(this.args);
 			this.EncodeZeros(2);//msg terminator
 		}
@@ -1631,7 +1631,7 @@ namespace SteamEngine.Networking {
 
 		protected override void WriteDynamicPart() {
 			this.EncodeInt(this.flaggedUid);
-			this.EncodeASCIIString(this.name);
+			this.EncodeASCIIStringTerminated(this.name);
 		}
 	}
 
@@ -1665,7 +1665,7 @@ namespace SteamEngine.Networking {
 			this.EncodeInt(this.y);
 
 			this.EncodeUShort((ushort) (this.layoutText.Length + 1)); //+1 cos of null terminator
-			this.EncodeASCIIString(this.layoutText);
+			this.EncodeASCIIStringTerminated(this.layoutText);
 
 			this.EncodeUShort((ushort) this.strings.Count);
 			foreach (string s in this.strings) {
@@ -2243,7 +2243,7 @@ namespace SteamEngine.Networking {
 		}
 
 
-		public void Prepare(int uid, IEnumerable<string> allTexts) {			
+		public void Prepare(int uid, IEnumerable<string> allTexts) {
 			this.uid = uid;
 			
 			this.entries.Clear();
@@ -2309,7 +2309,8 @@ namespace SteamEngine.Networking {
 			this.EncodeShort((short) Globals.dice.Next(short.MaxValue));
 						
 			this.EncodeASCIIStringWithLenByte(this.header);
-
+<<<<<<< .mine			this.EncodeASCIIStringTerminated(this.header);
+=======>>>>>>> .theirs
 			int n = this.entries.Count;
 			this.EncodeByte((byte) n);
 
@@ -2318,7 +2319,27 @@ namespace SteamEngine.Networking {
 				this.EncodeUShort(entry.model);
 				this.EncodeUShort(entry.color);
 				this.EncodeASCIIStringWithLenByte(entry.text);
+<<<<<<< .mine				this.EncodeByte((byte) entry.text.Length);
+				this.EncodeASCIIStringTerminated(entry.text);
+=======>>>>>>> .theirs			}
+		}
+	}
+
+	public sealed class OpenWebBrowserOutPacket : DynamicLengthOutPacket {
+		string url;
+
+		public void Prepare(string url) {
+			this.url = url;		
+		}
+
+		public override byte Id {
+			get {
+				return 0xA5;
 			}
+		}
+
+		protected override void WriteDynamicPart() {
+			this.EncodeASCIIStringTerminated(this.url);
 		}
 	}
 }

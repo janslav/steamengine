@@ -166,16 +166,31 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Display (or remove) a quest arrow pointing towards the specified coordinates")]
 		public void QuestArrow(bool active, ushort xPos, ushort yPos) {
-			QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
-			qaop.Prepare(active, xPos, yPos);
-			this.GameState.Conn.SendSinglePacket(qaop);
+			GameState state = this.GameState;
+			if (state != null) {
+				QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
+				qaop.Prepare(active, xPos, yPos);
+				state.Conn.SendSinglePacket(qaop);
+			}
 		}
 
 		[Summary("Display (or remove) a quest arrow pointing towards the specified location")]
 		public void QuestArrow(bool active, IPoint2D position) {
-			QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
-			qaop.Prepare(active, position);
-			this.GameState.Conn.SendSinglePacket(qaop);
+			GameState state = this.GameState;
+			if (state != null) {
+				QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
+				qaop.Prepare(active, position);
+				state.Conn.SendSinglePacket(qaop);
+			}
+		}
+
+		public void WebLink(string url) {
+			GameState state = this.GameState;
+			if (state != null) {
+				OpenWebBrowserOutPacket qaop = Pool<OpenWebBrowserOutPacket>.Acquire();
+				qaop.Prepare(url);
+				state.Conn.SendSinglePacket(qaop);
+			}
 		}
 
 		#region Profession

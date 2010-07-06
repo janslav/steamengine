@@ -113,19 +113,20 @@ WHITESPACE			= <<[ \t]+>>
 CROSSHASH			= <<[ \t]*#[ \t]*>>
 AT					= <<[ \t]*@[ \t]*>>
 
-COMEOL				= <<([ \t]*;[ \t]*(//.*)?[\n\r]*)|([ \t]*(//.*)?[\n\r]+)>> // ; or eol (and whitespace and comment);
-
 QUERYMARK			= <<[ \t]*\?[ \t]*>>
 
 ESCAPEDCHAR			= <<\\.>>
 
 OTHERSYMBOLS		= <<[^a-zA-Z_0-9]>>
 
+COMEOL				= <<([ \t]*;[ \t]*(//.*)?[\n\r]*)|([ \t]*(//.*)?[\n\r]+)>> // ; or eol (and whitespace and comment);
+
 
 
 %productions%
 
-Script = (WhileBlock | IfBlock | ForeachBlock | ForBlock | SwitchBlock | ([DottedExpressionChain] COMEOL))+;
+Script = (WhileBlock | IfBlock | ForeachBlock | ForBlock | SwitchBlock | ScriptLine)+;
+ScriptLine = (DottedExpressionChain COMEOL) | COMEOL;
 
 IfBlock = IfBegin {ElseIfBlock} [ElseBlock] ENDIF COMEOL;
 IfBegin = IF Code COMEOL [Script];
@@ -181,7 +182,7 @@ TimerKey = OP_MOD STRING; //%somename
 QuotedString = 
 QUOTE {
 	STRING
-
+	//| COMEOL
 	| QUERYMARK
 	| ARGCHK
 	| ARGTXT

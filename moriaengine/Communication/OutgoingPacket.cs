@@ -161,7 +161,7 @@ namespace SteamEngine.Communication {
 			this.EncodeZeros(maxlen - written);
 		}
 
-		protected void EncodeASCIIString(string value) {
+		protected void EncodeASCIIStringTerminated(string value) {
 			value = String.Concat(value);
 			this.SeekFromCurrent(Encoding.ASCII.GetBytes(value, 0, value.Length, this.buffer, this.position));
 			this.EncodeByte(0);
