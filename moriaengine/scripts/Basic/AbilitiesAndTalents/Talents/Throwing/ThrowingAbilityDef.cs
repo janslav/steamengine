@@ -15,13 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
@@ -77,7 +72,16 @@ namespace SteamEngine.CompiledScripts {
 			if ((seq != null) && (seq.SkillDef is WeaponSkillDef)) {
 				Character target = (Character) seq.Target1;
 				int distance = Point2D.GetSimpleDistance(self, target);
-				//if (!self.CanSeeVisibility
+				int range = this.Range + self.WeaponRangeModifier;
+				if (distance > range) {
+					args.Result = DenyResultMessages.Deny_ThatIsTooFarAway;
+					return true;
+				}
+				DenyResult losAndAlive = self.CanInteractWith(target);
+				if (!losAndAlive.Allow) {
+					args.Result = losAndAlive;
+					return true;
+				}
 			} else {
 				args.Result = DenyMessages_Throwing.Deny_OnlyWorksWhenFighting;
 				return true;
@@ -88,12 +92,31 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Activate(Character self, Ability ab) {
 			Projectile knife = (Projectile) self.Backpack.FindById(ThrowingKnifeDef);
-			int range = this.Range + self.WeaponRangeModifier;
-
+			
 			Character target = (Character) self.CurrentSkillArgs.Target1;
 			int distance = Point2D.GetSimpleDistance(self, target);
 
 			return false; //do not cancel
+		}
+
+
+		private static TagKey throwingKnifeTK = TagKey.Acquire("_throwing_knife_");
+		public static Projectile GetThrowingKnife(Character self) {
+			Projectile knife = self.GetTag(throwingKnifeTK) as Projectile;
+			if (knife != null) {
+				if (self.CanReach(knife).Allow) {
+					return knife;
+				}
+			}
+
+			knife = (Projectile) self.Backpack.FindById(ThrowingKnifeDef);
+			if (knife != null) {
+				self.SetTag(throwingKnifeTK, knife);
+				return knife;
+			} else {
+				self.RemoveTag(throwingKnifeTK);
+				return null;
+			}
 		}
 	}
 
