@@ -125,7 +125,7 @@ MENU MENU_help
 Message=Moria encyklopedia
 
 ON=@Aktualni informace na webu
-WEBLINK("http:\\www.moria.cz/www/page=7")
+WEBLINK("http:\/\/www.moria.cz/www/page=7")
 
 ON=@Remeslnik (craft)
 MENU MENU_MORIA_ENCYKLOPEDIA_POVOLANI

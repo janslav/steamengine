@@ -15,11 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-
 using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 
 namespace SteamEngine {
 
