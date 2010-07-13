@@ -99,13 +99,6 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class Item : AbstractItem {
-		
-		public override bool On_DenyDClick(DenyClickArgs args) {
-			DenyResult dr = args.ClickingChar.CanReach(this);
-			args.Result = dr;
-			return !dr.Allow;
-		}
-
 		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
 				" then the item will be deleted. Method returns the actually consumed amount.")]
 		public long Consume(long howMany) {

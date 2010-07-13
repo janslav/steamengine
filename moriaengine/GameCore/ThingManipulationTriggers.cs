@@ -16,17 +16,9 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
-using System.Threading;
-using System.Configuration;
-using SteamEngine.Regions;
 using SteamEngine.Networking;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 
@@ -948,26 +940,18 @@ namespace SteamEngine {
 		//will run the @deny triggers
 		//CanReach checks are not considered done.
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public DenyResult TryPickupItem(AbstractItem item, int amt) {
+		public DenyResult TryPickupItem(AbstractItem item, int amountToPick) {
 			this.ThrowIfDeleted();
 			item.ThrowIfDeleted();
 
 			if (!this.TryGetRidOfDraggedItem()) {
 				return DenyResultMessages.Deny_YouAreAlreadyHoldingAnItem;
 			}
-
-			DenyPickupArgs args;
-			bool cancel;
-			DenyResult retVal;
-			this.Trigger_DenyPickupItem(item, amt, out args, out cancel, out retVal);
-
-			//default implementation
-			if ((!cancel) && (retVal.Allow)) {
-				retVal = this.CanReach(item);
-			}
+			
+			DenyResult result = this.CanPickup(item);
 
 			//equip into dragging layer
-			if (retVal.Allow) {
+			if (result.Allow) {
 				IPoint4D oldPoint = item.TopObj();
 				if (oldPoint != this) {
 					if (oldPoint == item) {
@@ -977,7 +961,6 @@ namespace SteamEngine {
 					oldPoint = null;
 				}
 
-				int amountToPick = args.Amount;
 				int amountSum = item.Amount;
 				if (!item.IsEquipped && amountToPick < amountSum) {
 					AbstractItem dupedItem = (AbstractItem) item.Dupe();
@@ -992,12 +975,22 @@ namespace SteamEngine {
 					this.SendMovingItemAnimation(oldPoint, this, item);
 				}
 			}
-			return retVal;
+			return result;
 		}
 
-		private void Trigger_DenyPickupItem(AbstractItem item, int amt, out DenyPickupArgs args, out bool cancel, out DenyResult retVal) {
+		public DenyResult CanPickup(AbstractItem item) {
+			bool cancel;
+			DenyResult result = this.Trigger_DenyPickupItem(item, out cancel);
+			//default implementation, can be skipped by returning true (cancelling)
+			if ((!cancel) && (result.Allow)) {
+				return this.CanReach(item);
+			}
+			return result;
+		}
+
+		private DenyResult Trigger_DenyPickupItem(AbstractItem item, out bool cancel) {
 			//@deny triggers
-			args = new DenyPickupArgs(this, item, amt);
+			DenyPickupArgs args = new DenyPickupArgs(this, item);
 
 			cancel = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
 			if (!cancel) {
@@ -1041,7 +1034,7 @@ namespace SteamEngine {
 				}
 			}
 
-			retVal = args.Result;
+			return args.Result;
 		}
 
 		//typically called from InPackets. (I am the src)
@@ -1572,19 +1565,10 @@ namespace SteamEngine {
 		private readonly AbstractCharacter pickingChar;
 		private readonly AbstractItem manipulatedItem;
 
-		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem, int amount)
-			: base(DenyResultMessages.Allow, pickingChar, manipulatedItem, amount) {
+		public DenyPickupArgs(AbstractCharacter pickingChar, AbstractItem manipulatedItem)
+			: base(DenyResultMessages.Allow, pickingChar, manipulatedItem) {
 			this.pickingChar = pickingChar;
 			this.manipulatedItem = manipulatedItem;
-		}
-
-		public int Amount {
-			get {
-				return ConvertTools.ToInt32(this.Argv[3]);
-			}
-			set {
-				this.Argv[3] = value;
-			}
 		}
 
 		public AbstractCharacter PickingChar {

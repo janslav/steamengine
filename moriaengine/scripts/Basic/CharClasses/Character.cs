@@ -105,6 +105,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.ProtectedFlag3 != value) {
 					CharSyncQueue.AboutToChangeVisibility(this);
 					this.ProtectedFlag3 = value;
+					this.Trigger_VisibilityChange();
 				}
 			}
 		}
@@ -117,6 +118,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.ProtectedFlag4 != value) {
 					CharSyncQueue.AboutToChangeVisibility(this);
 					this.ProtectedFlag4 = value;
+					this.Trigger_VisibilityChange();
 				}
 			}
 		}
@@ -132,6 +134,14 @@ namespace SteamEngine.CompiledScripts {
 					this.Trigger_WarModeChange();
 				}
 			}
+		}
+
+		private static TriggerKey warModeChangeTK = TriggerKey.Acquire("warModeChange");
+		public void Trigger_WarModeChange() {
+			this.TryTrigger(warModeChangeTK, null);
+			try {
+				this.On_WarModeChange();
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		public bool Flag_GreenHealthBar {
@@ -333,8 +343,39 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Destroy();
 		}
 		#endregion Mount/Rider stuff
+		
+		#region Pets / ownership
+		public bool IsOwnerOf(Character cre) {
+			return cre.IsPetOf(this);
+		}
+
+		public bool IsPetOf(Character cre) {
+			return true;
+		}
+
+		public override bool CanEquipItemsOn(AbstractCharacter chr) {
+			Character target = (Character) chr;
+			return (this.IsPetOf(target)) && (this.CanReach(target).Allow);
+		}
+
+		//public override bool CanEquip(AbstractItem i) {
+		//    return true;
+		//}
+
+		public override bool CanRename(AbstractCharacter to) {
+			return (this.IsGM) ||
+				((this.IsPlayer) && (to != this) && this.IsOwnerOf((Character) to)); //can't rename self
+		}
+		#endregion Pets / ownership
 
 		#region Visibility
+
+		private static TriggerKey visibilityChangeTK = TriggerKey.Acquire("visibilityChange");
+		public void Trigger_VisibilityChange() {
+			TryTrigger(visibilityChangeTK, null);
+			On_VisibilityChange();
+		}
+
 		public virtual void On_VisibilityChange() {
 		}
 
@@ -407,6 +448,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Visibility
 
+		#region CanSee... / Check...
 		public DenyResult CanSeeLOS(IPoint3D target) {
 			IPoint3D targetTop = target.TopPoint;
 
@@ -481,44 +523,31 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		private static TriggerKey warModeChangeTK = TriggerKey.Acquire("warModeChange");
-		public void Trigger_WarModeChange() {
-			this.TryTrigger(warModeChangeTK, null);			
-			try {
-				this.On_WarModeChange();
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-		}
-
 		public virtual void On_WarModeChange() {
 		}
 
-		private static TriggerKey visibilityChangeTK = TriggerKey.Acquire("visibilityChange");
-		public void Trigger_VisibilityChange() {
-			TryTrigger(visibilityChangeTK, null);
-			On_VisibilityChange();
-		}
-
 		public DenyResult CanInteractWith(IPoint3D target) {
-			DenyResult result = this.CheckAlive();
-			if (!result.Allow) {
-				return result;
-			}
-
-			result = this.CanSeeLOS(target);
-			if (!result.Allow) {
-				return result;
-			}
-
-			Character targetAsChar = target as Character;
-			if (targetAsChar != null) {
-				if (targetAsChar.Flag_Dead) {
-					return DenyResultMessages_Character.Deny_TargetIsDead;
+			if (!this.IsGM) {
+				DenyResult result = this.CheckAlive();
+				if (!result.Allow) {
+					return result;
 				}
-				if (targetAsChar.Flag_Insubst) {
-					return DenyResultMessages_Character.Deny_TargetIsInsubst;
+
+				result = this.CanSeeLOS(target);
+				if (!result.Allow) {
+					return result;
+				}
+
+				Character targetAsChar = target as Character;
+				if (targetAsChar != null) {
+					if (targetAsChar.Flag_Dead) {
+						return DenyResultMessages_Character.Deny_TargetIsDead;
+					}
+					if (targetAsChar.Flag_Insubst) {
+						return DenyResultMessages_Character.Deny_TargetIsInsubst;
+					}
 				}
 			}
-
 			return DenyResultMessages.Allow;
 		}
 
@@ -530,6 +559,58 @@ namespace SteamEngine.CompiledScripts {
 			result.SendDenyMessage(this);
 			return false;
 		}
+		
+		public bool CanReachWithMessage(Thing target) {
+			DenyResult result = this.CanReach(target);
+			if (result.Allow) {
+				return true;
+			} else {
+				result.SendDenyMessage(this);
+				return false;
+			}
+		}
+
+		public override DenyResult CanPutItemsInContainer(AbstractItem targetContainer) {
+			if (this.IsGM) {
+				return DenyResultMessages.Allow;
+			}
+
+			if (this.Flag_Disconnected) {
+				return DenyResultMessages.Deny_NoMessage;
+			}
+
+			//TODO zamykani kontejneru
+
+			DenyResult result = DenyResultMessages.Allow;
+
+			Thing c = targetContainer.Cont;
+			if (c != null) {
+				Item contAsItem = c as Item;
+				if (contAsItem != null) {
+					return OpenedContainers.HasContainerOpen(this, contAsItem);
+				} else if (c != this) {
+					result = this.CanReach(c);
+					if (result.Allow) {
+						Character contAsChar = (Character) c;
+						if (!contAsChar.IsPetOf(this)) {//not my pet or myself
+							return DenyResultMessages.Deny_ThatDoesNotBelongToYou;
+						}
+					}
+				}
+			} else {
+				return this.CanReachCoordinates(targetContainer);
+			}
+
+			//equipped in visible layer?
+			if (targetContainer.Z > (int) LayerNames.Mount) {
+				return DenyResultMessages.Deny_ThatIsInvisible;
+			}
+
+			return result;
+		}
+
+
+		#endregion CanSee... / Check...
 
 		#region StatLock
 		public override sealed byte StatLockByte {
@@ -770,28 +851,23 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion status properties
 
-		public void AddHits(int howManyHits) {
-			int hits = this.Hits + howManyHits;
-			this.Hits = (short) Math.Min(0, Math.Max(this.MaxHits, hits));
-		}
-
 		#region resisty
-		private static TagKey resistMagicTK = TagKey.Acquire("_resistMagic_");
-		private static TagKey resistFireTK = TagKey.Acquire("_resistFire_");
-		private static TagKey resistElectricTK = TagKey.Acquire("_resistElectric_");
-		private static TagKey resistAcidTK = TagKey.Acquire("_resistAcid_");
-		private static TagKey resistColdTK = TagKey.Acquire("_resistCold_");
-		private static TagKey resistPoisonTK = TagKey.Acquire("_resistPoison_");
-		private static TagKey resistMysticalTK = TagKey.Acquire("_resistMystical_");
-		private static TagKey resistPhysicalTK = TagKey.Acquire("_resistPhysical_");
-		private static TagKey resistSlashingTK = TagKey.Acquire("_resistSlashing_");
-		private static TagKey resistStabbingTK = TagKey.Acquire("_resistStabbing_");
-		private static TagKey resistBluntTK = TagKey.Acquire("_resistBlunt_");
-		private static TagKey resistArcheryTK = TagKey.Acquire("_resistArchery_");
-		private static TagKey resistBleedTK = TagKey.Acquire("_resistBleed_");
-		private static TagKey resistSummonTK = TagKey.Acquire("_resistSummon_");
-		private static TagKey resistDragonTK = TagKey.Acquire("_resistDragon_");
-		private static TagKey resistParalyseTK = TagKey.Acquire("_resistParalyse_");
+		private static TagKey resistMagicTK = TagKey.Acquire("_resist_magic_");
+		private static TagKey resistFireTK = TagKey.Acquire("_resist_fire_");
+		private static TagKey resistElectricTK = TagKey.Acquire("_resist_electric_");
+		private static TagKey resistAcidTK = TagKey.Acquire("_resist_acid_");
+		private static TagKey resistColdTK = TagKey.Acquire("_resist_cold_");
+		private static TagKey resistPoisonTK = TagKey.Acquire("_resist_poison_");
+		private static TagKey resistMysticalTK = TagKey.Acquire("_resist_mystical_");
+		private static TagKey resistPhysicalTK = TagKey.Acquire("_resist_physical_");
+		private static TagKey resistSlashingTK = TagKey.Acquire("_resist_slashing_");
+		private static TagKey resistStabbingTK = TagKey.Acquire("_resist_stabbing_");
+		private static TagKey resistBluntTK = TagKey.Acquire("_resist_blunt_");
+		private static TagKey resistArcheryTK = TagKey.Acquire("_resist_archery_");
+		private static TagKey resistBleedTK = TagKey.Acquire("_resist_bleed_");
+		private static TagKey resistSummonTK = TagKey.Acquire("_resist_summon_");
+		private static TagKey resistDragonTK = TagKey.Acquire("_resist_dragon_");
+		private static TagKey resistParalyseTK = TagKey.Acquire("_resist_paralyse_");
 
 		public int ResistMagic {
 			get {
@@ -1075,24 +1151,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion regenerace
 
-		public override string PaperdollName {
-			get {
-				if (!String.IsNullOrEmpty(this.title)) {
-					return string.Concat(this.Name, ", ", title);
-				}
-				return this.Name;
-			}
-		}
-
-		public string Title {
-			get {
-				return this.title;
-			}
-			set {
-				this.title = value;
-			}
-		}
-
 		#region Death/Resurrection
 		public void Kill() {
 			//TODO effect?
@@ -1257,29 +1315,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Death/Resurrection
 
-		private static TriggerKey disruptionTK = TriggerKey.Acquire("disruption");
-		public void Trigger_Disrupt() {
-			TryTrigger(disruptionTK, null);
-			On_Disruption();
-		}
-
-		public virtual void On_Disruption() {
-			if (this.CurrentSkillName == SkillName.Magery) {
-				this.AbortSkill();
-			}
-		}
-
-		private static TriggerKey hostileActionTK = TriggerKey.Acquire("hostileAction");
-		public void Trigger_HostileAction(Character enemy) {
-			ScriptArgs sa = new ScriptArgs(enemy);
-			TryTrigger(hostileActionTK, sa);
-			On_HostileAction(enemy);
-		}
-
-		public virtual void On_HostileAction(Character enemy) {
-
-		}
-
 		#region Go() overrides
 		public void Go(Region reg) {
 			P(reg.P);
@@ -1341,119 +1376,6 @@ namespace SteamEngine.CompiledScripts {
 			//Update();
 		}
 		#endregion Go() overrides
-
-		private static ContainerDef backpackDef = null;
-
-		private AbstractItem AddBackpack() {
-			ThrowIfDeleted();
-			if (backpackDef == null) {
-				backpackDef = ThingDef.FindItemDef(0xe75) as ContainerDef;
-				if (backpackDef == null) {
-					throw new SEException("Unable to find itemdef 0xe75 in scripts.");
-				} else if (backpackDef.Layer != (int) LayerNames.Pack) {
-					throw new SEException("Wrong layer of backpack itemdef.");
-				}
-			}
-
-			AbstractItem i = (AbstractItem) backpackDef.Create(this);
-			if (i == null) {
-				throw new SEException("Unable to create backpack.");
-			}
-			return i;
-		}
-
-		public sealed override AbstractItem GetBackpack() {
-			AbstractItem foundPack = this.FindLayer(LayerNames.Pack);
-			if (foundPack == null) {
-				foundPack = this.AddBackpack();
-			}
-			return foundPack;
-		}
-
-		public Container Backpack {
-			get {
-				return (Container) this.GetBackpack();
-			}
-		}
-
-		public override sealed AbstractItem NewItem(IThingFactory arg, int amount) {
-			return this.Backpack.NewItem(arg, amount);
-		}
-
-		public Equippable NewEquip(IThingFactory factory) {
-			Thing t = factory.Create(this);
-			Equippable i = t as Equippable;
-			if (i != null) {
-				if (i.Cont != this) {
-					i.Delete();
-					throw new SEException("'" + i + "' ended not equipped on the char... Wtf?");
-				}
-				return i;
-			}
-			if (t != null) {
-				t.Delete();//we created something else
-			}
-			throw new SEException(factory + " did not create an equippable item.");
-		}
-
-		public override void On_Dupe(Thing model) {
-			Character copyFrom = (Character) model;
-
-			if (copyFrom.skillsabilities != null) {
-				foreach (object o in copyFrom.skillsabilities.Values) {
-					Ability a = o as Ability;
-					if (a != null) {
-						this.SkillsAbilities.Add(a.Def,
-							new Ability(a, this)); //add copy of the Ability object to the duped char's storage
-					} else {
-						Skill s = (Skill) o;
-						this.SkillsAbilities.Add(SkillDef.GetById(s.Id),
-							new Skill(s, this)); //add copy of the Skill object to the duped char's storage
-					}
-				}
-			}
-		}
-
-		#region Persistence
-		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
-			if (this.skillsabilities != null) {
-				foreach (object o in this.skillsabilities.Values) {
-					Ability a = o as Ability;
-					if (a != null) {
-						output.WriteLine(String.Concat(a.Def.PrettyDefname, "=", a.GetSaveString()));
-					} else {
-						Skill s = (Skill) o;
-						output.WriteLine(String.Concat(s.Def.PrettyDefname, "=", s.GetSaveString()));
-					}
-				}
-			}
-			base.On_Save(output);
-		}
-
-		public override void On_Load(PropsSection input) {
-			List<PropsLine> linesList = new List<PropsLine>(input.PropsLines); //can't iterate over the property itself, popping the lines would break the iteration
-			foreach (PropsLine line in linesList) {
-				AbilityDef abDef = AbilityDef.GetByDefname(line.Name);
-				if (abDef != null) {
-					input.PopPropsLine(line.Name);
-					Ability ab = this.AcquireAbilityObject(abDef);
-					if (!ab.LoadSavedString(line.Value)) {
-						Logger.WriteError(input.Filename, line.Line, "Unrecognised ability value format.");
-					}
-				} else {
-					AbstractSkillDef skillDef = AbstractSkillDef.GetByDefname(line.Name);
-					if (skillDef != null) {
-						input.PopPropsLine(line.Name);
-						Skill skill = this.AcquireSkillObject(skillDef);
-						if (!skill.LoadSavedString(line.Value)) {
-							Logger.WriteError(input.Filename, line.Line, "Unrecognised skill value format.");
-						}
-					}
-				}
-			}
-			base.On_Load(input);
-		}
-		#endregion Persistence
 
 		private Dictionary<AbstractDef, object> SkillsAbilities {
 			get {
@@ -1837,6 +1759,7 @@ namespace SteamEngine.CompiledScripts {
 		//}
 		#endregion roles
 
+		#region Spell cast / effect
 		public override void TryCastSpellFromBook(int spellid) {
 			MagerySkillDef.TryCastSpellFromBook(this, spellid);
 		}
@@ -1852,52 +1775,165 @@ namespace SteamEngine.CompiledScripts {
 		public virtual bool On_CauseSpellEffect(IPoint3D target, SpellEffectArgs spellEffectArgs) {
 			return false;
 		}
+		#endregion Spell cast / effect
 
-		/*
-			Method: GM
-		
-				Toggles the plevel of the account between 1 (player) and the account's max plevel.
-				Has no effect on players.
-		*/
-		public void GM() {
-			AbstractAccount acc = this.Account;
-			if (acc != null) {
-				GameState state = acc.GameState;
-				if (acc.PLevel < acc.MaxPLevel) {
-					acc.PLevel = acc.MaxPLevel;
-					state.WriteLine(String.Format(
-						Loc<CharacterLoc>.Get(state.Language).GMModeOn,
-						acc.PLevel));
-				} else {
-					acc.PLevel = 1;
-					state.WriteLine(Loc<CharacterLoc>.Get(state.Language).GMModeOff);
+		public override string PaperdollName {
+			get {
+				if (!String.IsNullOrEmpty(this.title)) {
+					return string.Concat(this.Name, ", ", title);
+				}
+				return this.Name;
+			}
+		}
+
+		public string Title {
+			get {
+				return this.title;
+			}
+			set {
+				this.title = value;
+			}
+		}
+
+		public void AddHits(int howManyHits) {
+			int hits = this.Hits + howManyHits;
+			this.Hits = (short) Math.Min(0, Math.Max(this.MaxHits, hits));
+		}
+
+		private static TriggerKey disruptionTK = TriggerKey.Acquire("disruption");
+		public void Trigger_Disrupt() {
+			TryTrigger(disruptionTK, null);
+			On_Disruption();
+		}
+
+		public virtual void On_Disruption() {
+			if (this.CurrentSkillName == SkillName.Magery) {
+				this.AbortSkill();
+			}
+		}
+
+		private static TriggerKey hostileActionTK = TriggerKey.Acquire("hostileAction");
+		public void Trigger_HostileAction(Character enemy) {
+			ScriptArgs sa = new ScriptArgs(enemy);
+			TryTrigger(hostileActionTK, sa);
+			On_HostileAction(enemy);
+		}
+
+		public virtual void On_HostileAction(Character enemy) {
+
+		}
+
+		private static ContainerDef backpackDef = null;
+		private AbstractItem AddBackpack() {
+			ThrowIfDeleted();
+			if (backpackDef == null) {
+				backpackDef = ThingDef.FindItemDef(0xe75) as ContainerDef;
+				if (backpackDef == null) {
+					throw new SEException("Unable to find itemdef 0xe75 in scripts.");
+				} else if (backpackDef.Layer != (int) LayerNames.Pack) {
+					throw new SEException("Wrong layer of backpack itemdef.");
+				}
+			}
+
+			AbstractItem i = (AbstractItem) backpackDef.Create(this);
+			if (i == null) {
+				throw new SEException("Unable to create backpack.");
+			}
+			return i;
+		}
+
+		public sealed override AbstractItem GetBackpack() {
+			AbstractItem foundPack = this.FindLayer(LayerNames.Pack);
+			if (foundPack == null) {
+				foundPack = this.AddBackpack();
+			}
+			return foundPack;
+		}
+
+		public Container Backpack {
+			get {
+				return (Container) this.GetBackpack();
+			}
+		}
+
+		public override sealed AbstractItem NewItem(IThingFactory arg, int amount) {
+			return this.Backpack.NewItem(arg, amount);
+		}
+
+		public Equippable NewEquip(IThingFactory factory) {
+			Thing t = factory.Create(this);
+			Equippable i = t as Equippable;
+			if (i != null) {
+				if (i.Cont != this) {
+					i.Delete();
+					throw new SEException("'" + i + "' ended not equipped on the char... Wtf?");
+				}
+				return i;
+			}
+			if (t != null) {
+				t.Delete();//we created something else
+			}
+			throw new SEException(factory + " did not create an equippable item.");
+		}
+
+		public override void On_Dupe(Thing model) {
+			Character copyFrom = (Character) model;
+
+			if (copyFrom.skillsabilities != null) {
+				foreach (object o in copyFrom.skillsabilities.Values) {
+					Ability a = o as Ability;
+					if (a != null) {
+						this.SkillsAbilities.Add(a.Def,
+							new Ability(a, this)); //add copy of the Ability object to the duped char's storage
+					} else {
+						Skill s = (Skill) o;
+						this.SkillsAbilities.Add(SkillDef.GetById(s.Id),
+							new Skill(s, this)); //add copy of the Skill object to the duped char's storage
+					}
 				}
 			}
 		}
 
-
-		//Method: GM
-		//
-		//	Sets GM mode to on or off, changing the plevel of the account to either the account's max plevel or 1.
-		//	Has no effect on players. Has no effect if GM mode is already at the requested state.
-		//
-		//Parameters:
-		//	i - 1 to turn GM mode on, 0 to turn it off off.
-		public void GM(int i) {
-			AbstractAccount acc = Account;
-			if (acc != null) {
-				GameState state = acc.GameState;
-				if (i > 0) {
-					acc.PLevel = acc.MaxPLevel;
-					state.WriteLine(String.Format(
-						Loc<CharacterLoc>.Get(state.Language).GMModeOn,
-						acc.PLevel));
-				} else {
-					acc.PLevel = 1;
-					state.WriteLine(Loc<CharacterLoc>.Get(state.Language).GMModeOff);
+		#region Persistence
+		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
+			if (this.skillsabilities != null) {
+				foreach (object o in this.skillsabilities.Values) {
+					Ability a = o as Ability;
+					if (a != null) {
+						output.WriteLine(String.Concat(a.Def.PrettyDefname, "=", a.GetSaveString()));
+					} else {
+						Skill s = (Skill) o;
+						output.WriteLine(String.Concat(s.Def.PrettyDefname, "=", s.GetSaveString()));
+					}
 				}
 			}
+			base.On_Save(output);
 		}
+
+		public override void On_Load(PropsSection input) {
+			List<PropsLine> linesList = new List<PropsLine>(input.PropsLines); //can't iterate over the property itself, popping the lines would break the iteration
+			foreach (PropsLine line in linesList) {
+				AbilityDef abDef = AbilityDef.GetByDefname(line.Name);
+				if (abDef != null) {
+					input.PopPropsLine(line.Name);
+					Ability ab = this.AcquireAbilityObject(abDef);
+					if (!ab.LoadSavedString(line.Value)) {
+						Logger.WriteError(input.Filename, line.Line, "Unrecognised ability value format.");
+					}
+				} else {
+					AbstractSkillDef skillDef = AbstractSkillDef.GetByDefname(line.Name);
+					if (skillDef != null) {
+						input.PopPropsLine(line.Name);
+						Skill skill = this.AcquireSkillObject(skillDef);
+						if (!skill.LoadSavedString(line.Value)) {
+							Logger.WriteError(input.Filename, line.Line, "Unrecognised skill value format.");
+						}
+					}
+				}
+			}
+			base.On_Load(input);
+		}
+		#endregion Persistence
 
 		[Summary("Check if the current character has plevel greater than 1 (is more than player)")]
 		public bool IsGM {
@@ -1908,28 +1944,6 @@ namespace SteamEngine.CompiledScripts {
 				}
 				return false;
 			}
-		}
-
-		public bool IsOwnerOf(Character cre) {
-			return cre.IsPetOf(this);
-		}
-
-		public bool IsPetOf(Character cre) {
-			return true;
-		}
-
-		public override bool CanEquipItemsOn(AbstractCharacter chr) {
-			Character target = (Character) chr;
-			return (this.IsPetOf(target)) && (this.CanReach(target).Allow);
-		}
-
-		//public override bool CanEquip(AbstractItem i) {
-		//    return true;
-		//}
-
-		public override bool CanRename(AbstractCharacter to) {
-			return (this.IsGM) || 
-				((this.IsPlayer) && (to != this) && this.IsOwnerOf((Character) to)); //can't rename self
 		}
 
 		//method: On_DClick
@@ -1948,6 +1962,12 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 			}
+		}
+
+		public override bool On_DenyItemDClick(DenyClickArgs args) {
+			DenyResult dr = this.CanReach(args.Target);
+			args.Result = dr;
+			return !dr.Allow;
 		}
 
 		public override void On_ItemDClick(AbstractItem dClicked) {
@@ -2083,7 +2103,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TagKey armorClassModifierTK = TagKey.Acquire("_armorClassModifier_");
+		private static TagKey armorClassModifierTK = TagKey.Acquire("_armor_class_modifier_");
 		public int ArmorClassModifier {
 			get {
 				return Convert.ToInt32(this.GetTag(armorClassModifierTK));
@@ -2119,7 +2139,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TagKey mindDefenseModifierTK = TagKey.Acquire("_mindDefenseModifier_");
+		private static TagKey mindDefenseModifierTK = TagKey.Acquire("_mind_defense_modifier_");
 		public int MindDefenseModifier {
 			get {
 				return Convert.ToInt32(this.GetTag(mindDefenseModifierTK));
@@ -2288,7 +2308,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static TagKey weaponRangeModifierTK = TagKey.Acquire("_weaponRangeModifier_");
+		private static TagKey weaponRangeModifierTK = TagKey.Acquire("_weapon_range_modifier_");
 		public int WeaponRangeModifier {
 			get {
 				return Convert.ToInt32(this.GetTag(weaponRangeModifierTK));
@@ -2429,56 +2449,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public bool CanReachWithMessage(Thing target) {
-			DenyResult result = this.CanReach(target);
-			if (result.Allow) {
-				return true;
-			} else {
-				result.SendDenyMessage(this);
-				return false;
-			}
-		}
-
-		public override DenyResult CanPutItemsInContainer(AbstractItem targetContainer) {
-			if (this.IsGM) {
-				return DenyResultMessages.Allow;
-			}
-
-			if (this.Flag_Disconnected) {
-				return DenyResultMessages.Deny_NoMessage;
-			}
-
-			//TODO zamykani kontejneru
-
-			DenyResult result = DenyResultMessages.Allow;
-
-			Thing c = targetContainer.Cont;
-			if (c != null) {
-				Item contAsItem = c as Item;
-				if (contAsItem != null) {
-					return OpenedContainers.HasContainerOpen(this, contAsItem);
-				} else if (c != this) {
-					result = this.CanReach(c);
-					if (result.Allow) {
-						Character contAsChar = (Character) c;
-						if (!contAsChar.IsPetOf(this)) {//not my pet or myself
-							return DenyResultMessages.Deny_ThatDoesNotBelongToYou;
-						}
-					}
-				}
-			} else {
-				return this.CanReachCoordinates(targetContainer);
-			}
-
-			//equipped in visible layer?
-			if (targetContainer.Z > (int) LayerNames.Mount) {
-				return DenyResultMessages.Deny_ThatIsInvisible;
-			}
-
-			return result;
-		}
-
-
 		public virtual bool On_DenyOpenDoor(DenySwitchDoorArgs args) {
 			return false;
 		}
@@ -2584,8 +2554,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class CharacterLoc : CompiledLocStringCollection {
-		public string GMModeOn = "GM mode on (Plevel {0}).";
-		public string GMModeOff = "GM mode off (Plevel 1).";
 		public string TargetIsDead = "The target is dead.";
 		public string TargetIsInsubst = "The target is insubstantial.";
 	}

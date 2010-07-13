@@ -61,7 +61,7 @@ namespace SteamEngine {
 			}
 		}
 
-		static TagKey visionRangeTK = TagKey.Acquire("_visionRange_");
+		static TagKey visionRangeTK = TagKey.Acquire("_vision_range_");
 		/**
 			Increases or decreases the vision range of this character.
 			
@@ -169,10 +169,6 @@ namespace SteamEngine {
 			int dist = Point2D.GetSimpleDistance(fromCoordinates.X, fromCoordinates.Y, targetX, targetY);
 			return dist <= this.UpdateRange;
 		}
-
-		//public virtual DenyResult CanPickUp(AbstractItem item) {
-		//    return DenyResult.Allow;
-		//}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
 		public DenyResult CanReach(Thing target) {

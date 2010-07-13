@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_DenyActivate(DenyAbilityArgs args) {
 			Character self = args.abiliter;
-			if (self.Backpack.FindById(ThrowingKnifeDef) == null) {
+			if (GetThrowingKnife(self) == null) {
 				args.Result = DenyMessages_Throwing.Deny_YouNeedThrowingKnife;
 				return true;
 			}
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_Activate(Character self, Ability ab) {
-			Projectile knife = (Projectile) self.Backpack.FindById(ThrowingKnifeDef);
+			Projectile knife = (Projectile) self.GetTag(throwingKnifeTK); //set in DenyActivate
 			
 			Character target = (Character) self.CurrentSkillArgs.Target1;
 			int distance = Point2D.GetSimpleDistance(self, target);
@@ -101,22 +101,30 @@ namespace SteamEngine.CompiledScripts {
 
 
 		private static TagKey throwingKnifeTK = TagKey.Acquire("_throwing_knife_");
+		
+
+		//todo? return specialised knife according to players preset preference
 		public static Projectile GetThrowingKnife(Character self) {
 			Projectile knife = self.GetTag(throwingKnifeTK) as Projectile;
-			if (knife != null) {
-				if (self.CanReach(knife).Allow) {
+			if (knife == null) {
+				if (self.CanPickup(knife).Allow) {
 					return knife;
 				}
 			}
 
-			knife = (Projectile) self.Backpack.FindById(ThrowingKnifeDef);
-			if (knife != null) {
-				self.SetTag(throwingKnifeTK, knife);
-				return knife;
-			} else {
-				self.RemoveTag(throwingKnifeTK);
-				return null;
+			ProjectileDef def = ThrowingKnifeDef;
+			foreach (Item i in self.Backpack.EnumShallow()) {
+				knife = i as Projectile;
+				if ((knife != null) && (knife.Def == def)) {
+					if (self.CanPickup(knife).Allow) {
+						self.SetTag(throwingKnifeTK, knife);
+						return knife;
+					}
+				}
 			}
+
+			self.RemoveTag(throwingKnifeTK);
+			return null;
 		}
 	}
 

@@ -18,14 +18,13 @@
 using System;
 using System.Collections;
 using SteamEngine.Regions;
+using SteamEngine;
+using SteamEngine.Common;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
 	public static class ScriptedCommands {
-		//public static OnTargon skillsetTargon;
-		//public static OnTargon dragonTileTargon = DragonTileTargon;
-		public static object[] args;
-
 		[SteamFunction]
 		public static void Remove(Player self) {
 			self.SysMessage("Zamer objekt pro odstraneni");
@@ -50,6 +49,54 @@ namespace SteamEngine.CompiledScripts {
 			protected override bool On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
 				self.Go(targetted);
 				return false;
+			}
+		}
+
+		[Summary("Toggles the plevel of the account between 1 (player) and the account's max plevel, and writes back a message about the resulting state.")]
+		[Remark("Has no effect on players.")]
+		[SteamFunction]
+		public static void GM(Character self) {
+			AbstractAccount acc = self.Account;
+			if (acc != null) {
+				if (acc.PLevel < acc.MaxPLevel) {
+					acc.PLevel = acc.MaxPLevel;
+					Globals.SrcWriteLine(String.Format(
+						Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).GMModeOn,
+						acc.PLevel));
+				} else {
+					acc.PLevel = 1;
+					Globals.SrcWriteLine(Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).GMModeOff);
+				}
+			}
+		}
+		
+		[Summary("Sets GM mode to on or off, changing the plevel of the account to either the account's max plevel or 1, and writes back a message about the resulting state.")]
+		[Remark("Has no effect on players. Has no effect if GM mode is already at the requested state.")]
+		[SteamFunction]
+		public static void GM(Character self, bool gmMode) {
+			AbstractAccount acc = self.Account;
+			if (acc != null) {
+				if (gmMode) {
+					acc.PLevel = acc.MaxPLevel;
+					Globals.SrcWriteLine(String.Format(
+						Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).GMModeOn,
+						acc.PLevel));
+				} else {
+					acc.PLevel = 1;
+					Globals.SrcWriteLine(Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).GMModeOff);
+				}
+			}
+		}
+
+		[Summary("Toggles the Flag_Insubst of a gm, and writes back a message about the resulting state.")]
+		[SteamFunction]
+		public static void Invis(Character self) {
+			if (self.Flag_Insubst) {
+				self.Flag_Insubst = false;
+				Globals.SrcWriteLine(Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).InsubstOff);
+			} else {
+				self.Flag_Insubst = true;
+				Globals.SrcWriteLine(Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).InsubstOn);
 			}
 		}
 
@@ -247,5 +294,12 @@ namespace SteamEngine.CompiledScripts {
 		//		cre.SysMessage( args[0]+": Value="+newvalue );
 		//	}
 		//}
+	}
+
+	public class GmCommandsLoc : CompiledLocStringCollection {
+		public string GMModeOn = "GM mode on (Plevel {0}).";
+		public string GMModeOff = "GM mode off (Plevel 1).";
+		public string InsubstOn = "Flag_Insubst on (you're invisible and players can not interact with you)";
+		public string InsubstOff = "Flag_Insubst off (you're visible)";
 	}
 }
