@@ -46,12 +46,11 @@ namespace SteamEngine.CompiledScripts {
 			//todo: various state checks...
 			Character self = skillSeqArgs.Self;
 			Container cnt = (Container) skillSeqArgs.Target1;
-			if (!self.CanReachWithMessage(cnt)) {
-				skillSeqArgs.Success = false;
-			} else {
+			if (self.CanReachWithMessage(cnt)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, 800);
+				return false;
 			}
-			return false;
+			return true;
 		}
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {

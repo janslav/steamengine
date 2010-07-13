@@ -91,17 +91,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_Activate(Character self, Ability ab) {
-			Projectile knife = (Projectile) self.GetTag(throwingKnifeTK); //set in DenyActivate
-			
-			Character target = (Character) self.CurrentSkillArgs.Target1;
+			Projectile knife = (Projectile) self.GetTag(throwingKnifeTK); //checked and set in DenyActivate
+
+			Character target = (Character) self.CurrentSkillArgs.Target1; //checked in DenyActivate
 			int distance = Point2D.GetSimpleDistance(self, target);
+
+			//TODO
 
 			return false; //do not cancel
 		}
 
 
-		private static TagKey throwingKnifeTK = TagKey.Acquire("_throwing_knife_");
-		
+		private static TagKey throwingKnifeTK = TagKey.Acquire("_throwing_knife_");		
 
 		//todo? return specialised knife according to players preset preference
 		public static Projectile GetThrowingKnife(Character self) {

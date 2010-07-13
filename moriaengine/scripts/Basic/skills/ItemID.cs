@@ -27,9 +27,12 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			//todo: various state checks...
-			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-			return false;
+			if (self.CanReachWithMessage((Item) skillSeqArgs.Target1)) {
+				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
+				return false;
+			} else {
+				return true;
+			}
 		}
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
@@ -38,16 +41,11 @@ namespace SteamEngine.CompiledScripts {
             GameState stateSelf = self.GameState;
 			Item targetted = (Item)skillSeqArgs.Target1;
             self.SysMessage(targetted.ToString()+ "," + targetted.IsDeleted);// kontrolni hlaska, pozdeji odstranit!
-			if (targetted == null || !targetted.IsDeleted) {
-                //if (stateSelf != null) {
-                //    stateSelf.WriteLine(Loc<ItemIdLoc>.Get(stateSelf.Language).ISuccess);
-                //}
-                self.SysMessage(targetted.Name + " se vyrabi z !RESOURCES!" + ", vazi " + targetted.Weight + " a barva je " + targetted.Color);
-			} else {
-                if (stateSelf != null) {
-                    stateSelf.WriteLine(Loc<ItemIdLoc>.Get(stateSelf.Language).TargetForgotten);
-                }
-			}
+			
+            //if (stateSelf != null) {
+            //    stateSelf.WriteLine(Loc<ItemIdLoc>.Get(stateSelf.Language).ISuccess);
+            //}
+            self.SysMessage(targetted.Name + " se vyrabi z !RESOURCES!" + ", vazi " + targetted.Weight + " a barva je " + targetted.Color);
 			return false;
 		}
 
@@ -90,7 +88,6 @@ namespace SteamEngine.CompiledScripts {
 	}
     public class ItemIdLoc : CompiledLocStringCollection {
         internal readonly string TargetWhat = "Co chceš identifikovat?";
-        internal readonly string TargetForgotten = "Zapomìl jsi, co máš identifikovat!";
         internal readonly string ICanceled = "Identifikace pøedmìtu pøerušena.";
         internal readonly string IFailed = "Identifikace pøedmìtu se nezdaøila.";
         internal readonly string ISuccess = "";

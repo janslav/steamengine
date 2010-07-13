@@ -27,10 +27,8 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			Item targetted = (Item)skillSeqArgs.Target1;
-			if (targetted == null || targetted.IsDeleted) {
-				self.SysMessage(self.IsFemale ? Loc<LockpickLoc>.Get(self.Language).forgottenItemWoman : Loc<LockpickLoc>.Get(self.Language).forgottenItem); // ztrata targetu
-			} else if (self.CanReachWithMessage(targetted)) {
+			Item targetted = (Item) skillSeqArgs.Target1;
+			if (self.CanReachWithMessage(targetted)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));	// TODO pridat succes v zavislosti na obtiznosti zamku
 				return false;
 				// odemknuti predmetu
@@ -41,8 +39,12 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			Item targetted = (Item)skillSeqArgs.Target1;
+			Item targetted = (Item) skillSeqArgs.Target1;
+
 			self.SysMessage(self.IsFemale ? Loc<LockpickLoc>.Get(self.Language).successWoman : Loc<LockpickLoc>.Get(self.Language).success);
+
+			//TODO
+
 			return false;
 		}
 
@@ -62,22 +64,19 @@ namespace SteamEngine.CompiledScripts {
 	public class t_lockpick : CompiledTriggerGroup {
 		public void On_DClick(Item self, Character clicker) {
 			//TODO? use resource system for consuming lockpicks
-
-			if (self.TopObj() == clicker) {
+			DenyResult canPickup = clicker.CanPickup(self);
+			if (canPickup.Allow) {
 				clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Lockpicking, self));
 				//StartLockpick(clicker, self);
 			} else {
-				Item otherLockpick = null;
-				foreach (Item i in clicker.Backpack) {
-					if (i.Type == this) {
-						otherLockpick = i;
-						break;
+				foreach (Item i in clicker.Backpack.EnumShallow()) {
+					if ((i.Type == this) && (clicker.CanPickup(i).Allow)) {
+						clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Lockpicking, self));
+						return;
 					}
 				}
-				if (otherLockpick != null) {
-					clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Lockpicking, self));
-				}
 			}
+			canPickup.SendDenyMessage(clicker);
 		}
 	}
 
@@ -91,23 +90,22 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
-			
+
 			//nevidi na cil
 			if (self.CanReachWithMessage(targetted)) {
 				if (!ItemLockPlugin.IsLocked(targetted)) {
 					skillSeq.Target1 = targetted;
 					skillSeq.PhaseStart();
+					return false;
 				}
 			}
-			return false;
+			return true;
 		}
 
 		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
 			self.SysMessage(Loc<LockpickLoc>.Get(self.Language).cantUseLockpick);
-			return false;
+			return true;
 		}
-
-		private TimerKey lockpickTimerKey = TimerKey.Acquire("_lockpickTimer_");
 	}
 
 	public class LockpickLoc : CompiledLocStringCollection {
@@ -117,7 +115,5 @@ namespace SteamEngine.CompiledScripts {
 		public string fail = "Nepodaøilo se ti odemknout zámek";
 		public string success = "Úspìšnì jsi odemkl zámek";
 		public string successWoman = "Úspìšnì jsi odemkla zámek";
-		public string forgottenItem = "Zapomnìl jsi, co máš odemknout";
-		public string forgottenItemWoman = "Zapomnìla jsi, co máš odemknout";
 	}
 }
