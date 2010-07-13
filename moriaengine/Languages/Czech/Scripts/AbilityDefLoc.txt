@@ -1,4 +1,4 @@
-AbilityActivated                = Abilita {0} aktivována
+AbilityActivated                = Abilita {0} aktivována.
 YouDontHaveThisAbility          = O této abilitě nevíš vůbec nic.
 NotYetCooledDown                = Abilitu nelze použít tak brzy po předchozím použití.
 HasBeenSwitchedOff              = Abilita deaktivována.

@@ -1,1 +1,1 @@
-WelcomeToShard      = Welcome to {0}.
+WelcomeToShard                  = Welcome to {0}.

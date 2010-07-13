@@ -1,7 +1,5 @@
 TargetWho                       = Co chceš zkoumat?
-TargetOnlyHuman                 = Zaměřuj pouze zvěř!
+TargetOnlyAnimals               = Zaměřuj pouze zvěř!
 ACanceled                       = Animal Lore bylo přerušeno.
 AFailed                         = Tvé zkoumání se nezdařilo.
-TargetForgottenF                = Zapoměla jsi co chceš zkoumat!
-TargetForgottenM                = Zapoměl jsi co chceš zkoumat!
 ASuccess1                       = Animal Lore se ti povedlo.
