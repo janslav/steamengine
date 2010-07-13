@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			GemBox focus = parameter as GemBox;
-			if ((!self.CanReachWithMessage(focus)) || (!self.CanReachWithMessage(targetted))) {
+			if ((!self.CanReachWithMessage(focus)) || (!self.CanPickUpWithMessage(targetted))) {
 				return false;
 			}
 			if (targetted.Type.Defname == "t_gem") {

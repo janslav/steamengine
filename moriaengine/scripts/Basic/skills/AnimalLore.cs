@@ -11,7 +11,7 @@ using SteamEngine.Networking;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class AnimalLoreSkillDef : SkillDef {
-        public AnimalLoreSkillDef(string defname, string filename, int headerLine)
+		public AnimalLoreSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
 
@@ -29,87 +29,72 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-			return false;
+			if (self.CanInteractWithMessage(skillSeqArgs.Target1)) {
+				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
+				return false;
+			} else {
+				return true;
+			}
 		}
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character targetted = skillSeqArgs.Target1 as Character;
-            GameState stateSelf = self.GameState;
-			if (targetted == null || targetted.IsDeleted) {
-                if (stateSelf != null) {
-                    stateSelf.WriteLine(self.IsFemale == true ? Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetForgottenF : Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetForgottenM);
-                }
-            } else if (self.CanReachWithMessage(targetted)) {
-                //TODO: Hlasky pro ruzne intervaly STR/STAM
-                if (stateSelf != null) {
-                    stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ASuccess1);
-                }
+			GameState stateSelf = skillSeqArgs.Self.GameState;
+			if (stateSelf != null) {
+				//TODO: Hlasky pro ruzne intervaly STR/STAM
+				stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ASuccess1);
 			}
 			return false;
 		}
 
 		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-            GameState stateSelf = skillSeqArgs.Self.GameState;
-            if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).AFailed);
-            }
+			GameState stateSelf = skillSeqArgs.Self.GameState;
+			if (stateSelf != null) {
+				stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).AFailed);
+			}
 			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-            GameState stateSelf = skillSeqArgs.Self.GameState;
-            if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ACanceled);
-            }
+			GameState stateSelf = skillSeqArgs.Self.GameState;
+			if (stateSelf != null) {
+				stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ACanceled);
+			}
 		}
 	}
 
-    public class Targ_AnimalLore : CompiledTargetDef {
+	public class Targ_AnimalLore : CompiledTargetDef {
 		protected override void On_Start(Player self, object parameter) {
-			GameState stateSelf = self.GameState;
-            if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetWho);
-            }
+			self.SysMessage(Loc<AnimalLoreLoc>.Get(self.Language).TargetWho);
 			base.On_Start(self, parameter);
 		}
 
 		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
-            if (!self.CanReachWithMessage(targetted)){
-                return false;
-            }
+			if (!self.CanInteractWithMessage(targetted)) {
+				return false;
+			}
 
-            if (targetted.IsAnimal) {
-                SkillSequenceArgs skillSeq = (SkillSequenceArgs)parameter;
-                skillSeq.Target1 = targetted;
-                skillSeq.PhaseStart();
-                return false;
-            } else {
-                GameState stateSelf = self.GameState;
-                if (stateSelf != null) {
-                    stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetOnlyHuman);
-                }
-                return false;
-            }
+			if (targetted.IsAnimal) {
+				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+				skillSeq.Target1 = targetted;
+				skillSeq.PhaseStart();
+				return false;
+			} else {
+				self.SysMessage(Loc<AnimalLoreLoc>.Get(self.Language).TargetOnlyAnimals);
+				return false;
+			}
 		}
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-            GameState stateSelf = self.GameState;
-            if (stateSelf != null) {
-                stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).TargetOnlyHuman);
-            }
-            return false;
+			self.SysMessage(Loc<AnimalLoreLoc>.Get(self.Language).TargetOnlyAnimals);
+			return true;
 		}
 	}
 
-    public class AnimalLoreLoc : CompiledLocStringCollection {
-        internal readonly string TargetWho = "Co chceš zkoumat?";
-        internal readonly string TargetOnlyHuman = "Zamìøuj pouze zvìø!";
-        internal readonly string ACanceled = "Animal Lore bylo pøerušeno.";
-        internal readonly string AFailed = "Tvé zkoumání se nezdaøilo.";
-        internal readonly string TargetForgottenF = "Zapomìla jsi co chceš zkoumat!";
-        internal readonly string TargetForgottenM = "Zapomìl jsi co chceš zkoumat!";
-        internal readonly string ASuccess1 = "Animal Lore se ti povedlo.";
-    }
+	public class AnimalLoreLoc : CompiledLocStringCollection {
+		internal readonly string TargetWho = "Co chceš zkoumat?";
+		internal readonly string TargetOnlyAnimals = "Zamìøuj pouze zvìø!";
+		internal readonly string ACanceled = "Animal Lore bylo pøerušeno.";
+		internal readonly string AFailed = "Tvé zkoumání se nezdaøilo.";
+		internal readonly string ASuccess1 = "Animal Lore se ti povedlo.";
+	}
 }

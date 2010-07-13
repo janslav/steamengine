@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 			PoisonPotion potion = skillSeqArgs.Tool as PoisonPotion;
 			if (potion != null) {
-				if (!self.CanReachWithMessage(potion)) {
+				if (!self.CanPickUpWithMessage(potion)) {
 					potion = null;
 				}
 			}
@@ -185,12 +185,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-			if (!self.CanReachWithMessage(targetted)) {
-				return true; //re-raise target
-			} else if (targetted is PoisonPotion) {
+			if (targetted is PoisonPotion) {
 				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 				skillSeq.Tool = targetted;
-				skillSeq.PhaseStart();
+				skillSeq.PhaseSelect();
 				return false;
 			} else {
 				self.ClilocSysMessage(502139); //That is not a poison potion.
@@ -208,15 +206,9 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
-
-			if (!self.CanReachWithMessage(targetted)) {
-				return true;
-			} else if (PoisoningSkillDef.CanPoisonWithMessage(self, (PoisonPotion) skillSeq.Tool, targetted)) {				
-				skillSeq.Target1 = targetted;
-				skillSeq.PhaseStart();
-				return false;
-			}
-			return true; //re-raise target
+			skillSeq.Target1 = targetted;
+			skillSeq.PhaseStart();
+			return false;
 		}
 	}
 

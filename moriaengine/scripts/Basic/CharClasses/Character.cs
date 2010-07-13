@@ -47,7 +47,6 @@ namespace SteamEngine.CompiledScripts {
 				"Ability/Skill object of the desired entity")]
 		private Dictionary<AbstractDef, object> skillsabilities;
 
-		float weight;
 		private CharModelInfo charModelInfo;
 
 		#region Flags
@@ -533,11 +532,6 @@ namespace SteamEngine.CompiledScripts {
 					return result;
 				}
 
-				result = this.CanSeeLOS(target);
-				if (!result.Allow) {
-					return result;
-				}
-
 				Character targetAsChar = target as Character;
 				if (targetAsChar != null) {
 					if (targetAsChar.Flag_Dead) {
@@ -546,6 +540,11 @@ namespace SteamEngine.CompiledScripts {
 					if (targetAsChar.Flag_Insubst) {
 						return DenyResultMessages_Character.Deny_TargetIsInsubst;
 					}
+				}
+
+				result = this.CanSeeLOS(target);
+				if (!result.Allow) {
+					return result;
 				}
 			}
 			return DenyResultMessages.Allow;
@@ -559,7 +558,17 @@ namespace SteamEngine.CompiledScripts {
 			result.SendDenyMessage(this);
 			return false;
 		}
-		
+
+		public bool CanPickUpWithMessage(Item target) {
+			DenyResult result = this.CanPickup(target);
+			if (result.Allow) {
+				return true;
+			} else {
+				result.SendDenyMessage(this);
+				return false;
+			}
+		}
+
 		public bool CanReachWithMessage(Thing target) {
 			DenyResult result = this.CanReach(target);
 			if (result.Allow) {
@@ -1984,6 +1993,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Weight
+
+		float weight;
+
 		public override float Weight {
 			get {
 				return weight;

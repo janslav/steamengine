@@ -70,24 +70,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		
-		[Summary("Sets GM mode to on or off, changing the plevel of the account to either the account's max plevel or 1, and writes back a message about the resulting state.")]
-		[Remark("Has no effect on players. Has no effect if GM mode is already at the requested state.")]
-		[SteamFunction]
-		public static void GM(Character self, bool gmMode) {
-			AbstractAccount acc = self.Account;
-			if (acc != null) {
-				if (gmMode) {
-					acc.PLevel = acc.MaxPLevel;
-					Globals.SrcWriteLine(String.Format(
-						Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).GMModeOn,
-						acc.PLevel));
-				} else {
-					acc.PLevel = 1;
-					Globals.SrcWriteLine(Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).GMModeOff);
-				}
-			}
-		}
-
 		[Summary("Toggles the Flag_Insubst of a gm, and writes back a message about the resulting state.")]
 		[SteamFunction]
 		public static void Invis(Character self) {

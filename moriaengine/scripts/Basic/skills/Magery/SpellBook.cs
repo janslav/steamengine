@@ -161,7 +161,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			SpellBook book = targetted as SpellBook;
 			if (book != null) {
-				DenyResult canReach = self.CanReach(targetted);
+				DenyResult canReach = self.CanPickup(targetted);
 				if (canReach.Allow) {
 					Container cont = targetted.Cont as Container;
 					if (cont == null) {

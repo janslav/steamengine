@@ -26,23 +26,23 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			//todo: various state checks...
-			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-			return false;
+			if (self.CanReachWithMessage((Item) skillSeqArgs.Target1)) {
+				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
+				return false;
+			} else {
+				return true;
+			}
 		}
 
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			self.SysMessage("Arms lore SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
 			Destroyable targetted = (Destroyable) skillSeqArgs.Target1;
-			if (targetted == null || targetted.IsDeleted) {
-				self.SysMessage("Zapomel jsi co zkoumáš!"); // ztrata targetu
-			} else if (self.CanReachWithMessage(targetted)) {
-				self.SysMessage("Armor už umíme, doplníme. Vypisujeme testovaci hlasku: " + targetted.Name + " model je: " + targetted.Model);
 
-				//Destroyable = zbran (Weapon) nebo brneni/obleceni (Wearable)
+			self.SysMessage("Armor už umíme, doplníme. Vypisujeme testovaci hlasku: " + targetted.Name + " model je: " + targetted.Model);
 
-			}
+			//Destroyable = zbran (Weapon) nebo brneni/obleceni (Wearable)
+
 			return false;
 		}
 
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
 			self.SysMessage("Zamìøuj pouze zbranì a zbroje!");
-			return false;
+			return true;
 		}
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
