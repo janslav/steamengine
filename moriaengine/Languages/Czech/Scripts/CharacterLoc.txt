@@ -1,4 +1,2 @@
-GMModeOn            = GM mód zapnut (Plevel {0}).
-GMModeOff           = GM mód vypnut (Plevel 1).
 TargetIsDead                    = The target is dead.
 TargetIsInsubst                 = The target is insubstantial.

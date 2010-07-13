@@ -1,5 +1,5 @@
-XCommandPrompt      = Command who or what?
-CommandFailed       = Command '{0}' failed - {1}
-WrongCommandArgument= Wrong argument for that method
-UnknownCommand      = Unknown method/function {0}
-WrongCommandFormat  = Unrecognized command format
+XCommandPrompt                  = Command who or what?
+CommandFailed                   = Command '{0}' failed - {1}
+WrongCommandArgument            = Wrong argument for that method
+UnknownCommand                  = Unknown method/function {0}
+WrongCommandFormat              = Unrecognized command format

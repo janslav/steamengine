@@ -1,6 +1,6 @@
-ResourcesLackingButContinue = Nedostatek zdrojù k vyrobení {0}, pokraèuji dalšími pøedmìty.
-ResourcesLackingAndFinish = Nedostatek zdrojù k vyrobení {0}, výroba je ukonèena.
-FinishCrafting = Výroba je ukonèena
-ItemMakingFailed = Výroba {0} se nezdaøila a ztratil jsi trochu materiálu. 
-CraftingAborted = Výroba byla pøerušena
-ItemMadeAndPutInRecCont = Vyrobil jsi {0} a umístil do {1}
+ResourcesLackingButContinue     = Not enough resources to make {0}, continuing with other items.
+ResourcesLackingAndFinish       = Not enough resources to make {0}, crafting is finished.
+ItemMakingFailed                = You have failed to make {0} and lost some of the resources
+FinishCrafting                  = Crafting is finished
+CraftingAborted                 = Crafting aborted
+ItemMadeAndPutInRecCont         = You create the {0} and put it in your {1}

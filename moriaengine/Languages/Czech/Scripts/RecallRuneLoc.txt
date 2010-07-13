@@ -1,5 +1,5 @@
-anUnknownDestination            = neznámé místo
-target                          = Cíl
+anUnknownDestination            = an unknown destination
+target                          = Target
 ForbiddenTeleportingIn          = Zde je zakázáno kouzlit teleportovací kouzla
 ForbiddenTeleportingOut         = Odtud je zakázáno kouzlit teleportovací kouzla
 ForbiddenEnemyTeleportingIn     = Zde je nepřátelům zakázáno kouzlit teleportovací kouzla
