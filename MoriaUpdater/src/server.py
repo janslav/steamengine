@@ -132,8 +132,11 @@ def create_pack(uiobj):
 	packname = os.path.join(_ftproot, FILENAME_PACK+utils.EXTENSION_ARCHIVE)
 	
 	#if moriapack is newer than the release directory, it probably doesn't need  
-	if not server_utils.is_newer_file(_releasesdir, packname):
-		return
+	#if not server_utils.is_newer_file(_releasesdir, packname):
+	#	return
+	
+	#better off zipping moriapack every time
+	
 	
 	archive = ZipFile(packname, mode="w", compression=ZIP_DEFLATED)
 	try:				
