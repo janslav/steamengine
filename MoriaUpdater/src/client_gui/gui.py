@@ -27,7 +27,23 @@ else:
 
 
 from PIL import ImageTk 
-PhotoImage = ImageTk.PhotoImage
+
+def PhotoImage(file):
+    import os
+    print os.path.abspath(".") 
+    if os.path.exists(file):
+        return ImageTk.PhotoImage(file = file)
+    else:
+        p = os.path.join(os.path.join("bin", file))
+        if os.path.exists(p):
+            return ImageTk.PhotoImage(file = p)
+        else:
+            p = os.path.join(os.path.join("..", file))
+            if os.path.exists(p):
+                return ImageTk.PhotoImage(file = p)
+            else:
+                p = os.path.join(os.path.join("..", "..", file))
+                return ImageTk.PhotoImage(file = p)
 
 '''
 
@@ -87,7 +103,7 @@ class Moria_Updater:
 
         self.tLa35 = ttk.Label (master)
         self.tLa35.place(relx=-0.01,rely=0.0)
-        self._img1 = PhotoImage(file="D:/SE/MoriaUpdater/src/client_ui/background.png")
+        self._img1 = PhotoImage(file="background.png")
         self.tLa35.configure(image=self._img1)
 
         self.scr33 = ScrolledText (master)

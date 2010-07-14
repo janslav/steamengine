@@ -31,10 +31,10 @@ def is_newer_file(filename_source, filename_dependant):
 		return True
 	
 	srcstat = os.stat(filename_source)
-	srctime = max(srcstat.st_atime, srcstat.st_mtime, srcstat.st_ctime)
+	srctime = max(srcstat.st_mtime, srcstat.st_ctime)
 	
 	depstat = os.stat(filename_dependant)	
-	deptime = max(depstat.st_atime, depstat.st_mtime, depstat.st_ctime)
+	deptime = max(depstat.st_mtime, depstat.st_ctime)
 	
 	return srctime > deptime
 
@@ -76,7 +76,7 @@ def _commandline(command):
 	inpipe.close()
 	code = outpipe.close()
 	if (code):
-		raise RuntimeError('Command failed. Return code = '+code)
+		raise RuntimeError('Command failed. Return code = '+str(code))
 	
 def delete_archive_of(filename):
 	archivename = filename+utils.EXTENSION_ARCHIVE
