@@ -602,10 +602,16 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static string GetMulsPath() {
 #if MSWIN
-			RegistryKey rk = Registry.LocalMachine;
-			rk = rk.OpenSubKey("SOFTWARE");
-			if (rk != null) {
-				rk = rk.OpenSubKey("Origin Worlds Online");
+			RegistryKey soft = Registry.LocalMachine.OpenSubKey("SOFTWARE");
+			if (soft != null) {
+				RegistryKey rk = soft.OpenSubKey("Origin Worlds Online");
+				if (rk == null) {
+					rk = soft.OpenSubKey("Wow6432Node"); //32bit stuff in 64bit Windows? Bizarre node name anyway
+					if (rk != null) {
+						rk = rk.OpenSubKey("Origin Worlds Online");
+					}
+				}
+
 				if (rk != null) {
 					string[] names = rk.GetSubKeyNames();
 					foreach (string name in names) {

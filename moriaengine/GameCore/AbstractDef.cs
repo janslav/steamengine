@@ -332,7 +332,7 @@ namespace SteamEngine {
 				return parserMethod;
 			}
 
-			//lazy initialisation. We're looking for our 
+			//lazy initialisation. We're looking for the according parser
 			Type type = defType;
 			while (type != typeof(AbstractDef)) {
 				if (defnameParsersByType_Registered.TryGetValue(type, out parserMethod)) {
