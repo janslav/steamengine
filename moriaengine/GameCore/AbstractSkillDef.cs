@@ -133,7 +133,7 @@ namespace SteamEngine {
 		}
 
 		public static new void Bootstrap() {
-			//ThingDef script sections are special in that they can have numeric header indicating model
+			//SkillDef script sections are special in that they have numeric header indicating skill id
 			AbstractDef.RegisterDefnameParser<AbstractSkillDef>(ParseDefnames);
 		}
 
