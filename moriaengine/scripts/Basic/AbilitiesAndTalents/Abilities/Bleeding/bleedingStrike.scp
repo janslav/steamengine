@@ -13,24 +13,14 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ThingTemplate Weapon : Destroyable]
-Def:	//vars on the def
-	double attackVsM = 50
-	double attackVsP = 50
-	double piercing = 0
-	double speed = 100
-	WeaponType weaponType = WeaponType.BareHands
-	WeaponAnimType weaponAnimType = WeaponAnimType.Undefined
-	ProjectileType projectileType = ProjectileType.None
-	int projectileAnim = -1
-	int rangeVsM = 1
-	int rangeVsP = 1
-	int strikeStartRange = 5
-	int strikeStopRange = 10
-	double mindPowerVsM = -1
-	double mindPowerVsP = -1
-	int poisoningDifficulty = 0
-	double poisoningEfficiency = 1.0
-	int poisonCapacity = 5
-	double bleedingEfficiency = 1.0
-	
+[ActivableAbilityDef a_bleeding_strike]
+Name="Bleeding Strike"
+EffectPower=0.1 //damage multiplier (original strike damage -> pertick damage)
+ResourcesPresent=40 stam
+EffectDuration = 75 //15 ticks (10-20 previously)
+
+PluginKey = @@bleeding_strike
+PluginDef = p_bleeding_strike
+
+//plugin representing activated ability
+[BleedingStrikePluginDef p_bleeding_strike]

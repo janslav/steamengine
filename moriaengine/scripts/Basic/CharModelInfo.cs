@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		public readonly bool isFemale;
 		public readonly bool isGhost;
 
-		//taken from runuo
+		//data taken from runuo
 		public static void Bootstrap() {
 			string filename = Path.Combine(Globals.ScriptsPath, "bodyTable.cfg");
 			if (File.Exists(filename)) {
