@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class DamagingPoisonEffectPlugin {
 
-		public override void On_PoisonTick() {
+		public override void On_FadingEffectTick() {
 			Character self = this.Cont as Character;
 			if (self != null) {
 
@@ -50,6 +50,30 @@ namespace SteamEngine.CompiledScripts {
 
 			//0-4 are valid messages
 			this.AnnouncePoisonStrength((PoisonStrengthMessage) (this.EffectPower / 2));
+		}
+
+		//the names aren't really important, the relevant part here is that it's 0-4
+		public enum PoisonStrengthMessage {
+			Zero = 0, Weakest = 0, Nauseous = 0, Ill = 0,
+			One = 1, Weak = 1, DisorientedAndNauseous = 1, ExtremelyIll = 1,
+			Two = 2, Normal = 2, FeelingPain = 2, StumblesAround = 2,
+			Three = 3, Strong = 3, ExtremelyWeak = 3, WrackedWithPain = 3,
+			Four = 4, Strongest = 4, ExtremePain = 4, SpasmingUncontrollably = 4
+		}
+
+		public void AnnouncePoisonStrength(PoisonStrengthMessage strength) {
+			Character self = this.Cont as Character;
+			if (self != null) {
+				int roundedEffect = (int) strength;
+				if (roundedEffect < 0) {
+					roundedEffect = 0;
+				} else if (roundedEffect > 4) {
+					roundedEffect = 4;
+				}
+
+				self.ClilocEmote(1042858 + (roundedEffect * 2), 0x21, self.Name); //shouldn't see one's own cliloc emote?
+				self.ClilocSysMessage(1042857 + (roundedEffect * 2), 0x21);
+			}
 		}
 	}
 }

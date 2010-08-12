@@ -16,7 +16,7 @@
 
 [PluginTemplate PoisonedItemPlugin : Plugin]
 Vars:
-	private PoisonEffectPluginDef poisonType  = null
+	private FadingEffectDurationPluginDef poisonType  = null
 	private double poisonPower = 0
 	private int poisonTickCount = 0
 	private int poisonDoses = 0

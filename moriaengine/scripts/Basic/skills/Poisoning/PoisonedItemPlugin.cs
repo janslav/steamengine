@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			return item.GetPlugin(poisonPK) as PoisonedItemPlugin;
 		}
 
-		public PoisonEffectPluginDef PoisonType {
+		public FadingEffectDurationPluginDef PoisonType {
 			get {
 				return this.poisonType;
 			}
@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//our weaponis being equipped to be fought with
+		//our weapon is being equipped to be fought with
 		public void On_Equip(ItemInCharArgs args) {
 			this.InstallCharacterTG((Character) args.Cont);
 		}

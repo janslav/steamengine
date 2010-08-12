@@ -33,11 +33,11 @@ namespace SteamEngine.CompiledScripts {
 		public PoisoningSettings() {
 		}
 
-		public AllPoisonTypesMassSetting poisonTypes = new AllPoisonTypesMassSetting();
+		public AllFadingEffectsMassSetting poisonTypes = new AllFadingEffectsMassSetting();
 
-		public PoisonTypeTickIntervalMassSetting tickIntervalsPerType = new PoisonTypeTickIntervalMassSetting();
-		public PoisonTypMaxTicksMassSetting maxTicksPerType = new PoisonTypMaxTicksMassSetting();
-		public PoisonTypMaxPowerMassSetting maxPowerPerType = new PoisonTypMaxPowerMassSetting();
+		public FadingEffectTickIntervalMassSetting tickIntervalsPerType = new FadingEffectTickIntervalMassSetting();
+		public FadingEffectMaxTicksMassSetting maxTicksPerType = new FadingEffectMaxTicksMassSetting();
+		public FadingEffectMaxPowerMassSetting maxPowerPerType = new FadingEffectMaxPowerMassSetting();
 
 
 		public AllPoisonPotionsMassSetting poisonPotions = new AllPoisonPotionsMassSetting();
@@ -56,28 +56,28 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	public class AllPoisonTypesMassSetting : MassSettings_ByClass_List<PoisonEffectPluginDef> {
+	public class AllFadingEffectsMassSetting : MassSettings_ByClass_List<FadingEffectDurationPluginDef> {
 
 		public override string Name {
-			get { return "Všechny typy jedù"; }
+			get { return "Všechny 'fading' efekty (bleeding, jedy, apod.)"; }
 		}
 	}
 
-	public class PoisonTypeTickIntervalMassSetting : 
-		MassSettings_ByClass_SingleField<PoisonEffectPluginDef, double> {
+	public class FadingEffectTickIntervalMassSetting : 
+		MassSettings_ByClass_SingleField<FadingEffectDurationPluginDef, double> {
 
-		public override string Name { get { return "Tick intervaly podle typu jedu v sekundách"; } }
+		public override string Name { get { return "Tick intervaly podle typu efektu v sekundách"; } }
 
 		protected class PoisonTypeTickIntervalFieldView : FieldView_ByClass_SingleField {
 			internal PoisonTypeTickIntervalFieldView(int index)
 				: base(index) {
 			}
 
-			internal override void SetValue(PoisonEffectPluginDef def, double value) {
+			internal override void SetValue(FadingEffectDurationPluginDef def, double value) {
 				def.TickInterval = value;
 			}
 
-			internal override double GetValue(PoisonEffectPluginDef def) {
+			internal override double GetValue(FadingEffectDurationPluginDef def) {
 				return def.TickInterval;
 			}
 		}
@@ -87,21 +87,21 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class PoisonTypMaxTicksMassSetting :
-		MassSettings_ByClass_SingleField<PoisonEffectPluginDef, int> {
+	public class FadingEffectMaxTicksMassSetting :
+		MassSettings_ByClass_SingleField<FadingEffectDurationPluginDef, int> {
 
-		public override string Name { get { return "Max poèet tickù podle typu jedu, tj. sèítací strop"; } }
+		public override string Name { get { return "Max poèet tickù podle typu efektu, tj. sèítací strop trvání"; } }
 
 		protected class MaxTicksFieldView : FieldView_ByClass_SingleField {
 			internal MaxTicksFieldView(int index)
 				: base(index) {
 			}
 
-			internal override void SetValue(PoisonEffectPluginDef def, int value) {
+			internal override void SetValue(FadingEffectDurationPluginDef def, int value) {
 				def.MaxTicks = value;
 			}
 
-			internal override int GetValue(PoisonEffectPluginDef def) {
+			internal override int GetValue(FadingEffectDurationPluginDef def) {
 				return def.MaxTicks;
 			}
 		}
@@ -111,21 +111,21 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class PoisonTypMaxPowerMassSetting :
-		MassSettings_ByClass_SingleField<PoisonEffectPluginDef, int> {
+	public class FadingEffectMaxPowerMassSetting :
+		MassSettings_ByClass_SingleField<FadingEffectDurationPluginDef, int> {
 
-		public override string Name { get { return "Max power podle typu jedu, tj. sèítací strop. Použit pøi opakované aplikaci jedu na jednoho chudáka."; } }
+		public override string Name { get { return "Max power podle typu efektu, tj. sèítací strop. Použit pøi opakované aplikaci stejneho efektu na jednoho chudáka."; } }
 
 		protected class MaxPowerFieldView : FieldView_ByClass_SingleField {
 			internal MaxPowerFieldView(int index)
 				: base(index) {
 			}
 
-			internal override void SetValue(PoisonEffectPluginDef def, int value) {
+			internal override void SetValue(FadingEffectDurationPluginDef def, int value) {
 				def.MaxPower = value;
 			}
 
-			internal override int GetValue(PoisonEffectPluginDef def) {
+			internal override int GetValue(FadingEffectDurationPluginDef def) {
 				return def.MaxPower;
 			}
 		}

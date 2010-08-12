@@ -14,5 +14,5 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate DamagingPoisonEffectPlugin : PoisonEffectPlugin]
+[PluginTemplate DamagingPoisonEffectPlugin : FadingEffectDurationPlugin]
 

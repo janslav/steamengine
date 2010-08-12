@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 			//base.On_DClick(dclicker); //empties flask
 		}
 
-		public PoisonEffectPluginDef PoisonType {
+		public FadingEffectDurationPluginDef PoisonType {
 			get { return this.TypeDef.PoisonType; }
 		}
 
