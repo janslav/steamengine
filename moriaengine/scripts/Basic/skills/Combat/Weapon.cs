@@ -151,5 +151,11 @@ namespace SteamEngine.CompiledScripts {
 				return this.TypeDef.PoisonCapacity;
 			}
 		}
+
+		public double BleedingEfficiency {
+			get {
+				return this.TypeDef.BleedingEfficiency;
+			}
+		}
 	}
 }

@@ -75,6 +75,51 @@ namespace SteamEngine.CompiledScripts {
 			return modifier;
 		}
 
+		[Summary("Cause damage to defender. Returns number of hitpoints that was actually removed. Runs @Damage triggers.")]
+		public static int CauseDamage(Character attacker, Character defender, DamageType flags, double damage) {
+			if (!defender.IsDeleted && !defender.Flag_Dead && !defender.Flag_Insubst) {
+				defender.Trigger_HostileAction(attacker);
+				defender.Trigger_Disrupt();//nebo jen pri damage > 0 ?
+
+				damage *= GetResistModifier(defender, flags);
+
+				int previousHits = defender.Hits;
+
+				DamageArgs damageArgs = new DamageArgs(attacker, defender, flags, damage);
+				Trigger_Damage(damageArgs);
+
+				damage = damageArgs.damage;
+				int newHits = (int) Math.Round(defender.Hits - damage);
+				defender.Hits = (short) newHits;
+
+				int actualDamage = previousHits - newHits;
+				if (actualDamage > 0) {
+					//TODO create blood?
+					if (newHits > 0) {
+						SoundCalculator.PlayHurtSound(defender);
+						AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
+					} //otherwise death sound+anim, is done elsewhere
+				}
+
+				return actualDamage;
+			}
+
+			return 0;
+		}
+
+		public static void ProcessSwing(Character attacker, Character defender) {
+			WeaponSwingArgs swingArgs = GetWeaponSwingArgs(attacker, defender);
+			SoundCalculator.PlayAttackSound(attacker);
+
+			if (!Trigger_BeforeSwing(swingArgs)) {
+				int actualDamage = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.DamageAfterAC);
+
+				swingArgs.InternalSetFinalDamage(actualDamage);
+
+				Trigger_AfterSwing(swingArgs);
+			}
+		}
+
 		public static WeaponSwingArgs GetWeaponSwingArgs(Character attacker, Character defender) {
 			CombatSettings settings = CombatSettings.instance;
 			double attack = settings.weapAttack;
@@ -102,8 +147,9 @@ namespace SteamEngine.CompiledScripts {
 				armorClass *= settings.armorClassM;
 			}
 
+			double damageAfterAC = CombatCalculator.CalculateArmorClassEffect(attacker, defender, attack, piercing, armorClass);
 
-			return new WeaponSwingArgs(attacker, defender, attack, piercing, armorClass);
+			return new WeaponSwingArgs(attacker, defender, attack, piercing, armorClass, damageAfterAC);
 		}
 
 
@@ -165,89 +211,6 @@ namespace SteamEngine.CompiledScripts {
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			}
 		}
-
-		public static void ApplyArmorClass(WeaponSwingArgs swingArgs) {
-			bool defenderIsPlayer = swingArgs.defender.IsPlayerForCombat;
-			bool attackerIsPlayer = swingArgs.attacker.IsPlayerForCombat;
-			CombatSettings settings = CombatSettings.instance;
-
-			double damageMod = 1.0;
-
-			bool isMvP = false;
-			if (defenderIsPlayer) {
-				if (attackerIsPlayer) {
-					damageMod = settings.swingDamagePvP;
-				} else {
-					damageMod = ScriptUtil.GetRandInRange(settings.swingDamageRandMvPMin, settings.swingDamageRandMvPMax);
-					isMvP = true;
-				}
-			} else {
-				damageMod = settings.swingDamageM;
-			}
-
-			double armor = swingArgs.ArmorClass * (1000 - swingArgs.Piercing) / 1000;
-			if (!isMvP) {
-				armor = ScriptUtil.GetRandInRange(settings.armorRandEffectMin, settings.armorRandEffectMax);
-			}
-
-			armor = Math.Max(0, armor);
-			swingArgs.Attack = Math.Max(0, swingArgs.Attack);
-			damageMod = Math.Max(0, damageMod);
-
-			//!!TODO!! ruznej vzorec pro pvm a pvm
-			//if (defenderIsPlayer && !attackerIsPlayer) { //damagecust_MvP 
-			//	armorClass *= settings.armorClassMvP; 
-			//}
-			swingArgs.DamageAfterAC = (swingArgs.Attack - armor) * damageMod;
-		}
-
-		public static double CauseDamage(Character attacker, Character defender, DamageType flags, double damage) {
-			if (!defender.IsDeleted && !defender.Flag_Dead && !defender.Flag_Insubst) {
-				defender.Trigger_HostileAction(attacker);
-				defender.Trigger_Disrupt();//nebo jen pri damage > 0 ?
-
-				damage *= GetResistModifier(defender, flags);
-
-				int previousHits = defender.Hits;
-
-				DamageArgs damageArgs = new DamageArgs(attacker, defender, flags, damage);
-				Trigger_Damage(damageArgs);
-
-				damage = damageArgs.damage;
-				int newHits = (int) Math.Round(defender.Hits - damage);
-				defender.Hits = (short) newHits;
-
-				if (previousHits > newHits) {
-					//TODO create blood?
-					if (newHits > 0) {
-						SoundCalculator.PlayHurtSound(defender);
-						AnimCalculator.PerformAnim(defender, GenericAnim.GetHit);
-					} //otherwise death sound+anim, is done elsewhere
-				}
-
-				return damage;
-			}
-
-			return 0;
-		}
-
-		public static double ProcessSwing(Character attacker, Character defender) {
-			WeaponSwingArgs swingArgs = GetWeaponSwingArgs(attacker, defender);
-			SoundCalculator.PlayAttackSound(attacker);
-			double retVal = 0;
-
-			if (!Trigger_BeforeSwing(swingArgs)) {
-				ApplyArmorClass(swingArgs);
-
-				retVal = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.DamageAfterAC);
-
-				swingArgs.InternalSetFinalDamage(retVal);
-
-				Trigger_AfterSwing(swingArgs);
-			}
-
-			return retVal;
-		}
 	}
 
 	public class DamageArgs : ScriptArgs {
@@ -268,38 +231,16 @@ namespace SteamEngine.CompiledScripts {
 	public class WeaponSwingArgs : ScriptArgs {
 		public readonly Character defender;
 		public readonly Character attacker;
+		public readonly double attack, piercing, armorClass;
+		int finalDamage;
 
-		public WeaponSwingArgs(Character attacker, Character defender, double attack, double piercing, double armorClass)
-			: base(attacker, defender, attack, piercing, armorClass, -1, -1) {
+		public WeaponSwingArgs(Character attacker, Character defender, double attack, double piercing, double armorClass, double damageAfterAC)
+			: base(attacker, defender, attack, piercing, armorClass, damageAfterAC, -1) {
 			this.attacker = attacker;
 			this.defender = defender;
-		}
-
-		public double Attack {
-			get {
-				return Convert.ToDouble(this.Argv[2]);
-			}
-			set {
-				this.Argv[2] = value;
-			}
-		}
-
-		public double Piercing {
-			get {
-				return Convert.ToDouble(this.Argv[3]);
-			}
-			set {
-				this.Argv[3] = value;
-			}
-		}
-
-		public double ArmorClass {
-			get {
-				return Convert.ToDouble(this.Argv[4]);
-			}
-			set {
-				this.Argv[4] = value;
-			}
+			this.attack = attack;
+			this.piercing = piercing;
+			this.armorClass = armorClass;
 		}
 
 		public double DamageAfterAC {
@@ -311,14 +252,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public double FinalDamage {
+		public int FinalDamage {
 			get {
-				return Convert.ToDouble(this.Argv[6]);
+				return this.finalDamage;
 			}
 		}
 
-		internal  void InternalSetFinalDamage(double value) {
+		internal  void InternalSetFinalDamage(int value) {
 			this.Argv[6] = value;
+			this.finalDamage = value;
 		}
 	}
 }

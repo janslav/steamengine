@@ -45,13 +45,15 @@ namespace SteamEngine.CompiledScripts {
 			int newMana = self.Mana - damage;
 
 			if (newMana > 0) {
-				//do no damage at all
-				self.Hits += (short) damage;
-				self.WriteLine(Loc<ManaShieldLoc>.Get(self.Language).shieldSavedYou);				
+				//all damage goes to mana
+				self.Hits += (short) damage; //add to hits what is about to be deducted in the script that calls this trigger
+				self.WriteLine(Loc<ManaShieldLoc>.Get(self.Language).shieldSavedYou);
+				self.Mana = (short) newMana;
 			} else {
-				//do some damage still (damage + newMana, but the newMana part is negative...)
+				//dmg partially routed to mana (damage + newMana, but the newMana part is negative...)
 				self.Hits += (short) (damage + newMana);
 				self.WriteLine(Loc<ManaShieldLoc>.Get(self.Language).shieldSavedYouPartially);
+				self.Mana = 0;
 				this.Delete();
 			}			
 		}

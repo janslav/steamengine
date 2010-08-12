@@ -346,7 +346,7 @@ namespace SteamEngine.CompiledScripts {
 			this.cooldown = InitTypedField("cooldown", 0, typeof(double));
 			this.chance = InitTypedField("chance", 1, typeof(double));
 			this.resourcesConsumed = InitTypedField("resourcesConsumed", null, typeof(ResourcesList));
-			this.resourcesPresent = InitTypelessField("resourcesPresent", null);
+			this.resourcesPresent = InitTypedField("resourcesPresent", null, typeof(ResourcesList));
 			this.effectPower = InitTypedField("effectPower", 1.0, typeof(double));
 			this.effectDuration = InitTypedField("effectDuration", 5.0, typeof(double));			
 		}

@@ -307,14 +307,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static new void Bootstrap() {
-			//ThingDef script sections are special in that they can have numeric header indicating model
+			//SpellDef script sections are special in that they have numeric header indicating spell id in spellbooks
 			AbstractDef.RegisterDefnameParser<SpellDef>(ParseDefnames);
 		}
 
 		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
 			ushort spellId;
 			if (!TagMath.TryParseUInt16(section.HeaderName, out spellId)) {
-				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
+				throw new ScriptException("Unrecognized format of the id number in the spelldef script header.");
 			}
 			defname = "spell_" + spellId.ToString(System.Globalization.CultureInfo.InvariantCulture);
 

@@ -250,8 +250,22 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item FindType(TriggerGroup type) {
+			return this.FindByType(type);
+		}
+
+		public Item FindByType(TriggerGroup type) {
 			ThrowIfDeleted();
 			foreach (Item i in this.EnumDeep()) {
+				if (i.Type == type) {
+					return i;
+				}
+			}
+			return null;
+		}
+
+		public Item FindByTypeShallow(TriggerGroup type) {
+			ThrowIfDeleted();
+			foreach (Item i in this.EnumShallow()) {
 				if (i.Type == type) {
 					return i;
 				}
@@ -268,6 +282,15 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
+		public Item FindByClassShallow(Type type) {
+			foreach (Item i in this.EnumShallow()) {
+				if (i.GetType() == type) {
+					return i;
+				}
+			}
+			return null;
+		}
+
 		public Item FindById(ItemDef def) {
 			foreach (Item i in this.EnumDeep()) {
 				if (i.Def == def) {
@@ -277,7 +300,7 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		public Item FindByShallow(ItemDef def) {
+		public Item FindByIdShallow(ItemDef def) {
 			foreach (Item i in this.EnumShallow()) {
 				if (i.Def == def) {
 					return i;

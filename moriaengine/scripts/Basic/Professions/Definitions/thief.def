@@ -72,10 +72,16 @@ a_leech_stam = 6, 20
 a_leech_mana = 7, 20
 
 a_longrange = 8, 10
-//TODO? throwing
+a_throwing = 9, 10
+//blokace stitem
+a_kick = 10, 10
+//pretnuti slach
 
-a_standcast = 8, 10
-a_energy_shield = 9, 30
+
+
+
+//a_standcast = 8, 10
+//a_energy_shield = 9, 30
 
 
 

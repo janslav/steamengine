@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C70C4C3E-FEC0-47BB-BB30-608951B723D5}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -40,21 +40,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AI\dummy.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Abilities\Bleeding\BleedingPlugins.Generated.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Abilities\Bleeding\BleedingStrikePlugin.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Abilities\Bleeding\BleedingEffectPlugin.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Abilities\LongRange\LongRangePlugin.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Abilities\LongRange\LongRangePlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Regenerations\HitsRegenAbilityDef.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Regenerations\ManaRegenAbilityDef.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Regenerations\StamRegenAbilityDef.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Abilities\Throwing\ThrowingAbilityDef.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Warcry\Warcry.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Warcry\Warcry.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.Generated.cs" />
-    <Compile Include="Basic\AbilitiesAndTalents\Talents\Throwing\ThrowingAbilityDef.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionActivatedPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionEffectPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.Generated.cs" />
-    <Compile Include="Basic\AbilitiesAndTalents\Talents\LongRange\LongRangePlugin.cs" />
-    <Compile Include="Basic\AbilitiesAndTalents\Talents\LongRange\LongRangePlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\SkillMasteries\SkillMasteryAbilityDef.cs" />
@@ -140,6 +143,8 @@
     <Compile Include="Basic\CharClasses\NPC.Generated.cs" />
     <Compile Include="Basic\CharClasses\Player.cs" />
     <Compile Include="Basic\CharClasses\Player.Generated.cs" />
+    <Compile Include="Basic\EffectDuration\FadingEffectDurationPlugin.cs" />
+    <Compile Include="Basic\EffectDuration\FadingEffectDurationPlugin.Generated.cs" />
     <Compile Include="Basic\Localization\LocDenyResult.cs" />
     <Compile Include="Basic\Localization\NumberedLocStringCollection.cs" />
     <Compile Include="Basic\db\DbManager.cs" />
@@ -192,6 +197,7 @@
     <Compile Include="Basic\Menu\AbstractMenuDef.cs" />
     <Compile Include="Basic\Menu\CompiledMenuDef.cs" />
     <Compile Include="Basic\Menu\ScriptedMenuDef.cs" />
+    <Compile Include="Basic\Professions\Professions.cs" />
     <Compile Include="Basic\Professions\ProfessionDef.cs" />
     <Compile Include="Basic\Professions\ProfessionPlugin.cs" />
     <Compile Include="Basic\Professions\ProfessionPlugin.Generated.cs" />
@@ -279,7 +285,8 @@
     <Compile Include="Basic\skills\Crafting\Tinkering.cs" />
     <Compile Include="Basic\skills\Discordance\Discordance.cs" />
     <Compile Include="Basic\skills\Discordance\DiscordanceEffectPlugin.Generated.cs" />
-    <Compile Include="Basic\skills\Healing\Healing.cs" />
+    <Compile Include="Basic\skills\HealingAndVeterinary\BandageSkillDef.cs" />
+    <Compile Include="Basic\skills\HealingAndVeterinary\Healing.cs" />
     <Compile Include="Basic\skills\Hiding\DetectHidden.cs" />
     <Compile Include="Basic\skills\Hiding\HiddenHelperPlugin.Generated.cs" />
     <Compile Include="Basic\skills\Hiding\Hiding.cs" />
@@ -322,8 +329,6 @@
     <Compile Include="Basic\skills\Poisoning\PoisoningSettings.cs" />
     <Compile Include="Basic\skills\Poisoning\PoisonedItemPlugin.cs" />
     <Compile Include="Basic\skills\Poisoning\PoisonedItemPlugin.Generated.cs" />
-    <Compile Include="Basic\skills\Poisoning\PoisonEffectPlugin.cs" />
-    <Compile Include="Basic\skills\Poisoning\PoisonEffectPlugin.Generated.cs" />
     <Compile Include="Basic\skills\Poisoning\Poisoning.cs" />
     <Compile Include="Basic\skills\Poisoning\PoisonPotion.cs" />
     <Compile Include="Basic\skills\Poisoning\PoisonPotion.Generated.cs" />
@@ -404,18 +409,22 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Basic\AbilitiesAndTalents\Abilities\Bleeding\bleedingStrike.scp" />
+    <None Include="Basic\AbilitiesAndTalents\Abilities\Bleeding\BleedingPlugins.ct" />
+    <None Include="Basic\AbilitiesAndTalents\Abilities\Bleeding\bleeding.scp" />
+    <None Include="Basic\AbilitiesAndTalents\Abilities\kick.scp" />
+    <None Include="Basic\AbilitiesAndTalents\Abilities\LongRange\longRange.scp" />
+    <None Include="Basic\AbilitiesAndTalents\Abilities\LongRange\LongRangePlugin.ct" />
     <None Include="Basic\AbilitiesAndTalents\Abilities\Regenerations\regenAbilities.scp" />
+    <None Include="Basic\AbilitiesAndTalents\Abilities\Throwing\throwing.scp" />
     <None Include="Basic\AbilitiesAndTalents\Abilities\Warcry\Warcry.ct" />
     <None Include="Basic\AbilitiesAndTalents\Abilities\Warcry\warcry.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\clearCast.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.ct" />
-    <None Include="Basic\AbilitiesAndTalents\Talents\Throwing\throwing.scp" />
-    <None Include="Basic\AbilitiesAndTalents\Talents\LongRange\longRange.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\energyShield.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\EnergyShield\EnergyShieldPlugin.ct" />
     <None Include="Basic\AbilitiesAndTalents\Talents\Ignition\ignition.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\Ignition\IgnitionPlugins.ct" />
-    <None Include="Basic\AbilitiesAndTalents\Talents\LongRange\LongRangePlugin.ct" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\manaSaving.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ManaSaving\ManaSavingPlugin.ct" />
     <None Include="Basic\AbilitiesAndTalents\Talents\SkillMasteries\skillMasteries.scp" />
@@ -453,6 +462,7 @@
     <None Include="Basic\dialogs\Bounds.bin" />
     <None Include="Basic\dialogs\explevel.scp" />
     <None Include="Basic\EffectDuration\EffectDurationPlugin.ct" />
+    <None Include="Basic\EffectDuration\FadingEffectDurationPlugin.ct" />
     <None Include="Basic\EffectDuration\StatDrainingEffectDurationPlugin.ct" />
     <None Include="Basic\ItemClasses\ColoredArmor.ct" />
     <None Include="Basic\ItemClasses\ColoredProjectile.ct" />
@@ -468,6 +478,7 @@
     <None Include="Basic\ItemClasses\Potion.ct" />
     <None Include="Basic\ItemClasses\Ship.ct" />
     <None Include="Basic\mailingsystem\mailsending.scp" />
+    <None Include="Basic\skills\HealingAndVeterinary\healing.scp" />
     <None Include="Basic\stuckHelp.scp" />
     <None Include="Basic\Professions\Definitions\mage.def" />
     <None Include="Basic\Professions\Definitions\thief.def" />
@@ -485,7 +496,6 @@
     <None Include="Basic\skills\Crafting\CraftingSkills.scp" />
     <None Include="Basic\skills\Discordance\Discordance.expl" />
     <None Include="Basic\skills\Discordance\DiscordanceEffectPlugin.ct" />
-    <None Include="Basic\skills\Healing\healing.scp" />
     <None Include="Basic\skills\Hiding\HiddenHelperPlugin.ct" />
     <None Include="Basic\skills\Hiding\Stealth.scp" />
     <None Include="Basic\skills\Lockpicking\ItemLockPlugin .ct" />
@@ -522,7 +532,6 @@
     <None Include="Basic\skills\Meditation\MeditationPlugin.ct" />
     <None Include="Basic\skills\Poisoning\poisonPotions.def" />
     <None Include="Basic\skills\Poisoning\PoisonedItemPlugin.ct" />
-    <None Include="Basic\skills\Poisoning\PoisonEffectPlugin.ct" />
     <None Include="Basic\skills\Poisoning\Poisoning.def" />
     <None Include="Basic\skills\Poisoning\PoisonPotion.ct" />
     <None Include="Basic\skills\Stealing\SnoopingPlugin.ct" />

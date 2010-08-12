@@ -474,6 +474,42 @@ namespace SteamEngine.CompiledScripts {
 
 			return retVal;
 		}
+
+
+		public static double CalculateArmorClassEffect(Character attacker, Character defender, double attack, double piercing, double armorClass) {
+			bool defenderIsPlayer = defender.IsPlayerForCombat;
+			bool attackerIsPlayer = attacker.IsPlayerForCombat;
+			CombatSettings settings = CombatSettings.instance;
+
+			double damageMod;
+
+			bool isMvP = false;
+			if (defenderIsPlayer) {
+				if (attackerIsPlayer) {
+					damageMod = settings.swingDamagePvP;
+				} else {
+					damageMod = ScriptUtil.GetRandInRange(settings.swingDamageRandMvPMin, settings.swingDamageRandMvPMax);
+					isMvP = true;
+				}
+			} else {
+				damageMod = settings.swingDamageM;
+			}
+
+			double armor = armorClass * (1000 - piercing) / 1000;
+			if (!isMvP) {
+				armor = ScriptUtil.GetRandInRange(settings.armorRandEffectMin, settings.armorRandEffectMax);
+			}
+
+			armor = Math.Max(0, armor);
+			attack = Math.Max(0, attack);
+			damageMod = Math.Max(0, damageMod);
+
+			//!!TODO!! ruznej vzorec pro pvm a pvm
+			//if (defenderIsPlayer && !attackerIsPlayer) { //damagecust_MvP 
+			//	armorClass *= settings.armorClassMvP; 
+			//}
+			return (attack - armor) * damageMod;
+		}
 	}
 }
 
