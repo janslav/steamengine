@@ -30,9 +30,6 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public class PoisonSpellDef : DurableCharEffectSpellDef {
-
-		public static readonly TimeSpan poisonTickInterval = TimeSpan.FromSeconds(5); //or should be settable?
-
 		public PoisonSpellDef(String defname, String filename, Int32 headerLine)
 			: base(defname, filename, headerLine) {
 		}
@@ -44,9 +41,9 @@ namespace SteamEngine.CompiledScripts {
 			int spellPower = spellEffectArgs.SpellPower;
 			double effect = (int) this.GetEffectForValue(spellPower);
 			double durationInSeconds = this.GetDurationForValue(spellPower);
-			int ticksCount = (int) (durationInSeconds / poisonTickInterval.TotalSeconds);
+			int ticksCount = (int) (durationInSeconds / SingletonScript<DamagingPoisonEffectPluginDef>.Instance.TickInterval);
 
-			((PoisonEffectPluginDef) this.EffectPluginDef).Apply(caster, target, spellEffectArgs.EffectFlag, 
+			((FadingEffectDurationPluginDef) this.EffectPluginDef).Apply(caster, target, spellEffectArgs.EffectFlag, 
 				effect, ticksCount);
 		}
 	}

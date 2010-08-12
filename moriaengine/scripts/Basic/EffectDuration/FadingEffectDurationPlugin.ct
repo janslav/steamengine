@@ -14,7 +14,7 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 
-[PluginTemplate PoisonEffectPlugin : EffectDurationPlugin]
+[PluginTemplate FadingEffectDurationPlugin : EffectDurationPlugin]
 Def:
 	double tickInterval = 5
 	int maxTicks = 60
