@@ -360,7 +360,7 @@ namespace SteamEngine.Persistence {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
 				if (uid < loadedObjectsCount) {
 					object o = loadedObjectsByUid[uid];
-					if (o != typeof(void)) {
+					if (o != voidObject) {
 						return o;
 					}
 				}
@@ -534,6 +534,8 @@ namespace SteamEngine.Persistence {
 			return Load(input);//we failed to load the type, lets try all other possibilities
 		}
 
+		private static readonly object voidObject = new object();
+
 		//or should this be public?
 		//or should this all not be public at all? :)
 		//in other words: do scripters need enabling saving/loading other than normal core worldsaving&loading?
@@ -553,7 +555,7 @@ namespace SteamEngine.Persistence {
 						//[name uid]
 						object loaded = isi.LoadSection(input);
 						while (loadedObjectsByUid.Count <= uid) {
-							loadedObjectsByUid.Add(typeof(void));//so that we know what was already loaded and what not.
+							loadedObjectsByUid.Add(voidObject);//so that we know what was already loaded and what not.
 						}
 						loadedObjectsByUid[(int) uid] = loaded;//should we check if there was something already...?
 					}
@@ -886,7 +888,7 @@ namespace SteamEngine.Persistence {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
 				if (objectUid < loadedObjectsCount) {
 					object o = loadedObjectsByUid[objectUid];
-					if (o != typeof(void)) {
+					if (o != voidObject) {
 						deleg(o, filename, line);
 						return;
 					}
@@ -906,7 +908,7 @@ namespace SteamEngine.Persistence {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
 				if (objectUid < loadedObjectsCount) {
 					object o = loadedObjectsByUid[(int) objectUid];
-					if (o != typeof(void)) {
+					if (o != voidObject) {
 						deleg(o, filename, line, param);
 						return;
 					}
