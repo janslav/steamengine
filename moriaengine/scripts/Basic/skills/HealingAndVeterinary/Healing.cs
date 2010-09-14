@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 			Character targetChar = target as Character;
 			if (targetChar != null) {
 				//pokud ma cil maximum zivotu
-				if ((targetChar.Hits >= targetChar.MaxHits) && (!BleedingEffectPluginDef.IsBleeding(targetChar)) {
+				if ((targetChar.Hits >= targetChar.MaxHits) && (!BleedingEffectPluginDef.IsBleeding(targetChar))) {
 					if (target == self) {
 						self.WriteLine(Loc<HealingLoc>.Get(self.Language).YoureAtMaxHitpoints);
 					} else {
@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 					self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingSucceeded);
 				}
 				//tell the target hes been healed?
-				
+
 
 				Item usedBandages = skillSeqArgs.Tool;
 				if ((usedBandages != null) && (usedBandages.Type == SingletonScript<t_bandage_blood>.Instance)) {

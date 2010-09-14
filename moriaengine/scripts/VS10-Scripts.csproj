@@ -13,6 +13,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,7 +26,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -681,23 +681,23 @@
     <None Include="scriptSources.Generated.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\VS08-Common.csproj">
+    <ProjectReference Include="..\Common\VS10-Common.csproj">
       <Project>{7B3428BD-F9AF-448E-92BB-85A72505DF50}</Project>
-      <Name>VS08-Common</Name>
+      <Name>VS10-Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Communication\VS08-Communication.csproj">
+    <ProjectReference Include="..\Communication\VS10-Communication.csproj">
       <Project>{42DC5FFC-D58D-48B2-8035-3123D4F0A84F}</Project>
-      <Name>VS08-Communication</Name>
+      <Name>VS10-Communication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameCore\VS08-GameCore.csproj">
+    <ProjectReference Include="..\GameCore\VS10-GameCore.csproj">
       <Project>{91710DA9-56BA-44A1-8E86-9A8EAFCDE88A}</Project>
-      <Name>VS08-GameCore</Name>
+      <Name>VS10-GameCore</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
