@@ -22,26 +22,33 @@ using SteamEngine.Persistence;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine.CompiledScripts
+{
 
-	public abstract class BandageSkillDef : SkillDef {
+	public abstract class BandageSkillDef : SkillDef
+	{
 		public BandageSkillDef(string defname, string filename, int line)
-			: base(defname, filename, line) {
+			: base(defname, filename, line)
+		{
 		}
 
 
-		public static void SelectBandageSkill(Player self) {
+		public static void SelectBandageSkill(Player self)
+		{
 			SingletonScript<Targ_SelectBandageTarget>.Instance.Assign(self, null);
 		}
 
-		public static void SelectBandageSkill(Player self, Item bandage) {
+		public static void SelectBandageSkill(Player self, Item bandage)
+		{
 			SingletonScript<Targ_SelectBandageTarget>.Instance.Assign(self, bandage);
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override bool On_Select(SkillSequenceArgs skillSeqArgs)
+		{
 			Character self = skillSeqArgs.Self;
 			Item bandage = AcquireBandage(self, skillSeqArgs.Tool);
-			if (bandage == null) {
+			if (bandage == null)
+			{
 				return true;
 			}
 			skillSeqArgs.Tool = bandage;
@@ -49,16 +56,19 @@ namespace SteamEngine.CompiledScripts {
 
 			Thing target = skillSeqArgs.Target1 as Thing;
 			//není cíl
-			if (target == null) {
+			if (target == null)
+			{
 				return true;
 			}
 
 			//nevidi na cil
-			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange)) {
+			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange))
+			{
 				self.ClilocSysMessage(3000268);	//That is too far away.
 				return true;
 			}
-			if (!self.CanInteractWithMessage(target)) {
+			if (!self.CanInteractWithMessage(target))
+			{
 				return true;
 			}
 
@@ -68,37 +78,45 @@ namespace SteamEngine.CompiledScripts {
 
 		private TimerKey healingTimerKey = TimerKey.Acquire("_healing_timer_");
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override bool On_Start(SkillSequenceArgs skillSeqArgs)
+		{
 			Character self = skillSeqArgs.Self;
 
 			//abort previous healing/veterinary, if needed
 			SkillSequenceArgs.SkillStrokeTimer timer = (SkillSequenceArgs.SkillStrokeTimer) self.RemoveTimer(healingTimerKey);
-			if (timer != null) {
+			if (timer != null)
+			{
 				timer.skillSeqArgs.PhaseAbort();
 				timer.skillSeqArgs = null;
 				timer.Delete();
 			}
 
 			skillSeqArgs.DelayInSeconds = this.GetDelayForChar(self);
-			if (skillSeqArgs.DelaySpan < TimeSpan.Zero) {
+			if (skillSeqArgs.DelaySpan < TimeSpan.Zero)
+			{
 				skillSeqArgs.PhaseStroke();
-			} else {
+			}
+			else
+			{
 				self.AddTimer(healingTimerKey, new SkillSequenceArgs.SkillStrokeTimer(skillSeqArgs)).DueInSpan = skillSeqArgs.DelaySpan;
 			}
 
 			return true; //cancel normal operation, we use separate timer here
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs)
+		{
 			Character self = skillSeqArgs.Self;
 
-			Thing target = skillSeqArgs.Target1 as Thing;
+			Thing target = (Thing) skillSeqArgs.Target1;
 			//nevidi na cil
-			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange)) {
+			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange))
+			{
 				self.ClilocSysMessage(3000268);	//That is too far away.
 				return true;
 			}
-			if (!self.CanInteractWithMessage(target)) {
+			if (!self.CanInteractWithMessage(target))
+			{
 				return true;
 			}
 
@@ -106,9 +124,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static ItemDef i_bandage_bloody;
-		public static ItemDef BloodyBandageDef {
-			get {
-				if (i_bandage_bloody == null) {
+		public static ItemDef BloodyBandageDef
+		{
+			get
+			{
+				if (i_bandage_bloody == null)
+				{
 					i_bandage_bloody = (ItemDef) ThingDef.GetByDefname("i_bandage_bloody");
 				}
 				return i_bandage_bloody;
@@ -116,92 +137,123 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static ItemDef i_bandage;
-		public static ItemDef CleanBandageDef {
-			get {
-				if (i_bandage == null) {
+		public static ItemDef CleanBandageDef
+		{
+			get
+			{
+				if (i_bandage == null)
+				{
 					i_bandage = (ItemDef) ThingDef.GetByDefname("i_bandage");
 				}
 				return i_bandage;
 			}
 		}
 
-		public static Item AcquireBandage(Character self, Item uncheckedBandage) {
-			if (uncheckedBandage != null) {
+		public static Item AcquireBandage(Character self, Item uncheckedBandage)
+		{
+			if (uncheckedBandage != null)
+			{
 				DenyResult result = self.CanPickup(uncheckedBandage);
-				if (!result.Allow) {
+				if (!result.Allow)
+				{
 					uncheckedBandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage>.Instance);
-					if ((uncheckedBandage == null) || (!self.CanPickup(uncheckedBandage).Allow)) {
+					if ((uncheckedBandage == null) || (!self.CanPickup(uncheckedBandage).Allow))
+					{
 						result.SendDenyMessage(self);
 						return null;
 					}
 				}
 			}
-			if (uncheckedBandage == null) {
+			if (uncheckedBandage == null)
+			{
 				uncheckedBandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage>.Instance);
-				if ((uncheckedBandage == null) || (!self.CanPickup(uncheckedBandage).Allow)) {
+				if ((uncheckedBandage == null) || (!self.CanPickup(uncheckedBandage).Allow))
+				{
 					self.SysMessage(Loc<BandageSkillLoc>.Get(self.Language).YouHaveNoBandages);
 					return null;
 				}
 			}
 
 			if ((uncheckedBandage.Type == SingletonScript<t_bandage>.Instance) || //clean bandage
-				((uncheckedBandage.Type == SingletonScript<t_bandage_blood>.Instance) && Professions.HasProfession(self, Professions.Shaman))) { //bloody bandage shaman only
+				((uncheckedBandage.Type == SingletonScript<t_bandage_blood>.Instance) && Professions.HasProfession(self, Professions.Shaman)))
+			{ //bloody bandage shaman only
 				return uncheckedBandage;
 			}
 
 			return null;
 		}
 
-		public static void AddBloodyBandage(Character self) {
+		public static void AddBloodyBandage(Character self)
+		{
 			Item bloodybandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage_blood>.Instance);
-			if (bloodybandage == null) {
+			if (bloodybandage == null)
+			{
 				BloodyBandageDef.Create(self.Backpack);
-			} else {
+			}
+			else
+			{
 				bloodybandage.Amount += 1;
 			}
 		}
 
-		public static void AddCleanBandage(Character self) {
+		public static void AddCleanBandage(Character self)
+		{
 			Item cleanBandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage>.Instance);
-			if (cleanBandage == null) {
+			if (cleanBandage == null)
+			{
 				CleanBandageDef.Create(self.Backpack);
-			} else {
+			}
+			else
+			{
 				cleanBandage.Amount += 1;
 			}
 		}
-		
+
 	}
 
-	public class t_bandage_blood : CompiledTriggerGroup {
+	public class t_bandage_blood : CompiledTriggerGroup
+	{
 
-		public void On_DClick(Item self, Player clicker) {
-			if (Professions.HasProfession(clicker, Professions.Shaman)) {
+		public void On_DClick(Item self, Player clicker)
+		{
+			if (Professions.HasProfession(clicker, Professions.Shaman))
+			{
 				BandageSkillDef.SelectBandageSkill(clicker, self);
-			} else {
+			}
+			else
+			{
 				Globals.SrcWriteLine("Bandage cleaning not yet implemented");
 			}
 		}
 	}
 
-	public class t_bandage : CompiledTriggerGroup {
+	public class t_bandage : CompiledTriggerGroup
+	{
 
-		public void On_DClick(Item self, Player clicker) {
+		public void On_DClick(Item self, Player clicker)
+		{
 			BandageSkillDef.SelectBandageSkill(clicker, self);
 		}
 	}
 
 
-	public class Targ_SelectBandageTarget : CompiledTargetDef {
+	public class Targ_SelectBandageTarget : CompiledTargetDef
+	{
 
-		protected override void On_Start(Player self, object parameter) {
+		protected override void On_Start(Player self, object parameter)
+		{
 			self.WriteLine(Loc<BandageSkillLoc>.Get(self.Language).SelectHealingTarget);
 		}
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected override bool On_TargonChar(Player self, Character targetted, object parameter)
+		{
 			SkillName skill;
-			if (CharModelInfo.IsHumanModel(targetted.Model)) {
+			if (CharModelInfo.IsHumanModel(targetted.Model))
+			{
 				skill = SkillName.Healing;
-			} else {
+			}
+			else
+			{
 				skill = SkillName.Veterinary;
 			}
 
@@ -210,26 +262,34 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override bool On_TargonItem(Player self, Item targetted, object parameter)
+		{
 			Corpse corpse = targetted as Corpse;
-			if (corpse != null) {
+			if (corpse != null)
+			{
 				SkillName skill;
-				if (CharModelInfo.IsHumanModel(corpse.CharDef.Model)) {
+				if (CharModelInfo.IsHumanModel(corpse.CharDef.Model))
+				{
 					skill = SkillName.Healing;
-				} else {
+				}
+				else
+				{
 					skill = SkillName.Veterinary;
 				}
 				SkillSequenceArgs skillSeq = SkillSequenceArgs.Acquire(self, skill, targetted, null, (Item) parameter, null, null); //tool = parameter = bandage
 				skillSeq.PhaseSelect();
 				return false;
-			} else {
+			}
+			else
+			{
 				self.WriteLine(Loc<BandageSkillLoc>.Get(self.Language).CantHealItems);
 			}
 			return false;
 		}
 	}
 
-	public class BandageSkillLoc : CompiledLocStringCollection {
+	public class BandageSkillLoc : CompiledLocStringCollection
+	{
 		internal readonly string SelectHealingTarget = "Koho chceš léèit?";
 		internal readonly string CantHealItems = "Pøedmìty nelze léèit.";
 		internal readonly string YouHaveNoBandages = "Nemáš u sebe bandáže!";

@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 			Character targetChar = target as Character;
 			if (targetChar != null) {
 				//pokud ma cil maximum zivotu
-				if (targetChar.Hits >= targetChar.MaxHits) {
+				if ((targetChar.Hits >= targetChar.MaxHits) && (!BleedingEffectPluginDef.IsBleeding(targetChar)) {
 					if (target == self) {
 						self.WriteLine(Loc<HealingLoc>.Get(self.Language).YoureAtMaxHitpoints);
 					} else {
@@ -83,13 +83,21 @@ namespace SteamEngine.CompiledScripts {
 			if (targetChar != null) {
 				// TODO? Vytvorit vzorec pro maximum a minimum pridanych HP
 
-				targetChar.Hits += (short) ScriptUtil.EvalRangePermille(self.GetSkill(SkillName.Healing) + self.GetSkill(SkillName.Anatomy), this.Effect);
+				if (BleedingEffectPluginDef.IsBleeding(targetChar)) {
+					BleedingEffectPluginDef.StopBleeding(targetChar);
 
-				if (targetChar.Hits > targetChar.MaxHits) {
-					targetChar.Hits = targetChar.MaxHits;
+					self.WriteLine(Loc<HealingLoc>.Get(self.Language).SuccessfullyStoppedBleeding);
+				} else {
+					targetChar.Hits += (short) ScriptUtil.EvalRangePermille(self.GetSkill(SkillName.Healing) + self.GetSkill(SkillName.Anatomy), this.Effect);
+
+					if (targetChar.Hits > targetChar.MaxHits) {
+						targetChar.Hits = targetChar.MaxHits;
+					}
+
+					self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingSucceeded);
 				}
-
-				self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingSucceeded);
+				//tell the target hes been healed?
+				
 
 				Item usedBandages = skillSeqArgs.Tool;
 				if ((usedBandages != null) && (usedBandages.Type == SingletonScript<t_bandage_blood>.Instance)) {
@@ -136,6 +144,8 @@ namespace SteamEngine.CompiledScripts {
 		internal readonly string HealingFailed = "Léèení se ti nezdaøilo!";
 		internal readonly string HealerFailedToHealYou = "{0} selhal pøi pokusu tì ošetøit!";
 		internal readonly string HealingAborted = "Léèení pøerušeno";
+
+		internal readonly string SuccessfullyStoppedBleeding = "Povedlo se ti zastavit krvácení";
 
 		internal readonly string HealingSkillNotApplicable = "Nelze léèit skillem Healing";
 	}
