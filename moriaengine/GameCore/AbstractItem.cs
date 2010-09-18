@@ -16,15 +16,11 @@
 */
 
 using System;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
-using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
+using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine {
@@ -41,7 +37,7 @@ namespace SteamEngine {
 	public abstract partial class AbstractItem : Thing, ICorpseEquipInfo {
 
 		private static int instances;
-		private static ArrayList registeredTGs = new ArrayList();
+		private static List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
 
 		public static int Instances {
 			get {
@@ -54,7 +50,7 @@ namespace SteamEngine {
 
 		private enum InternalFlag : byte {
 			SyncMask = (ItemSyncQueue.ItemSyncFlags.Resend | ItemSyncQueue.ItemSyncFlags.ItemUpdate | ItemSyncQueue.ItemSyncFlags.Property),
-			ItemFlag1 = 0x08, 
+			ItemFlag1 = 0x08,
 			ItemFlag2 = 0x10,
 			ItemFlag3 = 0x20,
 			ItemFlag4 = 0x40,
@@ -438,7 +434,7 @@ namespace SteamEngine {
 		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
+				TriggerGroup tg = registeredTGs[i];
 				tg.Run(this, tk, sa);
 			}
 			base.TryTrigger(tk, sa);
@@ -450,7 +446,7 @@ namespace SteamEngine {
 		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
+				TriggerGroup tg = registeredTGs[i];
 				tg.TryRun(this, tk, sa);
 			}
 			base.TryTrigger(tk, sa);
@@ -462,7 +458,7 @@ namespace SteamEngine {
 		public override bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
+				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.Run(this, tk, sa))) {
 					return true;
 				}
@@ -482,7 +478,7 @@ namespace SteamEngine {
 		public override bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = (TriggerGroup) registeredTGs[i];
+				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
 					return true;
 				}

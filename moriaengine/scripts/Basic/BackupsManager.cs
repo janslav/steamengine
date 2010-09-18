@@ -22,6 +22,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using SteamEngine.Timers;
 using SteamEngine.Common;
+using System.Collections.Generic;
 //using ICSharpCode.SharpZipLib.Zip;
 //using OrganicBit.Zip;
 
@@ -164,8 +165,8 @@ namespace SteamEngine.CompiledScripts {
 			bool sizeValid = false;
 			long size;
 
-			private ArrayList sortedByTime;
-			private ArrayList sortedBySpan;
+			private List<Backup> sortedByTime;
+			private List<Backup> sortedBySpan;
 
 			internal static DateTimeFormatInfo dtfi;
 			internal const string TimeFormat = "HH_mm_ss"; //_fffffff";
@@ -207,8 +208,8 @@ namespace SteamEngine.CompiledScripts {
 
 				lastTime = nowList.time;
 				sortedByTime.Add(nowList);
-				sortedBySpan.Sort(Backup.SpanComparerInstance);
-				sortedByTime.Sort(Backup.TimeComparerInstance);
+				sortedBySpan.Sort(Backup.spanComparerInstance);
+				sortedByTime.Sort(Backup.timeComparerInstance);
 
 				while (CountIsOverLimit() || SizeIsOverLimit(path)) {
 					if (sortedByTime.Count < 2) {
@@ -251,7 +252,7 @@ namespace SteamEngine.CompiledScripts {
 					ResetSpanAtIndex(index + 1);
 				}
 
-				sortedBySpan.Sort(Backup.SpanComparerInstance);
+				sortedBySpan.Sort(Backup.spanComparerInstance);
 				sortedByTime.Remove(toRemove);
 
 				firstTime = ((Backup) sortedByTime[0]).time;
@@ -337,8 +338,8 @@ namespace SteamEngine.CompiledScripts {
 
 			private void InitBackupsLists(string rootPath) {
 				if (sortedByTime == null) {
-					sortedByTime = new ArrayList();
-					sortedBySpan = new ArrayList();
+					sortedByTime = new List<Backup>();
+					sortedBySpan = new List<Backup>();
 					DirectoryInfo rootDir = new DirectoryInfo(rootPath);
 					foreach (DirectoryInfo subdir in rootDir.GetDirectories()) {
 						try {
@@ -354,7 +355,7 @@ namespace SteamEngine.CompiledScripts {
 						} catch (Exception) { }//unkown dir
 					}
 
-					sortedByTime.Sort(Backup.TimeComparerInstance);
+					sortedByTime.Sort(Backup.timeComparerInstance);
 					for (int i = 1, n = sortedByTime.Count - 1; i < n; i++) {//without the first and last one
 						Backup prev = (Backup) sortedByTime[i - 1];
 						Backup next = (Backup) sortedByTime[i + 1];
@@ -367,7 +368,7 @@ namespace SteamEngine.CompiledScripts {
 						lastTime = ((Backup) sortedByTime[sortedByTime.Count - 1]).time;
 					}
 
-					sortedBySpan.Sort(Backup.SpanComparerInstance);
+					sortedBySpan.Sort(Backup.spanComparerInstance);
 				}
 			}
 
@@ -378,8 +379,8 @@ namespace SteamEngine.CompiledScripts {
 				internal DateTime time;
 				internal TimeSpan span;
 
-				internal static IComparer SpanComparerInstance = new SpanComparer();
-				internal static IComparer TimeComparerInstance = new TimeComparer();
+				internal static readonly IComparer<Backup> spanComparerInstance = new SpanComparer();
+				internal static readonly IComparer<Backup> timeComparerInstance = new TimeComparer();
 
 				internal Backup(string path, DateTime time) {
 					this.pathInfo = new DirectoryInfo(path);
@@ -416,25 +417,15 @@ namespace SteamEngine.CompiledScripts {
 					return sizeSoFar;
 				}
 
-				private class SpanComparer : IComparer {
-					public int Compare(object x, object y) {
-						Backup a = x as Backup;
-						Backup b = y as Backup;
-						if ((a != null) && (b != null)) {
-							return TimeSpan.Compare(a.span, b.span);
-						}
-						throw new SEException("Can't compare '"+x+"' to '"+y+"'");
+				private class SpanComparer : IComparer<Backup> {
+					public int Compare(Backup x, Backup y) {
+						return TimeSpan.Compare(x.span, y.span);
 					}
 				}
 
-				private class TimeComparer : IComparer {
-					public int Compare(object x, object y) {
-						Backup a = x as Backup;
-						Backup b = y as Backup;
-						if ((a != null) && (b != null)) {
-							return DateTime.Compare(a.time, b.time);
-						}
-						throw new SEException("Can't compare '" + x + "' to '" + y + "'");
+				private class TimeComparer : IComparer<Backup> {
+					public int Compare(Backup x, Backup y) {
+						return DateTime.Compare(x.time, y.time);
 					}
 				}
 

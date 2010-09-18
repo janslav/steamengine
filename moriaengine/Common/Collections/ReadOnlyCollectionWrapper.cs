@@ -25,11 +25,11 @@ using System.Security.Cryptography;
 
 
 namespace SteamEngine.Common {
-	public sealed class ReadOnlyCollection<T> : ICollection<T> /*, ICollection */ {
+	public sealed class ReadOnlyCollectionWrapper<T> : ICollection<T> /*, ICollection */ {
 		ICollection<T> genericCollection;
 		IEnumerable nonGenericEnumerable;
 
-		public ReadOnlyCollection(ICollection<T> collection) {
+		public ReadOnlyCollectionWrapper(ICollection<T> collection) {
 			this.genericCollection = collection;
 			this.nonGenericEnumerable = (IEnumerable) collection;
 		}

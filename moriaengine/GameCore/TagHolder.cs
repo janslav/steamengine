@@ -342,7 +342,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual void Save(SaveStream output) {
 			if (tags != null) {
-				ArrayList forDeleting = new ArrayList();
+				ArrayList forDeleting = null;
 				foreach (DictionaryEntry entry in tags) {
 					object key = entry.Key;
 					object value = entry.Value;
@@ -350,6 +350,9 @@ namespace SteamEngine {
 						IDeletable deletableValue = value as IDeletable;
 						if (deletableValue != null) {
 							if (deletableValue.IsDeleted) {
+								if (forDeleting == null) {
+									forDeleting = new ArrayList();
+								}
 								forDeleting.Add(entry.Key);
 								continue;//we don't save deleted values
 							}
@@ -361,8 +364,10 @@ namespace SteamEngine {
 						//Logger.WriteError(string.Format("This should not happen. Unknown key-value pair: {0} - {1}", key, value));
 					}
 				}
-				foreach (object key in forDeleting) {
-					tags.Remove(key);
+				if (forDeleting != null) {
+					foreach (object key in forDeleting) {
+						tags.Remove(key);
+					}
 				}
 			}
 		}

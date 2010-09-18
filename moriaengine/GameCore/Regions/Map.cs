@@ -16,16 +16,13 @@
 */
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Configuration;
+using System.Collections.ObjectModel;
+using System.Linq;
 using SteamEngine.Common;
+using SteamEngine.Communication.TCP;
 using SteamEngine.CompiledScripts;
 using SteamEngine.Networking;
-using SteamEngine.Communication.TCP;
-using System.Linq;
 
 namespace SteamEngine.Regions {
 
@@ -39,7 +36,8 @@ namespace SteamEngine.Regions {
 		//sectorAnd and mulSectorAnd are also used to calculate relative x/y coordinates - much faster than using shifts.
 
 		private static Map[] maps = new Map[0x100];
-		private static ArrayList mapsList = new ArrayList();
+		private static List<Map> mapsList = new List<Map>();
+		private static ReadOnlyCollection<Map> readonlyMapsList = new ReadOnlyCollection<Map>(mapsList);
 
 		private readonly int numXSectors;
 		private readonly int numYSectors;
@@ -157,16 +155,16 @@ namespace SteamEngine.Regions {
 			throw new SEException("Mapplanes only have numbers >= 0 && < 0x100");
 		}
 
-		public static ArrayList AllMaps {
+		public static ReadOnlyCollection<Map> AllMaps {
 			get {
-				return ArrayList.ReadOnly(mapsList);
+				return readonlyMapsList;
 			}
 		}
 
 		/**
 			Clears all the maps of all dynamic objects.
 		*/
-		public static void ClearAll() {
+		public static void ClearAllDynamicStuff() {
 			foreach (Map map in mapsList) {
 				map.ClearThings();
 				map.InactivateRegions(true); //true - clear also the dynamic regions

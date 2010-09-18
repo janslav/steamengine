@@ -16,11 +16,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Text;
-using System.Collections;
-using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
@@ -104,8 +102,9 @@ namespace SteamEngine.LScript {
 						if ((sgd.responseTriggers != null) && (!sgd.IsUnloaded)) {//already loaded
 							throw new SEException("BUTTON section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
-						ArrayList responsesList = new ArrayList();
-						for (int i = 1, n = input.TriggerCount; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
+						int n = input.TriggerCount;
+						List<ResponseTrigger> responsesList = new List<ResponseTrigger>(n);
+						for (int i = 1; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
 							trigger = input.GetTrigger(i);
 							string triggerName = trigger.TriggerName;
 							if (StringComparer.OrdinalIgnoreCase.Equals(triggerName, "anybutton")) {
@@ -130,7 +129,7 @@ namespace SteamEngine.LScript {
 							}
 							Logger.WriteError("String '" + LogStr.Ident(triggerName) + "' is not valid as gump/dialog response trigger header");
 						}
-						sgd.responseTriggers = (ResponseTrigger[]) responsesList.ToArray(typeof(ResponseTrigger));
+						sgd.responseTriggers = responsesList.ToArray();
 						return sgd;
 				}
 			}
