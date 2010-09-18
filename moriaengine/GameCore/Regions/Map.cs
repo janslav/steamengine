@@ -80,10 +80,10 @@ namespace SteamEngine.Regions {
 		}
 
 		public byte M {
-			get { 
-				return this.m; 
+			get {
+				return this.m;
 			}
-		} 
+		}
 
 		/**
 			this returns the sector at given coordinates in the sector matrix (i.e. not real map coordinates!)
@@ -306,28 +306,28 @@ namespace SteamEngine.Regions {
 
 
 		public int NumXSectors {
-			get { 
-				return this.numXSectors; 
+			get {
+				return this.numXSectors;
 			}
 		}
 
 		public int NumYSectors {
-			get { 
-				return this.numYSectors; 
+			get {
+				return this.numYSectors;
 			}
 		}
 
 		public int SizeX {
-			get { 
-				return this.sizeX; 
+			get {
+				return this.sizeX;
 			}
 		}
 
 		public int SizeY {
 			get {
-				return this.sizeY; 
+				return this.sizeY;
 			}
-		} 
+		}
 
 		/**
 			If the specified thing is on the ground, this tells the sector it is in to move
@@ -640,7 +640,7 @@ namespace SteamEngine.Regions {
 		//    return (enumer.MoveNext());	//return true if there is a player somewhere, false if not.
 
 		//}
-		
+
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRange(int x, int y, int range) {
 			return this.GetConnectionsInRectangle(new ImmutableRectangle(x, y, range));
 		}

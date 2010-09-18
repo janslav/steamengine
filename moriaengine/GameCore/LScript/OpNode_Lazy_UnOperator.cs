@@ -16,13 +16,9 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
-using System.Globalization;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
@@ -130,7 +126,7 @@ namespace SteamEngine.LScript {
 
 		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
 			if (result != null) {
-				ArrayList matches = new ArrayList();
+                List<MethodInfo> matches = new List<MethodInfo>();
 
 				Type type = result.GetType();
 				MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
@@ -145,7 +141,7 @@ namespace SteamEngine.LScript {
 					}
 				}
 				if (matches.Count == 1) {
-					MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) matches[0]);
+					MethodInfo method = MemberWrapper.GetWrapperFor(matches[0]);
 					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename,
 						line, this.column, this.OrigNode, method, new OpNode[] { obj });
 					return newNode;

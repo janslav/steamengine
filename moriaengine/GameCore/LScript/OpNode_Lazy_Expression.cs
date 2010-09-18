@@ -16,13 +16,9 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
-using System.Globalization;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 using SteamEngine.Regions;
@@ -93,7 +89,7 @@ namespace SteamEngine.LScript {
 					current++;
 				}
 
-				ArrayList indexersList = new ArrayList();
+                List<OpNode> indexersList = new List<OpNode>();
 				while (IsType(code.GetChildAt(current), StrictConstants.INDEXER)) {
 					Production indexer = (Production) code.GetChildAt(current);
 					//"identifier[...] = ..." - then the assignment "belongs" to the indexer
@@ -123,7 +119,7 @@ namespace SteamEngine.LScript {
 					OpNode[] chain = new OpNode[indexersList.Count + 1];
 					chain[0] = constructed;
 					for (int i = 0, n = indexersList.Count; i < n; i++) {
-						chain[i + 1] = (OpNode) indexersList[i];
+						chain[i + 1] = indexersList[i];
 					}
 					return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, code, chain);
 				}
@@ -143,7 +139,7 @@ namespace SteamEngine.LScript {
 				return;
 			}
 			if (IsType(arg, StrictConstants.ARGS_LIST)) {
-				ArrayList argsList = new ArrayList();
+                List<OpNode> argsList = new List<OpNode>();
 				//ArrayList stringList = new ArrayList();
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0, n = arg.GetChildCount(); i < n; i += 2) { //step 2 - skipping argsseparators
@@ -155,8 +151,7 @@ namespace SteamEngine.LScript {
 					Node node = arg.GetChildAt(i);
 					argsList.Add(LScriptMain.CompileNode(this, node));
 				}
-				this.args = new OpNode[argsList.Count];
-				argsList.CopyTo(this.args);
+                this.args = argsList.ToArray();
 
 				object[] stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);

@@ -16,10 +16,10 @@
 */
 
 using System;
-using System.Text;
 using System.Collections;
-using SteamEngine.Common;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 

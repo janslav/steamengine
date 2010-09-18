@@ -37,7 +37,8 @@ namespace SteamEngine {
 	public abstract partial class AbstractItem : Thing, ICorpseEquipInfo {
 
 		private static int instances;
-		private static List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
+		private static readonly List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
+
 
 		public static int Instances {
 			get {

@@ -387,6 +387,7 @@
     <Compile Include="Tests\TargetDefTest.cs" />
     <Compile Include="Tests\Test.cs" />
     <Compile Include="Tests\TextColorTest.cs" />
+    <Compile Include="Utils\Comparers.cs" />
     <Compile Include="Utils\Persistence\ArrayListSaver.cs" />
     <Compile Include="Utils\Persistence\ArraySaver.cs" />
     <Compile Include="Utils\Persistence\DateSaver.cs" />
