@@ -15,10 +15,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -50,6 +48,12 @@ namespace SteamEngine.CompiledScripts {
 
 		public void RemoveRankName(int index) {
 			this.rankNames.RemoveAt(index);
+		}
+
+		public ReadOnlyCollection<string> RankNames {
+			get {
+				return this.rankNamesReadonly;
+			}
 		}
 
 		[SaveableClass]

@@ -31,8 +31,7 @@ namespace SteamEngine.Converter {
 	public class ConvertedRegion : ConvertedDef {
 		private static Dictionary<string, ConvertedRegion> regionsByDefname = new Dictionary<string, ConvertedRegion>(StringComparer.OrdinalIgnoreCase);
 		private static List<ConvertedRegion> allRegions = new List<ConvertedRegion>();
-		private static ArrayList temp = new ArrayList();
-
+		
 		private List<ImmutableRectangle> rectangles = new List<ImmutableRectangle>();
 		private Point2D[] points;//corners of the rectangles. its not too accurate, but who cares... :)
 		private byte mapplane;
@@ -234,7 +233,7 @@ namespace SteamEngine.Converter {
 				points[(i * 4) + 3] = new Point2D(rect.MaxX, rect.MinY);//right lower
 			}
 
-			temp.Clear();
+			List<DictionaryEntry> temp = new List<DictionaryEntry>();
 			foreach (ConvertedRegion reg in allRegions) {
 				if (HasSameMapplane(reg)) {
 					int contained = reg.ContainsPoints(this.points);
@@ -334,7 +333,7 @@ namespace SteamEngine.Converter {
 
 		//internal static void ResolveRegionsHierarchy() {
 		public static void SecondStageFinished() {
-			temp = new ArrayList(allRegions);//copy list of all regions
+			List<ConvertedRegion> temp = new List<ConvertedRegion>(allRegions);//copy list of all regions
 			int lastCount = -1;
 			while (temp.Count > 0) {
 				if (lastCount == temp.Count) {

@@ -15,14 +15,12 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Net;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
-using System.IO;
-using System.Net;
 
 namespace SteamEngine.Networking {
 	public class GameServer : TcpServer<GameState> {
@@ -30,10 +28,10 @@ namespace SteamEngine.Networking {
 		private static GameServer instance = new GameServer();
 
 		private static HashSet<GameState> clients = new HashSet<GameState>();
-		private static ReadOnlyCollection<GameState> clientsReadOnly = CreateClientsWrapper();
+		private static ReadOnlyCollectionWrapper<GameState> clientsReadOnly = CreateClientsWrapper();
 
-		static ReadOnlyCollection<GameState> CreateClientsWrapper() {
-			return new ReadOnlyCollection<GameState>(clients);
+		static ReadOnlyCollectionWrapper<GameState> CreateClientsWrapper() {
+			return new ReadOnlyCollectionWrapper<GameState>(clients);
 		}
 
 		private GameServer()
@@ -63,7 +61,7 @@ namespace SteamEngine.Networking {
 			instance.Dispose();
 		}
 
-		public static ReadOnlyCollection<GameState> AllClients {
+		public static ReadOnlyCollectionWrapper<GameState> AllClients {
 			get {
 				return clientsReadOnly;
 			}
@@ -71,12 +69,18 @@ namespace SteamEngine.Networking {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static IEnumerable<AbstractCharacter> GetAllPlayers() {
+#if NOLINQ
 			foreach (GameState state in clients) {
-				AbstractCharacter ch = state.Character;
-				if (ch != null) {
-					yield return ch;
-				}
+			    AbstractCharacter ch = state.Character;
+			    if (ch != null) {
+			        yield return ch;
+			    }
 			}
+#else
+			return from GameState state in clients
+				   where state.Character != null
+				   select state.Character;
+#endif
 		}
 
 		public static void SendToClientsWhoCanSee(Thing thing, OutgoingPacket outPacket) {

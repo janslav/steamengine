@@ -1,22 +1,30 @@
-using System;
-using System.IO;
-using System.Collections;
+/*
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	Or visit http://www.gnu.org/copyleft/gpl.html
+*/
+
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 namespace SteamEngine.Common {
 
-	//children are supposed to be simple classes with some string fields (public or internal, doesn't really matter) representing the localised messages.
-	//Then it should be used with the Loc<> class
-
-	//the system will then make sure it's available in all languages and corresponding txt files are created and maintained in the \Language\ subdir
 	public class NumberedLocStringCollection : LocStringCollection {
 		string defname;
 		string assemblyName;
-		List<string> strings = new List<string>();
-		ReadOnlyCollection<string> wrapper;
+		List<string> entriesByNumber = new List<string>();
+		ReadOnlyCollection<string> entriesReadonly;
 
 		public NumberedLocStringCollection(string defname, string assemblyName,
 			IList<string> strings, Language language) {
@@ -24,7 +32,7 @@ namespace SteamEngine.Common {
 			this.defname = defname;
 			this.assemblyName = assemblyName;
 
-			this.wrapper = new ReadOnlyCollection<string>(this.strings);
+			this.entriesReadonly = new ReadOnlyCollection<string>(this.entriesByNumber);
 
 			base.Init(GetEntriesFromList(strings), language);
 		}
@@ -41,10 +49,10 @@ namespace SteamEngine.Common {
 			base.ProtectedSetEntry(entryName, entry);
 			int index = ConvertTools.ParseInt32(entryName);
 			
-			while (this.strings.Count <= index) {
-				this.strings.Add(null);
+			while (this.entriesByNumber.Count <= index) {
+				this.entriesByNumber.Add(null);
 			}
-			this.strings[index] = entry;
+			this.entriesByNumber[index] = entry;
 		}
 
 		public override string Defname {
@@ -61,7 +69,7 @@ namespace SteamEngine.Common {
 
 		public ReadOnlyCollection<string> Entries {
 			get {
-				return this.wrapper;
+				return this.entriesReadonly;
 			}
 		}
 	}

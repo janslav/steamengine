@@ -16,15 +16,10 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Globalization;
-//using PerCederberg.Grammatica.Parser;
+using System.Text;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
@@ -202,14 +197,14 @@ namespace SteamEngine.LScript {
 			desc = null;
 			List<MemberDescriptor> ambiguities = null;
 			int argsLength = args.Length;
-			ArrayList namedWell = null;
+			List<MemberInfo> namedWell = null;
 
 			if (IsMethod(memberTypes)) {
 				MethodInfo[] mis = type.GetMethods(BindingFlags.Public | flags);
 				foreach (MethodInfo mi in mis) {//methods
 					if (StringComparer.OrdinalIgnoreCase.Equals(name, mi.Name)) {
 						if (namedWell == null) {
-							namedWell = new ArrayList(1);
+							namedWell = new List<MemberInfo>(1);
 						}
 						namedWell.Add(mi);
 						nameMatches = true;
@@ -254,7 +249,7 @@ namespace SteamEngine.LScript {
 					foreach (PropertyInfo pi in type.GetProperties(BindingFlags.Public | flags)) {
 						if (StringComparer.OrdinalIgnoreCase.Equals(name, pi.Name)) {
 							if (namedWell == null) {
-								namedWell = new ArrayList(1);
+								namedWell = new List<MemberInfo>(1);
 							}
 							namedWell.Add(pi);
 							nameMatches = true;
@@ -334,7 +329,7 @@ namespace SteamEngine.LScript {
 					foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | flags)) {
 						if (StringComparer.OrdinalIgnoreCase.Equals(name, fi.Name)) {
 							if (namedWell == null) {
-								namedWell = new ArrayList(1);
+								namedWell = new List<MemberInfo>(1);
 							}
 							namedWell.Add(fi);
 							nameMatches = true;

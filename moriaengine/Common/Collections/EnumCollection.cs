@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace SteamEngine.Common {
 	public interface IEnumItem {
@@ -71,7 +72,7 @@ namespace SteamEngine.Common {
 		}
 
 		public static IList<EnumItem<T>> GetAllItemsAsList() {
-			return new System.Collections.ObjectModel.ReadOnlyCollection<EnumItem<T>>(allItems);
+			return new ReadOnlyCollection<EnumItem<T>>(allItems);
 		}
 
 		public T TValue {

@@ -219,7 +219,7 @@ namespace SteamEngine {
 			Thing.ClearAll();
 			AbstractAccount.ClearAll();
 			Globals.ClearAll();
-			Map.ClearAll();
+			Map.ClearAllDynamicStuff();
 			ObjectSaver.ClearJobs();
 			OpenedContainers.ClearAll();
 			Commands.ClearGMCommandsCache();
