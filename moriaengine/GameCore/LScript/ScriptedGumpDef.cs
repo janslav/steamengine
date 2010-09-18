@@ -102,6 +102,7 @@ namespace SteamEngine.LScript {
 						if ((sgd.responseTriggers != null) && (!sgd.IsUnloaded)) {//already loaded
 							throw new SEException("BUTTON section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
+
 						int n = input.TriggerCount;
 						List<ResponseTrigger> responsesList = new List<ResponseTrigger>(n);
 						for (int i = 1; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section

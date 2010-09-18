@@ -16,13 +16,8 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
+using System.Collections.Generic;
 using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
@@ -51,8 +46,8 @@ namespace SteamEngine.LScript {
 			//LScript.DisplayTree(code);
 
 			Production ifProduction = (Production) code;
-			ArrayList conditionsList = new ArrayList();
-			ArrayList blocksList = new ArrayList();
+            List<OpNode> conditionsList = new List<OpNode>();
+            List<OpNode> blocksList = new List<OpNode>();
 			int n = code.GetChildCount();
 			for (int i = 0; i < n; i++) {
 				Node node = ifProduction.GetChildAt(i);
@@ -83,12 +78,8 @@ namespace SteamEngine.LScript {
 				constructed.elseBlock = LScriptMain.CompileNode(constructed, elseCode, true);
 			}
 
-			OpNode[] b = new OpNode[blocksList.Count];
-			blocksList.CopyTo(b);
-			constructed.blocks = b;
-			b = new OpNode[conditionsList.Count];
-			conditionsList.CopyTo(b);
-			constructed.conditions = b;
+            constructed.blocks = blocksList.ToArray();
+            constructed.conditions = conditionsList.ToArray();
 
 			return constructed;
 		}

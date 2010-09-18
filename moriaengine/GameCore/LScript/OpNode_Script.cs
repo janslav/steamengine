@@ -2,7 +2,7 @@
 //http://www.gnu.org/copyleft/gpl.html 
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 
@@ -23,7 +23,7 @@ namespace SteamEngine.LScript {
 			OpNode_Script constructed = new OpNode_Script(
 				parent, filename, line, column, code);
 
-			ArrayList blocksList = new ArrayList();
+            List<OpNode> blocksList = new List<OpNode>();
 			for (int i = 0, n = code.GetChildCount(); i < n; i++) {
 				Node block = code.GetChildAt(i);
 				if (block.GetId() != (int) StrictConstants.COMEOL) {
@@ -31,9 +31,7 @@ namespace SteamEngine.LScript {
 				}
 			}
 
-			OpNode[] b = new OpNode[blocksList.Count];
-			blocksList.CopyTo(b);
-			constructed.blocks = b;
+            constructed.blocks = blocksList.ToArray();
 			return constructed;
 		}
 

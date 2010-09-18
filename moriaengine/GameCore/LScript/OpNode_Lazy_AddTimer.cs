@@ -23,6 +23,7 @@ using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Timers;
 using SteamEngine.Common;
+using System.Collections.Generic;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
@@ -204,7 +205,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 		private void GetArgsFrom(Node arg) {
 			//caller / assigner
 			if (IsType(arg, StrictConstants.ARGS_LIST)) {
-				ArrayList argsList = new ArrayList();
+                List<OpNode> argsList = new List<OpNode>();
 				//ArrayList stringList = new ArrayList();
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0, n = arg.GetChildCount(); i < n; i += 2) { //step 2 - skipping argsseparators
@@ -216,8 +217,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					Node node = arg.GetChildAt(i);
 					argsList.Add(LScriptMain.CompileNode(this, node));
 				}
-				args = new OpNode[argsList.Count];
-				argsList.CopyTo(args);
+                args = argsList.ToArray();
 
 				object[] stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);

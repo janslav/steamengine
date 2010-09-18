@@ -16,13 +16,7 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
+using System.Collections.Generic;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
@@ -40,7 +34,7 @@ namespace SteamEngine.LScript {
 			//LScript.DisplayTree(origNode);
 			int type = ResolveTokenType(origNode.GetChildAt(0));
 			int current = 3;
-			ArrayList indicesList = new ArrayList();
+            List<OpNode> indicesList = new List<OpNode>();
 			OpNode_Lazy_Indexer lastIndex = null;
 			while (OpNode.IsType(origNode.GetChildAt(current), StrictConstants.INDEXER)) {
 				Production indexprod = (Production) origNode.GetChildAt(current);
@@ -122,8 +116,7 @@ namespace SteamEngine.LScript {
 					}
 				} else {
 					indicesList.Insert(0, ConstructGetNode(type, parent, line, column, origNode, name));
-					OpNode[] chain = new OpNode[indicesList.Count];
-					indicesList.CopyTo(chain);
+                    OpNode[] chain = indicesList.ToArray();
 					return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, origNode, chain);
 				}
 			}
