@@ -48,7 +48,7 @@ namespace SteamEngine.LScript {
 			return TryRunSnippet("<snippet>", 0, self, script);
 		}
 
-		internal static LScriptHolder GetNewSnippetRunner(string filename, int line, string script) {
+		public static LScriptHolder GetNewSnippetRunner(string filename, int line, string script) {
 			//Logger.WriteDebug("GetNewSnippetRunner("+script+")");
 
 			script += Environment.NewLine;

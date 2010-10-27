@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="steamengine" default="runCore" basedir="../..">
-	<property name="nant.settings.currentframework" value="net-3.5" />
+	<property name="nant.settings.currentframework" value="net-4.0" />
 
 	<property name="outputFilePrefix" value="Sane." overwrite="false"  />
 	

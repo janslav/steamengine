@@ -643,7 +643,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		[Summary("Call this before you start using this class for loading.")]
-		public static void StartingLoading() {
+		internal static void StartingLoading() {
 			loadedObjectsByUid = new ArrayList();
 			foreach (RGBCSCPair pair in coordinatorsRGs) {
 				pair.bcsc.StartingLoading();
@@ -651,7 +651,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Call this after you finish loading using this class.")]
-		public static void LoadingFinished() {
+		internal static void LoadingFinished() {
 			while (LoaderListIsNotEmpty) {
 				DelayedLoader loader = null;
 				try {
@@ -671,7 +671,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		[Summary("Call this before you start using this class for saving.")]
-		public static void StartingSaving() {
+		internal static void StartingSaving() {
 			saversList = null;
 			lastSaver = null;
 			savedUidsByObjects.Clear();
@@ -679,7 +679,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		[Summary("Call this after you finish saving using this class.")]
-		public static void SavingFinished() {
+		internal static void SavingFinished() {
 
 		}
 
