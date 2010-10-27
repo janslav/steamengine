@@ -23,7 +23,7 @@ namespace SteamEngine.LScript {
 			OpNode_Script constructed = new OpNode_Script(
 				parent, filename, line, column, code);
 
-            List<OpNode> blocksList = new List<OpNode>();
+			List<OpNode> blocksList = new List<OpNode>();
 			for (int i = 0, n = code.GetChildCount(); i < n; i++) {
 				Node block = code.GetChildAt(i);
 				if (block.GetId() != (int) StrictConstants.COMEOL) {
@@ -31,7 +31,7 @@ namespace SteamEngine.LScript {
 				}
 			}
 
-            constructed.blocks = blocksList.ToArray();
+			constructed.blocks = blocksList.ToArray();
 			return constructed;
 		}
 

@@ -17,26 +17,16 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Runtime.InteropServices;
-using SteamEngine.Timers;
-using SteamEngine.Common;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Networking;
+using System.Net;
+using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 using SteamEngine.Persistence;
-
-//using ICSharpCode.SharpZipLib.Zip;
-//using OrganicBit.Zip;
 
 namespace SteamEngine.CompiledScripts {
 	public class E_Firewall_Global : CompiledTriggerGroup {
-		public void On_ClientAttach(Globals ignored, ScriptArgs sa) {
-			TcpConnection<GameState> conn = (TcpConnection<GameState>) sa.Argv[1];
+		public void On_ClientAttach(Globals ignored, GameState state, TcpConnection<GameState> conn) {
 			if (Firewall.IsBlockedIP(conn.EndPoint.Address)) {
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.Blocked);
 				conn.Close("IP Blocked");
@@ -47,339 +37,202 @@ namespace SteamEngine.CompiledScripts {
 	[HasSavedMembers]
 	public static class Firewall {
 		[SavedMember]
-		private static Hashtable blockedIPEntries = new Hashtable();
+		private static Dictionary<IPAddress, FirewallEntry> blockedIPEntries = new Dictionary<IPAddress, FirewallEntry>();
 		[SavedMember]
-		private static ArrayList blockedIPRangeEntries = new ArrayList();
+		private static List<FirewallEntry> blockedIPRangeEntries = new List<FirewallEntry>();
 
-		[Summary("Various comparators")]
-		private static IPComparator ipComparator = new IPComparator();
-		private static AccountComparator accComparator = new AccountComparator();
-
-		[Summary("Returns a copy of the BlockedIPEntry Hashtable (usable for sorting etc.)")]
-		public static Hashtable BlockedIPEntries {
-			get {
-				return new Hashtable(blockedIPEntries);
-			}
+		public static List<FirewallEntry> GetAllEntries() {
+			List<FirewallEntry> entries = new List<FirewallEntry>(blockedIPRangeEntries);
+			entries.AddRange(blockedIPEntries.Values);
+			return entries;
 		}
 
-		[Summary("Returns a copy of the BlockedIPRangeEntry Hashtable (usable for sorting etc.)")]
-		public static ArrayList BlockedIPRangeEntries {
-			get {
-				return new ArrayList(blockedIPRangeEntries);
-			}
-		}
-
-		[Summary("Sorting method: Sorting parameters available are ip, account")]
-		public static ArrayList GetSortedBy(SortingCriteria criterion) {
-			ArrayList ipentries = new ArrayList(blockedIPEntries.Values);
-			ipentries.AddRange(blockedIPRangeEntries);
-
-			switch (criterion) {
-				case SortingCriteria.IPAsc:
-					ipentries.Sort(ipComparator);
-					break;
-
-				case SortingCriteria.AccountAsc:
-					ipentries.Sort(accComparator);
-					break;
-
-				case SortingCriteria.IPDesc:
-					ipentries.Sort(ipComparator);
-					ipentries.Reverse();
-					break;
-
-				case SortingCriteria.AccountDesc:
-					ipentries.Sort(accComparator);
-					ipentries.Reverse();
-					break;
-
-				default:
-					ipentries.Sort(ipComparator);
-					break;
-			}
-
-			return ipentries;
-		}
-
-		[Summary("Comparator serving for sorting the list of Blockedipentries by blocked by")]
-		class AccountComparator : IComparer {
-			public int Compare(object a, object b) {
-				string acc1 = ((ISortableIpBlockEntry) a).Account.Name;
-				string acc2 = ((ISortableIpBlockEntry) b).Account.Name;
-
-				return acc1.CompareTo(acc2);
-			}
-		}
-
-		[Summary("Comparator serving for sorting the list of Blockedipentries by IP")]
-		class IPComparator : IComparer {
-			public int Compare(object a, object b) {
-				IPAddress ip1 = ((ISortableIpBlockEntry) a).Ip;
-				IPAddress ip2 = ((ISortableIpBlockEntry) b).Ip;
-
-				if ((IPAddress.NetworkToHostOrder(getLongFromAddress(ip1))) < (IPAddress.NetworkToHostOrder(getLongFromAddress(ip2)))) {
-					return -1;
-				}
-				if ((IPAddress.NetworkToHostOrder(getLongFromAddress(ip1))) > (IPAddress.NetworkToHostOrder(getLongFromAddress(ip2)))) {
-					return 1;
-				} else return 0;
-			}
-		}
-
-		public static void AddBlockedIP(IPAddress IP, String reason, AbstractAccount who) {
-			if (IsBlockedIP(IP) == true) {
-				Globals.SrcWriteLine("The IP " + IP + " is already blocked.");
+		public static void AddBlockedIP(IPAddress ip, String reason, AbstractAccount blockedBy) {
+			if (IsBlockedIP(ip) == true) {
+				Globals.SrcWriteLine("The IP " + ip + " is already blocked.");
 				return;
 			}
-			BlockedIPEntry ipbe = new BlockedIPEntry();
-			ipbe.ip = IP;
-			ipbe.reason = reason;
-			ipbe.blockedBy = who;
-			blockedIPEntries[IP] = ipbe;
-			Globals.SrcWriteLine("The IP " + IP + " was blocked.");
-
+			blockedIPEntries[ip] = new FirewallEntry(ip, reason, blockedBy);
+			Globals.SrcWriteLine("The IP '" + ip + "' has been blocked.");
 		}
-		public static void AddBlockedIP(String IP, String reason, AbstractAccount who) {
-			IPAddress address;
-			if (IPAddress.TryParse(IP, out address)) {
-				Firewall.AddBlockedIP(address, reason, who);
-			} else {
-				Globals.SrcWriteLine("voe!(Tartaros) Zadal jsi uplne blbou adresu.");
-			}
 
+		public static void AddBlockedIP(String ip, String reason, AbstractAccount blockedBy) {
+			AddBlockedIP(IPAddress.Parse(ip), reason, blockedBy);
+		}
 
-			/*if (IsBlockedIP(IP) == true) {
-				Globals.SrcWriteLine("The IP " + IP + " is already blocked.");
+		public static void RemoveBlockedIP(IPAddress ip) {
+			if (IsBlockedIP(ip) == false) {
 				return;
 			}
-			BlockedIPEntry ipbe = new BlockedIPEntry();
-			ipbe.ip = IPAddress.Parse(IP);
-			ipbe.reason = reason;
-			ipbe.blockedBy = who;
-			blockedIPEntries[IPAddress.Parse(IP)] = ipbe;
-			Globals.SrcWriteLine("The IP " + IP + " was blocked."); */
-
-
+			blockedIPEntries.Remove(ip);
+			Globals.SrcWriteLine("The IP " + ip + " has been unblocked.");
 		}
 
-		public static void RemoveBlockedIP(String IP) {
-			Firewall.RemoveBlockedIP(IPAddress.Parse(IP));
+		public static void RemoveBlockedIP(String ip) {
+			Firewall.RemoveBlockedIP(IPAddress.Parse(ip));
+		}
 
-			/*if (IsBlockedIP(IP) == false) {
-				return;
+		public static bool IsBlockedIP(IPAddress ip) {
+			if (blockedIPEntries.ContainsKey(ip)) {
+				return true;
 			}
-			blockedIPEntries.Remove(IPAddress.Parse(IP)); */
-		}
 
-		public static void RemoveBlockedIP(IPAddress IP) {
-			//Firewall.RemoveBlockedIP(IP.ToString());
-			if (IsBlockedIP(IP) == false) {
-				return;
-			}
-			blockedIPEntries.Remove(IP);
-			Globals.SrcWriteLine("The IP " + IP + " was unblocked.");
-		}
-
-		public static bool IsBlockedIP(IPAddress IP) {
-			BlockedIPEntry lookEntry = (BlockedIPEntry) blockedIPEntries[IP];
-
-			foreach (BlockedIPRangeEntry bire in blockedIPRangeEntries) {
-				if (IsIPInRange(IP, bire.fromIp, bire.toIp) == true) {
+			foreach (FirewallEntry bire in blockedIPRangeEntries) {
+				if (IsIPInRange(ip, bire.LowerBound, bire.UpperBound)) {
 					return true;
 				}
 			}
-			if (lookEntry == null) {
-				return false;
-			} else {
-				return true;
-			};
+			return false;
 		}
 
 
 		public static bool IsBlockedIP(String IP) {
 			return Firewall.IsBlockedIP(IPAddress.Parse(IP));
-			/*BlockedIPEntry lookEntry = (BlockedIPEntry) blockedIPEntries[IPAddress.Parse(IP)];
-
-			foreach (BlockedIPRangeEntry bire in blockedIPRangeEntries.Values) {
-				if (IsIPInRange(IPAddress.Parse(IP), bire.fromIp, bire.toIp) == true) {
-					return true;
-				}
-			}
-
-			if (lookEntry == null) {
-				return false;
-			} else return true; */
 		}
 
-		public static void ShowBlockedIP() {
-			foreach (BlockedIPEntry bie in blockedIPEntries.Values) {
-				Globals.SrcWriteLine("Blocked IP: " + bie.ip + " Reason: " + bie.reason + " Blocked by: " + bie.blockedBy);
+		public static void ShowBlockedIPs() {
+			foreach (FirewallEntry bie in blockedIPEntries.Values) {
+				Globals.SrcWriteLine("Blocked IP: " + bie.LowerBound + " Reason: " + bie.Reason + " Blocked by: " + bie.BlockedBy);
 			}
-			foreach (BlockedIPRangeEntry bire in blockedIPRangeEntries) {
-				Globals.SrcWriteLine("Blocked IPRange from: " + bire.fromIp + " to: " + bire.toIp + " Reason: " + bire.reason + " Blocked by: " + bire.blockedBy);
+			foreach (FirewallEntry bire in blockedIPRangeEntries) {
+				Globals.SrcWriteLine("Blocked IPRange from: " + bire.LowerBound + " to: " + bire.UpperBound + " Reason: " + bire.Reason + " Blocked by: " + bire.BlockedBy);
 			}
-
-
 		}
-		public static void AddBlockedIPRange(String fromIP, String toIP, String reason, AbstractAccount who) {
-			IPAddress address1;
-			IPAddress address2;
-			if (IPAddress.TryParse(fromIP, out address1) && IPAddress.TryParse(toIP, out address2)) {
-				Firewall.AddBlockedIPRange(IPAddress.Parse(fromIP), IPAddress.Parse(toIP), reason, who);
+
+		public static void AddBlockedIPRange(IPAddress lowerBound, IPAddress upperBound, String reason, AbstractAccount blockedBy) {
+			if (CompareIPs(lowerBound, upperBound) == 0) {
+				AddBlockedIP(lowerBound, reason, blockedBy);
 			} else {
-				Globals.SrcWriteLine("voe!(Tartaros) Zadal jsi uplne blbou adresu.");
+				blockedIPRangeEntries.Add(new FirewallEntry(lowerBound, upperBound, reason, blockedBy));
 			}
-			/* BlockedIPRangeEntry iprbe = new BlockedIPRangeEntry();
-			iprbe.fromIp = IPAddress.Parse(fromIP);
-			iprbe.toIp = IPAddress.Parse(toIP);
-			iprbe.reason = reason;
-			iprbe.blockedBy = who;
-			blockedIPRangeEntries[IPAddress.Parse(fromIP)] = iprbe;
-			Globals.SrcWriteLine("Blocked IPRange from: " + iprbe.fromIp + " to: " + iprbe.toIp);
-			*/
 		}
 
-		public static void AddBlockedIPRange(IPAddress fromIP, IPAddress toIP, String reason, AbstractAccount who) {
-			//Firewall.AddBlockedIPRange(fromIP.ToString(), toIP.ToString() , reason, who);
-			BlockedIPRangeEntry iprbe = new BlockedIPRangeEntry();
-			iprbe.fromIp = fromIP;
-			iprbe.toIp = toIP;
-			iprbe.reason = reason;
-			iprbe.blockedBy = who;
-			blockedIPRangeEntries.Add(iprbe);
+		public static void AddBlockedIPRange(String lowerBound, String upperBound, String reason, AbstractAccount blockedBy) {
+			AddBlockedIPRange(IPAddress.Parse(lowerBound), IPAddress.Parse(upperBound), reason, blockedBy);
 		}
 
-		public static void RemoveBlockedIPRange(IPAddress fromIP, IPAddress toIP) {
-			foreach (BlockedIPRangeEntry bipe in BlockedIPRangeEntries) {
-				if ((bipe.fromIp.Equals(fromIP)) && (bipe.toIp.Equals(toIP))) {
+
+		public static void RemoveBlockedIPRange(IPAddress lowerBound, IPAddress upperBound) {
+			foreach (FirewallEntry bipe in blockedIPRangeEntries) {
+				if ((bipe.LowerBound.Equals(lowerBound)) && (bipe.UpperBound.Equals(upperBound))) {
 					blockedIPRangeEntries.Remove(bipe);
-					Globals.SrcWriteLine("IPRange: " + bipe.fromIp + "-" + bipe.toIp + " was unblocked.");
+					Globals.SrcWriteLine("IP range: " + bipe.LowerBound + "-" + bipe.UpperBound + " has been unblocked.");
 					return;
 				}
 			}
-			Globals.SrcWriteLine("IPRange nenalezena");
+			Globals.SrcWriteLine("IP range not found");
 		}
+
 		public static void RemoveBlockedIPRange(String fromIP, String toIP) {
 			Firewall.RemoveBlockedIPRange(IPAddress.Parse(fromIP), IPAddress.Parse(toIP));
 		}
-		/*public static void RemoveBlockedIPRange(String IP) {
-            Firewall.RemoveBlockedIPRange(IPAddress.Parse(IP));
-            /*if (IsBlockedIP(IP) == false) {
-				return;
-			}
-			blockedIPRangeEntries.Remove(IPAddress.Parse(IP));
-        } */
 
-		public static bool IsIPInRange(IPAddress ipair, IPAddress iplo, IPAddress iphi) {
-			long addr = IPAddress.NetworkToHostOrder(getLongFromAddress(ipair));
-			return ((addr >= IPAddress.NetworkToHostOrder(getLongFromAddress(iplo))) && (addr <= IPAddress.NetworkToHostOrder(getLongFromAddress(iphi))));
+		public static bool IsIPInRange(IPAddress ip, IPAddress lower, IPAddress upper) {
+			return (CompareIPs(ip, lower) >= 0) && (CompareIPs(ip, upper) <= 0);
 		}
 
-		private static long getLongFromAddress(IPAddress ipa) {
-			byte[] b = ipa.GetAddressBytes();
-			long l = 0;
-			for (int i = 0; i < b.Length; i++) {
-				l += (long) (b[i] * Math.Pow(256, i));
-			}
-			return l;
+		public static int CompareIPs(IPAddress a, IPAddress b) {
+			IStructuralComparable x = a.GetAddressBytes();
+			IStructuralComparable y = b.GetAddressBytes();
+
+			return x.CompareTo(y, Comparer<byte>.Default);
 		}
 	}
 
 	[SaveableClass]
 	[Dialogs.ViewableClass]
-	public class BlockedIPEntry : ISortableIpBlockEntry {
-		[LoadingInitializer]
-		public BlockedIPEntry() {
-		}
-		[SaveableData]
-		public IPAddress ip;
-		[SaveableData]
-		public String reason;
-		[SaveableData]
-		public AbstractAccount blockedBy;
+	public class FirewallEntry {
 
-		IPAddress ISortableIpBlockEntry.Ip {
-			get { return ip; }
-		}
-		String ISortableIpBlockEntry.toIp {
-			get { return ""; }
-		}
-		String ISortableIpBlockEntry.Reason {
-			get { return reason; }
-		}
-		AbstractAccount ISortableIpBlockEntry.Account {
-			get { return blockedBy; }
-		}
-	}
-
-	[SaveableClass]
-	[Dialogs.ViewableClass]
-	public class BlockedIPRangeEntry : ISortableIpBlockEntry {
-		[LoadingInitializer]
-		public BlockedIPRangeEntry() {
+		public FirewallEntry(IPAddress ip, string reason, AbstractAccount blockedBy) {
+			this.lowerBound = ip;
+			this.upperBound = ip;
+			this.reason = reason;
+			this.blockedBy = blockedBy;
 		}
 
-		[SaveableData]
-		public IPAddress fromIp;
-		[SaveableData]
-		public IPAddress toIp;
-		[SaveableData]
-		public String reason;
-		[SaveableData]
-		public AbstractAccount blockedBy;
+		public FirewallEntry(IPAddress lowerBound, IPAddress upperBound, string reason, AbstractAccount blockedBy) {
+			Sanity.IfTrueThrow(Firewall.CompareIPs(lowerBound, upperBound) > 0, "lowerBound > higherBound");
 
-		IPAddress ISortableIpBlockEntry.Ip {
-			get { return fromIp; }
+			this.lowerBound = lowerBound;
+			this.upperBound = upperBound;
+			this.reason = reason;
+			this.blockedBy = blockedBy;
 		}
-		String ISortableIpBlockEntry.toIp {
-			get { return toIp.ToString(); }
+
+		private IPAddress lowerBound;
+		private IPAddress upperBound;
+		private String reason;
+		private AbstractAccount blockedBy;
+
+		public IPAddress LowerBound {
+			get { return this.lowerBound; }
+			set { this.lowerBound = value; }
 		}
-		String ISortableIpBlockEntry.Reason {
-			get { return reason; }
+
+		public IPAddress UpperBound {
+			get { return this.upperBound; }
+			set { this.upperBound = value; }
 		}
-		AbstractAccount ISortableIpBlockEntry.Account {
-			get { return blockedBy; }
+
+		public string Reason {
+			get { return this.reason; }
+			set { this.reason = value; }
 		}
-	}
 
+		public AbstractAccount BlockedBy {
+			get { return this.blockedBy; }
+			set { this.blockedBy = value; }
+		}
 
-	public interface ISortableIpBlockEntry {
-		IPAddress Ip { get; }
-		String toIp { get; }
-		String Reason { get; }
-		AbstractAccount Account { get; }
-
-	}
-
-	public sealed class IPAddressSaveImplementor : ISimpleSaveImplementor {
-		public static Regex re = new Regex(@"^\(IP\)(?<value>.+)\s*$",
-			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
-		public Type HandledType {
+		public bool IsSingleIPEntry {
 			get {
-				return typeof(IPAddress);
+				return Firewall.CompareIPs(this.lowerBound, this.upperBound) == 0;
 			}
 		}
 
-		public Regex LineRecognizer {
-			get {
-				return re;
+		#region Persistence
+		[LoadSection]
+		public static FirewallEntry Load(PropsSection section) {
+			IPAddress lowerBound = (IPAddress) ObjectSaver.OptimizedLoad_SimpleType(section.PopPropsLine("lowerBound").Value, typeof(IPAddress));
+			IPAddress upperBound = lowerBound;
+			var upperBoundLine = section.TryPopPropsLine("upperBound");
+			if (upperBoundLine != null) {
+				upperBound = (IPAddress) ObjectSaver.OptimizedLoad_SimpleType(upperBoundLine.Value, typeof(IPAddress));
+			}
+
+			string reason = null;
+			var reasonLine = section.TryPopPropsLine("reason");
+			if (reasonLine != null) {
+				reason = (string) ObjectSaver.OptimizedLoad_String(reasonLine.Value);
+			}
+
+			FirewallEntry retVal = new FirewallEntry(lowerBound, upperBound, reason, null);
+
+			var blockedByLine = section.TryPopPropsLine("blockedBy");
+			if (blockedByLine != null) {
+				ObjectSaver.Load(blockedByLine.Value, retVal.DelayedLoad_BlockedBy, section.Filename, blockedByLine.Line);
+			}
+
+			return retVal;
+		}
+
+		private void DelayedLoad_BlockedBy(object resolvedObject, string filename, int line) {
+			this.blockedBy = (AbstractAccount) resolvedObject;
+		}
+
+		[Save]
+		public void Save(SaveStream stream) {
+			stream.WriteValue("lowerBound", this.lowerBound);
+			if (!this.IsSingleIPEntry) {
+				stream.WriteValue("upperBound", this.upperBound);
+			}
+			if (!string.IsNullOrEmpty(this.reason)) {
+				stream.WriteValue("reason", this.reason);
+			}
+			if (this.blockedBy != null) {
+				stream.WriteValue("blockedBy", this.blockedBy);
 			}
 		}
-
-		public string Save(object objToSave) {
-			return "(IP)" + objToSave;
-		}
-
-		public object Load(Match match) {
-			return IPAddress.Parse(match.Groups["value"].Value);
-		}
-
-		public string Prefix {
-			get {
-				return "(IP)";
-			}
-		}
-
+		#endregion Persistence
 	}
 }

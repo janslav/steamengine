@@ -28,6 +28,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -82,8 +83,10 @@
     <Compile Include="Basic\administration\accounts\AccCreate.cs" />
     <Compile Include="Basic\administration\accounts\AccList.cs" />
     <Compile Include="Basic\administration\Admin\Admin.cs" />
+    <Compile Include="Basic\administration\firewall\D_Firewall_BlockIpRange.cs" />
+    <Compile Include="Basic\administration\firewall\D_Firewall_BlockIp.cs" />
     <Compile Include="Basic\administration\firewall\Firewall.cs" />
-    <Compile Include="Basic\administration\firewall\FirewallDialog.cs" />
+    <Compile Include="Basic\administration\firewall\D_Firewall.cs" />
     <Compile Include="Basic\administration\Functions\FunctionsList.cs" />
     <Compile Include="Basic\administration\Pages\GMPage.cs" />
     <Compile Include="Basic\administration\plugins\PluginList.cs" />
@@ -387,9 +390,10 @@
     <Compile Include="Tests\TargetDefTest.cs" />
     <Compile Include="Tests\Test.cs" />
     <Compile Include="Tests\TextColorTest.cs" />
-    <Compile Include="Utils\Comparers.cs" />
+    <Compile Include="Utils\LScriptComparer.cs" />
     <Compile Include="Utils\Persistence\ArrayListSaver.cs" />
     <Compile Include="Utils\Persistence\ArraySaver.cs" />
+    <Compile Include="Utils\Persistence\IPAddressSaver.cs" />
     <Compile Include="Utils\Persistence\DateSaver.cs" />
     <Compile Include="Utils\Persistence\DictionarySaver.cs" />
     <Compile Include="Utils\Persistence\GenericListSaver.cs" />
