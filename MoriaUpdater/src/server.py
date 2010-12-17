@@ -68,12 +68,12 @@ def list_releases(uiobj, releasesdir):
 			if not server_utils.is_helper_filename(filename): #we are skipping the zipped ones and md5s
 				filepath = os.path.join(release_path, filename)
 				checksum = server_utils.get_checksum(filepath)
-				version = ui.FileVersionInfo(release_name, checksum)
+				version = ui.FileVersionInfo(filename, release_name, checksum)
 				
 				fi = ui.ui_getfilebyname(uiobj, filename)
 				if (fi == None):
 					fi = ui.FileInfo(filename)
-					ui.ui_addfile(uiobj, fi)
+					ui.ui_addfile(uiobj, fi, filename)
 				ui.fi_addversion(fi, version)
 	
 def list_originals(uiobj, ftproot):
@@ -81,11 +81,12 @@ def list_originals(uiobj, ftproot):
 	for directory in os.listdir(originalsdir):
 		original_path = os.path.join(originalsdir, directory)
 		original_name = os.path.join(utils.DIRNAME_ORIGINALS,directory)
-		for fi in uiobj.files.values(): #walking the list of files from releases, looking for them in originals
-			filepath = os.path.join(original_path, fi.filename)
-			if os.path.exists(filepath):
+		for filename in server_utils.listfiles_recursive(original_path, "", []):
+			filepath = os.path.join(original_path, filename)
+			fi = ui.ui_getfilebyname(uiobj, filename)
+			if (fi != None):
 				checksum = server_utils.get_checksum(filepath)
-				version = ui.FileVersionInfo(original_name, checksum)
+				version = ui.FileVersionInfo(filename, original_name, checksum)
 				version.isoriginal = True
 				ui.fi_addversion(fi, version)
 
@@ -96,8 +97,7 @@ def create_patches_successive(uiobj, ftproot, patchesdir):
 				for i in range(0, len(fi.versions_sorted) - 1):
 					oldver = fi.versions_sorted[i]
 					newver = fi.versions_sorted[i+1]
-					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, \
-						fi.filename, oldver, newver)				
+					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, oldver, newver)				
 					oldver.patchchecksum = server_utils.get_checksum(patchfilename)
 					
 def create_patches_fromoriginals(uiobj, ftproot, patchesdir):	
@@ -110,11 +110,10 @@ def create_patches_fromoriginals(uiobj, ftproot, patchesdir):
 					#delete possible old patches first
 					if len(fi.versions_sorted) > 1: #at least 2 release versions = there could be old patch
 						for i in range(0, len(fi.versions_sorted) - 1): #all but the last one
-							server_utils.delete_patch(patchesdir, fi.filename, origver, fi.versions_sorted[i])
+							server_utils.delete_patch(patchesdir, origver, fi.versions_sorted[i])
 							
 					#create patch to latest release
-					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, \
-																	fi.filename, origver, latestver)				
+					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, origver, latestver)				
 					origver.patchchecksum = server_utils.get_checksum(patchfilename)
 
 def compress_latest(uiobj, releasesdir, ftproot):
@@ -123,11 +122,12 @@ def compress_latest(uiobj, releasesdir, ftproot):
 			#delete possible unneeded archives first
 			if len(fi.versions_sorted) > 1: #at least 2 release versions = there could be old archive
 				for i in range(0, len(fi.versions_sorted) - 1): #all but the last one
-					filename = os.path.join(releasesdir, fi.versions_sorted[i].name, fi.filename) 
+					ver = fi.versions_sorted[i]
+					filename = os.path.join(releasesdir, ver.versionname, ver.filename) 
 					server_utils.delete_archive_of(filename)
 			
 			latestver = fi.versions_sorted[-1]
-			filename = os.path.join(ftproot, latestver.name, fi.filename)
+			filename = os.path.join(ftproot, latestver.versionname, latestver.filename)
 			latestver.archivechecksum = server_utils.compress_and_checksum(filename)
 
 			
@@ -144,18 +144,18 @@ def create_pack(uiobj, ftproot):
 		for fi in uiobj.files.values():
 			if not fi.todelete:
 				latestver = fi.versions_sorted[-1]
-				completefilename = os.path.join(ftproot, latestver.name, fi.filename)
+				completefilename = os.path.join(ftproot, latestver.versionname, latestver.filename)
 										
 				filesize = os.path.getsize(completefilename)		
-				logging.info("	adding file '" +  os.path.join(latestver.name, fi.filename) + "' - " + str(int(round((filesize / 1024))))+"kB")
+				logging.info("	adding file '" +  os.path.join(latestver.versionname, latestver.filename) + "' - " + str(int(round((filesize / 1024))))+"kB")
 				
 				# save the text as a PKZIP format .zip file
 				if (quiet or filesize < 1024*1024):
-					archive.write(completefilename, arcname=fi.filename)
+					archive.write(completefilename, arcname=latestver.filename)
 				else:
 					#create progressBar
 					pb = fileprogressbar(filesize)
-					archive.writeprogress(completefilename, arcname=fi.filename, callback=pb.update, )
+					archive.writeprogress(completefilename, arcname=latestver.filename, callback=pb.update, )
 					pb.finish()
 					print
 				
@@ -187,7 +187,7 @@ def read_additional_config(uiobj, ftproot):
 			else:
 				fi = ui.FileInfo(filename)
 				fi.todelete = True
-				ui.ui_addfile(uiobj, fi)
+				ui.ui_addfile(uiobj, fi, filename)
 	finally:
 		f.close()
 
