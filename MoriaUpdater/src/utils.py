@@ -41,7 +41,7 @@ def get_patchname(filename, origversion, newversion):
 	newversion = os.path.basename(newversion)
 	#filename = filename.replace("\\", ".-.")
 	#filename = filename.replace("/", ".-.")
-	return filename+"."+origversion+"."+newversion+".patch"
+	return filename.lower()+"."+origversion+"."+newversion+".patch"
 
 
 		

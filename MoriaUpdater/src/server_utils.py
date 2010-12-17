@@ -55,22 +55,22 @@ def is_helper_filename(filename):
 	return filename.endswith(utils.EXTENSION_ARCHIVE) or \
 		filename.endswith(utils.EXTENSION_CHECKSUM)
 					
-def create_patch_if_needed(ftproot, patchesdir, filename, origversion, newversion): #returns name of the patch file
-	patchpath = os.path.join(patchesdir, utils.get_patchname(filename, origversion.name, newversion.name))
+def create_patch_if_needed(ftproot, patchesdir, origversion, newversion): #returns versionname of the patch file
+	patchpath = os.path.join(patchesdir, utils.get_patchname(origversion.filename, origversion.versionname, newversion.versionname))
 	patchdir = os.path.dirname(patchpath)
 	if not os.path.exists(patchdir):
 		os.makedirs(patchdir)
 	if os.path.exists(patchpath):
 		pass #the patch already exists, we do nothing
 	else:
-		origpath = os.path.join(ftproot, origversion.name, filename)
-		newpath = os.path.join(ftproot, newversion.name, filename)
+		origpath = os.path.join(ftproot, origversion.versionname, origversion.filename)
+		newpath = os.path.join(ftproot, newversion.versionname, newversion.filename)
 		diff(origpath, newpath, patchpath)
 
 	return patchpath
 		
-def delete_patch(patchesdir, filename, origversion, newversion):
-	patchpath = os.path.join(patchesdir, utils.get_patchname(filename, origversion.name, newversion.name))
+def delete_patch(patchesdir, origversion, newversion):
+	patchpath = os.path.join(patchesdir, utils.get_patchname(origversion.filename, origversion.versionname, newversion.versionname))
 	if os.path.exists(patchpath):
 		os.remove(patchpath)
 	checksumfile = get_checksum_filename(patchpath)
