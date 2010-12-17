@@ -1,15 +1,28 @@
 import os
-import sys
+#import sys
 from zipfile import ZipFile, ZIP_DEFLATED
 
 
-import utils
+from pybsdiff import diff
 
+import server_config as config
+import utils
+import logging
+from zipfileprogress import ZipFileProgress
+from pb import fileprogressbar
 
 def get_checksum(filename):
 	sumfilename = get_checksum_filename(filename)
 	if is_newer_file(filename, sumfilename):
-		sum = utils.calculate_checksum(filename)
+		filesize = os.path.getsize(filename)
+		if (config.bequiet() or filesize < 1024*1024):
+			sum = utils.calculate_checksum(filename)
+		else:        
+			pb = fileprogressbar(filesize)
+			sum = utils.calculate_checksum(filename, pb.update)
+			pb.finish()
+			print
+		
 		f = open(sumfilename,"w")
 		f.write(sum)
 		f.close()
@@ -53,6 +66,7 @@ def create_patch_if_needed(ftproot, patchesdir, filename, origversion, newversio
 		origpath = os.path.join(ftproot, origversion.name, filename)
 		newpath = os.path.join(ftproot, newversion.name, filename)
 		diff(origpath, newpath, patchpath)
+
 	return patchpath
 		
 def delete_patch(patchesdir, filename, origversion, newversion):
@@ -65,18 +79,18 @@ def delete_patch(patchesdir, filename, origversion, newversion):
 
 
 
-def diff(oldfilename, newfilename, patchfilename):
-	_commandline('bsdiff ' + oldfilename + ' ' + newfilename + ' ' + patchfilename)
+#def diff(oldfilename, newfilename, patchfilename):
+#	_commandline('bsdiff ' + oldfilename + ' ' + newfilename + ' ' + patchfilename)
 
-def _commandline(command):
-	print "	cmd:", command
-	inpipe, outpipe = os.popen4(command)
-	for line in outpipe.readlines():
-		sys.stdout.write(line)
-	inpipe.close()
-	code = outpipe.close()
-	if (code):
-		raise RuntimeError('Command failed. Return code = '+str(code))
+#def _commandline(command):
+#	print "	cmd:", command
+#	for line in outpipe.readlines():
+#		sys.stdout.write(line)
+#	inpipe.close()
+#	inpipe, outpipe = os.popen4(command)
+#	code = outpipe.close()
+#	if (code):
+#		raise RuntimeError('Command failed. Return code = '+str(code))
 	
 def delete_archive_of(filename):
 	archivename = filename+utils.EXTENSION_ARCHIVE
@@ -91,17 +105,28 @@ def compress_and_checksum(filename, arcname=None):
 	archivename = filename+utils.EXTENSION_ARCHIVE
 	
 	if is_newer_file(filename, archivename):	
-		print "	zipping:", filename
-		
 		if not arcname:
 			arcname = os.path.basename(filename)
-		archive = ZipFile(archivename, mode="w", compression=ZIP_DEFLATED)
+			
+		filesize = os.path.getsize(filename)
+		logging.info("zipping file '" + filename + "' - " + str(int(round((filesize / 1024))))+"kB")
+		
 		try:
-			archive.write(filename, arcname=arcname)	
-			return get_checksum(archivename)		
+			if (config.bequiet() or filesize < 1024*1024):
+				archive = ZipFile(archivename, mode="w", compression=ZIP_DEFLATED)
+				archive.write(filename, arcname=arcname)				
+			else:
+				archive = ZipFileProgress(archivename, mode="w", compression=ZIP_DEFLATED)
+				#create progressBar
+				pb = fileprogressbar(filesize)
+				archive.writeprogress(filename, callback=pb.update, compress_type=ZIP_DEFLATED)
+				pb.finish()	
+				print		
 		finally:
 			archive.close()
-	
+			
+		return get_checksum(archivename)	
+
 
 def listfiles_recursive(basedir, currentdir, filelist): #makes a recursive file list, with paths starting from currentdir
 	for name in os.listdir(basedir):
