@@ -7,6 +7,10 @@ import gnosis.xml.pickle
 import update_info as ui
 import utils
 import server_utils
+import server_config as config
+import logging
+from pb import fileprogressbar
+from zipfileprogress import ZipFileProgress
 
 DIRNAME_FTPROOT = "storage"
 FILENAME_NOFORCE = "noforce"
@@ -14,38 +18,37 @@ FILENAME_TODELETE = "todelete"
 
 FILENAME_PACK = "moriapack"
 
-_localdir = os.path.dirname(sys.argv[0])
-_ftproot = os.path.join(_localdir, DIRNAME_FTPROOT)
 
-_releasesdir = os.path.join(_ftproot, utils.DIRNAME_RELEASES)
-_patchesdir = os.path.join(_ftproot, utils.DIRNAME_PATCHES)
-
-#_updaterfile = os.path.join(FTPROOT, UPDATER, "library.zip")
-
-def main(arg=None):
+def main(ftproot):
+	ftproot = os.path.abspath(ftproot)
+	logging.debug("ftproot: '"+ftproot+"'")
+	
+	releasesdir = os.path.join(ftproot, utils.DIRNAME_RELEASES)
+	patchesdir = os.path.join(ftproot, utils.DIRNAME_PATCHES)
+	
 	#first, make a list of the files to patch
 	uiobj = ui.UpdateInfo("moria update files")
 	
-	print "creating list of files"
-	list_releases(uiobj)
-	list_originals(uiobj)
+	logging.info("creating list of files")
+	list_releases(uiobj, releasesdir)
+	list_originals(uiobj, ftproot)
 	
-	print "reading noforce and todelete config files"
-	read_additional_config(uiobj)
+	logging.info("reading noforce and todelete config files")
+	read_additional_config(uiobj, ftproot)
 	
-	print "creating patches"
-	create_patches_successive(uiobj) #patches between releases
-	create_patches_fromoriginals(uiobj) #patches from originals to latest
+	logging.info("creating patches")
+	create_patches_successive(uiobj, ftproot, patchesdir) #patches between releases
+	create_patches_fromoriginals(uiobj, ftproot, patchesdir) #patches from originals to latest
 	
-	print "compressing latest files for direct downloading"
-	compress_latest(uiobj)
+	logging.info("compressing latest files for direct downloading")
+	compress_latest(uiobj, releasesdir, ftproot)
 	
-	print "creating moriapack"
-	create_pack(uiobj) #basically compresses the same files as compress_latest, 
+	logging.info("creating moriapack")
+	create_pack(uiobj, ftproot) #basically compresses the same files as compress_latest, 
 		#could be somehow optimized, if anyone cared (I don't)
 	
-	print "writing "+utils.FILENAME_UPDATEINFO
-	uifilename = os.path.join(_ftproot, utils.FILENAME_UPDATEINFO)
+	logging.info("writing "+utils.FILENAME_UPDATEINFO)
+	uifilename = os.path.join(ftproot, utils.FILENAME_UPDATEINFO)
 	f = file(uifilename, "w")
 	try:		
 		gnosis.xml.pickle.dump(uiobj, f)
@@ -53,13 +56,13 @@ def main(arg=None):
 		f.close()
 	server_utils.compress_and_checksum(uifilename)
 
-	print "done"
+	logging.info("done")
 	
-def list_releases(uiobj):
-	dirs_releases = os.listdir(_releasesdir)
+def list_releases(uiobj, releasesdir):
+	dirs_releases = os.listdir(releasesdir)
 	uiobj.lastversion = dirs_releases[-1]
 	for directory in dirs_releases:
-		release_path = os.path.join(_releasesdir, directory)
+		release_path = os.path.join(releasesdir, directory)
 		release_name = os.path.join(utils.DIRNAME_RELEASES, directory)
 		for filename in server_utils.listfiles_recursive(release_path, "", []):
 			if not server_utils.is_helper_filename(filename): #we are skipping the zipped ones and md5s
@@ -73,8 +76,8 @@ def list_releases(uiobj):
 					ui.ui_addfile(uiobj, fi)
 				ui.fi_addversion(fi, version)
 	
-def list_originals(uiobj):
-	originalsdir = os.path.join(_ftproot, utils.DIRNAME_ORIGINALS)
+def list_originals(uiobj, ftproot):
+	originalsdir = os.path.join(ftproot, utils.DIRNAME_ORIGINALS)
 	for directory in os.listdir(originalsdir):
 		original_path = os.path.join(originalsdir, directory)
 		original_name = os.path.join(utils.DIRNAME_ORIGINALS,directory)
@@ -86,18 +89,18 @@ def list_originals(uiobj):
 				version.isoriginal = True
 				ui.fi_addversion(fi, version)
 
-def create_patches_successive(uiobj):	
+def create_patches_successive(uiobj, ftproot, patchesdir):	
 	for fi in uiobj.files.values():
 		if not fi.todelete:
 			if len(fi.versions_sorted) > 1: #at least 2 versions = there's something to patch
 				for i in range(0, len(fi.versions_sorted) - 1):
 					oldver = fi.versions_sorted[i]
 					newver = fi.versions_sorted[i+1]
-					patchfilename = server_utils.create_patch_if_needed(_ftproot, _patchesdir, \
+					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, \
 						fi.filename, oldver, newver)				
 					oldver.patchchecksum = server_utils.get_checksum(patchfilename)
 					
-def create_patches_fromoriginals(uiobj):	
+def create_patches_fromoriginals(uiobj, ftproot, patchesdir):	
 	for fi in uiobj.files.values():
 		if not fi.todelete:
 			latestver = fi.versions_sorted[-1]
@@ -107,50 +110,61 @@ def create_patches_fromoriginals(uiobj):
 					#delete possible old patches first
 					if len(fi.versions_sorted) > 1: #at least 2 release versions = there could be old patch
 						for i in range(0, len(fi.versions_sorted) - 1): #all but the last one
-							server_utils.delete_patch(_patchesdir, fi.filename, origver, fi.versions_sorted[i])
+							server_utils.delete_patch(patchesdir, fi.filename, origver, fi.versions_sorted[i])
 							
 					#create patch to latest release
-					patchfilename = server_utils.create_patch_if_needed(_ftproot, _patchesdir, \
+					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, \
 																	fi.filename, origver, latestver)				
 					origver.patchchecksum = server_utils.get_checksum(patchfilename)
 
-def compress_latest(uiobj):
+def compress_latest(uiobj, releasesdir, ftproot):
 	for fi in uiobj.files.values():
 		if not fi.todelete:
 			#delete possible unneeded archives first
 			if len(fi.versions_sorted) > 1: #at least 2 release versions = there could be old archive
 				for i in range(0, len(fi.versions_sorted) - 1): #all but the last one
-					filename = os.path.join(_releasesdir, fi.versions_sorted[i].name, fi.filename) 
+					filename = os.path.join(releasesdir, fi.versions_sorted[i].name, fi.filename) 
 					server_utils.delete_archive_of(filename)
 			
 			latestver = fi.versions_sorted[-1]
-			filename = os.path.join(_ftproot, latestver.name, fi.filename)
+			filename = os.path.join(ftproot, latestver.name, fi.filename)
 			latestver.archivechecksum = server_utils.compress_and_checksum(filename)
 
 			
-def create_pack(uiobj):
-	packname = os.path.join(_ftproot, FILENAME_PACK+utils.EXTENSION_ARCHIVE)
-	
-	#if moriapack is newer than the release directory, it probably doesn't need  
-	#if not server_utils.is_newer_file(_releasesdir, packname):
-	#	return
-	
-	#better off zipping moriapack every time
-	
-	
-	archive = ZipFile(packname, mode="w", compression=ZIP_DEFLATED)
+def create_pack(uiobj, ftproot):
+	packname = os.path.join(ftproot, FILENAME_PACK+utils.EXTENSION_ARCHIVE)
+
+	quiet = config.bequiet()	
+	if (quiet):
+		archive = ZipFile(packname, mode="w", compression=ZIP_DEFLATED)
+	else:
+		archive = ZipFileProgress(packname, mode="w", compression=ZIP_DEFLATED)
+
 	try:				
 		for fi in uiobj.files.values():
 			if not fi.todelete:
 				latestver = fi.versions_sorted[-1]
-				print "	appending:",  os.path.join(latestver.name, fi.filename)
-				completefilename = os.path.join(_ftproot, latestver.name, fi.filename)						
-				archive.write(completefilename, arcname=fi.filename)
+				completefilename = os.path.join(ftproot, latestver.name, fi.filename)
+										
+				filesize = os.path.getsize(completefilename)		
+				logging.info("	adding file '" +  os.path.join(latestver.name, fi.filename) + "' - " + str(int(round((filesize / 1024))))+"kB")
+				
+				# save the text as a PKZIP format .zip file
+				if (quiet or filesize < 1024*1024):
+					archive.write(completefilename, arcname=fi.filename)
+				else:
+					#create progressBar
+					pb = fileprogressbar(filesize)
+					archive.writeprogress(completefilename, arcname=fi.filename, callback=pb.update, )
+					pb.finish()
+					print
+				
+				
 	finally:
 		archive.close()
 
-def read_additional_config(uiobj):
-	noforcefile = os.path.join(_ftproot, FILENAME_NOFORCE)
+def read_additional_config(uiobj, ftproot):
+	noforcefile = os.path.join(ftproot, FILENAME_NOFORCE)
 	
 	f = open(noforcefile)
 	try:
@@ -162,7 +176,7 @@ def read_additional_config(uiobj):
 		f.close()
 	
 	
-	todelfile = os.path.join(_ftproot, FILENAME_TODELETE)
+	todelfile = os.path.join(ftproot, FILENAME_TODELETE)
 	f = open(todelfile)
 	try:		
 		for line in f:
@@ -182,4 +196,4 @@ def read_additional_config(uiobj):
 	
 	
 if __name__ == '__main__': 
-	main()
+	main(sys.argv[0])
