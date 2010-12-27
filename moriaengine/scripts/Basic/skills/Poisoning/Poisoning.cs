@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static bool CanPoisonWithMessage(Character self, PoisonPotion potion, Item target) {
-			if (!self.CanReachWithMessage(target)) {
+			if (!self.CanPickUpWithMessage(target)) {
 				return false;
 			} else {
 				Weapon asWeapon = target as Weapon;

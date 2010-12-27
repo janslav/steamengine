@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			RegBox box = (RegBox) gi.Focus;
-			if (!((Player) gi.Cont).CanReachWithMessage(box)) {
+			if (!((Player) gi.Cont).CanPickUpWithMessage(box)) {
 				return;
 			}
 			if (gr.PressedButton == 0) {			// cancel
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
 			RegBox focus = parameter as RegBox;
-			if ((!self.CanReachWithMessage(focus)) || (!self.CanPickUpWithMessage(targetted))) {
+			if (!self.CanPickUpWithMessage(targetted)) {
 				return false;
 			}
 			if (targetted.Type.Defname == "t_reagent") {
