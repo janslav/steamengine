@@ -31,19 +31,27 @@
 #from oldfile to x bytes from the diff block; copy y bytes from the
 #extra block; seek forwards in oldfile by z bytes".
 
-import logging, bz2
+import logging
+import bz2
 import cStringIO as StringIO
 import bsdiff
-
+import server_utils
+import os
 
 #implementation of bspatch using the binary bspatch module
 def diff(old_file_name, new_file_name, patch_file_name):    
-    logging.info("opening old file '" + old_file_name + "'")
+    old_filesize = os.path.getsize(old_file_name)
+    logging.info("opening old file '" + old_file_name + \
+                 "' (checksum '" + server_utils.get_checksum(old_file_name) + \
+                 "', size " + server_utils.filesize_to_str(old_filesize) + ")")
     old_file = open(old_file_name)
     old_data = old_file.read()
     old_file.close()
     
-    logging.info("opening new file '" + new_file_name + "'")    
+    new_filesize = os.path.getsize(old_file_name)
+    logging.info("opening new file '" + new_file_name + \
+                 "' (checksum '" + server_utils.get_checksum(new_file_name) + \
+                 "', size " + server_utils.filesize_to_str(new_filesize) + ")")    
     new_file = open(new_file_name)   
     new_data = new_file.read()
     new_file.close()

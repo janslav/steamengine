@@ -123,6 +123,7 @@ def compress_latest(uiobj, releasesdir, ftproot):
 			if len(fi.versions_sorted) > 1: #at least 2 release versions = there could be old archive
 				for i in range(0, len(fi.versions_sorted) - 1): #all but the last one
 					ver = fi.versions_sorted[i]
+					#print "deleting version archive", ver.filename, ver.versionname 
 					filename = os.path.join(releasesdir, ver.versionname, ver.filename) 
 					server_utils.delete_archive_of(filename)
 			

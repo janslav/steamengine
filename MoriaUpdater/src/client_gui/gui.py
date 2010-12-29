@@ -2,6 +2,8 @@
 # -*- python -*-
 
 import sys
+import os
+import logging
 
 py2 = py30 = py31 = False
 version = sys.hexversion
@@ -24,13 +26,12 @@ else:
     """)
     sys.exit()
 
+import facade
 
 
 from PIL import ImageTk 
 
 def PhotoImage(file):
-    import os
-    print os.path.abspath(".") 
     if os.path.exists(file):
         return ImageTk.PhotoImage(file = file)
     else:
@@ -69,26 +70,14 @@ def destroy():
     w = None
 '''
 
-def vp_start_gui():
-    global val, w, root
+def start():
+    global root
     root = Tk()
     root.title('Moria_Updater')
     root.geometry('465x300+576+197')
-    w = Moria_Updater (root)
-    init()
+    w = Moria_Updater(root)
+    w.aw_alarm = root.after_idle(w.periodicCheckForMessages)
     root.mainloop()
-
-
-
-def init():
-    pass
-
-def xxx() :
-    pass
-
-
-
-
 
 class Moria_Updater:
     def __init__(self, master=None):
@@ -100,25 +89,51 @@ class Moria_Updater:
         master.configure(background=default)
 
 
-
-        self.tLa35 = ttk.Label (master)
+        self.tLa35 = ttk.Label(master)
         self.tLa35.place(relx=-0.01,rely=0.0)
         self._img1 = PhotoImage(file="background.png")
         self.tLa35.configure(image=self._img1)
 
-        self.scr33 = ScrolledText (master)
-        self.scr33.place(relx=0.02,rely=0.27,relheight=0.6,relwidth=0.78)
-        self.scr33.configure(background="white")
-        self.scr33.configure(height="3")
-        self.scr33.configure(width="10")
+        self.st_main = ScrolledText(master)
+        self.st_main.place(relx=0.02,rely=0.27,relheight=0.5,relwidth=0.78)
+        self.st_main.configure(background="white")
+        self.st_main.configure(height="3")
+        self.st_main.configure(width="10")
 
-        self.tPr36 = ttk.Progressbar (master)
-        self.tPr36.place(relx=0.02,rely=0.9,relheight=0.07,relwidth=0.77)
+        self.pb_current = ttk.Progressbar(master)
+        self.pb_current.place(relx=0.02,rely=0.8,relheight=0.07,relwidth=0.78)
+        self.pb_current_value = 0
 
+        self.pb_overall = ttk.Progressbar(master)
+        self.pb_overall.place(relx=0.02,rely=0.9,relheight=0.07,relwidth=0.78)
+        self.pb_overall_value = 0
+        
+    def periodicCheckForMessages(self):
+        """ Check if there are new messages and dispatch them """
+        
+        (has_msg, code, parameter) = facade.get_message()
+        if (has_msg):
+            if code == facade.MESSAGE_LOG:
+                self.write(parameter)
+            elif code == facade.MESSAGE_PROGRESS_OVERALL:
+                self.set_progress_overall(parameter)
+            elif code == facade.MESSAGE_PROGRESS_CURRENT:
+                self.set_progress_current(parameter)
+            else:
+                logging.error('Unknown ActionWindow message: %s, %s' % (code, parameter))
+    
+        self.aw_alarm = root.after(100, self.periodicCheckForMessages)
+    
+    def write(self, data):
+        self.st_main.insert(END, data + '\n')
 
+    def set_progress_overall(self, data):
+        self.pb_overall.step(data - self.pb_overall_value)
+        self.pb_overall_value = data
 
-
-
+    def set_progress_current(self, data):
+        self.pb_current.step(data - self.pb_current_value)
+        self.pb_current_value = data
 
 # The following code is added to facilitate the Scrolled widgets you specified.
 class AutoScroll(object):
@@ -177,7 +192,7 @@ class ScrolledText(AutoScroll, Text):
         AutoScroll.__init__(self, master)
 
 if __name__ == '__main__':
-    vp_start_gui()
+    start()
 
 
 
