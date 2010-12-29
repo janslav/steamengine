@@ -57,6 +57,7 @@ def is_helper_filename(filename):
 					
 def create_patch_if_needed(ftproot, patchesdir, origversion, newversion): #returns versionname of the patch file
 	patchpath = os.path.join(patchesdir, utils.get_patchname(origversion.filename, origversion.versionname, newversion.versionname))
+	
 	patchdir = os.path.dirname(patchpath)
 	if not os.path.exists(patchdir):
 		os.makedirs(patchdir)
@@ -101,6 +102,10 @@ def delete_archive_of(filename):
 	if os.path.exists(checksumfile):
 		os.remove(checksumfile)
 
+
+def filesize_to_str(filesize):
+	return str(int(round((filesize / 1024)))) + "kB"
+
 def compress_and_checksum(filename, arcname=None):
 	archivename = filename+utils.EXTENSION_ARCHIVE
 	
@@ -109,7 +114,7 @@ def compress_and_checksum(filename, arcname=None):
 			arcname = os.path.basename(filename)
 			
 		filesize = os.path.getsize(filename)
-		logging.info("zipping file '" + filename + "' - " + str(int(round((filesize / 1024))))+"kB")
+		logging.info("zipping file '" + filename + "' - " + filesize_to_str(filesize))
 		
 		try:
 			if (config.bequiet() or filesize < 1024*1024):
