@@ -1,5 +1,5 @@
 cd clientbuild
 call client_copyfiles.bat
-client.py
+python client.py
 cd..
 pause
