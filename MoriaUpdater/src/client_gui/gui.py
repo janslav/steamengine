@@ -110,9 +110,10 @@ class Moria_Updater:
         
     def periodicCheckForMessages(self):
         """ Check if there are new messages and dispatch them """
-        
-        (has_msg, code, parameter) = facade.get_message()
-        if (has_msg):
+        while True:
+            (has_msg, code, parameter) = facade.get_message()
+            if not has_msg:
+                break
             if code == facade.MESSAGE_LOG:
                 self.write(parameter)
             elif code == facade.MESSAGE_PROGRESS_OVERALL:

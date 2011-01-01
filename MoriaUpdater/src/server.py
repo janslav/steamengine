@@ -49,11 +49,9 @@ def main(ftproot):
 	
 	logging.info("writing "+utils.FILENAME_UPDATEINFO)
 	uifilename = os.path.join(ftproot, utils.FILENAME_UPDATEINFO)
-	f = file(uifilename, "w")
-	try:		
+	with file(uifilename, "w") as f:
 		gnosis.xml.pickle.dump(uiobj, f)
-	finally:
-		f.close()
+
 	server_utils.compress_and_checksum(uifilename)
 
 	logging.info("done")
@@ -64,7 +62,7 @@ def list_releases(uiobj, releasesdir):
 	for directory in dirs_releases:
 		release_path = os.path.join(releasesdir, directory)
 		release_name = os.path.join(utils.DIRNAME_RELEASES, directory)
-		for filename in server_utils.listfiles_recursive(release_path, "", []):
+		for filename in utils.listfiles_recursive(release_path):
 			if not server_utils.is_helper_filename(filename): #we are skipping the zipped ones and md5s
 				filepath = os.path.join(release_path, filename)
 				checksum = server_utils.get_checksum(filepath)
@@ -81,7 +79,7 @@ def list_originals(uiobj, ftproot):
 	for directory in os.listdir(originalsdir):
 		original_path = os.path.join(originalsdir, directory)
 		original_name = os.path.join(utils.DIRNAME_ORIGINALS,directory)
-		for filename in server_utils.listfiles_recursive(original_path, "", []):
+		for filename in utils.listfiles_recursive(original_path):
 			filepath = os.path.join(original_path, filename)
 			fi = ui.ui_getfilebyname(uiobj, filename)
 			if (fi != None):
@@ -167,19 +165,15 @@ def create_pack(uiobj, ftproot):
 def read_additional_config(uiobj, ftproot):
 	noforcefile = os.path.join(ftproot, FILENAME_NOFORCE)
 	
-	f = open(noforcefile)
-	try:
+	with open(noforcefile) as f:
 		for line in f:
 			fi = ui.ui_getfilebyname(uiobj, line.strip().lower())
 			if fi != None:
 				fi.forced = False
-	finally:
-		f.close()
 	
 	
 	todelfile = os.path.join(ftproot, FILENAME_TODELETE)
-	f = open(todelfile)
-	try:		
+	with open(todelfile) as f:
 		for line in f:
 			filename = line.strip()
 			fi = ui.ui_getfilebyname(uiobj, filename.lower())
@@ -189,10 +183,7 @@ def read_additional_config(uiobj, ftproot):
 				fi = ui.FileInfo(filename)
 				fi.todelete = True
 				ui.ui_addfile(uiobj, fi, filename)
-	finally:
-		f.close()
 
-	
 	
 	
 	

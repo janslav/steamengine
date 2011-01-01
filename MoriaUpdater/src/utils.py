@@ -36,14 +36,27 @@ def calculate_checksum(filename, progress_callback = None):
 	
 	return m.hexdigest()
 	
-def get_patchname(filename, origversion, newversion):
-	origversion = os.path.basename(origversion) #the version names include directory, which we dont need
-	newversion = os.path.basename(newversion)
+def get_patchname(origversion, newversion):
+	origversionname = os.path.basename(origversion.versionname) #the version names include directory, which we dont need
+	newversionname = os.path.basename(newversion.versionname)
 	#filename = filename.replace("\\", ".-.")
 	#filename = filename.replace("/", ".-.")
-	return filename.lower()+"."+origversion+"."+newversion+".patch"
+	return origversion.filename.lower()+"."+origversionname+"."+newversionname+".patch"
 
+def listfiles_recursive(basedir): #makes a recursive file list, with paths starting from currentdir
+	filelist = []
+	listfiles_recursive_impl(basedir, "", filelist)
+	return filelist
 
+def listfiles_recursive_impl(basedir, currentdir, filelist): #makes a recursive file list, with paths starting from currentdir
+	for name in os.listdir(basedir):
+		filepath = os.path.join(basedir, name)
+		relativepath = os.path.join(currentdir, name)
+		if os.path.isdir(filepath):
+			listfiles_recursive_impl(filepath, relativepath, filelist)
+		elif os.path.isfile(filepath):
+			#print "appending", filepath, "to", filelist
+			filelist.append(relativepath)
 		
 		
 #	
