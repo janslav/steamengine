@@ -56,7 +56,7 @@ def is_helper_filename(filename):
 		filename.endswith(utils.EXTENSION_CHECKSUM)
 					
 def create_patch_if_needed(ftproot, patchesdir, origversion, newversion): #returns versionname of the patch file
-	patchpath = os.path.join(patchesdir, utils.get_patchname(origversion.filename, origversion.versionname, newversion.versionname))
+	patchpath = os.path.join(patchesdir, utils.get_patchname(origversion, newversion))
 	
 	patchdir = os.path.dirname(patchpath)
 	if not os.path.exists(patchdir):
@@ -71,7 +71,7 @@ def create_patch_if_needed(ftproot, patchesdir, origversion, newversion): #retur
 	return patchpath
 		
 def delete_patch(patchesdir, origversion, newversion):
-	patchpath = os.path.join(patchesdir, utils.get_patchname(origversion.filename, origversion.versionname, newversion.versionname))
+	patchpath = os.path.join(patchesdir, utils.get_patchname(origversion, newversion))
 	if os.path.exists(patchpath):
 		os.remove(patchpath)
 	checksumfile = get_checksum_filename(patchpath)
@@ -124,7 +124,7 @@ def compress_and_checksum(filename, arcname=None):
 				archive = ZipFileProgress(archivename, mode="w", compression=ZIP_DEFLATED)
 				#create progressBar
 				pb = fileprogressbar(filesize)
-				archive.writeprogress(filename, callback=pb.update, compress_type=ZIP_DEFLATED)
+				archive.writeprogress(filename, arcname=arcname, callback=pb.update, compress_type=ZIP_DEFLATED)
 				pb.finish()	
 				print		
 		finally:
@@ -132,14 +132,3 @@ def compress_and_checksum(filename, arcname=None):
 			
 		return get_checksum(archivename)	
 
-
-def listfiles_recursive(basedir, currentdir, filelist): #makes a recursive file list, with paths starting from currentdir
-	for name in os.listdir(basedir):
-		filepath = os.path.join(basedir, name)
-		relativepath = os.path.join(currentdir, name)
-		if os.path.isdir(filepath):
-			listfiles_recursive(filepath, relativepath, filelist)
-		elif os.path.isfile(filepath):
-			#print "appending", filepath, "to", filelist
-			filelist.append(relativepath)
-	return filelist

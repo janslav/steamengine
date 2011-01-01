@@ -2,7 +2,7 @@
 
 class UpdateInfo: #this is the class that gets serialized in the meta file (updateinfo.xml)
 	def __init__(self, name):
-		self.versionname = name
+		self.name = name
 		self.files = {}
 		self.lastversion = ""
 		self.librarychecksum = ""
@@ -17,13 +17,19 @@ def ui_getfilebyname(uiobj, filename):
 		return uiobj.files[filename]
 	else:
 		return None
+	
+def ui_popfilebyname(uiobj, filename):
+	filename = filename.lower()
+	if filename in uiobj.files:
+		return uiobj.files.pop(filename)
+	else:
+		return None
 
 class FileInfo:
 	def __init__(self, filename):
 		#self.filename = filename
 		self.forced = True
 		self.todelete = False
-		self.latestversion = None
 		self.versions_sorted = [] #release versions, sorted
 		self.versions_byname = {}
 		self.versions_bychecksum = {}

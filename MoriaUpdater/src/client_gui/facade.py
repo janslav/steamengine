@@ -11,6 +11,7 @@ MESSAGE_PROGRESS_OVERALL = "progress_overall"
 
 messages = Queue.Queue()
 
+PBMAX = 99.99 #progressbar maximum
 
 def start_gui(callback):
     t = threading.Thread(target=_wrap_calc, args=(callback,))
