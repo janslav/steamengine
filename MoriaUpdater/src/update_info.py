@@ -64,7 +64,8 @@ class FileVersionInfo:
 		self.versionname = versionname #Usually something like "Releases\\20041212", i.e. including the directory above
 		self.checksum = checksum 	#checksum of the file
 		self.archivechecksum = "" #checksum of the archive (valid for newest version)
-		#self.patcharchivechecksum = "" #checksum of the archived patch (valid for the older versions - could be in one variable with archivechecksum, but this is safer...)
+		self.archivesize = 0 
 		self.patchchecksum = ""		#patch from the previous version to the latest version. 
 			#if this is original version, then it's patch to the latest one
+		self.patchsize = 0
 		self.isoriginal = False		#should be backed up by the client

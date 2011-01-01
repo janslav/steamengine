@@ -44,17 +44,15 @@ def diff(old_file_name, new_file_name, patch_file_name):
     logging.info("opening old file '" + old_file_name + \
                  "' (checksum '" + server_utils.get_checksum(old_file_name) + \
                  "', size " + server_utils.filesize_to_str(old_filesize) + ")")
-    old_file = open(old_file_name)
-    old_data = old_file.read()
-    old_file.close()
+    with open(old_file_name, "rb") as old_file:
+        old_data = old_file.read()
     
     new_filesize = os.path.getsize(old_file_name)
     logging.info("opening new file '" + new_file_name + \
                  "' (checksum '" + server_utils.get_checksum(new_file_name) + \
                  "', size " + server_utils.filesize_to_str(new_filesize) + ")")    
-    new_file = open(new_file_name)   
-    new_data = new_file.read()
-    new_file.close()
+    with open(new_file_name, "rb") as new_file:   
+        new_data = new_file.read()
 
     logging.info("invoking the bsdiff.Diff function (progress bar unavailable :( )")
     (control_tuples_list, diff_string, extra_string) = bsdiff.Diff(old_data, new_data)
@@ -65,26 +63,24 @@ def diff(old_file_name, new_file_name, patch_file_name):
         # write out each triplet of control data
         _offtout(x, control_stream)
         _offtout(y, control_stream)
-        _offtout(z, control_stream) 
+        _offtout(z, control_stream)
 
     logging.debug("compressing the diff file blocks")
     compressed_control = bz2.compress(control_stream.getvalue())
     compressed_diff = bz2.compress(diff_string)
     compressed_extra = bz2.compress(extra_string)    
     
-    logging.info("opening patch file '" + patch_file_name + "'")
-    patch_file = open(patch_file_name, "w")
-    patch_file.write("BSDIFF40")   
-    _offtout(len(compressed_control), patch_file)
-    _offtout(len(compressed_diff), patch_file)
-    _offtout(len(new_data), patch_file)
-    logging.debug("len(compressed_control): " + str(len(compressed_control)) + ", len(compressed_diff): " + str(len(compressed_diff)) + ", len(new_data): " + str(len(new_data)))
-    
-    patch_file.write(compressed_control)
-    patch_file.write(compressed_diff)
-    patch_file.write(compressed_extra)
-    
-    patch_file.close()
+    logging.info("writing patch file '" + patch_file_name + "'")
+    with open(patch_file_name, "wb") as patch_file:
+        patch_file.write("BSDIFF40")   
+        _offtout(len(compressed_control), patch_file)
+        _offtout(len(compressed_diff), patch_file)
+        _offtout(len(new_data), patch_file)
+        logging.debug("len(compressed_control): " + str(len(compressed_control)) + ", len(compressed_diff): " + str(len(compressed_diff)) + ", len(new_data): " + str(len(new_data)))
+        
+        patch_file.write(compressed_control)
+        patch_file.write(compressed_diff)
+        patch_file.write(compressed_extra)
 
 
 #taken from the c implementation.
@@ -104,12 +100,14 @@ def _offtout(x, stream):
     stream.write(chr(z))
 
 def main():    
-    from sys import argv         
-    if(len(argv) < 4):
-        print "pybsdiff: usage: python pybsdiff.py oldfile newfile patchfile"
-    else:
-        #logging.basicConfig(level=logging.DEBUG)
-        diff(argv[1], argv[2], argv[3])  
+        from sys import argv
+        logging.basicConfig(level=logging.INFO)         
+        if(len(argv) < 4):
+            print "pybsdiff: usage: python pybsdiff.py oldfile newfile patchfile"
+        else:
+            #logging.basicConfig(level=logging.DEBUG)
+            diff(argv[1], argv[2], argv[3])  
+    #diff("F:/Development/storage/originals/LBR_nopatch/map0.mul", "F:/Development/storage/releases/2010_12_17_sjednoceno/map0.mul", "C:/games/map0.patch")
 
 if __name__ == '__main__': 
     main()

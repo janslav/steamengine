@@ -2,6 +2,11 @@ import os
 
 import _winreg
 
+try:
+	from bspatch import patch
+except ImportError:
+	from pybspatch import patch #pure python - slower
+
 
 
 def get_uodir_from_registry():
