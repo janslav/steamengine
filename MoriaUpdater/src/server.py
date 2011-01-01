@@ -97,6 +97,7 @@ def create_patches_successive(uiobj, ftproot, patchesdir):
 					newver = fi.versions_sorted[i+1]
 					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, oldver, newver)				
 					oldver.patchchecksum = server_utils.get_checksum(patchfilename)
+					oldver.patchsize = os.path.getsize(patchfilename)
 					
 def create_patches_fromoriginals(uiobj, ftproot, patchesdir):	
 	for fi in uiobj.files.values():
@@ -113,6 +114,7 @@ def create_patches_fromoriginals(uiobj, ftproot, patchesdir):
 					#create patch to latest release
 					patchfilename = server_utils.create_patch_if_needed(ftproot, patchesdir, origver, latestver)				
 					origver.patchchecksum = server_utils.get_checksum(patchfilename)
+					origver.patchsize = os.path.getsize(patchfilename)
 
 def compress_latest(uiobj, releasesdir, ftproot):
 	for fi in uiobj.files.values():
@@ -128,6 +130,7 @@ def compress_latest(uiobj, releasesdir, ftproot):
 			latestver = fi.versions_sorted[-1]
 			filename = os.path.join(ftproot, latestver.versionname, latestver.filename)
 			latestver.archivechecksum = server_utils.compress_and_checksum(filename)
+			latestver.archivesize = os.path.getsize(filename)
 
 			
 def create_pack(uiobj, ftproot):
@@ -165,7 +168,7 @@ def create_pack(uiobj, ftproot):
 def read_additional_config(uiobj, ftproot):
 	noforcefile = os.path.join(ftproot, FILENAME_NOFORCE)
 	
-	with open(noforcefile) as f:
+	with open(noforcefile, 'r') as f:
 		for line in f:
 			fi = ui.ui_getfilebyname(uiobj, line.strip().lower())
 			if fi != None:
@@ -173,7 +176,7 @@ def read_additional_config(uiobj, ftproot):
 	
 	
 	todelfile = os.path.join(ftproot, FILENAME_TODELETE)
-	with open(todelfile) as f:
+	with open(todelfile, 'r') as f:
 		for line in f:
 			filename = line.strip()
 			fi = ui.ui_getfilebyname(uiobj, filename.lower())

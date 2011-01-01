@@ -1,57 +1,80 @@
 from sys import argv
+import os
+from bsdiff import Patch
 
 import bz2
+from array import array
 import struct
 import cStringIO as StringIO
 
+def patch(old_file_name, new_file_name, patch_file_name):
+	#import stopwatch
+	#t = stopwatch.Timer() # immediately starts the clock
+
+	with open(patch_file_name, "rb") as patch_file:
+		patch_file.read(8) #magic number
+		
+		compressed_control_len = offtin(patch_file.read(8))
+		compressed_diff_len = offtin(patch_file.read(8))
+		new_file_len = offtin(patch_file.read(8))
+	
+		compressed_control_block = patch_file.read(compressed_control_len)
+		compressed_diff_block    = patch_file.read(compressed_diff_len)
+		compressed_extra_block   = patch_file.read()
+	
+	#print t.elapsed, "s"
+
+	control_stream = StringIO.StringIO(bz2.decompress(compressed_control_block))
+	diff_string    = bz2.decompress(compressed_diff_block)
+	extra_string   = bz2.decompress(compressed_extra_block)
+
+	with open(old_file_name, "rb") as old_file:
+		old_data = old_file.read()
+		
+	control_tuples_list = []
+	while True:
+		r = control_stream.read(8)
+		if not r:
+			break				
+		x = offtin(r)
+		y = offtin(control_stream.read(8))
+		z = offtin(control_stream.read(8))
+		control_tuples_list.append((x,y,z))
+		
+	new_data = Patch(old_data, new_file_len, control_tuples_list, diff_string, extra_string)
+		
+	with open(new_file_name, "wb") as new_file:
+		new_file.write(new_data)
+		
+	#import utils
+	#print utils.calculate_checksum(new_file_name)
+	#print t.elapsed, "s"
+
+def offtin(buf):
+	s = ord(buf[7])
+	
+	y=(s&0x7F)<<56;
+	y+=ord(buf[6])<<48;
+	y+=ord(buf[5])<<40;
+	y+=ord(buf[4])<<32;
+	y+=ord(buf[3])<<24;
+	y+=ord(buf[2])<<16;
+	y+=ord(buf[1])<<8;
+	y+=ord(buf[0]);
+
+	if (s&0x80):
+		y=-y;
+		
+	return y
+
 def main():
-	old_file_name   = argv[1]
-	new_file_name   = argv[2]
-	patch_file_name = argv[3]
-
-	patch_file = open(patch_file_name)
-
-	raw_data = patch_file.read()
-
-	(control_block_length, diff_block_length, _) = struct.unpack("qqq", raw_data[8:16] + raw_data[16:24] + raw_data[24:32])
-
-	compressed_control_block = raw_data[32:32 + control_block_length]
-	compressed_diff_block    = raw_data[32 + control_block_length:32 + control_block_length + diff_block_length]
-	compressed_extra_block   = raw_data[32 + control_block_length + diff_block_length:]
-
-	control_block = StringIO.StringIO(bz2.decompress(compressed_control_block))
-	diff_block    = StringIO.StringIO(bz2.decompress(compressed_diff_block))
-	extra_block   = StringIO.StringIO(bz2.decompress(compressed_extra_block))
-
-	old_file      = open(old_file_name)
-	#old_file_size = len(old_file.read())
-	old_file.seek(0)
-
-	control_block_size = len(control_block.read())
-	control_block.seek(0)
-
-	block_size = 8
-	new_file = open(new_file_name, "w")
-
-	for i in range(control_block_size)[::3 * block_size]:
-		# read control data
-		# 1. add x bytes from old to x bytes of diff file
-		# 2. copy y bytes from extra
-		# 4. seek forward z bytes in the old file
-		(x, y, z) = struct.unpack("qqq", control_block.read(8) + control_block.read(8) + control_block.read(8))
-		diff = diff_block.read(x)
-		old = old_file.read(x)
-		for i in range(len(diff)):
-			(a, b) = struct.unpack("BB", diff[i] + old[i])
-			(result,) = struct.pack("B", (a + b) % 256)
-			new_file.write(result)
-		for i in extra_block.read(y):
-			new_file.write(i)
-		if z > 0:
-			old_file.read(z)
-	return new_file
-
-if(len(argv) < 4):
-	print "error: inputs"
-else:
-	new_file = main()
+	if(len(argv) < 4):
+		print "bspatch: usage: python pybsdiff.py oldfile newfile patchfile"
+	else:
+		old_file_name   = argv[1]
+		new_file_name   = argv[2]
+		patch_file_name = argv[3]
+		patch(old_file_name, new_file_name, patch_file_name)
+	
+if __name__ == '__main__': 
+	main()

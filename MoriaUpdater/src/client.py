@@ -55,13 +55,13 @@ def work():
 		#download ui archive checksum file
 		uiarchivechecksum_filename = utils.FILENAME_UPDATEINFO + utils.EXTENSION_ARCHIVE + utils.EXTENSION_CHECKSUM
 		totaldone = download(tempdir, uiarchivechecksum_filename, TOTALPERCENTAGE_UICHECKSUM_DOWNLOAD, totaldone)
-		with open(os.path.join(tempdir, uiarchivechecksum_filename),"r") as f:
+		with open(os.path.join(tempdir, uiarchivechecksum_filename), "r") as f:
 			uiarchivechecksum = f.read()
 		
 		totaldone = download(tempdir, utils.FILENAME_UPDATEINFO + utils.EXTENSION_ARCHIVE, TOTALPERCENTAGE_UIFILE_DOWNLOAD, totaldone, uiarchivechecksum)
 		totaldone = unpack(tempdir, utils.FILENAME_UPDATEINFO, TOTALPERCENTAGE_UIFILE_UNPACK, totaldone)
 		
-		with open(os.path.join(tempdir, utils.FILENAME_UPDATEINFO)) as f:
+		with open(os.path.join(tempdir, utils.FILENAME_UPDATEINFO), "r") as f:
 			uiobj = gnosis.xml.pickle.load(f)
 		totaldone += TOTALPERCENTAGE_UIFILE_READ
 		facade.set_progress_overall(totaldone)
@@ -90,7 +90,9 @@ def work():
 		logging.info("Kalkulace kontrolnich souctu souboru...")
 		
 		todownload = [] #(filepath, filesize, fi)
+		downloadsize = 0
 		topatch = [] #(filepath, filesize, fi, version)
+		patchfilessize = 0
 		todelete = [] #filepath
 		for (filepath, filesize, fi) in todo:
 			if fi.todelete:
@@ -112,15 +114,22 @@ def work():
 					version = ui.fi_getversionbychecksum(fi, checksum)
 					if not (version is None):
 						topatch.append((filepath, filesize, fi, version))
+						patchfilessize += version.patchsize
 					else:
 						todownload.append((filepath, filesize, fi))
+						downloadsize += latestversion.archivesize
 		
 		if todownload or topatch or todelete:
 			logging.info("Souboru ke stazeni:"+str(len(todownload))+", k patchnuti:"+str(len(topatch))+", ke smazani:"+str(len(todelete)))
 		else:
-			logging.info("Vsechny soubory v aktualni verzi")
+			logging.info("Vsechny soubory v aktualni verzi.")
 			facade.set_progress_overall(facade.PBMAX)
-				
+		
+		
+		totalwork = TIMEPERCENTAGE_DOWNLOADING * (downloadsize + patchfilessize) + \
+			TIMEPERCENTAGE_UNPACKING * downloadsize + TIMEPERCENTAGE_PATCHING * patchfilessize
+		
+		tomove = []
 			
 	finally:
 		rmtree(tempdir)
@@ -183,7 +192,7 @@ def unpack(localroot, filepath, totalfraction, totaldone, checksum = None):
 	size = float(entry_info.file_size)
 
 	i = z.open(targetfilename)
-	with open(targetpath, 'w') as o:
+	with open(targetpath, 'wb') as o:
 		try:
 			offset = 0
 			while True:
