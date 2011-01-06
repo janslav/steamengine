@@ -20,20 +20,18 @@ def calculate_checksum(filename, progress_callback = None):
 	filesize = os.path.getsize(filename)
 	logging.info("computing checksum of file " + filename + " - " + str(int(round((filesize / 1024))))+" kB")
 	
-	fp = open(filename, 'rb')
-	done = 0
-	try:
+	with open(filename, 'rb') as fp:
+		done = 0
 		while 1:
 			data = fp.read(BUFFERSIZE)
-			if not data:
+			l = len(data)
+			if l == 0:
 				break
 			m.update(data)
 			if (progress_callback):
-				done += len(data)			
+				done += l
 				progress_callback(done)
-	finally:
-		fp.close()
-	
+		
 	return m.hexdigest()
 	
 def get_patchname(origversion, newversion):

@@ -26,8 +26,8 @@ def main(arg=None):
 	facade.start_gui(work)	
 	
 #fractions of download progress
-PERCENTAGE_DOWNLOAD=0.9
-PERCENTAGE_CALCULATECHECKSUM=0.1
+PERCENTAGE_DOWNLOAD_WITHOUT_CHECKSUM=0.9
+PERCENTAGE_UNPACK_WITHOUT_CHECKSUM=0.8
 
 #first phase - getting updateinfo file
 TOTALPERCENTAGE_UI = 0.01 * facade.PBMAX
@@ -73,10 +73,10 @@ def work():
 		for filename in utils.listfiles_recursive(config.uo_path):
 			fi = ui.ui_popfilebyname(uiobj, filename)
 			if not (fi is None): 
-				filepath = os.path.join(config.uo_path, filename)
-				size = os.path.getsize(filepath)		
+				path_in_uo = os.path.join(config.uo_path, filename)
+				size = os.path.getsize(path_in_uo)		
 				totalsize += size
-				todo.append((filepath, float(size), fi))
+				todo.append((path_in_uo, float(size), fi))
 		
 		for fi in uiobj.files.values():
 			if fi.forced:
@@ -89,16 +89,16 @@ def work():
 		
 		logging.info("Kalkulace kontrolnich souctu souboru...")
 		
-		todownload = [] #(filepath, filesize, fi)
+		todownload = [] #(path_in_uo, filesize, fi)
 		downloadsize = 0
-		topatch = [] #(filepath, filesize, fi, version)
+		topatch = [] #(path_in_uo, filesize, fi, version)
 		patchfilessize = 0
-		todelete = [] #filepath
-		for (filepath, filesize, fi) in todo:
+		todelete = [] #path_in_uo
+		for (path_in_uo, filesize, fi) in todo:
 			if fi.todelete:
-				todelete.append(filepath)
+				todelete.append(path_in_uo)
 			else:
-				if filepath:
+				if path_in_uo:
 					sizefraction = filesize/totalsize
 					TOTALPERCENTAGE_CHECKSUMALL
 					def progress_callback(done):
@@ -106,17 +106,17 @@ def work():
 						facade.set_progress_current(facade.PBMAX * fraction)
 						facade.set_progress_overall(totaldone + (sizefraction * fraction * TOTALPERCENTAGE_CHECKSUMALL))
 					
-					checksum = utils.calculate_checksum(filepath, progress_callback) 
+					checksum = utils.calculate_checksum(path_in_uo, progress_callback) 
 					totaldone += sizefraction * TOTALPERCENTAGE_CHECKSUMALL
 				
 				latestversion = fi.versions_sorted[-1]
 				if (checksum != latestversion.checksum): #nemame spravnou verzi, musime resit
 					version = ui.fi_getversionbychecksum(fi, checksum)
 					if not (version is None):
-						topatch.append((filepath, filesize, fi, version))
+						topatch.append((path_in_uo, filesize, fi, version))
 						patchfilessize += version.patchsize
 					else:
-						todownload.append((filepath, filesize, fi))
+						todownload.append((path_in_uo, filesize, fi))
 						downloadsize += latestversion.archivesize
 		
 		if todownload or topatch or todelete:
@@ -128,19 +128,40 @@ def work():
 		
 		totalwork = TIMEPERCENTAGE_DOWNLOADING * (downloadsize + patchfilessize) + \
 			TIMEPERCENTAGE_UNPACKING * downloadsize + TIMEPERCENTAGE_PATCHING * patchfilessize
+		fraction_per_byte = totaldone / totalwork
 		
-		tomove = []
+		
+		tomove = [] #(path_downloaded, path_in_uo, filesize)
+			
+		for (path_in_uo, filesize, fi) in todownload:
+			latestversion = fi.versions_sorted[-1]
+			
+			#download archive
+			remote_path = latestversion.versionname + '/' + latestversion.filename + utils.EXTENSION_ARCHIVE
+			fraction = latestversion.archivesize * fraction_per_byte * TIMEPERCENTAGE_DOWNLOADING
+			totaldone = download(tempdir, remote_path, fraction, totaldone, latestversion.archivechecksum)
+			
+			#archive downloaded, now unpack
+			path_downloaded = os.path.join(latestversion.versionname, latestversion.filename)
+			fraction = latestversion.archivesize * fraction_per_byte * TIMEPERCENTAGE_UNPACKING
+			totaldone = unpack(tempdir, path_downloaded, fraction, totaldone, latestversion.checksum)
+			
+			tomove.append((os.path.join(tempdir, path_downloaded), path_in_uo, filesize))
+			
 			
 	finally:
-		rmtree(tempdir)
+		pass
+		#rmtree(tempdir)
 		
 	
 #	facade.set_progress_current(50)
 #	facade.set_progress_overall(20)
 
 def download(localroot, remote_filepath, totalfraction, totaldone, checksum = None):
+	logging.info("downloading file '" + remote_filepath + "'")
+
 	if (checksum):
-		percentage_download = PERCENTAGE_DOWNLOAD
+		percentage_download = PERCENTAGE_DOWNLOAD_WITHOUT_CHECKSUM
 	else:
 		percentage_download = 1.0
 		
@@ -155,6 +176,7 @@ def download(localroot, remote_filepath, totalfraction, totaldone, checksum = No
 		facade.set_progress_current(facade.PBMAX * fraction)
 		facade.set_progress_overall(totaldone + (totalfraction * fraction))
 	
+	remote_filepath.replace('\\', '/')
 	url = urljoin(config.server_url, remote_filepath)
 	local_filepath = os.path.join(localroot, remote_filepath)
 	
@@ -168,19 +190,26 @@ def download(localroot, remote_filepath, totalfraction, totaldone, checksum = No
 		
 	if not (checksum is None):
 		filesize = float(os.path.getsize(local_filepath))
-		totaldone_sofar = totaldone + (totalfraction * PERCENTAGE_DOWNLOAD)
-		currentdone = facade.PBMAX * PERCENTAGE_DOWNLOAD
+		totaldone_sofar = totaldone + (totalfraction * percentage_download)
+		currentdone = facade.PBMAX * percentage_download
 		
 		def progress_callback(done):
-			fraction = (done/filesize) * PERCENTAGE_CALCULATECHECKSUM
+			fraction = (done/filesize) * (1 - percentage_download)
 			facade.set_progress_current(currentdone + (facade.PBMAX * fraction))
 			facade.set_progress_overall(totaldone_sofar + (totalfraction * fraction))
 			
-		utils.calculate_checksum(local_filepath, progress_callback)
+		calculated = utils.calculate_checksum(local_filepath, progress_callback)
+		raise_if_incorect_checksum(checksum, calculated)
 	
 	return totalfraction + totaldone
 
+
 def unpack(localroot, filepath, totalfraction, totaldone, checksum = None):
+	if (checksum):
+		percentage_unpack = PERCENTAGE_UNPACK_WITHOUT_CHECKSUM
+	else:
+		percentage_unpack = 1.0
+	
 	targetpath = os.path.join(localroot, filepath)
 	targetfilename = os.path.basename(targetpath)
 	archivepath = targetpath + utils.EXTENSION_ARCHIVE
@@ -188,27 +217,48 @@ def unpack(localroot, filepath, totalfraction, totaldone, checksum = None):
 	block_size = 1024 * 1024
 
 	z = ZipFile(archivepath)
-	entry_info = z.getinfo(targetfilename)
-	size = float(entry_info.file_size)
-
-	i = z.open(targetfilename)
-	with open(targetpath, 'wb') as o:
-		try:
-			offset = 0
-			while True:
-				b = i.read(block_size)
-				offset += len(b)
-				fraction = (offset/size)
-				facade.set_progress_current(fraction * facade.PBMAX)
-				facade.set_progress_overall(totaldone + (fraction * totalfraction))
-				
-				if b == '':
-					break
-				o.write(b)
-		finally:	
-			i.close()
+	try:
+		entry_info = z.getinfo(targetfilename)
+		size = float(entry_info.file_size)
+	
+		i = z.open(targetfilename)
+		with open(targetpath, 'wb') as o:
+			try:
+				offset = 0
+				while True:
+					b = i.read(block_size)
+					l = len(b)
+					if l == 0:
+						break
+					offset += l 
+					fraction = (offset/size)
+					facade.set_progress_current(fraction * facade.PBMAX)
+					facade.set_progress_overall(totaldone + (fraction * totalfraction))
+					o.write(b)
+			finally:	
+				i.close()
+	finally:
+		z.close()
+			
+	if not (checksum is None):
+		filesize = float(os.path.getsize(targetpath))
+		totaldone_sofar = totaldone + (totalfraction * percentage_unpack)
+		currentdone = facade.PBMAX * percentage_unpack
+		
+		def progress_callback(done):
+			fraction = (done/filesize) * (1 - percentage_unpack)
+			facade.set_progress_current(currentdone + (facade.PBMAX * fraction))
+			facade.set_progress_overall(totaldone_sofar + (totalfraction * fraction))
+			
+		calculated = utils.calculate_checksum(targetpath, progress_callback)
+		
+		raise_if_incorect_checksum(checksum, calculated)
 			
 	return totalfraction + totaldone
 
+def raise_if_incorect_checksum(checksum, calculated):
+	if not checksum == calculated:
+		raise Exception("Incorrect checksum. Run the updater again.")
+	
 if __name__ == '__main__': 
 	main()
