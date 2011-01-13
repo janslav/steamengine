@@ -341,6 +341,8 @@ namespace SteamEngine {
 		private static bool LoadAll() {
 			RunLevelManager.SetStartup();
 			ObjectSaver.ClearJobs();
+
+			ClassTemplateParser.Init();
 			if (!CompilerInvoker.CompileScripts(false)) {
 				RunLevelManager.UnsetStartup();
 				return false;
