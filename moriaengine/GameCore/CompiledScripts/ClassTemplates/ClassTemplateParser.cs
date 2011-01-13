@@ -65,8 +65,19 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 				if (file.Exists) {
 					ProcessFile(file);
 				} else {
-					file.Unload();
+					UnloadFile(file);
 				}
+			}
+		}
+
+		private static void UnloadFile(ScriptFile scriptFile) {
+			scriptFile.Unload();
+			string dirName = Path.GetDirectoryName(scriptFile.FullName);
+			string fileName = GetGeneratedFileName(scriptFile.FullName);
+			string outFileName = Path.Combine(dirName, fileName);
+
+			if (File.Exists(outFileName)) {
+				File.Delete(outFileName);
 			}
 		}
 
