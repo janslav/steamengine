@@ -48,6 +48,16 @@ namespace SteamEngine.CompiledScripts {
 			this.nonMultiplicablesSubList = list.OfType<IResourceListEntry_Simple>().OrderBy(e => -e.DesiredCount).ToArray();
 		}
 
+		public static void ThrowIfNotConsumable(ResourcesList rl) {
+			if (rl != null) {
+				foreach (var entry in rl.nonMultiplicablesSubList) {
+					if (!entry.IsConsumable) {
+						throw new SEException("Resource '" + entry.ParsableString + "' is not consumable.");
+					}
+				}
+			}
+		}
+
 		[Summary("Check if character has all resources from the resource list. " +
 				"in case some resource is missing, it is set to the output variable.")]
 		public bool HasResourcesPresent(Character chr, ResourcesLocality where, out IResourceListEntry firstMissingResource) {

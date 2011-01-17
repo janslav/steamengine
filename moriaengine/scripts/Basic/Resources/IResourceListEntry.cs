@@ -53,8 +53,14 @@ namespace SteamEngine.CompiledScripts {
 			"demands 5 a_warcry then it makes no sense using the reslist repeatedly and demad 10 a_warcry (unlike e.g. i_apple)")]
 	public interface IResourceListEntry_Simple : IResourceListEntry {
 		[Summary("Does the character have this particular resource? (in desired amount). Check only the presence " +
-				"do not consume or anything else...")]
+				"do not consume.")]
 		bool IsResourcePresent(Character chr);
+
+		[Summary("Indicates whether this is a consumable resource")]
+		bool IsConsumable { get; }
+
+		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		void Consume(Character ch);
 	}
 
 	[Summary("Interface for single resource stored in resource lists. These items can be multiplicable - " +

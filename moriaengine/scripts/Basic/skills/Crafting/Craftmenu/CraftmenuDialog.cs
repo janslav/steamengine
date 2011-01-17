@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					dlg.LastTable[rowCntr, 2] = GUTAImage.Builder.NamedGump(GumpIDs.Pouch).Build();
 				} else {
 					oneItm = (CraftmenuItem) elem;
-					if (!oneItm.itemDef.CanBeMade((Character) focus)) {
+					if (!CraftingSkillDef.CanBeMade(oneItm.itemDef, (Character) focus)) {
 						//cannot be made, do not display, step over and continue
 						if (imax < maxIndex) {
 							imax++; //we can iterate additional one step 

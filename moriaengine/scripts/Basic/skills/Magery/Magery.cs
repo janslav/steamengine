@@ -124,13 +124,15 @@ namespace SteamEngine.CompiledScripts {
 				if (mana >= manaUse) {
 					if (!isFromScroll) {
 						ResourcesList req = spell.Requirements;
-						ResourcesList res = spell.Resources;
-
 						IResourceListEntry missingItem;
-						if (((req != null) && (!req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) ||
-								((res != null) && (!res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem)))) {
+						if ((req != null) && (!req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) {
 							self.SysMessage(missingItem.GetResourceMissingMessage(self.Language));
-							//? self.ClilocSysMessage(502630); // More reagents are needed for this spell.
+							return true;
+						}
+
+						ResourcesList res = spell.Resources;
+						if ((res != null) && (!res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem))) {
+							self.SysMessage(missingItem.GetResourceMissingMessage(self.Language));
 							return true;
 						}
 					} else {

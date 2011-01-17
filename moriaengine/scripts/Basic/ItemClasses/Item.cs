@@ -26,31 +26,6 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class ItemDef {
 	
-		[Summary("Check the resources and skillmake if the given character can craft this item")]
-		public bool CanBeMade(Character chr) {
-			if (chr.IsGM) {//GM can everything
-				return true;
-			}
-			//skillmake (skills, tools etc.)
-			ResourcesList requir = SkillMake;
-			if (requir != null) {
-				IResourceListEntry missingItem;
-				if (!requir.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-					return false;
-				}
-			}
-
-			//resources (necessary items)
-			ResourcesList reslist = Resources;
-			if (reslist != null) {
-				IResourceListEntry missingItem;
-				if (!reslist.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-					return false;
-				}
-			}
-			return true;
-		}
-
 		public bool IsWearableDef {
 			get {
 				return (this is WearableDef);
@@ -67,6 +42,13 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				return (this is WeaponDef);
 			}
+		}
+
+		protected override void On_AfterLoadFromScripts() {
+			base.On_AfterLoadFromScripts();
+
+			ResourcesList.ThrowIfNotConsumable(this.Resources);
+			ResourcesList.ThrowIfNotConsumable(this.Resources2);
 		}
 	}
 

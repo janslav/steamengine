@@ -16,7 +16,7 @@
 [ActivableAbilityDef a_bleeding_strike]
 Name="Bleeding Strike"
 EffectPower=0.1 //damage multiplier (original strike damage -> pertick damage)
-ResourcesPresent=40 stam
+Requirements = 40 stam
 EffectDuration = 75 //15 ticks (10-20 previously)
 
 PluginKey = @@bleeding_strike

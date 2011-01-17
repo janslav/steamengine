@@ -73,6 +73,14 @@ namespace SteamEngine.CompiledScripts {
 			//method returns number of ability points or 0 if we dont have the ability
 			return chr.GetAbility(this.abilityDef) >= this.DesiredCount;
 		}
+
+		[Summary("Indicates whether this is a consumable resource")]
+		public bool IsConsumable { get { return false; } }
+
+		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		public void Consume(Character ch) {
+			throw new InvalidOperationException("Abilities can not be consumed as a resource.");
+		}
 		#endregion
 	}
 }

@@ -69,6 +69,13 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
+		[Summary("Indicates whether this is a consumable resource")]
+		public bool IsConsumable { get { return false; } }
+
+		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		public void Consume(Character ch) {
+			throw new InvalidOperationException("Vitality can not be consumed as a resource.");
+		}
 		#endregion
 	}
 }

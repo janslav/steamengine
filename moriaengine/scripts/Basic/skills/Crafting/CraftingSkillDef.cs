@@ -228,6 +228,31 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return true;
 		}
+
+		[Summary("Check the resources and skillmake if the given character can craft this item")]
+		public static bool CanBeMade(ItemDef iDef, Character chr) {
+			if (chr.IsGM) {//GM can everything
+				return true;
+			}
+			//skillmake (skills, tools etc.)
+			ResourcesList requir = iDef.SkillMake;
+			if (requir != null) {
+				IResourceListEntry missingItem;
+				if (!requir.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
+					return false;
+				}
+			}
+
+			//resources (necessary items)
+			ResourcesList reslist = iDef.Resources;
+			if (reslist != null) {
+				IResourceListEntry missingItem;
+				if (!reslist.HasResourcesPresent(chr, ResourcesLocality.Backpack, out missingItem)) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	internal class CraftSkillsLoc : CompiledLocStringCollection {
