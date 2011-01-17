@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	public static class ResourceItemFinder {
 		[Summary("Get all items from the character in specified locality (e.g. all items from chars bank) and look if they are desired " +
 				"as resources in the list - initiate the resource counters list")]
-		internal static void LocalizeItems(Character chr, ResourcesLocality where, List<ResourceCounter> resCountersList) {
+		internal static void LocalizeItems(Character chr, ResourcesLocality where, ItemCounter[] resCountersList) {
 			//the behaviour of ResourcesLocality is like of a bitmask - there can be more locations specified at once (
 			//e.g. backpack and bank; everywhere etc...
 			if ((where & ResourcesLocality.WearableLayers) == ResourcesLocality.WearableLayers) {
@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Iterate through all items in character's wearable layers check if it is in the resource items list " +
 				"and if so, prepare the ResourceCounter object for it")]
-		private static void LocalizeWearableItems(Character chr, List<ResourceCounter> resCountersList) {
+		private static void LocalizeWearableItems(Character chr, ItemCounter[] resCountersList) {
 			foreach (Item i in chr.VisibleEquip) {
 				switch ((LayerNames) i.Z) {
 					case LayerNames.Arms:
@@ -73,19 +73,19 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Iterate through all items in character's backpack check if it is in the resource items list " +
 				"and if so, prepare the ResourceCounter object for it. Do it recursively for inner containers")]
-		private static void LocalizeBackpackItems(Character chr, List<ResourceCounter> resCountersList) {
+		private static void LocalizeBackpackItems(Character chr, ItemCounter[] resCountersList) {
 			CheckItemsInside(chr.Backpack, resCountersList);
 		}
 
 		[Summary("Iterate through all items in character's bank, check if it is in the resource items list " +
 				"and if so, prepare the ResourceCounter object for it. Do it recurcively for inner containers")]
-		private static void LocalizeBankItems(Character chr, List<ResourceCounter> resCountersList) {
+		private static void LocalizeBankItems(Character chr, ItemCounter[] resCountersList) {
 			CheckItemsInside((Item) chr.FindLayer(LayerNames.Bankbox), resCountersList);
 		}
 
 		//check all items in the specified item if they are among the reslist items in the specified list
 		//can be called recursively (useful for containers :) )
-		private static void CheckItemsInside(Item itm, List<ResourceCounter> resCountersList) {
+		private static void CheckItemsInside(Item itm, ItemCounter[] resCountersList) {
 			IEnumerator<AbstractItem> insideItems = itm.GetEnumerator();
 			while (insideItems.MoveNext()) {
 				Item oneItem = (Item) insideItems.Current;
@@ -104,13 +104,13 @@ namespace SteamEngine.CompiledScripts {
 		//for every ResourceCounter in the list check, if this item corresponds to its resource, if so
 		//include this item in the counter...
 		//remember that the item can be null if we are checking items from layers
-		private static void CheckByCounters(Item itm, List<ResourceCounter> resCountersList) {
+		private static void CheckByCounters(Item itm, ItemCounter[] resCountersList) {
 			if (itm == null) {
 				return;
 			}
 			bool counterAlreadyFound = false;
-			foreach (ResourceCounter resCntr in resCountersList) {
-				if (resCntr.ItemCorresponds(itm)) {
+			foreach (ItemCounter resCntr in resCountersList) {
+				if (resCntr.IsCorresponding(itm)) {
 					if (counterAlreadyFound) {
 						//if this happens, it means that the Item corresponds to some ItemsCounter 
 						//and TriggerGroupCounter together which we are not able to handle => this is 

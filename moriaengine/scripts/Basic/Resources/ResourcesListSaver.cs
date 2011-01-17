@@ -43,12 +43,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string Save(object objToSave) {
-			return Prefix + ((ResourcesList)objToSave).ToDefsString();
+			return Prefix + ((ResourcesList)objToSave).ToParsableString();
 		}
 
 		public object Load(Match match) {
-			object retVal;
-			if (processMatch(match, out retVal)) {
+			ResourcesList retVal;
+			if (ResourcesListParser.InternalProcessMatch(match, out retVal)) {
 				return retVal;
 			} else {
 				throw new SEException("Unable to load: " + match.Value);
@@ -61,33 +61,5 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		#endregion
-
-		//same method as in ResourcesParser...
-		private bool processMatch(Match m, out object retVal) {
-			if (m.Success) {
-				List<IResourceListItem> resources = new List<IResourceListItem>();
-				int n = m.Groups["resource"].Captures.Count; //number of found resources
-				CaptureCollection numbers = m.Groups["number"].Captures;
-				CaptureCollection values = m.Groups["value"].Captures;
-				for (int i = 0; i < n; i++) {
-					string number = "";
-					try {
-						number = numbers[i].Value;
-						if (number.Equals(""))
-							number = "1";
-					} catch {
-						//maybe we have something like this: "2 i_something, i_something_else" which we want to be interpreted as "2 ..., 1 ..."
-						number = "1";
-					}
-					string value = values[i].Value; //resource name (trimmed)
-					double nmr = ConvertTools.ParseDouble(number);
-					resources.Add(ResourcesParser.createResListItem(nmr, value));
-				}
-				retVal = new ResourcesList(resources);
-				return true;
-			}
-			retVal = null;
-			return false;
-		}
 	}
 }
