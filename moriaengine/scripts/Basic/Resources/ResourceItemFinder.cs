@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 						//error in resource list definition and scripter should be executed!
 						//e.g. 5 i_apple, 3 t_fruit e.t.c
 						//this will not occur for 5 i_apple, 3 i_apple because this situation is handled during
-						//reslist parsing (and result is that we are looking for 8 i_apple) 
+						//reslist parsing
 						throw new SEException(LogStr.Error("Item " + itm.ToString() + " corresponds to more than one resource from the list"));
 					}
 					counterAlreadyFound = true;
