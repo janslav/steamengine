@@ -37,19 +37,24 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		//public void On_Assign() {
-		//    //apply effect of the bonus talent, if present
-		//    Character self = (Character) this.Cont;
-		//    this.EffectPower *= 1 + (self.GetAbility(IgnitionBonusDef) * IgnitionBonusDef.EffectPower);
-		//    base.On_Assign();
-		//}
+		private static PassiveAbilityDef a_bleeding_bonus;
+		private static PassiveAbilityDef BleedingBonusDef {
+			get {
+				if (a_bleeding_bonus == null) {
+					a_bleeding_bonus = (PassiveAbilityDef) AbilityDef.GetByDefname("a_bleeding_bonus");
+				}
+				return a_bleeding_bonus;
+			}
+		}
 
 		public void On_AfterSwing(WeaponSwingArgs swingArgs) {
 			if (swingArgs.FinalDamage > 0) {
 				BleedingEffectPluginDef bleedingDef = SingletonScript<BleedingEffectPluginDef>.Instance;
 				Character attacker = swingArgs.attacker;
 
-				double bleedDamage = swingArgs.FinalDamage * attacker.Weapon.BleedingEfficiency * BleedingStrikeDef.EffectPower;
+				double bleedDamage = swingArgs.FinalDamage * attacker.Weapon.BleedingEfficiency * BleedingStrikeDef.EffectPower //standard effect
+					* (1 + (attacker.GetAbility(BleedingBonusDef) * BleedingBonusDef.EffectPower)); //bonus effect
+
 				double durationInSeconds = BleedingStrikeDef.EffectDuration;
 				int ticksCount = (int) (durationInSeconds / bleedingDef.TickInterval);
 

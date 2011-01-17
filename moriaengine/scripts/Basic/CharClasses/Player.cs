@@ -338,7 +338,7 @@ namespace SteamEngine.CompiledScripts {
 		public void Menu(AbstractMenuDef def) {
 			def.Assign(this, null);
 		}
-		
+
 		public void Menu(AbstractMenuDef def, object parameter) {
 			def.Assign(this, parameter);
 		}
@@ -400,63 +400,63 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Messaging
 
-        #region Add
+		#region Add
 		public void Add(int model) {
-			this.Add(ThingDef.GetByModel(model),1);
+			this.Add(ThingDef.GetByModel(model), 1);
 		}
 
 		public void Add(IThingFactory addedDef) {
-            this.Add(addedDef, 1);
+			this.Add(addedDef, 1);
 		}
 
-        public void Add(int model, int amount) {
-            this.Add(ThingDef.GetByModel(model),amount);
-        }
+		public void Add(int model, int amount) {
+			this.Add(ThingDef.GetByModel(model), amount);
+		}
 
 		public void Add(IThingFactory addedDef, int amount) {
-            GameState state = this.GameState;
-            if (state != null) {
-                if (addedDef != null) {
+			GameState state = this.GameState;
+			if (state != null) {
+				if (addedDef != null) {
 					string name = addedDef is ThingDef ? ((ThingDef) addedDef).Name : addedDef.ToString();
-                    this.SysMessage("Kam chceš umístit '" + name + "' ?");
+					this.SysMessage("Kam chceš umístit '" + name + "' ?");
 
-                    ItemDef idef = addedDef as ItemDef;
-                    AddHelper addedH = new AddHelper(addedDef, amount);
-                    if ((idef != null) && (idef.MultiData != null)) {
-                        state.TargetForMultis(idef.Model, this.Add_OnTargon, null, addedH);
-                    } else {
-                        state.Target(true, this.Add_OnTargon, null, addedH);
-                    }
-                } else {
+					ItemDef idef = addedDef as ItemDef;
+					AddHelper addedH = new AddHelper(addedDef, amount);
+					if ((idef != null) && (idef.MultiData != null)) {
+						state.TargetForMultis(idef.Model, this.Add_OnTargon, null, addedH);
+					} else {
+						state.Target(true, this.Add_OnTargon, null, addedH);
+					}
+				} else {
 					this.SysMessage("Nenalezen odpovidajici ItemDef/TemplateDef.");
-                }
-            }
-        }
+				}
+			}
+		}
 
-        private class AddHelper {
+		private class AddHelper {
 			internal IThingFactory def;
-            internal int amount;
+			internal int amount;
 			public AddHelper(IThingFactory def, int amount) {
-                this.def = def;
-                this.amount = amount;
-            }
-        }
+				this.def = def;
+				this.amount = amount;
+			}
+		}
 
 		private void Add_OnTargon(GameState state, IPoint3D getback, object parameter) {
 
-            AddHelper addedH = (AddHelper)parameter;
+			AddHelper addedH = (AddHelper) parameter;
 			Item targettedItem = getback as Item;
 			if (targettedItem != null) {
 				getback = targettedItem.TopObj();
 			}
 			Thing t = addedH.def.Create(getback.X, getback.Y, getback.Z, this.M);
-            Item i = t as Item;
-            if (i != null) {
-                i.Amount = addedH.amount;
-            }
-        }
-        #endregion Add
-        [Summary("The crafting main method. Tries to create the given Item(Def) in a requested quantity")]
+			Item i = t as Item;
+			if (i != null) {
+				i.Amount = addedH.amount;
+			}
+		}
+		#endregion Add
+		[Summary("The crafting main method. Tries to create the given Item(Def) in a requested quantity")]
 		public void Make(ItemDef what, int howMuch) {
 			SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
 			selectionQueue.Enqueue(new CraftingSelection(what, howMuch));
@@ -465,7 +465,7 @@ namespace SteamEngine.CompiledScripts {
 			double highestSkillVal = 0;
 			CraftingSkillDef highestCsd = (CraftingSkillDef) SkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
 			if (skillMake != null) {
-				foreach (IResourceListItemNonMultiplicable itm in skillMake.NonMultiplicablesSublist) {
+				foreach (IResourceListEntry_Simple itm in skillMake.NonMultiplicablesSublist) {
 					SkillResource sklr = itm as SkillResource;
 					if (sklr != null) {
 						CraftingSkillDef neededCraftingSkill = sklr.SkillDef as CraftingSkillDef;

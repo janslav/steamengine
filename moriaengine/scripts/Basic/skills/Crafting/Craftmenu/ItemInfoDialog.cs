@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = GUTAText.Builder.Text((itm.Resources != null) ? itm.Resources.ToString() : "").Build();
 			//type
 			dlg.LastTable[1, 0] = GUTAText.Builder.TextLabel("Typ").Build();
-			dlg.LastTable[1, 1] = GUTAText.Builder.Text(CraftmenuContents.typeNames[itm.Type.Defname]).Build();
+			dlg.LastTable[1, 1] = GUTAText.Builder.Text(ItemTypeNames.GetPrettyName(itm.Type)).Build();
 			//weapon
 			if (itm.IsWeaponDef) {
 				dlg.LastTable[2, 0] = GUTAText.Builder.TextLabel("UC vs M").Build();

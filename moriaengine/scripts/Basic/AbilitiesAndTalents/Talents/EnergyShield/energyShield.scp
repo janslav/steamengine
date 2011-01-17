@@ -23,4 +23,4 @@ on=@Damage
 a_energy_shield.Activate(this)
 
 [function cancelenergyshield]
-a_energy_shield.Unactivate(this)
+a_energy_shield.Deactivate(this)

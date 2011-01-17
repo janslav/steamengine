@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Used in some abilities to compute the probabilty of their success. "+
+		[Summary("Used in some abilities to compute the probabilty of their success. " +
 			"Typically 1.0 = 100%")]
 		public double Chance {
 			get {
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		
+
 		#endregion Accessors
 
 		#region Factory methods
@@ -145,16 +145,16 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability" +
 				"and in case he has, it runs the protected activation method")]
 		public virtual void Activate(Character chr) {
-					Ability ab = chr.GetAbilityObject(this);
+			Ability ab = chr.GetAbilityObject(this);
 
-				DenyResult retVal = this.Trigger_DenyActivate(chr, ab); //return value means only that the trigger has been cancelled
+			DenyResult retVal = this.Trigger_DenyActivate(chr, ab); //return value means only that the trigger has been cancelled
 
-				if (retVal.Allow) {
-					this.Trigger_Activate(chr, ab);
-					ab.LastUsage = Globals.TimeAsSpan; //set the last usage time
-				} else {
-					retVal.SendDenyMessage(chr); //send result(message) of the "activate" call to the client
-				}
+			if (retVal.Allow) {
+				ab.LastUsage = Globals.TimeAsSpan; //set the last usage time
+				this.Trigger_Activate(chr, ab);
+			} else {
+				retVal.SendDenyMessage(chr); //send result(message) of the "activate" call to the client
+			}
 		}
 		#endregion Factory methods
 
@@ -201,7 +201,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("This method fires the @denyUse triggers. "
-		        + "Their purpose is to check if all requirements for running the ability have been met")]
+				+ "Their purpose is to check if all requirements for running the ability have been met")]
 		protected DenyResult Trigger_DenyActivate(Character chr, Ability ab) {
 			if (ab == null || ab.ModifiedPoints == 0) {
 				return DenyResultMessages_Abilities.Deny_DoesntHaveAbility;
@@ -228,35 +228,35 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("C# based @denyUse trigger method, implementation of common checks")]
 		protected virtual bool On_DenyActivate(DenyAbilityArgs args) {
-		    Ability ab = args.ranAbility;
-		    //check cooldown
-		    if (((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) && !args.abiliter.IsGM) { //check the timing if OK
-		        args.Result = DenyResultMessages_Abilities.Deny_NotYetCooledDown;
-		        return true;//same as "return 1" from LScript - cancel trigger sequence
-		    }
+			Ability ab = args.ranAbility;
+			//check cooldown
+			if (((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) && !args.abiliter.IsGM) { //check the timing if OK
+				args.Result = DenyResultMessages_Abilities.Deny_NotYetCooledDown;
+				return true;//same as "return 1" from LScript - cancel trigger sequence
+			}
 
-		    //check resources present (if needed)
-		    ResourcesList resPresent = resourcesPresent.CurrentValue as ResourcesList;
-		    if (resPresent != null) {
-		        IResourceListItem missingItem;
-		        if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-		            missingItem.SendMissingMessage(args.abiliter);
-		            args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesPresent;
+			//check resources present (if needed)
+			ResourcesList resPresent = resourcesPresent.CurrentValue as ResourcesList;
+			if (resPresent != null) {
+				IResourceListEntry missingItem;
+				if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
+					args.abiliter.SysMessage(missingItem.GetResourceMissingMessage(args.abiliter.Language));
+					args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesPresent;
 					return true; //cancel
-		        }
-		    }
+				}
+			}
 
-		    //check consumable resources
-		    ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
-		    if (resConsum != null) {
-		        //look to the backpack and among the items that we are wearing
-		        IResourceListItem missingItem;
-		        if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
-		            missingItem.SendMissingMessage(args.abiliter);
-		            args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesToConsume;
+			//check consumable resources
+			ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
+			if (resConsum != null) {
+				//look to the backpack and among the items that we are wearing
+				IResourceListEntry missingItem;
+				if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
+					args.abiliter.SysMessage(missingItem.GetResourceMissingMessage(args.abiliter.Language));
+					args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesToConsume;
 					return true; //cancel
-		        }
-		    }
+				}
+			}
 
 			DenyResult result = args.abiliter.CheckAlive();
 			args.Result = result;
@@ -264,7 +264,7 @@ namespace SteamEngine.CompiledScripts {
 				return true; //cancel
 			}
 
-		    return false; //all ok, continue
+			return false; //all ok, continue
 		}
 
 		//this is not a character trigger. I think for them the @valuechanged should be enough
@@ -348,7 +348,7 @@ namespace SteamEngine.CompiledScripts {
 			this.resourcesConsumed = InitTypedField("resourcesConsumed", null, typeof(ResourcesList));
 			this.resourcesPresent = InitTypedField("resourcesPresent", null, typeof(ResourcesList));
 			this.effectPower = InitTypedField("effectPower", 1.0, typeof(double));
-			this.effectDuration = InitTypedField("effectDuration", 5.0, typeof(double));			
+			this.effectDuration = InitTypedField("effectDuration", 5.0, typeof(double));
 		}
 
 		#region Loading from scripts
@@ -389,7 +389,7 @@ namespace SteamEngine.CompiledScripts {
 
 	//abilities running possible results
 	public static class DenyResultMessages_Abilities {
-		public static readonly DenyResult Deny_DoesntHaveAbility = 
+		public static readonly DenyResult Deny_DoesntHaveAbility =
 			new CompiledLocDenyResult<AbilityDefLoc>("YouDontHaveThisAbility"); //we don't have the ability (no points in it)
 		public static readonly DenyResult Deny_NotYetCooledDown =
 			new CompiledLocDenyResult<AbilityDefLoc>("NotYetCooledDown"); //the ability usage timer has not yet passed

@@ -13,18 +13,7 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
-[ActivableAbilityDef a_bleeding_strike]
-Name="Bleeding Strike"
-EffectPower=0.1 //damage multiplier (original strike damage -> pertick damage)
-ResourcesPresent=40 stam
-EffectDuration = 75 //15 ticks (10-20 previously)
 
-PluginKey = @@bleeding_strike
-PluginDef = p_bleeding_strike
+[PluginTemplate WhirlWindPlugin : EffectDurationPlugin]
+Def:
 
-//plugin representing activated ability
-[BleedingStrikePluginDef p_bleeding_strike]
-
-[PassiveAbilityDef a_bleeding_bonus]
-Name="Bleeding bonus"
-EffectPower=0.02 // 10% bonus at 5 points

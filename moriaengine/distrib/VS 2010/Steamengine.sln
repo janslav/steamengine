@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VS10-Common", "..\..\Common\VS10-Common.csproj", "{7B3428BD-F9AF-448E-92BB-85A72505DF50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VS10-Communication", "..\..\Communication\VS10-Communication.csproj", "{42DC5FFC-D58D-48B2-8035-3123D4F0A84F}"
@@ -51,6 +51,7 @@ Global
 		{0A6BEB83-CF08-4946-BA88-2A74480F9777}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A6BEB83-CF08-4946-BA88-2A74480F9777}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{36CC1B5F-5F1B-406D-AE88-2DC3762CBDB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36CC1B5F-5F1B-406D-AE88-2DC3762CBDB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36CC1B5F-5F1B-406D-AE88-2DC3762CBDB5}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{36CC1B5F-5F1B-406D-AE88-2DC3762CBDB5}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{C70C4C3E-FEC0-47BB-BB30-608951B723D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

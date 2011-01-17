@@ -42,10 +42,13 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 			}
+
+			//TODO realms, etc.
 			return HighlightColor.NoColor;
 		}
 
 		public static CharRelation GetCharRelation(Character a, Character b) {
+			//TODO
 			return CharRelation.Unknown;
 		}
 	}

@@ -10,7 +10,7 @@ endif
 [function talentoff] //deactivate ability by name
 arg.a = AbilityDef.GetByName(args)
 if (<arg.a>)
-	arg.a.UnActivate(this)
+	arg.a.Deactivate(this)
 else
 	Echo(LocManager.GetEntry("loc_ability_functions", "NoSuchAbility", Globals.SrcLanguage))
 endif
@@ -19,7 +19,7 @@ endif
 arg.a = AbilityDef.GetByName(args)
 if (<arg.a>)
 	if ((arg.a is ActivableAbilityDef) && (arg.a.IsActive(this)))
-		arg.a.Unactivate(this)
+		arg.a.Deactivate(this)
 	else
 		arg.a.Activate(this)
 	endif

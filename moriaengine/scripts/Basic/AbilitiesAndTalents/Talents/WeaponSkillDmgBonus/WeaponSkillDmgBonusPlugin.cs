@@ -26,18 +26,17 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class SpellPowerBonusPlugin {
+	public partial class WeaponSkillDmgBonusPlugin {
 
-		public void On_CauseSpellEffect(SpellEffectArgs spellEffectArgs) {
-			if (spellEffectArgs.CurrentTarget == spellEffectArgs.MainTarget) { //so that the power is only raised once. Won't work in case of mass spells that are ground-targettable - TODO?
-				if (spellEffectArgs.SpellDef == this.TypeDef.Spell) {
-					spellEffectArgs.SpellPower += (int) (spellEffectArgs.SpellPower * this.EffectPower); //apply our effect on the spellpower
-				}
+		public void On_BeforeSwing(WeaponSwingArgs swingArgs) {
+			var attackerSkill = swingArgs.attacker.CurrentSkill as WeaponSkillDef;
+			if (attackerSkill == this.TypeDef.Skill) {
+				swingArgs.DamageAfterAC *= (1 + this.EffectPower);
 			}
 		}
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class SpellPowerBonusPluginDef {
+	public partial class WeaponSkillDmgBonusPluginDef {
 	}
 }

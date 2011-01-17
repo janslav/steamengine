@@ -31,8 +31,8 @@ namespace SteamEngine.CompiledScripts {
 			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
 	[ViewableClass]
 	public class ActivableAbilityDef : AbilityDef {
-		//internal static readonly TriggerKey tkUnActivate = TriggerKey.Acquire("unActivate");
-		//internal static readonly TriggerKey tkUnActivateAbility = TriggerKey.Acquire("unActivateAbility");
+		//internal static readonly TriggerKey tkDeactivate = TriggerKey.Acquire("deActivate");
+		//internal static readonly TriggerKey tkDeactivateAbility = TriggerKey.Acquire("deActivateAbility");
 
 		//fields for storing the keys (comming from LScript or set in constructor of children)
 		private FieldValue pluginDef;
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 			return base.On_Activate(chr, ab);
 		}
 
-		public void UnActivate(Character chr) {
+		public void Deactivate(Character chr) {
 			PluginKey key = this.PluginKey;
 			if (key != null) {
 				chr.DeletePlugin(key);
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 		#region triggerMethods
 		[Summary("When unassigning, do not forget to deactivate the ability")]
 		protected override void On_UnAssign(Character ch, Ability ab) {
-			this.UnActivate(ch); //unactivate the ability automatically
+			this.Deactivate(ch); //deactivate the ability automatically
 		}
 		#endregion triggerMethods
 
