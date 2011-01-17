@@ -126,10 +126,10 @@ namespace SteamEngine.CompiledScripts {
 						ResourcesList req = spell.Requirements;
 						ResourcesList res = spell.Resources;
 
-						IResourceListItem missingItem;
+						IResourceListEntry missingItem;
 						if (((req != null) && (!req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) ||
 								((res != null) && (!res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem)))) {
-							missingItem.SendMissingMessage(self);
+							self.SysMessage(missingItem.GetResourceMissingMessage(self.Language));
 							//? self.ClilocSysMessage(502630); // More reagents are needed for this spell.
 							return true;
 						}
@@ -151,7 +151,7 @@ namespace SteamEngine.CompiledScripts {
 					if (!string.IsNullOrEmpty(runeWords)) {
 						self.Speech(runeWords, 0, SpeechType.Spell, -1, ClientFont.Unified, null, null);
 					}
-					
+
 					return true; //default = set delay by magery skilldef, which we don't want					
 				} else {
 					self.ClilocSysMessage(502625); // Insufficient mana for this spell.

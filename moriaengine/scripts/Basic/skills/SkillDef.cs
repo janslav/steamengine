@@ -528,10 +528,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void PhaseStart() {
+			this.DelayInSeconds = this.skillDef.GetDelayForChar(this.self);
+
 			if (!this.skillDef.Trigger_Start(this)) {
 				AbortSkill(this.self);
-
-				this.DelayInSeconds = this.skillDef.GetDelayForChar(this.self);
 				this.DelayStroke();
 			}
 		}

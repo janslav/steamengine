@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		[Summary("This trigger is used only when clicked the skill-list blue radio button for some crafting skill."+
+		[Summary("This trigger is used only when clicked the skill-list blue radio button for some crafting skill." +
 				"opens the craftmenu for the given skill")]
 		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("This trigger is called when OK button is clicked from the craftmenu. One item from the queue is picked and its making process "+
+		[Summary("This trigger is called when OK button is clicked from the craftmenu. One item from the queue is picked and its making process " +
 			"begins here (i.e. the making success and the number of strokes is pre-computed here")]
 		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
@@ -63,22 +63,22 @@ namespace SteamEngine.CompiledScripts {
 				return true;//something wrong, finish now
 			}
 
-			ItemDef iDefToMake = (ItemDef)skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
-				//get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
+			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
+			//get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
 			double[] itemStrokes = iDefToMake.Strokes; //always 2-item array
-				//compute the actual strokes count to make the selected item for "self" char
-			int strokes = (int)Math.Round(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes));
+			//compute the actual strokes count to make the selected item for "self" char
+			int strokes = (int) Math.Round(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes));
 			//check the Success now / TODO> item difficulty
 			skillSeqArgs.Success = this.CheckSuccess(self, iDefToMake.Difficulty);
 			if (!skillSeqArgs.Success) {//the item making will fail
-				skillSeqArgs.Param2 = (int)Math.Round(ScriptUtil.GetRandInRange(1, strokes));//fail will occur after a few strokes (not necessary immediatelly)
+				skillSeqArgs.Param2 = (int) Math.Round(ScriptUtil.GetRandInRange(1, strokes));//fail will occur after a few strokes (not necessary immediatelly)
 			} else {//item will be created, with pre-computed number of strokes
 				skillSeqArgs.Param2 = strokes;
 			}
 			return false; //continue to delay, then @stroke
 		}
 
-		[Summary("This trigger is run a pre-computed number of times before the item is either created or failed."+
+		[Summary("This trigger is run a pre-computed number of times before the item is either created or failed." +
 				"The item-making animations and sounds are run from here")]
 		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
@@ -100,8 +100,8 @@ namespace SteamEngine.CompiledScripts {
 			return false; //continue to @success or @fail (the result is already prepared from the "@start" phase
 		}
 
-		[Summary("This trigger is run in case the item making succeeds. It consumes the desired number of resources, "+
-				"creates the item instance and checks if there are any other items to be created in the queue. If so, it "+
+		[Summary("This trigger is run in case the item making succeeds. It consumes the desired number of resources, " +
+				"creates the item instance and checks if there are any other items to be created in the queue. If so, it " +
 				"re-runs the @start trigger")]
 		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
 			Player self = (Player) skillSeqArgs.Self;
@@ -114,17 +114,17 @@ namespace SteamEngine.CompiledScripts {
 
 			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
-			IResourceListItem missingResource;
+			IResourceListEntry missingResource;
 			bool canMake = true;
 			//first check the necessary resources to have (GM needn't have anything) (if any resources are needed)
 			if (!self.IsGM && iDefToMake.SkillMake != null && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
-				missingResource.SendMissingMessage(self);		            
+				self.SysMessage(missingResource.GetResourceMissingMessage(self.Language));
 				canMake = false;
 			}
 
 			if (canMake) {//if still OK try to consume the consumable resources (if any) otherwise step over this block
 				if (!self.IsGM && iDefToMake.Resources != null && !iDefToMake.Resources.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingResource)) {
-					missingResource.SendMissingMessage(self);
+					self.SysMessage(missingResource.GetResourceMissingMessage(self.Language));
 					canMake = false;
 				} else {//resources consumed or we are GM or no resources needed, create the item and place it to the pre-defined (or default) location
 					Item newItem = (Item) iDefToMake.Create(self.ReceivingContainer);
@@ -161,7 +161,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//check if we can even make it (i.e. we have necessary resources) otherwise we can attempt to make something without resources and in case 
 			//we failed the next attempt will begin afterwards (which makes no sense since we do not even have the resources...)
-			IResourceListItem missingResource;
+			IResourceListEntry missingResource;
 			bool canMake = true;
 			//first check the necessary resources to have (GM needn't have anything) (if any resources are needed)
 			if (!self.IsGM && iDefToMake.SkillMake != null && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
@@ -199,17 +199,17 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
-				"Its purpose is to make something related to the success of the particular skill (such as playing sound,"+
+				"Its purpose is to make something related to the success of the particular skill (such as playing sound," +
 				"computing some special item characteristics etc.)")]
 		protected virtual void DoSuccess(SkillSequenceArgs skillSeqArgs, Item newItem) {
 			//TODO pocitat nejake ty "exceptional" vlastnosti, podepisovani predmetu atp.
 			Character self = skillSeqArgs.Self;
 			self.SysMessage(skillSeqArgs.SkillDef.Defname + " success");
-		}		
+		}
 
 		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
-				"Its purpose is to check any additional pre-requisities for succesfull skill usage "+
-				"(e.g. for BS check if the anvil or forge is near etc...)."+
+				"Its purpose is to check any additional pre-requisities for succesfull skill usage " +
+				"(e.g. for BS check if the anvil or forge is near etc...)." +
 				"Return false if the trigger above should be cancelled or true if we can continue")]
 		protected virtual bool DoCheckSpecials(SkillSequenceArgs skillSeqArgs) {
 			return true;

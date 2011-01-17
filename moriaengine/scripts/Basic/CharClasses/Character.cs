@@ -1744,12 +1744,12 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		internal virtual bool On_UnActivateAbility(ActivableAbilityDef aDef, Ability ab) {
-			return false;
-		}
+		//internal virtual bool On_DeactivateAbility(ActivableAbilityDef aDef, Ability ab) {
+		//    return false;
+		//}
 
-		internal virtual void On_AbilityUnActivate(AbilityDef aDef, Ability ab) {
-		}
+		//internal virtual void On_AbilityDeactivate(AbilityDef aDef, Ability ab) {
+		//}
 		#endregion abilities
 
 		#region roles

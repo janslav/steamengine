@@ -120,7 +120,7 @@ namespace SteamEngine.CompiledScripts {
 			if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
 				if (cont == this.sourceThing) { //my own ability
 					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
-						Loc<EffectDurationLoc>.Get(cont.Language).AbilityUnActivated,
+						Loc<EffectDurationLoc>.Get(cont.Language).AbilityDeactivated,
 						this.EffectName));
 				} else {
 					string msg;
@@ -158,7 +158,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class EffectDurationLoc : CompiledLocStringCollection {
-		public string AbilityUnActivated = "Ability '{0}' deactivated.";
+		public string AbilityDeactivated = "Ability '{0}' deactivated.";
 
 		public string AbilityEffectEnded = "Effect of ability '{0}' ended.";
 		public string EvilAbilityEffectEnded = "The unpleasant effect of ability '{0}' ended.";

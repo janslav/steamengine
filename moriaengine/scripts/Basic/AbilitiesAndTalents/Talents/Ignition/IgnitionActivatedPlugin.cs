@@ -47,7 +47,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-
 		private static SpellDef s_meteor_swarm;
 		private static SpellDef MeteorSwarmDef {
 			get {

@@ -26,18 +26,16 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class SpellPowerBonusPlugin {
-
-		public void On_CauseSpellEffect(SpellEffectArgs spellEffectArgs) {
-			if (spellEffectArgs.CurrentTarget == spellEffectArgs.MainTarget) { //so that the power is only raised once. Won't work in case of mass spells that are ground-targettable - TODO?
-				if (spellEffectArgs.SpellDef == this.TypeDef.Spell) {
-					spellEffectArgs.SpellPower += (int) (spellEffectArgs.SpellPower * this.EffectPower); //apply our effect on the spellpower
-				}
+	public partial class CoolDownSpeedupPlugin {
+		public void On_ActivateAbility(AbilityDef ad, Ability a) {
+			if (ad == this.TypeDef.Ability) {
+				//move the lastusage time backwards
+				a.LastUsage = Globals.TimeAsSpan - TimeSpan.FromSeconds(ad.Cooldown * this.EffectPower);
 			}
 		}
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class SpellPowerBonusPluginDef {
+	public partial class CoolDownSpeedupPluginDef {
 	}
 }

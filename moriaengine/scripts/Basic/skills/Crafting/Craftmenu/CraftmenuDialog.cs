@@ -30,15 +30,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static TagKey tkInputIds = TagKey.Acquire("_cm_input_ids_");
 		private static int width = 600;
 
-        private static TagKey tkLastCat;
-        public static TagKey TkLastCat {
-            get {
-                if (tkLastCat == null) {
-                    tkLastCat = TagKey.Acquire(D_Craftmenu.tkCraftmenuLastposPrefix);
-                }
-                return tkLastCat;
-            }
-        }
+		private static TagKey tkLastCat;
+		public static TagKey TkLastCat {
+			get {
+				if (tkLastCat == null) {
+					tkLastCat = TagKey.Acquire(D_Craftmenu.tkCraftmenuLastposPrefix);
+				}
+				return tkLastCat;
+			}
+		}
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			sendTo.SysMessage("Co chceš vyrobit?");
@@ -130,7 +130,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					if (reses != null) {//only if we have any resources...
 						int spaceLength = ImprovedDialog.TextLength(" ");
 						int lastColPos = spaceLength; //relative position in the resources column (beginning one space from the border)
-						foreach (IResourceListItemMultiplicable rlItm in reses.MultiplicablesSublist) {
+						foreach (IResourceListEntry_ItemCounter rlItm in reses.MultiplicablesSublist) {
 							ItemResource itmRes = rlItm as ItemResource;
 							if (itmRes != null) {//add count + item picture
 								string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2spaces
@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								TriggerGroupResource tgrRes = rlItm as TriggerGroupResource;
 								if (tgrRes != null) {
 									string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2 spaces
-									textToShow += tgrRes.DesiredCount.ToString() + " " + tgrRes.Name;
+									textToShow += tgrRes.DesiredCount.ToString() + " " + ItemTypeNames.GetPrettyName(tgrRes.triggerGroup);
 									dlg.LastTable[rowCntr, resourcesColumn] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 									//prepare next offset:
 									lastColPos += spaceLength + ImprovedDialog.TextLength(textToShow);
@@ -322,16 +322,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-        public static void Craftmenu(Character self, CraftingSkillDef skill) {
-            TagKey tkKey = TagKey.Acquire(tkCraftmenuLastposPrefix);
-            Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(tkKey);
-            CraftmenuCategory prevCat = null;
-            if (lastPosDict != null && skill != null) {
-                prevCat = lastPosDict[skill];
-            }
-            if (prevCat != null) {//some bookmark for this skill exist... use it
-                self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
-            } else if (skill != null) {//no bookmark, open the main skill category
+		public static void Craftmenu(Character self, CraftingSkillDef skill) {
+			TagKey tkKey = TagKey.Acquire(tkCraftmenuLastposPrefix);
+			Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(tkKey);
+			CraftmenuCategory prevCat = null;
+			if (lastPosDict != null && skill != null) {
+				prevCat = lastPosDict[skill];
+			}
+			if (prevCat != null) {//some bookmark for this skill exist... use it
+				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
+			} else if (skill != null) {//no bookmark, open the main skill category
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName) skill.Id]));
 			} else { //default craftmenu opening (selection of skills)
 				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);

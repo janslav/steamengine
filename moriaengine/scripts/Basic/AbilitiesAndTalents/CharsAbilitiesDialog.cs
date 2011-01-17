@@ -231,7 +231,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //de-activate ability (dostupne jen kdyz abilita bezela) - pro Activable Ability
-						((ActivableAbilityDef)ab.Def).UnActivate((Character) gi.Focus);
+						((ActivableAbilityDef)ab.Def).Deactivate((Character) gi.Focus);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //abilitydef info

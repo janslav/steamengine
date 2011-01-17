@@ -6,3 +6,4 @@ SpellEffecEnded                 = Effect of spell '{0}' ended.
 EvilSpellEffecEnded             = The unpleasant effect of spell '{0}' ended.
 GoodSpellEffecEnded             = The pleasant effect of spell '{0}' ended.
 UnspecifiedEffectEnded          = Effect of '{0}' ended.
+AbilityDeactivated              = Ability '{0}' deactivated.

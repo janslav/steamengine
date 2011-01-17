@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 			//skillmake (skills, tools etc.)
 			ResourcesList requir = SkillMake;
 			if (requir != null) {
-				IResourceListItem missingItem;
+				IResourceListEntry missingItem;
 				if (!requir.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
 					return false;
 				}
@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 			//resources (necessary items)
 			ResourcesList reslist = Resources;
 			if (reslist != null) {
-				IResourceListItem missingItem;
+				IResourceListEntry missingItem;
 				if (!reslist.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
 					return false;
 				}

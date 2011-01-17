@@ -1,0 +1,11 @@
+//assassin's talent
+[PassiveAbilityDef a_crushing_bonus]
+Name="Crushing Bonus"
+EffectPower=0.02 // +10% dmg at 5 points
+
+PluginKey = @@crushing_bonus
+PluginDef = p_crushing_bonus
+
+[WeaponSkillDmgBonusPluginDef p_crushing_bonus]
+Skill = skill_crushing
+

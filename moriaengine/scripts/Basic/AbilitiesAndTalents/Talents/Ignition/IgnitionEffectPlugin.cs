@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 			if (self != null) {
 				EffectFactory.StationaryEffect(self, 0x36BD, 20, 10);
 				SoundCalculator.PlayHurtSound(self);
-			}			
+			}
 		}
 	}
 
@@ -101,8 +101,8 @@ namespace SteamEngine.CompiledScripts {
 
 
 	[Dialogs.ViewableClass]
-		public partial class IgnitionEffectPluginDef {
-		public static readonly IgnitionEffectPluginDef instance = 
+	public partial class IgnitionEffectPluginDef {
+		public static readonly IgnitionEffectPluginDef instance =
 			(IgnitionEffectPluginDef) new IgnitionEffectPluginDef("p_ignitionEffect", "C# scripts", -1).Register();
 	}
 }
