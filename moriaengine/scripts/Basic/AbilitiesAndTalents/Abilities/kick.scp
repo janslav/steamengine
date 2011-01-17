@@ -3,7 +3,7 @@ Name="Kick"
 EffectPower=0.2 //multiplier for damage. Relevant effect of kick is skill abort
 Cooldown = 2 * 60
 Chance = 0.09 //90% at 10 points
-ResourcesConsumed = 80 stam
+Resources = 80 stam
 
 PluginKey = @@kick
 PluginDef = p_kick

@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 
 				//if Blessed || YellowHealthbar
 				//	|= 0x08;
-				
+
 
 				return (byte) ret;
 			}
@@ -342,7 +342,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Destroy();
 		}
 		#endregion Mount/Rider stuff
-		
+
 		#region Pets / ownership
 		public bool IsOwnerOf(Character cre) {
 			return cre.IsPetOf(this);
@@ -1166,12 +1166,12 @@ namespace SteamEngine.CompiledScripts {
 			this.CauseDeath((Character) Globals.SrcCharacter);
 		}
 
-        private static TagKey DeathTimeTK = TagKey.Acquire("_deathTime_");
+		private static TagKey DeathTimeTK = TagKey.Acquire("_deathTime_");
 
 		public virtual void On_Death(Character killedBy) {
 			//stop regenerating
 			this.DeletePlugin(RegenerationPlugin.regenerationsPluginKey);
-            this.SetTag(DeathTimeTK, Globals.TimeAsSpan);
+			this.SetTag(DeathTimeTK, Globals.TimeAsSpan);
 		}
 
 		private static TriggerKey deathTK = TriggerKey.Acquire("death");
@@ -1246,27 +1246,27 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-        [Summary("Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo")]
-        public void Resurrect() {			
+		[Summary("Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo")]
+		public void Resurrect() {
 			Corpse c = null;
 			foreach (Thing nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
 				c = nearbyThing as Corpse;
-                if (c != null) {
-                    if (c.Owner == this) {
-                        break;
-                    } else {
-                        c = null;
-                    }
-                }
+				if (c != null) {
+					if (c.Owner == this) {
+						break;
+					} else {
+						c = null;
+					}
+				}
 			}
 
-			this.Resurrect(c);			
+			this.Resurrect(c);
 		}
 
-        [Summary("Resne a pokud je telo tak i lootne telo.")]
-        [Remark("Vzajemna pozice mezi telem a mrtve postavy neni kontrolovana")]
-        [Param(0, "Telo jehoz majitel je this. Muze byt null.")]
-        public void Resurrect(Corpse c) {
+		[Summary("Resne a pokud je telo tak i lootne telo.")]
+		[Remark("Vzajemna pozice mezi telem a mrtve postavy neni kontrolovana")]
+		[Param(0, "Telo jehoz majitel je this. Muze byt null.")]
+		public void Resurrect(Corpse c) {
 			if (this.Flag_Dead) {
 				if (c != null && !c.IsDeleted) {
 					c.ReturnStuffToChar(this);
@@ -1285,7 +1285,7 @@ namespace SteamEngine.CompiledScripts {
 					PreparedPacketGroups.SendResurrectMessage(state.Conn);
 				}
 			}
-        }
+		}
 
 		private static TagKey oColorTK = TagKey.Acquire("_ocolor_");
 		public int OColor {
@@ -1804,9 +1804,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public void AddHits(int howManyHits) {
-			int hits = this.Hits + howManyHits;
-			this.Hits = (short) Math.Min(0, Math.Max(this.MaxHits, hits));
+		public void AddHits(int howMany) {
+			int newCount = this.Hits + howMany;
+			this.Hits = (short) Math.Min(0, Math.Max(this.MaxHits, newCount));
+		}
+
+		public void AddMana(int howMany) {
+			int newCount = this.Mana + howMany;
+			this.Mana = (short) Math.Min(0, Math.Max(this.MaxMana, newCount));
+		}
+
+		public void AddStamina(int howMany) {
+			int newCount = this.Stam + howMany;
+			this.Stam = (short) Math.Min(0, Math.Max(this.MaxStam, newCount));
 		}
 
 		private static TriggerKey disruptionTK = TriggerKey.Acquire("disruption");
@@ -2047,7 +2057,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public Item Hair {
 			get {
-				return (Item) this.FindLayer( LayerNames.Hair);
+				return (Item) this.FindLayer(LayerNames.Hair);
 			}
 		}
 

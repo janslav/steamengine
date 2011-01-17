@@ -1,4 +1,3 @@
-AbilityUnActivated              = Ability '{0}' deactivated.
 AbilityEffectEnded              = Effect of ability '{0}' ended.
 EvilAbilityEffectEnded          = The unpleasant effect of ability '{0}' ended.
 GoodAbilityEffectEnded          = The pleasant effect of ability '{0}' ended.

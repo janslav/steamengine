@@ -342,6 +342,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		protected override void On_AfterLoadFromScripts() {
+			base.On_AfterLoadFromScripts();
+
+			ResourcesList.ThrowIfNotConsumable(this.Resources);
+		}
+
 		public override void Unload() {
 			if (this.scriptedTriggers != null) {
 				this.scriptedTriggers.Unload();

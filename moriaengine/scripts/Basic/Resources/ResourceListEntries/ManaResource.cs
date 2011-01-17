@@ -69,6 +69,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		[Summary("Indicates whether this is a consumable resource")]
+		public bool IsConsumable { get { return true; } }
+
+		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		public void Consume(Character ch) {
+			if (this.AsPercentage) {
+				ch.AddMana(-(int) Math.Round(ch.Mana * this.DesiredCount / ch.MaxMana));
+			} else {
+				ch.AddMana(-(int) Math.Round(this.DesiredCount));
+			}
+		}
 		#endregion
 	}
 }

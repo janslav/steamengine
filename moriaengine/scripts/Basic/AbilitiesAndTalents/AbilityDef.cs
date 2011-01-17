@@ -37,8 +37,8 @@ namespace SteamEngine.CompiledScripts {
 
 		private FieldValue chance;
 		private FieldValue cooldown;
-		private FieldValue resourcesConsumed;//resourcelist of resources to be consumed for ability using
-		private FieldValue resourcesPresent;//resourcelist of resources that player must have intending to run the ability
+		private FieldValue resources;//resourcelist of resources to be consumed for ability using
+		private FieldValue requirements;//resourcelist of resources that player must have intending to run the ability
 		private FieldValue effectPower;
 		private FieldValue effectDuration;
 
@@ -61,6 +61,34 @@ namespace SteamEngine.CompiledScripts {
 		public static ICollection<AbilityDef> AllAbilities {
 			get {
 				return AllIndexedDefs;
+			}
+		}
+
+		public AbilityDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+			this.cooldown = InitTypedField("cooldown", 0, typeof(double));
+			this.chance = InitTypedField("chance", 1, typeof(double));
+			this.resources = InitTypedField("resources", null, typeof(ResourcesList));
+			this.requirements = InitTypedField("requirements", null, typeof(ResourcesList));
+			this.effectPower = InitTypedField("effectPower", 1.0, typeof(double));
+			this.effectDuration = InitTypedField("effectDuration", 5.0, typeof(double));
+		}
+
+		public ResourcesList Requirements {
+			get {
+				return (ResourcesList) this.requirements.CurrentValue;
+			}
+			set {
+				this.requirements.CurrentValue = value;
+			}
+		}
+
+		public ResourcesList Resources {
+			get {
+				return (ResourcesList) this.resources.CurrentValue;
+			}
+			set {
+				this.resources.CurrentValue = value;
 			}
 		}
 
@@ -236,7 +264,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//check resources present (if needed)
-			ResourcesList resPresent = resourcesPresent.CurrentValue as ResourcesList;
+			ResourcesList resPresent = this.Requirements;
 			if (resPresent != null) {
 				IResourceListEntry missingItem;
 				if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
@@ -247,7 +275,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//check consumable resources
-			ResourcesList resConsum = resourcesConsumed.CurrentValue as ResourcesList;
+			ResourcesList resConsum = this.Resources;
 			if (resConsum != null) {
 				//look to the backpack and among the items that we are wearing
 				IResourceListEntry missingItem;
@@ -341,16 +369,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Trigger methods
 
-		public AbilityDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {
-			this.cooldown = InitTypedField("cooldown", 0, typeof(double));
-			this.chance = InitTypedField("chance", 1, typeof(double));
-			this.resourcesConsumed = InitTypedField("resourcesConsumed", null, typeof(ResourcesList));
-			this.resourcesPresent = InitTypedField("resourcesPresent", null, typeof(ResourcesList));
-			this.effectPower = InitTypedField("effectPower", 1.0, typeof(double));
-			this.effectDuration = InitTypedField("effectDuration", 5.0, typeof(double));
-		}
-
 		#region Loading from scripts
 		public override void LoadScriptLines(PropsSection ps) {
 			PropsLine p = ps.PopPropsLine("name");
@@ -363,6 +381,12 @@ namespace SteamEngine.CompiledScripts {
 				ps.HeaderName = "t__" + this.Defname + "__";
 				this.scriptedTriggers = ScriptedTriggerGroup.Load(ps);
 			}
+		}
+
+		protected override void On_AfterLoadFromScripts() {
+			base.On_AfterLoadFromScripts();
+
+			ResourcesList.ThrowIfNotConsumable(this.Resources);
 		}
 
 		public override void Unload() {

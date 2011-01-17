@@ -3,7 +3,7 @@ Name="Energy Shield"
 EffectPower=30 //30 hitpoints per ability point
 EffectDuration=60
 Cooldown = 4 * 60
-ResourcesConsumed = 60 mana, 1 i_amethyst
+Resources = 60 mana, 1 i_amethyst
 
 PluginKey = @@energyShield
 PluginDef = p_energyShield

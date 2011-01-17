@@ -1331,7 +1331,7 @@ DESCRIPTION = Stew
 TYPE = T_FOOD
 //DUPELIST = 0971,0972,0973 // commented out by Converter 
 WEIGHT = 10
-RESOURCES = 1 i_water,  1 i_pot, 1 i_flour_sack,  //some resources were fixed by converter 
+RESOURCES = 1 i_water,  1 i_pot, 1 i_flour_sack  //some resources were fixed by converter 
 DEFNAME = i_bowl_stew
 //VALUE = {2 4} // commented out by Converter 
 

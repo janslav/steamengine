@@ -7,7 +7,7 @@ PluginKey = @@crushing_delayspeedup
 PluginDef = p_crushing_delayspeedup
 
 [SkillDelaySpeedupPluginDef p_crushing_delayspeedup]
-Ability = skill_crushing
+Skill = skill_crushing
 
 //assassin's talent
 [PassiveAbilityDef a_swordsmanship_delayspeedup]
@@ -18,4 +18,4 @@ PluginKey = @@swordsmanship_delayspeedup
 PluginDef = p_swordsmanship_delayspeedup
 
 [SkillDelaySpeedupPluginDef p_swordsmanship_delayspeedup]
-Ability = skill_swordsmanship
+Skill = skill_swordsmanship

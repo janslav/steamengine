@@ -217,6 +217,7 @@
     <Compile Include="Basic\Regions\FlaggedRegion.cs" />
     <Compile Include="Basic\Resources\IResourceListEntry.cs" />
     <Compile Include="Basic\Resources\ItemCounter.cs" />
+    <Compile Include="Basic\Resources\ResourceItemFinder.cs" />
     <Compile Include="Basic\Resources\ResourceListEntries\AbilityResource.cs" />
     <Compile Include="Basic\Resources\ResourceListEntries\DexResource.cs" />
     <Compile Include="Basic\Resources\ResourceListEntries\IntResource.cs" />
@@ -232,7 +233,6 @@
     <Compile Include="Basic\Resources\ResourceListEntries\VitResource.cs" />
     <Compile Include="Basic\Resources\ResourcesListParser.cs" />
     <Compile Include="Basic\Resources\ResourcesListSaver.cs" />
-    <Compile Include="Basic\Resources\Searching\ResourceItemFinder.cs" />
     <Compile Include="Basic\Resources\ResourcesList.cs" />
     <Compile Include="Basic\Roles\Guild\Guild.cs" />
     <Compile Include="Basic\Roles\Guild\GuildMembership.cs" />

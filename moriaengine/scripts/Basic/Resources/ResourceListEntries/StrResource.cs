@@ -66,6 +66,13 @@ namespace SteamEngine.CompiledScripts {
 			return chr.Str >= DesiredCount;
 		}
 
+		[Summary("Indicates whether this is a consumable resource")]
+		public bool IsConsumable { get { return false; } }
+
+		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		public void Consume(Character ch) {
+			throw new InvalidOperationException("Strength can not be consumed as a resource.");
+		}
 		#endregion
 	}
 }

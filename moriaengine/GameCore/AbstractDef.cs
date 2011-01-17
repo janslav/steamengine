@@ -38,14 +38,14 @@ namespace SteamEngine {
 
 		#region Accessors
 		public string Filename {
-			get { 
-				return this.filename; 
+			get {
+				return this.filename;
 			}
 		}
 
 		public int HeaderLine {
-			get { 
-				return this.headerLine; 
+			get {
+				return this.headerLine;
 			}
 		}
 
@@ -372,7 +372,7 @@ namespace SteamEngine {
 		public static bool ExistsDefType(string name) {
 			return constructorsByTypeName.ContainsKey(name);
 		}
-		
+
 		protected AbstractDef(string defname, string filename, int headerLine)
 			: base(defname) {
 			this.filename = filename;
@@ -554,7 +554,7 @@ namespace SteamEngine {
 				case "subsection":
 				case "description":
 					return;
-					//axis props are ignored. Or shouldnt they? :)
+				//axis props are ignored. Or shouldnt they? :)
 				default:
 					fieldValue = (FieldValue) fieldValues[param];
 					if (fieldValue != null) {
@@ -562,6 +562,20 @@ namespace SteamEngine {
 						return;
 					}
 					throw new ScriptException("Invalid data '" + LogStr.Ident(param) + "' = '" + LogStr.Number(args) + "'.");
+			}
+		}
+
+		internal static void LoadingFinished() {
+
+			//load postponed lines. That are those which are not initialised by the start of the loading.
+			//this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
+			//this way, for example ProfessionDef definition can list skills and abilities
+			foreach (AbstractScript script in AllScripts) {
+				AbstractDef def = script as AbstractDef;
+				if (def != null) {
+					def.LoadPostponedScriptLines();
+					def.Trigger_AfterLoadFromScripts();
+				}
 			}
 		}
 
@@ -580,17 +594,20 @@ namespace SteamEngine {
 			}
 		}
 
-		internal static void LoadingFinished() {
-
-			//load postponed lines. That are those which are not initialised by the start of the loading.
-			//this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
-			//this way, for example ProfessionDef definition can list skills and abilities
-			foreach (AbstractScript script in AllScripts) {
-				AbstractDef def = script as AbstractDef;
-				if (def != null) {
-					def.LoadPostponedScriptLines();
-				}
+		private void Trigger_AfterLoadFromScripts() {
+			try {
+				this.On_AfterLoadFromScripts();
+			} catch (FatalException) {
+				throw;
+			} catch (SEException se) {
+				se.TryAddFileLineInfo(this.filename, this.headerLine);
+				Logger.WriteError(se);
+			} catch (Exception e) {
+				Logger.WriteError(this.filename, this.headerLine, e);
 			}
+		}
+
+		virtual protected void On_AfterLoadFromScripts() {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
