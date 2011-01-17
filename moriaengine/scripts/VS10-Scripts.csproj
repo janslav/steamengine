@@ -385,6 +385,7 @@
     <Compile Include="Basic\TimerPlugin.cs" />
     <Compile Include="Basic\utilities\ItemTypeNames.cs" />
     <Compile Include="Optional\StorageBoxes\GemBox.cs" />
+    <Compile Include="Optional\StorageBoxes\PotionKeg.cs" />
     <Compile Include="Optional\StorageBoxes\RegBox.cs" />
     <Compile Include="Optional\StorageBoxes\storageBoxes.Generated.cs" />
     <Compile Include="Optional\Treasures\Treasures.cs" />
