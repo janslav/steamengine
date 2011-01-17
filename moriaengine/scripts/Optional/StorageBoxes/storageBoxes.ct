@@ -31,8 +31,8 @@ Vars:	//vars defined in the class, so they basically do what tags do, but better
 
 [ThingTemplate PotionKeg : Item]
 Def:	//vars on the def
-	public int capacity 1000
+	public int capacity = 1000
 Vars:	//vars defined in the class, so they basically do what tags do, but better
 	public int potionsCount = 0
-	public int PotionDef potionDef = null
+	public PotionDef potionDef = null
 	
