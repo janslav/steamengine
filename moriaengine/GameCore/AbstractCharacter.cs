@@ -1446,6 +1446,54 @@ namespace SteamEngine {
 			}
 		}
 
+		public string Speech {
+			get {
+				return Convert.ToString(this.Argv[1]);
+			}
+		}
+
+		public int ClilocSpeech {
+			get {
+				return Convert.ToInt32(this.Argv[2]);
+			}
+		}
+
+		public SpeechType Type {
+			get {
+				return (SpeechType) Convert.ToInt32(this.Argv[3]);
+			}
+		}
+
+		public int Color {
+			get {
+				return Convert.ToInt32(this.Argv[4]);
+			}
+		}
+
+		public ClientFont Font {
+			get {
+				return (ClientFont) Convert.ToInt32(this.Argv[5]);
+			}
+		}
+
+		public string Lang {
+			get {
+				return Convert.ToString(this.Argv[6]);
+			}
+		}
+
+		public int[] ClilocKeywords {
+			get {
+				return (int[]) this.Argv[7];
+			}
+		}
+
+		public string[] ClilocArgs {
+			get {
+				return (string[]) this.Argv[8];
+			}
+		}
+
 		public AbstractCharacter ExclusiveListener {
 			get {
 				return (AbstractCharacter) this.Argv[1];
@@ -1455,57 +1503,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public string Speech {
-			get {
-				return Convert.ToString(this.Argv[2]);
-			}
-		}
-
-		public int ClilocSpeech {
-			get {
-				return Convert.ToInt32(this.Argv[3]);
-			}
-		}
-
-		public SpeechType Type {
-			get {
-				return (SpeechType) Convert.ToInt32(this.Argv[4]);
-			}
-		}
-
-		public int Color {
-			get {
-				return Convert.ToInt32(this.Argv[5]);
-			}
-		}
-
-		public ClientFont Font {
-			get {
-				return (ClientFont) Convert.ToInt32(this.Argv[6]);
-			}
-		}
-
-		public string Lang {
-			get {
-				return Convert.ToString(this.Argv[7]);
-			}
-		}
-
-		public int[] ClilocKeywords {
-			get {
-				return (int[]) this.Argv[8];
-			}
-		}
-
-		public string[] ClilocArgs {
-			get {
-				return (string[]) this.Argv[9];
-			}
-		}
-
-		public SpeechArgs(AbstractCharacter speaker, AbstractCharacter exclusiveListener,
-			string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, string lang, int[] clilocKeywords, string[] clilocArgs) :
-			base(speaker, exclusiveListener, speech, clilocSpeech, type, color, font, lang, clilocKeywords, clilocArgs) {
+		public SpeechArgs(AbstractCharacter speaker, string speech, int clilocSpeech, 
+				SpeechType type, int color, ClientFont font, string lang, int[] clilocKeywords, string[] clilocArgs) :
+			base(speaker, speech, clilocSpeech, type, color, font, lang, clilocKeywords, clilocArgs, null, false) {
 		}
 	}
 }
