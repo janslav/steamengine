@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class FadingEffectTickIntervalMassSetting : 
+	public class FadingEffectTickIntervalMassSetting :
 		MassSettings_ByClass_SingleField<FadingEffectDurationPluginDef, double> {
 
 		public override string Name { get { return "Tick intervaly podle typu efektu v sekundách"; } }
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class FadingEffectMaxPowerMassSetting :
-		MassSettings_ByClass_SingleField<FadingEffectDurationPluginDef, int> {
+		MassSettings_ByClass_SingleField<FadingEffectDurationPluginDef, double> {
 
 		public override string Name { get { return "Max power podle typu efektu, tj. sèítací strop. Použit pøi opakované aplikaci stejneho efektu na jednoho chudáka."; } }
 
@@ -121,11 +121,11 @@ namespace SteamEngine.CompiledScripts {
 				: base(index) {
 			}
 
-			internal override void SetValue(FadingEffectDurationPluginDef def, int value) {
+			internal override void SetValue(FadingEffectDurationPluginDef def, double value) {
 				def.MaxPower = value;
 			}
 
-			internal override int GetValue(FadingEffectDurationPluginDef def) {
+			internal override double GetValue(FadingEffectDurationPluginDef def) {
 				return def.MaxPower;
 			}
 		}
@@ -193,9 +193,11 @@ namespace SteamEngine.CompiledScripts {
 	public class ProjectilePoisoningEfficiencyMassSetting :
 		MassSettings_ByClass_SingleField<ProjectileDef, double> {
 
-		public override string Name { get { 
-			return "Efektivita poisoningu pro jednotlivé druhy projektilù. 1.0 = 100% "; 
-		} }
+		public override string Name {
+			get {
+				return "Efektivita poisoningu pro jednotlivé druhy projektilù. 1.0 = 100% ";
+			}
+		}
 
 		protected class ProjectilePoisoningEfficiencyFieldView : FieldView_ByClass_SingleField {
 			internal ProjectilePoisoningEfficiencyFieldView(int index)
@@ -219,9 +221,11 @@ namespace SteamEngine.CompiledScripts {
 	public class ProjectilePoisoningDifficultyMassSetting :
 		MassSettings_ByClass_SingleField<ProjectileDef, int> {
 
-		public override string Name { get { 
-			return "Obtížnost poisoningu pro jednotlivé druhy projektilù. 0 = nelze otrávit, 1000 = 100% "; 
-		} }
+		public override string Name {
+			get {
+				return "Obtížnost poisoningu pro jednotlivé druhy projektilù. 0 = nelze otrávit, 1000 = 100% ";
+			}
+		}
 
 		protected class ProjectilePoisoningDifficultyFieldView : FieldView_ByClass_SingleField {
 			internal ProjectilePoisoningDifficultyFieldView(int index)
@@ -243,9 +247,11 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class WeaponPoisoningDifficultyMassSetting : MassSettings_ByModel<WeaponDef, int> {
-		public override string Name { get { 
-			return "Obtížnost poisoningu pro zbranì dle modelu. 0 = nelze otrávit, 1000 = 100% "; 
-		} }
+		public override string Name {
+			get {
+				return "Obtížnost poisoningu pro zbranì dle modelu. 0 = nelze otrávit, 1000 = 100% ";
+			}
+		}
 
 		protected class WeaponPoisoningDifficultyFieldView : FieldView_ByModel {
 			internal WeaponPoisoningDifficultyFieldView(int index)
@@ -267,9 +273,11 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class WeaponPoisoningEfficiencyMassSetting : MassSettings_ByModel<WeaponDef, double> {
-		public override string Name { get {
-			return "Efektivita poisoningu pro zbranì dle modelu. 1.0 = 100% "; 
-		} }
+		public override string Name {
+			get {
+				return "Efektivita poisoningu pro zbranì dle modelu. 1.0 = 100% ";
+			}
+		}
 
 		protected class WeaponPoisoningDifficultyFieldView : FieldView_ByModel {
 			internal WeaponPoisoningDifficultyFieldView(int index)
@@ -291,9 +299,11 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class WeaponPoisoningCapacityMassSetting : MassSettings_ByModel<WeaponDef, int> {
-		public override string Name {get {
-			return "Poisoning kapacita zbraní - Kolikrát lze udeøit než se jed na zbrani vyèerpá ";
-		} }
+		public override string Name {
+			get {
+				return "Poisoning kapacita zbraní - Kolikrát lze udeøit než se jed na zbrani vyèerpá ";
+			}
+		}
 
 		protected class WeaponPoisoningDifficultyFieldView : FieldView_ByModel {
 			internal WeaponPoisoningDifficultyFieldView(int index)

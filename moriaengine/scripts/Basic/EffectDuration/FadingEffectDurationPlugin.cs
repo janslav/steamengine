@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 
 					double maxDuration = this.MaxTicks * tickSeconds;
 					double newDuration = Math.Min(previous.Timer + duration, maxDuration);
-					double newPower = Math.Min(previous.EffectPower + effectPower, this.MaxPower);
+					double newPower = Math.Min(previous.EffectPower + effectPower, this.GetMaxPower(source, target, sourceType));
 
 					//reinit with new duration and effect. Hope it doesn't break anything :D
 					//also we change it's source, so that the new attacker is responsible now
@@ -89,6 +89,10 @@ namespace SteamEngine.CompiledScripts {
 			effect.Init(source, sourceType, effectPower,
 				TimeSpan.FromSeconds(duration));
 			target.AddPlugin(key, effect);
+		}
+
+		public virtual double GetMaxPower(Thing source, Character target, EffectFlag sourceType) {
+			return this.MaxPower;
 		}
 	}
 

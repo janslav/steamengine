@@ -13,10 +13,8 @@
 //	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
+[ThingTemplate PlayerVendor : NPC]
+Def:	//vars on the def
 
-[PluginTemplate FadingEffectDurationPlugin : EffectDurationPlugin]
-Def:
-	double tickInterval = 5
-	int maxTicks = 60
-	double maxPower = 1000
-	PluginKey pluginKey = null
+Vars:	//vars defined in the class, so they basically do what tags do, but better
+

@@ -112,11 +112,11 @@ a_mastery_swordsmanship = 2, 1, 5
 //Provocation +25% = 2, 3, 5
 a_poisoning_bonus = 2, 4, 5
 
-//Oslepeni - uder 	5
-//Oslepeni CD -10 sek 	5
-//Bleed - zvednuti stropu 	5
-//Painful bleed +5% sance 	5
-//Painful bleed +5% efekt 	5
+//Oslepeni - uder = 3, 0, 5
+//Oslepeni CD -10 sek  = 3, 1, 5
+a_bleeding_maxpower_bonus = 3, 2, 5
+//Painful bleed +5% sance = 3, 4, 5
+//Painful bleed +5% efekt =3, 4, 5
 
 //Probodnuti +10% dmg 	5
 //Probodnuti -20% SP 	5
