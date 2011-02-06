@@ -380,10 +380,11 @@
     <Compile Include="Basic\PlayerCreation.cs" />
     <Compile Include="Basic\ScriptedAccount.cs" />
     <Compile Include="Basic\ScriptSector.cs" />
-    <Compile Include="Basic\Speech.cs" />
     <Compile Include="Basic\TemplateDef.cs" />
     <Compile Include="Basic\TimerPlugin.cs" />
     <Compile Include="Basic\utilities\ItemTypeNames.cs" />
+    <Compile Include="Optional\PlayerVendor\PlayerVendor.cs" />
+    <Compile Include="Optional\PlayerVendor\playerVendor.Generated.cs" />
     <Compile Include="Optional\StorageBoxes\GemBox.cs" />
     <Compile Include="Optional\StorageBoxes\PotionKeg.cs" />
     <Compile Include="Optional\StorageBoxes\RegBox.cs" />
@@ -685,6 +686,7 @@
     <None Include="converted\speech.def" />
     <None Include="defaults\chardefs\newCharDefsFromMuls.def" />
     <None Include="Optional\playerHelp.scp" />
+    <None Include="Optional\PlayerVendor\playerVendor.ct" />
     <None Include="Optional\StorageBoxes\storageBoxes.ct" />
     <None Include="Optional\StorageBoxes\storageBoxes.def" />
     <None Include="Optional\Treasures\treasures.ct" />
@@ -784,4 +786,8 @@
       <HintPath>..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Optional\PlayerVendor\playerVendor.scp" />
+  </ItemGroup>
+  <ItemGroup />
 </Project>

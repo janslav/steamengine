@@ -147,7 +147,7 @@ namespace SteamEngine {
 				things.Add(this);//sets uid
 				this.Resend();
 			} else {
-				this.uid = uidBeingLoaded;				
+				this.uid = uidBeingLoaded;
 			}
 			Globals.LastNew = this;
 		}
@@ -502,9 +502,9 @@ namespace SteamEngine {
 			}
 		}
 
-		public override bool IsDeleted { 
-			get { 
-				return (this.uid == -1); 
+		public override bool IsDeleted {
+			get {
+				return (this.uid == -1);
 			}
 		}
 
@@ -1630,11 +1630,11 @@ namespace SteamEngine {
 		public void Speech(string msg, int clilocMsg, SpeechType type, int color, ClientFont font, string language, int[] keywords, string[] args) {
 			this.ThrowIfDeleted();
 
-			AbstractCharacter self = this as AbstractCharacter;
+			AbstractCharacter speaker = this as AbstractCharacter;
 
-			bool selfIsPlayer = ((self != null) && (self.IsPlayer));
+			bool selfIsPlayer = ((speaker != null) && (speaker.IsPlayer));
 			if (selfIsPlayer) {
-				bool cancel = self.Trigger_Say(msg, type, keywords);
+				bool cancel = speaker.Trigger_Say(msg, type, keywords);
 				if (cancel) {
 					return;
 				}
@@ -1661,28 +1661,39 @@ namespace SteamEngine {
 			}
 
 			Map map = this.GetMap();
-			ushort x = this.point4d.x;
-			ushort y = this.point4d.y;
-
+			IEnumerable<AbstractCharacter> chars;
+			SpeechArgs sa = null;
 			if (selfIsPlayer) {
-				foreach (AbstractCharacter chr in map.GetCharsInRange(x, y, dist)) {
-					chr.Trigger_Hear(self, msg, clilocMsg, type, color, font, language, keywords, args);
-				}
-			} else {//item/npc is speaking... no triggers fired, just send it to players
-				PacketGroup pg = null;
-				foreach (TcpConnection<GameState> conn in map.GetConnectionsInRange(x, y, dist)) {
-					if (pg == null) {
-						pg = PacketGroup.AcquireMultiUsePG();
-						if (msg == null) {
-							pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocMsg, this.Name, type, font, color,
-								args == null ? null : string.Join("\t", args));
-						} else {
-							pg.AddPacket(PacketSequences.PrepareMessagePacket(
-								this, msg, this.Name, type, font, color, language));
+				chars = map.GetCharsInRange(this.point4d.x, this.point4d.y, dist);
+				sa = new SpeechArgs(speaker, null, msg, clilocMsg, type, color, font, language, keywords, args);
+			} else {
+				chars = map.GetPlayersInRange(this.point4d.x, this.point4d.y, dist);
+			}
+
+			PacketGroup pg = null;
+			try {
+				foreach (AbstractCharacter listener in chars) {
+					if (selfIsPlayer) {
+						listener.Trigger_Hear(sa);
+					}// else item/npc is speaking... no triggers fired, just send it to players
+
+					var state = listener.GameState;
+					if (state != null) {
+						if (pg == null) {
+							pg = PacketGroup.AcquireMultiUsePG();
+							if (msg == null) {
+								pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(this, clilocMsg, this.Name, type, font, color,
+									args == null ? null : string.Join("\t", args));
+							} else {
+								pg.AddPacket(PacketSequences.PrepareMessagePacket(
+									this, msg, this.Name, type, font, color, language));
+							}
 						}
+
+						state.Conn.SendPacketGroup(pg);
 					}
-					conn.SendPacketGroup(pg);
 				}
+			} finally {
 				if (pg != null) {
 					pg.Dispose();
 				}
@@ -1736,13 +1747,13 @@ namespace SteamEngine {
 
 		public AbstractCharacter ClickingChar {
 			get {
-				return this.clickingChar; 
+				return this.clickingChar;
 			}
 		}
 
 		public Thing Target {
-			get { 
-				return this.target; 
+			get {
+				return this.target;
 			}
 		}
 	}

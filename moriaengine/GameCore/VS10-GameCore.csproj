@@ -76,6 +76,9 @@
     <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs" />
     <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs" />
     <Compile Include="3rdParty\JMBucknall.Containers\PriorityQueue.cs" />
+    <Compile Include="CompiledScripts\CompiledSpeechDef.cs" />
+    <Compile Include="LScript\ScriptedSpeechDef.cs" />
+    <Compile Include="SpeechDef.cs" />
     <Compile Include="AI\AI.cs" />
     <Compile Include="AI\PathFinder.cs" />
     <Compile Include="AuxServerPipe\AuxServerPipeClient.cs" />

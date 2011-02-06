@@ -38,7 +38,7 @@ namespace SteamEngine {
 	//-SL
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
 	public enum Direction : byte {
-		North = 0, Default = North, 
+		North = 0, Default = North,
 		NorthEast = 1,
 		East = 2,
 		SouthEast = 3,
@@ -140,6 +140,12 @@ namespace SteamEngine {
 		Command = 15,
 	}
 
+	public enum SpeechResult {
+		Ignored = 0,
+		ActedUpon = 1,
+		ActedUponExclusively = 2
+	}
+
 	//only 0 and 3 normally used
 	public enum ClientFont {
 		Server = 0, Wide = 0,
@@ -147,7 +153,7 @@ namespace SteamEngine {
 		ShadowFaceBig = 2,
 		Regular = 3, Unified = 3, //ascii the same as unicode, more or less
 		FancyTall = 4,
-		FancyNoColor = 5, 
+		FancyNoColor = 5,
 		FancyBorderLess = 6,
 		FancyShadowFace = 7,
 		Runic = 8,

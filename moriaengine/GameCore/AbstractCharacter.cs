@@ -108,7 +108,7 @@ namespace SteamEngine {
 			this.name = copyFrom.name;
 			this.directionAndFlags = copyFrom.directionAndFlags;
 			Globals.LastNewChar = this;
-			this.GetMap().Add(this);			
+			this.GetMap().Add(this);
 		}
 
 		//The client apparently doesn't want characters' uids to be flagged with anything.
@@ -579,7 +579,7 @@ namespace SteamEngine {
 		public void WriteLine(string line) {
 			this.SysMessage(line);
 		}
-		
+
 		public Language Language {
 			get {
 				GameState state = this.GameState;
@@ -730,7 +730,7 @@ namespace SteamEngine {
 				}
 
 				//move char, and send 0x77 to players nearby
-				CharSyncQueue.AboutToChangePosition(this, mt); 
+				CharSyncQueue.AboutToChangePosition(this, mt);
 
 				this.point4d.SetXYZ(newX, newY, newZ);
 				this.ChangedP(oldPoint, mt);
@@ -956,40 +956,15 @@ namespace SteamEngine {
 		#region Speech
 		//this method fires the [speech] triggers
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal void Trigger_Hear(AbstractCharacter speaker, string speech, int clilocSpeech,
-				SpeechType type, int color, ClientFont font, string lang, int[] keywords, string[] args) {
-
-			ScriptArgs sa = new ScriptArgs(speaker, speech, clilocSpeech, type, color, font, lang, keywords, args);
+		internal void Trigger_Hear(SpeechArgs sa) {
 			this.TryTrigger(TriggerKey.hear, sa);
-			object[] saArgv = sa.Argv;
-
-			speech = ConvertTools.ToString(saArgv[1]);
-			clilocSpeech = ConvertTools.ToInt32(saArgv[2]);
-			type = (SpeechType) ConvertTools.ToInt32(saArgv[3]);
-			color = ConvertTools.ToInt32(saArgv[4]);
-			font = (ClientFont) ConvertTools.ToInt32(saArgv[5]);
-			lang = ConvertTools.ToString(saArgv[6]);
-			keywords = (int[]) saArgv[7];
-			args = (string[]) saArgv[8];
-
 			try {
-				this.On_Hear(speaker, speech, clilocSpeech, type, color, font, lang, keywords, args);
+				this.On_Hear(sa);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-
-			GameState state = this.GameState;
-			if (state != null) {
-				if (speech == null) {
-					ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
-					packet.Prepare(speaker, clilocSpeech, speaker.Name, type, font, color, string.Join("\t", args));
-					state.Conn.SendSinglePacket(packet);
-				} else {
-					PacketSequences.InternalSendMessage(state.Conn, speaker, speech, speaker.Name, type, font, color, lang);
-				}
-			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_Hear(AbstractCharacter speaker, string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, string lang, int[] keywords, string[] args) {
+		public virtual void On_Hear(SpeechArgs args) {
 
 		}
 
@@ -1243,7 +1218,7 @@ namespace SteamEngine {
 		*/
 		public abstract bool CanRename(AbstractCharacter to);
 
-	
+
 		public void Anim(int animId) {
 			this.Anim(animId, 1, false, false, 0x01);
 		}
@@ -1460,6 +1435,77 @@ namespace SteamEngine {
 			get {
 				return this.current;
 			}
+		}
+	}
+
+	public class SpeechArgs : ScriptArgs {
+
+		public AbstractCharacter Speaker {
+			get {
+				return (AbstractCharacter) this.Argv[0];
+			}
+		}
+
+		public AbstractCharacter ExclusiveListener {
+			get {
+				return (AbstractCharacter) this.Argv[1];
+			}
+			set {
+				this.Argv[1] = value;
+			}
+		}
+
+		public string Speech {
+			get {
+				return Convert.ToString(this.Argv[2]);
+			}
+		}
+
+		public int ClilocSpeech {
+			get {
+				return Convert.ToInt32(this.Argv[3]);
+			}
+		}
+
+		public SpeechType Type {
+			get {
+				return (SpeechType) Convert.ToInt32(this.Argv[4]);
+			}
+		}
+
+		public int Color {
+			get {
+				return Convert.ToInt32(this.Argv[5]);
+			}
+		}
+
+		public ClientFont Font {
+			get {
+				return (ClientFont) Convert.ToInt32(this.Argv[6]);
+			}
+		}
+
+		public string Lang {
+			get {
+				return Convert.ToString(this.Argv[7]);
+			}
+		}
+
+		public int[] ClilocKeywords {
+			get {
+				return (int[]) this.Argv[8];
+			}
+		}
+
+		public string[] ClilocArgs {
+			get {
+				return (string[]) this.Argv[9];
+			}
+		}
+
+		public SpeechArgs(AbstractCharacter speaker, AbstractCharacter exclusiveListener,
+			string speech, int clilocSpeech, SpeechType type, int color, ClientFont font, string lang, int[] clilocKeywords, string[] clilocArgs) :
+			base(speaker, exclusiveListener, speech, clilocSpeech, type, color, font, lang, clilocKeywords, clilocArgs) {
 		}
 	}
 }

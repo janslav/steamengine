@@ -28,8 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	/*
 		Class: CompiledTriggerGroup
 			.NET scripts should extend this class, and make use of its features.
-			This class provides automatic linking of methods intended for use as triggers and
-			creates a TriggerGroup that your triggers are in.
+			This class provides automatic linking of methods intended for use as triggers
 	*/
 	public abstract class CompiledTriggerGroup : TriggerGroup {
 		protected CompiledTriggerGroup()

@@ -28,3 +28,8 @@ PluginDef = p_bleeding_strike
 [PassiveAbilityDef a_bleeding_bonus]
 Name="Bleeding bonus"
 EffectPower=0.02 // 10% bonus at 5 points
+
+[PassiveAbilityDef a_bleeding_maxpower_bonus]
+Name="Bleeding MaxPower bonus"
+EffectPower=0.1 // +50% max power at 5 points
+

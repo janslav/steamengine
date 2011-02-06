@@ -32,30 +32,6 @@ DEFNAME = c_woman
 //ARMOR = 0 // commented out by Converter 
 //TEVENTS = e_character // commented out by Converter 
 
-[NPCDef c_h_vendor_f]
-CATEGORY = Civilized
-SUBSECTION = Tradesmen
-DESCRIPTION = Vendor female
-
-NAME = "Vendor"
-model = c_woman
-//can = MT_NONMOVER|MT_EQUIP|MT_FEMALE // commented out by Converter 
-//maxfood = 04fff // commented out by Converter 
-//tevents = e_vendor_custom // commented out by Converter 
-//TSPEECH = spk_vendor_custom // commented out by Converter 
-
-[NPCDef c_h_vendor]
-CATEGORY = Civilized
-SUBSECTION = Tradesmen
-DESCRIPTION = Vendor
-
-NAME = "Vendor"
-model = c_man
-//can = MT_NONMOVER|MT_EQUIP|MT_MALE // commented out by Converter 
-//maxfood = 04fff // commented out by Converter 
-//tevents = e_vendor_custom // commented out by Converter 
-//TSPEECH = spk_vendor_custom // commented out by Converter 
-
 [NPCDef 0x192]
 CATEGORY = Vendori
 SUBSECTION = Miscellaneous
