@@ -1662,12 +1662,13 @@ namespace SteamEngine {
 
 			Map map = this.GetMap();
 			IEnumerable<AbstractCharacter> chars;
-			SpeechArgs sa = null;
+			SpeechArgs sa;
 			if (selfIsPlayer) {
 				chars = map.GetCharsInRange(this.point4d.x, this.point4d.y, dist);
-				sa = new SpeechArgs(speaker, null, msg, clilocMsg, type, color, font, language, keywords, args);
+				sa = new SpeechArgs(speaker, msg, clilocMsg, type, color, font, language, keywords, args);
 			} else {
 				chars = map.GetPlayersInRange(this.point4d.x, this.point4d.y, dist);
+				sa = null;
 			}
 
 			PacketGroup pg = null;
