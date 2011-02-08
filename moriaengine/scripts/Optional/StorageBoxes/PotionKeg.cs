@@ -27,11 +27,31 @@ namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class PotionKeg {
 		public override void On_DClick (AbstractCharacter dclicker) {
-			dclicker.SysMessage("Zble");
+			
 			base.On_DClick (dclicker);
 		}
+		public override void  On_DClick(AbstractCharacter dclicker)
+{
+ 	 base.On_DClick(dclicker);
+}
 
-
+	}
+	public class Targ_PotionKeg: CompiledTargetDef {
+		protected override void On_Start (Player self, object parameter) {
+			self.SysMessage ("Zaměř potiony, které chceš vylít do kegu");
+			base.On_Start (self, parameter);
+		}
+		protected override bool On_TargonItem (Player self, Item targetted, object parameter) {
+			PotionKeg focus = parameter as PotionKeg;
+			if (!self.CanReachWithMessage (focus)) {
+				return false;
+			}
+			if (targetted.Type.Defname == "t_potion") {
+				int previousCount;
+				
+			}
+		}
+	
 	}
 
 	[Dialogs.ViewableClass]
