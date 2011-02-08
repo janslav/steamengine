@@ -26,14 +26,10 @@ using SteamEngine.LScript;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class PotionKeg {
-		public override void On_DClick (AbstractCharacter dclicker) {
-			
-			base.On_DClick (dclicker);
+
+		public override void On_DClick (AbstractCharacter ac) {
+			base.On_DClick (ac);
 		}
-		public override void  On_DClick(AbstractCharacter dclicker)
-{
- 	 base.On_DClick(dclicker);
-}
 
 	}
 	public class Targ_PotionKeg: CompiledTargetDef {
@@ -48,13 +44,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (targetted.Type.Defname == "t_potion") {
 				int previousCount;
-				
+
 			} else {
-				self.SysMessage("Muzes nalit jenom potiony");
+				self.SysMessage ("Muzes nalit jenom potiony");
 			}
 			return true;
 		}
-		
+
 	}
 
 	[Dialogs.ViewableClass]
