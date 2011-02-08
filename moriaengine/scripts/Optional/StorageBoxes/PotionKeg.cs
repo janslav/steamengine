@@ -33,18 +33,25 @@ namespace SteamEngine.CompiledScripts {
 
 	}
 	public class Targ_PotionKeg: CompiledTargetDef {
+
 		protected override void On_Start (Player self, object parameter) {
 			self.SysMessage ("Zaměř potiony, které chceš vylít do kegu");
 			base.On_Start (self, parameter);
 		}
+
 		protected override bool On_TargonItem (Player self, Item targetted, object parameter) {
 			PotionKeg focus = parameter as PotionKeg;
 			if (!self.CanReachWithMessage (focus)) {
 				return false;
 			}
 			if (targetted.Type.Defname == "t_potion") {
-				int previousCount;
-
+				if (focus.potionsCount + (int)targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
+					int potionsToTake = focus.TypeDef.Capacity - focus.potionsCount;
+					targetted.Amount -= potionsToTake;
+					focus.potionsCount += potionsToTake;
+				} else {
+					focus.potionsCount += (int)targetted.Amount;
+				}
 			} else {
 				self.SysMessage ("Muzes nalit jenom potiony");
 			}
@@ -53,7 +60,7 @@ namespace SteamEngine.CompiledScripts {
 
 	}
 
-	[Dialogs.ViewableClass]
-	public partial class PotionKegDef {
-	}
+	//[Dialogs.ViewableClass]
+	//public partial class PotionKegDef {}
+	//
 }
