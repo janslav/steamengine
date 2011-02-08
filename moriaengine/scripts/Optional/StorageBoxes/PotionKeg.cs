@@ -49,9 +49,12 @@ namespace SteamEngine.CompiledScripts {
 			if (targetted.Type.Defname == "t_potion") {
 				int previousCount;
 				
+			} else {
+				self.SysMessage("Muzes nalit jenom potiony");
 			}
+			return true;
 		}
-	
+		
 	}
 
 	[Dialogs.ViewableClass]
