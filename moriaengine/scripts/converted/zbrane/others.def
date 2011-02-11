@@ -267,22 +267,3 @@ RESOURCES = 1 i_log //some resources were fixed by converter
 SKILLMAKE = 0.0 bowcraft //some resources were fixed by converter 
 DEFNAME = i_kindling
 //REPLICATE = 1 // commented out by Converter 
-
-[ItemDef 0xde2]
-DUPEITEM = i_kindling
-
-[EquippableDef 0xf64]
-CATEGORY = Decoration - Lightsources
-SUBSECTION = Torches
-DESCRIPTION = Torch (Unlit)
-
-TYPE = T_LIGHT_OUT
-//DUPELIST = 0f6b // commented out by Converter 
-WEIGHT = 10
-RESOURCES = 1 i_log //some resources were fixed by converter 
-//TDATA3 = i_torch_lit // commented out by Converter 
-layer = 2 //Set by Converter 
-DEFNAME = i_torch
-
-[ItemDef 0xf6b]
-DUPEITEM = i_torch
