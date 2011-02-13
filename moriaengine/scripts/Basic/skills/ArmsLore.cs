@@ -11,30 +11,30 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
 			Player self = skillSeqArgs.Self as Player;
 			if (self != null) {
 				self.Target(SingletonScript<Targ_ArmsLore>.Instance, skillSeqArgs);
 			}
-			return true;
+			return TriggerResult.Cancel;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (self.CanReachWithMessage((Item) skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-				return false;
+				return TriggerResult.Continue;
 			} else {
-				return true;
+				return TriggerResult.Cancel;
 			}
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			self.SysMessage("Arms lore SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
 			Destroyable targetted = (Destroyable) skillSeqArgs.Target1;
@@ -42,13 +42,10 @@ namespace SteamEngine.CompiledScripts {
 			self.SysMessage("Armor už umíme, doplníme. Vypisujeme testovaci hlasku: " + targetted.Name + " model je: " + targetted.Model);
 
 			//Destroyable = zbran (Weapon) nebo brneni/obleceni (Wearable)
-
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			skillSeqArgs.Self.SysMessage("Arms lore se nepovedlo.");
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			PoisonPotion potion = skillSeqArgs.Tool as PoisonPotion;
 			if (potion != null) {
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					throw new SEException("Poison potion not set for nonplayer while poisoning");
 				}
-				return true;
+				return TriggerResult.Cancel;
 			}
 
 			Item target = skillSeqArgs.Target1 as Item;
@@ -65,13 +65,13 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					throw new SEException("Target not set for nonplayer while poisoning");
 				}
-				return true;
+				return TriggerResult.Cancel;
 			}
 
-			return false; //continue
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			self.Sound(0x4F);
 
@@ -87,21 +87,21 @@ namespace SteamEngine.CompiledScripts {
 				potion.Consume(1);
 			}
 
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//Character self = skillSeqArgs.Self;
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			PoisonPotion potion = (PoisonPotion) skillSeqArgs.Tool;
 			Item target = (Item) skillSeqArgs.Target1;
 			if (!CanPoisonWithMessage(self, potion, target)) {
-				return true;
+				return;
 			}
 
 			PoisonedItemPlugin plugin = (PoisonedItemPlugin) skillSeqArgs.Param1;
@@ -112,11 +112,9 @@ namespace SteamEngine.CompiledScripts {
 				plugin.BindToWeapon((Weapon) target);
 			}
 			self.ClilocSysMessage(1010517); //You apply the poison
-
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			if ((1200 - self.GetSkill(this)) > Globals.dice.Next(12000)) {
@@ -125,8 +123,6 @@ namespace SteamEngine.CompiledScripts {
 				plugin.Apply(self, self, EffectFlag.FromPotion | EffectFlag.HarmfulEffect);
 				plugin.Delete();
 			}
-
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

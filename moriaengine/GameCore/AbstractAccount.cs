@@ -663,19 +663,19 @@ namespace SteamEngine {
 			base.TryTrigger(tk, sa);
 		}
 
-		public override bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public override TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				if (TagMath.Is1(registeredTGs[i].Run(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
 			return base.TryCancellableTrigger(tk, sa);
 		}
 
-		public override bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				if (TagMath.Is1(registeredTGs[i].TryRun(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
 			return base.TryCancellableTrigger(tk, sa);

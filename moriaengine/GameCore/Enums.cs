@@ -142,8 +142,7 @@ namespace SteamEngine {
 
 	public enum SpeechResult {
 		Ignored = 0,
-		ActedUpon = 1,
-		ActedUponExclusively = 2
+		ActedUponExclusively = 1
 	}
 
 	//only 0 and 3 normally used
@@ -158,6 +157,11 @@ namespace SteamEngine {
 		FancyShadowFace = 7,
 		Runic = 8,
 		BorderLess = 9
+	}
+
+	public enum TriggerResult {
+		Continue = 0,
+		Cancel = 1
 	}
 
 	public enum RenderModes {

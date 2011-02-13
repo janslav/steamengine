@@ -12,32 +12,32 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
 			Player self = skillSeqArgs.Self as Player;
 			if (self != null) {
 				self.Target(SingletonScript<Targ_Lockpick>.Instance, skillSeqArgs);
 			}
-			return true;
+			return TriggerResult.Cancel;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Item targetted = (Item) skillSeqArgs.Target1;
 			if (self.CanReachWithMessage(targetted)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));	// TODO pridat succes v zavislosti na obtiznosti zamku
-				return false;
+				return TriggerResult.Continue;
 				// odemknuti predmetu
 			}
 			skillSeqArgs.PhaseAbort();
-			return true;
+			return TriggerResult.Cancel;
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Item targetted = (Item) skillSeqArgs.Target1;
 
@@ -45,13 +45,11 @@ namespace SteamEngine.CompiledScripts {
 
 			//TODO
 
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			skillSeqArgs.Self.SysMessage(Loc<LockpickLoc>.Get(self.Language).fail);
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

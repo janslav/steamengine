@@ -204,14 +204,14 @@ namespace SteamEngine.CompiledScripts {
 		protected void Trigger_Activate(Character chr, Ability ab) {
 			ScriptArgs sa = new ScriptArgs(this, ab);
 
-			bool cancel = chr.TryCancellableTrigger(AbilityDef.tkActivateAbility, sa);
-			if (!cancel) {
+			var result = chr.TryCancellableTrigger(AbilityDef.tkActivateAbility, sa);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = chr.On_ActivateAbility(this, ab);
+					result = chr.On_ActivateAbility(this, ab);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(chr, AbilityDef.tkActivate, null);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(chr, AbilityDef.tkActivate, null);
+					if (result != TriggerResult.Cancel) {
 						try {
 							this.On_Activate(chr, ab);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -237,14 +237,14 @@ namespace SteamEngine.CompiledScripts {
 
 			DenyAbilityArgs denyArgs = new DenyAbilityArgs(chr, this, ab);
 
-			bool cancel = chr.TryCancellableTrigger(tkDenyActivateAbility, denyArgs);
-			if (!cancel) {
+			var result = chr.TryCancellableTrigger(tkDenyActivateAbility, denyArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = chr.On_DenyActivateAbility(denyArgs);
+					result = chr.On_DenyActivateAbility(denyArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(chr, AbilityDef.tkDenyActivate, denyArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(chr, AbilityDef.tkDenyActivate, denyArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
 							this.On_DenyActivate(denyArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -255,12 +255,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("C# based @denyUse trigger method, implementation of common checks")]
-		protected virtual bool On_DenyActivate(DenyAbilityArgs args) {
+		protected virtual void On_DenyActivate(DenyAbilityArgs args) {
 			Ability ab = args.ranAbility;
 			//check cooldown
 			if (((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) && !args.abiliter.IsGM) { //check the timing if OK
 				args.Result = DenyResultMessages_Abilities.Deny_NotYetCooledDown;
-				return true;//same as "return 1" from LScript - cancel trigger sequence
+				return;
 			}
 
 			//check resources present (if needed)
@@ -270,7 +270,7 @@ namespace SteamEngine.CompiledScripts {
 				if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
 					args.abiliter.SysMessage(missingItem.GetResourceMissingMessage(args.abiliter.Language));
 					args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesPresent;
-					return true; //cancel
+					return;
 				}
 			}
 
@@ -282,17 +282,11 @@ namespace SteamEngine.CompiledScripts {
 				if (!resConsum.ConsumeResourcesOnce(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
 					args.abiliter.SysMessage(missingItem.GetResourceMissingMessage(args.abiliter.Language));
 					args.Result = DenyResultMessages_Abilities.Deny_NotEnoughResourcesToConsume;
-					return true; //cancel
+					return;
 				}
 			}
 
-			DenyResult result = args.abiliter.CheckAlive();
-			args.Result = result;
-			if (!result.Allow) {
-				return true; //cancel
-			}
-
-			return false; //all ok, continue
+			args.Result = args.abiliter.CheckAlive();
 		}
 
 		//this is not a character trigger. I think for them the @valuechanged should be enough
@@ -352,14 +346,14 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void On_ValueChanged(Character ch, Ability ab, int previousValue) {
 		}
 
-		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+		public TriggerResult TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
 				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {

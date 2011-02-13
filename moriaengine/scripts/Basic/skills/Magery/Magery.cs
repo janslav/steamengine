@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, line) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 
@@ -97,14 +97,14 @@ namespace SteamEngine.CompiledScripts {
 				if (book != null) {
 					if ((book.TopObj() == self) && book.HasSpell(spell)) {
 						spell.Trigger_Select(skillSeqArgs);
-						return true; //cancel here, the rest of Select is being done by SpellDef
+						return TriggerResult.Cancel; //cancel here, the rest of Select is being done by SpellDef
 					}
 				}
 
 				SpellScroll scroll = skillSeqArgs.Tool as SpellScroll;
 				if (scroll != null) {
 					spell.Trigger_Select(skillSeqArgs);
-					return true; //cancel here, the rest of Select is being done by SpellDef
+					return TriggerResult.Cancel; //cancel here, the rest of Select is being done by SpellDef
 				}
 			}
 
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//checking and consuming resources
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (self.CanInteractWithMessage(skillSeqArgs.Target1)) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
@@ -127,20 +127,20 @@ namespace SteamEngine.CompiledScripts {
 						IResourceListEntry missingItem;
 						if ((req != null) && (!req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) {
 							self.SysMessage(missingItem.GetResourceMissingMessage(self.Language));
-							return true;
+							return TriggerResult.Cancel; ;
 						}
 
 						ResourcesList res = spell.Resources;
 						if ((res != null) && (!res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem))) {
 							self.SysMessage(missingItem.GetResourceMissingMessage(self.Language));
-							return true;
+							return TriggerResult.Cancel; ;
 						}
 					} else {
 						skillSeqArgs.Tool.Consume(1);
 					}
 
-					if (!spell.Trigger_Start(skillSeqArgs)) {
-						return true;
+					if (TriggerResult.Cancel == spell.Trigger_Start(skillSeqArgs)) {
+						return TriggerResult.Cancel;
 					}
 
 					self.Mana = (short) (mana - manaUse);
@@ -154,16 +154,16 @@ namespace SteamEngine.CompiledScripts {
 						self.Speech(runeWords, 0, SpeechType.Spell, -1, ClientFont.Unified, null, null);
 					}
 
-					return true; //default = set delay by magery skilldef, which we don't want					
+					return TriggerResult.Cancel; ; //default = set delay by magery skilldef, which we don't want
 				} else {
 					self.ClilocSysMessage(502625); // Insufficient mana for this spell.
 				}
 			}
-			//skillSeqArgs.Dispose();
-			return true;
+
+			return TriggerResult.Cancel;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 
@@ -175,10 +175,10 @@ namespace SteamEngine.CompiledScripts {
 					isFromScroll = false;
 					if (book.IsDeleted || (book.TopObj() != self)) {
 						self.ClilocSysMessage(501608);	//You don't have a spellbook.
-						return false;
+						return TriggerResult.Cancel;
 					} else if (!book.HasSpell(spell)) {
 						self.ClilocSysMessage(501902);	//You don't know that spell.
-						return false;
+						return TriggerResult.Cancel;
 					}
 				} else if (tool is SpellScroll) { //it might be deleted by now, but we can still check for it's type...
 					isFromScroll = true;
@@ -190,23 +190,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (!self.CanInteractWithMessage(skillSeqArgs.Target1)) {
-				return false;
+				return TriggerResult.Cancel;
 			}
 
 			skillSeqArgs.Success = this.CheckSuccess(self, spell.GetDifficulty(isFromScroll));
 
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 			spell.Trigger_Success(skillSeqArgs);
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Fizzle(skillSeqArgs.Self);
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

@@ -47,14 +47,14 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.Target1 == null || skillSeqArgs.Target1 == skillSeqArgs.Self) {
-				return true;
+				return TriggerResult.Cancel;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = (Character) skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 			self.AbortSkill(); //abort previous skill
@@ -64,18 +64,18 @@ namespace SteamEngine.CompiledScripts {
 			skillSeqArgs.DelayInSeconds = 0;
 			skillSeqArgs.DelayStroke();
 
-			return true;//cancel because we're not using the skill's delay just yet
+			return TriggerResult.Cancel; //cancel because we're not using the skill's delay just yet
 		}
 
 		static TimerKey animTk = TimerKey.Acquire("_weaponAnimDelay_");
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 			if (!self.CanInteractWith(target).Allow) {
 				WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 				self.AbortSkill();
-				return true;
+				return TriggerResult.Cancel;
 			}
 			int distance = Point2D.GetSimpleDistance(self, target);
 			WeaponSkillPhase phase = (WeaponSkillPhase) Convert.ToInt64(skillSeqArgs.Param1);
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 					skillSeqArgs.DelaySpan = delay;
 					skillSeqArgs.DelayStroke();
 					self.AddTimer(animTk, new WeaponAnimTimer()).DueInSeconds = delay.TotalSeconds / 2;
-					return true;
+					return TriggerResult.Cancel;
 				}
 			} else {
 				if (distance > self.WeaponStrikeStopRange) {
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 						} else if (self.WeaponProjectileType != ProjectileType.None) {
 							self.SysMessage(Loc<WeaponSkillDefLoc>.Get(self.Language).YouHaveNoAmmo);
 							self.AbortSkill();
-							return true;
+							return TriggerResult.Cancel;
 						}
 
 						if (!self.Flag_Moving) {
@@ -139,14 +139,14 @@ namespace SteamEngine.CompiledScripts {
 							WeaponSkillTargetQueuePlugin.FightCurrentTarget(self);
 						}
 
-						return false;
+						return TriggerResult.Continue;
 					}
 				}
 			}
 
 			skillSeqArgs.DelaySpan = TimeSpan.FromSeconds(1);
 			skillSeqArgs.DelayStroke();//we keep stroking, this needs to be the current skill...
-			return true;
+			return TriggerResult.Cancel;
 		}
 
 		[Dialogs.ViewableClass]
@@ -163,21 +163,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = (Character) skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 
 			DamageManager.ProcessSwing(self, target);
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = (Character) skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 
 			target.Trigger_HostileAction(self);
 			SoundCalculator.PlayMissSound(self);
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

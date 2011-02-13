@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public interface IRoleMembership : IDisposable {
-			Character Member { get;}
+			Character Member { get; }
 		}
 
 		protected virtual IRoleMembership CreateMembershipObject(Character member) {
@@ -103,8 +103,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal DenyResult Trigger_DenyAddMember(Character chr) {
 			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, null, this);
-			bool cancel = this.def.TryCancellableTrigger(this, RoleDef.tkDenyAddMember, args);
-			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
+			if (TriggerResult.Cancel != this.def.TryCancellableTrigger(this, RoleDef.tkDenyAddMember, args)) {
 				try {
 					this.On_DenyAddMember(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -121,8 +120,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal DenyResult Trigger_DenyRemoveMember(Character chr, IRoleMembership membership) {
 			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, membership, this);
-			bool cancel = this.def.TryCancellableTrigger(this, RoleDef.tkDenyRemoveMember, args);
-			if (!cancel) {//not cancelled (no return 1 in LScript), lets continue
+			if (TriggerResult.Cancel != this.def.TryCancellableTrigger(this, RoleDef.tkDenyRemoveMember, args)) {
 				try {
 					this.On_DenyRemoveMember(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -146,8 +144,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Trigger called when the new member adding is requested from this role")]
-		protected virtual bool On_DenyAddMember(DenyRoleTriggerArgs args) {
-			return false; //dont cancel
+		protected virtual void On_DenyAddMember(DenyRoleTriggerArgs args) {
 		}
 
 		[Summary("Trigger called when the new member is assigned to this role")]
@@ -156,8 +153,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Trigger called when the member remove is requested from this role")]
-		protected virtual bool On_DenyRemoveMember(DenyRoleTriggerArgs args) {
-			return false; //dont cancel
+		protected virtual void On_DenyRemoveMember(DenyRoleTriggerArgs args) {
 		}
 
 		[Summary("Trigger called when the member is unassigned from this role")]

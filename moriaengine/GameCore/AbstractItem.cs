@@ -456,72 +456,66 @@ namespace SteamEngine {
 			}
 		}
 
-		public override bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public override TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.Run(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			if (base.CancellableTrigger(tk, sa)) {
-				return true;
-			} else {
+
+			if (TriggerResult.Cancel != base.CancellableTrigger(tk, sa)) {
 				if (this.type != null) {
 					if (TagMath.Is1(this.type.Run(this, tk, sa))) {
-						return true;
+						return TriggerResult.Cancel;
 					}
 				}
+			} else {
+				return TriggerResult.Cancel;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		public override bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			if (base.TryCancellableTrigger(tk, sa)) {
-				return true;
-			} else {
+
+			if (TriggerResult.Cancel != base.TryCancellableTrigger(tk, sa)) {
 				if (this.type != null) {
 					if (TagMath.Is1(this.type.TryRun(this, tk, sa))) {
-						return true;
+						return TriggerResult.Cancel;
 					}
 				}
+			} else {
+				return TriggerResult.Cancel;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		internal override sealed bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
+		internal override sealed TriggerResult Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
 			//helper method for Trigger_Click
-			bool cancel = false;
-			cancel = clickingChar.TryCancellableTrigger(TriggerKey.itemClick, sa);
-			if (!cancel) {
-				cancel = clickingChar.On_ItemClick(this);
+			var result = clickingChar.TryCancellableTrigger(TriggerKey.itemClick, sa);
+			if (result != TriggerResult.Cancel) {
+				result = clickingChar.On_ItemClick(this);
 			}
-			return cancel;
+			return result;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		internal void Trigger_Step(AbstractCharacter steppingChar, bool repeated, MovementType movementType) {
 			ThrowIfDeleted();
-			bool cancel = false;
 			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated, movementType);
-			cancel = steppingChar.TryCancellableTrigger(TriggerKey.itemStep, sa);
-			if (!cancel) {
-				//@item/charStep on src did not return 1
-				cancel = steppingChar.On_ItemStep(this, repeated, movementType);//sends true if repeated=1
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(TriggerKey.step, sa);
-					if (!cancel) {
-						this.On_Step(steppingChar, repeated, movementType);
-					}
-				}
-			}
+
+			steppingChar.TryTrigger(TriggerKey.itemStep, sa);
+			steppingChar.On_ItemStep(this, repeated, movementType);//sends true if repeated=1
+			this.TryTrigger(TriggerKey.step, sa);
+			this.On_Step(steppingChar, repeated, movementType);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]

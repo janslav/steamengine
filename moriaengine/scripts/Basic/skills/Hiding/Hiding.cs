@@ -43,31 +43,29 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			return false; //continue to @start
+			return TriggerResult.Continue; //continue to @start
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false; //continue to delay, then @stroke
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue; //continue to delay, then @stroke
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			//todo: various state checks...
 			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 
-			return false; //continue to @success or @fail
+			return TriggerResult.Continue; //continue to @success or @fail
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Hide(skillSeqArgs.Self);
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			skillSeqArgs.Self.ClilocSysMessage(501241);//You can't seem to hide here.
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

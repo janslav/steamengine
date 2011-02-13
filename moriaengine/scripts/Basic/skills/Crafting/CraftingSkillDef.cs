@@ -34,33 +34,33 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("This trigger is used only when clicked the skill-list blue radio button for some crafting skill." +
 				"opens the craftmenu for the given skill")]
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
 			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
-				return true;//something wrong, finish now
+				return TriggerResult.Cancel; //something wrong, finish now
 			}
 
 			if (skillSeqArgs.Param1 != null) {
-				return false; //do not stop, we have some item here, we can start crafting now
+				return TriggerResult.Continue; //do not stop, we have some item here, we can start crafting now
 			} else {//no item pre-selected, open the craftmenu
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName) this.Id]));
 				//do not continue, the rest will be solved from the craftmenu
-				return true; //F = continue to @start, T = stop
+				return TriggerResult.Cancel; //F = continue to @start, T = stop
 			}
 		}
 
 		[Summary("This trigger is called when OK button is clicked from the craftmenu. One item from the queue is picked and its making process " +
 			"begins here (i.e. the making success and the number of strokes is pre-computed here")]
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
 			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
-				return true;//something wrong, finish now
+				return TriggerResult.Cancel; //something wrong, finish now
 			}
 
 			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
@@ -75,17 +75,17 @@ namespace SteamEngine.CompiledScripts {
 			} else {//item will be created, with pre-computed number of strokes
 				skillSeqArgs.Param2 = strokes;
 			}
-			return false; //continue to delay, then @stroke
+			return TriggerResult.Continue; //continue to delay, then @stroke
 		}
 
 		[Summary("This trigger is run a pre-computed number of times before the item is either created or failed." +
 				"The item-making animations and sounds are run from here")]
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
 			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(skillSeqArgs.Self);
-				return true;//something wrong, finish now
+				return TriggerResult.Cancel; //something wrong, finish now
 			}
 
 			int strokesCnt = Convert.ToInt32(skillSeqArgs.Param2);
@@ -94,22 +94,22 @@ namespace SteamEngine.CompiledScripts {
 				DoStroke(skillSeqArgs);
 				skillSeqArgs.Param2 = strokesCnt - 1;
 				skillSeqArgs.DelayStroke();
-				return true; //stop here for now (we are waiting for the next stroke round...)
+				return TriggerResult.Cancel; //stop here for now (we are waiting for the next stroke round...)
 			}
 			DoStroke(skillSeqArgs);//do the animation, sound and finish
-			return false; //continue to @success or @fail (the result is already prepared from the "@start" phase
+			return TriggerResult.Continue; //continue to @success or @fail (the result is already prepared from the "@start" phase
 		}
 
 		[Summary("This trigger is run in case the item making succeeds. It consumes the desired number of resources, " +
 				"creates the item instance and checks if there are any other items to be created in the queue. If so, it " +
 				"re-runs the @start trigger")]
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Player self = (Player) skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
 			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
-				return true;//something wrong, finish now
+				return;//something wrong, finish now
 			}
 
 			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
@@ -141,20 +141,18 @@ namespace SteamEngine.CompiledScripts {
 			//deal with failure - not enough resources 
 			if (!canMake) {
 				CraftingProcessPlugin.MakeImpossible(skillSeqArgs);
-				return true; //stop the trigger, the rest will be decided by the CraftingProcessPlugin
+				//the rest will be decided by the CraftingProcessPlugin
 			}
-
-			return false;
 		}
 
 		[Summary("This trigger is run in case the item making fails. It consumes some of the desired number of resources (i.e. these are wasted), " +
 				"and checks if there are any other items to be created in the queue. If so, it " +
 				"re-runs the @start trigger")]
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) { //checking alive will be enough
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
-				return true;//no message needed, it's been already sent in the called method
+				return;//no message needed, it's been already sent in the called method
 			}
 
 			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
@@ -182,7 +180,7 @@ namespace SteamEngine.CompiledScripts {
 						iDefToMake.Name));
 			}
 			CraftingProcessPlugin.MakeFinished(skillSeqArgs, canMake && hasMaterial);
-			return true; //stop the trigger, the rest will be decided by the CraftingProcessPlugin
+			//the rest will be decided by the CraftingProcessPlugin
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

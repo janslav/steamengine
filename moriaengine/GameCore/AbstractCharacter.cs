@@ -415,7 +415,7 @@ namespace SteamEngine {
 
 		//Called by GameConn
 		internal bool TryLogIn() {
-			bool success = this.Trigger_LogIn();
+			bool success = this.Trigger_LogIn() != TriggerResult.Cancel;
 			if (success) {
 				this.SetFlag_Disconnected(false);
 			}
@@ -425,16 +425,15 @@ namespace SteamEngine {
 		//method: Trigger_LogIn
 		//this method fires the @login trigger
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal bool Trigger_LogIn() {
-			bool cancel = false;
-			cancel = this.TryCancellableTrigger(TriggerKey.login, null);
-			if (!cancel) {
+		internal TriggerResult Trigger_LogIn() {
+			var result = this.TryCancellableTrigger(TriggerKey.login, null);
+			if (result != TriggerResult.Cancel) {
 				//@login did not return 1
 				try {
-					cancel = this.On_LogIn();
+					result = this.On_LogIn();
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			}
-			return !cancel;	//return true for success
+			return result;
 		}
 
 		//method: Trigger_LogOut
@@ -453,8 +452,8 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_LogIn() {
-			return false;
+		public virtual TriggerResult On_LogIn() {
+			return TriggerResult.Continue;
 		}
 		#endregion Login/Logout
 
@@ -706,7 +705,7 @@ namespace SteamEngine {
 					return false;
 				}
 
-				if (Trigger_Step(dir, running)) {
+				if (TriggerResult.Cancel == Trigger_Step(dir, running)) {
 					return false;
 				}
 
@@ -771,19 +770,18 @@ namespace SteamEngine {
 		}
 
 
-		private bool Trigger_Step(Direction dir, bool running) {
-			if (this.TryCancellableTrigger(TriggerKey.step, new ScriptArgs(dir, running))) {
-				return true;
+		private TriggerResult Trigger_Step(Direction dir, bool running) {
+			if (TriggerResult.Cancel == this.TryCancellableTrigger(TriggerKey.step, new ScriptArgs(dir, running))) {
+				return TriggerResult.Cancel;
 			}
 			try {
 				return this.On_Step(dir, running);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			return false;
+			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); return TriggerResult.Cancel; }
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_Step(Direction direction, bool running) {
-			return false;
+		public virtual TriggerResult On_Step(Direction direction, bool running) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
@@ -802,7 +800,7 @@ namespace SteamEngine {
 		internal void Trigger_NewPosition(Point4D oldP, MovementType movementType) {
 			this.TryTrigger(TriggerKey.newPosition, new ScriptArgs(oldP));
 			try {
-				this.On_NewPosition();
+				this.On_NewPosition(oldP);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 			foreach (AbstractItem itm in this.GetMap().GetItemsInRange(this.X, this.Y, 0)) {
@@ -813,12 +811,11 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_NewPosition() {
+		public virtual void On_NewPosition(Point4D oldP) {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_ItemStep(AbstractItem i, bool repeated, MovementType movementType) {
-			return false;
+		public virtual void On_ItemStep(AbstractItem i, bool repeated, MovementType movementType) {
 		}
 		#endregion Movement
 
@@ -875,29 +872,29 @@ namespace SteamEngine {
 		#endregion Gump/Dialog sending
 
 		#region Click and Dclick
+		//helper method for Trigger_Click
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal override sealed bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
-			//helper method for Trigger_Click
-			bool cancel = false;
-			cancel = clickingChar.TryCancellableTrigger(TriggerKey.charClick, sa);
-			if (!cancel) {
+		internal override sealed TriggerResult Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
+			var result = clickingChar.TryCancellableTrigger(TriggerKey.charClick, sa);
+			if (result != TriggerResult.Cancel) {
+
 				try {
-					cancel = clickingChar.On_CharClick(this);
+					result = clickingChar.On_CharClick(this);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			}
-			return cancel;
+			return result;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_ItemClick(AbstractItem clickedOn) {
+		public virtual TriggerResult On_ItemClick(AbstractItem clickedOn) {
 			//I clicked an item
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_CharClick(AbstractCharacter clickedOn) {
+		public virtual TriggerResult On_CharClick(AbstractCharacter clickedOn) {
 			//I clicked a char
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public void ShowPaperdollToSrc() {
@@ -942,14 +939,14 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyItemDClick(DenyClickArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyItemDClick(DenyClickArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyCharDClick(DenyClickArgs args) {
-			//default implementation only for item... char can be dclicked even if outa range (paperdoll)
-			return false;
+		public virtual TriggerResult On_DenyCharDClick(DenyClickArgs args) {
+			//only item has a default implementation... char can be dclicked even if outa range (paperdoll)
+			return TriggerResult.Continue;
 		}
 		#endregion Click and Dclick
 
@@ -970,23 +967,21 @@ namespace SteamEngine {
 
 		//cancellable because of things like Guild speech, etc.
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal bool Trigger_Say(string speech, SpeechType type, int[] keywords) {
-			bool cancel = false;
+		internal TriggerResult Trigger_Say(string speech, SpeechType type, int[] keywords) {
 			if (this.IsPlayer) {
 				ScriptArgs sa = new ScriptArgs(speech, type, keywords);
-				cancel = this.TryCancellableTrigger(TriggerKey.say, sa);
-				if (!cancel) {
+				if (TriggerResult.Cancel != this.TryCancellableTrigger(TriggerKey.say, sa)) {
 					try {
-						cancel = this.On_Say(speech, type, keywords);
+						return this.On_Say(speech, type, keywords);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
-			return cancel;
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_Say(string speech, SpeechType type, int[] keywords) {
-			return false;
+		public virtual TriggerResult On_Say(string speech, SpeechType type, int[] keywords) {
+			return TriggerResult.Continue;
 		}
 		#endregion Speech
 
@@ -1503,7 +1498,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public SpeechArgs(AbstractCharacter speaker, string speech, int clilocSpeech, 
+		public SpeechArgs(AbstractCharacter speaker, string speech, int clilocSpeech,
 				SpeechType type, int color, ClientFont font, string lang, int[] clilocKeywords, string[] clilocArgs) :
 			base(speaker, speech, clilocSpeech, type, color, font, lang, clilocKeywords, clilocArgs, null, false) {
 		}

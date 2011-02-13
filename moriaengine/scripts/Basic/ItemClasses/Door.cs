@@ -66,63 +66,61 @@ namespace SteamEngine.CompiledScripts {
 		private void Trigger_Open(Character user) {
 			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);
 
-			bool cancel = user.TryCancellableTrigger(tkDenyOpenDoor, args);
-			if (!cancel) {
+			var triggerResult = user.TryCancellableTrigger(tkDenyOpenDoor, args);
+			if (triggerResult != TriggerResult.Cancel) {
 				try {
-					cancel = user.On_DenyOpenDoor(args);
+					triggerResult = user.On_DenyOpenDoor(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(tkDenyOpen, args);
-					if (!cancel) {
+				if (triggerResult != TriggerResult.Cancel) {
+					triggerResult = this.TryCancellableTrigger(tkDenyOpen, args);
+					if (triggerResult != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_DenyOpen(args);
+							this.On_DenyOpen(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
 
-			DenyResult result = args.Result;
+			DenyResult denyResult = args.Result;
 
-			if (result.Allow) {
+			if (denyResult.Allow) {
 				this.SetOpen();
 			} else {
-				result.SendDenyMessage(user);
+				denyResult.SendDenyMessage(user);
 			}
 		}
 
 		private void Trigger_Close(Character user) {
 			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);
 
-			bool cancel = user.TryCancellableTrigger(tkDenyCloseDoor, args);
-			if (!cancel) {
+			var triggerResult = user.TryCancellableTrigger(tkDenyCloseDoor, args);
+			if (triggerResult != TriggerResult.Cancel) {
 				try {
-					cancel = user.On_DenyCloseDoor(args);
+					triggerResult = user.On_DenyCloseDoor(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(tkDenyClose, args);
-					if (!cancel) {
+				if (triggerResult != TriggerResult.Cancel) {
+					triggerResult = this.TryCancellableTrigger(tkDenyClose, args);
+					if (triggerResult != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_DenyClose(args);
+							this.On_DenyClose(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
 
-			DenyResult result = args.Result;
+			DenyResult denyResult = args.Result;
 
-			if (result.Allow) {
+			if (denyResult.Allow) {
 				this.SetClose();
 			} else {
-				result.SendDenyMessage(user);
+				denyResult.SendDenyMessage(user);
 			}
 		}
 
-		public virtual bool On_DenyOpen(DenySwitchDoorArgs args) {
-			return false;
+		public virtual void On_DenyOpen(DenySwitchDoorArgs args) {
 		}
 
-		public virtual bool On_DenyClose(DenySwitchDoorArgs args) {
-			return false;
+		public virtual void On_DenyClose(DenySwitchDoorArgs args) {
 		}
 
 		public void SetOpen() {

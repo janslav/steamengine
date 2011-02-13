@@ -148,7 +148,7 @@ namespace SteamEngine {
 		public static bool AuthorizeCommand(ISrc commandSrc, string name) {
 			if (commandRunning) {
 				ScriptArgs sa = new ScriptArgs(commandSrc, name);
-				if (Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
+				if (TriggerResult.Cancel == Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
 					return false;
 				}
 			}
@@ -158,7 +158,7 @@ namespace SteamEngine {
 		public static void AuthorizeCommandThrow(ISrc commandSrc, string name) {
 			if (commandRunning) {
 				ScriptArgs sa = new ScriptArgs(commandSrc, name);
-				if (Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
+				if (TriggerResult.Cancel == Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
 					throw new SEException(commandAuthorisationFailed);
 				}
 			}

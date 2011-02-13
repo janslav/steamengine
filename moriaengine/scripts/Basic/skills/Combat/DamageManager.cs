@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 				isPoison + isMystical + isSlashing + isStabbing +
 				isBlunt + isArchery + isBleed + isSummon + isDragon;
 			Sanity.IfTrueThrow(resistCount == 0, "Attack of type '" + damageType + "' - has no resist subtype");
-			
+
 			modifier = modifier * resistCount;
 
 			modifier -= isFire * resistingChar.ResistFire;
@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 			WeaponSwingArgs swingArgs = GetWeaponSwingArgs(attacker, defender);
 			SoundCalculator.PlayAttackSound(attacker);
 
-			if (!Trigger_BeforeSwing(swingArgs)) {
+			if (TriggerResult.Cancel != Trigger_BeforeSwing(swingArgs)) {
 				int actualDamage = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.DamageAfterAC);
 
 				swingArgs.InternalSetFinalDamage(actualDamage);
@@ -157,23 +157,22 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey beforeGetSwingTK = TriggerKey.Acquire("beforeGetSwing");
 
 		[Summary("Happens before applying armor, can be cancelled.")]
-		public static bool Trigger_BeforeSwing(WeaponSwingArgs swingArgs) {
-			if (!swingArgs.attacker.TryCancellableTrigger(beforeSwingTK, swingArgs)) {
+		public static TriggerResult Trigger_BeforeSwing(WeaponSwingArgs swingArgs) {
+			var result = swingArgs.attacker.TryCancellableTrigger(beforeSwingTK, swingArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					if (swingArgs.attacker.On_BeforeSwing(swingArgs)) {
-						return true;
-					}
+					result = swingArgs.attacker.On_BeforeSwing(swingArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!swingArgs.defender.TryCancellableTrigger(beforeGetSwingTK, swingArgs)) {
-					try {
-						if (swingArgs.defender.On_BeforeGetSwing(swingArgs)) {
-							return true;
-						}
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-					return false;
+				if (result != TriggerResult.Cancel) {
+					result = swingArgs.defender.TryCancellableTrigger(beforeGetSwingTK, swingArgs);
+					if (result != TriggerResult.Cancel) {
+						try {
+							result = swingArgs.defender.On_BeforeGetSwing(swingArgs);
+						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					}
 				}
 			}
-			return true;
+			return result;
 		}
 
 		static TriggerKey causeDamageTK = TriggerKey.Acquire("causeDamage");
@@ -186,7 +185,7 @@ namespace SteamEngine.CompiledScripts {
 				damageArgs.attacker.On_CauseDamage(damageArgs);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-			damageArgs.defender.TryCancellableTrigger(damageTK, damageArgs);
+			damageArgs.defender.TryTrigger(damageTK, damageArgs);
 			try {
 				damageArgs.defender.On_Damage(damageArgs);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -258,7 +257,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		internal  void InternalSetFinalDamage(int value) {
+		internal void InternalSetFinalDamage(int value) {
 			this.Argv[6] = value;
 			this.finalDamage = value;
 		}

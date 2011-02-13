@@ -16,13 +16,13 @@ namespace SteamEngine.CompiledScripts {
 
 		//public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Thing target = skillSeqArgs.Target1 as Thing;
 
 			Character targetChar = target as Character;
 			if (targetChar != null) {
-				//pokud ma cil maximum zivotu
+				//pokud ma cil maximum zivotu,a nekrvaci
 				if ((targetChar.Hits >= targetChar.MaxHits) && (!BleedingEffectPluginDef.IsBleeding(targetChar))) {
 					if (target == self) {
 						self.WriteLine(Loc<HealingLoc>.Get(self.Language).YoureAtMaxHitpoints);
@@ -30,12 +30,12 @@ namespace SteamEngine.CompiledScripts {
 						self.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 							Loc<HealingLoc>.Get(self.Language).TargetIsAtMaxHitpoints, target.Name));
 					}
-					return true;
+					return TriggerResult.Cancel;
 				}
 
 				if (!CharModelInfo.IsHumanModel(targetChar.Model)) {
 					self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingSkillNotApplicable);
-					return true;
+					return TriggerResult.Cancel;
 				}
 
 			} else {
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Thing target = skillSeqArgs.Target1 as Thing;
 
@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 			return base.On_Start(skillSeqArgs); //BandageSkillDef implementation. Starts using separate timer
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(200));
@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 			return base.On_Stroke(skillSeqArgs); //BandageSkillDef implementation. Similar checks as in @select
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Thing target = skillSeqArgs.Target1 as Thing;
 
@@ -108,10 +108,9 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				throw new NotImplementedException("Resurrecting not implemented");
 			}
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Thing target = skillSeqArgs.Target1 as Thing;
 
@@ -126,7 +125,6 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				throw new NotImplementedException("Resurrecting not implemented");
 			}
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

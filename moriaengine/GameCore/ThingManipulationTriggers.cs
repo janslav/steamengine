@@ -221,7 +221,7 @@ namespace SteamEngine {
 				try {
 					cont.On_ItemUnequip(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);				
+				ReturnIntoCharIfNeeded(cont, layer);
 			} else {
 				this.TryTrigger(TriggerKey.leaveChar, args);
 				ReturnIntoCharIfNeeded(cont, layer);
@@ -359,8 +359,8 @@ namespace SteamEngine {
 		//add "toStack" to this stack, if possible
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool Trigger_StackInCont(AbstractItem toStack, AbstractItem waitingStack) {
-			Sanity.IfTrueThrow(this != toStack.Cont, "toStack not in this.");
-			Sanity.IfTrueThrow(this != waitingStack.Cont, "waitingStack not in this.");
+			Sanity.IfTrueThrow(this != toStack.Cont, "this != toStack.Cont");
+			Sanity.IfTrueThrow(this != waitingStack.Cont, "this != waitingStack.Cont");
 
 			if (CouldBeStacked(toStack, waitingStack)) {
 				//Amount overflow checking:
@@ -375,21 +375,21 @@ namespace SteamEngine {
 				ushort toStackY = toStack.point4d.y;
 				ItemStackArgs args = new ItemStackArgs(toStack, waitingStack);
 
-				bool cancel = toStack.TryCancellableTrigger(TriggerKey.stackOnItem, args);
+				var result = toStack.TryCancellableTrigger(TriggerKey.stackOnItem, args);
 				toStack.ReturnIntoItemIfNeeded(this, toStackX, toStackY);
-				if (!cancel && waitingStack.Cont == this) {
+				if (result != TriggerResult.Cancel && waitingStack.Cont == this) {
 					try {
-						cancel = toStack.On_StackOnItem(args);
+						result = toStack.On_StackOnItem(args);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					toStack.ReturnIntoItemIfNeeded(this, toStackX, toStackY);
-					if (!cancel && waitingStack.Cont == this) {
-						cancel = waitingStack.TryCancellableTrigger(TriggerKey.itemStackOn, args);
+					if (result != TriggerResult.Cancel && waitingStack.Cont == this) {
+						result = waitingStack.TryCancellableTrigger(TriggerKey.itemStackOn, args);
 						toStack.ReturnIntoItemIfNeeded(this, toStackX, toStackY);
-						if (!cancel && waitingStack.Cont == this) {
+						if (result != TriggerResult.Cancel && waitingStack.Cont == this) {
 							try {
-								cancel = waitingStack.On_ItemStackOn(args);
+								result = waitingStack.On_ItemStackOn(args);
 							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-							if (!cancel && waitingStack.Cont == this) {
+							if (result != TriggerResult.Cancel && waitingStack.Cont == this) {
 								toStack.InternalDelete();
 								waitingStack.Amount = tmpAmount;
 								return true;
@@ -400,7 +400,7 @@ namespace SteamEngine {
 					}
 				}
 			}
-			return false;
+			return false; //stacking didn't happen
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
@@ -421,21 +421,21 @@ namespace SteamEngine {
 				Point4D toStackPoint = toStack.P();
 				ItemStackArgs args = new ItemStackArgs(toStack, waitingStack);
 
-				bool cancel = toStack.TryCancellableTrigger(TriggerKey.stackOnItem, args);
+				var result = toStack.TryCancellableTrigger(TriggerKey.stackOnItem, args);
 				toStack.ReturnOnGroundIfNeeded(toStackPoint);
-				if (!cancel && waitingStack.Cont == null) {
+				if (result != TriggerResult.Cancel && waitingStack.Cont == null) {
 					try {
-						cancel = toStack.On_StackOnItem(args);
+						result = toStack.On_StackOnItem(args);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					toStack.ReturnOnGroundIfNeeded(toStackPoint);
-					if (!cancel && waitingStack.Cont == null) {
-						cancel = waitingStack.TryCancellableTrigger(TriggerKey.itemStackOn, args);
+					if (result != TriggerResult.Cancel && waitingStack.Cont == null) {
+						result = waitingStack.TryCancellableTrigger(TriggerKey.itemStackOn, args);
 						toStack.ReturnOnGroundIfNeeded(toStackPoint);
-						if (!cancel && waitingStack.Cont == null) {
+						if (result != TriggerResult.Cancel && waitingStack.Cont == null) {
 							try {
-								cancel = waitingStack.On_ItemStackOn(args);
+								result = waitingStack.On_ItemStackOn(args);
 							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-							if (!cancel && waitingStack.Cont == null) {
+							if (result != TriggerResult.Cancel && waitingStack.Cont == null) {
 								toStack.InternalDelete();
 								waitingStack.Amount = tmpAmount;
 								return true;
@@ -554,13 +554,13 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_ItemStackOn(ItemStackArgs args) {
-			return false;
+		public virtual TriggerResult On_ItemStackOn(ItemStackArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_StackOnItem(ItemStackArgs args) {
-			return false;
+		public virtual TriggerResult On_StackOnItem(ItemStackArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
@@ -686,48 +686,45 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to pick me up")]
-		public virtual bool On_DenyPickup(DenyPickupArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyPickup(DenyPickupArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to pick up item that is contained in me")]
-		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-			return false;
+		public virtual void On_DenyPickupItemFrom(DenyPickupArgs args) {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put me on ground")]
-		public virtual bool On_DenyPutOnGround(DenyPutOnGroundArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyPutOnGround(DenyPutOnGroundArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put me in a container")]
-		public virtual bool On_DenyPutInItem(DenyPutInItemArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyPutInItem(DenyPutInItemArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put an item in me (I am a container)")]
-		public virtual bool On_DenyPutItemIn(DenyPutInItemArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyPutItemIn(DenyPutInItemArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("I am being put on another item")]
-		public virtual bool On_PutOnItem(ItemOnItemArgs args) {
-			return false;
+		public virtual TriggerResult On_PutOnItem(ItemOnItemArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Another item is being put on me")]
-		public virtual bool On_PutItemOn(ItemOnItemArgs args) {
-			return false;
+		public virtual void On_PutItemOn(ItemOnItemArgs args) {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("I am being put on a character other than the person wielding me")]
-		public virtual bool On_PutOnChar(ItemOnCharArgs args) {
-			return false;
+		public virtual TriggerResult On_PutOnChar(ItemOnCharArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Iam being equipped on a character")]
-		public virtual bool On_DenyEquip(DenyEquipArgs args) {
-			return false;
+		public virtual void On_DenyEquip(DenyEquipArgs args) {
 		}
 
 		//should we add reference to the player?
@@ -947,7 +944,7 @@ namespace SteamEngine {
 			if (!this.TryGetRidOfDraggedItem()) {
 				return DenyResultMessages.Deny_YouAreAlreadyHoldingAnItem;
 			}
-			
+
 			DenyResult result = this.CanPickup(item);
 
 			//equip into dragging layer
@@ -964,7 +961,7 @@ namespace SteamEngine {
 				int amountSum = item.Amount;
 				if (!item.IsEquipped && amountToPick < amountSum) {
 					AbstractItem dupedItem = (AbstractItem) item.Dupe();
-					dupedItem.Amount = (amountSum - amountToPick);	
+					dupedItem.Amount = (amountSum - amountToPick);
 					item.Amount = amountToPick;
 					item.Trigger_SplitFromStack(dupedItem);
 				}
@@ -979,55 +976,55 @@ namespace SteamEngine {
 		}
 
 		public DenyResult CanPickup(AbstractItem item) {
-			bool cancel;
-			DenyResult result = this.Trigger_DenyPickupItem(item, out cancel);
+			TriggerResult triggerResult;
+			DenyResult denyResult = this.Trigger_DenyPickupItem(item, out triggerResult);
 			//default implementation, can be skipped by returning true (cancelling)
-			if ((!cancel) && (result.Allow)) {
+			if (triggerResult != TriggerResult.Cancel && (denyResult.Allow)) {
 				return this.CanReach(item);
 			}
-			return result;
+			return denyResult;
 		}
 
-		private DenyResult Trigger_DenyPickupItem(AbstractItem item, out bool cancel) {
+		private DenyResult Trigger_DenyPickupItem(AbstractItem item, out TriggerResult result) {
 			//@deny triggers
 			DenyPickupArgs args = new DenyPickupArgs(this, item);
 
-			cancel = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
-			if (!cancel) {
+			result = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = this.On_DenyPickupItem(args);
+					result = this.On_DenyPickupItem(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = item.TryCancellableTrigger(TriggerKey.denyPickup, args);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = item.TryCancellableTrigger(TriggerKey.denyPickup, args);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = item.On_DenyPickup(args);
+							result = item.On_DenyPickup(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-						if (!cancel) {
+						if (result != TriggerResult.Cancel) {
 							Thing c = item.Cont;
 							if (c != null) {
 								AbstractItem contItem = c as AbstractItem;
 								if (contItem != null) {
-									cancel = contItem.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
-									if (!cancel) {
+									result = contItem.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
+									if (result != TriggerResult.Cancel) {
 										try {
-											cancel = contItem.On_DenyPickupItemFrom(args);
+											contItem.On_DenyPickupItemFrom(args);
 										} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 									}
 								} else {
 									AbstractCharacter contChar = (AbstractCharacter) c;
-									cancel = contChar.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
-									if (!cancel) {
+									result = contChar.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
+									if (result != TriggerResult.Cancel) {
 										try {
-											cancel = contChar.On_DenyPickupItemFrom(args);
+											contChar.On_DenyPickupItemFrom(args);
 										} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 									}
 								}
 							} else {
 								MutablePoint4D p = item.point4d;
 								Region region = Map.GetMap(p.m).GetRegionFor(p.x, p.y);
-								cancel = region.Trigger_DenyPickupItemFrom(args);
+								region.Trigger_DenyPickupItemFrom(args);
 							}
 						}
 					}
@@ -1052,22 +1049,22 @@ namespace SteamEngine {
 			if (targetCont.IsContainer) {
 				DenyPutInItemArgs args = new DenyPutInItemArgs(this, item, targetCont);
 
-				bool cancel = this.TryCancellableTrigger(TriggerKey.denyPutItemInItem, args);
-				if (!cancel) {
+				var result = this.TryCancellableTrigger(TriggerKey.denyPutItemInItem, args);
+				if (result != TriggerResult.Cancel) {
 					try {
-						cancel = this.On_DenyPutItemInItem(args);
+						result = this.On_DenyPutItemInItem(args);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-					if (!cancel) {
-						cancel = item.TryCancellableTrigger(TriggerKey.denyPutInItem, args);
-						if (!cancel) {
+					if (result != TriggerResult.Cancel) {
+						result = item.TryCancellableTrigger(TriggerKey.denyPutInItem, args);
+						if (result != TriggerResult.Cancel) {
 							try {
-								cancel = item.On_DenyPutInItem(args);
+								result = item.On_DenyPutInItem(args);
 							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-							if (!cancel) {
-								cancel = targetCont.TryCancellableTrigger(TriggerKey.denyPutItemIn, args);
-								if (!cancel) {
+							if (result != TriggerResult.Cancel) {
+								result = targetCont.TryCancellableTrigger(TriggerKey.denyPutItemIn, args);
+								if (result != TriggerResult.Cancel) {
 									try {
-										cancel = targetCont.On_DenyPutItemIn(args);
+										result = targetCont.On_DenyPutItemIn(args);
 									} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 								}
 							}
@@ -1077,7 +1074,7 @@ namespace SteamEngine {
 
 				DenyResult retVal = args.Result;
 
-				if ((!cancel) && (retVal.Allow)) {
+				if (result != TriggerResult.Cancel && (retVal.Allow)) {
 					retVal = OpenedContainers.HasContainerOpen(this, targetCont);
 
 					if (!retVal.Allow) {//we don't have it open, let's check if we could
@@ -1165,21 +1162,20 @@ namespace SteamEngine {
 
 		private void Trigger_TryPutItemOnItem(AbstractItem target, AbstractItem item) {
 			ItemOnItemArgs args = new ItemOnItemArgs(this, item, target);
-			bool cancel = item.TryCancellableTrigger(TriggerKey.putOnItem, args);
-			if (!cancel) {
+			var result = item.TryCancellableTrigger(TriggerKey.putOnItem, args);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = item.On_PutOnItem(args);
+					result = item.On_PutOnItem(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = target.TryCancellableTrigger(TriggerKey.putItemOn, args);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = target.TryCancellableTrigger(TriggerKey.putItemOn, args);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = target.On_PutItemOn(args);
-							//we do nothing anyway...
+							target.On_PutItemOn(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
-			}			
+			}
 		}
 
 		//typically called from InPackets. (I am the src)
@@ -1196,21 +1192,21 @@ namespace SteamEngine {
 			IPoint4D point = new Point4D(x, y, z, m);
 			DenyPutOnGroundArgs args = new DenyPutOnGroundArgs(this, item, point);
 
-			bool cancel = this.TryCancellableTrigger(TriggerKey.denyPutItemOnGround, args);
-			if (!cancel) {
+			var result = this.TryCancellableTrigger(TriggerKey.denyPutItemOnGround, args);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = this.On_DenyPutItemOnGround(args);
+					result = this.On_DenyPutItemOnGround(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = item.TryCancellableTrigger(TriggerKey.denyPutOnGround, args);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = item.TryCancellableTrigger(TriggerKey.denyPutOnGround, args);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = item.On_DenyPutOnGround(args);
+							result = item.On_DenyPutOnGround(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-						if (!cancel) {
+						if (result != TriggerResult.Cancel) {
 							Region region = Map.GetMap(m).GetRegionFor(x, y);
-							cancel = region.Trigger_DenyPutItemOn(args);
+							result = region.Trigger_DenyPutItemOn(args);
 						}
 					}
 				}
@@ -1220,7 +1216,7 @@ namespace SteamEngine {
 			point = args.Point.TopPoint;
 
 			//default implementation
-			if ((!cancel) && (retVal.Allow)) {
+			if (result != TriggerResult.Cancel && (retVal.Allow)) {
 				retVal = this.CanReachCoordinates(point);
 			}
 
@@ -1249,22 +1245,22 @@ namespace SteamEngine {
 			} else {
 				ItemOnCharArgs args = new ItemOnCharArgs(this, item, target);
 
-				bool cancel = this.TryCancellableTrigger(TriggerKey.putItemOnChar, args);
-				if (!cancel) {
+				var result = this.TryCancellableTrigger(TriggerKey.putItemOnChar, args);
+				if (result != TriggerResult.Cancel) {
 					try {
-						cancel = this.On_PutItemOnChar(args);
+						result = this.On_PutItemOnChar(args);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-					if (!cancel) {
-						cancel = item.TryCancellableTrigger(TriggerKey.putOnChar, args);
-						if (!cancel) {
+					if (result != TriggerResult.Cancel) {
+						result = item.TryCancellableTrigger(TriggerKey.putOnChar, args);
+						if (result != TriggerResult.Cancel) {
 							try {
-								cancel = item.On_PutOnChar(args);
+								result = item.On_PutOnChar(args);
 							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-							if (!cancel) {
-								cancel = target.TryCancellableTrigger(TriggerKey.putItemOn, args);
-								if (!cancel) {
+							if (result != TriggerResult.Cancel) {
+								result = target.TryCancellableTrigger(TriggerKey.putItemOn, args);
+								if (result != TriggerResult.Cancel) {
 									try {
-										cancel = target.On_PutItemOn(args);
+										result = target.On_PutItemOn(args);
 									} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 								}
 							}
@@ -1272,7 +1268,7 @@ namespace SteamEngine {
 					}
 				}
 
-				if (!cancel) {
+				if (result != TriggerResult.Cancel) {
 					return this.TryPutItemOnItem(target.GetBackpack());
 				}
 			}
@@ -1326,22 +1322,22 @@ namespace SteamEngine {
 
 					DenyEquipArgs args = new DenyEquipArgs(this, item, target, layer);
 
-					bool cancel = this.TryCancellableTrigger(TriggerKey.denyEquipOnChar, args);
-					if (!cancel) {
+					var result = this.TryCancellableTrigger(TriggerKey.denyEquipOnChar, args);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_DenyEquipOnChar(args);
+							result = this.On_DenyEquipOnChar(args);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-						if (!cancel) {
-							cancel = target.TryCancellableTrigger(TriggerKey.denyEquip, args);
-							if (!cancel) {
+						if (result != TriggerResult.Cancel) {
+							result = target.TryCancellableTrigger(TriggerKey.denyEquip, args);
+							if (result != TriggerResult.Cancel) {
 								try {
-									cancel = target.On_DenyEquip(args);
+									result = target.On_DenyEquip(args);
 								} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-								if (!cancel) {
-									cancel = item.TryCancellableTrigger(TriggerKey.denyEquip, args);
-									if (!cancel) {
+								if (result != TriggerResult.Cancel) {
+									result = item.TryCancellableTrigger(TriggerKey.denyEquip, args);
+									if (result != TriggerResult.Cancel) {
 										try {
-											cancel = item.On_DenyEquip(args);
+											item.On_DenyEquip(args);
 										} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 									}
 								}
@@ -1349,15 +1345,15 @@ namespace SteamEngine {
 						}
 					}
 
-					DenyResult result = args.Result;
+					DenyResult retVal = args.Result;
 
-					if (result.Allow) {
+					if (retVal.Allow) {
 						if (this != target) {
-							result = this.CanReach(target);
+							retVal = this.CanReach(target);
 						}
 					}
 
-					if (result.Allow) {
+					if (retVal.Allow) {
 						item.MakeLimbo();
 						item.Trigger_EnterChar(target, layer);
 						if (this != target) {
@@ -1365,7 +1361,7 @@ namespace SteamEngine {
 						}
 					}
 
-					return result;
+					return retVal;
 				}
 			}
 
@@ -1397,43 +1393,42 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyPutItemOnGround(DenyPutOnGroundArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyPutItemOnGround(DenyPutOnGroundArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyPickupItem(DenyPickupArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyPickupItem(DenyPickupArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyPutItemInItem(DenyPutInItemArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyPutItemInItem(DenyPutInItemArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
-			return false;
+		public virtual void On_DenyPickupItemFrom(DenyPickupArgs args) {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_PutItemOn(ItemOnCharArgs args) {
-			return false;
+		public virtual TriggerResult On_PutItemOn(ItemOnCharArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_PutItemOnChar(ItemOnCharArgs args) {
-			return false;
+		public virtual TriggerResult On_PutItemOnChar(ItemOnCharArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyEquip(DenyEquipArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyEquip(DenyEquipArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyEquipOnChar(DenyEquipArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyEquipOnChar(DenyEquipArgs args) {
+			return TriggerResult.Continue;
 		}
 	}
 
@@ -1448,16 +1443,16 @@ namespace SteamEngine {
 		}
 
 		public AbstractItem ManipulatedItem {
-			get { 
+			get {
 				return manipulatedItem;
 			}
 		}
 
 		public AbstractItem WaitingStack {
-			get { 
-				return waitingStack; 
+			get {
+				return waitingStack;
 			}
-		} 
+		}
 	}
 
 	public class ItemOnGroundArgs : ScriptArgs {
@@ -1474,21 +1469,21 @@ namespace SteamEngine {
 
 		public AbstractItem ManipulatedItem {
 			get {
-				return this.manipulatedItem; 
+				return this.manipulatedItem;
 			}
 		}
 
 		public Region Region {
 			get {
-				return this.region; 
+				return this.region;
 			}
 		}
 
 		public Point4D Point {
 			get {
-				return this.point; 
+				return this.point;
 			}
-		} 
+		}
 	}
 
 	public class ItemInItemArgs : ScriptArgs {
@@ -1503,15 +1498,15 @@ namespace SteamEngine {
 
 		public AbstractItem ManipulatedItem {
 			get {
-				return this.manipulatedItem; 
+				return this.manipulatedItem;
 			}
 		}
 
 		public AbstractItem Container {
 			get {
-				return this.container; 
+				return this.container;
 			}
-		} 
+		}
 	}
 
 	public class ItemInCharArgs : ScriptArgs {
@@ -1528,21 +1523,21 @@ namespace SteamEngine {
 
 		public AbstractItem ManipulatedItem {
 			get {
-				return this.manipulatedItem; 
+				return this.manipulatedItem;
 			}
 		}
 
 		public AbstractCharacter Cont {
 			get {
-				return this.cont; 
+				return this.cont;
 			}
 		}
 
 		public int Layer {
 			get {
-				return this.layer; 
+				return this.layer;
 			}
-		} 
+		}
 	}
 
 	public class DenyTriggerArgs : ScriptArgs {
@@ -1572,16 +1567,16 @@ namespace SteamEngine {
 		}
 
 		public AbstractCharacter PickingChar {
-			get { 
-				return this.pickingChar; 
+			get {
+				return this.pickingChar;
 			}
 		}
 
 		public AbstractItem ManipulatedItem {
 			get {
-				return this.manipulatedItem; 
+				return this.manipulatedItem;
 			}
-		} 
+		}
 	}
 
 	public class DenyPutInItemArgs : DenyTriggerArgs {
@@ -1597,22 +1592,22 @@ namespace SteamEngine {
 		}
 
 		public AbstractCharacter PickingChar {
-			get { 
-				return this.pickingChar; 
+			get {
+				return this.pickingChar;
 			}
 		}
 
 		public AbstractItem ManipulatedItem {
-			get { 
-				return this.manipulatedItem; 
+			get {
+				return this.manipulatedItem;
 			}
 		}
 
 		public AbstractItem Container {
-			get { 
+			get {
 				return this.container;
 			}
-		} 
+		}
 
 	}
 
@@ -1636,16 +1631,16 @@ namespace SteamEngine {
 		}
 
 		public AbstractCharacter PuttingChar {
-			get { 
-				return this. puttingChar; 
+			get {
+				return this.puttingChar;
 			}
 		}
 
 		public AbstractItem ManipulatedItem {
-			get { 
-				return this.manipulatedItem; 
+			get {
+				return this.manipulatedItem;
 			}
-		} 
+		}
 	}
 
 	public class ItemOnItemArgs : ScriptArgs {
@@ -1668,15 +1663,15 @@ namespace SteamEngine {
 
 		public AbstractItem ManipulatedItem {
 			get {
-				return this.manipulatedItem; 
+				return this.manipulatedItem;
 			}
 		}
 
 		public AbstractItem WaitingItem {
 			get {
-				return this.waitingItem; 
+				return this.waitingItem;
 			}
-		} 
+		}
 	}
 
 	public class ItemOnCharArgs : ScriptArgs {

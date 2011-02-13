@@ -31,16 +31,16 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
 			Character self = skillSeqArgs.Self;
 			double range = Math.Round(this.GetEffectForChar(self));
@@ -50,20 +50,14 @@ namespace SteamEngine.CompiledScripts {
 					if (this.CheckSuccess(self, target.GetSkill(SkillName.Hiding))) {
 						skillSeqArgs.Success = true;
 						skillSeqArgs.Target1 = target;
-						skillSeqArgs.PhaseSuccess();
 					}
 				}
 			}
 
-			if (skillSeqArgs.Success) {
-				//skillSeqArgs.Dispose();
-				return true; //we're done
-			} else {
-				return false; //continue to @Fail
-			}
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 			HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
@@ -71,17 +65,15 @@ namespace SteamEngine.CompiledScripts {
 				if (ssp.hadDetectedMe == null) {
 					ssp.hadDetectedMe = new LinkedList<Character>();
 				} else if (ssp.hadDetectedMe.Contains(self)) {
-					return false;
+					return;
 				}
 				Networking.CharSyncQueue.AboutToChangeVisibility(target);
 				ssp.hadDetectedMe.AddFirst(self);
 			}
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			skillSeqArgs.Self.ClilocSysMessage(500817);//You can see nothing hidden there.
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

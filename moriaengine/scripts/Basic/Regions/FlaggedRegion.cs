@@ -96,16 +96,16 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		public override bool On_Enter(AbstractCharacter ch, bool forced) {
+		public override TriggerResult On_Enter(AbstractCharacter ch, bool forced) {
 			Player asPlayer = ch as Player;
 			if (asPlayer != null) {
 				asPlayer.SendGlobalLightLevel(LightAndWeather.GetLightIn(this));
 			}
 
-			return false;//if forced is true, the return value is irrelevant
+			return TriggerResult.Continue;//if forced is true, the return value is irrelevant
 		}
 
-		public override bool On_Exit(AbstractCharacter ch, bool forced) {
+		public override TriggerResult On_Exit(AbstractCharacter ch, bool forced) {
 			Player asPlayer = ch as Player;
 			if (asPlayer != null) {
 				//we're exiting this one, hence "re-entering" the parent
@@ -115,7 +115,7 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			return false;//if forced is true, the return value is irrelevant
+			return TriggerResult.Continue;//if forced is true, the return value is irrelevant
 		}
 
 		#region Persistence

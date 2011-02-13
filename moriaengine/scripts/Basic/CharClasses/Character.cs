@@ -1636,27 +1636,27 @@ namespace SteamEngine.CompiledScripts {
 			SkillSequenceArgs.AbortSkill(this);
 		}
 
-		public virtual bool On_SkillSelect(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		public virtual TriggerResult On_SkillSelect(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		public virtual bool On_SkillStart(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		public virtual TriggerResult On_SkillStart(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
 		public virtual void On_SkillAbort(SkillSequenceArgs skillSeqArgs) {
 		}
 
-		public virtual bool On_SkillFail(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		public virtual TriggerResult On_SkillFail(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		public virtual bool On_SkillStroke(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		public virtual TriggerResult On_SkillStroke(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		public virtual bool On_SkillSuccess(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		public virtual TriggerResult On_SkillSuccess(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
 		//public virtual bool On_SkillGain(int id, object arg) {
@@ -1736,12 +1736,12 @@ namespace SteamEngine.CompiledScripts {
 		internal virtual void On_AbilityValueChanged(AbilityDef aDef, Ability ab, int previousValue) {
 		}
 
-		internal virtual bool On_DenyActivateAbility(DenyAbilityArgs args) {
-			return false;
+		internal virtual TriggerResult On_DenyActivateAbility(DenyAbilityArgs args) {
+			return TriggerResult.Continue;
 		}
 
-		internal virtual bool On_ActivateAbility(AbilityDef aDef, Ability ab) {
-			return false;
+		internal virtual TriggerResult On_ActivateAbility(AbilityDef aDef, Ability ab) {
+			return TriggerResult.Continue;
 		}
 
 		//internal virtual bool On_DeactivateAbility(ActivableAbilityDef aDef, Ability ab) {
@@ -1777,12 +1777,12 @@ namespace SteamEngine.CompiledScripts {
 			MagerySkillDef.TryCastSpellFromBook(this, spellDef);
 		}
 
-		public virtual bool On_SpellEffect(SpellEffectArgs spellEffectArgs) {
-			return false;
+		public virtual TriggerResult On_SpellEffect(SpellEffectArgs spellEffectArgs) {
+			return TriggerResult.Continue;
 		}
 
-		public virtual bool On_CauseSpellEffect(IPoint3D target, SpellEffectArgs spellEffectArgs) {
-			return false;
+		public virtual TriggerResult On_CauseSpellEffect(IPoint3D target, SpellEffectArgs spellEffectArgs) {
+			return TriggerResult.Continue;
 		}
 		#endregion Spell cast / effect
 
@@ -1983,10 +1983,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override bool On_DenyItemDClick(DenyClickArgs args) {
+		public override TriggerResult On_DenyItemDClick(DenyClickArgs args) {
 			DenyResult dr = this.CanReach(args.Target);
 			args.Result = dr;
-			return !dr.Allow;
+			return dr.Allow ? TriggerResult.Continue : TriggerResult.Cancel;
 		}
 
 		public override void On_ItemDClick(AbstractItem dClicked) {
@@ -2381,12 +2381,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public bool On_BeforeSwing(WeaponSwingArgs args) {
-			return false;
+		public TriggerResult On_BeforeSwing(WeaponSwingArgs args) {
+			return TriggerResult.Continue;
 		}
 
-		public bool On_BeforeGetSwing(WeaponSwingArgs args) {
-			return false;
+		public TriggerResult On_BeforeGetSwing(WeaponSwingArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		public void On_CauseDamage(DamageArgs args) {
@@ -2471,12 +2471,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual bool On_DenyOpenDoor(DenySwitchDoorArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyOpenDoor(DenySwitchDoorArgs args) {
+			return TriggerResult.Continue;
 		}
 
-		public virtual bool On_DenyCloseDoor(DenySwitchDoorArgs args) {
-			return false;
+		public virtual TriggerResult On_DenyCloseDoor(DenySwitchDoorArgs args) {
+			return TriggerResult.Continue;
 		}
 
 		public Party Party {

@@ -29,25 +29,23 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//self.ClilocSysMessage(500014); //That skill cannot be used directly.
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

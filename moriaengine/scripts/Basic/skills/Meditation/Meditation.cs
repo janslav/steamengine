@@ -30,24 +30,27 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
-			return !CheckPrerequisities(skillSeqArgs); //F = continue to @start, T = stop
+			if (!CheckPrerequisities(skillSeqArgs)) {
+				return TriggerResult.Cancel;
+			}
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false; //continue to delay, then @stroke
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue; //continue to delay, then @stroke
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			if (!CheckPrerequisities(skillSeqArgs)) {
-				return true;//stop
+				return TriggerResult.Cancel;
 			}
 			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 
-			return false; //continue to @success or @fail
+			return TriggerResult.Continue; //continue to @success or @fail
 		}
 
 		//bonus talent 
@@ -61,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			self.ClilocSysMessage(501851);//You enter a meditative trance.
@@ -70,12 +73,10 @@ namespace SteamEngine.CompiledScripts {
 			effect += effect * MeditationBonusDef.EffectPower * self.GetAbility(MeditationBonusDef);
 			mpl.additionalManaRegenSpeed = effect;
 			self.AddPlugin(MeditationPlugin.meditationPluginKey, mpl);
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			skillSeqArgs.Self.ClilocSysMessage(501848);//You cannot focus your concentration
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

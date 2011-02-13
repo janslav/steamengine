@@ -211,7 +211,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Profession
 
 		[Summary("Every step is monitored by the ScriptSector system")]
-		public override bool On_Step(Direction direction, bool running) {
+		public override TriggerResult On_Step(Direction direction, bool running) {
 			ScriptSector.AddTrackingStep(this, direction);
 			return base.On_Step(direction, running);
 		}
@@ -232,9 +232,9 @@ namespace SteamEngine.CompiledScripts {
 			base.On_LogOut();
 		}
 
-		public override bool On_LogIn() {
-			bool stopLogin = base.On_LogIn();
-			if (!stopLogin) {
+		public override TriggerResult On_LogIn() {
+			var result = base.On_LogIn();
+			if (result != TriggerResult.Cancel) {
 				//if (DbManager.Config.useDb) {
 				//    DbMethods.loginLogs.GameLogin(this.Conn);
 				//    Logger.WriteDebug(ScriptUtil.GetLogString(this.Conn, "Logged in"));
@@ -246,7 +246,7 @@ namespace SteamEngine.CompiledScripts {
 				state.SendPersonalLightLevel(this.personalLightLevel);
 				state.SendGlobalLightLevel(LightAndWeather.GetLightAt(this));
 			}
-			return stopLogin;
+			return result;
 		}
 
 		//[Summary("Add a profession-powered skill checkings. Check if the skill value doesn't go "+
