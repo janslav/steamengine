@@ -8,9 +8,12 @@ namespace SteamEngine.CompiledScripts {
             this.Say("Shine");
             if (this.Amount > 1) {
                 //vytvori hromadku dalsich pochodni s amount-1
-                //ItemDef shiningItemDef = this.TypeDef.ShiningItemDef;
-                this.NewItem(ShiningItemDef,this.Amount-1); //(shiningItemDef, this.Amount-1);//(ShiningItemdef, this.Amount-1);
+                Item restOfTorches = (Item)this.Dupe();
+				restOfTorches.Amount = restOfTorches.Amount - 1;
+				this.Amount = 1;
             }
+			this.Model = 0xa12;
+			base.On_DClick(dclicker);
 		}
 	}
 
