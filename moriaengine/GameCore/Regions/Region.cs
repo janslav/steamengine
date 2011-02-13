@@ -58,7 +58,7 @@ namespace SteamEngine.Regions {
 				return this.parent;
 			}
 			protected set {
-				this.parent = value; 
+				this.parent = value;
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace SteamEngine.Regions {
 				return this.defname;
 			}
 			protected set {
-				this.defname = value; 
+				this.defname = value;
 			}
 		}
 
@@ -225,66 +225,55 @@ namespace SteamEngine.Regions {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal bool Trigger_DenyPickupItemFrom(DenyPickupArgs args) {
+		internal void Trigger_DenyPickupItemFrom(DenyPickupArgs args) {
 			Region region = this;
 
-			bool cancel = false;
 			do {
-				if (!cancel) {
-					cancel = region.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
-					if (!cancel) {
-						try {
-							cancel = region.On_DenyPickupItemFrom(args);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-					} else {
-						break;
-					}
+				if (TriggerResult.Cancel != region.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args)) {
+					try {
+						if (TriggerResult.Cancel != region.On_DenyPickupItemFrom(args)) {
+							return;
+						}
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				} else {
-					break;
+					return;
 				}
-
 				region = region.parent;
 			} while (region != null);
-
-			return cancel;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyPickupItemFrom(DenyPickupArgs args) {
+		public virtual TriggerResult On_DenyPickupItemFrom(DenyPickupArgs args) {
 			ThrowIfDeleted();
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal bool Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
+		internal TriggerResult Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
 			ThrowIfDeleted();
 			Region region = this;
 
-			bool cancel = false;
 			do {
-				if (!cancel) {
-					cancel = region.TryCancellableTrigger(TriggerKey.denyPutItemOn, args);
-					if (!cancel) {
-						try {
-							cancel = region.On_DenyPutItemOn(args);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-					} else {
-						break;
-					}
+				if (TriggerResult.Cancel != region.TryCancellableTrigger(TriggerKey.denyPutItemOn, args)) {
+					try {
+						if (TriggerResult.Cancel != region.On_DenyPutItemOn(args)) {
+							return TriggerResult.Cancel;
+						}
+					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				} else {
-					break;
+					return TriggerResult.Cancel;
 				}
 
 				region = region.parent;
 			} while (region != null);
 
-			return cancel;
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyPutItemOn(DenyPutOnGroundArgs args) {
+		public virtual TriggerResult On_DenyPutItemOn(DenyPutOnGroundArgs args) {
 			ThrowIfDeleted();
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		private static void ReturnItemOnGroundIfNeeded(AbstractItem item, Point4D point) {
@@ -339,8 +328,8 @@ namespace SteamEngine.Regions {
 
 		public bool TryEnter(AbstractCharacter ch) {
 			ThrowIfDeleted();
-			if (!TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
-				if (!On_Enter(ch, false)) {
+			if (TriggerResult.Cancel != TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
+				if (TriggerResult.Cancel != On_Enter(ch, false)) {
 					return true;
 				}
 			}
@@ -349,8 +338,8 @@ namespace SteamEngine.Regions {
 
 		public bool TryExit(AbstractCharacter ch) {
 			ThrowIfDeleted();
-			if (!TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
-				if (!On_Exit(ch, false)) {
+			if (TriggerResult.Cancel != TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
+				if (TriggerResult.Cancel != On_Exit(ch, false)) {
 					return true;
 				}
 			}
@@ -370,17 +359,17 @@ namespace SteamEngine.Regions {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public virtual bool On_Enter(AbstractCharacter ch, bool forced) {//if forced is true, the return value is irrelevant
+		public virtual TriggerResult On_Enter(AbstractCharacter ch, bool forced) {//if forced is true, the return value is irrelevant
 			Logger.WriteDebug(ch + " entered " + this);
 			ch.SysMessage("You have just entered " + this);
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public virtual bool On_Exit(AbstractCharacter ch, bool forced) {
+		public virtual TriggerResult On_Exit(AbstractCharacter ch, bool forced) {
 			Logger.WriteDebug(ch + " left " + this);
 			ch.SysMessage("You have just left " + this);
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public bool IsInactivated {

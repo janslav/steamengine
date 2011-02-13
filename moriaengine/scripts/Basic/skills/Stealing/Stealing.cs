@@ -31,17 +31,17 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			skillSeqArgs.PhaseStroke();
-			return true;//cancel - don't delay
+			return TriggerResult.Cancel; //cancel - don't delay
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Item item = (Item) skillSeqArgs.Target1;
 
@@ -51,22 +51,24 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				skillSeqArgs.Success = false;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			self.ClilocSysMessage(500174);      // You successfully steal the item!
-			return true; //true = no default disposing of skillSeqArgs, Snooping implementation does the rest
+
+			//Snooping implementation does the rest
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Item item = (Item) skillSeqArgs.Target1;
 			self.ClilocSysMessage(500172);	    // I failed to steal.
 			((Character) item.TopObj()).Trigger_HostileAction(self);
 			//self.ClilocSysMessage(500167);	    // You are now a criminal.
-			return true; //true = no default disposing of skillSeqArgs, Snooping implementation does the rest
+
+			//Snooping implementation does the rest
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

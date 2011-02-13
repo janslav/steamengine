@@ -367,8 +367,8 @@ namespace SteamEngine.CompiledScripts {
 		//    this.SoundTo(this.TypeDef.DropSound, droppingChar);
 		//}
 
-		public virtual bool On_SpellEffect(SpellEffectArgs spellEffectArgs) {
-			return false;
+		public virtual TriggerResult On_SpellEffect(SpellEffectArgs spellEffectArgs) {
+			return TriggerResult.Continue;
 		}
 
 		private static TagKey morepTK = TagKey.Acquire("_morep_");

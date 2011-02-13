@@ -333,22 +333,22 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override bool On_Enter(AbstractCharacter ch, bool forced) {
-			bool retVal = base.On_Enter(ch, forced);
-			if (!retVal || forced) {
+		public override TriggerResult On_Enter(AbstractCharacter ch, bool forced) {
+			var result = base.On_Enter(ch, forced);
+			if (result != TriggerResult.Cancel || forced) {
 				this.Ship.AddThing(ch);
 				ch.AddTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);
 			}
-			return retVal;
+			return result;
 		}
 
-		public override bool On_Exit(AbstractCharacter ch, bool forced) {
-			bool retVal = base.On_Exit(ch, forced);
-			if (!retVal || forced) {
+		public override TriggerResult On_Exit(AbstractCharacter ch, bool forced) {
+			var result = base.On_Exit(ch, forced);
+			if (result != TriggerResult.Cancel || forced) {
 				this.Ship.RemoveThing(ch);
 				ch.RemoveTriggerGroup(SingletonScript<E_BeingOnShip>.Instance);
 			}
-			return retVal;
+			return result;
 		}
 
 		public class E_BeingOnShip : CompiledTriggerGroup {

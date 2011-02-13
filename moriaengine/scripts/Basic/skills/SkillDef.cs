@@ -210,103 +210,101 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		internal bool Trigger_Select(SkillSequenceArgs skillSeqArgs) {
+		internal TriggerResult Trigger_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {
-				return true;
+				return TriggerResult.Cancel;
 			}
 
-			bool cancel = self.TryCancellableTrigger(tkSkillSelect, skillSeqArgs.scriptArgs);
-			if (!cancel) {
+			var result = self.TryCancellableTrigger(tkSkillSelect, skillSeqArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = self.On_SkillSelect(skillSeqArgs);
+					result = self.On_SkillSelect(skillSeqArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(self, tkSelect, skillSeqArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(self, tkSelect, skillSeqArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_Select(skillSeqArgs);
+							result = this.On_Select(skillSeqArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
-			return cancel;
+			return result;
 		}
 
-		internal bool Trigger_Start(SkillSequenceArgs skillSeqArgs) {
+		internal TriggerResult Trigger_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			bool cancel = self.TryCancellableTrigger(tkSkillStart, skillSeqArgs.scriptArgs);
-			if (!cancel) {
+			var result = self.TryCancellableTrigger(tkSkillStart, skillSeqArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = self.On_SkillStart(skillSeqArgs);
+					result = self.On_SkillStart(skillSeqArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(self, tkStart, skillSeqArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(self, tkStart, skillSeqArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_Start(skillSeqArgs);
+							result = this.On_Start(skillSeqArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
-			return cancel;
+			return result;
 		}
 
-		internal bool Trigger_Stroke(SkillSequenceArgs skillSeqArgs) {
+		internal TriggerResult Trigger_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			bool cancel = self.TryCancellableTrigger(tkSkillStroke, skillSeqArgs.scriptArgs);
-			if (!cancel) {
+			var result = self.TryCancellableTrigger(tkSkillStroke, skillSeqArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = self.On_SkillStroke(skillSeqArgs);
+					result = self.On_SkillStroke(skillSeqArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(self, tkStroke, skillSeqArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(self, tkStroke, skillSeqArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_Stroke(skillSeqArgs);
+							result = this.On_Stroke(skillSeqArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
-			return cancel;
+			return result;
 		}
 
-		internal bool Trigger_Fail(SkillSequenceArgs skillSeqArgs) {
+		internal void Trigger_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			bool cancel = self.TryCancellableTrigger(tkSkillFail, skillSeqArgs.scriptArgs);
-			if (!cancel) {
+			var result = self.TryCancellableTrigger(tkSkillFail, skillSeqArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = self.On_SkillFail(skillSeqArgs);
+					result = self.On_SkillFail(skillSeqArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(self, tkFail, skillSeqArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(self, tkFail, skillSeqArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_Fail(skillSeqArgs);
+							this.On_Fail(skillSeqArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
-			return cancel;
 		}
 
-		internal bool Trigger_Success(SkillSequenceArgs skillSeqArgs) {
+		internal void Trigger_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
-			bool cancel = self.TryCancellableTrigger(tkSkillSuccess, skillSeqArgs.scriptArgs);
-			if (!cancel) {
+			var result = self.TryCancellableTrigger(tkSkillSuccess, skillSeqArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = self.On_SkillSuccess(skillSeqArgs);
+					result = self.On_SkillSuccess(skillSeqArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(self, tkSuccess, skillSeqArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(self, tkSuccess, skillSeqArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = this.On_Success(skillSeqArgs);
+							this.On_Success(skillSeqArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
-			return cancel;
 		}
 
 		internal void Trigger_Abort(SkillSequenceArgs skillSeqArgs) {
@@ -322,19 +320,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("This method implements the Select phase of the skill.")]
-		protected abstract bool On_Select(SkillSequenceArgs skillSeqArgs);
+		protected abstract TriggerResult On_Select(SkillSequenceArgs skillSeqArgs);
 
 		[Summary("This method implements the Start phase of the skill.")]
-		protected abstract bool On_Start(SkillSequenceArgs skillSeqArgs);
+		protected abstract TriggerResult On_Start(SkillSequenceArgs skillSeqArgs);
 
 		[Summary("This method implements the \"stroke\" of the skill, that means some important moment \"in the middle\".")]
-		protected abstract bool On_Stroke(SkillSequenceArgs skillSeqArgs);
+		protected abstract TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs);
 
 		[Summary("This method implements the failing of the skill. ")]
-		protected abstract bool On_Fail(SkillSequenceArgs skillSeqArgs);
+		protected abstract void On_Fail(SkillSequenceArgs skillSeqArgs);
 
 		[Summary("This method implements the succes of the skill, a.e. skillgaiin and the success effect.")]
-		protected abstract bool On_Success(SkillSequenceArgs skillSeqArgs);
+		protected abstract void On_Success(SkillSequenceArgs skillSeqArgs);
 
 		[Summary("This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... ")]
 		protected abstract void On_Abort(SkillSequenceArgs skillSeqArgs);
@@ -522,7 +520,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void PhaseSelect() {
-			if (!this.skillDef.Trigger_Select(this)) {
+			if (TriggerResult.Cancel != this.skillDef.Trigger_Select(this)) {
 				this.PhaseStart();
 			}
 		}
@@ -530,7 +528,7 @@ namespace SteamEngine.CompiledScripts {
 		public void PhaseStart() {
 			this.DelayInSeconds = this.skillDef.GetDelayForChar(this.self);
 
-			if (!this.skillDef.Trigger_Start(this)) {
+			if (TriggerResult.Cancel != this.skillDef.Trigger_Start(this)) {
 				AbortSkill(this.self);
 				this.DelayStroke();
 			}
@@ -548,7 +546,7 @@ namespace SteamEngine.CompiledScripts {
 		+ "Gets usually called by the SkillTimer.")]
 		public void PhaseStroke() {
 			if (this.self.IsAliveAndValid) {
-				if (!this.skillDef.Trigger_Stroke(this)) {
+				if (TriggerResult.Cancel != this.skillDef.Trigger_Stroke(this)) {
 					if (this.success) {
 						this.PhaseSuccess();
 					} else {
@@ -561,16 +559,12 @@ namespace SteamEngine.CompiledScripts {
 		[Summary("This method fires the @skillFail triggers. Gets usually called from the Stroke phase")]
 		[Remark("Failing is something else than being forced to abort")]
 		public void PhaseFail() {
-			if (!this.skillDef.Trigger_Fail(this)) {
-				//this.Dispose();
-			}
+			this.skillDef.Trigger_Fail(this);
 		}
 
 		[Summary("This method fires the @Success triggers. Gets usually called from the Stroke phase")]
 		public void PhaseSuccess() {
-			if (!this.skillDef.Trigger_Success(this)) {
-				//this.Dispose();
-			}
+			this.skillDef.Trigger_Success(this);
 		}
 
 		[Summary("This method fires the @skillAbort triggers. "

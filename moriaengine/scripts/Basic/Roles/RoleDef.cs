@@ -94,14 +94,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Loading from scripts
 
-		public bool TryCancellableTrigger(Role role, TriggerKey td, ScriptArgs sa) {
+		public TriggerResult TryCancellableTrigger(Role role, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
 				if (TagMath.Is1(this.scriptedTriggers.TryRun(role, td, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public void TryTrigger(Role role, TriggerKey td, ScriptArgs sa) {

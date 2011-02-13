@@ -33,13 +33,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region triggerMethods
-		protected override bool On_DenyActivate(DenyAbilityArgs args) {
-			bool retVal = false;
-			//TODO - zde ještì implementovat to jestli dotyènej žije/nežije atd.
-
-			retVal = base.On_DenyActivate(args); //call superclass for common checks - including resources consuming etc
-			return retVal;
-		}
 
 		[Summary("Functional implementation of warcry ability")]
 		protected override bool On_Activate(Character chr, Ability ab) {

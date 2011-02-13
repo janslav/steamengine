@@ -296,37 +296,33 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal bool CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
+		internal TriggerResult CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.Run(self, td, sa);
-					try {
-						int retInt = Convert.ToInt32(retVal, System.Globalization.CultureInfo.InvariantCulture);
-						if (retInt == 1) {
-							return true;
-						}
-					} catch (Exception) {
+					if (TagMath.Is1(retVal)) {
+						return TriggerResult.Cancel;
 					}
 					curNode = curNode.nextNode;
 				} while (curNode != null);
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal bool TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
+		internal TriggerResult TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.TryRun(self, td, sa);
 					if (TagMath.Is1(retVal)) {
-						return true;
+						return TriggerResult.Cancel;
 					}
 					curNode = curNode.nextNode;
 				} while (curNode != null);
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 		#endregion TriggerGroupHolder helper methods
 

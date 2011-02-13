@@ -43,13 +43,13 @@ namespace SteamEngine.CompiledScripts
 			SingletonScript<Targ_SelectBandageTarget>.Instance.Assign(self, bandage);
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs)
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs)
 		{
 			Character self = skillSeqArgs.Self;
 			Item bandage = AcquireBandage(self, skillSeqArgs.Tool);
 			if (bandage == null)
 			{
-				return true;
+				return TriggerResult.Cancel;
 			}
 			skillSeqArgs.Tool = bandage;
 
@@ -58,27 +58,27 @@ namespace SteamEngine.CompiledScripts
 			//není cíl
 			if (target == null)
 			{
-				return true;
+				return TriggerResult.Cancel;
 			}
 
 			//nevidi na cil
 			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange))
 			{
 				self.ClilocSysMessage(3000268);	//That is too far away.
-				return true;
+				return TriggerResult.Cancel;
 			}
 			if (!self.CanInteractWithMessage(target))
 			{
-				return true;
+				return TriggerResult.Cancel;
 			}
 
-			return false;
+			return TriggerResult.Continue;
 		}
 
 
 		private TimerKey healingTimerKey = TimerKey.Acquire("_healing_timer_");
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs)
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs)
 		{
 			Character self = skillSeqArgs.Self;
 
@@ -101,10 +101,10 @@ namespace SteamEngine.CompiledScripts
 				self.AddTimer(healingTimerKey, new SkillSequenceArgs.SkillStrokeTimer(skillSeqArgs)).DueInSpan = skillSeqArgs.DelaySpan;
 			}
 
-			return true; //cancel normal operation, we use separate timer here
+			return TriggerResult.Cancel; //cancel normal operation, we use separate timer here
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs)
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs)
 		{
 			Character self = skillSeqArgs.Self;
 
@@ -113,14 +113,14 @@ namespace SteamEngine.CompiledScripts
 			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange))
 			{
 				self.ClilocSysMessage(3000268);	//That is too far away.
-				return true;
+				return TriggerResult.Cancel;
 			}
 			if (!self.CanInteractWithMessage(target))
 			{
-				return true;
+				return TriggerResult.Cancel;
 			}
 
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		private static ItemDef i_bandage_bloody;

@@ -61,26 +61,26 @@ namespace SteamEngine.CompiledScripts {
 			pvmEffect = InitTypedField("pvmEffect", new double[] { 16.0, 64, 0 }, typeof(double[]));
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
 			if (!CheckPrerequisities(skillSeqArgs)) {
-				return true;//finish now
+				return TriggerResult.Cancel; //finish now
 			}
 			Character self = skillSeqArgs.Self;
 			self.ClilocSysMessage(1011350);//What do you wish to track?
 			self.Dialog(self, SingletonScript<D_Tracking_Categories>.Instance, new DialogArgs(skillSeqArgs));
-			return true; //stop it, other triggers will be run from the tracking dialog
+			return TriggerResult.Cancel; //stop it, other triggers will be run from the tracking dialog
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false; //continue to delay, then @stroke
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue; //continue to delay, then @stroke
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			if (!CheckPrerequisities(skillSeqArgs)) {
-				return true;//stop
+				return TriggerResult.Cancel;
 			}
 			switch ((TrackingEnums) skillSeqArgs.Param2) {
 				case TrackingEnums.Phase_Characters_Seek:
@@ -91,10 +91,10 @@ namespace SteamEngine.CompiledScripts {
 					break;
 			}
 
-			return false; //continue to @success or @fail
+			return TriggerResult.Continue; //continue to @success or @fail
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			CharacterTypes charType = (CharacterTypes) skillSeqArgs.Param1;
 			TimeSpan now = Globals.TimeAsSpan;
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 						//check if tracking is possible (with message)
 						//i.e. too many chars or none at all
 						if (this.CheckTrackImpossible(skillSeqArgs, charsAround.Count, charType)) {
-							return true;
+							return;
 						}
 
 						//display a dialog with the found trackable characters
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 
 						//check if tracking is possible (with message) - i.e. too many chars or none at all
 						if (this.CheckTrackImpossible(skillSeqArgs, trackables.Count, charType)) {
-							return true;
+							return;
 						}
 
 						//display a dialog with the found trackable characters
@@ -176,12 +176,10 @@ namespace SteamEngine.CompiledScripts {
 						break;
 				}
 			}
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			skillSeqArgs.Self.ClilocSysMessage(502989);//Tracking failed.
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

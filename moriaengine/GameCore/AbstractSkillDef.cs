@@ -202,14 +202,14 @@ namespace SteamEngine {
 		#endregion Load from scripts
 
 		#region trigger methods
-		public bool TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+		public TriggerResult TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
 				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {

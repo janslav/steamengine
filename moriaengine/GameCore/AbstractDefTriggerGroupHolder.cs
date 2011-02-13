@@ -237,30 +237,30 @@ namespace SteamEngine {
 				<Trigger>, <CancellableTriggers>
 		*/
 
-		public virtual bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					if (TagMath.Is1(curNode.storedTG.Run(this, tk, sa))) {
-						return true;
+						return TriggerResult.Cancel;
 					}
 					curNode = curNode.nextNode;
 				} while (curNode != null);
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		public virtual bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public virtual TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
 				do {
 					if (TagMath.Is1(curNode.storedTG.TryRun(this, tk, sa))) {
-						return true;
+						return TriggerResult.Cancel;
 					}
 					curNode = curNode.nextNode;
 				} while (curNode != null);
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public void Trigger(TriggerKey tk, params object[] scriptArguments) {
@@ -271,7 +271,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public bool CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
+		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				return CancellableTrigger(tk, new ScriptArgs(scriptArguments));
 			} else {

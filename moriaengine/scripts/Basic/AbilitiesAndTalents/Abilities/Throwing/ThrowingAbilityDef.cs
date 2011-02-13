@@ -61,11 +61,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool On_DenyActivate(DenyAbilityArgs args) {
+		protected override void On_DenyActivate(DenyAbilityArgs args) {
 			Character self = args.abiliter;
 			if (GetThrowingKnife(self) == null) {
 				args.Result = DenyMessages_Throwing.Deny_YouNeedThrowingKnife;
-				return true;
+				return;
 			}
 
 			SkillSequenceArgs seq = self.CurrentSkillArgs;
@@ -75,19 +75,19 @@ namespace SteamEngine.CompiledScripts {
 				int range = this.Range + self.WeaponRangeModifier;
 				if (distance > range) {
 					args.Result = DenyResultMessages.Deny_ThatIsTooFarAway;
-					return true;
+					return;
 				}
 				DenyResult losAndAlive = self.CanInteractWith(target);
 				if (!losAndAlive.Allow) {
 					args.Result = losAndAlive;
-					return true;
+					return;
 				}
 			} else {
 				args.Result = DenyMessages_Throwing.Deny_OnlyWorksWhenFighting;
-				return true;
+				return;
 			}
 
-			return base.On_DenyActivate(args);
+			base.On_DenyActivate(args);
 		}
 
 		protected override bool On_Activate(Character self, Ability ab) {

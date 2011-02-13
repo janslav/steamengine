@@ -528,31 +528,31 @@ namespace SteamEngine {
 			this.def.TryTrigger(this, tk, sa);
 		}
 
-		public override bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public override TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.Run(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			if (base.CancellableTrigger(tk, sa)) {
-				return true;
+			if (TriggerResult.Cancel == CancellableTrigger(tk, sa)) {
+				return TriggerResult.Cancel;
 			} else {
 				return this.def.CancellableTrigger(this, tk, sa);
 			}
 		}
 
-		public override bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			if (base.TryCancellableTrigger(tk, sa)) {
-				return true;
+			if (TriggerResult.Cancel == base.TryCancellableTrigger(tk, sa)) {
+				return TriggerResult.Cancel;
 			} else {
 				return this.def.TryCancellableTrigger(this, tk, sa);
 			}
@@ -955,10 +955,8 @@ namespace SteamEngine {
 				if (!clicker.CanSeeForUpdate(this).Allow) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
-					bool cancel = false;
 					ScriptArgs sa = new ScriptArgs(clicker, clickerState, clickerConn, this);
-					cancel = this.TryCancellableTrigger(TriggerKey.aosClick, sa);
-					if (!cancel) {
+					if (TriggerResult.Cancel != this.TryCancellableTrigger(TriggerKey.aosClick, sa)) {
 						//@aosClick on thing did not return 1
 						try {
 							this.On_AosClick(clicker, clickerState, clickerConn);
@@ -982,13 +980,12 @@ namespace SteamEngine {
 				if (!clicker.CanSeeForUpdate(this).Allow) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
-					bool cancel = false;
 					ScriptArgs sa = new ScriptArgs(clicker, this);
-					cancel = this.Trigger_SpecificClick(clicker, sa);
-					if (!cancel) {
+					var result = this.Trigger_SpecificClick(clicker, sa);
+					if (result != TriggerResult.Cancel) {
 						//@itemclick or @charclick on src did not return 1
-						cancel = this.TryCancellableTrigger(TriggerKey.click, sa);
-						if (!cancel) {
+						result = this.TryCancellableTrigger(TriggerKey.click, sa);
+						if (result != TriggerResult.Cancel) {
 							//@click on item did not return 1
 							try {
 								this.On_Click(clicker, clickerState, clickerConn);
@@ -999,7 +996,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal abstract bool Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa);
+		internal abstract TriggerResult Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa);
 
 		//method: On_Click
 		//Thing`s implementation of trigger @Click,
@@ -1065,29 +1062,29 @@ namespace SteamEngine {
 
 		private DenyResult Trigger_DenyDClick(AbstractCharacter dclicker, bool isItem) {
 			DenyClickArgs denyArgs = new DenyClickArgs(dclicker, this);
-			bool cancel = false;
+			TriggerResult result;
 
 			if (isItem) {
-				cancel = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
-				if (!cancel) {
+				result = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
+				if (result != TriggerResult.Cancel) {
 					try {
-						cancel = dclicker.On_DenyItemDClick(denyArgs);
+						result = dclicker.On_DenyItemDClick(denyArgs);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			} else {
-				cancel = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
-				if (!cancel) {
+				result = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
+				if (result != TriggerResult.Cancel) {
 					try {
-						cancel = dclicker.On_DenyCharDClick(denyArgs);
+						result = dclicker.On_DenyCharDClick(denyArgs);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
 
-			if (!cancel) {
-				cancel = this.TryCancellableTrigger(TriggerKey.denyDClick, denyArgs);
-				if (!cancel) {
+			if (result != TriggerResult.Cancel) {
+				result = this.TryCancellableTrigger(TriggerKey.denyDClick, denyArgs);
+				if (result != TriggerResult.Cancel) {
 					try {
-						cancel = this.On_DenyDClick(denyArgs);
+						this.On_DenyDClick(denyArgs);
 					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
@@ -1102,8 +1099,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual bool On_DenyDClick(DenyClickArgs args) {
-			return false;
+		public virtual void On_DenyDClick(DenyClickArgs args) {
 		}
 
 		//method:On_Create
@@ -1634,8 +1630,7 @@ namespace SteamEngine {
 
 			bool selfIsPlayer = ((speaker != null) && (speaker.IsPlayer));
 			if (selfIsPlayer) {
-				bool cancel = speaker.Trigger_Say(msg, type, keywords);
-				if (cancel) {
+				if (TriggerResult.Cancel == speaker.Trigger_Say(msg, type, keywords)) {
 					return;
 				}
 			}

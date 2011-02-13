@@ -15,43 +15,41 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			Player self = skillSeqArgs.Self as Player;
 			if (self != null) {
 				self.Target(SingletonScript<Targ_Anatomy>.Instance, skillSeqArgs);
 			}
-			return true;
+			return TriggerResult.Cancel;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (self.CanInteractWithMessage(skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
-				return false;
+				return TriggerResult.Continue;
 			} else {
-				return true;
+				return TriggerResult.Cancel;
 			}
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			GameState stateSelf = skillSeqArgs.Self.GameState;
 			if (stateSelf != null) {
 				//TODO: Hlasky pro ruzne intervaly STR/STAM
 				stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).ASuccess1);
 			}
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			GameState stateSelf = skillSeqArgs.Self.GameState;
 			if (stateSelf != null) {
 				stateSelf.WriteLine(Loc<AnatomyLoc>.Get(stateSelf.Language).AFailed);
 			}
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

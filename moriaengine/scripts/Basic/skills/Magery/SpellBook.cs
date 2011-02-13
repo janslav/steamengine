@@ -36,16 +36,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override bool On_DenyDClick(DenyClickArgs args) {
+		public override void On_DenyDClick(DenyClickArgs args) {
 			Character ch = (Character) args.ClickingChar;
 			Thing cont = this.Cont;
 			if (ch.IsGM || (cont == ch) || (cont == ch.Backpack)) {
-				return base.On_DenyDClick(args);
+				base.On_DenyDClick(args);
 			}
 
 			//necessary since DisplayTo implies this is in a client-visible and known container.
 			args.Result = DenyResultMessages_SpellBook.Deny_MustBeInYourBackPack;
-			return true;
 		}
 
 		public override void On_DClick(AbstractCharacter from) {
@@ -132,15 +131,13 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		public override bool On_PutItemOn(ItemOnItemArgs args) {
+		public override void On_PutItemOn(ItemOnItemArgs args) {
 			SpellScroll scroll = args.ManipulatedItem as SpellScroll;
 			if (scroll != null) {
 				if (this.AddSpell(scroll.SpellId)) {
 					scroll.Delete();
 				}
 			}
-
-			return false;
 		}
 	}
 

@@ -37,8 +37,8 @@ namespace SteamEngine {
 
 		void Trigger(TriggerKey tk, ScriptArgs sa);
 		void TryTrigger(TriggerKey tk, ScriptArgs sa);
-		bool CancellableTrigger(TriggerKey tk, ScriptArgs sa);
-		bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa);
+		TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa);
+		TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		IEnumerable<TriggerGroup> GetAllTriggerGroups();
@@ -271,11 +271,11 @@ namespace SteamEngine {
 				<Trigger>, <CancellableTriggers>
 		*/
 
-		public virtual bool CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
 				if (TagMath.Is1(curNode.storedTG.Run(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 				curNode = curNode.nextNode;
 			}
@@ -284,18 +284,18 @@ namespace SteamEngine {
 				object scriptedRetVal, compiledRetVal;
 				curPlugin.Run(tk, sa, out scriptedRetVal, out compiledRetVal);
 				if (TagMath.Is1(scriptedRetVal) || TagMath.Is1(compiledRetVal)) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 				curPlugin = curPlugin.nextInList;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		public virtual bool TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
+		public virtual TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			TGListNode curNode = firstTGListNode;
 			while (curNode != null) {
 				if (TagMath.Is1(curNode.storedTG.TryRun(this, tk, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 				curNode = curNode.nextNode;
 			}
@@ -304,11 +304,11 @@ namespace SteamEngine {
 				object scriptedRetVal, compiledRetVal;
 				curPlugin.TryRun(tk, sa, out scriptedRetVal, out compiledRetVal);
 				if (TagMath.Is1(scriptedRetVal) || TagMath.Is1(compiledRetVal)) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 				curPlugin = curPlugin.nextInList;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 		#endregion Trigger() methods
 

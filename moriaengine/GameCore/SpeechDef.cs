@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 				if (self != null) {
 					SpeechArgs speechArgs = sa as SpeechArgs;
 					if (speechArgs != null) {
-						this.Handle(ch, speechArgs);
+						return this.Handle(ch, speechArgs);
 					}
 				}
 			}
@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 				if (self != null) {
 					SpeechArgs speechArgs = sa as SpeechArgs;
 					if (speechArgs != null) {
-						this.TryHandle(ch, speechArgs);
+						return this.TryHandle(ch, speechArgs);
 					}
 				}
 			}

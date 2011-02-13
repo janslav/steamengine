@@ -33,27 +33,27 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static PluginKey snoopedPluginKey = PluginKey.Acquire("_snoopedBackpacks_");
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
-			return false;
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
 			Character self = skillSeqArgs.Self;
 			Container cnt = (Container) skillSeqArgs.Target1;
 			if (self.CanReachWithMessage(cnt)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, 800);
-				return false;
+				return TriggerResult.Continue;
 			}
-			return true;
+			return TriggerResult.Cancel;
 		}
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Container cnt = (Container) skillSeqArgs.Target1;
 			self.SysMessage("Vidíš do batohu osoby " + cnt.TopObj().Name + ".");
@@ -64,10 +64,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			sb.Add(cnt);
 			sb.Timer = SnoopingPlugin.duration;
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Character victim = (Character) (((Container) skillSeqArgs.Target1).TopObj());
 			self.ClilocSysMessage(500210); // You failed to peek into the container. 
@@ -84,7 +83,6 @@ namespace SteamEngine.CompiledScripts {
 					victim.Trigger_HostileAction(self);
 					break;
 			}
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {

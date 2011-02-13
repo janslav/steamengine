@@ -31,24 +31,24 @@ namespace SteamEngine.CompiledScripts {
 	[Flags]
 	public enum SpellFlag : int {
 		None = 0,
-		CanTargetStatic =	0x000001,
-		CanTargetGround =	0x000002,
-		CanTargetItem =		0x000004,
-		CanTargetChar =		0x000008,
+		CanTargetStatic = 0x000001,
+		CanTargetGround = 0x000002,
+		CanTargetItem = 0x000004,
+		CanTargetChar = 0x000008,
 		CanTargetAnything = CanTargetStatic | CanTargetGround | CanTargetItem | CanTargetChar,
-		AlwaysTargetSelf =	0x000010,
+		AlwaysTargetSelf = 0x000010,
 		CanEffectDeadChar = 0x000020,
-		CanEffectStatic =	0x000040,
-		CanEffectGround =	0x000080,
-		CanEffectItem =		0x000100,
-		CanEffectChar =		0x000200,
+		CanEffectStatic = 0x000040,
+		CanEffectGround = 0x000080,
+		CanEffectItem = 0x000100,
+		CanEffectChar = 0x000200,
 		CanEffectAnything = CanEffectStatic | CanEffectGround | CanEffectItem | CanEffectChar,
-		EffectNeedsLOS =	0x000400,
-		IsAreaSpell =		0x000800,
-		TargetCanMove =		0x001000,
-		UseMindPower =		0x002000, //otherwise, magery value is used
-		IsHarmful =			0x004000,
-		IsBeneficial =		0x008000,
+		EffectNeedsLOS = 0x000400,
+		IsAreaSpell = 0x000800,
+		TargetCanMove = 0x001000,
+		UseMindPower = 0x002000, //otherwise, magery value is used
+		IsHarmful = 0x004000,
+		IsBeneficial = 0x008000,
 	}
 
 	[ViewableClass]
@@ -358,14 +358,14 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Loading from scripts
 
 		#region Trigger methods
-		public bool TryCancellableTrigger(IPoint3D self, TriggerKey td, ScriptArgs sa) {
+		public TriggerResult TryCancellableTrigger(IPoint3D self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
 			if (this.scriptedTriggers != null) {
 				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		private static TriggerKey tkSuccess = TriggerKey.Acquire("success");
@@ -417,16 +417,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//return false = aborting
-		internal bool Trigger_Start(SkillSequenceArgs mageryArgs) {
-			bool cancel = this.TryCancellableTrigger(mageryArgs.Self, tkStart, mageryArgs.scriptArgs);
-			if (!cancel) {
-				cancel = this.On_Start(mageryArgs);
+		internal TriggerResult Trigger_Start(SkillSequenceArgs mageryArgs) {
+			var result = this.TryCancellableTrigger(mageryArgs.Self, tkStart, mageryArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
+				result = this.On_Start(mageryArgs);
 			}
-			return !cancel;
+			return result;
 		}
 
-		public virtual bool On_Start(SkillSequenceArgs mageryArgs) {
-			return false; //don't cancel
+		public virtual TriggerResult On_Start(SkillSequenceArgs mageryArgs) {
+			return TriggerResult.Continue; //don't cancel
 		}
 
 		internal void Trigger_Success(SkillSequenceArgs mageryArgs) {
@@ -437,11 +437,13 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			bool cancel = this.TryCancellableTrigger(caster, tkSuccess, mageryArgs.scriptArgs);
-			if (!cancel) {
-				cancel = this.On_Success(mageryArgs);
-			}
-			if (cancel) {
+			var result = this.TryCancellableTrigger(caster, tkSuccess, mageryArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
+				result = this.On_Success(mageryArgs);
+				if (result == TriggerResult.Cancel) {
+					return;
+				}
+			} else {
 				return;
 			}
 
@@ -472,7 +474,7 @@ namespace SteamEngine.CompiledScripts {
 			bool singleEffectDone = false;
 			Character targetAsChar = target as Character;
 			if (targetAsChar != null) {
-				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {					
+				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {
 					singleEffectDone = true;
 					this.GetSpellPowerAgainstChar(caster, target, targetAsChar, effectFlag, ref sea);
 					if (this.CheckSpellPowerWithMessage(sea)) {
@@ -601,9 +603,9 @@ namespace SteamEngine.CompiledScripts {
 					mindDef = currentTarget.MindDefenseVsM;
 				}
 				if (currentTarget.IsPlayerForCombat) {
-					spellPower = (caster.MindPowerVsP - mindDef)*10; //*10 because we need to be in thousands, like it is with skills
+					spellPower = (caster.MindPowerVsP - mindDef) * 10; //*10 because we need to be in thousands, like it is with skills
 				} else {
-					spellPower = (caster.MindPowerVsM - mindDef)*10;
+					spellPower = (caster.MindPowerVsM - mindDef) * 10;
 				}
 			} else {
 				spellPower = caster.GetSkill(SkillName.Magery);
@@ -640,20 +642,20 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			Character caster = spellEffectArgs.Caster;
-			bool cancel = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
-			if (!cancel) {
+			var result = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = caster.On_CauseSpellEffect(target, spellEffectArgs);
+					result = caster.On_CauseSpellEffect(target, spellEffectArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = target.On_SpellEffect(spellEffectArgs);
+							result = target.On_SpellEffect(spellEffectArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-						if (!cancel) {
-							cancel = this.TryCancellableTrigger(target, tkEffectChar, spellEffectArgs.scriptArgs);
-							if (!cancel) {
+						if (result != TriggerResult.Cancel) {
+							result = this.TryCancellableTrigger(target, tkEffectChar, spellEffectArgs.scriptArgs);
+							if (result != TriggerResult.Cancel) {
 								try {
 									this.On_EffectChar(target, spellEffectArgs);
 								} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -661,7 +663,7 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 				}
-			}		
+			}
 		}
 
 		public void Trigger_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
@@ -669,20 +671,20 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 			Character caster = spellEffectArgs.Caster;
-			bool cancel = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
-			if (!cancel) {
+			var result = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = caster.On_CauseSpellEffect(target, spellEffectArgs);
+					result = caster.On_CauseSpellEffect(target, spellEffectArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = target.TryCancellableTrigger(tkSpellEffect, spellEffectArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
-							cancel = target.On_SpellEffect(spellEffectArgs);
+							result = target.On_SpellEffect(spellEffectArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-						if (!cancel) {
-							cancel = this.TryCancellableTrigger(target, tkEffectItem, spellEffectArgs.scriptArgs);
-							if (!cancel) {
+						if (result != TriggerResult.Cancel) {
+							result = this.TryCancellableTrigger(target, tkEffectItem, spellEffectArgs.scriptArgs);
+							if (result != TriggerResult.Cancel) {
 								try {
 									this.On_EffectItem(target, spellEffectArgs);
 								} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -699,14 +701,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			Character caster = spellEffectArgs.Caster;
-			bool cancel = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
-			if (!cancel) {
+			var result = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
+			if (result != TriggerResult.Cancel) {
 				try {
-					cancel = caster.On_CauseSpellEffect(target, spellEffectArgs);
+					result = caster.On_CauseSpellEffect(target, spellEffectArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				if (!cancel) {
-					cancel = this.TryCancellableTrigger(target, tkEffectGround, spellEffectArgs.scriptArgs);
-					if (!cancel) {
+				if (result != TriggerResult.Cancel) {
+					result = this.TryCancellableTrigger(target, tkEffectGround, spellEffectArgs.scriptArgs);
+					if (result != TriggerResult.Cancel) {
 						try {
 							this.On_EffectGround(target, spellEffectArgs);
 						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -770,8 +772,8 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		protected virtual bool On_Success(SkillSequenceArgs mageryArgs) {
-			return false;
+		protected virtual TriggerResult On_Success(SkillSequenceArgs mageryArgs) {
+			return TriggerResult.Continue;
 		}
 
 		protected virtual void On_EffectGround(IPoint3D target, SpellEffectArgs spellEffectArgs) {
@@ -981,12 +983,11 @@ namespace SteamEngine.CompiledScripts {
 	public class SpellDefLoc : CompiledLocStringCollection {
 		internal string TargetResistedSpell = "Cíl odolal kouzlu!";
 		internal string ForbiddenMagicIn = "Zde je zakázáno kouzlit";
-		internal string ForbiddenMagicOut  = "Odtud je zakázáno kouzlit";
+		internal string ForbiddenMagicOut = "Odtud je zakázáno kouzlit";
 		internal string ForbiddenHarmfulMagicIn = "Zde je zakázáno kouzlit škodlivá kouzla";
-		internal string	ForbiddenHarmfulMagicOut = "Odtud je zakázáno kouzlit škodlivá kouzla";
+		internal string ForbiddenHarmfulMagicOut = "Odtud je zakázáno kouzlit škodlivá kouzla";
 		internal string ForbiddenBeneficialMagicIn = "Zde je zakázáno kouzlit pøínosná kouzla";
 		internal string ForbiddenBeneficialMagicOut = "Odtud je zakázáno kouzlit pøínosná kouzla";
 	}
 }
 
-		

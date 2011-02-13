@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		protected override bool On_Select(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Musical instrument = skillSeqArgs.Tool as Musical;
 			if (instrument != null) {
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 			if (instrument == null) {
 				self.SysMessage("Nemáš u sebe hudební nástroj.");
 				skillSeqArgs.Success = false;
-				return true;
+				return TriggerResult.Cancel;
 			}
 			skillSeqArgs.Tool = instrument;
 
@@ -54,16 +54,16 @@ namespace SteamEngine.CompiledScripts {
 				Player selfAsPlayer = self as Player;
 				if (selfAsPlayer != null) {
 					selfAsPlayer.Target(SingletonScript<Targ_Discordance>.Instance, skillSeqArgs);
-					return true;
+					return TriggerResult.Cancel;
 				} else {
 					throw new SEException("Discordance target not set for nonplayer");
 				}
 			}
 
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		protected override bool On_Start(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			SkillSequenceArgs musicianship = SkillSequenceArgs.Acquire(self, SkillName.Musicianship, skillSeqArgs.Tool, true); //true = parameter for the musicianship @Stroke, it won't proceed with the skill
 			musicianship.PhaseStroke();
@@ -72,20 +72,20 @@ namespace SteamEngine.CompiledScripts {
 				skillSeqArgs.Success = musicianship.Success;
 
 				self.SysMessage("Pokousis se oslabit " + ((Character) skillSeqArgs.Target1).Name + ".");
-				return false;
+				return TriggerResult.Continue;
 			} else {
 				//skillSeqArgs.Dispose();
-				return true; //we lost the instrument or something
+				return TriggerResult.Cancel; //we lost the instrument or something
 			}
 		}
 
-		protected override bool On_Stroke(SkillSequenceArgs skillSeqArgs) {
+		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			if (skillSeqArgs.Tool.IsDeleted || skillSeqArgs.Tool.TopObj() != self) {
 				self.SysMessage("Nemáš u sebe hudební nástroj.");
 				skillSeqArgs.PhaseAbort();
-				return true;
+				return TriggerResult.Cancel;
 			}
 
 			Character target = (Character) skillSeqArgs.Target1;
@@ -106,12 +106,12 @@ namespace SteamEngine.CompiledScripts {
 				//    } //else success stays true
 				//}
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		internal static PluginKey effectPluginKey = PluginKey.Acquire("_discordanceEffect_");
 
-		protected override bool On_Success(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 
@@ -124,15 +124,13 @@ namespace SteamEngine.CompiledScripts {
 				target.AddPluginAsSimple(effectPluginKey, plugin);
 				self.Trigger_HostileAction(self);
 			}
-			return false;
 		}
 
-		protected override bool On_Fail(SkillSequenceArgs skillSeqArgs) {
+		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
 			self.SysMessage("Oslabení se nepovedlo.");
 			self.Trigger_HostileAction(self);
-			return false;
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
