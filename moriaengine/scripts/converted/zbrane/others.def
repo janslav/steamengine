@@ -267,3 +267,6 @@ RESOURCES = 1 i_log //some resources were fixed by converter
 SKILLMAKE = 0.0 bowcraft //some resources were fixed by converter 
 DEFNAME = i_kindling
 //REPLICATE = 1 // commented out by Converter 
+
+[ItemDef 0xde2]
+DUPEITEM = i_kindling

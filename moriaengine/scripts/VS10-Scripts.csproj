@@ -155,6 +155,8 @@
     <Compile Include="Basic\CharClasses\Player.Generated.cs" />
     <Compile Include="Basic\EffectDuration\FadingEffectDurationPlugin.cs" />
     <Compile Include="Basic\EffectDuration\FadingEffectDurationPlugin.Generated.cs" />
+    <Compile Include="Basic\ItemClasses\ShiningItem\ShiningItem.cs" />
+    <Compile Include="Basic\ItemClasses\ShiningItem\ShiningItem.Generated.cs" />
     <Compile Include="Basic\Localization\LocDenyResult.cs" />
     <Compile Include="Basic\Localization\NumberedLocStringCollection.cs" />
     <Compile Include="Basic\db\DbManager.cs" />
@@ -504,6 +506,8 @@
     <None Include="Basic\ItemClasses\MultiItem.ct" />
     <None Include="Basic\ItemClasses\Musical.ct" />
     <None Include="Basic\ItemClasses\Potion.ct" />
+    <None Include="Basic\ItemClasses\ShiningItem\ShiningItem.ct" />
+    <None Include="Basic\ItemClasses\ShiningItem\ShiningItem.def" />
     <None Include="Basic\ItemClasses\Ship.ct" />
     <None Include="Basic\mailingsystem\mailsending.scp" />
     <None Include="Basic\skills\HealingAndVeterinary\healing.scp" />
