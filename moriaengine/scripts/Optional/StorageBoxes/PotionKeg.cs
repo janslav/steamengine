@@ -39,10 +39,10 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start (self, parameter);
 		}
 
-		protected override bool On_TargonItem (Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			PotionKeg focus = parameter as PotionKeg;
 			if (!self.CanReachWithMessage (focus)) {
-				return false;
+				return TargetResult.RestartTargetting;
 			}
 			if (targetted.Type.Defname == "t_potion") {
 				if (focus.potionsCount + (int)targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				self.SysMessage ("Muzes nalit jenom potiony");
 			}
-			return true;
+			return TargetResult.Done;
 		}
 
 	}

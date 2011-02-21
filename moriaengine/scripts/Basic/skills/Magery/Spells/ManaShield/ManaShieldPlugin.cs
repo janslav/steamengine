@@ -59,21 +59,21 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//interrupt on meditation attempt
-		public bool On_SelectSkill(SkillSequenceArgs skillSeq) {
+		public TriggerResult On_SkillSelect(SkillSequenceArgs skillSeq) {
 			return CheckStartingSkill(skillSeq);
 		}
 
-		public bool On_StartSkill(SkillSequenceArgs skillSeq) {
+		public TriggerResult On_SkillStart(SkillSequenceArgs skillSeq) {
 			return CheckStartingSkill(skillSeq);
 		}
 
-		private bool CheckStartingSkill(SkillSequenceArgs skillSeq) {
+		private TriggerResult CheckStartingSkill(SkillSequenceArgs skillSeq) {
 			if (skillSeq.SkillDef.Id == (int) SkillName.Meditation) {
 				Character self = (Character) this.Cont;
 				self.WriteLine(Loc<ManaShieldLoc>.Get(self.Language).cantMeditateWithManaShield);
 				this.Delete();
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public override void On_UnAssign(Character cont) {

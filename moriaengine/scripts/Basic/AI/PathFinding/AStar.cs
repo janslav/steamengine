@@ -285,7 +285,7 @@ namespace SteamEngine.CompiledScripts {
 				instance = this;
 			}
 
-			protected override bool On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
+			protected override TargetResult On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
 				IMovementSettings settings = (IMovementSettings) arr[1];
@@ -309,7 +309,7 @@ namespace SteamEngine.CompiledScripts {
 					Globals.SrcWriteLine("Path not calculated");
 				}
 
-				return true;
+				return TargetResult.Done;
 			}
 		}
 
@@ -342,7 +342,7 @@ namespace SteamEngine.CompiledScripts {
 				instance = this;
 			}
 
-			protected override bool On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
+			protected override TargetResult On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
 				object[] arr = (object[]) parameter;
 				Character self = (Character) arr[0];
 				double seconds = Convert.ToDouble(arr[1]);
@@ -358,7 +358,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					Globals.SrcWriteLine("Path not calculated");
 				}
-				return true;
+				return TargetResult.Done;
 			}
 		}
 

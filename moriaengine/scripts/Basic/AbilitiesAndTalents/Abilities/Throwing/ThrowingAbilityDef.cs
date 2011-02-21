@@ -90,7 +90,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_DenyActivate(args);
 		}
 
-		protected override bool On_Activate(Character self, Ability ab) {
+		protected override void On_Activate(Character self, Ability ab) {
 			Projectile knife = (Projectile) self.GetTag(throwingKnifeTK); //checked and set in DenyActivate
 
 			Character target = (Character) self.CurrentSkillArgs.Target1; //checked in DenyActivate
@@ -98,7 +98,6 @@ namespace SteamEngine.CompiledScripts {
 
 			//TODO
 
-			return false; //do not cancel
 		}
 
 

@@ -174,15 +174,15 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			if (targetted is PoisonPotion) {
 				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 				skillSeq.Tool = targetted;
 				skillSeq.PhaseSelect();
-				return false;
+				return TargetResult.Done;
 			} else {
 				self.ClilocSysMessage(502139); //That is not a poison potion.
-				return true; //re-raise target
+				return TargetResult.RestartTargetting;
 			}
 		}
 	}
@@ -194,11 +194,11 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 			skillSeq.Target1 = targetted;
 			skillSeq.PhaseStart();
-			return false;
+			return TargetResult.Done;
 		}
 	}
 

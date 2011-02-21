@@ -145,21 +145,21 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
 			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 
 			if (targetted.IsPlayer) {
 				self.SysMessage("Zamìøuj jenom monstra!");
-				return false;
+				return TargetResult.RestartTargetting;
 			} else if (targetted.HasPlugin(DiscordanceSkillDef.effectPluginKey)) {
 				self.SysMessage("Cíl je již oslaben.");
-				return false;
+				return TargetResult.Done;
 			}
 
 			skillSeq.Target1 = targetted;
 			skillSeq.PhaseStart();
 
-			return false;
+			return TargetResult.Done;
 		}
 	}
 

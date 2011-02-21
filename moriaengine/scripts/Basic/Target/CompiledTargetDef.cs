@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 		protected sealed override void On_Targon(GameState state, IPoint3D getback, object parameter) {
 			Player self = state.Character as Player;
 			if (self != null) {
-				if (this.On_TargonPoint(self, getback, parameter)) {
+				if (TargetResult.RestartTargetting == this.On_TargonPoint(self, getback, parameter)) {
 					this.On_Start(self, parameter);
 				}
 			}
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void On_TargonCancel(Player self, object parameter) {
 		}
 
-		protected virtual bool On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
+		protected virtual TargetResult On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
 			Thing thing = targetted as Thing;
 			if (thing != null) {
 				return On_TargonThing(self, thing, parameter);
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 			return On_TargonGround(self, targetted, parameter);
 		}
 
-		protected virtual bool On_TargonThing(Player self, Thing targetted, object parameter) {
+		protected virtual TargetResult On_TargonThing(Player self, Thing targetted, object parameter) {
 			Character ch = targetted as Character;
 			if (ch != null) {
 				return On_TargonChar(self, ch, parameter);
@@ -91,26 +91,31 @@ namespace SteamEngine.CompiledScripts {
 			if (item != null) {
 				return On_TargonItem(self, item, parameter);
 			}
-			return true;//item nor char? huh?
+			return TargetResult.RestartTargetting;//item nor char? huh?
 		}
 
-		protected virtual bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected virtual TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
 			self.ClilocSysMessage(1046439);//That is not a valid target.
-			return true;
+			return TargetResult.RestartTargetting;
 		}
 
-		protected virtual bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected virtual TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			self.ClilocSysMessage(1046439);//That is not a valid target.
-			return true;
+			return TargetResult.RestartTargetting;
 		}
 
-		protected virtual bool On_TargonStatic(Player self, AbstractInternalItem targetted, object parameter) {
+		protected virtual TargetResult On_TargonStatic(Player self, AbstractInternalItem targetted, object parameter) {
 			return On_TargonGround(self, targetted, parameter);
 		}
 
-		protected virtual bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
+		protected virtual TargetResult On_TargonGround(Player self, IPoint3D targetted, object parameter) {
 			self.ClilocSysMessage(1046439);//That is not a valid target.
-			return true;
+			return TargetResult.RestartTargetting;
 		}
+	}
+
+	public enum TargetResult {
+		RestartTargetting = 1,
+		Done = 0,
 	}
 }

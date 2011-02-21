@@ -38,24 +38,24 @@ namespace SteamEngine.CompiledScripts {
 		//    return true;
 		//}
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
 			self.SysMessage("You targetted char " + targetted + ", parameter " + parameter);
-			return true;
+			return TargetResult.Done;
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			self.SysMessage("You targetted item " + targetted + ", parameter " + parameter);
-			return true;
+			return TargetResult.Done;
 		}
 
-		protected override bool On_TargonStatic(Player self, AbstractInternalItem targetted, object parameter) {
+		protected override TargetResult On_TargonStatic(Player self, AbstractInternalItem targetted, object parameter) {
 			self.SysMessage("You targetted static item " + targetted + ", parameter " + parameter);
-			return true;
+			return TargetResult.Done;
 		}
 
-		protected override bool On_TargonGround(Player self, IPoint3D targetted, object parameter) {
+		protected override TargetResult On_TargonGround(Player self, IPoint3D targetted, object parameter) {
 			self.SysMessage("You targetted ground at " + targetted + ", parameter " + parameter);
-			return true;
+			return TargetResult.Done;
 		}
 
 		protected override void On_TargonCancel(Player self, object parameter) {

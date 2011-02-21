@@ -97,11 +97,11 @@ namespace SteamEngine.CompiledScripts {
 		internal static PluginKey snoopedPluginKey = PluginKey.Acquire("_snoopedBackpacks_");
 		public static int duration = 180;
 
-		public bool On_DenyPickupItem(DenyPickupArgs args) {
+		public TriggerResult On_DenyPickupItem(DenyPickupArgs args) {
 			Container conta = args.ManipulatedItem.Cont as Container;
+			Sanity.IfTrueThrow(conta == null, "args.ManipulatedItem.Cont == null");
 
 			if (this.Contains(conta)) {
-				Sanity.IfTrueThrow(conta == null, "conta == null");
 				Character thief = args.PickingChar as Character;
 
 				SkillSequenceArgs stealing = SkillSequenceArgs.Acquire(thief, SkillName.Stealing, args.ManipulatedItem, null, null, null, null);
@@ -111,11 +111,11 @@ namespace SteamEngine.CompiledScripts {
 
 				if (!success) {
 					args.Result = DenyResultMessages.Deny_ThatDoesNotBelongToYou;
-					return true;
+					return TriggerResult.Cancel;
 				}
 			}
 
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public void Add(Container cont) {

@@ -67,15 +67,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool On_Activate(Character ch, Ability ab) {
-			bool retVal = base.On_Activate(ch, ab);
+		protected override void On_Activate(Character ch, Ability ab) {
+			base.On_Activate(ch, ab);
 
 			StatDrainingEffectDurationPlugin plugin = ch.GetPlugin(this.PluginKey) as StatDrainingEffectDurationPlugin;
 			if (plugin != null) {
 				plugin.InitDrain(this.HitsDrain, this.StamDrain, this.ManaDrain);
 			}
-
-			return retVal;
 		}
 	}
 }

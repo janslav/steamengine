@@ -27,11 +27,11 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class SkillDelaySpeedupPlugin {
-		public bool On_SkillStart(SkillSequenceArgs ssa) {
+		public TriggerResult On_SkillStart(SkillSequenceArgs ssa) {
 			if (ssa.SkillDef == this.TypeDef.Skill) {
 				ssa.DelayInSeconds *= (1 - this.EffectPower);
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		//public void On_ActivateAbility(AbilityDef ad, Ability a) {

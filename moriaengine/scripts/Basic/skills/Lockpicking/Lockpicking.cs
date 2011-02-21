@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 
 			//nevidi na cil
@@ -94,15 +94,15 @@ namespace SteamEngine.CompiledScripts {
 				if (!ItemLockPlugin.IsLocked(targetted)) {
 					skillSeq.Target1 = targetted;
 					skillSeq.PhaseStart();
-					return false;
+					return TargetResult.Done;
 				}
 			}
-			return true;
+			return TargetResult.RestartTargetting;
 		}
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
 			self.SysMessage(Loc<LockpickLoc>.Get(self.Language).cantUseLockpick);
-			return true;
+			return TargetResult.RestartTargetting;
 		}
 	}
 

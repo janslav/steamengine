@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 		public void On_Damage(DamageArgs args) {
 			if (!args.attacker.IsPlayer) {
 				this.EffectPower -= args.damage;
-				
+
 				Character self = (Character) this.Cont;
 				if (Math.Round(this.EffectPower) > 0) {
 					//do no damage at all
@@ -51,20 +51,20 @@ namespace SteamEngine.CompiledScripts {
 					//do some damage still (damage + effectpower, but the effectpower part is negative...)
 					self.Hits += (short) Math.Round(args.damage + this.EffectPower);
 					self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).shieldSavedYouPartially);
-					this.Delete();					
+					this.Delete();
 				}
 			}
 		}
 
-		public bool On_SelectSkill(SkillSequenceArgs skillSeq) {
+		public TriggerResult On_SkillSelect(SkillSequenceArgs skillSeq) {
 			return CheckAllowedSpells(skillSeq);
 		}
 
-		public bool On_StartSkill(SkillSequenceArgs skillSeq) {
+		public TriggerResult On_SkillStart(SkillSequenceArgs skillSeq) {
 			return CheckAllowedSpells(skillSeq);
 		}
 
-		private bool CheckAllowedSpells(SkillSequenceArgs skillSeq) {
+		private TriggerResult CheckAllowedSpells(SkillSequenceArgs skillSeq) {
 			if (skillSeq.SkillDef.Id == (int) SkillName.Magery) {
 				SpellDef spell = (SpellDef) skillSeq.Param1;
 				switch (spell.Id) {
@@ -74,11 +74,11 @@ namespace SteamEngine.CompiledScripts {
 						Character self = skillSeq.Self;
 						self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).cantTeleport);
 						//return true; //cancel
-						this.Delete(); //cancel traveling spell, or cancel the shield?
+						this.Delete(); //cancel travelling spell, or cancel the shield?
 						break;
 				}
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		protected override void EffectEndedMessage(Character cont) {
@@ -89,12 +89,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public bool On_Step(Direction direction, bool running) {
+		public TriggerResult On_Step(Direction direction, bool running) {
 			Character self = (Character) this.Cont;
 			self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).cantMove);
 			//return true; //cancel
 			this.Delete(); //cancel movement, or cancel the shield?
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 

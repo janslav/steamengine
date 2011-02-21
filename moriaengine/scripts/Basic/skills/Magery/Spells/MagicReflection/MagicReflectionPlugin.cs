@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual bool On_SpellEffect(SpellEffectArgs effectArgs) {
+		public virtual TriggerResult On_SpellEffect(SpellEffectArgs effectArgs) {
 			SpellDef spell = effectArgs.SpellDef;
 			if ((spell.Flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
 				this.Delete(); //delete the reflection plugin, it's work is done
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 
 					ReflectionEyeCandy(origTarget);
 
-					return true; //cancel the harmful spelleffect
+					return TriggerResult.Cancel; //cancel the harmful spelleffect
 				} else {
 					//caster has reflection too. We optimize here and let the spell go on, just weaker
 					effectArgs.SpellPower = (int) (effectArgs.SpellPower * this.EffectPower * this.EffectPower);
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			return false; //nonharmful spell - do nothing			
+			return TriggerResult.Continue; //nonharmful spell - do nothing			
 		}
 
 		private static void ReflectionEyeCandy(Character target) {

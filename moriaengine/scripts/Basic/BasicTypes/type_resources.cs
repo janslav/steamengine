@@ -34,46 +34,46 @@ namespace SteamEngine.CompiledScripts {
 
 	public class t_coin : CompiledTriggerGroup {
 
-		public bool on_playdropsound(Item self, Character droppingChar) {
-			if (self.Amount <= 1) {
-				self.SoundTo((ushort) SoundNames.DroppingASingleCoin2, droppingChar);		//1
-			} else if (self.Amount >= 6) {
-				self.SoundTo((ushort) SoundNames.DroppingManyCoins, droppingChar);			//6
-			} else if (self.Amount >= 3) {
-				self.SoundTo((ushort) SoundNames.DroppingSomeCoins, droppingChar);			//3
-			} else if (self.Amount >= 2) {
-				self.SoundTo((ushort) SoundNames.DroppingTwoCoins, droppingChar);			//2
-			}
-			return true;
-		}
+		//public bool on_playdropsound(Item self, Character droppingChar) {
+		//    if (self.Amount <= 1) {
+		//        self.SoundTo((ushort) SoundNames.DroppingASingleCoin2, droppingChar);		//1
+		//    } else if (self.Amount >= 6) {
+		//        self.SoundTo((ushort) SoundNames.DroppingManyCoins, droppingChar);			//6
+		//    } else if (self.Amount >= 3) {
+		//        self.SoundTo((ushort) SoundNames.DroppingSomeCoins, droppingChar);			//3
+		//    } else if (self.Amount >= 2) {
+		//        self.SoundTo((ushort) SoundNames.DroppingTwoCoins, droppingChar);			//2
+		//    }
+		//    return true;
+		//}
 	}
 
 	public class t_gold : CompiledTriggerGroup {
-		public bool on_playDropSound(Item self, Character droppingChar) {
-			if (self.Amount <= 1) {
-				self.SoundTo((ushort) SoundNames.DroppingASingleCoin2, droppingChar);
-			} else if (self.Amount >= 6) {
-				self.SoundTo((ushort) SoundNames.DroppingManyCoins, droppingChar);
-			} else if (self.Amount >= 3) {
-				self.SoundTo((ushort) SoundNames.DroppingSomeCoins, droppingChar);
-			} else if (self.Amount >= 2) {
-				self.SoundTo((ushort) SoundNames.DroppingTwoCoins, droppingChar);
-			}
-			return true;
-		}
+		//public bool on_playDropSound(Item self, Character droppingChar) {
+		//    if (self.Amount <= 1) {
+		//        self.SoundTo((ushort) SoundNames.DroppingASingleCoin2, droppingChar);
+		//    } else if (self.Amount >= 6) {
+		//        self.SoundTo((ushort) SoundNames.DroppingManyCoins, droppingChar);
+		//    } else if (self.Amount >= 3) {
+		//        self.SoundTo((ushort) SoundNames.DroppingSomeCoins, droppingChar);
+		//    } else if (self.Amount >= 2) {
+		//        self.SoundTo((ushort) SoundNames.DroppingTwoCoins, droppingChar);
+		//    }
+		//    return true;
+		//}
 	}
 
 	public class t_gem : CompiledTriggerGroup {
-		public bool on_playDropSound(Item self, Character droppingChar) {
-			if (self.Amount <= 1) {
-				self.SoundTo((ushort) SoundNames.DroppingGem3, droppingChar);
-			} else if (self.Amount >= 6) {
-				self.SoundTo((ushort) SoundNames.DroppingGem2, droppingChar);
-			} else if (self.Amount >= 3) {
-				self.SoundTo((ushort) SoundNames.DroppingGem, droppingChar);
-			}
-			return true;
-		}
+		//public bool on_playDropSound(Item self, Character droppingChar) {
+		//    if (self.Amount <= 1) {
+		//        self.SoundTo((ushort) SoundNames.DroppingGem3, droppingChar);
+		//    } else if (self.Amount >= 6) {
+		//        self.SoundTo((ushort) SoundNames.DroppingGem2, droppingChar);
+		//    } else if (self.Amount >= 3) {
+		//        self.SoundTo((ushort) SoundNames.DroppingGem, droppingChar);
+		//    }
+		//    return true;
+		//}
 	}
 
 	public class t_reagent : CompiledTriggerGroup {

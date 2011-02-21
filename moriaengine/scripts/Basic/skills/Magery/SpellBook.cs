@@ -155,11 +155,10 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			SpellBook book = targetted as SpellBook;
 			if (book != null) {
-				DenyResult canReach = self.CanPickup(targetted);
-				if (canReach.Allow) {
+				if (self.CanPickUpWithMessage(book)) {
 					Container cont = targetted.Cont as Container;
 					if (cont == null) {
 						cont = self.Backpack;
@@ -177,11 +176,10 @@ namespace SteamEngine.CompiledScripts {
 							}
 						}
 					}
-					return false;
 				}
-				canReach.SendDenyMessage(self);
+				return TargetResult.Done;
 			}
-			return true;
+			return TargetResult.RestartTargetting; //neni to spellbook, restart target
 		}
 	}
 

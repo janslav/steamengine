@@ -157,31 +157,36 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-			RegBox focus = parameter as RegBox;
-			if (!self.CanPickUpWithMessage(targetted)) {
-				return false;
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
+			RegBox regBox = (RegBox) parameter;
+
+			if (!self.CanReachWithMessage(regBox)) {
+				return TargetResult.Done;
 			}
-			if (targetted.Type.Defname == "t_reagent") {
-				int previousCount;
-				focus.EnsureDictionary();
-				if (!focus.inBoxReags.TryGetValue(targetted.TypeDef, out previousCount)) {
-					previousCount = 0;
-				}
-				if (focus.pocetRegu + (int) targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
-					int reagsToTake = focus.TypeDef.Capacity - focus.pocetRegu;
-					targetted.Amount -= reagsToTake;
-					focus.pocetRegu += reagsToTake;
-					focus.inBoxReags[targetted.TypeDef] = previousCount + reagsToTake;
+
+			if (self.CanPickUpWithMessage(targetted)) {
+				if (targetted.Type == SingletonScript<t_reagent>.Instance) {
+					int previousCount;
+					regBox.EnsureDictionary();
+					if (!regBox.inBoxReags.TryGetValue(targetted.TypeDef, out previousCount)) {
+						previousCount = 0;
+					}
+					if (regBox.pocetRegu + targetted.Amount > regBox.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
+						int reagsToTake = regBox.TypeDef.Capacity - regBox.pocetRegu;
+						targetted.Amount -= reagsToTake;
+						regBox.pocetRegu += reagsToTake;
+						regBox.inBoxReags[targetted.TypeDef] = previousCount + reagsToTake;
+					} else {
+						regBox.pocetRegu += targetted.Amount;
+						regBox.inBoxReags[targetted.TypeDef] = previousCount + targetted.Amount;
+						targetted.Delete();
+					}
 				} else {
-					focus.pocetRegu += (int) targetted.Amount;
-					focus.inBoxReags[targetted.TypeDef] = previousCount + (int) targetted.Amount;
-					targetted.Delete();
+					self.SysMessage("Do bedny mùžeš pøidat jen regy.");
+
 				}
-			} else {
-				self.SysMessage("Do bedny mùžeš pøidat jen regy.");
 			}
-			return true;
+			return TargetResult.RestartTargetting; //pridavame dal a dal, krome pripadu kdy jsme box ztratili z dosahu
 		}
 
 		protected override void On_TargonCancel(Player self, object parameter) {

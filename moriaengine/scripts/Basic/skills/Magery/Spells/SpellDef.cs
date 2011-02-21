@@ -929,7 +929,7 @@ namespace SteamEngine.CompiledScripts {
 			//mageryArgs.Dispose();
 		}
 
-		protected override bool On_TargonGround(Player caster, IPoint3D targetted, object parameter) {
+		protected override TargetResult On_TargonGround(Player caster, IPoint3D targetted, object parameter) {
 			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
 			SpellDef spell = (SpellDef) mageryArgs.Param1;
 			SpellFlag flags = spell.Flags;
@@ -942,41 +942,41 @@ namespace SteamEngine.CompiledScripts {
 					mageryArgs.Target1 = targetted;
 				}
 				if (!spell.CheckPermissionIncoming(caster, mageryArgs.Target1)) {
-					return false;
+					return TargetResult.Done;
 				}
 				mageryArgs.PhaseStart();
 			} else {
-				return true; //repeat targetting
+				return TargetResult.RestartTargetting; //repeat targetting
 			}
-			return false;
+			return TargetResult.Done;
 		}
 
-		protected override bool On_TargonChar(Player caster, Character targetted, object parameter) {
+		protected override TargetResult On_TargonChar(Player caster, Character targetted, object parameter) {
 			return this.TargonNonGround(caster, targetted, parameter, SpellFlag.CanTargetChar);
 		}
 
-		protected override bool On_TargonItem(Player caster, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player caster, Item targetted, object parameter) {
 			return this.TargonNonGround(caster, targetted, parameter, SpellFlag.CanTargetItem);
 		}
 
-		protected override bool On_TargonStatic(Player caster, AbstractInternalItem targetted, object parameter) {
+		protected override TargetResult On_TargonStatic(Player caster, AbstractInternalItem targetted, object parameter) {
 			return this.TargonNonGround(caster, targetted, parameter, SpellFlag.CanTargetStatic);
 		}
 
-		private bool TargonNonGround(Player caster, IPoint3D targetted, object parameter, SpellFlag targetSF) {
+		private TargetResult TargonNonGround(Player caster, IPoint3D targetted, object parameter, SpellFlag targetSF) {
 			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
 			SpellDef spell = (SpellDef) mageryArgs.Param1;
 
 			if ((spell.Flags & targetSF) == targetSF) {
 				if (!spell.CheckPermissionIncoming(caster, targetted)) {
-					return false;
+					return TargetResult.Done;
 				}
 				mageryArgs.Target1 = targetted;
 				mageryArgs.PhaseStart();
 			} else {
 				return this.On_TargonGround(caster, targetted, parameter);
 			}
-			return false;
+			return TargetResult.Done;
 		}
 	}
 
