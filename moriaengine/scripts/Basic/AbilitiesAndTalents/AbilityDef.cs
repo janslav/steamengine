@@ -221,11 +221,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("C# based @activate trigger method")]
-		protected virtual bool On_Activate(Character chr, Ability ab) {
+		protected virtual void On_Activate(Character chr, Ability ab) {
 			chr.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 				Loc<AbilityDefLoc>.Get(chr.Language).AbilityActivated,
 				ab.Def.Name));
-			return false; //no cancelling
 		}
 
 		[Summary("This method fires the @denyUse triggers. "

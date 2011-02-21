@@ -73,15 +73,15 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			if (!self.CanReachWithMessage(targetted)) {
-				return false;
+				return TargetResult.RestartTargetting;
 			}
 
 			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 			skillSeq.Target1 = targetted;
 			skillSeq.PhaseStart();
-			return false;
+			return TargetResult.Done;
 		}
 	}
 	public class ItemIdLoc : CompiledLocStringCollection {

@@ -120,13 +120,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
 			Party myParty = Party.GetParty(self);
 			bool isNew = false;
 			if (myParty != null) {
 				if (!myParty.IsLeader(self)) {
 					self.ClilocSysMessage(1005453); // You may only add members to the party if you are the leader.
-					return false;
+					return TargetResult.Done;
 				}
 			} else {
 				myParty = PartyDef.NewParty(self);
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (!inviteLegal && isNew) {
 				myParty.Dispose();
 			}
-			return !inviteLegal;
+			return inviteLegal ? TargetResult.Done : TargetResult.RestartTargetting;
 		}
 	}
 }

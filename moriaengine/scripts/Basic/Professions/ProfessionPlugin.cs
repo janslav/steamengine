@@ -47,15 +47,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual bool On_SkillSelect(SkillSequenceArgs skillSeqArgs) {
+		public virtual TriggerResult On_SkillSelect(SkillSequenceArgs skillSeqArgs) {
 			return this.CheckCancelSkill((Player) this.Cont, skillSeqArgs);
 		}
 
-		public virtual bool On_SkillStart(SkillSequenceArgs skillSeqArgs) {
+		public virtual TriggerResult On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			return this.CheckCancelSkill((Player) this.Cont, skillSeqArgs);
 		}
 
-		private bool CheckCancelSkill(Player player, SkillSequenceArgs skillSeqArgs) {
+		private TriggerResult CheckCancelSkill(Player player, SkillSequenceArgs skillSeqArgs) {
 			if ((!player.IsGM)&& skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 				if (!this.profession.AllowedSpells.Contains(spell)) {
@@ -63,10 +63,10 @@ namespace SteamEngine.CompiledScripts {
 						Loc<ProfessionPluginLoc>.Get(player.Language).YouCantCastThis,
 						this.profession.Name));
 
-					return true; //return true for cancel, if it doesn't contain this spell
+					return TriggerResult.Cancel; //we don't know that spell
 				}
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public static ProfessionPlugin GetInstalledPlugin(Player player) {

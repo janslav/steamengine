@@ -59,24 +59,24 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
 			self.SysMessage("Zamìøuj pouze zbranì a zbroje!");
-			return true;
+			return TargetResult.RestartTargetting;
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			if (!self.CanReachWithMessage(targetted)) {
-				return false;
+				return TargetResult.RestartTargetting;
 			}
 
 			if (targetted is Destroyable) {
 				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 				skillSeq.Target1 = targetted;
 				skillSeq.PhaseStart();
-				return false;
+				return TargetResult.Done;
 			} else {
 				self.SysMessage("Zamìøuj pouze zbranì a zbroje!");
-				return false;
+				return TargetResult.RestartTargetting;
 			}
 		}
 	}

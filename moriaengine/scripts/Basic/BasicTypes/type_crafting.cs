@@ -22,17 +22,17 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	public class t_mortar : CompiledTriggerGroup {
-		public bool On_Dclick(Item self, Character dclicker) {
+		public TriggerResult On_Dclick(Item self, Character dclicker) {
 			D_Craftmenu.Craftmenu(dclicker, SkillName.Alchemy);
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 
 	public class t_anvil : CompiledTriggerGroup {
 		//anvil is for blacksmithing skill
-		public bool On_Dclick(Item self, Character dclicker) {
+		public TriggerResult On_Dclick(Item self, Character dclicker) {
 			D_Craftmenu.Craftmenu(dclicker, SkillName.Blacksmith);
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 
@@ -45,30 +45,30 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_shaft : CompiledTriggerGroup {
-		public bool On_Dclick(Item self, Character dclicker) {
+		public TriggerResult On_Dclick(Item self, Character dclicker) {
 			D_Craftmenu.Craftmenu(dclicker, SkillName.Fletching);
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 
 	public class t_carpentry : CompiledTriggerGroup {
-		public bool On_Dclick(Item self, Character dclicker) {
+		public TriggerResult On_Dclick(Item self, Character dclicker) {
 			D_Craftmenu.Craftmenu(dclicker, SkillName.Carpentry);
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 
 	public class t_sewing_kit : CompiledTriggerGroup {
-		public bool On_Dclick(Item self, Character dclicker) {
+		public TriggerResult On_Dclick(Item self, Character dclicker) {
 			D_Craftmenu.Craftmenu(dclicker, SkillName.Tailoring);
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 
 	public class t_tinker_tools : CompiledTriggerGroup {
-		public bool On_Dclick(Item self, Character dclicker) {
+		public TriggerResult On_Dclick(Item self, Character dclicker) {
 			D_Craftmenu.Craftmenu(dclicker, SkillName.Tinkering);
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 }

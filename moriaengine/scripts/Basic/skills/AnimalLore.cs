@@ -66,25 +66,25 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonChar(Player self, Character targetted, object parameter) {
+		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
 			if (!self.CanInteractWithMessage(targetted)) {
-				return false;
+				return TargetResult.RestartTargetting;
 			}
 
 			if (targetted.IsAnimal) {
 				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
 				skillSeq.Target1 = targetted;
 				skillSeq.PhaseStart();
-				return false;
+				return TargetResult.Done;
 			} else {
 				self.SysMessage(Loc<AnimalLoreLoc>.Get(self.Language).TargetOnlyAnimals);
-				return false;
+				return TargetResult.RestartTargetting;
 			}
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			self.SysMessage(Loc<AnimalLoreLoc>.Get(self.Language).TargetOnlyAnimals);
-			return true;
+			return TargetResult.RestartTargetting;
 		}
 	}
 

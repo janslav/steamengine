@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		#region triggerMethods
 
 		[Summary("Functional implementation of warcry ability")]
-		protected override bool On_Activate(Character chr, Ability ab) {
+		protected override void On_Activate(Character chr, Ability ab) {
 			//TODO - taky nejak zarvat nebo co !
 
 			double power = ab.Def.EffectPower * ab.ModifiedPoints; //
@@ -50,7 +50,6 @@ namespace SteamEngine.CompiledScripts {
 				warcryEffect.Init(chr, EffectFlag.FromAbility | EffectFlag.HarmfulEffect, power, duration, this);
 				target.AddPlugin(WarcryEffectPlugin.warcyEffectPluginKey, warcryEffect);
 			}
-			return false; //no cancel needed
 		}
 		#endregion triggerMethods
 
@@ -76,20 +75,20 @@ namespace SteamEngine.CompiledScripts {
 			(WarcryEffectPluginDef) new WarcryEffectPluginDef("p_warcryEffect", "C# scripts", -1).Register();
 		internal static PluginKey warcyEffectPluginKey = PluginKey.Acquire("_warcryEffect_");
 
-		public bool On_SkillSelect(SkillSequenceArgs ssa) {
+		public TriggerResult On_SkillSelect(SkillSequenceArgs ssa) {
 			if (ssa.SkillDef.Id == (int) SkillName.Magery) {
 				((Character) this.Cont).RedMessage("Jsi v šoku a nemùžeš kouzlit!");
-				return true;
+				return TriggerResult.Cancel;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
-		public bool On_SkillStart(SkillSequenceArgs ssa) {
+		public TriggerResult On_SkillStart(SkillSequenceArgs ssa) {
 			if (ssa.SkillDef.Id == (int) SkillName.Magery) {
 				((Character) this.Cont).RedMessage("Jsi v šoku a nemùžeš kouzlit!");
-				return true;
+				return TriggerResult.Cancel;
 			}
-			return false;
+			return TriggerResult.Continue;
 		}
 
 		public void On_Assign() {

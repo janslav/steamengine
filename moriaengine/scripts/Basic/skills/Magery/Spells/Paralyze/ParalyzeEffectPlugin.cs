@@ -34,10 +34,10 @@ namespace SteamEngine.CompiledScripts {
 			self.ClilocSysMessage(500111); //You are frozen and cannot move.
 		}
 
-		public bool On_Step(Direction dir, bool running) {
+		public TriggerResult On_Step(Direction dir, bool running) {
 			Character self = (Character) this.Cont;
 			self.ClilocSysMessage(500111); //You are frozen and cannot move.
-			return true;
+			return TriggerResult.Cancel;
 		}
 
 		protected override void EffectEndedMessage(Character cont) {

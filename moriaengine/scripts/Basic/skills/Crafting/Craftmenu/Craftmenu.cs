@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	public static class CraftmenuContents {
 		[SavedMember]
 		private static readonly Dictionary<SkillName, CraftmenuCategory> mainCategories = new Dictionary<SkillName, CraftmenuCategory>();
-		
+
 		public static Dictionary<SkillName, CraftmenuCategory> MainCategories {
 			get {
 				if (mainCategories.Count == 0) {//yet empty - first access, initialize it
@@ -38,20 +38,20 @@ namespace SteamEngine.CompiledScripts {
 						CraftingSkillDef csk = AbstractSkillDef.GetById(i) as CraftingSkillDef;
 						if (csk != null) {
 							//add only Crafting skills...
-							mainCategories[(SkillName)i] = new CraftmenuCategory(csk);
+							mainCategories[(SkillName) i] = new CraftmenuCategory(csk);
 						}
 					}
 				}
 				return mainCategories;
 			}
-		}		
+		}
 
 		//method for lazy loading the ICraftmenuElement parental info, used only when accessing some element's parent which is yet null
 		internal static void TryLoadParents() {
 			foreach (CraftmenuCategory mainCat in mainCategories.Values) { //these dont have Parents...
 				ResolveChildParent(mainCat);
 				mainCat.Parent = mainCat; //main categories will have themselves as parents...
-				mainCat.categorySkill = (CraftingSkillDef)AbstractSkillDef.GetByKey(mainCat.Name); //main categories have the skill Key as their name
+				mainCat.categorySkill = (CraftingSkillDef) AbstractSkillDef.GetByKey(mainCat.Name); //main categories have the skill Key as their name
 				mainCat.isLoaded = true; //loaded, now if the parental reference is null then the category should be taken as deleted
 			}
 		}
@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//lazily loaded reference to the crafting skill connected to this category (main categories only)
 		internal CraftingSkillDef categorySkill;
-		
+
 		[SaveableData]
 		public string name; //name of the category
 		[SaveableData]
@@ -116,7 +116,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//constructor used for main categories only
-		internal CraftmenuCategory(CraftingSkillDef csd) : this(csd.Key) {
+		internal CraftmenuCategory(CraftingSkillDef csd)
+			: this(csd.Key) {
 			this.categorySkill = csd;
 		}
 
@@ -197,7 +198,7 @@ namespace SteamEngine.CompiledScripts {
 			if (this.Parent != null) {
 				this.Parent.Contents.Remove(this); //remove from the parent's hierarchy list
 			}
-			foreach(ICraftmenuElement subElem in contents) {
+			foreach (ICraftmenuElement subElem in contents) {
 				subElem.Remove();//remove every element in the removed category (incl. subcategories)
 			}
 			Delete(); //will clear the reference to the parent and disable the overall usage as favourite category etc.
@@ -205,18 +206,18 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it")]
 		public void Bounce(AbstractItem whereto) {
-			Item newPouch = (Item)ItemDef.GetByDefname("i_pouch").Create(whereto);
+			Item newPouch = (Item) ItemDef.GetByDefname("i_pouch").Create(whereto);
 			newPouch.Name = this.Name;
 			foreach (ICraftmenuElement innerElem in this.Contents) {
 				innerElem.Bounce(newPouch);
 			}
 		}
 		#endregion
-	
+
 		#region IDeletable Members
 
 		public bool IsDeleted {
-			get { 
+			get {
 				return (isLoaded == true && parent == null);//has been loaded but the parent is null? (this can happen only if the category was deleted)
 			}
 		}
@@ -226,7 +227,7 @@ namespace SteamEngine.CompiledScripts {
 			//but there can exist references on it (favourite categroy etc...) so we need to mark it somehow
 			//in order to disable its usage anymore
 			isLoaded = true; //consider it as loaded (but in time of deleting it should be loaded anyways)
- 			parent = null;
+			parent = null;
 		}
 		#endregion
 
@@ -235,7 +236,7 @@ namespace SteamEngine.CompiledScripts {
 			if (this.IsDeleted) {
 				throw new DeletedException("Invalid usage of deleted Craftmenu Category (" + this + ")");
 			}
-		} 
+		}
 	}
 
 	[SaveableClass]
@@ -291,7 +292,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[Summary("Bouncing of the item means creating an instance and putting to the specified location")]
 		public void Bounce(AbstractItem whereto) {
-			Item newItm = (Item)itemDef.Create(whereto);
+			Item newItm = (Item) itemDef.Create(whereto);
 		}
 		#endregion
 	}
@@ -321,23 +322,23 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			CraftmenuCategory catToPut = (CraftmenuCategory) parameter;
 
 			Encategorize(targetted, catToPut);
 
 			//reopen the dialog on the stored position
 			Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(D_Craftmenu.TkLastCat);
-            CraftmenuCategory prevCat = null;
-            if (lastPosDict != null) {
-                prevCat = lastPosDict[catToPut.CategorySkill];
-            }
+			CraftmenuCategory prevCat = null;
+			if (lastPosDict != null) {
+				prevCat = lastPosDict[catToPut.CategorySkill];
+			}
 			if (prevCat != null) {//not null means that the category was not deleted and can be accessed again
 				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(prevCat));
 			} else {//null means that it either not existed (the tag) or the category was deleted from the menu
 				self.Dialog(SingletonScript<D_CraftmenuCategories>.Instance);
 			}
-			return false;
+			return TargetResult.Done;
 		}
 	}
 
@@ -367,7 +368,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Class encapsulating one instance of the crafting 'order list' - the queue of the CraftingSelections "+
+	[Summary("Class encapsulating one instance of the crafting 'order list' - the queue of the CraftingSelections " +
 			"and the required used skill.")]
 	public class CraftingOrder {
 		private readonly CraftingSkillDef craftingSkill;

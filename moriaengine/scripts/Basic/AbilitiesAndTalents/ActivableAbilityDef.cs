@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Summary("Add Plugin to ability holder, if specified for this AbilityDef")]
-		protected override bool On_Activate(Character chr, Ability ab) {
+		protected override void On_Activate(Character chr, Ability ab) {
 			PluginDef def = this.PluginDef;
 			PluginKey key = this.PluginKey;
 			Sanity.IfTrueThrow((def == null) != (key == null), 
@@ -101,7 +101,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 				chr.AddPlugin(key, plugin);
 			}
-			return base.On_Activate(chr, ab);
+
+			base.On_Activate(chr, ab);
 		}
 
 		public void Deactivate(Character chr) {

@@ -161,31 +161,35 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			base.On_Start(self, parameter);
 		}
 
-		protected override bool On_TargonItem(Player self, Item targetted, object parameter) {
-			GemBox focus = parameter as GemBox;
-			if (!self.CanReachWithMessage(focus)) {
-				return false;
+		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
+			GemBox gemBox = (GemBox) parameter;
+			if (!self.CanReachWithMessage(gemBox)) {
+				return TargetResult.Done;
 			}
-			if (targetted.Type.Defname == "t_gem") {
-				int previousCount;
-				focus.EnsureDictionary();
-				if (!focus.inBoxGems.TryGetValue(targetted.TypeDef, out previousCount)) {
-					previousCount = 0;
-				}
-				if (focus.pocetGemu + (int) targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik gemu, kolik skutecne lze pridat
-					int gemsToTake = focus.TypeDef.Capacity - focus.pocetGemu;
-					targetted.Amount -= gemsToTake;
-					focus.pocetGemu += gemsToTake;
-					focus.inBoxGems[targetted.TypeDef] = previousCount + gemsToTake;
+
+			if (self.CanPickUpWithMessage(targetted)) {
+				if (targetted.Type == SingletonScript<t_gem>.Instance) {
+					int previousCount;
+					gemBox.EnsureDictionary();
+					if (!gemBox.inBoxGems.TryGetValue(targetted.TypeDef, out previousCount)) {
+						previousCount = 0;
+					}
+
+					if (gemBox.pocetGemu + targetted.Amount > gemBox.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik gemu, kolik skutecne lze pridat
+						int gemsToTake = gemBox.TypeDef.Capacity - gemBox.pocetGemu;
+						targetted.Amount -= gemsToTake;
+						gemBox.pocetGemu += gemsToTake;
+						gemBox.inBoxGems[targetted.TypeDef] = previousCount + gemsToTake;
+					} else {
+						gemBox.pocetGemu += targetted.Amount;
+						gemBox.inBoxGems[targetted.TypeDef] = previousCount + targetted.Amount;
+						targetted.Delete();
+					}
 				} else {
-					focus.pocetGemu += (int) targetted.Amount;
-					focus.inBoxGems[targetted.TypeDef] = previousCount + (int) targetted.Amount;
-					targetted.Delete();
+					self.SysMessage("Do bedny mùžeš pøidat jen drahé kameny.");
 				}
-			} else {
-				self.SysMessage("Do bedny mùžeš pøidat jen drahé kameny.");
 			}
-			return true;
+			return TargetResult.RestartTargetting;
 		}
 
 		protected override void On_TargonCancel(Player self, object parameter) {

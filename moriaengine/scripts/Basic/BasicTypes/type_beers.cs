@@ -21,10 +21,10 @@ using SteamEngine;
 namespace SteamEngine.CompiledScripts {
 
 	public class t_booze : CompiledTriggerGroup {
-		public bool on_dclick(Item self, Character dclicker) {
+		public TriggerResult On_DClick(Item self, Character dclicker) {
 			dclicker.Emote("Hic!");
 			self.Delete();
-			return true;
+			return TriggerResult.Cancel;
 		}
 	}
 }

@@ -25,15 +25,15 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class t_ingot : CompiledTriggerGroup {
-		public bool on_playDropSound(Item self, Character droppingChar) {
-			self.SoundTo((ushort) SoundNames.DroppingSomethingWhichBouncesSlightly, droppingChar);
-			return true;
-		}
+		//public bool on_playDropSound(Item self, Character droppingChar) {
+		//    self.SoundTo((ushort) SoundNames.DroppingSomethingWhichBouncesSlightly, droppingChar);
+		//    return true;
+		//}
 
-		//ingor is for blacksmithing too...
-		public bool On_Dclick(Item self, Character dclicker) {
+		//ingot is for blacksmithing too...
+		public TriggerResult On_Dclick(Item self, Character dclicker) {
 			Dialogs.D_Craftmenu.Craftmenu(dclicker, SkillName.Blacksmith);
-			return false;
+			return TriggerResult.Continue;
 		}
 	}
 }

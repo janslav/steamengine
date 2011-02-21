@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state = self.GameState;
 			if (state != null) {
 				Language lang = state.Language;
-				state.Menu(this.GetAllTexts(lang), 
+				state.Menu(this.GetAllTexts(lang),
 					this.responseCallback, this.cancelCallback, parameter);
 			}
 		}

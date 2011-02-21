@@ -213,7 +213,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		//this.Cont is being stacked onto another item (projectile) 
-		public virtual bool On_StackOnItem(ItemStackArgs args) {
+		public virtual TriggerResult On_StackOnItem(ItemStackArgs args) {
 			Sanity.IfTrueThrow(this.Cont != args.ManipulatedItem, "this != args.ManipulatedItem");
 
 			PoisonedItemPlugin otherPoison = args.WaitingStack.GetPlugin(poisonPK) as PoisonedItemPlugin;
@@ -224,11 +224,11 @@ namespace SteamEngine.CompiledScripts {
 				args.WaitingStack.AddPlugin(poisonPK, this);
 			}
 
-			return false; //do not cancel
+			return TriggerResult.Continue; //do not cancel
 		}
 
 		//another item (projectile) is being stacked onto this.Cont
-		public virtual bool On_ItemStackOn(ItemStackArgs args) {
+		public virtual TriggerResult On_ItemStackOn(ItemStackArgs args) {
 			Sanity.IfTrueThrow(this.Cont != args.WaitingStack, "this != args.WaitingStack");
 
 			PoisonedItemPlugin otherPoison = args.ManipulatedItem.GetPlugin(poisonPK) as PoisonedItemPlugin;
@@ -245,10 +245,10 @@ namespace SteamEngine.CompiledScripts {
 
 				args.WaitingStack.InvalidateAosToolTips();
 
-				otherPoison.Delete(); //probably doesn't matter, because it's parent is gonna be deleted anyway
-			}		
-			
-			return false;
+				otherPoison.Delete(); //probably doesn't matter, because it's holder is gonna be deleted anyway
+			}
+
+			return TriggerResult.Continue;
 		}
 
 		public void On_Unassign(Item cont) {
