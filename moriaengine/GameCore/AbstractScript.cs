@@ -16,15 +16,16 @@
 */
 
 using System;
-using System.Text;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using SteamEngine.Common;
 
 namespace SteamEngine {
 	public abstract class AbstractScript : IUnloadable {
 
-		private readonly static Dictionary<string, AbstractScript> byDefname = new Dictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
+		private readonly static ConcurrentDictionary<string, AbstractScript> byDefname = new ConcurrentDictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
 
 		private string defname;
 		private bool unloaded = false;
@@ -40,10 +41,10 @@ namespace SteamEngine {
 		}
 
 		public static void ForgetAll() {
-			foreach (AbstractScript gs in new List<AbstractScript>(byDefname.Values)) {
+			foreach (AbstractScript gs in byDefname.Values.ToList()) {
 				gs.Unregister();
 			}
-			Sanity.IfTrueThrow(byDefname.Count > 0, "byDefname.Count > 0 after UnloadAll");
+			Contract.Ensures(byDefname.Count == 0, "byDefname.Count > 0 after UnloadAll");
 		}
 
 		//register with static dictionaries and lists. 
@@ -51,11 +52,10 @@ namespace SteamEngine {
 		//Returns self for easier usage 
 		virtual public AbstractScript Register() {
 			if (!string.IsNullOrEmpty(this.defname)) {
-				AbstractScript previous;
-				if (byDefname.TryGetValue(this.defname, out previous)) {
-					Sanity.IfTrueThrow(previous != this, "previous != this when registering AbstractScript '" + this.defname + "'");
+				var previous = byDefname.GetOrAdd(this.defname, this);
+				if (previous != this) {
+					throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
 				}
-				byDefname[this.defname] = this;
 			}
 			return this;
 		}
@@ -65,18 +65,22 @@ namespace SteamEngine {
 		virtual protected void Unregister() {
 			if (!string.IsNullOrEmpty(this.defname)) {
 				AbstractScript previous;
-				if (byDefname.TryGetValue(this.defname, out previous)) {
-					Sanity.IfTrueThrow(previous != this, "previous != this when unregistering AbstractScript '" + this.defname + "'"); 
+				if (byDefname.TryRemove(this.defname, out previous)) {
+					if (previous != this) {
+						if (!byDefname.TryAdd(this.defname, previous)) {
+							throw new FatalException("Parallel loading fucked up.");
+						}
+						throw new SEException("previous != this when unregistering AbstractScript '" + this.defname + "'");
+					}
 				}
-				byDefname.Remove(this.defname);
 			}
 		}
 
-		internal static Dictionary<string, AbstractScript> AllScriptsByDefname {
+		internal static ConcurrentDictionary<string, AbstractScript> AllScriptsByDefname {
 			get {
-				return byDefname; 
+				return byDefname;
 			}
-		} 
+		}
 
 		public static ICollection<AbstractScript> AllScripts {
 			get {
@@ -111,8 +115,8 @@ namespace SteamEngine {
 		}
 
 		public bool IsUnloaded {
-			get { 
-				return this.unloaded; 
+			get {
+				return this.unloaded;
 			}
 		}
 
@@ -121,8 +125,8 @@ namespace SteamEngine {
 		}
 
 		public string Defname {
-			get { 
-				return this.defname; 
+			get {
+				return this.defname;
 			}
 		}
 

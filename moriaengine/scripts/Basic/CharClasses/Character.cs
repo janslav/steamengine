@@ -448,45 +448,6 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Visibility
 
 		#region CanSee... / Check...
-		public DenyResult CanSeeLOS(IPoint3D target) {
-			IPoint3D targetTop = target.TopPoint;
-
-			int thisM = this.M;
-			IPoint4D targetAs4D = targetTop as IPoint4D;
-
-			if ((targetAs4D != null) && (targetAs4D.M != thisM)) { //different M
-				return DenyResultMessages.Deny_ThatIsTooFarAway;
-			} else {
-				Regions.Map map = Regions.Map.GetMap(thisM);
-				Thing targetAsThing = target as Thing;
-				if (targetAsThing != null) {
-					if ((targetAsThing.IsDeleted) || (targetAsThing.Flag_Disconnected)) {
-						return DenyResultMessages.Deny_ThatDoesntExist;
-					}
-					DenyResult canSee = this.CanSeeForUpdate(targetAsThing);
-					if (!canSee.Allow) {
-						return canSee;
-					}
-					if (!map.CanSeeLosFromTo(this, targetTop)) {
-						return DenyResultMessages.Deny_ThatIsOutOfLOS;
-					}
-				} else if (target != null) {
-					if (Point2D.GetSimpleDistance(this, targetTop) > this.VisionRange) {
-						return DenyResultMessages.Deny_ThatIsTooFarAway;
-					}
-					if (map.CanSeeLosFromTo(this, targetTop)) {
-						//if it's really an IPoint3D, we assume it exists on all mapplanes. 
-						//TODO? Could be wrong with statics on multiple facets, but we'll get there when we get there
-						return DenyResultMessages.Deny_ThatIsOutOfLOS;
-					}
-				} else { //target == null
-					return DenyResultMessages.Deny_ThatDoesntExist;
-				}
-			}
-
-			return DenyResultMessages.Allow;
-		}
-
 		public bool CanSeeLOSMessage(IPoint3D target) {
 			DenyResult result = this.CanSeeLOS(target);
 			if (result.Allow) {

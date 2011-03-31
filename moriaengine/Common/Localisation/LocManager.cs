@@ -1,10 +1,7 @@
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {
 
@@ -14,14 +11,14 @@ namespace SteamEngine.Common {
 	}
 
 	public static class LocManager {
-		private static Dictionary<string, LocStringCollection>[] loadedLanguages = InitDictArrays();
+		private static readonly ConcurrentDictionary<string, LocStringCollection>[] loadedLanguages = InitDictArrays();
 
-		private static Dictionary<string, LocStringCollection>[] InitDictArrays() {
+		private static ConcurrentDictionary<string, LocStringCollection>[] InitDictArrays() {
 			int n = Tools.GetEnumLength<Language>();
-			Dictionary<string, LocStringCollection>[] langs = new Dictionary<string, LocStringCollection>[n];
+			var langs = new ConcurrentDictionary<string, LocStringCollection>[n];
 
 			for (int i = 0; i < n; i++) {
-				langs[i] = new Dictionary<string, LocStringCollection>(StringComparer.InvariantCultureIgnoreCase);
+				langs[i] = new ConcurrentDictionary<string, LocStringCollection>(StringComparer.InvariantCultureIgnoreCase);
 			}
 
 			return langs;
@@ -31,17 +28,27 @@ namespace SteamEngine.Common {
 		public static void RegisterLoc(LocStringCollection newLoc) {
 			string className = newLoc.Defname;
 			Language lan = newLoc.Language;
-			if (loadedLanguages[(int) lan].ContainsKey(className)) {
+
+			var previous = loadedLanguages[(int) lan].GetOrAdd(className, newLoc);
+			if (previous != newLoc) {
 				throw new SEException("Loc instance '" + className + "' already exists");
 			}
-			loadedLanguages[(int) lan].Add(className, newLoc);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void UnregisterLoc(LocStringCollection newLoc) {
 			string className = newLoc.Defname;
 			Language lan = newLoc.Language;
-			loadedLanguages[(int) lan].Remove(className);
+
+			LocStringCollection previous;
+			if (loadedLanguages[(int) lan].TryRemove(className, out previous)) {
+				if (previous != newLoc) {
+					if (!loadedLanguages[(int) lan].TryAdd(className, previous)) {
+						throw new FatalException("Parallel loading fucked up.");
+					}
+					throw new SEException("Loc instance '" + className + "' was not registered.");
+				}
+			}
 		}
 
 		public static LocStringCollection GetLoc(string defname, Language language) {
@@ -79,28 +86,28 @@ namespace SteamEngine.Common {
 		}
 
 		public static void ForgetInstancesFromAssembly(Assembly assemblyBeingUnloaded) {
-			Dictionary<string, LocStringCollection> defaults = loadedLanguages[(int)Language.Default];
-			LocStringCollection[] allLocs = new LocStringCollection[defaults.Count];
-			defaults.Values.CopyTo(allLocs, 0); //we copy the list first, because we're going to remove some entries in a foreach loop
+			//we copy the list first, because we're going to remove some entries in a foreach loop
+			var allLocs = loadedLanguages[(int) Language.Default].Values.ToList();
 
 			foreach (LocStringCollection loc in allLocs) {
 				if (loc.GetType().Assembly == assemblyBeingUnloaded) {
-					foreach (Dictionary<string, LocStringCollection> langDict in loadedLanguages) {
-						langDict.Remove(loc.Defname);
+					foreach (var langDict in loadedLanguages) {
+						LocStringCollection ignored;
+						langDict.TryRemove(loc.Defname, out ignored);
 					}
 				}
 			}
 		}
 
 		public static void ForgetInstancesOfType(Type type) {
-			Dictionary<string, LocStringCollection> defaults = loadedLanguages[(int) Language.Default];
-			LocStringCollection[] allLocs = new LocStringCollection[defaults.Count];
-			defaults.Values.CopyTo(allLocs, 0); //we copy the list first, because we're going to remove some entries in a foreach loop
+			//we copy the list first, because we're going to remove some entries in a foreach loop
+			var allLocs = loadedLanguages[(int) Language.Default].Values.ToList();
 
 			foreach (LocStringCollection loc in allLocs) {
 				if (loc.GetType() == type) {
-					foreach (Dictionary<string, LocStringCollection> langDict in loadedLanguages) {
-						langDict.Remove(loc.Defname);
+					foreach (var langDict in loadedLanguages) {
+						LocStringCollection ignored;
+						langDict.TryRemove(loc.Defname, out ignored);
 					}
 				}
 			}

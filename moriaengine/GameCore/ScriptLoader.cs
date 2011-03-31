@@ -16,24 +16,23 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Text;
-using SteamEngine.LScript;
-using SteamEngine.Timers;
+using System.Linq;
+using System.Reflection;
 using SteamEngine.Common;
+using SteamEngine.LScript;
+using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
-using SteamEngine.Networking;
 
 namespace SteamEngine {
 	public static class ScriptLoader {
 		private static ScriptFileCollection allFiles = InitScpCollection();
 
-		private static Dictionary<string, RegisteredScript> scriptTypesByName =
-			new Dictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
+		private static ConcurrentDictionary<string, RegisteredScript> scriptTypesByName =
+			new ConcurrentDictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
 
 		static ScriptFileCollection InitScpCollection() {
 			ScriptFileCollection retVal = new ScriptFileCollection(Globals.ScriptsPath, ".scp");
@@ -46,7 +45,7 @@ namespace SteamEngine {
 		internal static void Load() {
 			ICollection<ScriptFile> files = allFiles.GetAllFiles();
 			long lengthSum = allFiles.LengthSum;
-			long alreadyloaded = 0;
+
 			using (StopWatch.StartAndDisplay("Loading " + LogStr.Number(files.Count) + " *.def and *.scp script files. (" + LogStr.Number(lengthSum) + " bytes)...")) {
 
 				ThingDef.StartingLoading();
@@ -56,14 +55,22 @@ namespace SteamEngine {
 				//ObjectSaver.StartingLoading();
 				AbstractSkillDef.StartingLoading();
 
-				foreach (ScriptFile f in files) {
-					if (f.Exists) {
+				var loadedBytes = files.AsParallel().Aggregate(
+					() => 0L,
+					(alreadyloaded, sf) => {
+						Logger.WriteDebug("Loading " + sf.Name);
+						LoadFile(sf);
+						return alreadyloaded + sf.Length;
+					},
+					(a, b) => {
+						var alreadyloaded = a + b;
 						Logger.SetTitle("Loading scripts: " + ((alreadyloaded * 100) / lengthSum) + " %");
-						Logger.WriteDebug("Loading " + f.Name);
-						LoadFile(f);
-						alreadyloaded += f.Length;
-					}
-				}
+						return alreadyloaded;
+					},
+					a => a);
+
+				Sanity.IfTrueSay(lengthSum != loadedBytes, "ScriptLoader.Load: lengthSum != loadedBytes");
+
 				Logger.WriteDebug("Script files loaded.");
 				Logger.SetTitle("");//reset title of the console
 
@@ -276,16 +283,16 @@ namespace SteamEngine {
 		}
 
 		public static void RegisterScriptType(string name, LoadSection deleg, bool startAsScript) {
-			RegisteredScript rs;
-			if (scriptTypesByName.TryGetValue(name, out rs)) {
-				if (rs.deleg.Method != deleg.Method) {
-					throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(rs) + ") registered for handling the section name " + LogStr.Ident(name));
-				} else {
-					rs.startAsScript = rs.startAsScript || startAsScript; //if any wants true, it stays true. This is here because of AbstractDef and TemplateDef... yeah not exactly clean
-					return;
-				}
-			}
-			scriptTypesByName[name] = new RegisteredScript(deleg, startAsScript);
+			scriptTypesByName.AddOrUpdate(name,
+				n => new RegisteredScript(deleg, startAsScript),
+				(n, rs) => {
+					if (rs.deleg.Method != deleg.Method) {
+						throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(rs) + ") registered for handling the section name " + LogStr.Ident(name));
+					} else {
+						rs.startAsScript = rs.startAsScript || startAsScript; //if any wants true, it stays true. This is here because of AbstractDef and TemplateDef... yeah not exactly clean
+						return rs;
+					}
+				});
 		}
 
 		public static void RegisterScriptType(string[] names, LoadSection deleg, bool startAsScript) {
@@ -310,8 +317,8 @@ namespace SteamEngine {
 
 			Assembly coreAssembly = CompiledScripts.ClassManager.CoreAssembly;
 
-			Dictionary<string, RegisteredScript> origScripts = scriptTypesByName;
-			scriptTypesByName = new Dictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
+			var origScripts = scriptTypesByName.ToArray();
+			scriptTypesByName = new ConcurrentDictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);
 			foreach (KeyValuePair<string, RegisteredScript> pair in origScripts) {
 				if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly) {
 					scriptTypesByName[pair.Key] = pair.Value;

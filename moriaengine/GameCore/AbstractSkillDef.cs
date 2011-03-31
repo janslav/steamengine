@@ -16,18 +16,14 @@
 */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
 	public abstract class AbstractSkillDef : AbstractIndexedDef<AbstractSkillDef, int> /*TriggerGroupHolder*/ {
 
 		//string(defname)-Skilldef pairs
-		private static Dictionary<string, AbstractSkillDef> byKey = new Dictionary<string, AbstractSkillDef>(StringComparer.OrdinalIgnoreCase);
+		private static ConcurrentDictionary<string, AbstractSkillDef> byKey = new ConcurrentDictionary<string, AbstractSkillDef>(StringComparer.OrdinalIgnoreCase);
 		//string(key)-Skilldef pairs
 		//private static List<AbstractSkillDef> byId = new List<AbstractSkillDef>();
 		//Skilldef instances by their ID
@@ -108,11 +104,11 @@ namespace SteamEngine {
 		public override AbstractScript Register() {
 			try {
 				string key = this.Key;
-				AbstractSkillDef previous;
-				if (byKey.TryGetValue(key, out previous)) {
-					Sanity.IfTrueThrow(previous != this, "previous != this when unregistering AbstractSkillDef '" + key + "'");
+				var previous = byKey.GetOrAdd(key, this);
+				if (previous != this) {
+					throw new SEException("previous != this when registering AbstractSkillDef '" + key + "'");
 				}
-				byKey[key] = this;
+
 			} finally {
 				base.Register();
 			}
@@ -122,11 +118,17 @@ namespace SteamEngine {
 		protected override void Unregister() {
 			try {
 				string key = this.Key;
+
 				AbstractSkillDef previous;
-				if (byKey.TryGetValue(key, out previous)) {
-					Sanity.IfTrueThrow(previous != this, "previous != this when unregistering AbstractSkillDef '" + key + "'");
+				if (byKey.TryRemove(key, out previous)) {
+					if (previous != this) {
+						if (!byKey.TryAdd(key, previous)) {
+							throw new FatalException("Parallel loading fucked up.");
+						}
+						throw new SEException("previous != this when unregistering AbstractSkillDef '" + key + "'");
+					}
 				}
-				byKey.Remove(key);
+
 			} finally {
 				base.Unregister();
 			}
@@ -165,7 +167,7 @@ namespace SteamEngine {
 			//byId.Clear();
 			//skillDefCtorsByName.Clear();
 		}
-		
+
 		protected AbstractSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			this.key = this.InitTypedField("key", "", typeof(string));
@@ -223,10 +225,10 @@ namespace SteamEngine {
 
 	[Summary("Instances of this class store the skill values of each character")]
 	public interface ISkill {
-		int RealValue { get; set;}
+		int RealValue { get; set; }
 		int ModifiedValue { get; }
 		int Cap { get; }
-		SkillLockType Lock { get; set;}
-		int Id { get;}
+		SkillLockType Lock { get; set; }
+		int Id { get; }
 	}
 }

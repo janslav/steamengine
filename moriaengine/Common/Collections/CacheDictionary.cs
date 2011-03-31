@@ -39,7 +39,7 @@ namespace SteamEngine {
 			get {
 				return this.disposeOnRemove;
 			}
-		} 
+		}
 
 		private struct CacheDictionaryKeyEntry {
 			internal TValue value;

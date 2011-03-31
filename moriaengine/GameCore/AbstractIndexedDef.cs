@@ -17,13 +17,8 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine {
 
@@ -32,13 +27,14 @@ namespace SteamEngine {
 		where TDef : AbstractIndexedDef<TDef, TIndex> {
 
 		//for string indices, be case insensitive
-		private static Dictionary<TIndex, TDef> byIndex = (typeof(TIndex) == typeof(string)) ?
-			new Dictionary<TIndex, TDef>((IEqualityComparer<TIndex>) StringComparer.OrdinalIgnoreCase) :
-			new Dictionary<TIndex, TDef>();
+		private static ConcurrentDictionary<TIndex, TDef> byIndex = (typeof(TIndex) == typeof(string)) ?
+			new ConcurrentDictionary<TIndex, TDef>((IEqualityComparer<TIndex>) StringComparer.OrdinalIgnoreCase) :
+			new ConcurrentDictionary<TIndex, TDef>();
 
 		private TIndex index;
 
-		protected AbstractIndexedDef(string defname, string filename, int headerLine) : base(defname, filename, headerLine) {
+		protected AbstractIndexedDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
 		}
 
 		public static TDef GetByDefIndex(TIndex index) {
@@ -55,7 +51,7 @@ namespace SteamEngine {
 				this.index = value;
 			}
 		}
-		
+
 		public static int IndexedCount {
 			get {
 				return byIndex.Count;
@@ -70,11 +66,12 @@ namespace SteamEngine {
 
 		public override AbstractScript Register() {
 			try {
-				TDef previous;
-				if (byIndex.TryGetValue(this.index, out previous)) {
-					Sanity.IfTrueThrow(previous != this, "previous != this when registering AbstractIndexedDef " + this.index);
+
+				TDef previous = byIndex.GetOrAdd(this.index, (TDef) this);
+				if (previous != this) {
+					throw new SEException("previous != this when registering AbstractIndexedDef '" + this.index + "'");
 				}
-				byIndex[this.index] = (TDef) this;
+
 			} finally {
 				base.Register();
 			}
@@ -83,11 +80,17 @@ namespace SteamEngine {
 
 		protected override void Unregister() {
 			try {
+
 				TDef previous;
-				if (byIndex.TryGetValue(this.index, out previous)) {
-					Sanity.IfTrueThrow(previous != this, "previous != this when unregistering AbstractIndexedDef " + this.index);
+				if (byIndex.TryRemove(this.index, out previous)) {
+					if (previous != this) {
+						if (!byIndex.TryAdd(this.index, previous)) {
+							throw new FatalException("Parallel loading fucked up.");
+						}
+						throw new SEException("previous != this when unregistering AbstractScript '" + this.index + "'");
+					}
 				}
-				byIndex.Remove(this.index);
+
 			} finally {
 				base.Unregister();
 			}

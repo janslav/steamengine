@@ -85,10 +85,11 @@ namespace SteamEngine.CompiledScripts {
 			foreach (SpeechTrigger st in triggers) {
 				Match m = st.re.Match(message);
 				if (m.Success) {
-					return (SpeechResult) Convert.ToInt32(st.holder.Run(listener, speechArgs));
+					object o = st.holder.Run(listener, speechArgs);
+					return (SpeechResult) Convert.ToInt32(o);
 				}
 			}
-			return SpeechResult.Ignored;
+			return SpeechResult.IgnoredOrActedUpon;
 		}
 
 		protected override SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs) {
@@ -96,10 +97,13 @@ namespace SteamEngine.CompiledScripts {
 			foreach (SpeechTrigger st in triggers) {
 				Match m = st.re.Match(message);
 				if (m.Success) {
-					return (SpeechResult) Convert.ToInt32(st.holder.TryRun(listener, speechArgs));
+					object o = st.holder.TryRun(listener, speechArgs);
+					try {
+						return (SpeechResult) Convert.ToInt32(o);
+					} catch { }
 				}
 			}
-			return SpeechResult.Ignored;
+			return SpeechResult.IgnoredOrActedUpon;
 		}
 
 		private static Regex GetRegex(string triggername) {
