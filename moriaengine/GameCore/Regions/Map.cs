@@ -725,11 +725,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from player in sector.Players
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from player in  this.GetSector(sx, sy).Players
 				   where player.GameState != null && rectangle.Contains(player)
 				   select player.GameState.Conn;
 #else
@@ -751,11 +749,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from player in sector.Players
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from player in this.GetSector(sx, sy).Players
 				   where rectangle.Contains(player)
 				   select player;
 #else
@@ -779,11 +775,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from thing in sector.Things
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from thing in this.GetSector(sx, sy).Things
 				   where rectangle.Contains(thing)
 				   select thing;
 #else
@@ -807,11 +801,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from thing in sector.Things
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from thing in this.GetSector(sx, sy).Things
 				   where thing is AbstractItem && rectangle.Contains(thing)
 				   select (AbstractItem) thing;
 #else
@@ -836,11 +828,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from thing in sector.Things
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from thing in this.GetSector(sx, sy).Things
 				   where thing is AbstractCharacter && rectangle.Contains(thing)
 				   select (AbstractCharacter) thing;
 #else
@@ -865,11 +855,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from thing in sector.Things
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from thing in this.GetSector(sx, sy).Things
 				   where thing is AbstractCharacter && !thing.IsPlayer && rectangle.Contains(thing)
 				   select (AbstractCharacter) thing;
 #else
@@ -923,11 +911,9 @@ namespace SteamEngine.Regions {
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from thing in sector.Disconnects
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from thing in this.GetSector(sx, sy).Disconnects
 				   where rectangle.Contains(thing)
 				   select thing;
 #else
@@ -952,11 +938,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from mic in sector.MultiComponents
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from mic in this.GetSector(sx, sy).MultiComponents
 				   where rectangle.Contains(mic)
 				   select mic;
 #else
@@ -973,28 +957,6 @@ namespace SteamEngine.Regions {
 #endif
 		}
 
-		///**
-		//    This is used by Thing's similarly named method, but this version allows
-		//    you to explicitly specify an IPoint6D to find clients who can see :).
-
-		//    This checks LOS and the actual UpdateRange of each client, etc. It calls
-		//    each client character's CanSee. If the point is in a container, it
-		//    checks that too and whether the client has it open.
-		//    (This is all done by CanSee, mind you)
-		//*/
-		//public IEnumerable<GameConn> GetGameConnsWhoCanSee(Thing thing) {
-		//    Thing t = thing.TopObj();
-		//    ImmutableRectangle rectangle = new ImmutableRectangle(t.X, t.Y, Globals.MaxUpdateRange);
-		//    foreach (Sector sector in this.GetSectorsInRectangle(rectangle)) {
-		//        foreach (AbstractCharacter player in sector.players) {
-		//            GameConn conn = player.Conn;
-		//            if ((conn != null) && (rectangle.Contains(player)) && (player.CanSeeForUpdate(thing))) {
-		//                yield return conn;
-		//            }
-		//        }
-		//    }
-		//}
-
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsWhoCanSee(Thing thing) {
 			Thing top = thing.TopObj();
@@ -1003,11 +965,9 @@ namespace SteamEngine.Regions {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
 #if !NOLINQ
-			return from sector in
-					   (from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
-						from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-						select this.GetSector(sx, sy))
-				   from player in sector.Players
+			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
+				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
+				   from player in this.GetSector(sx, sy).Players
 				   where player.GameState != null && rectangle.Contains(player) && player.CanSeeForUpdate(thing).Allow
 				   select player.GameState.Conn;
 #else

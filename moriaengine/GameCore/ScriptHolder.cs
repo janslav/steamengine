@@ -16,19 +16,13 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Globalization;
 using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine {
 	public abstract class ScriptHolder {
-		private static Dictionary<string, ScriptHolder> functionsByName = new Dictionary<string, ScriptHolder>(StringComparer.OrdinalIgnoreCase);
+		private static ConcurrentDictionary<string, ScriptHolder> functionsByName = new ConcurrentDictionary<string, ScriptHolder>(StringComparer.OrdinalIgnoreCase);
 
 		private readonly string name;
 		internal bool unloaded;
@@ -55,8 +49,8 @@ namespace SteamEngine {
 		}
 
 		public string Name {
-			get { 
-				return this.name; 
+			get {
+				return this.name;
 			}
 		}
 
@@ -65,25 +59,19 @@ namespace SteamEngine {
 		}
 
 		internal protected void RegisterAsFunction() {
-			if (!functionsByName.ContainsKey(this.name)) {
-				functionsByName[this.name] = this;
-				return;
+			if (!functionsByName.TryAdd(this.name, this)) {
+				throw new ServerException("ScriptHolder '" + this.name + "' already exists; Cannot create a new one with the same name.");
 			}
-			throw new ServerException("ScriptHolder '" + this.name + "' already exists; Cannot create a new one with the same name.");
 		}
 
-		internal static void ForgetAll() {
+		internal static void ForgetAllFunctions() {
 			functionsByName.Clear();
 		}
 
 		[Summary("Return enumerable containing all functions")]
 		public static IEnumerable<ScriptHolder> AllFunctions {
 			get {
-				if (functionsByName != null) {
-					return functionsByName.Values;
-				} else {
-					return EmptyReadOnlyGenericCollection<ScriptHolder>.instance;
-				}
+				return functionsByName.Values;
 			}
 		}
 

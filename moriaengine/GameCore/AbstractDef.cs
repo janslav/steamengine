@@ -20,7 +20,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -355,7 +354,7 @@ namespace SteamEngine {
 		public static bool RegisterSubtype(Type defType) {
 			if (!defType.IsAbstract) {
 				ConstructorInfo ci;
-				if (constructorsByTypeName.TryGetValue(defType.Name, out ci)) { //we have already a SpellDef type named like that
+				if (constructorsByTypeName.TryGetValue(defType.Name, out ci)) { //we have already a Def type named like that
 					throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of AbstractDef classes.");
 				}
 				ci = defType.GetConstructor(ConstructorParamTypes);
@@ -480,11 +479,10 @@ namespace SteamEngine {
 		override public AbstractScript Register() {
 			try {
 				if (!string.IsNullOrEmpty(this.altdefname)) {
-					AbstractScript previous;
-					if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
-						Sanity.IfTrueThrow(previous != this, "previous != this when registering AbstractDef '" + this.altdefname + "'");
+					var previous = AllScriptsByDefname.GetOrAdd(this.altdefname, this);
+					if (previous != this) {
+						throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
 					}
-					AllScriptsByDefname[this.altdefname] = this;
 				}
 			} finally {
 				base.Register();
@@ -497,11 +495,16 @@ namespace SteamEngine {
 		override protected void Unregister() {
 			try {
 				if (!string.IsNullOrEmpty(this.altdefname)) {
+
 					AbstractScript previous;
-					if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
-						Sanity.IfTrueThrow(previous != this, "previous != this when unregistering AbstractDef '" + this.altdefname + "'");
+					if (AllScriptsByDefname.TryRemove(this.altdefname, out previous)) {
+						if (previous != this) {
+							if (!AllScriptsByDefname.TryAdd(this.altdefname, previous)) {
+								throw new FatalException("Parallel loading fucked up.");
+							}
+							throw new SEException("previous != this when unregistering AbstractScript '" + this.altdefname + "'");
+						}
 					}
-					AllScriptsByDefname.Remove(this.altdefname);
 				}
 			} finally {
 				base.Unregister();

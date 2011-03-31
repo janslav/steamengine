@@ -44,7 +44,7 @@ namespace SteamEngine.Networking {
 			this.encryption = new GameEncryption();
 			this.uid = uids++;
 		}
-		
+
 		#region Uid
 		private static int uids;
 		private int uid;
@@ -204,7 +204,7 @@ namespace SteamEngine.Networking {
 				return this.character;
 			}
 		}
-		
+
 		public bool PacketGroupsJoiningAllowed {
 			get {
 				return false;
@@ -369,7 +369,7 @@ namespace SteamEngine.Networking {
 			internal MenuCancel cancel;
 			internal object parameter;
 		}
-		
+
 		public void Menu(IEnumerable<string> allTexts, MenuRespose response, MenuCancel cancel, object parameter) {
 			int menuUid = this.PrepareMenu(response, cancel, parameter);
 
@@ -399,7 +399,7 @@ namespace SteamEngine.Networking {
 			};
 			return menuUid;
 		}
-		
+
 		internal void HandleMenu(int menuUid, int oneBasedIndex) {
 			MenuResponseEntry entry;
 			if (this.menuEntries.TryGetValue(menuUid, out entry)) {
@@ -477,7 +477,7 @@ namespace SteamEngine.Networking {
 		}
 		#endregion Gump
 
-		#region Recompiling 
+		#region Recompiling
 		internal int charBackupUid;
 
 		internal void BackupLinksToCharacters() {
@@ -532,19 +532,33 @@ namespace SteamEngine.Networking {
 		#endregion LightLevel
 
 		#region Last Macro Spell/Skill
-		private int lastSkillMacroId;
-		private int lastSpellMacroId;
-
 		public int LastSkillMacroId {
-			get { return lastSkillMacroId; }
-			internal set { lastSkillMacroId = value; }
+			get;
+			internal set;
 		}
 
 		public int LastSpellMacroId {
-			get { return lastSpellMacroId; }
-			internal set { lastSpellMacroId = value; }
+			get;
+			internal set;
 		}
 		#endregion Last Macro Spell/Skill
+
+		#region Last exclusive conversation partner
+
+		private AbstractCharacter lastExclusiveConversationpartner;
+		public AbstractCharacter LastExclusiveConversationPartner {
+			get {
+				if (this.lastExclusiveConversationpartner != null) {
+					if (this.lastExclusiveConversationpartner.IsDeleted) {
+						this.lastExclusiveConversationpartner = null;
+					}
+				}
+				return this.lastExclusiveConversationpartner;
+			}
+			internal set { this.lastExclusiveConversationpartner = value; }
+		}
+
+		#endregion Last exclusive conversation partner
 
 		#region IDeletable
 		private bool isDeleted;
@@ -589,7 +603,7 @@ namespace SteamEngine.Networking {
 		public override bool Equals(object obj) {
 			return Object.ReferenceEquals(this, obj);
 		}
-		
+
 		public void WriteLine(string msg) {
 			PacketSequences.SendSystemMessage(this.conn, msg, -1);
 		}

@@ -953,16 +953,21 @@ namespace SteamEngine {
 		#region Speech
 		//this method fires the [speech] triggers
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal void Trigger_Hear(SpeechArgs sa) {
-			this.TryTrigger(TriggerKey.hear, sa);
-			try {
-				this.On_Hear(sa);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+		internal SpeechResult Trigger_Hear(SpeechArgs sa) {
+			SpeechResult result = (SpeechResult) this.TryCancellableTrigger(TriggerKey.hear, sa);
+
+			if (SpeechResult.ActedUponExclusively != result) {
+				try {
+					result = this.On_Hear(sa);
+				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			}
+
+			return result;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		public virtual void On_Hear(SpeechArgs args) {
-
+		public virtual SpeechResult On_Hear(SpeechArgs args) {
+			return SpeechResult.IgnoredOrActedUpon;
 		}
 
 		//cancellable because of things like Guild speech, etc.

@@ -1627,13 +1627,18 @@ namespace SteamEngine {
 			this.ThrowIfDeleted();
 
 			AbstractCharacter speaker = this as AbstractCharacter;
+			GameState speakerGameState = null;
+			bool runSpeechTriggers = false;
+			if (speaker != null) {
+				speakerGameState = speaker.GameState;
+				runSpeechTriggers = speaker.IsPlayer;
+			}
 
-			bool selfIsPlayer = ((speaker != null) && (speaker.IsPlayer));
-			if (selfIsPlayer) {
+			if (runSpeechTriggers) {
 				if (TriggerResult.Cancel == speaker.Trigger_Say(msg, type, keywords)) {
 					return;
 				}
-			}
+			}// else item/npc is speaking... no triggers fired
 
 			int dist = 0;
 			switch (type) {
@@ -1658,9 +1663,40 @@ namespace SteamEngine {
 			Map map = this.GetMap();
 			IEnumerable<AbstractCharacter> chars;
 			SpeechArgs sa;
-			if (selfIsPlayer) {
+			AbstractCharacter listenerToExclude = null;
+			if (runSpeechTriggers) {
 				chars = map.GetCharsInRange(this.point4d.x, this.point4d.y, dist);
 				sa = new SpeechArgs(speaker, msg, clilocMsg, type, color, font, language, keywords, args);
+
+				if (speakerGameState != null) {
+
+					//zkusime jestli se jedna o osloveni jmenem
+					if (!string.IsNullOrWhiteSpace(msg)) {
+						foreach (AbstractCharacter listener in chars) {
+							if (msg.StartsWith(listener.Name)) {
+								if (listener.CanSeeLOS(speaker).Allow) {
+									listener.Trigger_Hear(sa);
+									speakerGameState.LastExclusiveConversationPartner = listener;
+									runSpeechTriggers = false;
+								}
+							}
+						}
+					}
+
+					if (runSpeechTriggers) {
+						//zkusime predchozi exkluzivne konverzujici npc (vendor apod)
+						var partner = speakerGameState.LastExclusiveConversationPartner;
+						if ((Point2D.GetSimpleDistance(speaker, partner) <= dist) && partner.CanSeeLOS(speaker).Allow) {
+							var result = partner.Trigger_Hear(sa);
+							if (result == SpeechResult.ActedUponExclusively) {
+								runSpeechTriggers = false;
+							} else {
+								listenerToExclude = partner; //nebudeme na nem znova spoustet @hear
+							}
+						}
+					}
+				}
+
 			} else {
 				chars = map.GetPlayersInRange(this.point4d.x, this.point4d.y, dist);
 				sa = null;
@@ -1669,9 +1705,15 @@ namespace SteamEngine {
 			PacketGroup pg = null;
 			try {
 				foreach (AbstractCharacter listener in chars) {
-					if (selfIsPlayer) {
-						listener.Trigger_Hear(sa);
-					}// else item/npc is speaking... no triggers fired, just send it to players
+					if ((runSpeechTriggers) && (listener != listenerToExclude) && listener.CanSeeLOS(speaker).Allow) {
+						var result = listener.Trigger_Hear(sa);
+						if (result == SpeechResult.ActedUponExclusively) {
+							if (speakerGameState != null) {
+								speakerGameState.LastExclusiveConversationPartner = listener;
+							}
+							runSpeechTriggers = false;
+						}
+					}
 
 					var state = listener.GameState;
 					if (state != null) {
@@ -1695,6 +1737,7 @@ namespace SteamEngine {
 				}
 			}
 		}
+
 
 		///*
 		//    Method: CheckForInvalidCoords

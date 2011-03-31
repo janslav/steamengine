@@ -141,8 +141,8 @@ namespace SteamEngine {
 	}
 
 	public enum SpeechResult {
-		Ignored = 0,
-		ActedUponExclusively = 1
+		IgnoredOrActedUpon = 0,
+		ActedUponExclusively = 1,
 	}
 
 	//only 0 and 3 normally used

@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {
@@ -65,14 +63,14 @@ namespace SteamEngine.Common {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "entriesByName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "language"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-		internal protected virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {			
+		internal protected virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {
 			this.entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			Dictionary<string, string> helperList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			foreach (KeyValuePair<string, string> pair in entriesByName) {
 				this.entriesByName.Add(pair.Key, pair.Value);
 				helperList.Add(pair.Key, pair.Value);
 			}
-			
+
 			this.language = language;
 
 			string path = Tools.CombineMultiplePaths(".", servLocDir,

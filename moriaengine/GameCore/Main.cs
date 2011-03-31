@@ -16,22 +16,15 @@
 */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Text;
 using System.Globalization;
 using System.Threading;
+using SteamEngine.AuxServerPipe;
 using SteamEngine.Common;
-using SteamEngine.Timers;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.ClassTemplates;
+using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
-using SteamEngine.AuxServerPipe;
-using SteamEngine.Networking;
 
 namespace SteamEngine {
 	public static class MainClass {
@@ -133,7 +126,7 @@ namespace SteamEngine {
 			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			RunLevelManager.SetStartup();
-			
+
 			using (StopWatch.StartAndDisplay("Server Initialisation")) {
 				AuxServerPipeClient.Init();
 				System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
@@ -215,7 +208,7 @@ namespace SteamEngine {
 		//this is used for clearing a failed load attempt.
 		public static void ClearWorld() {
 			//Logger.WriteWarning("Clearing the world.");
-			
+
 			Thing.ClearAll();
 			AbstractAccount.ClearAll();
 			Globals.ClearAll();
@@ -287,7 +280,7 @@ namespace SteamEngine {
 
 			RunLevelManager.UnsetRecompiling();
 
-			PacketSequences.BroadCast("Script recompiling finished.");		
+			PacketSequences.BroadCast("Script recompiling finished.");
 		}
 
 		internal static void RetryRecompilingScripts() {
@@ -315,7 +308,7 @@ namespace SteamEngine {
 			ClassManager.ForgetScripts();//bye-bye to all storec types
 			GeneratedCodeUtil.ForgetScripts();//bye-bye to scripted code generators
 			//TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
-			ScriptHolder.ForgetAll();//bye-bye to all scripted functions
+			ScriptHolder.ForgetAllFunctions();//bye-bye to all scripted functions
 			ThingDef.ForgetAll();//clear thingdef constructors etc.
 			PluginDef.ForgetAll();//clear plugindef constructors etc.
 			//GroundTileType.ForgetScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
@@ -362,7 +355,7 @@ namespace SteamEngine {
 			RunLevelManager.UnsetStartup();
 			//Globals.UnPauseServerTime();
 			//Region.ResolveLoadedRegions();
-			
+
 
 			Logger.WriteDebug("triggering @startup");
 			Globals.Instance.TryTrigger(TriggerKey.startup, new ScriptArgs(false));
@@ -407,7 +400,7 @@ namespace SteamEngine {
 			if (Globals.Instance != null) { //is null when first run (and writing steamengine.ini)
 				Logger.WriteDebug("triggering @shutdown");
 				Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
-			}			
+			}
 			Timers.Timer.Clear();
 			RunLevelManager.SetDead();
 		}
