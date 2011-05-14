@@ -16,12 +16,8 @@
 */
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
@@ -246,7 +242,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			//try recognizing an ability name or defname. The parameters means order of displaying and max points in that ability for this profession
+			//try recognizing an ability name or defname. The parameters mean order of displaying and max points in that ability for this profession
 			AbilityDef ability = AbilityDef.GetByDefname(param);
 			if (ability == null) {
 				ability = AbilityDef.GetByName(param);
@@ -263,7 +259,7 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			//try recognizing a skill name or defname. The parameters then means starting and max (cap) points for this profession
+			//try recognizing a skill name or defname. The parameters then mean starting and max (cap) points for this profession
 			AbstractSkillDef skillDef = SkillDef.GetByDefname(param);
 			if (skillDef == null) {
 				skillDef = SkillDef.GetByKey(param);
@@ -315,7 +311,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void ClearCache() {
 			this.cachedSpells = null;
-			
+
 			this.abilityCache.Clear();
 			this.sortedAbilityCache = null;
 
@@ -327,7 +323,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Load from saves
 		private const string abilityOrderPrefix = "AbilityOrder.";
-		private const string abilityMaxPointsPrefix = "AbilityMaxPoints.";		
+		private const string abilityMaxPointsPrefix = "AbilityMaxPoints.";
 		private const string skillMinimumPrefix = "SkillMinimum.";
 		private const string skillCapPrefix = "SkillCap.";
 
@@ -379,7 +375,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public class ProfessionAbilityEntry {
 		public readonly AbilityDef abilityDef;
-		public readonly int order;		
+		public readonly int order;
 		public readonly int maxPoints;
 
 		public ProfessionAbilityEntry(AbilityDef def, int order, int maxPoints) {
