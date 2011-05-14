@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
-using SteamEngine.Communication;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
@@ -20,7 +17,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		public static ManualResetEvent SetToExit {
 			get { return MainClass.setToExit; }
-		} 
+		}
 
 		static void Main() {
 			//name the console window for better recognizability

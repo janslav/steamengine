@@ -16,7 +16,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -40,7 +39,8 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		internal ItemResource(ItemDef itemDef, double number, bool asPercentage) : base(number, asPercentage) {
+		internal ItemResource(ItemDef itemDef, double number, bool asPercentage)
+			: base(number, asPercentage) {
 			this.itemDef = itemDef;
 		}
 
