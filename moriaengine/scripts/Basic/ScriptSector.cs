@@ -16,41 +16,46 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.Timers;
-using SteamEngine.Regions;
 using SteamEngine.Communication;
 using SteamEngine.Networking;
+using SteamEngine.Regions;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
-	[Summary("Sector-defining class used in various scripts")]
+	/// <summary>Sector-defining class used in various scripts</summary>
 	public class ScriptSector {
-		[Remark("Dictionary mapping the computed SectorKey to the ScriptSector " +
-				"we use computed X and Y (byte shift) and the normal M for determining the ScriptSector ")]
+		/// <summary>
+		/// Dictionary mapping the computed SectorKey to the ScriptSector 
+		/// we use computed X and Y (byte shift) and the normal M for determining the ScriptSector 
+		/// </summary>
 		internal static Dictionary<SectorKey, ScriptSector> scriptSectors = new Dictionary<SectorKey, ScriptSector>();
 
-		[Remark("Power of 2 determining the size of the sector i.e. size 5 means a rectangle 32*32 fields.")]
+		/// <summary>Power of 2 determining the size of the sector i.e. size 5 means a rectangle 32*32 fields.</summary>
 		private const int scriptSectorSize = 5;
 
 		public readonly static TimeSpan cleaningPeriod = TimeSpan.FromMinutes(3);
 
-		[Remark("Time for how long we allow all information to remain in the ScriptSector " +
-				"(if not refreshed) - e.g. player's TrackPoints etc.")]
+		/// <summary>
+		/// Time for how long we allow all information to remain in the ScriptSector 
+		/// (if not refreshed) - e.g. player's TrackPoints etc.
+		/// </summary>
 		public readonly static TimeSpan maxEntityAge = TimeSpan.FromMinutes(3);
 
-		[Summary("The dictionary containing all characters that passed through this sector. Everyone leaves an information " +
-				"about the fields he stepped onto. For character Tracking purposes.")]
+		/// <summary>
+		/// The dictionary containing all characters that passed through this sector. Everyone leaves an information 
+		/// about the fields he stepped onto. For character Tracking purposes.
+		/// </summary>
 		private Dictionary<Character, TrackPoint.LinkedQueue> charsPassing = new Dictionary<Character, TrackPoint.LinkedQueue>();
 
 		private ScriptSectorTimer sectorTimer;
 
-		[Remark("Computed SEctorKey determining a set of map fields that belong to this sector - " +
-				" see the GetScriptSector method")]
+		/// <summary>
+		/// Computed SEctorKey determining a set of map fields that belong to this sector - 
+		///  see the GetScriptSector method
+		///  </summary>
 		private SectorKey sectorIdentifier;
 
 		private ScriptSector(SectorKey sectorIdentifier) {
@@ -60,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 			sectorTimer.PeriodSpan = cleaningPeriod;//set the period for periodic checking
 		}
 
-		[Remark("Perform all check necesarry to do on timeout")]
+		/// <summary>Perform all check necesarry to do on timeout</summary>
 		internal void CheckOnTimeout() {
 			//check and clean all old TrackPoints left by passing characters
 			TimeSpan minServerTime = Globals.TimeAsSpan - maxEntityAge;
@@ -112,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 			scriptSectors.Remove(this.sectorIdentifier);
 		}
 
-		[Summary("For the given map Point4D compute and return the corresponding ScriptSector for further purposes")]
+		/// <summary>For the given map Point4D compute and return the corresponding ScriptSector for further purposes</summary>
 		public static ScriptSector GetScriptSector(IPoint4D forPoint) {
 			SectorKey determiningPoint = new SectorKey((ushort) (forPoint.X >> scriptSectorSize), (ushort) (forPoint.Y >> scriptSectorSize), forPoint.M);
 			ScriptSector retSector;
@@ -123,8 +128,10 @@ namespace SteamEngine.CompiledScripts {
 			return retSector;
 		}
 
-		[Summary("Method stolen from the Map class. Find all ScriptSectors that intersect the given " +
-				"Rectangle (can be ScriptRectangle etc) lying in the given mapplane")]
+		/// <summary>
+		/// Method stolen from the Map class. Find all ScriptSectors that intersect the given 
+		/// Rectangle (can be ScriptRectangle etc) lying in the given mapplane
+		/// </summary>
 		public static IEnumerable<ScriptSector> GetScriptSectorsInRectangle(AbstractRectangle rectangle, byte mapplane) {
 			//get first and last computed ScriptSector point for the given rectangle
 			//(i.e. the sectors where the top left and bottom right rectangle points lies)
@@ -144,10 +151,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Get all ScriptSectors that intersect with the given rectangle (lying in the give mapplane), then check all " +
-			"characters (typically Players) contained inside if they also belong to the rectangle, check if the " +
-			"character in the rect. is of the desired type and if its footsteps are not too old. " +
-			"Return the list of found characters.")]
+		/// <summary>
+		/// Get all ScriptSectors that intersect with the given rectangle (lying in the give mapplane), then check all 
+		/// characters (typically Players) contained inside if they also belong to the rectangle, check if the 
+		/// character in the rect. is of the desired type and if its footsteps are not too old. 
+		/// Return the list of found characters.
+		/// </summary>
 		public static List<AbstractCharacter> GetCharactersInRectangle(AbstractRectangle rect, TimeSpan now, TimeSpan maxAge, byte mapplane) {
 			List<AbstractCharacter> retChars = new List<AbstractCharacter>();
 			TimeSpan minServTime = now - maxAge;
@@ -172,8 +181,10 @@ namespace SteamEngine.CompiledScripts {
 			return retChars;
 		}
 
-		[Summary("For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane " +
-				"and which are not older than specified. The returned")]
+		/// <summary>
+		/// For the given character, get the set of all his footsteps belonging to the given rectangle in the given mapplane 
+		/// and which are not older than specified.
+		/// </summary>
 		public static IEnumerable<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan now, TimeSpan maxAge, byte mapplane) {
 			TimeSpan minTimeToYield = now - maxAge; //newer than this are returned
 			TimeSpan minTimeToStay = now - maxEntityAge; //older than this are deleted
@@ -233,7 +244,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("For the given player make a record of his actual position as a new tracking step")]
+		/// <summary>For the given player make a record of his actual position as a new tracking step</summary>
 		internal static void AddTrackingStep(Player whose, Direction direction) {
 			//get actual sector
 			ScriptSector hisSector = ScriptSector.GetScriptSector(whose);
@@ -352,8 +363,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Special immutable key for determining ScriptSectors. It is specified by computed X, Y (byteshifted position) " +
-			"and the mapplane it lies in")]
+	/// <summary>
+	/// Special immutable key for determining ScriptSectors. It is specified by computed X, Y (byteshifted position) 
+	/// and the mapplane it lies in
+	/// </summary>
 	public struct SectorKey {
 		private readonly int x, y;
 		private readonly byte m;

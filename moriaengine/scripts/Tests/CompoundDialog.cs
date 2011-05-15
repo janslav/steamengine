@@ -14,26 +14,20 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog testing the tables in columns")]
+	/// <summary>Dialog testing the tables in columns</summary>
 	public class D_CompoundDlg : CompiledGumpDef {
 
-		[Summary("Instance of the D_TagList, for possible access from other dialogs etc.")]
+		/// <summary>Instance of the D_TagList, for possible access from other dialogs etc.</summary>
 		private static D_CompoundDlg instance;
 		public static D_CompoundDlg Instance {
 			get {
 				return instance;
 			}
 		}
-		[Summary("Set the static reference to the instance of this dialog")]
+		/// <summary>Set the static reference to the instance of this dialog</summary>
 		public D_CompoundDlg() {
 			instance = this;
 		}

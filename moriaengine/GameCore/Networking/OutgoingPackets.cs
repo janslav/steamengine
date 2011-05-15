@@ -70,8 +70,8 @@ namespace SteamEngine.Networking {
 
 		public override string FullName {
 			get {
-				return string.Concat(this.Name, 
-					" ( 0x", this.Id.ToString("X", System.Globalization.CultureInfo.InvariantCulture), 
+				return string.Concat(this.Name,
+					" ( 0x", this.Id.ToString("X", System.Globalization.CultureInfo.InvariantCulture),
 					"-0x", this.SubCmdId.ToString("X", System.Globalization.CultureInfo.InvariantCulture), " )");
 			}
 		}
@@ -259,7 +259,7 @@ namespace SteamEngine.Networking {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void Prepare(GameState state, AbstractCharacter ch) {
 			this.flaggedUid = ch.FlaggedUid;
-			this.model =  ch.ShortModel;
+			this.model = ch.ShortModel;
 			this.color = ch.ShortColor;
 			MutablePoint4D p = ch.point4d;
 			this.x = p.x;
@@ -750,7 +750,10 @@ namespace SteamEngine.Networking {
 			this.color = (ushort) item.Color;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1718:AvoidLanguageSpecificTypeNamesInParameters", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "dir"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "color"), Summary("Prepare method for creating the 'fake item' packets")]
+		/// <summary>
+		/// Prepare method for creating the 'fake item' packets
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1718:AvoidLanguageSpecificTypeNamesInParameters", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "model"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "dir"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "color")]
 		[CLSCompliant(false)]
 		public void PrepareFakeItem(uint itemUid, int model, IPoint3D point3D, ushort shortAmount, Direction dir, int color) {
 			//this must be the item UID (containing 0x40000000)
@@ -2245,16 +2248,16 @@ namespace SteamEngine.Networking {
 
 		public void Prepare(int uid, IEnumerable<string> allTexts) {
 			this.uid = uid;
-			
+
 			this.entries.Clear();
 			bool headerDone = false;
-			foreach (string str in allTexts) {				
+			foreach (string str in allTexts) {
 				if (headerDone) {
 					Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
 					this.entries.Add(new Entry() { text = str });
 				} else {
 					Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Header text length 256 exceeded");
-					this.header = str;					
+					this.header = str;
 					headerDone = true;
 				}
 			}
@@ -2307,7 +2310,7 @@ namespace SteamEngine.Networking {
 		protected override void WriteDynamicPart() {
 			this.EncodeInt(this.uid);
 			this.EncodeShort((short) Globals.dice.Next(short.MaxValue));
-						
+
 			this.EncodeASCIIStringWithLenByte(this.header);
 			int n = this.entries.Count;
 			this.EncodeByte((byte) n);
@@ -2325,7 +2328,7 @@ namespace SteamEngine.Networking {
 		string url;
 
 		public void Prepare(string url) {
-			this.url = url;		
+			this.url = url;
 		}
 
 		public override byte Id {

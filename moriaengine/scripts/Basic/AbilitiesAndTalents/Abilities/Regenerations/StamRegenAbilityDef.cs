@@ -15,17 +15,11 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Stamina Regeneration")]
+	/// <summary>Stamina Regeneration</summary>
 	[ViewableClass]
 	public class StaminaRegenAbilityDef : PassiveAbilityDef {
 

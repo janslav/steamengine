@@ -220,7 +220,7 @@ namespace SteamEngine {
 			//dump the number of constants loaded?
 		}
 
-		[Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
+		/// <summary>This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True</summary>
 		public static void ResolveAll() {
 			int count = allConstantsByName.Count;
 			Logger.WriteDebug("Resolving " + count + " constants");

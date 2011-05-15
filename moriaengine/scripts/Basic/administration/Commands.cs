@@ -16,11 +16,7 @@
  */
 
 using System;
-using System.Collections;
-using SteamEngine.Regions;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -52,8 +48,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Toggles the plevel of the account between 1 (player) and the account's max plevel, and writes back a message about the resulting state.")]
-		[Remark("Has no effect on players.")]
+		/// <summary>Toggles the plevel of the account between 1 (player) and the account's max plevel, and writes back a message about the resulting state.</summary>
+		/// <remarks>Has no effect on players.</remarks>
 		[SteamFunction]
 		public static void GM(Character self) {
 			AbstractAccount acc = self.Account;
@@ -69,8 +65,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
-		
-		[Summary("Toggles the Flag_Insubst of a gm, and writes back a message about the resulting state.")]
+
+		/// <summary>Toggles the Flag_Insubst of a gm, and writes back a message about the resulting state.</summary>
 		[SteamFunction]
 		public static void Invis(Character self) {
 			if (self.Flag_Insubst) {

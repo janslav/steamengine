@@ -20,10 +20,12 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Class for finding items from the resourcelist")]
+	/// <summary>Class for finding items from the resourcelist</summary>
 	public static class ResourceItemFinder {
-		[Summary("Get all items from the character in specified locality (e.g. all items from chars bank) and look if they are desired " +
-				"as resources in the list - initiate the resource counters list")]
+		/// <summary>
+		/// Get all items from the character in specified locality (e.g. all items from chars bank) and look if they are desired 
+		/// as resources in the list - initiate the resource counters list
+		/// </summary>
 		internal static void LocalizeItems(Character chr, ResourcesLocality where, ItemCounter[] resCountersList) {
 			//the behaviour of ResourcesLocality is like of a bitmask - there can be more locations specified at once (
 			//e.g. backpack and bank; everywhere etc...
@@ -38,8 +40,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Iterate through all items in character's wearable layers check if it is in the resource items list " +
-				"and if so, prepare the ResourceCounter object for it")]
+		/// <summary>
+		/// Iterate through all items in character's wearable layers check if it is in the resource items list 
+		/// and if so, prepare the ResourceCounter object for it
+		/// </summary>
 		private static void LocalizeWearableItems(Character chr, ItemCounter[] resCountersList) {
 			foreach (Item i in chr.VisibleEquip) {
 				switch ((LayerNames) i.Z) {
@@ -70,14 +74,18 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Iterate through all items in character's backpack check if it is in the resource items list " +
-				"and if so, prepare the ResourceCounter object for it. Do it recursively for inner containers")]
+		/// <summary>
+		/// Iterate through all items in character's backpack check if it is in the resource items list 
+		/// and if so, prepare the ResourceCounter object for it. Do it recursively for inner containers
+		/// </summary>
 		private static void LocalizeBackpackItems(Character chr, ItemCounter[] resCountersList) {
 			CheckItemsInside(chr.Backpack, resCountersList);
 		}
 
-		[Summary("Iterate through all items in character's bank, check if it is in the resource items list " +
-				"and if so, prepare the ResourceCounter object for it. Do it recurcively for inner containers")]
+		/// <summary>
+		/// Iterate through all items in character's bank, check if it is in the resource items list 
+		/// and if so, prepare the ResourceCounter object for it. Do it recurcively for inner containers
+		/// </summary>
 		private static void LocalizeBankItems(Character chr, ItemCounter[] resCountersList) {
 			CheckItemsInside((Item) chr.FindLayer(LayerNames.Bankbox), resCountersList);
 		}

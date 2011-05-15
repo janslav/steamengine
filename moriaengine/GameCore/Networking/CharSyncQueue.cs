@@ -17,12 +17,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
-using System.IO;
-using System.Net;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
@@ -53,7 +50,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when a thing is being created")]
+		/// <summary>Call when a thing is being created</summary>
 		public static void Resend(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "Resend(" + thing + ") called");
@@ -75,7 +72,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when name is about to be changed")]
+		/// <summary>Call when name is about to be changed</summary>
 		public static void AboutToChangeName(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeName(" + thing + ") called");
@@ -83,7 +80,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when base properties (model/color) are about to be changed")]
+		/// <summary>Call when base properties (model/color) are about to be changed</summary>
 		public static void AboutToChangeBaseProps(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeBaseProps(" + thing + ") called");
@@ -91,7 +88,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when direction is about to be changed")]
+		/// <summary>Call when direction is about to be changed</summary>
 		public static void AboutToChangeDirection(AbstractCharacter thing, bool requested) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeDirection(" + thing + ") called");
@@ -99,7 +96,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when Flags are about to be changed")]
+		/// <summary>Call when Flags are about to be changed</summary>
 		public static void AboutToChangeFlags(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeFlags(" + thing + ") called");
@@ -107,14 +104,14 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when visibility is about to be changed")]
+		/// <summary>Call when visibility is about to be changed</summary>
 		public static void AboutToChangeVisibility(AbstractCharacter ch) {
 			if (IsEnabled) {
 				instance.PopAndEnqueueInstance(ch).AboutToChangeVisibility();
 			}
 		}
 
-		[Summary("Call when position is about to be changed")]
+		/// <summary>Call when position is about to be changed</summary>
 		public static void AboutToChangePosition(AbstractCharacter thing, MovementType movType) {
 			if (IsEnabled) {
 				int movTypeInt = (int) movType;
@@ -124,7 +121,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when mount is about to be changed")]
+		/// <summary>Call when mount is about to be changed</summary>
 		public static void AboutToChangeMount(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeMount(" + thing + ") called");
@@ -132,7 +129,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when highlight (notoriety color) is about to be changed")]
+		/// <summary>Call when highlight (notoriety color) is about to be changed</summary>
 		public static void AboutToChangeHighlight(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeHighlight(" + thing + ") called");
@@ -140,14 +137,14 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when hitpoints are about to be changed")]
+		/// <summary>Call when hitpoints are about to be changed</summary>
 		public static void AboutToChangeHitpoints(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeHitpoints(" + thing + ") called");
 				instance.PopAndEnqueueInstance(thing).AboutToChangeHitpoints();
 			}
 		}
-		[Summary("Call when mana is about to be changed")]
+		/// <summary>Call when mana is about to be changed</summary>
 		public static void AboutToChangeMana(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeMana(" + thing + ") called");
@@ -155,7 +152,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when stamina is about to be changed")]
+		/// <summary>Call when stamina is about to be changed</summary>
 		public static void AboutToChangeStamina(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeStamina(" + thing + ") called");
@@ -163,10 +160,15 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when stats  are about to be changed")]
-		[Remark("The stats are following: Strength, Dexterity, Intelligence, Gender, Gold, "
-		+ "PhysicalResist (armor), Weight, FireResist, ColdResist, PoisonResist, "
-		+ "EnergyResist, Luck, MinDamage, MaxDamage and TithingPoints")]
+		/// <summary>
+		/// Call when stats are about to be changed
+		/// </summary>
+		/// <param name="thing">The thing.</param>
+		/// <remarks>
+		/// The stats are following: Strength, Dexterity, Intelligence, Gender, Gold,
+		/// PhysicalResist (armor), Weight, FireResist, ColdResist, PoisonResist,
+		/// EnergyResist, Luck, MinDamage, MaxDamage and TithingPoints
+		/// </remarks>
 		public static void AboutToChangeStats(AbstractCharacter thing) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangeStats(" + thing + ") called");
@@ -338,7 +340,7 @@ namespace SteamEngine.Networking {
 					retVal = true;
 					if ((this.changeFlags & CharSyncFlags.Running) == CharSyncFlags.Running) {
 						running = true;
-					} 
+					}
 					if ((this.changeFlags & CharSyncFlags.Teleport) == CharSyncFlags.Teleport) {
 						teleported = true;
 					}

@@ -18,8 +18,10 @@
 
 //namespace SteamEngine.CompiledScripts.Dialogs {
 
-//    [Summary("Priklad C# skriptovane verze input dialogu. Jedine co je potreba udelat je overridnout metodu Response "+
-//            "K dispozici jsou ve fieldu InputParams vstupni parametry dialoguse kterymi lze pracovat pri responsu")]
+//    /// <summary>
+//    /// Priklad C# skriptovane verze input dialogu. Jedine co je potreba udelat je overridnout metodu Response 
+//    /// K dispozici jsou ve fieldu InputParams vstupni parametry dialoguse kterymi lze pracovat pri responsu
+//    /// </summary>
 //    public class InputTestCompiled : CompiledInputDef {
 //        public override string Label {
 //            get {
@@ -35,9 +37,9 @@
 
 //        public override void Response(Character src, Thing focus, string filledText) {
 //            src.SysMessage("Vlozeno: " + filledText);
-//            if(InputParams.Argv.Length > 0) {
+//            if (InputParams.Argv.Length > 0) {
 //                string nextParams = "";
-//                foreach(object obj in InputParams.Argv) {
+//                foreach (object obj in InputParams.Argv) {
 //                    nextParams += obj.ToString();
 //                }
 //                src.SysMessage("Vstupni parametry: " + nextParams);

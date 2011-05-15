@@ -29,133 +29,192 @@ namespace SteamEngine.Persistence {
 	public delegate void LoadObject(object resolvedObject, string filename, int line);
 	public delegate void LoadObjectParam(object resolvedObject, string filename, int line, object additionalParameter);
 
-	[Summary("Use this interface to implement saving and loading of custom object types.")]
-	[Remark("Note that once you write a class implementing this interface in the scripts, it is supposed to be"
-	+ "automatically registered with the ObjectSaver class. "
-	+ "Therefore, it needs to have a public constructor with no parameters so that the core ClassManager class can instantiate it.")]
+	/// <summary>
+	/// Use this interface to implement saving and loading of custom object types.
+	/// </summary>
+	/// <remarks>
+	/// Note that once you write a class implementing this interface in the scripts, it is supposed to be
+	/// automatically registered with the ObjectSaver class.
+	/// Therefore, it needs to have a public constructor with no parameters so that the core ClassManager class can instantiate it.
+	/// </remarks>
 	public interface ISaveImplementor {
-		[Summary("Write out the section from which this object can be loaded later.")]
-		[Remark("First, note that you actually implement only saving of the \"body\" of the section, "
-		+ "not it's header, because that is reserved for use by the ObjectSaver class."
-		+ "Also note that there are certain format restrictions you should (or must) follow. "
-		+ "For example, the obvious one is that you can't use the format of the header ;)"
-		+ "Basically, you should follow the \"name = value\" way of saving.")]
-		[Param(0, "The object to be saved")]
-		[Param(1, "The text stream for the save to be written to. "
-		+ "Note that this may not be immediately written to a file. (Or, in some extreme case, maybe not saved at all)")]
+		/// <summary>
+		/// Write out the section from which this object can be loaded later.
+		/// </summary>
+		/// <remarks>
+		/// First, note that you actually implement only saving of the \"body\" of the section,
+		/// not it's header, because that is reserved for use by the ObjectSaver class.
+		/// Also note that there are certain format restrictions you should (or must) follow.
+		/// For example, the obvious one is that you can't use the format of the header ;)
+		/// Basically, you should follow the \"name = value\" way of saving.
+		/// </remarks>
+		/// <param name="objToSave">The object to be saved.</param>
+		/// <param name="writer">The text stream for the save to be written to. 
+		/// Note that this may not be immediately written to a file. (Or, in some extreme case, maybe not saved at all)</param>
 		void Save(object objToSave, SaveStream writer);
 
 
-		[Summary("Returns the .NET Type of the object that it can load and save.")]
-		[Remark("The returned type is used when determining which implementor to use when saving"
-		+ "individual objects. Therefore, there can be only one implementor for loading of one class, "
-		+ "and this class can not be auto-loadable (by decorating it by SaveableClassAttribute,etc.), "
-		+ "because for those classes, ISaveImplementor instances are created, too.")]
+		/// <summary>
+		/// Returns the .NET Type of the object that it can load and save.
+		/// </summary>
+		/// <remarks>
+		/// The returned type is used when determining which implementor to use when saving
+		/// individual objects. Therefore, there can be only one implementor for loading of one class, 
+		/// and this class can not be auto-loadable (by decorating it by SaveableClassAttribute,etc.), 
+		/// because for those classes, ISaveImplementor instances are created, too.
+		/// </remarks>
+		/// <value>
+		/// The .NET Type of the object that it can load and save.
+		/// </value>
 		Type HandledType { get; }
 
-
-		[Summary("Load the object from the previously saved section.")]
-		[Return("The loaded object")]
-		[ExceptionDoc(typeof(UnrecognizedValueException), "if the format of the string is not recognized.")]
-		[ExceptionDoc(typeof(InsufficientDataException), "if this section can not be resolved to the desired object. ")]
+		/// <summary>
+		/// Load the object from the previously saved section.
+		/// </summary>
+		/// <param name="input">The input.</param>
+		/// <returns>The loaded object</returns>
+		/// <exception cref="UnrecognizedValueException">
+		/// if the format of the string is not recognized.
+		/// </exception>
+		/// <exception cref="InsufficientDataException">
+		/// if this section can not be resolved to the desired object. 
+		/// </exception>
 		object LoadSection(PropsSection input);
 
-		[Summary("Get the string that identifies this implementor.")]
-		[Remark("The returned string is used in the header of the saved sections. When the sections are loaded,"
-		+ "we know that they should be passed to the \"LoadSection\" method of this instance. "
-		+ "Note though that this string must be unique among all the other header names that can emerge"
-		+ "in the saves.")]
+		/// <summary>
+		/// Get the string that identifies this implementor.
+		/// </summary>
+		/// <remarks>
+		/// The returned string is used in the header of the saved sections. When the sections are loaded,
+		/// we know that they should be passed to the \"LoadSection\" method of this instance. 
+		/// Note though that this string must be unique among all the other header names that can emerge
+		/// in the saves.
+		/// </remarks>
+		/// <value>
+		/// The name of the header.
+		/// </value>
 		string HeaderName { get; }
 	}
 
-	[Summary("Use this interface to coordinate saving of a isntances of a class hierarchy with given base class.")]
-	[Remark("Using this interface, the individual subclasses are still supposd to have their own ISaveImplementor.")]
+	/// <summary>Use this interface to coordinate saving of a isntances of a class hierarchy with given base class.</summary>
+	/// <remarks>Using this interface, the individual subclasses are still supposd to have their own ISaveImplementor.</remarks>
 	public interface IBaseClassSaveCoordinator {
-		[Summary("File name without extension to which these instances will be saved.")]
+		/// <summary>File name without extension to which these instances will be saved.</summary>
 		string FileNameToSave { get; }
 
-		[Summary("Is called on the start of loading process")]
+		/// <summary>Is called on the start of loading process</summary>
 		void StartingLoading();
 
-		[Summary("Implementation of the save of all instances. The SaveStream is created on the file of the name given by FileNameToSave property")]
+		/// <summary>Implementation of the save of all instances. The SaveStream is created on the file of the name given by FileNameToSave property</summary>
 		void SaveAll(SaveStream writer);
 
-		[Summary("Is called on the end of loading process")]
+		/// <summary>Is called on the end of loading process</summary>
 		void LoadingFinished();
 
-		[Summary("Base class of the hierarchy tree that is handled by this object.")]
+		/// <summary>Base class of the hierarchy tree that is handled by this object.</summary>
 		Type BaseType { get; }
 
-		[Summary("Returns a line that it can later recognize as a one-line-reference to the instance, and which it will be able to delayed-load.")]
-		[Remark("The line needs to have an unique format that can be recognied by the regex returned by ReferenceLineRecognizer property")]
+		/// <summary>Returns a line that it can later recognize as a one-line-reference to the instance, and which it will be able to delayed-load.</summary>
+		/// <remarks>The line needs to have an unique format that can be recognied by the regex returned by ReferenceLineRecognizer property</remarks>
 		string GetReferenceLine(object value);
 
-		[Summary("Regex that recognizes our.")]
+		/// <summary>Regex that recognizes our.</summary>
 		Regex ReferenceLineRecognizer { get; }
 
-		[Summary("This will be typically called on the end of the loading process, and is supposed to return the loaded object by the Match of the recognizer regex")]
+		/// <summary>This will be typically called on the end of the loading process, and is supposed to return the loaded object by the Match of the recognizer regex</summary>
 		object Load(Match m);
 	}
 
-	[Summary("Use this interface to implement saving and loading of simple custom object types.")]
-	[Remark("Note that once you write a class implementing this interface in the scripts, it is supposed to be"
-	+ "automatically registered with the ObjectSaver class. "
-	+ "Therefore, it needs to have a public constructor with no parameters so that the core ClassManager class can instantiate it.")]
+	/// <summary>
+	/// Use this interface to implement saving and loading of simple custom object types.
+	/// </summary>
+	/// <remarks>
+	/// Note that once you write a class implementing this interface in the scripts, it is supposed to be
+	/// automatically registered with the ObjectSaver class. 
+	/// Therefore, it needs to have a public constructor with no parameters so that the core ClassManager class can instantiate it.
+	/// </remarks>
 	public interface ISimpleSaveImplementor {
-		[Summary("Returns the .NET Type of the object that it can load and save.")]
-		[Remark("The returned type is used when determining which implementor to use when saving"
-		+ "individual objects. Therefore, there can be only one implementor for loading of one class, "
-		+ "and this class can not auto-loadable (by decorating it by SaveableClassAttribute,etc.), "
-		+ "because for those classes, ISaveImplementor instances are created, too.")]
+		/// <summary>
+		/// Returns the .NET Type of the object that it can load and save.
+		/// </summary>
+		/// <value>
+		/// The .NET Type of the object that it can load and save.
+		/// </value>
+		/// <remarks>
+		/// The returned type is used when determining which implementor to use when saving
+		/// individual objects. Therefore, there can be only one implementor for loading of one class,
+		/// and this class can not be auto-loadable (by decorating it by SaveableClassAttribute,etc.),
+		/// because for those classes, ISaveImplementor instances are created, too.
+		/// </remarks>
 		Type HandledType { get; }
 
 
-		[Summary("Get the regular expression object to match the saved strings.")]
-		[Remark("The returned regex object will be used to match the saved strings. It is supposed "
-		+ "to be unique among the format of other saved types, and the produced Match object must be recognisable"
-		+ "by your Load method on this instance.")]
+		/// <summary>Get the regular expression object to match the saved strings.</summary>
+		/// <remarks>
+		/// The returned regex object will be used to match the saved strings. It is supposed 
+		/// to be unique among the format of other saved types, and the produced Match object must be recognisable
+		/// by your Load method on this instance.
+		/// </remarks>
 		Regex LineRecognizer { get; }
 
-		[Summary("Return the one-line string, from which this object can be loaded later.")]
-		[Remark("The returned string must really be one-line, and it must be compatible with the regex"
-		+ "returned by the LineRecognizer property. Note that if called by the ObjectSaver class, "
-		+ "the passed argument will be of the appropriate type (the one returned by HandledType property).")]
-		[Param(0, "The object to be saved")]
-		[Return("The the one-line string to be written in the save file.")]
+		/// <summary>
+		/// Returns the one-line string, from which this object can be loaded later.
+		/// </summary>
+		/// <param name="objToSave">The object to be saved</param>
+		/// <returns>The one-line string to be written in the save file.</returns>
+		/// <remarks>
+		/// The returned string must really be one-line, and it must be compatible with the regex
+		/// returned by the LineRecognizer property. Note that if called by the ObjectSaver class,
+		/// the passed argument will be of the appropriate type (the one returned by HandledType property).
+		/// </remarks>
 		string Save(object objToSave);
 
-		[Summary("Load the object from the previously saved line.")]
-		[Param(0, "The Match object produced by the Regex of this instance. "
-		+ "It is passed here only after a succesful match.")]
-		[Return("The loaded object")]
-		[ExceptionDoc(typeof(UnrecognizedValueException), "if the format of the string is not recognized.")]
-		[ExceptionDoc(typeof(InsufficientDataException), "if this string can not be resolved to the desired object. "
-		+ "That most probably means that the string is just a reference to something that has "
-		+ "not yet been loaded in this loading session. In such cases, we suggest using one of "
-		+ "the Load methods that support delayed loading.")]
+		/// <summary>
+		/// Load the object from the previously saved line.
+		/// </summary>
+		/// <param name="match">
+		/// The Match object produced by the Regex of this instance. 
+		/// It is passed here only after a succesful match.
+		/// </param>
+		/// <returns>The loaded object</returns>
+		/// <exception cref="UnrecognizedValueException">
+		/// if the format of the string is not recognized.
+		/// </exception>
+		/// <exception cref="InsufficientDataException">
+		/// if this string can not be resolved to the desired object.
+		/// That most probably means that the string is just a reference to something that has
+		/// not yet been loaded in this loading session. In such cases, we suggest using one of 
+		/// the Load methods that support delayed loading.
+		/// </exception>
 		object Load(Match match);
 
-		[Summary("Return the prefix used to identify this item type in the save file")]
-		[Remark("The returned value is e.g. (4D) for point4D, (IP) for IP address etc. We will use it" +
-				"in settings dialogs for better writing out the values (without these texts)")]
+		/// <summary>Return the prefix used to identify this item type in the save file</summary>
+		/// <remarks>
+		/// The returned value is e.g. (4D) for point4D, (IP) for IP address etc. We will use it
+		/// in settings dialogs for better writing out the values (without these texts)
+		/// </remarks>
 		string Prefix { get; }
 	}
 
-	[Summary("Class used to load and save (serialize and deserialize) various non-standard objects to savefiles.")]
-	[Remark("There are basically three ways to implement the saving and loading of your custom (scripted) classes."
-	+ "One is writing a helper class implementing the ISimpleSaveImplementor, second to write ISaveImplementor. "
-	+ "The third way is to decorate your class with certain attributes. "
-	+ "Basically, you will use the ISaveImplementor only for classes which you can not "
-	+ "change, a.e. mostly the classes from .NET standard library, and that is because you have to write the "
-	+ "saving and loading of all the data by hand. Using the Attributes, on the other hand, you can choose the rate"
-	+ "of automatisation and own code that best suits your needs. Note that this class is NOT supposed to be used"
-	+ "For loading of core-saveable objects, such as Things, ThinDefs, Regions, Timers, etc. "
-	+ "On the other hand, it can and should be used to everything that can be written on one line, such as references "
-	+ "to scripted objects (like TriggerGroups) or simple wrappers (TriggerKey, TimerKey, ...)."
-	+ "ISimpleSaveImplementor will mostly be used for very simple classes that can be saved on one line, like valuetypes.")]
-	[SeeAlso(typeof(ISaveImplementor))]
-	[SeeAlso(typeof(SaveableClassAttribute))]
-	[SeeAlso(typeof(ISimpleSaveImplementor))]
+	/// <summary>
+	/// Class used to load and save (serialize and deserialize) various non-standard objects to savefiles.
+	/// </summary>
+	/// <seealso cref="ISaveImplementor"/>
+	/// <seealso cref="SaveableClassAttribute"/>
+	/// <seealso cref="ISimpleSaveImplementor"/>
+	/// <remarks>
+	/// There are basically three ways to implement the saving and loading of your custom (scripted) classes.
+	/// One is writing a helper class implementing the ISimpleSaveImplementor, second to write ISaveImplementor.
+	/// The third way is to decorate your class with certain attributes.
+	/// Basically, you will use the ISaveImplementor only for classes which you can not
+	/// change, a.e. mostly the classes from .NET standard library, and that is because you have to write the
+	/// saving and loading of all the data by hand. Using the Attributes, on the other hand, you can choose the rate
+	/// of automatisation and own code that best suits your needs. Note that this class is NOT supposed to be used
+	/// For loading of core-saveable objects, such as Things, ThinDefs, Regions, Timers, etc.
+	/// On the other hand, it can and should be used to everything that can be written on one line, such as references
+	/// to scripted objects (like TriggerGroups) or simple wrappers (TriggerKey, TimerKey, ...).
+	/// ISimpleSaveImplementor will mostly be used for very simple classes that can be saved on one line, like valuetypes.
+	/// </remarks>
 	public static partial class ObjectSaver {
 		internal static readonly Regex abstractScriptRE = new Regex(@"^\s*#(?<value>[a-z_][a-z0-9_]+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -192,16 +251,22 @@ namespace SteamEngine.Persistence {
 			ClassManager.RegisterSupplySubclassInstances<ISimpleSaveImplementor>(RegisterSimpleImplementor, true, true);
 		}
 
-		[Summary("Method for generic saving of various objects.")]
-		[Remark("There are two possible outcomes of this method."
-		+ "Either, if the object being saved is trivial enough (like a known value type),"
-		+ "the returned string will contain the entire needed information to load it later."
-		+ "Or, if it is a reference type, like a Character or an ArrayList for example,"
-		+ "it will return a string which will be then, later when it's loaded again, identified by this class"
-		+ "as a reference to an item which will be in fact saved elsewhere.")]
-		[Param(0, "The object to be saved")]
-		[ExceptionDoc(typeof(UnsaveableTypeException), "if we do not know how to save this object.")]
-		[Return("A single-line string to be written in the save file.")]
+		/// <summary>
+		/// Method for generic saving of various objects.
+		/// </summary>
+		/// <remarks>
+		/// There are two possible outcomes of this method.
+		/// Either, if the object being saved is trivial enough (like a known value type),
+		/// the returned string will contain the entire needed information to load it later.
+		/// Or, if it is a more complex reference type, like a Character or an ArrayList for example,
+		/// it will return a string which will be then, later when it's loaded again, identified by this class
+		/// as a reference to an item which will be in fact saved elsewhere.
+		/// </remarks>
+		/// <param name="value">The object to be saved</param>
+		/// <returns>A single-line string to be written in the save file.</returns>
+		/// <exception cref="UnsaveableTypeException">
+		/// if we do not know how to save this object.
+		/// </exception>
 		public static string Save(object value) {
 			if (value == null) {
 				return "null";
@@ -261,12 +326,17 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Writes out the object previously cached by the Save method.")]
-		[Remark("If any of the previous calls to the Save method required to save some more complex "
-		+ "object,only a string-reference to them has been returned by it, and they were cached here. "
-		+ "Now they will be written to the supplied SaveStream, each in it's own proper section, etc. "
-		+ "Note that objects that are supposed to be written by other mechanisms, such as Things, will not be written out here.")]
-		[Param(0, "The SaveStream instance to flush the cached object to.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		/// <summary>
+		/// Writes out the object(s) previously cached by the Save method.
+		/// </summary>
+		/// <param name="writer">The SaveStream instance to flush the cached object to.</param>
+		/// <remarks>
+		/// If any of the previous calls to the Save method required to save some more complex 
+		/// object, only a string-reference to them has been returned by it, and they were cached here. 
+		/// Now they will be written to the supplied SaveStream, each in it's own proper section, etc. 
+		/// Note that objects that are supposed to be written by other mechanisms, such as Things, will not be written out here.
+		/// </remarks>
 		public static void FlushCache(SaveStream writer) {
 			while (SaverListIsNotEmpty) {
 				try {
@@ -281,7 +351,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[Summary("Find out if the specified type is known to be saveable by the ObjectSaver class.")]
+		/// <summary>Find out if the specified type is known to be saveable by the ObjectSaver class.</summary>
 		public static bool IsSaveableType(Type t) {
 			if (TagMath.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
@@ -307,7 +377,7 @@ namespace SteamEngine.Persistence {
 			return true;
 		}
 
-		[Summary("Types that are either simple or have their coordinator for saving")]
+		/// <summary>Types that are either simple or have their coordinator for saving</summary>
 		public static bool IsSimpleSaveableOrCoordinated(Type t) {
 			if (TagMath.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
@@ -329,17 +399,25 @@ namespace SteamEngine.Persistence {
 			return implementorsByName.ContainsKey(name);
 		}
 
-		[Summary("Load the one-line string previously returned by the Save method.")]
-		[Remark("This is the simplest method for object loading. Use it only if you know that the "
-		+ "object saved on the given line was simple enough to be saved just in this line, "
-		+ "a.e. that it was not written by the FlushCache method.")]
-		[ExceptionDoc(typeof(UnrecognizedValueException), "if the format of the string is not recognized.")]
-		[ExceptionDoc(typeof(InsufficientDataException), "if this string can not be resolved to the desired object. "
-		+ "That most probably means that the string is just a reference to something that has "
-		+ "not yet been loaded in this loading session. In such cases, we suggest using one of "
-		+ "the Load methods that support delayed loading.")]
-		[Return("The object loaded from the string.")]
-		[Param(0, "The string to load the object from.")]
+		/// <summary>
+		/// Load the one-line string previously returned by the Save method.
+		/// </summary>
+		/// <remarks>
+		/// This is the simplest method for object loading. Use it only if you know that the 
+		/// object saved on the given line was simple enough to be saved just in this line, 
+		/// a.e. that it was not written by the FlushCache method.
+		/// </remarks>
+		/// <param name="input">The string to load the object from.</param>
+		/// <returns>The object loaded from the string.</returns>
+		/// <exception cref="UnrecognizedValueException">
+		/// if the format of the string is not recognized.
+		/// </exception>
+		/// <exception cref="InsufficientDataException">
+		/// if this string can not be resolved to the desired object. 
+		/// That most probably means that the string is just a reference to something that has 
+		/// not yet been loaded in this loading session. In such cases, we suggest using one of 
+		/// the Load methods that support delayed loading.
+		/// </exception>
 		public static object Load(string input) {
 			object retVal;
 			if (LoadSimple(input, out retVal)) {
@@ -436,13 +514,21 @@ namespace SteamEngine.Persistence {
 			return false;
 		}
 
-		[Summary("Load the one-line string previously returned by the Save method.")]
-		[Remark("This is the method for delayed object loading. It will recognize the supplied string, "
-		+ "and return the object that is associated with it as soon as possible. "
-		+ "However, it will not return it directly, it will use the supplied callback delegate instead.")]
-		[Param(0, "The string to load the object from.")]
-		[Param(1, "The callback delegate to call when the object is loaded.")]
-		[ExceptionDoc(typeof(UnrecognizedValueException), "if the format of the string is not recognized.")]
+		/// <summary>
+		/// Load the one-line string previously returned by the Save method.
+		/// </summary>
+		/// <remarks>
+		/// This is the method for delayed object loading. It will recognize the supplied string, 
+		/// and return the object that is associated with it as soon as possible. 
+		/// However, it will not return it directly, it will use the supplied callback delegate instead.
+		/// </remarks>
+		/// <param name="input">The string to load the object from.</param>
+		/// <param name="deleg">The callback delegate to call when the object is loaded.</param>
+		/// <param name="filename">The filename.</param>
+		/// <param name="line">The line number.</param>
+		/// <exception cref="UnrecognizedValueException">
+		/// if the format of the string is not recognized.
+		/// </exception>
 		public static void Load(string input, LoadObject deleg, string filename, int line) {
 			object retVal;
 			if (LoadSimple(input, out retVal)) {
@@ -468,12 +554,21 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[Summary("Load the one-line string previously returned by the Save method.")]
-		[Remark("This method works similarly as the \"public static void Load(string value, LoadObject deleg)\", "
-		+ "only it allows you to pass additional parameter to the callback delegate.")]
-		[Param(0, "The string to load the object from.")]
-		[Param(1, "The callback delegate to call when the object is loaded.")]
-		[ExceptionDoc(typeof(UnrecognizedValueException), "if the format of the string is not recognized.")]
+		/// <summary>
+		/// Load the one-line string previously returned by the Save method.
+		/// </summary>
+		/// <param name="input">The string to load the object from.</param>
+		/// <param name="deleg">The callback delegate to call when the object is loaded.</param>
+		/// <param name="filename">The filename.</param>
+		/// <param name="line">The line number.</param>
+		/// <param name="additionalParameter">The additional parameter.</param>
+		/// <remarks>
+		/// This method works similarly as the \"public static void Load(string value, LoadObject deleg)\",
+		/// only it allows you to pass additional parameter to the callback delegate.
+		/// </remarks>
+		/// <exception cref="UnrecognizedValueException">
+		/// if the format of the string is not recognized.
+		/// </exception>
 		public static void Load(string input, LoadObjectParam deleg, string filename, int line, object additionalParameter) {
 			object retVal;
 			if (LoadSimple(input, out retVal)) {
@@ -501,8 +596,13 @@ namespace SteamEngine.Persistence {
 			throw new UnrecognizedValueException("We really do not know what could the loaded string '" + LogStr.Ident(input) + "' refer to.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Use this if you know that the loaded value is supposed to be a string. "
-		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		/// <summary>
+		/// Use this if you know that the loaded value is supposed to be a string.
+		/// If it's not, this method will try to load it anyway, by calling the standard Load(string) method.
+		/// </summary>
+		/// <param name="input">The input.</param>
+		/// <returns></returns>
 		public static object OptimizedLoad_String(string input) {
 			object retVal = null;
 			if (TryLoadString(input, ref retVal)) {
@@ -511,8 +611,13 @@ namespace SteamEngine.Persistence {
 			return Load(input);//we failed to load string, lets try all other possibilities
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Use this if you know that the loaded value is supposed to be an AbstractScript instance. "
-		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
+		/// <summary>
+		/// Use this if you know that the loaded value is supposed to be an AbstractScript instance. 
+		/// If it's not, this method will try to load it anyway, by calling the standard Load(string) method.
+		/// </summary>
+		/// <param name="input">The input.</param>
+		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static object OptimizedLoad_Script(string input) {
 			object retVal = null;
 			if (TryLoadScriptReference(input, ref retVal)) {
@@ -521,8 +626,14 @@ namespace SteamEngine.Persistence {
 			return Load(input);//we failed to load string, lets try all other possibilities
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Use this if you know that the loaded value is supposed to be of a simple-saveable type (other than a number or enum). "
-		+ "If it's not, this method will try to load it anyway, by calling the standard Load(string) method.")]
+		/// <summary>
+		/// Use this if you know that the loaded value is supposed to be of a simple-saveable type (other than a number or enum). 
+		/// If it's not, this method will try to load it anyway, by calling the standard Load(string) method.
+		/// </summary>
+		/// <param name="input">The input.</param>
+		/// <param name="suggestedType">Type of the suggested.</param>
+		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static object OptimizedLoad_SimpleType(string input, Type suggestedType) {
 			ISimpleSaveImplementor issi;
 			if (simpleImplementorsByType.TryGetValue(suggestedType, out issi)) {
@@ -642,7 +753,7 @@ namespace SteamEngine.Persistence {
 			simpleImplementorsRGs.Add(new RGSSIPair(implementor, implementor.LineRecognizer));
 		}
 
-		[Summary("Call this before you start using this class for loading.")]
+		/// <summary>Call this before you start using this class for loading.</summary>
 		internal static void StartingLoading() {
 			loadedObjectsByUid = new ArrayList();
 			foreach (RGBCSCPair pair in coordinatorsRGs) {
@@ -650,7 +761,10 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Call this after you finish loading using this class.")]
+		/// <summary>
+		/// Call this after you finish loading using this class.
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadingFinished() {
 			while (LoaderListIsNotEmpty) {
 				DelayedLoader loader = null;
@@ -670,7 +784,9 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[Summary("Call this before you start using this class for saving.")]
+		/// <summary>
+		/// Call this before you start using this class for saving.
+		/// </summary>
 		internal static void StartingSaving() {
 			saversList = null;
 			lastSaver = null;
@@ -678,7 +794,7 @@ namespace SteamEngine.Persistence {
 			uids = 0;
 		}
 
-		[Summary("Call this after you finish saving using this class.")]
+		/// <summary>Call this after you finish saving using this class.</summary>
 		internal static void SavingFinished() {
 
 		}
@@ -769,8 +885,9 @@ namespace SteamEngine.Persistence {
 			return ds;
 		}
 
-		[Summary("Forwards call for finding a SimpleSaveImplementor for given Type." +
-				"Returns the ISimpleSaveImplementor instance or null if nothing was found")]
+		/// <summary>
+		/// Returns the ISimpleSaveImplementor for given Type.
+		/// </summary>
 		public static ISimpleSaveImplementor GetSimpleSaveImplementorByType(Type t) {
 			ISimpleSaveImplementor retVal = null;
 			simpleImplementorsByType.TryGetValue(t, out retVal);

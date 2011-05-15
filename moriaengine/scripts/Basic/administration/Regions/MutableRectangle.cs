@@ -15,19 +15,18 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine;
-using SteamEngine.Regions;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	[Summary("Rectangle class for dialogs - the mutable one. It will be used for operating with " +
-				"rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle")]
 	[SaveableClass]
+	/// <summary>
+	/// Rectangle class for dialogs - the mutable one. It will be used for operating with " 
+	/// "rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle
+	/// </summary>	
 	public class MutableRectangle : AbstractRectangle {
 		public int minX, minY, maxX, maxY;
 
@@ -42,8 +41,9 @@ namespace SteamEngine.CompiledScripts {
 			this.maxY = copiedOne.MaxY;
 		}
 
-		[Summary("Return a rectangle created from the central point with the specific range around the point" +
-				"(square 'around')")]
+		/// <summary>
+		/// Return a rectangle created from the central point with the specific range around the point (square 'around' it)
+		/// </summary>
 		public MutableRectangle(int x, int y, int range) {
 			this.minX = x - range;
 			this.minY = y - range;
@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 			this.maxY = y + range;
 		}
 
-		[Summary("Create a rectangle using the center point and the area around (=>square)")]
+		/// <summary>Create a rectangle using the center point and the area around (=>square)</summary>
 		public MutableRectangle(IPoint4D center, int range)
 			: this(center.X, center.Y, range) {
 		}
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes.")]
+		/// <summary>Alters all four rectangle's position coordinates for specified tiles in X and Y axes.</summary>
 		public MutableRectangle Move(int timesX, int timesY) {
 			minX += (ushort) timesX;
 			maxX += (ushort) timesX;
@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 			return this;
 		}
 
-		[Summary("Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the immutable ones)")]
+		/// <summary>Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the immutable ones)</summary>
 		public static List<MutableRectangle> TakeRectsFromRegion(Region reg) {
 			List<MutableRectangle> retList = new List<MutableRectangle>();
 			foreach (ImmutableRectangle regRect in reg.Rectangles) {

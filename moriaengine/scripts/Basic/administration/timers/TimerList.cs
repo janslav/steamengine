@@ -14,17 +14,19 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Timers;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all object(tagholder)'s timers")]
+	/// <summary>
+	/// Dialog listing all object(tagholder)'s timers
+	/// Seznam parametru: 0 - thing jehoz timery zobrazujeme, 
+	/// 	1 - index ze seznamu timeru ktery bude na strance jako prvni 
+	/// 	2 - vyhledavaci kriterium pro jmena timeru(timerkeye)
+	/// 	3 - ulozeny timerlist pro pripadnou navigaci v dialogu
+	/// </summary>
 	public class D_TimerList : CompiledGumpDef {
 		internal static readonly TagKey holderTK = TagKey.Acquire("_timer_holder_");
 		internal static readonly TagKey timerListTK = TagKey.Acquire("_timer_list_");
@@ -33,10 +35,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 500;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
-		[Summary("Seznam parametru: 0 - thing jehoz timery zobrazujeme, " +
-				"	1 - index ze seznamu timeru ktery bude na strance jako prvni" +
-				"	2 - vyhledavaci kriterium pro jmena timeru(timerkeye)" +
-				"	3 - ulozeny timerlist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam timeru z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder) args.GetTag(D_TimerList.holderTK); //z koho budeme timery brat?
@@ -160,7 +158,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all timers the given TagHolder has")]
+		/// <summary>Retreives the list of all timers the given TagHolder has</summary>
 		private List<KeyValuePair<TimerKey, BoundTimer>> ListifyTimers(IEnumerable<KeyValuePair<TimerKey, BoundTimer>> tags, string criteria) {
 			List<KeyValuePair<TimerKey, BoundTimer>> timersList = new List<KeyValuePair<TimerKey, BoundTimer>>();
 			foreach (KeyValuePair<TimerKey, BoundTimer> entry in tags) {
@@ -174,9 +172,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return timersList;
 		}
 
-		[Summary("Display a timers ist. Function accessible from the game." +
-				"The function is designed to be triggered using .x TimersList(criteria)" +
-				"but it can be used also normally .TimerList(criteria) to display runner's own timers")]
+		/// <summary>
+		/// Display a timers ist. Function accessible from the game.
+		/// The function is designed to be triggered using .x TimersList(criteria)
+		/// but it can be used also normally .TimerList(criteria) to display runner's own timers
+		/// </summary>
 		[SteamFunction]
 		public static void TimerList(TagHolder self, ScriptArgs text) {
 			//zavolat dialog, 
@@ -195,7 +195,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting timer dictionary entries by timers TimerKeys asc")]
+	/// <summary>Comparer for sorting timer dictionary entries by timers TimerKeys asc</summary>
 	public class TimersComparer : IComparer<KeyValuePair<TimerKey, BoundTimer>> {
 		public readonly static TimersComparer instance = new TimersComparer();
 

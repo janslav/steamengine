@@ -15,12 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace SteamEngine.Regions {
 	public class DynamicRegion : Region {
@@ -44,7 +39,10 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Serves to place the region to the map for the first time (after creation)")]
+		/// <summary>
+		/// Serves to place the region to the map for the first time (after creation)
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Place(Point4D p) {
 			ThrowIfDeleted();
 			if (p != null) { //already placed!
@@ -74,9 +72,14 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Summary("Tries to move the specified amount of fields in X and Y axes. First examines if it is possible" +
-				"to move that way to the desired location and if so, it moves every rectangle there." +
-				"We expect the timesX and timesY parameteres to be small numbers")]
+		/// <summary>
+		/// Tries to move the specified amount of fields in X and Y axes. First examines if it is possible
+		/// to move that way to the desired location and if so, it moves every rectangle there.
+		/// We expect the timesX and timesY parameteres to be small numbers
+		/// </summary>
+		/// <param name="xDiff">The x diff.</param>
+		/// <param name="yDiff">The y diff.</param>
+		/// <returns></returns>
 		public bool Step(int xDiff, int yDiff) {
 			//a new list of changed (moved) rectangles
 			List<RegionRectangle> movedRects = new List<RegionRectangle>();
@@ -96,8 +99,10 @@ namespace SteamEngine.Regions {
 			return result;
 		}
 
-		[Summary("Method called on position change - it recounts the region's rectangles' position and also makes " +
-				"sure that no confilicts with other dynamic regions occurs when moving!")]
+		/// <summary>
+		/// Method called on position change - it recounts the region's rectangles' position and also makes 
+		/// sure that no conflicts with other dynamic regions occur when moving!
+		/// </summary>
 		private bool Step(Point4D newP) {
 			Point4D oldPos = this.P; //store the old position for case the movement fails!
 
@@ -140,9 +145,12 @@ namespace SteamEngine.Regions {
 			return movingOK;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter"), Summary("Take the list of rectangles and make an array of RegionRectangles of it." +
-				"The purpose is the same as for StaticRegion but the checks are different." +
-				"The map parameter allows us to specifiy the map where the region should be")]
+		/// <summary>
+		/// Take the list of rectangles and make an array of RegionRectangles of it.
+		/// The purpose is the same as for StaticRegion but the checks are different.
+		/// The map parameter allows us to specifiy the map where the region should be
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool SetRectangles<T>(IList<T> list, Map map) where T : ImmutableRectangle {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for (int i = 0; i < list.Count; i++) {

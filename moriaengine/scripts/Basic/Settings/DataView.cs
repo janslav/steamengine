@@ -15,50 +15,52 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Interface for displaying the labels and values of single members of the target" +
-			"(infoized) object in the dialog")]
+	/// <summary>
+	/// Interface for displaying the labels and values of single members of the target
+	/// (infoized) object in the dialog
+	/// </summary>
 	public interface IDataFieldView {
-		[Summary("The name of this field / the label of the button")]
+		/// <summary>The name of this field / the label of the button</summary>
 		string GetName(object target);
 
-		[Summary("Is the data read only? - i.e. displaying the settings results?")]
+		/// <summary>Is the data read only? - i.e. displaying the settings results?</summary>
 		bool ReadOnly { get; }
 
-		[Summary("Shall this value be displayed with a button?")]
+		/// <summary>Shall this value be displayed with a button?</summary>
 		bool IsButtonEnabled { get; }
 
-		[Summary("The real type of the data field (it needn't necessary be the type of the value...)")]
-		Type FieldType { get;}
+		/// <summary>The real type of the data field (it needn't necessary be the type of the value...)</summary>
+		Type FieldType { get; }
 
-		[Summary("Take the target object and retreive its member's (for which this interface instance is) value")]
+		/// <summary>Take the target object and retreive its member's (for which this interface instance is) value</summary>
 		object GetValue(object target);
 
-		[Summary("Take the target object and set its member's value")]
+		/// <summary>Take the target object and set its member's value</summary>
 		void SetValue(object target, object value);
 
-		[Summary("Take the target object and retreive its member's value in the stringified form")]
+		/// <summary>Take the target object and retreive its member's value in the stringified form</summary>
 		string GetStringValue(object target);
 
-		[Summary("Take the stringified value, convert it and set it to the respective member of the target")]
+		/// <summary>Take the stringified value, convert it and set it to the respective member of the target</summary>
 		void SetStringValue(object target, string value);
 
-		[Summary("What will happen when the button is pressed?")]
+		/// <summary>What will happen when the button is pressed?</summary>
 		void OnButton(object target);
 	}
 
-	[Summary("Class for managing all generated dataviews and providing them according to wanted type")]
+	/// <summary>Class for managing all generated dataviews and providing them according to wanted type</summary>
 	public static class DataViewProvider {
 		public static Hashtable dataViewsForTypes = new Hashtable();
 
 		public static SortedList<Type, IDataView> dataViewsForbaseClasses = new SortedList<Type, IDataView>(TypeHierarchyComparer.instance);
 
-		[Summary("Will find dataview for given type.")]
+		/// <summary>Will find dataview for given type.</summary>
 		public static IDataView FindDataViewByType(Type handledType) {
 			IDataView view = (IDataView) dataViewsForTypes[handledType];
 			if (view != null) {
@@ -74,14 +76,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return null;
 		}
 
-		[Summary("Register a new hook to ClassManager - it will send the examined Types here and we will care for next.")]
+		/// <summary>Register a new hook to ClassManager - it will send the examined Types here and we will care for next.</summary>
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<IDataView>(CheckGeneratedDataViewClass);
 			//ClassManager.RegisterHook(CheckGeneratedDataViewClass);
 		}
 
-		[Summary("Method for checking if the given Type is a descendant of IDataView. If so, store it in the map" +
-				"with the HandledType as Key...")]
+		/// <summary>
+		/// Method for checking if the given Type is a descendant of IDataView. If so, store it in the map
+		/// with the HandledType as Key...
+		/// </summary>
 		public static bool CheckGeneratedDataViewClass(Type type) {
 			if (!type.IsAbstract) {
 				//if (typeof(IDataView).IsAssignableFrom(type)) { //this should be managed by the ClassManager :)
@@ -104,43 +108,47 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Interface used for all generated DataView classes")]
+	/// <summary>Interface used for all generated DataView classes</summary>
 	public interface IDataView {
-		[Summary("This getter will provide us the Type this AbstractDataView is made for")]
-		Type HandledType { get;}
+		/// <summary>This getter will provide us the Type this AbstractDataView is made for</summary>
+		Type HandledType { get; }
 
-		[Summary("If true, subclasses of HandledType will also be handled.")]
-		bool HandleSubclasses { get;}
+		/// <summary>If true, subclasses of HandledType will also be handled.</summary>
+		bool HandleSubclasses { get; }
 
-		[Summary("Name that will be displayed in the Info dialog headline - description of the infoized class")]
+		/// <summary>Name that will be displayed in the Info dialog headline - description of the infoized class</summary>
 		string GetName(object instance);
 
-		[Summary("Number of buttons")]
+		/// <summary>Number of buttons</summary>
 		int GetActionButtonsCount(object instance);
 
-		[Summary("Number of fields")]
+		/// <summary>Number of fields</summary>
 		int GetFieldsCount(object instance);
 
-		[Summary("GetPage for data fields")]
+		/// <summary>GetPage for data fields</summary>
 		IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target);
 
-		[Summary("GetPage for action buttons")]
+		/// <summary>GetPage for action buttons</summary>
 		IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target);
 	}
 
-	[Summary("The ancestor of all generated classes that manage and return the paged data to display." +
-			"It implements two interfaces - first for paging the data fields, second for paging the action buttons" +
-			"both types will be available by two similar GetPage methods.")]
+	/// <summary>
+	/// The ancestor of all generated classes that manage and return the paged data to display.
+	/// It implements two interfaces - first for paging the data fields, second for paging the action buttons
+	/// both types will be available by two similar GetPage methods.
+	/// </summary>
 	public abstract class AbstractDataView : IDataView {
-		[Summary("Implement the method to return an initialized instance of AbstractPage. This " +
-				"should be then used in foreach block or somehow (as an IEnumerable) for iterating through the data fields")]
+		/// <summary>
+		/// Implement the method to return an initialized instance of AbstractPage. This 
+		/// should be then used in foreach block or somehow (as an IEnumerable) for iterating through the data fields
+		/// </summary>
 		public abstract IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target);
 
-		[Summary("Similar as the previous method but for iterating over the action buttons pages")]
+		/// <summary>Similar as the previous method but for iterating over the action buttons pages</summary>
 		public abstract IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target);
 
 		//these three interface properties will be implemented in children
-		public abstract Type HandledType { get;}
+		public abstract Type HandledType { get; }
 
 		public bool HandleSubclasses {
 			get {
@@ -155,8 +163,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public abstract int GetFieldsCount(object instance);
 
 
-		[Summary("This will be used to return the desired page of objects to be displayed" +
-			"it will also hold all the IDataFieldViews belonging to the ViewableClass")]
+		/// <summary>
+		/// This will be used to return the desired page of objects to be displayed
+		/// it will also hold all the IDataFieldViews belonging to the ViewableClass
+		/// </summary>
 		public abstract class AbstractPage<T> : IEnumerable<T>, IEnumerator<T> {
 			//increased everytime the MoveNext method will be invoked
 			protected int nextIndex;
@@ -164,9 +174,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//this is the current field we are displaying - it will be used in Enumerators methods
 			protected T current;
 
-			[Summary("This method will be used by IPageableCollection to prepare the Enumerator" +
-				   "- set the starting index and the reference object from which we possibly can obtain some" +
-					"necessary inforamtion such as upper bound of iteration... if needed")]
+			/// <summary>
+			/// This method will be used by IPageableCollection to prepare the Enumerator
+			/// - set the starting index and the reference object from which we possibly can obtain some
+			/// necessary inforamtion such as upper bound of iteration... if needed
+			/// </summary>
 			public AbstractPage(int startIndex, object target) {
 				//initialize indices and prepare for usage
 				this.nextIndex = startIndex;
@@ -174,21 +186,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			#region IEnumerable<T> Members
-			[Summary("Interface method used for iterating - it will return itself, but prepared for iterating")]
+			/// <summary>Interface method used for iterating - it will return itself, but prepared for iterating</summary>
 			public IEnumerator<T> GetEnumerator() {
 				return this;
 			}
 			#endregion
 
 			#region IEnumerable Members
-			[Summary("Interface method used for iterating - it will return itself, but prepared for iterating")]
+			/// <summary>Interface method used for iterating - it will return itself, but prepared for iterating</summary>
 			IEnumerator IEnumerable.GetEnumerator() {
 				return this;
 			}
 			#endregion
 
 			#region IEnumerator<T> Members
-			[Summary("Yet another interface property - returns the prepared field for displaying")]
+			/// <summary>Yet another interface property - returns the prepared field for displaying</summary>
 			public T Current {
 				get {
 					return current;
@@ -197,7 +209,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			#endregion
 
 			#region IDisposable Members
-			[Summary("Do nothing, we don't need to dispose anything in some special way")]
+			/// <summary>Do nothing, we don't need to dispose anything in some special way</summary>
 			public void Dispose() {
 				//we dont care
 			}
@@ -205,8 +217,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			#region IEnumerator Members
 
-			[Summary("This is the most important method - it will ensure the iterating on the fields " +
-					"belonging to the desired page")]
+			/// <summary>
+			/// This is the most important method - it will ensure the iterating on the fields 
+			/// belonging to the desired page
+			/// </summary>
 			public abstract bool MoveNext();
 
 			public void Reset() {
@@ -222,68 +236,68 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Abstract class providing basics to display a non editable 'label-value' in the dialog")]
+	/// <summary>Abstract class providing basics to display a non editable 'label-value' in the dialog</summary>
 	public abstract class ReadOnlyDataFieldView : IDataFieldView {
-		[Summary("There is no button for this dataview field")]
+		/// <summary>There is no button for this dataview field</summary>
 		public bool IsButtonEnabled {
 			get {
 				return false;
 			}
 		}
 
-		[Summary("Yes, this dataview field is read only")]
+		/// <summary>Yes, this dataview field is read only</summary>
 		public bool ReadOnly {
 			get {
 				return true;
 			}
 		}
 
-		[Summary("This method is forbidden in this class")]
+		/// <summary>This method is forbidden in this class</summary>
 		public void SetValue(object target, object value) {
 			throw new SEException(LogStr.Error("Cannot set a value to the non-editable field"));
 		}
 
-		[Summary("This method is forbidden in this class")]
+		/// <summary>This method is forbidden in this class</summary>
 		public void SetStringValue(object target, string value) {
 			throw new SEException(LogStr.Error("Cannot convert and set a stringified value to the non-editable field"));
 		}
 
-		[Summary("This field does not have any buttons too - buttons have another type of data view")]
+		/// <summary>This field does not have any buttons too - buttons have another type of data view</summary>
 		public void OnButton(object target) {
 			throw new SEException(LogStr.Error("This dataview cannot have any buttons"));
 		}
 
 		//all other properties/methods will be implemented in child classes later
 		public abstract string GetName(object target);
-		public abstract Type FieldType { get;}
+		public abstract Type FieldType { get; }
 		public abstract object GetValue(object target);
 		public abstract string GetStringValue(object target);
 	}
 
-	[Summary("Abstract class providing basics to display an editable 'label-value' in the dialog")]
+	/// <summary>Abstract class providing basics to display an editable 'label-value' in the dialog</summary>
 	public abstract class ReadWriteDataFieldView : IDataFieldView {
-		[Summary("There is no button for this dataview field")]
+		/// <summary>There is no button for this dataview field</summary>
 		public bool IsButtonEnabled {
 			get {
 				return false;
 			}
 		}
 
-		[Summary("No, this dataview field can be edited")]
+		/// <summary>No, this dataview field can be edited</summary>
 		public bool ReadOnly {
 			get {
 				return false;
 			}
 		}
 
-		[Summary("This field does not have any buttons - buttons are present in another type of data view")]
+		/// <summary>This field does not have any buttons - buttons are present in another type of data view</summary>
 		public void OnButton(object target) {
 			throw new SEException(LogStr.Error("This dataview cannot have any buttons"));
 		}
 
 		//all other properties/methods will be implemented in child classes later
 		public abstract string GetName(object target);
-		public abstract Type FieldType { get;}
+		public abstract Type FieldType { get; }
 		public abstract object GetValue(object target);
 		public abstract void SetValue(object target, object value);
 		public abstract string GetStringValue(object target);
@@ -291,16 +305,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	}
 
-	[Summary("Abstract class providing basics to display a '[button]-label' in the dialog")]
+	/// <summary>Abstract class providing basics to display a '[button]-label' in the dialog</summary>
 	public abstract class ButtonDataFieldView : IDataFieldView {
-		[Summary("There is actually a button present for this dataview field")]
+		/// <summary>There is actually a button present for this dataview field</summary>
 		public bool IsButtonEnabled {
 			get {
 				return true;
 			}
 		}
 
-		[Summary("Nothing to write or set here...")]
+		/// <summary>Nothing to write or set here...</summary>
 		public bool ReadOnly {
 			get {
 				return true;
@@ -313,22 +327,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("This method is forbidden in this class, there is nothing to set")]
+		/// <summary>This method is forbidden in this class, there is nothing to set</summary>
 		public void SetValue(object target, object value) {
 			throw new SEException(LogStr.Error("Cannot set any value to a buttonized dataview field"));
 		}
 
-		[Summary("This method is forbidden in this class, there is nothing to get")]
+		/// <summary>This method is forbidden in this class, there is nothing to get</summary>
 		public object GetValue(object target) {
 			throw new SEException(LogStr.Error("Cannot get any value from the buttonized dataview field"));
 		}
 
-		[Summary("This method is forbidden in this class, there is nothing to set")]
+		/// <summary>This method is forbidden in this class, there is nothing to set</summary>
 		public void SetStringValue(object target, string value) {
 			throw new SEException(LogStr.Error("Cannot convert and set any stringified value to a buttonized dataview field"));
 		}
 
-		[Summary("This method is forbidden in this class, there is nothing to get")]
+		/// <summary>This method is forbidden in this class, there is nothing to get</summary>
 		public string GetStringValue(object target) {
 			throw new SEException(LogStr.Error("Cannot get and convert any value from the buttonized dataview field"));
 		}
@@ -339,10 +353,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	}
 
-	[Summary("Decorate your class by this attribute if you want it to be viewable by info dialogs.")]
+	/// <summary>Decorate your class by this attribute if you want it to be viewable by info dialogs.</summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 	public class ViewableClassAttribute : Attribute {
-		[Summary("The name that will be displayed in the headline of the infodialog")]
+		/// <summary>The name that will be displayed in the headline of the infodialog</summary>
 		private string name;
 
 		public string Name {
@@ -360,8 +374,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Decorate a member of the ViewableClass by this attribute if you want to prevent them to be displayed in info dialogs." +
-			 "all other attributes will be displayed")]
+	/// <summary>
+	/// Decorate a member of the ViewableClass by this attribute if you want to prevent them to be displayed in info dialogs.
+	/// all other attributes will be displayed
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class NoShowAttribute : Attribute {
 		//no params constructor
@@ -369,11 +385,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Decorate a member of the ViewableClass by this attribute if you want it to be infoized and you want" +
-			 "to specify its name explicitely")]
+	/// <summary>
+	/// Decorate a member of the ViewableClass by this attribute if you want it to be infoized and you want
+	/// to specify its name explicitely
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class InfoFieldAttribute : Attribute {
-		[Summary("The name of the field which will be displayed in the dialog rather than the fields name itself")]
+		/// <summary>The name of the field which will be displayed in the dialog rather than the fields name itself</summary>
 		private string name;
 
 		public string Name {
@@ -387,10 +405,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Used in ViewableClasses for methods we want to be available as buttons in the info dialogs.")]
+	/// <summary>Used in ViewableClasses for methods we want to be available as buttons in the info dialogs.</summary>
 	[AttributeUsage(AttributeTargets.Method)]
 	public class ButtonAttribute : Attribute {
-		[Summary("The name of the button which will be connected with the method decorated by this attribute")]
+		/// <summary>The name of the button which will be connected with the method decorated by this attribute</summary>
 		private string name;
 
 		public string Name {
@@ -408,15 +426,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Used for marking classes used as descriptors - see SimpleClassDescriptor for example." +
-			"Obligatory constructor parameter is handled type, voluntary is the name of the described class")]
+	/// <summary>
+	/// Used for marking classes used as descriptors - see SimpleClassDescriptor for example.
+	/// Obligatory constructor parameter is handled type, voluntary is the name of the described class
+	/// </summary>
 	public class ViewDescriptorAttribute : Attribute {
 		private Type handledType;
 
-		[Summary("The name that will be displayed in the headline of the infodialog")]
+		/// <summary>The name that will be displayed in the headline of the infodialog</summary>
 		private string name;
 
-		[Summary("Array of field names that wont be generated to the DataView")]
+		/// <summary>Array of field names that wont be generated to the DataView</summary>
 		private string[] nonDisplayedFields;
 
 		public Type HandledType {
@@ -453,10 +473,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Used for marking field get method in descriptors")]
+	/// <summary>Used for marking field get method in descriptors</summary>
 	public class GetMethodAttribute : Attribute {
-		[Summary("The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set " +
-				" descriptor method of the same field")]
+		/// <summary>
+		/// The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set 
+		///  descriptor method of the same field
+		///  </summary>
 		private string name;
 		private Type fieldType;
 
@@ -478,10 +500,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Used for marking field set method in descriptors")]
+	/// <summary>Used for marking field set method in descriptors</summary>
 	public class SetMethodAttribute : Attribute {
-		[Summary("The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set " +
-				" descriptor method of the same field")]
+		/// <summary>
+		/// The name of the field that appears in the info dialog. Obligatory, it will be used for matching get and set 
+		///  descriptor method of the same field
+		///  </summary>
 		private string name;
 		private Type fieldType;
 
@@ -503,7 +527,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("For comparing collections containing Types")]
+	/// <summary>For comparing collections containing Types</summary>
 	public class TypeHierarchyComparer : IComparer<Type> {
 		public static TypeHierarchyComparer instance = new TypeHierarchyComparer();
 

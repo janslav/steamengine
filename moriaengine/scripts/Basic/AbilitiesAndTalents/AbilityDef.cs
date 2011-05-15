@@ -16,12 +16,8 @@
 */
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
@@ -56,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Return enumerable containing all abilities (copying the values from the main dictionary)")]
+		/// <summary>Return enumerable containing all abilities (copying the values from the main dictionary)</summary>
 		//public static Dictionary<string,AbilityDef>.ValueCollection AllAbilities {
 		public static ICollection<AbilityDef> AllAbilities {
 			get {
@@ -98,8 +94,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Used in some abilities to compute the probabilty of their success. " +
-			"Typically 1.0 = 100%")]
+		/// <summary>
+		/// Used in some abilities to compute the probabilty of their success. 
+		/// Typically 1.0 = 100%
+		/// </summary>
 		public double Chance {
 			get {
 				return (double) this.chance.CurrentValue;
@@ -121,8 +119,10 @@ namespace SteamEngine.CompiledScripts {
 			return Globals.dice.NextDouble() <= (points * this.Chance);
 		}
 
-		[Summary("Field for holding the number of seconds between next activation try." +
-				"You can use 0 for no delay")]
+		/// <summary>
+		/// Field for holding the number of seconds between next activation try.
+		/// You can use 0 for no delay
+		/// </summary>
 		public double Cooldown {
 			get {
 				return (double) this.cooldown.CurrentValue;
@@ -133,15 +133,17 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[NoShow]
-		[Summary("Field for holding the number of seconds between next activation try." +
-				"You can use 0 for no delay")]
+		/// <summary>
+		/// Field for holding the number of seconds between next activation try.
+		/// You can use 0 for no delay
+		/// </summary>
 		public TimeSpan CooldownAsSpan {
 			get {
 				return TimeSpan.FromSeconds(this.Cooldown);
 			}
 		}
 
-		[Summary("Used in some abilities to compute the power of their effect")]
+		/// <summary>Used in some abilities to compute the power of their effect</summary>
 		public double EffectPower {
 			get {
 				return (double) effectPower.CurrentValue;
@@ -151,7 +153,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Used in some abilities to compute the duration of their effect. Typically in seconds.")]
+		/// <summary>Used in some abilities to compute the duration of their effect. Typically in seconds.</summary>
 		public double EffectDuration {
 			get {
 				return (double) effectDuration.CurrentValue;
@@ -165,13 +167,15 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Accessors
 
 		#region Factory methods
-		[Summary("Method for instatiating Abilities.")]
+		/// <summary>Method for instatiating Abilities.</summary>
 		public virtual Ability Create(Character chr) {
 			return new Ability(this, chr);
 		}
 
-		[Summary("Overall method for running the abilites. Its basic implementation looks if the character has given ability" +
-				"and in case he has, it runs the protected activation method")]
+		/// <summary>
+		/// Overall method for running the abilites. Its basic implementation looks if the character has given ability
+		/// and in case he has, it runs the protected activation method
+		/// </summary>
 		public virtual void Activate(Character chr) {
 			Ability ab = chr.GetAbilityObject(this);
 
@@ -199,8 +203,10 @@ namespace SteamEngine.CompiledScripts {
 
 		private TriggerGroup scriptedTriggers;
 
-		[Summary("LScript based @activate triggers" +
-				"Gets called when every prerequisity has been fulfilled and the ability can be run now")]
+		/// <summary>
+		/// LScript based @activate triggers
+		/// Gets called when every prerequisity has been fulfilled and the ability can be run now
+		/// </summary>
 		protected void Trigger_Activate(Character chr, Ability ab) {
 			ScriptArgs sa = new ScriptArgs(this, ab);
 
@@ -220,15 +226,17 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("C# based @activate trigger method")]
+		/// <summary>C# based @activate trigger method</summary>
 		protected virtual void On_Activate(Character chr, Ability ab) {
 			chr.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
 				Loc<AbilityDefLoc>.Get(chr.Language).AbilityActivated,
 				ab.Def.Name));
 		}
 
-		[Summary("This method fires the @denyUse triggers. "
-				+ "Their purpose is to check if all requirements for running the ability have been met")]
+		/// <summary>
+		/// This method fires the @denyUse triggers. 
+		/// Their purpose is to check if all requirements for running the ability have been met
+		/// </summary>
 		protected DenyResult Trigger_DenyActivate(Character chr, Ability ab) {
 			if (ab == null || ab.ModifiedPoints == 0) {
 				return DenyResultMessages_Abilities.Deny_DoesntHaveAbility;
@@ -253,7 +261,7 @@ namespace SteamEngine.CompiledScripts {
 			return denyArgs.Result;
 		}
 
-		[Summary("C# based @denyUse trigger method, implementation of common checks")]
+		/// <summary>C# based @denyUse trigger method, implementation of common checks</summary>
 		protected virtual void On_DenyActivate(DenyAbilityArgs args) {
 			Ability ab = args.ranAbility;
 			//check cooldown
@@ -296,7 +304,7 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[Summary("This method implements the assigning of the first point to the Ability")]
+		/// <summary>This method implements the assigning of the first point to the Ability</summary>
 		protected virtual void On_Assign(Character ch, Ability ab) {
 			//ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
 		}
@@ -309,7 +317,7 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[Summary("This method implements the assigning of the first point to the Ability")]
+		/// <summary>This method implements the assigning of the first point to the Ability</summary>
 		protected virtual void On_UnAssign(Character ch, Ability ab) {
 			//ch.SysMessage("Abilita " + Name + " nemá implementaci trigger metody On_Assign");
 		}

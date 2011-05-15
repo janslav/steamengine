@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using SteamEngine.Common;
 
 namespace SteamEngine {
 
@@ -142,7 +141,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Count the arithmetic mean of the given values")]
+		/// <summary>Count the arithmetic mean of the given values</summary>
 		public static double ArithmeticMean(params double[] values) {
 			if (values.Length == 0)
 				throw new SanityCheckException("ArithmeticMean called on no values");

@@ -14,17 +14,10 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("A new triggergrouup adding dialog")]
+	/// <summary>A new triggergrouup adding dialog</summary>
 	public class D_NewTriggerGroup : CompiledGumpDef {
 		private static int width = 400;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;

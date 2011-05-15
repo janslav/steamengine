@@ -16,11 +16,10 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as AbilityDef")]
+	/// <summary>Resource as AbilityDef</summary>
 	public class AbilityResource : AbstractResourceListEntry, IResourceListEntry_Simple {
 		private AbilityDef abilityDef;
 
@@ -28,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given string as ItemResource")]
+		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			AbilityDef abl = AbilityDef.GetByDefname(definition);
 			if (abl != null) {
@@ -74,10 +73,10 @@ namespace SteamEngine.CompiledScripts {
 			return chr.GetAbility(this.abilityDef) >= this.DesiredCount;
 		}
 
-		[Summary("Indicates whether this is a consumable resource")]
+		/// <summary>Indicates whether this is a consumable resource</summary>
 		public bool IsConsumable { get { return false; } }
 
-		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		/// <summary>Consumes this resource. Throws if this is not a consumable resource.</summary>
 		public void Consume(Character ch) {
 			throw new InvalidOperationException("Abilities can not be consumed as a resource.");
 		}

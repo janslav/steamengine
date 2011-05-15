@@ -15,13 +15,12 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("This class will be used fo iterating over the character's skills")]
+	/// <summary>This class will be used fo iterating over the character's skills</summary>
 	internal class SkillsEnumerator : IEnumerator<ISkill>, IEnumerable<ISkill> {
 		private Skill current;
 		private IEnumerator valuesEnum;
@@ -56,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Iterate through the players skillsAbiilities dictionary but jump only on Skills")]
+		/// <summary>Iterate through the players skillsAbiilities dictionary but jump only on Skills</summary>
 		public bool MoveNext() {
 			while (valuesEnum.MoveNext()) {//move to the next Value (which is either Skill or Ability)
 				current = valuesEnum.Current as Skill;

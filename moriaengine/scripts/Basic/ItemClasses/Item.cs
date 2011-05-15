@@ -18,14 +18,13 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class ItemDef {
-	
+
 		public bool IsWearableDef {
 			get {
 				return (this is WearableDef);
@@ -81,14 +80,16 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class Item : AbstractItem {
-		[Summary("Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 " +
-				" then the item will be deleted. Method returns the actually consumed amount.")]
+		/// <summary>
+		/// Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 
+		///  then the item will be deleted. Method returns the actually consumed amount.
+		///  </summary>
 		public long Consume(long howMany) {
 			int prevAmount = this.Amount;
 
 			long resultAmount;
 			try {
-				resultAmount =  checked(prevAmount - howMany);
+				resultAmount = checked(prevAmount - howMany);
 			} catch (OverflowException) {
 				resultAmount = -1; //so we delete
 			}
@@ -176,7 +177,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Enumerates every item in this item and items in all subcontainers, recurses into infinite depth.")]
+		/// <summary>Enumerates every item in this item and items in all subcontainers, recurses into infinite depth.</summary>
 		public IEnumerable<Item> EnumDeep() {
 			this.ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();
@@ -193,7 +194,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Enumerates every item in this item and items in all subcontainers, but does not recurse deeper.")]
+		/// <summary>Enumerates every item in this item and items in all subcontainers, but does not recurse deeper.</summary>
 		public IEnumerable<Item> EnumShallow() {
 			ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();

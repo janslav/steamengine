@@ -16,14 +16,11 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Globalization;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Class for saving resources (used mainly at info Dialogs)")]
+	/// <summary>Class for saving resources (used mainly at info Dialogs)</summary>
 	public sealed class ResourceListSaveImplementor : ISimpleSaveImplementor {
 		//same regexp as for ResourcesParser but this time contains a prefix (used in Info dialogs for setting values) 
 		public static readonly Regex re = new Regex(@"^\(RL\) (?<resource>\s* (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) (\s*,\s* (?<resource> (?<number>(0x?[0-9a-f]+\s*)|(\d+(\.\d+)?\s*))? (?<value>[a-z_][a-z0-9_]*) ) )* $",
@@ -43,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string Save(object objToSave) {
-			return Prefix + ((ResourcesList)objToSave).ToParsableString();
+			return Prefix + ((ResourcesList) objToSave).ToParsableString();
 		}
 
 		public object Load(Match match) {

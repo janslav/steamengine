@@ -14,15 +14,17 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog for dispalying the regions rectangles")]
+	/// <summary>
+	/// Dialog for dispalying the regions rectangles
+	/// Seznam parametru: 0 - region
+	/// 1 - paging
+	/// 2 - rectangly v listu(je totiž možno pøidávat dynamicky)
+	/// </summary>
 	public class D_Region_Rectangles : CompiledGumpDef {
 		internal static readonly TagKey regionTK = TagKey.Acquire("_region_with_rects_");
 		internal static readonly TagKey rectsListTK = TagKey.Acquire("_rects_list_");
@@ -30,9 +32,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private static int width = 450;
 
-		[Summary("Seznam parametru: 0 - region" +
-				"	1 - paging" +
-				"	2 - rectangly v listu(je totiž možno pøidávat dynamicky)")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			Region reg = (Region) args.GetTag(D_Region_Rectangles.regionTK);
 			List<MutableRectangle> rectList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);

@@ -16,11 +16,8 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using SteamEngine;
-using SteamEngine.Networking;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -38,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 			this.id = (byte) id;
 			this.cont = cont;
 		}
-		
+
 		//copying contstructor
 		public Skill(Skill copyFrom, Character cont) {
 			this.realValue = copyFrom.realValue;
@@ -48,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 			this.cont = cont;
 		}
 
-		[Summary("Character's skill points. This is the real value, i.e. unmodified by temporary effect, equipped magic items, etc.")]
+		/// <summary>Character's skill points. This is the real value, i.e. unmodified by temporary effect, equipped magic items, etc.</summary>
 		public int RealValue {
 			get {
 				return this.realValue;
@@ -70,16 +67,18 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Character's skill points. This is the modified value, which can be different from RealValue when some temporary effects take place. " +
-		   "When character dies, this value should become equal to RealValue.")]
-		[Remark("This will never return a negative value, even if RealValue+modification is negative. That's why the modification must be changed in a separate method.")]
+		/// <summary>
+		/// Character's skill points. This is the modified value, which can be different from RealValue when some temporary effects take place. 
+		/// When character dies, this value should become equal to RealValue.
+		/// </summary>
+		/// <remarks>This will never return a negative value, even if RealValue+modification is negative. That's why the modification must be changed in a separate method.</remarks>
 		public int ModifiedValue {
 			get {
 				return Math.Max(0, this.realValue + this.modification);
 			}
 		}
 
-		[Summary("Change the value of ModifiedPoints")]
+		/// <summary>Change the value of ModifiedPoints</summary>
 		public void ModifyValue(int difference) {
 			if (difference != 0) {
 				CharSyncQueue.AboutToChangeSkill(this.cont, this.id);
@@ -165,8 +164,8 @@ namespace SteamEngine.CompiledScripts {
 					default:
 						throw new SEException("this.lockType != Up | Down | Locked");
 				}
-				return String.Concat(this.realValue.ToString(), ", ", 
-					this.modification.ToString(), ", ", 
+				return String.Concat(this.realValue.ToString(), ", ",
+					this.modification.ToString(), ", ",
 					lockStr);
 			}
 		}

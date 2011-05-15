@@ -14,16 +14,20 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all object(tagholder)'s tags")]
+	/// <summary>
+	/// Dialog listing all object(tagholder)'s tags
+	/// Seznam parametru: 0 - thing jehoz tagy zobrazujeme, 
+	/// 1 - index ze seznamu tagu ktery bude na strance jako prvni
+	/// 2 - vyhledavaci kriterium pro jmena tagu
+	/// 3 - ulozeny taglist pro pripadnou navigaci v dialogu
+	/// </summary>
 	public class D_TagList : CompiledGumpDef {
 		internal static readonly TagKey holderTK = TagKey.Acquire("_tag_holder_");
 		internal static readonly TagKey tagListTK = TagKey.Acquire("_tag_list_");
@@ -32,10 +36,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 700;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
-		[Summary("Seznam parametru: 0 - thing jehoz tagy zobrazujeme, " +
-				"	1 - index ze seznamu tagu ktery bude na strance jako prvni" +
-				"	2 - vyhledavaci kriterium pro jmena tagu" +
-				"	3 - ulozeny taglist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder) args.GetTag(D_TagList.holderTK); //z koho budeme tagy brat?
@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all tags the given TagHolder has")]
+		/// <summary>Retreives the list of all tags the given TagHolder has</summary>
 		private List<KeyValuePair<TagKey, Object>> ListifyTags(IEnumerable<KeyValuePair<TagKey, Object>> tags, string criteria) {
 			List<KeyValuePair<TagKey, Object>> tagsList = new List<KeyValuePair<TagKey, Object>>();
 			foreach (KeyValuePair<TagKey, Object> entry in tags) {
@@ -204,9 +204,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return tagsList;
 		}
 
-		[Summary("Display a tag list. Function accessible from the game." +
-				"The function is designed to be triggered using .x TagList(criteria)" +
-				"but it can be used also normally .TagList(criteria) to display runner's own tags")]
+		/// <summary>
+		/// Display a tag list. Function accessible from the game.
+		/// The function is designed to be triggered using .x TagList(criteria)
+		/// but it can be used also normally .TagList(criteria) to display runner's own tags
+		/// </summary>
 		[SteamFunction]
 		public static void TagList(TagHolder self, ScriptArgs text) {
 			//zavolat dialog, 
@@ -223,7 +225,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting tag dictionary entries by tags name asc")]
+	/// <summary>Comparer for sorting tag dictionary entries by tags name asc</summary>
 	public class TagsComparer : IComparer<KeyValuePair<TagKey, Object>> {
 		public readonly static TagsComparer instance = new TagsComparer();
 

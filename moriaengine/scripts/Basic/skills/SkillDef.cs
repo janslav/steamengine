@@ -16,9 +16,7 @@
  */
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -41,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 		//CSKILLDEFPROP(Stat_Str,		0, "")
 		//CSKILLDEFPROP(Title,		0, "")
 		//CSKILLDEFPROP(Values,		0, "")
-		
+
 		private FieldValue advRate;
 		private FieldValue delay;
 		private FieldValue effect;
@@ -60,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		public static SkillDef GetBySkillName(SkillName name) {
 			return (SkillDef) GetById((int) name);
 		}
-		
+
 		public static ICollection<AbstractSkillDef> AllSkillDefs {
 			get {
 				return AllIndexedDefs;
@@ -319,22 +317,22 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[Summary("This method implements the Select phase of the skill.")]
+		/// <summary>This method implements the Select phase of the skill.</summary>
 		protected abstract TriggerResult On_Select(SkillSequenceArgs skillSeqArgs);
 
-		[Summary("This method implements the Start phase of the skill.")]
+		/// <summary>This method implements the Start phase of the skill.</summary>
 		protected abstract TriggerResult On_Start(SkillSequenceArgs skillSeqArgs);
 
-		[Summary("This method implements the \"stroke\" of the skill, that means some important moment \"in the middle\".")]
+		/// <summary>This method implements the \"stroke\" of the skill, that means some important moment \"in the middle\".</summary>
 		protected abstract TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs);
 
-		[Summary("This method implements the failing of the skill. ")]
+		/// <summary>This method implements the failing of the skill. </summary>
 		protected abstract void On_Fail(SkillSequenceArgs skillSeqArgs);
 
-		[Summary("This method implements the succes of the skill, a.e. skillgaiin and the success effect.")]
+		/// <summary>This method implements the succes of the skill, a.e. skillgaiin and the success effect.</summary>
 		protected abstract void On_Success(SkillSequenceArgs skillSeqArgs);
 
-		[Summary("This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... ")]
+		/// <summary>This method implements the aborting of the skill. Unlike Fail, this happens before the regular end of the script delay, if there's any... </summary>
 		protected abstract void On_Abort(SkillSequenceArgs skillSeqArgs);
 		#endregion Triggers
 	}
@@ -542,8 +540,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("This method fires the @skillStroke triggers. "
-		+ "Gets usually called by the SkillTimer.")]
+		/// <summary>
+		/// This method fires the @skillStroke triggers. 
+		/// Gets usually called by the SkillTimer.
+		/// </summary>
 		public void PhaseStroke() {
 			if (this.self.IsAliveAndValid) {
 				if (TriggerResult.Cancel != this.skillDef.Trigger_Stroke(this)) {
@@ -556,19 +556,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("This method fires the @skillFail triggers. Gets usually called from the Stroke phase")]
-		[Remark("Failing is something else than being forced to abort")]
+		/// <summary>This method fires the @skillFail triggers. Gets usually called from the Stroke phase</summary>
+		/// <remarks>Failing is something else than being forced to abort</remarks>
 		public void PhaseFail() {
 			this.skillDef.Trigger_Fail(this);
 		}
 
-		[Summary("This method fires the @Success triggers. Gets usually called from the Stroke phase")]
+		/// <summary>This method fires the @Success triggers. Gets usually called from the Stroke phase</summary>
 		public void PhaseSuccess() {
 			this.skillDef.Trigger_Success(this);
 		}
 
-		[Summary("This method fires the @skillAbort triggers. "
-		+ "Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.")]
+		/// <summary>
+		/// This method fires the @skillAbort triggers. 
+		/// Gets usually called when the skill is interrupted \"from outside\" - no skillgain, etc.
+		/// </summary>
 		public void PhaseAbort() {
 			this.skillDef.Trigger_Abort(this);
 			//this.Dispose();

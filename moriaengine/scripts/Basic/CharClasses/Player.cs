@@ -16,14 +16,12 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Timers;
 using SteamEngine.Common;
-using SteamEngine.LScript;
 using SteamEngine.CompiledScripts.Dialogs;
-using SteamEngine.Persistence;
 using SteamEngine.Networking;
+using SteamEngine.Persistence;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
@@ -164,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Display (or remove) a quest arrow pointing towards the specified coordinates")]
+		/// <summary>Display (or remove) a quest arrow pointing towards the specified coordinates</summary>
 		public void QuestArrow(bool active, ushort xPos, ushort yPos) {
 			GameState state = this.GameState;
 			if (state != null) {
@@ -174,7 +172,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Display (or remove) a quest arrow pointing towards the specified location")]
+		/// <summary>Display (or remove) a quest arrow pointing towards the specified location</summary>
 		public void QuestArrow(bool active, IPoint2D position) {
 			GameState state = this.GameState;
 			if (state != null) {
@@ -210,7 +208,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Profession
 
-		[Summary("Every step is monitored by the ScriptSector system")]
+		/// <summary>Every step is monitored by the ScriptSector system</summary>
 		public override TriggerResult On_Step(Direction direction, bool running) {
 			ScriptSector.AddTrackingStep(this, direction);
 			return base.On_Step(direction, running);
@@ -249,25 +247,17 @@ namespace SteamEngine.CompiledScripts {
 			return result;
 		}
 
-		//[Summary("Add a profession-powered skill checkings. Check if the skill value doesn't go "+
-		//        "above the maximal limit")]
-		//public override void On_SkillChange(Skill skill, ushort oldValue) {
-		//    short skillMaxValue = (short)(profession.ProfessionDef.MaxSkill(skill.Id) + GetSkillMaxModifier(skill.Name));
-		//    if(skill.RealValue > skillMaxValue) {
-		//        skill.RealValue = (ushort)Math.Min((ushort)0, skillMaxValue); //don't allow to go over maximum or under 0
-		//    }
 
-		//    base.On_SkillChange(skill, oldValue);
-		//}
-
-		[Summary("@Death trigger - check if none of the skills goes above the maximal limit")]
+		/// <summary>@Death trigger - check if none of the skills goes above the maximal limit</summary>
 		public override void On_Death(Character killedBy) {
 			CheckSkillMaxima();
 			base.On_Death(killedBy);
 		}
 
-		[Summary("Return the modifier of the skill's maximum value (it is normally determined by " +
-				"selected profession, but can be altered e.g. by magic items etc...)")]
+		/// <summary>
+		/// Return the modifier of the skill's maximum value (it is normally determined by 
+		/// selected profession, but can be altered e.g. by magic items etc...)
+		/// </summary>
 		internal short GetSkillMaxModifier(SkillName name) {
 			if (maxSkillModifier != null) {
 				short outVal = 0;
@@ -280,8 +270,10 @@ namespace SteamEngine.CompiledScripts {
 			return 0;
 		}
 
-		[Summary("Set the special modifier to the given skill's maximum value (the player will be " +
-				"allowed to go over his normal profession's maximum for this particular skill")]
+		/// <summary>
+		/// Set the special modifier to the given skill's maximum value (the player will be 
+		/// allowed to go over his normal profession's maximum for this particular skill
+		/// </summary>
 		internal void SetSkillMaxModifier(SkillName name, short value) {
 			if (maxSkillModifier == null) {
 				maxSkillModifier = new Dictionary<SkillName, short>();
@@ -348,8 +340,10 @@ namespace SteamEngine.CompiledScripts {
 			DelayedMessage(null, text);
 		}
 
-		[Summary("Send a delayed message to the player. Specify the sender of the message (null means " +
-				"that the message comes from the system)")]
+		/// <summary>
+		/// Send a delayed message to the player. Specify the sender of the message (null means 
+		/// that the message comes from the system)
+		/// </summary>
 		public void DelayedMessage(AbstractCharacter sender, string text) {
 			if (sender == null) {
 				//add a new message without the sender
@@ -365,8 +359,10 @@ namespace SteamEngine.CompiledScripts {
 			InfoMessage("Nova zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
 		}
 
-		[Summary("Send a delayed message to the player. Specify the sender of the message (null means " +
-				"that the message comes from the system), we can also specify a message custom color here")]
+		/// <summary>
+		/// Send a delayed message to the player. Specify the sender of the message (null means 
+		/// that the message comes from the system), we can also specify a message custom color here
+		/// </summary>
 		public void DelayedMessage(AbstractCharacter sender, string text, Hues hue) {
 			if (sender == null) {
 				//add a new message without the sender
@@ -384,8 +380,10 @@ namespace SteamEngine.CompiledScripts {
 			DelayedRedMessage(null, text);
 		}
 
-		[Summary("Send a delayed red message to the player. Specify the sender of the message (null means " +
-				"that the message comes from the system)")]
+		/// <summary>
+		/// Send a delayed red message to the player. Specify the sender of the message (null means 
+		/// that the message comes from the system)
+		/// </summary>
 		public void DelayedRedMessage(AbstractCharacter sender, string text) {
 			if (sender == null) {
 				//add a new red message without the sender
@@ -456,7 +454,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		#endregion Add
-		[Summary("The crafting main method. Tries to create the given Item(Def) in a requested quantity")]
+		/// <summary>The crafting main method. Tries to create the given Item(Def) in a requested quantity</summary>
 		public void Make(ItemDef what, int howMuch) {
 			SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
 			selectionQueue.Enqueue(new CraftingSelection(what, howMuch));

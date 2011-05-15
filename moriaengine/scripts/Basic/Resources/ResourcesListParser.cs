@@ -18,14 +18,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Globalization;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	public delegate bool TryParseResource(string str, double number, bool asPercentage, out IResourceListEntry resource);
 
-	[Summary("Class for parsing resources strings from LScript")]
+	/// <summary>Class for parsing resources strings from LScript</summary>
 	public class ResourcesListParser : IFieldValueParser {
 		//(^(\s*0x?[0-9a-f]+\s*)$)|(^(\s*\d+(\.\d+)?)$) = pattern for recognizing hex, float and decimal numbers together
 		//regular expression for recogninzing the whole reslist (first resource is obligatory, others are voluntary (separated by commas), all resources contain from a number-value pair where number can be hex, float and decimal
@@ -96,7 +94,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static List<TryParseResource> parsers = new List<TryParseResource>();
 
-		[Summary("Register resource parsing methods here")]
+		/// <summary>Register resource parsing methods here</summary>
 		public static void RegisterResourceParser(TryParseResource parserDeleg) {
 			parsers.Add(parserDeleg);
 		}

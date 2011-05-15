@@ -18,8 +18,6 @@
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Collections;
-using System.Reflection;
 namespace SteamEngine.Common {
 
 	//I renamed the methods and stuff, and reimplemented only those which are needed now, cos I'm too lazy :)
@@ -74,8 +72,13 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		[Summary("If the string contains a \n, \r, or \0, then it is truncated just before that character."
-			 + "If it contains any tabs, they are changed to spaces.")]
+		/// <summary>
+		/// Removes the illegal chars.
+		/// If the string contains a \n, \r, or \0, then it is truncated just before that character.
+		/// If it contains any tabs, they are changed to spaces.
+		/// </summary>
+		/// <param name="s">The s.</param>
+		/// <returns></returns>
 		public static string RemoveIllegalChars(string s) {
 			if (s == null) return s;
 			for (int a = 0; a < s.Length; a++) {
@@ -100,8 +103,13 @@ namespace SteamEngine.Common {
 			return (T) ConvertTo(typeof(T), obj);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
-		Summary("The most generic method to convert types. Throws when convert impossible.")]
+		/// <summary>
+		/// The most generic method to convert types. Throws when convert impossible."
+		/// </summary>
+		/// <param name="type">The type.</param>
+		/// <param name="obj">The obj.</param>
+		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static object ConvertTo(Type type, object obj) {
 			//Console.WriteLine("Converting from {0} {1} to {2}", obj.GetType(), obj, type);
 			if (obj == null) return obj;
@@ -136,7 +144,14 @@ namespace SteamEngine.Common {
 			return Convert.ChangeType(obj, type, invariantCulture);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("The most generic method to convert types. Returns false when convert impossible.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		/// <summary>
+		/// The most generic method to convert types. Returns false when convert impossible.
+		/// </summary>
+		/// <param name="type">The type.</param>
+		/// <param name="obj">The obj.</param>
+		/// <param name="retVal">The ret val.</param>
+		/// <returns></returns>
 		public static bool TryConvertTo(Type type, object obj, out object retVal) {
 			try {
 				retVal = ConvertTools.ConvertTo(type, obj);
@@ -149,7 +164,7 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		[Summary("Try converting the given object to string")]
+		/// <summary>Try converting the given object to string</summary>
 		public static bool TryConvertToString(object obj, out string retVal) {
 			IConvertible asConvertible = obj as IConvertible;
 			if (asConvertible != null) {
@@ -166,7 +181,7 @@ namespace SteamEngine.Common {
 			return false;
 		}
 
-		[Summary("Try converting the given object to string")]
+		/// <summary>Try converting the given object to string</summary>
 		public static string ToString(object obj) {
 			IConvertible asConvertible = obj as IConvertible;
 			if (asConvertible != null) {

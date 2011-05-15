@@ -15,15 +15,11 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Simple class for testing the info dialogs")]
+	/// <summary>Simple class for testing the info dialogs</summary>
 	[ViewableClass("SimpleClass")]
 	public class SimpleClass {
 		private AbstractCharacter refChar;
@@ -85,7 +81,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	/*[Summary("Class returning pages for the dialog.")]
+	/*/// <summary>Class returning pages for the dialog.</summary>
 	public sealed class Prototype_GeneratedDataView_SimpleClass : AbstractDataView {
 		protected override IEnumerable<ButtonDataFieldView> ActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) {
 			return new SimpleClassActionButtonsPage(firstLineIndex, maxButtonsOnPage);			
@@ -134,7 +130,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("And this one ensures correct iteration over the action buttons of the ViewableClass")]
+		/// <summary>And this one ensures correct iteration over the action buttons of the ViewableClass</summary>
 		public class SimpleClassActionButtonsPage : AbstractPage<ButtonDataFieldView> {
 			public SimpleClassActionButtonsPage(int firstLineIndex, int maxButtonsOnPage) : base(firstLineIndex, maxButtonsOnPage) {
 			}
@@ -159,7 +155,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Dataview implementation for the member 'foo' of the SimpleClass")]
+		/// <summary>Dataview implementation for the member 'foo' of the SimpleClass</summary>
 		public class GeneratedReadWriteDataFieldView_SimpleClass_Foo : ReadWriteDataFieldView {
 			public static GeneratedReadWriteDataFieldView_SimpleClass_Foo instance = new GeneratedReadWriteDataFieldView_SimpleClass_Foo();
 
@@ -186,7 +182,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}		
 		}
 
-		[Summary("Dataview implementation for the method 'SomeMethod' of the SimpleClass")]
+		/// <summary>Dataview implementation for the method 'SomeMethod' of the SimpleClass</summary>
 		public class GeneratedButtonDataFieldView_SimpleClass_SomeMethod : ButtonDataFieldView {
 			public static GeneratedButtonDataFieldView_SimpleClass_SomeMethod instance = new GeneratedButtonDataFieldView_SimpleClass_SomeMethod();
 

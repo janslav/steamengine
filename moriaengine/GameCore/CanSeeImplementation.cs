@@ -15,18 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
-using System.Threading;
-using System.Configuration;
-using SteamEngine.CompiledScripts;
-using SteamEngine.Regions;
 using SteamEngine.Networking;
+using SteamEngine.Regions;
 
 
 namespace SteamEngine {
@@ -92,7 +82,11 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Returns true if this character can see that target. This works on items in containers, etc, as well.")]
+		/// <summary>
+		/// Returns true if this character can see that target "for update" i.e. if it should and will be sent to the client. 
+		/// This works on items in containers, etc, as well.
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual DenyResult CanSeeForUpdate(Thing target) {
 			return this.CanSeeForUpdateImpl(this, target.TopPoint, target);
 		}
@@ -170,7 +164,13 @@ namespace SteamEngine {
 			return dist <= this.UpdateRange;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Determines if I can reach the specified Thing. Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.")]
+		/// <summary>
+		/// Determines if I can reach the specified Thing. 
+		/// Checks distance and LOS of the top object and visibility and openness of whole container hierarchy.
+		/// </summary>
+		/// <param name="target">The target.</param>
+		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public DenyResult CanReach(Thing target) {
 			if (target == null || target.IsDeleted) {
 				return DenyResultMessages.Deny_ThatDoesntExist;

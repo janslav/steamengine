@@ -16,13 +16,7 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 using SteamEngine.Common;
 
@@ -109,16 +103,28 @@ namespace SteamEngine.Communication {
 			this.lastPosition = Math.Max(this.position, this.lastPosition);
 		}
 
-		[Summary("Decodes a unicode string, truncating it if it contains endlines (and replacing tabs with spaces).")]
-		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
-		[Param(0, "The number of bytes to decode (two per character)")]
+		/// <summary>
+		/// Decodes a unicode string, truncating it if it contains endlines (and replacing tabs with spaces).
+		/// </summary>
+		/// <remarks>
+		/// If the string contains a \0 (the 'end-of-string' character), it will be truncated.
+		/// </remarks>
+		/// <param name="len">The number of bytes to decode (two per character)</param>
+		/// <returns></returns>
 		protected string DecodeBigEndianUnicodeString(int len) {
 			return DecodeBigEndianUnicodeString(len, true);
 		}
 
-		[Summary("Decodes a unicode string.")]
-		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
-		[Param(1, "If true, truncates the string if it contains endlines (and replacing tabs with spaces).")]
+		/// <summary>
+		/// Decodes a unicode string.
+		/// </summary>
+		/// <param name="len">The len.</param>
+		/// <param name="truncateEndlines">if set to <c>true</c>,
+		/// truncates the string if it contains endlines (and replacing tabs with spaces).</param>
+		/// <returns></returns>
+		/// <remarks>
+		/// If the string contains a \0 (the 'end-of-string' character), it will be truncated.
+		/// </remarks>
 		protected string DecodeBigEndianUnicodeString(int len, bool truncateEndlines) {
 			string str = Encoding.BigEndianUnicode.GetString(this.buffer, this.position, len);
 			int indexOfZero = str.IndexOf((char) 0);
@@ -133,8 +139,8 @@ namespace SteamEngine.Communication {
 			}
 		}
 
-		[Summary("Decodes an ascii string, which is expected to be null-terminated, truncating it if it contains endlines (and replacing tabs with spaces).")]
-		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
+		/// <summary>Decodes an ascii string, which is expected to be null-terminated, truncating it if it contains endlines (and replacing tabs with spaces).</summary>
+		/// <remarks>If the string contains a \0 (the 'end-of-string' character), it will be truncated.</remarks>
 		protected string DecodeTerminatedAsciiString() {
 			int indexOfEnd = Array.IndexOf<byte>(this.buffer, 0, this.position);
 			int len = indexOfEnd - this.position;
@@ -142,17 +148,28 @@ namespace SteamEngine.Communication {
 			return DecodeAsciiString(len, true);
 		}
 
-		[Summary("Decodes an ascii string, truncating it if it contains endlines (and replacing tabs with spaces).")]
-		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
-		[Param(0, "The length of the string.")]
+		/// <summary>
+		/// Decodes an ascii string, truncating it if it contains endlines (and replacing tabs with spaces).
+		/// </summary>
+		/// <param name="len">The length of the string.</param>
+		/// <returns></returns>
+		/// <remarks>
+		/// If the string contains a \0 (the 'end-of-string' character), it will be truncated.
+		/// </remarks>
 		protected string DecodeAsciiString(int len) {
 			return DecodeAsciiString(len, true);
 		}
 
-		[Summary("Decodes an ascii string.")]
-		[Remark("If the string contains a \0 (the 'end-of-string' character), it will be truncated.")]
-		[Param(0, "The length of the string.")]
-		[Param(1, "If true, truncates the string if it contains endlines (and replacing tabs with spaces).")]
+		/// <summary>
+		/// Decodes an ascii string.
+		/// </summary>
+		/// <param name="len">The length of the string.</param>
+		/// <param name="truncateEndlines">if set to <c>true</c>, 
+		/// truncates the string if it contains endlines (and replacing tabs with spaces)</param>
+		/// <returns></returns>
+		/// <remarks>
+		/// If the string contains a \0 (the 'end-of-string' character), it will be truncated.
+		/// </remarks>
 		protected string DecodeAsciiString(int len, bool truncateEndlines) {
 			string str = "";
 			//try {

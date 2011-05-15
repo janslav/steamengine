@@ -17,14 +17,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using SteamEngine;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public class E_CommandsAuthorization_Global : CompiledTriggerGroup {
-		[Summary("Use this const for all non-player functions where the plevel number has no special meaning " +
-				"except for differentiation 'player available function' / 'player forbidden function'")]
+		/// <summary>
+		/// Use this const for all non-player functions where the plevel number has no special meaning 
+		/// except for differentiation 'player available function' / 'player forbidden function'
+		/// </summary>
 		const int MORE_THAN_PLAYER = 2;
 
 		const int PLEVEL_VISITOR = 0;
@@ -36,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		const int PLEVEL_DEVELOPER = 6;
 		const int PLEVEL_OWNER = 7;
 
-		[Summary("Meaning all commands except the ones for higher levels")]
+		/// <summary>Meaning all commands except the ones for higher levels</summary>
 		const int plevelToAllCommands = 4;
 
 		Dictionary<string, int> commands = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -49,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			commands["Resync"] = PLEVEL_PLAYER;//resend nearby stuff
 			commands["Messages"] = PLEVEL_PLAYER;//delayed messages board
 
-	
+
 			//GMs
 			//Print the value of given expression
 			commands["show"] = MORE_THAN_PLAYER;

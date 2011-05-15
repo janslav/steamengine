@@ -16,15 +16,10 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts.Dialogs;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog showing the results after storing the info or settigns dialog changes")]
+	/// <summary>Dialog showing the results after storing the info or settigns dialog changes</summary>
 	public class D_Settings_Result : CompiledGumpDef {
 		internal static readonly TagKey resultsListTK = TagKey.Acquire("_settings_results_list_");
 

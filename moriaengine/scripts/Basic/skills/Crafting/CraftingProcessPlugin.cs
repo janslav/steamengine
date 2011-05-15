@@ -15,9 +15,7 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -46,20 +44,22 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void StartCrafting() {
-			SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character)Cont, craftingOrder.CraftingSkill);
+			SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character) Cont, craftingOrder.CraftingSkill);
 
 			CraftingSelection csl = this.craftingOrder.SelectionQueue.Peek();
 			ssa.Param1 = (csl != null ? csl.ItemDef : null);  //either selected ItemDef or null (both is acceptable)
-			
+
 			ssa.PhaseSelect();
 		}
 
-		[Summary("Static method called after finishing with one item crafting - either successfull or failed. "+
-				"If success - lower the amount of items to be made and (if anything is yet to be made) start again. "+
-				"If failed - start the craftmaking again immediatelly")]
+		/// <summary>
+		/// Static method called after finishing with one item crafting - either successfull or failed. 
+		/// If success - lower the amount of items to be made and (if anything is yet to be made) start again. 
+		/// If failed - start the craftmaking again immediatelly
+		/// </summary>
 		internal static void MakeFinished(SkillSequenceArgs skillSeqArgs, bool canMakeAndHasMaterial) {
 			Character cont = skillSeqArgs.Self;
-			CraftingProcessPlugin pl = (CraftingProcessPlugin)cont.GetPlugin(craftingProcessPK);
+			CraftingProcessPlugin pl = (CraftingProcessPlugin) cont.GetPlugin(craftingProcessPK);
 
 			if (skillSeqArgs.Success) {
 				CraftingSelection crSel = pl.craftingOrder.SelectionQueue.Peek(); //actual crafted item and its to-make count
@@ -91,8 +91,8 @@ namespace SteamEngine.CompiledScripts {
 		internal static void MakeImpossible(SkillSequenceArgs skillSeqArgs) {
 			Character cont = skillSeqArgs.Self;
 			CraftingProcessPlugin pl = (CraftingProcessPlugin) cont.GetPlugin(craftingProcessPK);
-			
-			ItemDef iDefToMake = (ItemDef)skillSeqArgs.Param1;
+
+			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
 			pl.craftingOrder.SelectionQueue.Dequeue(); //remove the item from the queue
 			if (pl.craftingOrder.SelectionQueue.Count > 0) { //still something to be made

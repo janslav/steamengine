@@ -16,39 +16,38 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.CodeDom;
-using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Reflection;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
-	[Summary("Decorate your class by this attribute if you want it to be cloneable using the DeepCopyFactory framework."
-	+ "When this attribute is used, LoadingInitializerAttribute is expected to be found on a corresponding member, and will be used to initialize a new instance."
-	+ "Members with SaveableData attribute will be considered the members to be copied.")]
+	/// <summary>
+	/// Decorate your class by this attribute if you want it to be cloneable using the DeepCopyFactory framework.
+	/// When this attribute is used, LoadingInitializerAttribute is expected to be found on a corresponding member, and will be used to initialize a new instance.
+	/// Members with SaveableData attribute will be considered the members to be copied.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 	public sealed class DeepCopyableClassAttribute : Attribute {
 	}
 
-	[Summary("In classes that have [DeepCopyableClass], use this attribute to decorate public instance fields and properties"
-	+ " that are supposed to be copied by the deepcopy framework along with the main object.")]
+	/// <summary>
+	/// In classes that have [DeepCopyableClass], use this attribute to decorate public instance fields and properties
+	/// that are supposed to be copied by the deepcopy framework along with the main object.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public sealed class CopyableDataAttribute : Attribute {
 	}
 
-	[Summary("Use this to decorate a static method or constructor that implements deep copying of instances of the given class. "
-	+ "It must have one parameter of it's type and a return value of assignable type.")]
+	/// <summary>
+	/// Use this to decorate a static method or constructor that implements deep copying of instances of the given class. 
+	/// It must return value of assignable (the same) type.
+	/// If it has one parameter of its type, the original object being copied will be supplied using this parameter.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 	public sealed class DeepCopyImplementationAttribute : Attribute {
 	}
-
-	//public abstract class DecoratedClassesDeepCopyImplementor : IDeepCopyImplementor {
-	//}
 
 	internal sealed class DeepCopyImplementorGenerator : ISteamCSCodeGenerator {
 		static List<Type> decoratedClasses = new List<Type>();

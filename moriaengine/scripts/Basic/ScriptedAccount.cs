@@ -16,9 +16,7 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -27,11 +25,11 @@ namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[Dialogs.ViewableClass]
 	public class ScriptedAccount : AbstractAccount {
-		[Summary("GM written notes for this account")]
+		/// <summary>GM written notes for this account</summary>
 		[Dialogs.NoShow]
 		List<AccountNote> accNotes = new List<AccountNote>();
 
-		[Summary("Crimes commited by this account (AFK, bugs, roughing etc.)")]
+		/// <summary>Crimes commited by this account (AFK, bugs, roughing etc.)</summary>
 		[Dialogs.NoShow]
 		List<AccountCrime> accCrimes = new List<AccountCrime>();
 
@@ -49,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		[Summary("Returns a copy of the AccNotes Dictionary (usable for sorting etc.)")]
+		/// <summary>Returns a copy of the AccNotes Dictionary (usable for sorting etc.)</summary>
 		[Dialogs.NoShow]
 		public List<AccountNote> AccNotes {
 			get {
@@ -57,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Returns a copy of the AccCrimes Dictionary (usable for sorting etc.)")]
+		/// <summary>Returns a copy of the AccCrimes Dictionary (usable for sorting etc.)</summary>
 		[Dialogs.NoShow]
 		public List<AccountCrime> AccCrimes {
 			get {
@@ -65,19 +63,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Add a new note")]
+		/// <summary>Add a new note</summary>
 		public void AddNote(AccountNote note) {
 			accNotes.Add(note);
 		}
-		[Summary("Remove one selected note (cannot be removed from AccNotes property")]
+		/// <summary>Remove one selected note (cannot be removed from AccNotes property</summary>
 		public void RemoveNote(AccountNote note) {
 			accNotes.Remove(note);
 		}
-		[Summary("Add a new crime")]
+		/// <summary>Add a new crime</summary>
 		public void AddCrime(AccountCrime crime) {
 			accCrimes.Add(crime);
 		}
-		[Summary("Remove one selected crime (cannot be removed from AccCrimes property")]
+		/// <summary>Remove one selected crime (cannot be removed from AccCrimes property</summary>
 		public void RemoveCrime(AccountCrime crime) {
 			accCrimes.Remove(crime);
 		}
@@ -101,8 +99,10 @@ namespace SteamEngine.CompiledScripts {
 			base.Save(output);
 		}
 
-		[Summary("Method for retreiving a sublist of GameAccounts which names contain " +
-				"a specified string")]
+		/// <summary>
+		/// Method for retreiving a sublist of GameAccounts which names contain 
+		/// a specified string
+		/// </summary>
 		public static List<ScriptedAccount> RetreiveByStr(string searched) {
 			List<ScriptedAccount> retList = new List<ScriptedAccount>();
 			if (searched == null) searched = ""; //can be null

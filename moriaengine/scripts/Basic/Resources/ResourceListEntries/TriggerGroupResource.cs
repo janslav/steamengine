@@ -16,13 +16,13 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as TriggerGroup (used only for 'type' checking of char's items), we dont use " +
-			"resource triggergroups for checking character's available triggergroups!")]
+	/// <summary>
+	/// Resource as TriggerGroup (used only for 'type' checking of char's items), we dont use 
+	/// resource triggergroups for checking character's available triggergroups!
+	/// </summary>
 	public class TriggerGroupResource : AbstractResourceListEntry, IResourceListEntry_ItemCounter {
 		public readonly TriggerGroup triggerGroup;
 
@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given string as ItemResource")]
+		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			TriggerGroup tg = TriggerGroup.GetByDefname(definition);
 			if (tg != null) {
@@ -42,7 +42,8 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		internal TriggerGroupResource(TriggerGroup triggerGroup, double number, bool asPercentage) : base(number, asPercentage) {
+		internal TriggerGroupResource(TriggerGroup triggerGroup, double number, bool asPercentage)
+			: base(number, asPercentage) {
 			this.triggerGroup = triggerGroup;
 		}
 
@@ -75,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 	}
 
-	[Summary("Counter of triggergroups resources")]
+	/// <summary>Counter of triggergroups resources</summary>
 	public class TriggerGroupsCounter : ItemCounter<TriggerGroupResource> {
 		internal override bool IsCorresponding(Item itm) {
 			return (itm.Type == this.ListEntry.triggerGroup);

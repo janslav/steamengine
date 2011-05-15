@@ -16,24 +16,23 @@
 */
 
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using Microsoft.CSharp;
-using System.Text;
-using System.Globalization;
-using SteamEngine.Timers;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
-using NAnt.Core;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Implement this interface to use the core's service of generating an assembly, additional to the scripts "
-		+ "(it will most likely be somehow based on the scripts...)")]
-	[Remark("In the method \"WriteSources\", the implementor is supposed to generate the code using CodeDom facilities, in C#.")]
+	/// <summary>
+	/// Implement this interface to use the core's service of generating an assembly, additional to the scripts
+	/// (it will most likely be somehow based on the scripts...)
+	/// </summary>
+	/// <remarks>
+	/// In the method \"WriteSources\", the implementor is supposed to generate the code using CodeDom facilities, in C#.
+	/// </remarks>
 	public interface ISteamCSCodeGenerator {
 		string FileName { get; }
 		CodeCompileUnit WriteSources();

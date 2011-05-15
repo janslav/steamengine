@@ -14,26 +14,25 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all accounts notes")]
+	/// <summary>
+	/// Dialog listing all accounts notes
+	/// Seznam parametru: 0 - account jehoz noty zobrazujeme, 
+	/// 1 - tridici kriterium
+	/// 2 - index ze seznamu notu ktery bude na strance jako prvni
+	/// 3 - ulozeny noteslist pro pripadnou navigaci v dialogu
+	/// </summary>
 	public class D_AccountNotes : CompiledGumpDef {
 		internal static readonly TagKey accountTK = TagKey.Acquire("_scripted_account_tag_");
 		internal static readonly TagKey issuesListTK = TagKey.Acquire("_acc_issues_list_"); //used for notes, crimes
 		internal static readonly TagKey issuesSortingTK = TagKey.Acquire("_acc_issues_sorting_"); //used the smae way
 		private static int width = 800;
 
-		[Summary("Seznam parametru: 0 - account jehoz noty zobrazujeme, " +
-				"	1 - tridici kriterium" +
-				"	2 - index ze seznamu notu ktery bude na strance jako prvni" +
-				"	3 - ulozeny noteslist pro pripadnou navigaci v dialogu")]
+
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ScriptedAccount acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK); //vzit seznam notu z accountu prisleho v parametru dialogu
 
@@ -196,11 +195,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display an account notes. Function accessible from the game." +
-				"The function is designed to be triggered using .x AccNotes or .AccNotes" +
-				"but it can be also called from other dialogs - such as info..." +
-				"Default sorting is by Time, desc." +
-				"Another way to use is: .AccNotes('acc_name'[,'sorting']).")]
+		/// <summary>
+		/// Display an account notes. Function accessible from the game.
+		/// The function is designed to be triggered using .x AccNotes or .AccNotes
+		/// but it can be also called from other dialogs - such as info...
+		/// Default sorting is by Time, desc.
+		/// Another way to use is: .AccNotes('acc_name'[,'sorting']).
+		/// </summary>
 		[SteamFunction]
 		public static void AccNotes(Thing self, ScriptArgs text) {
 			//Parametry dialogu:
@@ -239,14 +240,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Dialog listing all account's crimes")]
+	/// <summary>
+	/// Dialog listing all account's crimes
+	/// Seznam parametru: 0 - account jehoz crimy zobrazujeme, 
+	/// 	1 - tridici kriterium
+	/// 	2 - index ze seznamu notu ktery bude na strance jako prvni
+	/// 	3 - ulozeny noteslist pro pripadnou navigaci v dialogu
+	/// </summary>
 	public class D_AccountCrimes : CompiledGumpDef {
 		private static int width = 900;
 
-		[Summary("Seznam parametru: 0 - account jehoz crimy zobrazujeme, " +
-				"	1 - tridici kriterium" +
-				"	2 - index ze seznamu notu ktery bude na strance jako prvni" +
-				"	3 - ulozeny noteslist pro pripadnou navigaci v dialogu")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ScriptedAccount acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK);
 
@@ -417,11 +420,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display an account crimes. Function accessible from the game." +
-				"The function is designed to be triggered using .x AccCrimes or .AccCrimes" +
-				"but it can be also called from other dialogs - such as info..." +
-				"Default sorting is by Time, desc." +
-				"Another way to use is: .AccCrimes('acc_name'[,'sorting']).")]
+		/// <summary>
+		/// Display an account crimes. Function accessible from the game.
+		/// The function is designed to be triggered using .x AccCrimes or .AccCrimes
+		/// but it can be also called from other dialogs - such as info...
+		/// Default sorting is by Time, desc.
+		/// Another way to use is: .AccCrimes('acc_name'[,'sorting']).
+		/// </summary>
 		[SteamFunction]
 		public static void AccCrimes(Thing self, ScriptArgs text) {
 			//Parametry dialogu:
@@ -570,8 +575,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display the dialog for creating a new AccountNote." +
-				"Is called directly by .x NewAccNote on the target player")]
+		/// <summary>
+		/// Display the dialog for creating a new AccountNote.
+		/// Is called directly by .x NewAccNote on the target player
+		/// </summary>
 		[SteamFunction]
 		public static void NewAccNote(Thing self, ScriptArgs text) {
 			//dialog parameters: 
@@ -598,8 +605,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display the dialog for creating a new AccountCrime." +
-				"Is called directly by .x NewAccCrime on the target player")]
+		/// <summary>
+		/// Display the dialog for creating a new AccountCrime.
+		/// Is called directly by .x NewAccCrime on the target player
+		/// </summary>
 		[SteamFunction]
 		public static void NewAccCrime(Thing self, ScriptArgs text) {
 			//dialog parameters: 

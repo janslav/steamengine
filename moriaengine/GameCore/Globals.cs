@@ -16,19 +16,12 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Globalization;
 using System.IO;
-using System.Net;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Communication.TCP;
 using System.Diagnostics;
-using System.ComponentModel;
 using SharpSvn;
 #if MSWIN
 using Microsoft.Win32;	//for RegistryKey
@@ -40,7 +33,7 @@ namespace SteamEngine {
 		byte MaxPlevel { get; }
 		void WriteLine(string line);
 		AbstractAccount Account { get; }
-		Language Language { get;}
+		Language Language { get; }
 	}
 
 	public class Globals : PluginHolder {
@@ -59,7 +52,7 @@ namespace SteamEngine {
 		private static string serverName;
 		public static string ServerName {
 			get { return Globals.serverName; }
-		} 
+		}
 
 		public override string Name {
 			get {
@@ -74,7 +67,7 @@ namespace SteamEngine {
 		private static string adminEmail;
 		public static string AdminEmail {
 			get { return Globals.adminEmail; }
-		} 
+		}
 
 		private static string commandPrefix;
 		public static string CommandPrefix {
@@ -117,7 +110,7 @@ namespace SteamEngine {
 			get { return Globals.ndocExe; }
 		}
 #endif
-		
+
 		private static bool logToFiles;
 		public static bool LogToFiles {
 			get { return Globals.logToFiles; }
@@ -142,7 +135,7 @@ namespace SteamEngine {
 		private static int plevelForLscriptCommands;
 		public static int PlevelForLscriptCommands {
 			get { return Globals.plevelForLscriptCommands; }
-		} 
+		}
 
 		private static bool allowUnencryptedClients;
 		public static bool AllowUnencryptedClients {
@@ -273,7 +266,7 @@ namespace SteamEngine {
 		public static int FeaturesFlags {
 			get { return Globals.featuresFlags; }
 		}
-		
+
 		private static int defaultItemModel;
 		public static int DefaultItemModel {
 			get { return Globals.defaultItemModel; }
@@ -283,7 +276,7 @@ namespace SteamEngine {
 		public static int DefaultCharModel {
 			get { return Globals.defaultCharModel; }
 		}
-		
+
 		private static bool hashPasswords;
 		public static bool HashPasswords {
 			get { return Globals.hashPasswords; }
@@ -298,30 +291,30 @@ namespace SteamEngine {
 		private static bool useAosToolTips;
 		public static bool UseAosToolTips {
 			get { return Globals.useAosToolTips; }
-		} 
+		}
 
 		private static TagHolder lastNew;
-		[Summary("The last new item or character or memory or whatever created.")]
+		/// <summary>The last new item or character or memory or whatever created.</summary>
 		public static TagHolder LastNew {
 			get { return Globals.lastNew; }
 			internal set { Globals.lastNew = value; }
 		}
 
 		private static AbstractCharacter lastNewChar;
-		[Summary("The last new Character created.")]
+		/// <summary>The last new Character created.</summary>
 		public static AbstractCharacter LastNewChar {
 			get { return Globals.lastNewChar; }
 			internal set { Globals.lastNewChar = value; }
 		}
-		
+
 		private static AbstractItem lastNewItem;
-		[Summary("The last new Item created.")]
+		/// <summary>The last new Item created.</summary>
 		public static AbstractItem LastNewItem {
 			get { return Globals.lastNewItem; }
 			internal set { Globals.lastNewItem = value; }
 		}
 
-		[Summary("The source of the current action.")]
+		/// <summary>The source of the current action.</summary>
 		private static ISrc src;
 		public static ISrc Src {
 			get {
@@ -837,35 +830,32 @@ namespace SteamEngine {
 			ndocProcess = null;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), 
-		Summary("First documentation in Steamengine.")]
-		[Remark("This is first documentation in Steamengine, that uses SteamDoc attributes.")]
-		[Return("Nothing")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void CompileDocs() {
 			if (ndocProcess != null) {
 				Logger.WriteError("NDoc is already running.");
 				return;
 			}
-			try {
-				Console.WriteLine("Generating Common XML documentation file");
-				DocScanner scanner = new DocScanner();
-				Assembly asm = ClassManager.CommonAssembly;
-				scanner.ScanAssembly(asm);
-				scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
+			//try {
+			//    Console.WriteLine("Generating Common XML documentation file");
+			//    DocScanner scanner = new DocScanner();
+			//    Assembly asm = ClassManager.CommonAssembly;
+			//    scanner.ScanAssembly(asm);
+			//    scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
 
-				Console.WriteLine("Generating Core XML documentation file");
-				asm = ClassManager.CoreAssembly;
-				scanner = new DocScanner();
-				scanner.ScanAssembly(asm);
-				scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
+			//    Console.WriteLine("Generating Core XML documentation file");
+			//    asm = ClassManager.CoreAssembly;
+			//    scanner = new DocScanner();
+			//    scanner.ScanAssembly(asm);
+			//    scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
 
-				Console.WriteLine("Generating Scripts XML documentation file");
-				asm = ClassManager.ScriptsAssembly;
-				scanner = new DocScanner();
-				scanner.ScanAssembly(asm);
-				scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
+			//    Console.WriteLine("Generating Scripts XML documentation file");
+			//    asm = ClassManager.ScriptsAssembly;
+			//    scanner = new DocScanner();
+			//    scanner.ScanAssembly(asm);
+			//    scanner.WriteToFile("bin\\" + asm.GetName().Name + ".xml");
 
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			//} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 			if (ndocExe.Length != 0) {
 				Console.WriteLine("Invoking NDOC, documentation will be generated to docs/sourceDoc");
@@ -977,7 +967,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("For sphere compatibility, this returns servertime in tenths of second")]
+		/// <summary>For sphere compatibility, this returns servertime in tenths of second</summary>
 		public long Time {
 			get {
 				return (long) (TimeAsSpan.TotalSeconds / 10d);

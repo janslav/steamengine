@@ -68,7 +68,7 @@ namespace SteamEngine {
 			functionsByName.Clear();
 		}
 
-		[Summary("Return enumerable containing all functions")]
+		/// <summary>Return enumerable containing all functions</summary>
 		public static IEnumerable<ScriptHolder> AllFunctions {
 			get {
 				return functionsByName.Values;

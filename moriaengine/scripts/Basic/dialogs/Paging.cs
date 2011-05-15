@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 /*
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,17 +16,16 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine.Common;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Data source for all paging dialogs (those, where there are displayed larger " +
-			"collections of data that need to be divided to more pages")]
+	/// <summary>
+	/// Data source for all paging dialogs (those, where there are displayed larger 
+	/// collections of data that need to be divided to more pages)
+	/// </summary>
 	public interface IPageableCollection {
-		[Summary("Field for checking the OutOfBounds problem :)")]
+		/// <summary>Field for checking the OutOfBounds problem :)</summary>
 		int LineCount { get; }
-		[Summary("Returns an enumeration for a subset of data (for one single page)")]
+		/// <summary>Returns an enumeration for a subset of data (for one single page)</summary>
 		IEnumerable GetPage(int firstLineIndex, int maxLinesOnPage);
 	}
 
@@ -32,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		new IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage);
 	}
 
-	[Summary("Wrapper class for List<T> which allows us to use the paging")]
+	/// <summary>Wrapper class for List<T> which allows us to use the paging</summary>
 	public class PageableList<T> : IPageableCollection<T> {
 		private List<T> wrappedList;
 
@@ -58,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 		#endregion
 
-		[Summary("Inner class for getting the exact range from the wrappedList. Similar to AbstractPage.")]
+		/// <summary>Inner class for getting the exact range from the wrappedList. Similar to AbstractPage.</summary>
 		public class Page : IEnumerator<T>, IEnumerable<T> {
 			private int nextIndex, upperBound;
 			private List<T> wrappedList;
@@ -76,8 +77,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			}
 
-			[Summary("The main iteration method. Make checks if we are not exceeding the page boundaries" +
-					"and check also if we are not exceeding the wrapped list boundaries...")]
+			/// <summary>
+			/// The main iteration method. Make checks if we are not exceeding the page boundaries
+			/// and check also if we are not exceeding the wrapped list boundaries...
+			/// </summary>
 			public bool MoveNext() {
 				if (nextIndex < upperBound && nextIndex < wrappedList.Count) {
 					current = wrappedList[nextIndex];

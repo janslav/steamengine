@@ -14,16 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Regions;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog for creating a new region")]
+	/// <summary>Dialog for creating a new region</summary>
 	public class D_New_Region : CompiledGumpDef {
 		private static readonly TagKey defNameTK = TagKey.Acquire("_new_region_defname_");
 		private static readonly TagKey nameTK = TagKey.Acquire("_new_region_name_");
@@ -31,7 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static readonly TagKey parentDefTK = TagKey.Acquire("_new_region_parent_defname_");
 		private static int width = 450;
 
-		[Summary("V argumentech (args) mohou prijit parametry pro dialogove editfieldy")]
+		/// <summary>V argumentech (args) mohou prijit parametry pro dialogove editfieldy</summary>
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY, name, defname, home, parent; //predzadane hodnoty (if any)
 
@@ -199,9 +195,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Create a new region. Function accessible from the game." +
-				"The function is designed to be triggered using .NewRegion" +
-				"but it can be also called from other dialogs - such as regions list...")]
+		/// <summary>
+		/// Create a new region. Function accessible from the game.
+		/// The function is designed to be triggered using .NewRegion"
+		/// but it can be also called from other dialogs - such as regions list...
+		/// </summary>
 		[SteamFunction]
 		public static void NewRegion(Thing self, ScriptArgs text) {
 			//Parametry dialogu: - jen 4 zakladni souradnice rectanglu

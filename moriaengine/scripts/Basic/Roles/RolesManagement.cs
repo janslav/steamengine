@@ -15,22 +15,21 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Utility class managing everything about roles including assigning and storing information about casts")]
+	/// <summary>Utility class managing everything about roles including assigning and storing information about casts</summary>
 	public static class RolesManagement {
 		//dictionary holding a set of assigned roles to all characters that have any...
 		internal static Dictionary<Character, Dictionary<RoleKey, Role>> charactersRoles = new Dictionary<Character, Dictionary<RoleKey, Role>>();
 
-		[Summary("Try assign chr to role. Runs and obeys @deny triggers.")]
-		[Return("Allow = true: chr is now member of role, otherwise it's not")]
+		/// <summary>
+		/// Try assign chr to role. Runs and obeys @deny triggers.
+		/// </summary>
+		/// <param name="chr">The CHR.</param>
+		/// <param name="role">The role.</param>
+		/// <returns>Allow = true: chr is now member of role, otherwise it's not</returns>
 		public static DenyResult TryAssign(Character chr, Role role) {
 			RoleKey key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
@@ -65,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			return DenyResultMessages.Allow;
 		}
 
-		[Summary("Assign chr to role. Ignores @deny triggers.")]
+		/// <summary>Assign chr to role. Ignores @deny triggers.</summary>
 		public static void Assign(Character chr, Role role) {
 			InternalAddLoadedRole(role, chr);
 			role.InternalAddMember(chr);
@@ -92,9 +91,13 @@ namespace SteamEngine.CompiledScripts {
 			//role.InternalAddMember(chr); this is done when calling this method
 		}
 
-		[Summary("Find a list of characters for given role and remove the specified character from it " +
-				"then remove the role from the character's roles list ")]
-		[Return("true = chr is not member of role, false = it is")]
+		/// <summary>
+		/// Find a list of characters for given role and remove the specified character from it
+		/// then remove the role from the character's roles list
+		/// </summary>
+		/// <param name="chr">The CHR.</param>
+		/// <param name="role">The role.</param>
+		/// <returns>true = chr is not member of role, false = it is</returns>
 		public static DenyResult TryUnAssign(Character chr, Role role) {
 			RoleKey key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;

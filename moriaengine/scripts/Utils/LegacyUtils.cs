@@ -1,16 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Methods for simulating of sphereserver API in some cases")]
+	/// <summary>Methods for simulating of sphereserver API in some cases</summary>
 	public static class LegacyUtils {
 
 		//the same as currentskill, only backward compatible with sphere

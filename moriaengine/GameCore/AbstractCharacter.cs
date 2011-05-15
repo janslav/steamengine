@@ -18,21 +18,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
-using System.Threading;
-using System.Configuration;
-using SteamEngine.Networking;
-using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
 #if TESTRUNUO
 using RunUO_Compression = Server.Network.Compression;
 #endif
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
 
@@ -204,7 +197,7 @@ namespace SteamEngine {
 
 		public abstract AbstractCharacter Mount { get; set; }
 
-		[Summary("This is the name that displays in one's Paperdoll, i.e. including his title(s)")]
+		/// <summary>This is the name that displays in one's Paperdoll, i.e. including his title(s)</summary>
 		public abstract string PaperdollName { get; }
 
 		public abstract bool IsFemale { get; }
@@ -224,7 +217,7 @@ namespace SteamEngine {
 
 
 		#region Direction byte/Flags
-		[Summary("The Direction this character is facing.")]
+		/// <summary>The Direction this character is facing.</summary>
 		public Direction Direction {
 			get {
 				return (Direction) this.DirectionByte;
@@ -234,7 +227,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Direction, as a byte.")]
+		/// <summary>Direction, as a byte.</summary>
 		internal byte DirectionByte {
 			get {
 				return (byte) (this.directionAndFlags & DirectionAndFlag.DirectionMask);
@@ -857,8 +850,9 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Look into the dialogs dictionary and find out whether the desired one is opened" +
-				"(visible) or not")]
+		/// <summary>
+		/// Looks into the dialogs dictionary and finds out whether the specified one is opened (visible) or not
+		/// </summary>
 		public bool HasOpenedDialog(GumpDef def) {
 			GameState state = this.GameState;
 			if (state != null) {
@@ -1020,10 +1014,10 @@ namespace SteamEngine {
 		public abstract ISkill GetSkillObject(int id);
 		public abstract int GetSkill(int id);
 
-		[Summary("Gets called by the core when the player presses the skill button/runs the macro")]
+		/// <summary>Gets called by the core when the player presses the skill button/runs the macro</summary>
 		public abstract void SelectSkill(AbstractSkillDef skillDef);
 
-		[Summary("Gets called by the core when the player presses the spell icon/runs the macro")]
+		/// <summary>Gets called by the core when the player presses the spell icon/runs the macro</summary>
 		public abstract void TryCastSpellFromBook(int spellid);
 
 		public abstract byte StatLockByte { get; }
@@ -1046,29 +1040,29 @@ namespace SteamEngine {
 		//They can even go negative (but not from using powers, which work only with enough points).
 		//You only gain points by sacrificing gold (that balances this with other magic classes since this has no reagent costs).
 		public abstract short TithingPoints { get; set; }
-		[Summary("Displays in client status as Physical resistance by default")]
+		/// <summary>Displays in client status as Physical resistance by default</summary>
 		public virtual short StatusArmorClass { get { return 0; } }
-		[Summary("Displays in client status as Energy resistance by default")]
+		/// <summary>Displays in client status as Energy resistance by default</summary>
 		public virtual short StatusMindDefense { get { return 0; } }
 
 		//Resistances do not have effs. Negative values impart penalties.
-		[Summary("Displays in client status as Fire resistance by default")]
+		/// <summary>Displays in client status as Fire resistance by default</summary>
 		public virtual short ExtendedStatusNum01 { get { return 0; } }
-		[Summary("Displays in client status as Cold resistance by default")]
+		/// <summary>Displays in client status as Cold resistance by default</summary>
 		public virtual short ExtendedStatusNum02 { get { return 0; } }
-		[Summary("Displays in client status as Poison resistance by default")]
+		/// <summary>Displays in client status as Poison resistance by default</summary>
 		public virtual short ExtendedStatusNum03 { get { return 0; } }
-		[Summary("Displays in client status as Luck by default")]
+		/// <summary>Displays in client status as Luck by default</summary>
 		public virtual short ExtendedStatusNum04 { get { return 0; } }
-		[Summary("Displays in client status as Min damage by default")]
+		/// <summary>Displays in client status as Min damage by default</summary>
 		public virtual short ExtendedStatusNum05 { get { return 0; } }
-		[Summary("Displays in client status as Max damage by default")]
+		/// <summary>Displays in client status as Max damage by default</summary>
 		public virtual short ExtendedStatusNum06 { get { return 0; } }
-		[Summary("Displays in client status as Current pet count by default")]
+		/// <summary>Displays in client status as Current pet count by default</summary>
 		public virtual byte ExtendedStatusNum07 { get { return 0; } }
-		[Summary("Displays in client status as Max pet count by default")]
+		/// <summary>Displays in client status as Max pet count by default</summary>
 		public virtual byte ExtendedStatusNum08 { get { return 0; } }
-		[Summary("Displays in client status as Stat cap by default")]
+		/// <summary>Displays in client status as Stat cap by default</summary>
 		public virtual short ExtendedStatusNum09 { get { return 0; } }
 		#endregion Status, skills, stats
 

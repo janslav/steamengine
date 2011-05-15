@@ -16,9 +16,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -213,7 +211,7 @@ namespace SteamEngine.CompiledScripts {
 		public virtual void On_Close() {
 		}
 
-		[Summary("Is doors orthogonal(kolmé) on which direction?")]
+		/// <summary>Is doors orthogonal(kolmé) on which direction?</summary>
 		public Direction DoorDirection {
 			get {
 				this.SetBaseDoorModelOrThrow();
@@ -288,7 +286,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Do doors rotate by left or right side?")]
+	/// <summary>Do doors rotate by left or right side?</summary>
 	public enum DoorRotation {
 		Left,
 		Right

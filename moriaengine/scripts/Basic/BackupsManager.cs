@@ -16,32 +16,38 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
-using SteamEngine.Timers;
 using SteamEngine.Common;
-using System.Collections.Generic;
 //using ICSharpCode.SharpZipLib.Zip;
 //using OrganicBit.Zip;
 
 namespace SteamEngine.CompiledScripts {
 	public class E_BackupsManager_Global : CompiledTriggerGroup {
 
-		[Summary("The maximal size of the save folder on the disk (including the backups) in Megabytes. ")]
-		[Remark("A positive number means absolute size, negative number means how much space should stay "
-		+ "on the given disk. After each save, when the size oversteppes the number given here, "
-		+ "backups are deleted, according to an algorhitm that values more recent backups "
-		+ "as more important, but still keeps older backups too...")]
+		/// <summary>
+		/// The maximal size of the save folder on the disk (including the backups) in Megabytes.
+		/// </summary>
+		/// <remarks>
+		/// A positive number means absolute size, negative number means how much space should stay 
+		/// on the given disk. After each save, when the size oversteppes the number given here, 
+		/// backups are deleted, according to an algorhitm that values more recent backups 
+		/// as more important, but still keeps older backups too...
+		/// </remarks>
 		public const double SavesSize = 0;
 
 
-		[Summary("The maximal number of complete backups.")]
-		[Remark("A zero value means any number of nackups."
-		+ "After each save, when the count oversteppes the number given here, "
-		+ "backups are deleted, according to an algorhitm that values more recent backups "
-		+ "as more important, but still keeps older backups too...")]
+		/// <summary>
+		/// The maximal number of complete backups.
+		/// </summary>
+		/// <remarks>
+		/// A zero value means any number of backups. 
+		/// After each save, when the count oversteppes the number given here, 
+		/// backups are deleted, according to an algorhitm that values more recent backups 
+		/// as more important, but still keeps older backups too...
+		/// </remarks>
 		public const int MaxBackups = 50;
 
 		private ISaveFileManager fileManager;

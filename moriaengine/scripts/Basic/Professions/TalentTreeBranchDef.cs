@@ -16,17 +16,13 @@
 */
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
-	[Summary("Def listing fields necessary for all professions. Actual profession-elated active code is in ProfessionPlugin class")]
+	/// <summary>Def listing fields necessary for all professions. Actual profession-elated active code is in ProfessionPlugin class</summary>
 	public class TalentTreeBranchDef : AbstractIndexedDef<TalentTreeBranchDef, string> {
 		#region Accessors
 		public static new TalentTreeBranchDef GetByDefname(string defname) {

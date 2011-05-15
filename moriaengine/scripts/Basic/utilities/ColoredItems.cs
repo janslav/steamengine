@@ -14,12 +14,9 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
@@ -44,7 +41,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[SteamFunction]
-		[Summary("Returns a collection of basic itemdefs for all colored weapons")]
+		/// <summary>Returns a collection of basic itemdefs for all colored weapons</summary>
 		public static ICollection<WeaponDef> GetBasicWeapons() {
 			if (basicWeapons == null) {
 				basicWeapons = InitBasicItems<WeaponDef, ColoredWeaponDef>();
@@ -54,7 +51,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[SteamFunction]
-		[Summary("Returns a collection of basic itemdefs for all colored armors")]
+		/// <summary>Returns a collection of basic itemdefs for all colored armors</summary>
 		public static ICollection<ProjectileDef> GetBasicProjectiles() {
 			if (basicProjectiles == null) {
 				basicProjectiles = InitBasicItems<ProjectileDef, ColoredProjectileDef>();
@@ -84,7 +81,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return retVal;
 		}
 
-		[Summary("Returns a collection of basic itemdefs for all colored armors of given type")]
+		/// <summary>Returns a collection of basic itemdefs for all colored armors of given type</summary>
 		public static ICollection<WearableDef> GetBasicArmors(WearableType type) {
 			WearableDef[] arrOfType = basicArmors[(int) type];
 
@@ -135,8 +132,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					T def = script as T;
 					if ((def != null) && (def.Model == model) && (def.Material == material)) {
 						//if (retVal == null) {
-							retVal = def;
-							break;
+						retVal = def;
+						break;
 						//} else {
 						//	throw new Exception("'" + def + "' and '" + retVal + "' have the same material and model - that is probably wrong.");
 						//commented because some items can perhaps share the same model. Like bolts + jagged bolts? or some such
@@ -194,7 +191,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static ColoredProjectileDef GetColoredProjectile(object ignoredSelf, int model, Material material) {
 			return GetColoredProjectile(model, material);
 		}
-		
+
 		#endregion SteamFunctions
 	}
 }

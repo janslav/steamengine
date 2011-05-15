@@ -685,45 +685,78 @@ namespace SteamEngine {
 			Logger.WriteWarning("The object (" + resolvedObj + ") is being loaded as cont for item '" + this.ToString() + "', but it already does have it's cont. This should not happen.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to pick me up")]
+		/// <summary>
+		/// Called when someone is trying to pick me up
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPickup(DenyPickupArgs args) {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to pick up item that is contained in me")]
+		/// <summary>
+		/// Called when someone is trying to pick up item that is contained in me
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_DenyPickupItemFrom(DenyPickupArgs args) {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put me on ground")]
+		/// <summary>
+		/// Called when someone is trying to put me on ground
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPutOnGround(DenyPutOnGroundArgs args) {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put me in a container")]
+		/// <summary>
+		/// Called when someone is trying to put me in a container
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPutInItem(DenyPutInItemArgs args) {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Someone is trying to put an item in me (I am a container)")]
+		/// <summary>
+		/// Called when someone is trying to put an item in me (I am a container)
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPutItemIn(DenyPutInItemArgs args) {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("I am being put on another item")]
+		/// <summary>
+		/// Called when I am being put on another item.
+		/// </summary>
+		/// <param name="args">The args.</param>
+		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_PutOnItem(ItemOnItemArgs args) {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Another item is being put on me")]
+		/// <summary>
+		/// Called when another item is being put on me.
+		/// </summary>
+		/// <param name="args">The args.</param>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_PutItemOn(ItemOnItemArgs args) {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("I am being put on a character other than the person wielding me")]
+		/// <summary>
+		/// Called when I am being put on a character other than the person wielding me.
+		/// </summary>
+		/// <param name="args">The args.</param>
+		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_PutOnChar(ItemOnCharArgs args) {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("Iam being equipped on a character")]
+		/// <summary>
+		/// Called when I am being equipped on a character
+		/// </summary>
+		/// <param name="args">The args.</param>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_DenyEquip(DenyEquipArgs args) {
 		}
 
@@ -896,8 +929,10 @@ namespace SteamEngine {
 			i.Cont = this;
 		}
 
-		[Summary("Tries to have the char drop the item it is dragging. First it tries to put it in backpack, then on ground.")]
-		[Return("True if it is dragging no item after the method passes.")]
+		/// <summary>
+		/// Tries to have the char drop the item it is dragging. First it tries to put it in backpack, then on ground.
+		/// </summary>
+		/// <returns>True if it is dragging no item after the method passes.</returns>
 		public bool TryGetRidOfDraggedItem() {
 			AbstractItem i = this.draggingLayer;
 			if (i != null) {

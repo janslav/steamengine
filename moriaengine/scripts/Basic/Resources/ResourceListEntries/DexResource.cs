@@ -16,18 +16,17 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as characters Dexterity")]
+	/// <summary>Resource as characters Dexterity</summary>
 	public class StatDexResource : AbstractResourceListEntry, IResourceListEntry_Simple {
 
 		public static void Bootstrap() {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given string as ItemResource")]
+		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			if ("dex".Equals(definition, StringComparison.OrdinalIgnoreCase) ||
 					"dexterity".Equals(definition, StringComparison.OrdinalIgnoreCase)) {
@@ -46,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("String from which the resource could be parsed again, used for saving")]
+		/// <summary>String from which the resource could be parsed again, used for saving</summary>
 		public override string ParsableString {
 			get {
 				return "dex";
@@ -66,10 +65,10 @@ namespace SteamEngine.CompiledScripts {
 			return chr.Dex >= DesiredCount;
 		}
 
-		[Summary("Indicates whether this is a consumable resource")]
+		/// <summary>Indicates whether this is a consumable resource</summary>
 		public bool IsConsumable { get { return false; } }
 
-		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		/// <summary>Consumes this resource. Throws if this is not a consumable resource.</summary>
 		public void Consume(Character ch) {
 			throw new InvalidOperationException("Dexterity can not be consumed as a resource.");
 		}

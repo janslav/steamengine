@@ -14,20 +14,18 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog for creating a new region rectangle")]
+	/// <summary>Dialog for creating a new region rectangle</summary>
 	public class D_New_Rectangle : CompiledGumpDef {
 		private static int width = 450;
 
-		[Summary("Seznam parametru: 0 - list s rectanglama kam to pak pridame " +
-				"1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)")]
+		/// <summary>
+		/// Seznam parametru: 0 - list s rectanglama kam to pak pridame 
+		/// 1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)
+		/// </summary>
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
 			object[] argsArray = args.GetArgsArray();

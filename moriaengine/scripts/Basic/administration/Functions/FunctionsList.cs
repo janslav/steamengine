@@ -14,16 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog that will display all steam functions available")]
+	/// <summary>Dialog that will display all steam functions available</summary>
 	public class D_Functions : CompiledGumpDef {
 		internal static readonly TagKey listTK = TagKey.Acquire("_functions_list_");
 		internal static readonly TagKey criteriaTK = TagKey.Acquire("_functions_search_criteria_");
@@ -134,7 +130,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all existing functions")]
+		/// <summary>Retreives the list of all existing functions</summary>
 		private List<ScriptHolder> ListifyFunctions(IEnumerable<ScriptHolder> fctions, string criteria) {
 			List<ScriptHolder> fList = new List<ScriptHolder>();
 			foreach (ScriptHolder entry in fctions) {
@@ -147,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return fList;
 		}
 
-		[Summary("Sorting of the functions list")]
+		/// <summary>Sorting of the functions list</summary>
 		private void SortFunctions(List<ScriptHolder> list, SortingCriteria criteria) {
 			switch (criteria) {
 				case SortingCriteria.NameAsc:
@@ -160,8 +156,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display a list of all functions (ScriptHolders). Function accessible from the game." +
-			   "The function is designed to be triggered using .AllFunctions(criteria)")]
+		/// <summary>
+		/// Display a list of all functions (ScriptHolders). Function accessible from the game.
+		/// The function is designed to be triggered using .AllFunctions(criteria)
+		/// </summary>
 		[SteamFunction]
 		public static void AllFunctions(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
@@ -175,7 +173,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting functions by name asc")]
+	/// <summary>Comparer for sorting functions by name asc</summary>
 	public class FunctionsNameComparer : IComparer<ScriptHolder> {
 		public readonly static FunctionsNameComparer instance = new FunctionsNameComparer();
 

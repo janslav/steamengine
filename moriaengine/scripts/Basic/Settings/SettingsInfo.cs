@@ -15,16 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts.Dialogs;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog zobrazující informace a vysvìtlivky symbolù pro nastavení")]
+	/// <summary>Dialog zobrazující informace a vysvìtlivky symbolù pro nastavení</summary>
 	public class D_Settings_Help : CompiledGumpDef {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {

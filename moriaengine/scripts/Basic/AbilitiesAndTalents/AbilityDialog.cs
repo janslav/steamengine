@@ -14,16 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all available abilities (ability defs)")]
+	/// <summary>Dialog listing all available abilities (ability defs)</summary>
 	public class D_AbilitiesList : CompiledGumpDef {
 		internal static readonly TagKey listTK = TagKey.Acquire("_ability_list_");
 		internal static readonly TagKey criteriumTK = TagKey.Acquire("_ability_criterium_");
@@ -86,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + i).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ad.Name).Build();
 				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(ad.Defname).Build();
-				
+
 				rowCntr++;
 			}
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
@@ -147,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all existing abilities")]
+		/// <summary>Retreives the list of all existing abilities</summary>
 		private List<AbilityDef> ListifyAbilities(IEnumerable<AbilityDef> abilities, string criteria) {
 			List<AbilityDef> absList = new List<AbilityDef>();
 			foreach (AbilityDef entry in abilities) {
@@ -160,7 +156,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return absList;
 		}
 
-		[Summary("Sorting of the abilitydefs list")]
+		/// <summary>Sorting of the abilitydefs list</summary>
 		private void SortAbilityDefs(List<AbilityDef> list, SortingCriteria criteria) {
 			switch (criteria) {
 				case SortingCriteria.NameAsc:
@@ -180,8 +176,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display a list of all abilities. Function accessible from the game." +
-			   "The function is designed to be triggered using .AllAbilities(criteria)")]
+		/// <summary>
+		/// Display a list of all abilities. Function accessible from the game.
+		/// The function is designed to be triggered using .AllAbilities(criteria)
+		/// </summary>
 		[SteamFunction]
 		public static void AllAbilities(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
@@ -195,7 +193,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting abilities by ability name asc")]
+	/// <summary>Comparer for sorting abilities by ability name asc</summary>
 	public class AbilityDefsNameComparer : IComparer<AbilityDef> {
 		public readonly static AbilityDefsNameComparer instance = new AbilityDefsNameComparer();
 
@@ -211,7 +209,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting abstract defs defnames asc")]
+	/// <summary>Comparer for sorting abstract defs defnames asc</summary>
 	public class AbilityDefsDefNameComparer : IComparer<AbilityDef> {
 		public readonly static AbilityDefsDefNameComparer instance = new AbilityDefsDefNameComparer();
 

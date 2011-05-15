@@ -16,11 +16,10 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as SkillDef")]
+	/// <summary>Resource as SkillDef</summary>
 	public class SkillResource : AbstractResourceListEntry, IResourceListEntry_Simple {
 		private readonly SkillDef skillDef;
 
@@ -28,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given string as ItemResource")]
+		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			var skl = (SkillDef) AbstractSkillDef.GetByKey(definition); //"hiding", "anatomy" etc.
 			if (skl == null) {
@@ -80,10 +79,10 @@ namespace SteamEngine.CompiledScripts {
 			return this.skillDef.SkillValueOfChar(chr) >= this.DesiredCount;
 		}
 
-		[Summary("Indicates whether this is a consumable resource")]
+		/// <summary>Indicates whether this is a consumable resource</summary>
 		public bool IsConsumable { get { return false; } }
 
-		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		/// <summary>Consumes this resource. Throws if this is not a consumable resource.</summary>
 		public void Consume(Character ch) {
 			throw new InvalidOperationException("Skills can not be consumed as a resource.");
 		}

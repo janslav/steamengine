@@ -14,28 +14,25 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Class that will display the detail on the particular single IDataFieldView from the info dialog")]
+	/// <summary>Class that will display the detail on the particular single IDataFieldView from the info dialog</summary>
 	public class D_Info_Detail : CompiledGumpDef {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			IDataFieldView view = (IDataFieldView)args[0];//view to be displayed in detail
+			IDataFieldView view = (IDataFieldView) args[0];//view to be displayed in detail
 			object target = args[1]; //infoized target of the info dialog
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			dlg.CreateBackground(600);
 			dlg.SetLocation(50, 30);
-			
+
 			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			//the viewCls could be null ! - e.g. DataView does not exist
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Detail of "+ target.ToString()+":"+view.GetName(target)).Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Detail of " + target.ToString() + ":" + view.GetName(target)).Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
@@ -72,7 +69,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[0, 1] = GUTAText.Builder.Text("Uložit").Build();
 			}
 			dlg.MakeLastTableTransparent();
-			
+
 			dlg.WriteOut();
 		}
 

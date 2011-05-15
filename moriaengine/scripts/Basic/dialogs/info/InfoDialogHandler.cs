@@ -16,16 +16,11 @@
 */
 
 using System;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Class used to manage and create all necessarities for various Info dialogs.")]
+	/// <summary>Class used to manage and create all necessarities for various Info dialogs.</summary>
 	public class InfoDialogHandler : ImprovedDialog {
 		private GUTATable actionTable;
 		private GUTATable actualFieldTable;
@@ -57,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Create the wrapper instance and prepare set the instance variable for receiving dialog method calls")]
+		/// <summary>Create the wrapper instance and prepare set the instance variable for receiving dialog method calls</summary>
 		public InfoDialogHandler(Gump dialogInstance)
 			: base(dialogInstance) {
 			//pairing collections (pairs IDAtaFieldViews and indexes of edit fields or buttons
@@ -68,7 +63,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogInstance.InputArgs.SetTag(D_Info.detailIndexPairingTK, new Dictionary<int, IDataFieldView>());
 		}
 
-		[Summary("Table for all of the IDataFieldViews")]
+		/// <summary>Table for all of the IDataFieldViews</summary>
 		public void CreateDataFieldsSpace(IDataView viewCls, object target) {
 			this.target = target;
 			this.viewCls = viewCls;
@@ -129,7 +124,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			actualFieldColumn = firstFieldsColumn; //column counter (we have REAL_COLUMNS_COUNT columns to write to)
 		}
 
-		[Summary("Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields")]
+		/// <summary>Write a single DataField to the dialog. Target is the infoized object - we will use it to get the proper values of displayed fields</summary>
 		public void WriteDataField(IDataFieldView field, object target, ref int buttonsIndex, ref int editsIndex, ref int detailsIndex) {
 			if (field.IsButtonEnabled) { //buttonized field - we need the button index
 				actionTable[actualActionRow, 0] = CreateInfoInnerButton(ref buttonsIndex, field);
@@ -140,7 +135,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first column holds the type information in brackets() and the name of the field
 			actualFieldTable[actualFieldRow, 0] = GUTAText.Builder.TextLabel(GetFieldName(field, target)).Build();
-			
+
 			object fieldValue = field.GetValue(target);
 			Type fieldValueType = null;
 			string thirdColumnText = "";
@@ -170,7 +165,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					thirdColumnIsText = field.ReadOnly;
 					if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
 						thirdColumnText = Enum.GetName(field.FieldType, fieldValue);
-						if (thirdColumnText == null) { 
+						if (thirdColumnText == null) {
 							thirdColumnText = Convert.ToInt64(fieldValue).ToString();
 						}
 						secondColIsButton = !field.ReadOnly; //editable enum will have button						
@@ -195,7 +190,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				actualFieldTable[actualFieldRow, 1] = CreateInfoInnerButton(ref buttonsIndex, field);
 			}
 			//if the value to be written to the text column is too long, we will add a button for value's detail display
-			if (ImprovedDialog.TextLength(thirdColumnText) > FieldColumn - (FIELD_LABEL + ButtonMetrics.D_BUTTON_WIDTH + 2*ImprovedDialog.D_COL_SPACE) ) { //whole single column includes label (,button), field value - we need only the value
+			if (ImprovedDialog.TextLength(thirdColumnText) > FieldColumn - (FIELD_LABEL + ButtonMetrics.D_BUTTON_WIDTH + 2 * ImprovedDialog.D_COL_SPACE)) { //whole single column includes label (,button), field value - we need only the value
 				Dictionary<int, IDataFieldView> detailBtnsPairing = (Dictionary<int, IDataFieldView>) instance.InputArgs.GetTag(D_Info.detailIndexPairingTK);
 				actualFieldTable[actualFieldRow, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(detailsIndex).Build();
 				//now the shortened text (non editable - this will be done usnig the new button...
@@ -228,7 +223,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Create paging for the Info dialog - it looks a little bit different than normal paging")]
+		/// <summary>Create paging for the Info dialog - it looks a little bit different than normal paging</summary>
 		public void CreatePaging(IDataView viewCls, object target, int firstItemButt, int firstItemFld) {
 			int buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
 			int fieldLines = viewCls.GetFieldsCount(target); //number of fields didvided by number of columns per page
@@ -282,7 +277,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastTable = storedLastTable;
 		}
 
-		[Summary("Check the gump response for the pressed button number and if it is one of the paging buttons, do something")]
+		/// <summary>Check the gump response for the pressed button number and if it is one of the paging buttons, do something</summary>
 		public static bool PagingHandled(Gump gi, GumpResponse gr) {
 			DialogArgs args = gi.InputArgs;//arguments of the dialog		
 			object target = args[0];
@@ -327,7 +322,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}
 
-		[Summary("Create a inside-info dialog button (buttons in the columns). Increase the button index and store the field in the map")]
+		/// <summary>Create a inside-info dialog button (buttons in the columns). Increase the button index and store the field in the map</summary>
 		private GUTAComponent CreateInfoInnerButton(ref int buttonsIndex, IDataFieldView field) {
 			GUTAComponent retBut = GUTAButton.Builder.Id(buttonsIndex).Build();
 			//store the field under the edits index
@@ -337,7 +332,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return retBut;
 		}
 
-		[Summary("Return the fields name accompanied with the type information (but sometimes we dont need the type info...)")]
+		/// <summary>Return the fields name accompanied with the type information (but sometimes we dont need the type info...)</summary>
 		private static string GetFieldName(IDataFieldView field, object target) {
 			object fieldVal = field.GetValue(target);
 			string retName = field.GetName(target);

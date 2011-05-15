@@ -16,9 +16,7 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -476,11 +474,12 @@ namespace SteamEngine.Regions {
 			this.region = region;
 		}
 
-		[Summary("Alters all four rectangle's position coordinates for specified tiles in X and Y axes." +
-				"Returns a new (moved) instance")]
+		/// <summary>
+		/// Returns a new (moved) instance, with coordinates altered by given x and y
+		/// </summary>
 		internal RegionRectangle CloneMoved(int xDiff, int yDiff) {
 			return new RegionRectangle(this.MinX + xDiff, this.MinY + yDiff,
-									   this.MaxX + xDiff, this.MaxY + yDiff, region);
+				this.MaxX + xDiff, this.MaxY + yDiff, region);
 		}
 	}
 }

@@ -16,18 +16,14 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
-using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Timers;
 
 namespace SteamEngine {
 	public interface IDeletable {
@@ -43,12 +39,13 @@ namespace SteamEngine {
 		void ClearTags();
 	}
 
-	/*
-		Class: TagHolder
-		All Things (Items and Characters) and GameAccounts are TagHolders, as is Server.globals.
-	*/
-	[Summary("This is the base class for implementation of our \"lightweight polymorphism\". "
-		+ "TagHolder class holds tags (values indexed by names) and Timers.")]
+	/// <summary>
+	/// This is the base class for implementation of our \"lightweight polymorphism\". 
+	/// TagHolder class holds tags (values indexed by names) and Timers.
+	/// </summary>
+	/// <remarks>
+	/// All Things (Items and Characters) and GameAccounts are TagHolders, as is Server.globals.
+	/// </remarks>
 	public class TagHolder : IDeletable, ITagHolder {
 		internal Hashtable tags; //in this Hashtable are stored Tags, Timers, and by PluginHolder class also Plugins and TGListNodes
 
@@ -180,7 +177,7 @@ namespace SteamEngine {
 			return null;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), Summary("Return enumerable containing all timers")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {
@@ -194,7 +191,7 @@ namespace SteamEngine {
 		#endregion Timers
 
 		#region Tags
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), Summary("Return enumerable containing all tags")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {

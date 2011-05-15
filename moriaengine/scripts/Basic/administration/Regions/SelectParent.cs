@@ -14,22 +14,21 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog listing all regions for selecting single one for parent dialog")]
+	/// <summary>
+	/// Dialog listing all regions for selecting single one for parent dialog
+	/// Seznam parametru: 0 - vyhledavaci retezec
+	/// 1 - paging
+	/// 2 - seznam regionu
+	/// 3 - trideni
+	/// </summary>
 	public class D_SelectParent : CompiledGumpDef {
 		private static int width = 450;
 
-		[Summary("Seznam parametru: 0 - vyhledavaci retezec" +
-				"	1 - paging" +
-				"	2 - seznam regionu" +
-				"	3 - trideni")]
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK); //regionlist si posilame v argumentu (napriklad pri pagingu)
 			if (regionsList == null) {

@@ -16,18 +16,17 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as characters Hitsength")]
+	/// <summary>Resource as characters Hitsength</summary>
 	public class StatHitsResource : AbstractResourceListEntry, IResourceListEntry_Simple {
 
 		public static void BootHitsap() {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given String as ItemResource")]
+		/// <summary>Try parsing given String as ItemResource</summary>
 		public static bool TryParse(String definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			if ("Hits".Equals(definition, StringComparison.OrdinalIgnoreCase) ||
 					"Hitpoints".Equals(definition, StringComparison.OrdinalIgnoreCase)) {
@@ -42,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(number, asPercentage) {
 		}
 
-		[Summary("String from which the resource could be parsed again, used for saving")]
+		/// <summary>String from which the resource could be parsed again, used for saving</summary>
 		public override String ParsableString {
 			get {
 				return "hits";
@@ -66,10 +65,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Indicates whether this is a consumable resource")]
+		/// <summary>Indicates whether this is a consumable resource</summary>
 		public bool IsConsumable { get { return true; } }
 
-		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		/// <summary>Consumes this resource. Throws if this is not a consumable resource.</summary>
 		public void Consume(Character ch) {
 			if (this.AsPercentage) {
 				ch.AddHits(-(int) Math.Round(ch.Hits * this.DesiredCount / ch.MaxHits));

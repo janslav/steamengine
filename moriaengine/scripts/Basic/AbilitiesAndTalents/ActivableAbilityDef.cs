@@ -16,19 +16,16 @@
 */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Ability class serving as a parent for special types of abilities that can assign a plugin or a " +
-			"trigger group (or both) to the ability holder when activated." +
-			"The performing of the ability ends when it is either manually deactivated or some other conditions are fulfilled" +
-			"The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)")]
+	/// <summary>
+	/// Ability class serving as a parent for special types of abilities that can assign a plugin or a 
+	/// trigger group (or both) to the ability holder when activated.
+	/// The performing of the ability ends when it is either manually deactivated or some other conditions are fulfilled
+	/// The included TriggerGroup/Plugin will be attached to the holder after activation (and removed after deactivation)
+	/// </summary>
 	[ViewableClass]
 	public class ActivableAbilityDef : AbilityDef {
 		//internal static readonly TriggerKey tkDeactivate = TriggerKey.Acquire("deActivate");
@@ -65,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		[Summary("If its is running - deactivate, otherwise - activate.")]
+		/// <summary>If its is running - deactivate, otherwise - activate.</summary>
 		public void Switch(Character chr) {
 			PluginKey key = this.PluginKey;
 			if (key != null) {
@@ -79,19 +76,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Activate(Character chr) {
-			if (!this.IsActive(chr)){
+			if (!this.IsActive(chr)) {
 				base.Activate(chr); //try to activate
 			}
 		}
 
-		[Summary("Add Plugin to ability holder, if specified for this AbilityDef")]
+		/// <summary>Add Plugin to ability holder, if specified for this AbilityDef</summary>
 		protected override void On_Activate(Character chr, Ability ab) {
 			PluginDef def = this.PluginDef;
 			PluginKey key = this.PluginKey;
-			Sanity.IfTrueThrow((def == null) != (key == null), 
-				"Both PluginDef and PluginKey must be defined for " + 
+			Sanity.IfTrueThrow((def == null) != (key == null),
+				"Both PluginDef and PluginKey must be defined for " +
 				this + ", or neither."); //could not hold in some curious cases, we'll see
-			
+
 			if ((def != null) && (key != null)) {
 				Plugin plugin = def.Create();
 				EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
@@ -113,14 +110,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region triggerMethods
-		[Summary("When unassigning, do not forget to deactivate the ability")]
+		/// <summary>When unassigning, do not forget to deactivate the ability</summary>
 		protected override void On_UnAssign(Character ch, Ability ab) {
 			this.Deactivate(ch); //deactivate the ability automatically
 		}
 		#endregion triggerMethods
 
-		[Summary("Plugindef connected with this ability (can be null if no key is specified). It will be used " +
-				"for creating plugin instances and setting them to the ability holder")]
+		/// <summary>
+		/// Plugindef connected with this ability (can be null if no key is specified). It will be used 
+		/// for creating plugin instances and setting them to the ability holder
+		/// </summary>
 		public PluginDef PluginDef {
 			get {
 				return (PluginDef) pluginDef.CurrentValue;
@@ -130,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Return plugin key from the field value (used e.g. for adding/removing plugins to the character)")]
+		/// <summary>Return plugin key from the field value (used e.g. for adding/removing plugins to the character)</summary>
 		public PluginKey PluginKey {
 			get {
 				return (PluginKey) pluginKey.CurrentValue;

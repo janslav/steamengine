@@ -16,12 +16,11 @@
 */
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using SteamEngine.Common;
+using System.Linq;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Class for holding one parsed resource list")]
+	/// <summary>Class for holding one parsed resource list</summary>
 	public class ResourcesList {
 		//complete list of resources (separated into number-value pairs in special class)
 		private readonly IResourceListEntry[] resourceItemsList;
@@ -58,8 +57,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Check if character has all resources from the resource list. " +
-				"in case some resource is missing, it is set to the output variable.")]
+		/// <summary>
+		/// Check if character has all resources from the resource list. 
+		/// in case some resource is missing, it is set to the output variable.
+		/// </summary>
 		public bool HasResourcesPresent(Character chr, ResourcesLocality where, out IResourceListEntry firstMissingResource) {
 			//first check non-multiplicables (these are easy to check (usually some "Has..." method))
 			if (!CheckSimpleEntries(chr, out firstMissingResource)) {
@@ -81,8 +82,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Consume the whole resource list from the character (once) " +
-				"in case some resource is missing, it is set to the output variable.")]
+		/// <summary>
+		/// Consume the whole resource list from the character (once) 
+		/// in case some resource is missing, it is set to the output variable.
+		/// </summary>
 		public bool ConsumeResourcesOnce(Character chr, ResourcesLocality where, out IResourceListEntry firstMissingResource) {
 			if (!CheckSimpleEntries(chr, out firstMissingResource)) {
 				return false;
@@ -105,9 +108,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Consume the whole resource list from the character as many times as possible, return information " +
-				"about how many times it has been consumed " +
-				".In case some resource is missing, it is set to the output variable.")]
+		/// <summary>
+		/// Consume the whole resource list from the character as many times as possible, return information 
+		/// about how many times it has been consumed. 
+		/// In case some resource is missing, it is set to the output variable.
+		/// </summary>
 		public double ConsumeResources(Character chr, ResourcesLocality where, out IResourceListEntry firstMissingResource) {
 			if (!CheckSimpleEntries(chr, out firstMissingResource)) {
 				return 0;
@@ -131,8 +136,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Consume some resources from the resource list from the character " +
-				"the resource is consumed only if present, the amount consumed will vary between 0 and the amount available (but not more than desired amount in the list)")]
+		/// <summary>
+		/// Consume some resources from the resource list from the character 
+		/// the resource is consumed only if present, the amount consumed will vary between 0 and the amount available (but not more than desired amount in the list)
+		/// </summary>
 		public void ConsumeSomeResources(Character chr, ResourcesLocality where) {
 
 			var resourceCounters = PrepareResourceCounters();
@@ -157,14 +164,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Get all item multiplicable resources from the list separated in their own sublist")]
+		/// <summary>Get all item multiplicable resources from the list separated in their own sublist</summary>
 		public IEnumerable<IResourceListEntry_ItemCounter> MultiplicablesSublist {
 			get {
 				return this.multiplicablesSubList;
 			}
 		}
 
-		[Summary("Get all non-multiplicable resources from the list separated in their own sublist")]
+		/// <summary>Get all non-multiplicable resources from the list separated in their own sublist</summary>
 		public IEnumerable<IResourceListEntry_Simple> NonMultiplicablesSublist {
 			get {
 				return nonMultiplicablesSubList;
@@ -218,12 +225,12 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		[Summary("Make a string containing counts and names of all resource list items")]
+		/// <summary>Make a string containing counts and names of all resource list items</summary>
 		public override string ToString() {
 			return this.ToParsableString();
 		}
 
-		[Summary("Make a string containing counts and (pretty)defnames of all resource list items")]
+		/// <summary>Make a string containing counts and (pretty)defnames of all resource list items</summary>
 		public string ToParsableString() {
 			int n = this.resourceItemsList.Length;
 			string[] arr = new string[n];
@@ -234,44 +241,5 @@ namespace SteamEngine.CompiledScripts {
 			}
 			return string.Join(", ", arr);
 		}
-
-		//[Summary("From the given resources list get the first resourcelistitem that is of the desired (T)ype and " +
-		//        " that's underlaying resource fulfils the given criteria - for SkillResource the it is the skill key, for " +
-		//        " AbilityResource or ItemResource it is the defname etc.")]
-		//public static T GetResource<T, U>(List<U> list, string criteria)
-		//    where T : IResourceListItem //type of resource we are looking for (specific)
-		//    where U : IResourceListItem {//type of resources that are in the list (multiplicable or nonmultiplicable as an interface...)
-		//    foreach (IResourceListItem itm in list) {
-		//        if (typeof(T) == itm.GetType()) {
-		//            if (criteria == null) {
-		//                return (T) itm; //no criteria, return the first corresponding resource found
-		//            }
-		//            SkillDef skl;
-		//            if (ResourcesListParser.IsSkillResource(criteria, out skl)) {
-		//                return (T) itm;//this resource is a skill of a correct key ('criteria')
-		//            }
-		//            ItemDef itdef;
-		//            if (ResourcesListParser.IsItemResource(criteria, out itdef)) {
-		//                return (T) itm;//this resource is an item of a correct defname ('criteria')
-		//            }
-		//            TriggerGroup tgr;
-		//            if (ResourcesListParser.IsTriggerGroupResource(criteria, out tgr)) {
-		//                return (T) itm;//this resource is a trigger group of a correct defname ('criteria')
-		//            }
-		//            AbilityDef abl;
-		//            if (ResourcesListParser.IsAbilityResource(criteria, out abl)) {
-		//                return (T) itm;//this resource is an ability of a correct defname ('criteria')
-		//            }
-		//            //try stats
-		//            if ((criteria.Equals("str", StringComparison.InvariantCultureIgnoreCase)) ||
-		//                (criteria.Equals("dex", StringComparison.InvariantCultureIgnoreCase)) ||
-		//                (criteria.Equals("int", StringComparison.InvariantCultureIgnoreCase)) ||
-		//                (criteria.Equals("vit", StringComparison.InvariantCultureIgnoreCase))) {
-		//                return (T) itm;
-		//            }
-		//        }
-		//    }
-		//    return default(T);
-		//}
 	}
 }

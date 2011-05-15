@@ -14,33 +14,29 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	public abstract class Builder<T> where T : LeafGUTAComponent{
+	public abstract class Builder<T> where T : LeafGUTAComponent {
 		public abstract T Build();
 	}
-	
-	[Summary("Leaf GUTA components cannot have any children, these are e.g buttons, inputs, texts etc.")]
+
+	/// <summary>Leaf GUTA components cannot have any children, these are e.g buttons, inputs, texts etc.</summary>
 	public abstract class LeafGUTAComponent : GUTAComponent {
-		[Summary("This is the ID many gump items have - buttons number, input entries number...")]
+		/// <summary>This is the ID many gump items have - buttons number, input entries number...</summary>
 		protected int id;
 
-		[Summary("Which row in the column this component lies in?")]
+		/// <summary>Which row in the column this component lies in?</summary>
 		protected int columnRow;
 
-		[Summary("Adding any children to the leaf is prohibited...")]
+		/// <summary>Adding any children to the leaf is prohibited...</summary>
 		internal override sealed void AddComponent(GUTAComponent child) {
 			throw new GUTAComponentCannotBeExtendedException("GUTAcomponent " + this.GetType() + " cannot have any children");
 		}
 	}
 
-	[Summary("A staic class holding all necessary button constants")]
+	/// <summary>A staic class holding all necessary button constants</summary>
 	public static class ButtonMetrics {
 		public const int D_BUTTON_WIDTH = 31;
 		public const int D_BUTTON_HEIGHT = 22;
@@ -51,13 +47,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public const int D_BUTTON_PREVNEXT_WIDTH = 16;
 		public const int D_BUTTON_PREVNEXT_HEIGHT = 21;
 
-		[Summary("Number of pixels to move the button in the line so it is in the middle")]
+		/// <summary>Number of pixels to move the button in the line so it is in the middle</summary>
 		public const int D_SORTBUTTON_LINE_OFFSET = 9;
-		[Summary("Number of pixels to move the text to the right so it is readable next to the sort buttons")]
+		/// <summary>Number of pixels to move the text to the right so it is readable next to the sort buttons</summary>
 		public const int D_SORTBUTTON_COL_OFFSET = 11;
 
 		//not used and not necessary so far...
-		//[Summary("The TiledButton component class - it handles the tiled button writing to the client")]
+		///// <summary>The TiledButton component class - it handles the tiled button writing to the client</summary>
 		//public class TiledButton : LeafGUTAComponent {
 		//    protected static string stringDescription = "Tiled Button";
 
@@ -67,9 +63,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//    private int itemID, hue;
 
-		//    [Summary("Button vertical alignment")]
+		//    /// <summary>Button vertical alignment</summary>
 		//    protected DialogAlignment valign = DialogAlignment.Valign_Top;
-		//    [Summary("Button horizontal alignment")]
+		//    /// <summary>Button horizontal alignment</summary>
 		//    protected DialogAlignment align = DialogAlignment.Align_Left;
 
 		//    internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, int itemID, int hue, int width, int height) {
@@ -87,13 +83,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//        this.hue = hue;
 		//    }
 
-		//    [Summary("Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids")]
+		//    /// <summary>Basic constructor awaiting the buttons ID and string value of UP and DOWN gump graphic ids</summary>
 		//    internal TiledButton(int id, int xPos, int yPos, ButtonGump gumps, bool active, int page, DialogAlignment valign, GumpIDs itemID, Hues hue, int width, int height)
 		//        :
 		//        this(id, xPos, yPos, gumps, active, page, valign, (int) itemID, (int) hue, width, height) {
 		//    }
 
-		//    [Summary("When added, we must recompute the TiledButtons absolute position in the dialog (we " +
+		//    <summary>When added, we must recompute the TiledButtons absolute position in the dialog (we " +
 		//            " were provided only relative positions")]
 		//    protected override void OnBeforeWrite(GUTAComponent parent) {
 		//        //set the level
@@ -118,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//        yPos += parent.YPos + valignOffset;
 		//    }
 
-		//    [Summary("Simply write the tiled button (send the method request to the underlaying gump)")]
+		//    /// <summary>Simply write the tiled button (send the method request to the underlaying gump)</summary>
 		//    internal override void WriteComponent() {
 		//        gump.AddTiledButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, page, id, itemID, hue, width, height);
 		//    }
@@ -137,7 +133,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 	}
 
-	[Summary("The Button component class - it handles the button writing to the client")]
+	/// <summary>The Button component class - it handles the button writing to the client</summary>
 	public class GUTAButton : LeafGUTAComponent {
 		protected static string stringDescription = "Button";
 
@@ -175,8 +171,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			buttonGumps.Add(LeafComponentTypes.RadioButton, new ButtonGump(208, 209));
 		}
 
-		[Summary("Flyweight struct carrying info about the two button gumps (pressed and released)" +
-				"it will be used when building the dialog buttons for storing info about the gumps.")]
+		/// <summary>
+		/// Flyweight struct carrying info about the two button gumps (pressed and released)
+		/// it will be used when building the dialog buttons for storing info about the gumps.
+		/// </summary>
 		protected struct ButtonGump {
 			private int gumpUp, //also unchecked checkbox and unselected radiobutton
 						gumpDown; //also checked checkbox and selected radiobutton
@@ -203,16 +201,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private int page = 0;
 		private bool active = true;
 
-		[Summary("Button vertical alignment")]
+		/// <summary>Button vertical alignment</summary>
 		protected DialogAlignment valign = DialogAlignment.Valign_Top;
-		
+
 		public static ButtonBuilder Builder {
 			get {
 				return new ButtonBuilder();
 			}
 		}
 
-		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		/// <summary>Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class ButtonBuilder : Builder<GUTAButton> {
 			//prepare the default values
 			internal int xPos = 0;
@@ -224,45 +222,45 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal LeafComponentTypes type = LeafComponentTypes.ButtonTick;
 
 			internal ButtonBuilder() {
-			}			
+			}
 
-			[Summary("Set the button's relative X position")]
+			/// <summary>Set the button's relative X position</summary>
 			public ButtonBuilder XPos(int val) {
 				xPos = val;
 				return this;
 			}
 
-			[Summary("Set the button's relative Y position")]
+			/// <summary>Set the button's relative Y position</summary>
 			public ButtonBuilder YPos(int val) {
 				yPos = val;
 				return this;
 			}
-			
-			[Summary("Set the button's ID")]
+
+			/// <summary>Set the button's ID</summary>
 			public ButtonBuilder Id(int val) {
 				id = val;
 				return this;
 			}
 
-			[Summary("Set the button's state (active = clickable)")]
+			/// <summary>Set the button's state (active = clickable)</summary>
 			public ButtonBuilder Active(bool val) {
 				active = val;
 				return this;
 			}
 
-			[Summary("Set the button's referenced page")]
+			/// <summary>Set the button's referenced page</summary>
 			public ButtonBuilder Page(int val) {
 				page = val;
 				return this;
 			}
 
-			[Summary("Set the button's up and down graphics (using enumeration of types)")]
+			/// <summary>Set the button's up and down graphics (using enumeration of types)</summary>
 			public ButtonBuilder Type(LeafComponentTypes val) {
 				type = val;
 				return this;
 			}
-			
-			[Summary("Set the button's vertical algiment")]
+
+			/// <summary>Set the button's vertical algiment</summary>
 			public ButtonBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAButton field: " + val.ToString()));
@@ -271,7 +269,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Create the GUTAButton instance")]
+			/// <summary>Create the GUTAButton instance</summary>
 			public override GUTAButton Build() {
 				GUTAButton retVal = new GUTAButton(this);
 				return retVal;
@@ -292,8 +290,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.valign = builder.valign;
 		}
 
-		[Summary("When added, we must recompute the Buttons absolute position in the dialog (we " +
-				" were provided only relative positions")]
+		/// <summary>
+		/// When added, we must recompute the Buttons absolute position in the dialog (we 
+		/// were provided only relative positions
+		/// </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
 			level = parent.Level + 1;
@@ -317,7 +317,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			yPos += parent.YPos + valignOffset;
 		}
 
-		[Summary("Simply write the button (send the method request to the underlaying gump)")]
+		/// <summary>Simply write the button (send the method request to the underlaying gump)</summary>
 		internal override void WriteComponent() {
 			gump.AddButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, 0, id);
 		}
@@ -335,12 +335,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Create a nice small checkbox")]
+	/// <summary>Create a nice small checkbox</summary>
 	public class GUTACheckBox : GUTAButton {
 		protected new static string stringDescription = "CheckBox";
 
 		private bool isChecked;
-		[Summary("Checkbox's horizontal alignment")]
+		/// <summary>Checkbox's horizontal alignment</summary>
 		private DialogAlignment align = DialogAlignment.Align_Center;
 
 		public new static CheckBoxBuilder Builder {
@@ -349,7 +349,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Builder class for the Checkbox LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		/// <summary>Builder class for the Checkbox LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class CheckBoxBuilder : Builder<GUTACheckBox> {
 			//prepare the default values
 			internal int xPos = 0;
@@ -363,37 +363,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal CheckBoxBuilder() {
 			}
 
-			[Summary("Set the checkbox's relative X position")]
+			/// <summary>Set the checkbox's relative X position</summary>
 			public CheckBoxBuilder XPos(int val) {
 				xPos = val;
 				return this;
 			}
 
-			[Summary("Set the checkbox's relative Y position")]
+			/// <summary>Set the checkbox's relative Y position</summary>
 			public CheckBoxBuilder YPos(int val) {
 				yPos = val;
 				return this;
 			}
 
-			[Summary("Set the checkbox's ID")]
+			/// <summary>Set the checkbox's ID</summary>
 			public CheckBoxBuilder Id(int val) {
 				id = val;
 				return this;
 			}
 
-			[Summary("Set the checkbox's state (checked/unchecked)")]
+			/// <summary>Set the checkbox's state (checked/unchecked)</summary>
 			public CheckBoxBuilder Checked(bool val) {
 				isChecked = val;
 				return this;
 			}
 
-			[Summary("Set the checkbox's up and down graphics (using enumeration of types)")]
+			/// <summary>Set the checkbox's up and down graphics (using enumeration of types)</summary>
 			public CheckBoxBuilder Type(LeafComponentTypes val) {
 				type = val;
 				return this;
 			}
-			
-			[Summary("Set the checkbox's vertical algiment")]
+
+			/// <summary>Set the checkbox's vertical algiment</summary>
 			public CheckBoxBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTACheckBox field: " + val.ToString()));
@@ -402,7 +402,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Set the checkbox's horizontal algiment")]
+			/// <summary>Set the checkbox's horizontal algiment</summary>
 			public CheckBoxBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTACheckBox field: " + val.ToString()));
@@ -411,7 +411,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Create the GUTACheckBox instance")]
+			/// <summary>Create the GUTACheckBox instance</summary>
 			public override GUTACheckBox Build() {
 				GUTACheckBox retVal = new GUTACheckBox(this);
 				return retVal;
@@ -428,8 +428,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.align = builder.align;
 		}
 
-		[Summary("When added, we must recompute the Checkbox's absolute position in the dialog (we " +
-				" were provided only relative positions")]
+		/// <summary>
+		/// When added, we must recompute the Checkbox's absolute position in the dialog (we 
+		/// were provided only relative positions
+		/// </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
 			level = parent.Level + 1;
@@ -441,7 +443,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			int valignOffset = 0;
 			int alignOffset = 0;
-			
+
 			switch (valign) {
 				case DialogAlignment.Valign_Center:
 					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_CHECKBOX_HEIGHT / 2 + 1; //moves the button to the middle of the column
@@ -464,18 +466,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			yPos += parent.YPos + valignOffset;
 		}
 
-		[Summary("Simply call the gumps method for writing the checkbox")]
+		/// <summary>Simply call the gumps method for writing the checkbox</summary>
 		internal override void WriteComponent() {
 			//unchecked!!!,    checked !!!
 			gump.AddCheckBox(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
 		}
 	}
 
-	[Summary("A class representing the radio button")]
+	/// <summary>A class representing the radio button</summary>
 	public class GUTARadioButton : GUTAButton {
 		protected new static string stringDescription = "Radio";
 
-		[Summary("Radiobutton's horizontal alignment")]
+		/// <summary>Radiobutton's horizontal alignment</summary>
 		private DialogAlignment align = DialogAlignment.Align_Center;
 		private bool isChecked;
 
@@ -485,7 +487,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Builder class for the Radiobutton LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		/// <summary>Builder class for the Radiobutton LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class RadioBuilder : Builder<GUTARadioButton> {
 			//prepare the default values
 			internal int xPos = 0;
@@ -499,37 +501,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal RadioBuilder() {
 			}
 
-			[Summary("Set the radiobutton's relative X position")]
+			/// <summary>Set the radiobutton's relative X position</summary>
 			public RadioBuilder XPos(int val) {
 				xPos = val;
 				return this;
 			}
 
-			[Summary("Set the radiobutton's relative Y position")]
+			/// <summary>Set the radiobutton's relative Y position</summary>
 			public RadioBuilder YPos(int val) {
 				yPos = val;
 				return this;
 			}
 
-			[Summary("Set the radiobutton's ID")]
+			/// <summary>Set the radiobutton's ID</summary>
 			public RadioBuilder Id(int val) {
 				id = val;
 				return this;
 			}
 
-			[Summary("Set the radiobutton's state (checked/unchecked)")]
+			/// <summary>Set the radiobutton's state (checked/unchecked)</summary>
 			public RadioBuilder Checked(bool val) {
 				isChecked = val;
 				return this;
 			}
 
-			[Summary("Set the radiobutton's checked/unchecked graphics (using enumeration of types)")]
+			/// <summary>Set the radiobutton's checked/unchecked graphics (using enumeration of types)</summary>
 			public RadioBuilder Type(LeafComponentTypes val) {
 				type = val;
 				return this;
 			}
 
-			[Summary("Set the radiobutton's vertical algiment")]
+			/// <summary>Set the radiobutton's vertical algiment</summary>
 			public RadioBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTARadioButton field: " + val.ToString()));
@@ -538,7 +540,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Set the radiobutton's horizontal algiment")]
+			/// <summary>Set the radiobutton's horizontal algiment</summary>
 			public RadioBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTARadioButton field: " + val.ToString()));
@@ -547,7 +549,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Create the GUTARadioButton instance")]
+			/// <summary>Create the GUTARadioButton instance</summary>
 			public override GUTARadioButton Build() {
 				GUTARadioButton retVal = new GUTARadioButton(this);
 				return retVal;
@@ -564,8 +566,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.align = builder.align;
 		}
 
-		[Summary("When added, we must recompute the Radiobutton's absolute position in the dialog (we " +
-				" were provided only relative positions")]
+		/// <summary>
+		/// When added, we must recompute the Radiobutton's absolute position in the dialog (we 
+		/// were provided only relative positions
+		/// </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
 			level = parent.Level + 1;
@@ -600,25 +604,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			yPos += parent.YPos + valignOffset;
 		}
 
-		[Summary("Simply call the gumps method for writing the radiobutton")]
+		/// <summary>Simply call the gumps method for writing the radiobutton</summary>
 		internal override void WriteComponent() {
 			//unselected!!!, selected!!!
 			gump.AddRadio(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
 		}
 	}
 
-	[Summary("The Button component class - it handles the button writing to the client")]
+	/// <summary>The Button component class - it handles the button writing to the client</summary>
 	public class GUTAInput : LeafGUTAComponent {
 		private LeafComponentTypes type;
-		[Summary("We have either ID of the used (pre-)text, or the text string itself")]
+		/// <summary>We have either ID of the used (pre-)text, or the text string itself</summary>
 		private int textId;
 		private string text;
-		[Summary("The text hue in the input field - if not specified, the default will be used.")]
+		/// <summary>The text hue in the input field - if not specified, the default will be used.</summary>
 		private int textHue;
 
-		[Summary("Input field vertical alignment")]
+		/// <summary>Input field vertical alignment</summary>
 		protected DialogAlignment valign = DialogAlignment.Valign_Top;
-		[Summary("Input field horizontal alignment")]
+		/// <summary>Input field horizontal alignment</summary>
 		protected DialogAlignment align = DialogAlignment.Align_Left;
 
 		public static InputBuilder Builder {
@@ -627,7 +631,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		/// <summary>Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class InputBuilder : Builder<GUTAInput> {
 			//prepare the default values
 			internal LeafComponentTypes type = LeafComponentTypes.InputText;
@@ -643,69 +647,69 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal int textId = 0;
 
 			internal InputBuilder() {
-			}			
+			}
 
-			[Summary("Set the input field's relative X position")]
+			/// <summary>Set the input field's relative X position</summary>
 			public InputBuilder XPos(int val) {
 				xPos = val;
 				return this;
 			}
 
-			[Summary("Set the input field's relative Y position")]
+			/// <summary>Set the input field's relative Y position</summary>
 			public InputBuilder YPos(int val) {
 				yPos = val;
 				return this;
 			}
 
-			[Summary("Set the input field's ID for inside-Response recognition")]
+			/// <summary>Set the input field's ID for inside-Response recognition</summary>
 			public InputBuilder Id(int val) {
 				id = val;
 				return this;
 			}
 
-			[Summary("Set the input field's width")]
+			/// <summary>Set the input field's width</summary>
 			public InputBuilder Width(int val) {
 				width = val;
 				return this;
 			}
 
-			[Summary("Set the input field's height")]
+			/// <summary>Set the input field's height</summary>
 			public InputBuilder Height(int val) {
 				height = val;
 				return this;
 			}
 
-			[Summary("Set the input type")]
+			/// <summary>Set the input type</summary>
 			public InputBuilder Type(LeafComponentTypes val) {
 				type = val;
 				return this;
 			}
 
-			[Summary("Set the input field's text hue")]
+			/// <summary>Set the input field's text hue</summary>
 			public InputBuilder Hue(int val) {
 				hue = val;
 				return this;
 			}
 
-			[Summary("Set the input field's text hue usign enum")]
+			/// <summary>Set the input field's text hue usign enum</summary>
 			public InputBuilder Hue(Hues val) {
 				hue = (int) val;
 				return this;
 			}
 
-			[Summary("Set the input field's value")]
+			/// <summary>Set the input field's value</summary>
 			public InputBuilder Text(string val) {
 				text = val;
 				return this;
 			}
 
-			[Summary("Set the input field's text id (for prepared texts)")]
+			/// <summary>Set the input field's text id (for prepared texts)</summary>
 			public InputBuilder TextId(int val) {
 				textId = val;
 				return this;
 			}
 
-			[Summary("Set the input field's text's horizontal algiment")]
+			/// <summary>Set the input field's text's horizontal algiment</summary>
 			public InputBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTAInput field: " + val.ToString()));
@@ -714,7 +718,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Set the input field's text's vertical algiment")]
+			/// <summary>Set the input field's text's vertical algiment</summary>
 			public InputBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAInput field: " + val.ToString()));
@@ -723,7 +727,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Create the GUTAInput instance")]
+			/// <summary>Create the GUTAInput instance</summary>
 			public override GUTAInput Build() {
 				GUTAInput retVal = new GUTAInput(this);
 				return retVal;
@@ -744,8 +748,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.textId = builder.textId;
 		}
 
-		[Summary("When added, we must recompute the Input Field's absolute position in the dialog (we " +
-				" were provided only relative positions")]
+		/// <summary>
+		/// When added, we must recompute the Input Field's absolute position in the dialog (we 
+		///  were provided only relative positions
+		///  </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
 			level = parent.Level + 1;
@@ -790,8 +796,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			yPos += valignOffset;
 		}
 
-		[Summary("Simply write the input (send the method request to the underlaying gump)" +
-				" it will determine also what parameters to send")]
+		/// <summary>
+		/// Simply write the input (send the method request to the underlaying gump) 
+		/// it will determine also what parameters to send
+		/// </summary>
 		internal override void WriteComponent() {
 			//first of all add a different background
 			gump.AddGumpPicTiled(xPos, yPos, width, height, ImprovedDialog.D_DEFAULT_INPUT_BACKGROUND);
@@ -832,17 +840,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("The text component class - it handles the text writing to the underlaying gump")]
+	/// <summary>The text component class - it handles the text writing to the underlaying gump</summary>
 	public class GUTAText : LeafGUTAComponent {
-		[Summary("The text hue in the input field - if not specified, the default will be used.")]
+		/// <summary>The text hue in the input field - if not specified, the default will be used.</summary>
 		private int textHue;
-		[Summary("We have either ID of the used text, or the text string itself")]
+		/// <summary>We have either ID of the used text, or the text string itself</summary>
 		private int textId;
 		private string text;
 
-		[Summary("Text horizontal alignment")]
+		/// <summary>Text horizontal alignment</summary>
 		private DialogAlignment align;
-		[Summary("Text vertical alignment")]
+		/// <summary>Text vertical alignment</summary>
 		private DialogAlignment valign;
 
 		public static TextBuilder Builder {
@@ -851,7 +859,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		/// <summary>Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class TextBuilder : Builder<GUTAText> {
 			//prepare the default values
 			internal int xPos = 0;
@@ -863,59 +871,59 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal int textId = 0;
 
 			internal TextBuilder() {
-			}			
+			}
 
-			[Summary("Set the text's relative X position")]
+			/// <summary>Set the text's relative X position</summary>
 			public TextBuilder XPos(int val) {
 				xPos = val;
 				return this;
 			}
 
-			[Summary("Set the text's relative Y position")]
+			/// <summary>Set the text's relative Y position</summary>
 			public TextBuilder YPos(int val) {
 				yPos = val;
 				return this;
 			}
 
-			[Summary("Set the text's hue")]
+			/// <summary>Set the text's hue</summary>
 			public TextBuilder Hue(int val) {
 				hue = val;
 				return this;
 			}
 
-			[Summary("Set the text's hue usign enum")]
+			/// <summary>Set the text's hue usign enum</summary>
 			public TextBuilder Hue(Hues val) {
 				hue = (int) val;
 				return this;
 			}
 
-			[Summary("Create the text as label (set the hue also)")]
+			/// <summary>Create the text as label (set the hue also)</summary>
 			public TextBuilder TextLabel(string val) {
 				text = val;
 				hue = (int) Hues.LabelColor;
 				return this;
 			}
 
-			[Summary("Create the text as headline (set the hue also)")]
+			/// <summary>Create the text as headline (set the hue also)</summary>
 			public TextBuilder TextHeadline(string val) {
 				text = val;
 				hue = (int) Hues.HeadlineColor;
 				return this;
 			}
 
-			[Summary("Set the text value")]
+			/// <summary>Set the text value</summary>
 			public TextBuilder Text(string val) {
 				text = val;
 				return this;
 			}
 
-			[Summary("Set the text id (for prepared texts)")]
+			/// <summary>Set the text id (for prepared texts)</summary>
 			public TextBuilder TextId(int val) {
 				textId = val;
 				return this;
 			}
 
-			[Summary("Set the text's horizontal algiment")]
+			/// <summary>Set the text's horizontal algiment</summary>
 			public TextBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTAText field: " + val.ToString()));
@@ -924,7 +932,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Set the text's vertical algiment")]
+			/// <summary>Set the text's vertical algiment</summary>
 			public TextBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAText field: " + val.ToString()));
@@ -933,7 +941,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Create the GUTAText instance")]
+			/// <summary>Create the GUTAText instance</summary>
 			public override GUTAText Build() {
 				GUTAText retVal = new GUTAText(this);
 				return retVal;
@@ -950,7 +958,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.textId = builder.textId;
 		}
 
-		[Summary("When added to the column we have to specify the position (count the absolute)")]
+		/// <summary>When added to the column we have to specify the position (count the absolute)</summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
 			level = parent.Level + 1;
@@ -990,7 +998,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Call the underlaying gump istance's methods")]
+		/// <summary>Call the underlaying gump istance's methods</summary>
 		internal override void WriteComponent() {
 			if (textId == 0) { //no text ID was specified, use the text version
 				gump.AddText(xPos, yPos, textHue, text);
@@ -1012,11 +1020,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	
-	[Summary("The HTML text component class - allows making the text scrollable")]
+
+	/// <summary>The HTML text component class - allows making the text scrollable</summary>
 	public class GUTAHTMLText : LeafGUTAComponent {
 		private bool isScrollable, hasBoundBox;
-		[Summary("The text is either specified or passed as a text id")]
+		/// <summary>The text is either specified or passed as a text id</summary>
 		private string text;
 		private int textId;
 
@@ -1026,7 +1034,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		/// <summary>Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class HTMLTextBuilder : Builder<GUTAHTMLText> {
 			//prepare the default values
 			internal int xPos = 0;
@@ -1037,51 +1045,51 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal int textId = 0;
 
 			internal HTMLTextBuilder() {
-			}			
+			}
 
-			[Summary("Set the text's relative X position")]
+			/// <summary>Set the text's relative X position</summary>
 			public HTMLTextBuilder XPos(int val) {
 				xPos = val;
 				return this;
 			}
 
-			[Summary("Set the text's relative Y position")]
+			/// <summary>Set the text's relative Y position</summary>
 			public HTMLTextBuilder YPos(int val) {
 				yPos = val;
 				return this;
 			}
-			
-			[Summary("Set the text's scrollable state")]
+
+			/// <summary>Set the text's scrollable state</summary>
 			public HTMLTextBuilder Scrollable(bool val) {
 				isScrollable = val;
 				return this;
 			}
 
-			[Summary("Set the text's scrollable state")]
+			/// <summary>Set the text's scrollable state</summary>
 			public HTMLTextBuilder HasBoundBox(bool val) {
 				hasBoundBox = val;
 				return this;
 			}
-			
-			[Summary("Set the text value")]
+
+			/// <summary>Set the text value</summary>
 			public HTMLTextBuilder Text(string val) {
 				text = val;
 				return this;
 			}
 
-			[Summary("Set the text id (for prepared texts)")]
+			/// <summary>Set the text id (for prepared texts)</summary>
 			public HTMLTextBuilder TextId(int val) {
 				textId = val;
 				return this;
 			}
-			
-			[Summary("Create the GUTAText instance")]
+
+			/// <summary>Create the GUTAText instance</summary>
 			public override GUTAHTMLText Build() {
 				GUTAHTMLText retVal = new GUTAHTMLText(this);
 				return retVal;
 			}
 		}
-		
+
 		private GUTAHTMLText(HTMLTextBuilder builder) {
 			this.xPos = builder.xPos;
 			this.yPos = builder.yPos;
@@ -1099,9 +1107,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.height = height;
 			this.hasBoundBox = hasBoundBox;
 			this.isScrollable = isScrollable;
-		}		
+		}
 
-		[Summary("When added to the column we have to specify the position (count the absolute)")]
+		/// <summary>When added to the column we have to specify the position (count the absolute)</summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
 			level = parent.Level + 1;
@@ -1123,7 +1131,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Call the underlaying gump istance's methods")]
+		/// <summary>Call the underlaying gump istance's methods</summary>
 		internal override void WriteComponent() {
 			if (textId == 0) { //no text ID was specified, use the text version
 				gump.AddHtmlGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);
@@ -1149,9 +1157,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private int gumpId;
 		private int color;
 
-		[Summary("Image horizontal alignment")]
+		/// <summary>Image horizontal alignment</summary>
 		private DialogAlignment align;
-		[Summary("Image vertical alignment")]
+		/// <summary>Image vertical alignment</summary>
 		private DialogAlignment valign;
 
 		public static ImageBuilder Builder {
@@ -1160,7 +1168,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Builder class for the GUTAImage LeafGUTAComponent. Allows to set some or all necessary parameters via methods")]
+		/// <summary>Builder class for the GUTAImage LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class ImageBuilder : Builder<GUTAImage> {
 			//prepare the default values
 			internal int xPos = 0;
@@ -1173,19 +1181,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			internal ImageBuilder() {
 			}
 
-			[Summary("Set the image's relative X position")]
+			/// <summary>Set the image's relative X position</summary>
 			public ImageBuilder XPos(int val) {
 				xPos = val;
 				return this;
 			}
 
-			[Summary("Set the image's relative Y position")]
+			/// <summary>Set the image's relative Y position</summary>
 			public ImageBuilder YPos(int val) {
 				yPos = val;
 				return this;
 			}
 
-			[Summary("Set the image's horizontal alignment")]
+			/// <summary>Set the image's horizontal alignment</summary>
 			public ImageBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTAImage field: " + val.ToString()));
@@ -1194,7 +1202,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Set the image's vertical alignment")]
+			/// <summary>Set the image's vertical alignment</summary>
 			public ImageBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAImage field: " + val.ToString()));
@@ -1203,31 +1211,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return this;
 			}
 
-			[Summary("Set the image's gump")]
+			/// <summary>Set the image's gump</summary>
 			public ImageBuilder Gump(int val) {
 				gumpId = val;
 				return this;
 			}
 
-			[Summary("Set the image's gump using enumeration")]
+			/// <summary>Set the image's gump using enumeration</summary>
 			public ImageBuilder NamedGump(GumpIDs val) {
 				gumpId = (int) val;
 				return this;
 			}
 
-			[Summary("Set the image's hue (color)")]
+			/// <summary>Set the image's hue (color)</summary>
 			public ImageBuilder Hue(int val) {
 				this.color = (int) val;
 				return this;
 			}
 
-			[Summary("Set the image's hue (color)")]
+			/// <summary>Set the image's hue (color)</summary>
 			public ImageBuilder Color(int val) {
 				this.color = (int) val;
 				return this;
 			}
 
-			[Summary("Create the GUTAImage instance")]
+			/// <summary>Create the GUTAImage instance</summary>
 			public override GUTAImage Build() {
 				GUTAImage retVal = new GUTAImage(this);
 				return retVal;
@@ -1243,7 +1251,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.color = builder.color;
 		}
 
-		[Summary("When added to the column we have to specify the position (count the absolute)")]
+		/// <summary>When added to the column we have to specify the position (count the absolute)</summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
 			level = parent.Level + 1;
@@ -1278,7 +1286,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			yPos += parent.YPos + valignOffset;
 		}
 
-		[Summary("Call the underlaying gump istance's methods")]
+		/// <summary>Call the underlaying gump istance's methods</summary>
 		internal override void WriteComponent() {
 			if (this.color == 0) {
 				gump.AddTilePic(xPos, yPos, gumpId);

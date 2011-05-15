@@ -19,7 +19,7 @@ using System;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as ItemDef")]
+	/// <summary>Resource as ItemDef</summary>
 	public class ItemResource : AbstractResourceListEntry, IResourceListEntry_ItemCounter {
 		private readonly ItemDef itemDef;
 
@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given string as ItemResource")]
+		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			ItemDef idef = ThingDef.GetByDefname(definition) as ItemDef;
 			if (idef != null) {
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 	}
 
-	[Summary("Counter of triggergroups resources")]
+	/// <summary>Counter of triggergroups resources</summary>
 	public class ItemCounter_ByItemDef : ItemCounter<ItemResource> {
 		internal override bool IsCorresponding(Item itm) {
 			return (itm.TypeDef == this.ListEntry.ItemDef);

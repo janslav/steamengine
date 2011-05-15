@@ -15,13 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
@@ -40,16 +35,20 @@ namespace SteamEngine.CompiledScripts {
 
 		private TriggerGroup scriptedTriggers;
 
-		[Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden " +
-				"in every RoleDef's descendant!")]
+		/// <summary>
+		/// Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden 
+		/// in every RoleDef's descendant!
+		/// </summary>
 		public Role Create(RoleKey key, string name) {
 			Role newRole = this.Create(key);
 			newRole.Name = name;
 			return newRole;
 		}
 
-		[Summary("Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden " +
-				"in every RoleDef's descendant!")]
+		/// <summary>
+		/// Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden 
+		/// in every RoleDef's descendant!
+		/// </summary>
 		public Role Create(RoleKey key) {
 			Role newRole = this.CreateImpl(key);
 			newRole.Trigger_Create();
@@ -115,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region utilities
-		[Summary("Return enumerable containing all roles (copying the values from the main dictionary)")]
+		/// <summary>Return enumerable containing all roles (copying the values from the main dictionary)</summary>
 		public static IEnumerable<RoleDef> AllRoles {
 			get {
 				foreach (AbstractScript script in AllScripts) {
@@ -129,7 +128,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion utilities
 	}
 
-	[Summary("Argument wrapper used in DenyMemberAddRequest trigger")]
+	/// <summary>Argument wrapper used in DenyMemberAddRequest trigger</summary>
 	public class DenyRoleTriggerArgs : DenyTriggerArgs {
 		public readonly Role.IRoleMembership membership;
 		public readonly Character assignee;

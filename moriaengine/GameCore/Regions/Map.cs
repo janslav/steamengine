@@ -727,7 +727,7 @@ namespace SteamEngine.Regions {
 #if !NOLINQ
 			return from sx in Enumerable.Range(xSectorStart, xSectorEnd - xSectorStart + 1)
 				   from sy in Enumerable.Range(ySectorStart, ySectorEnd - ySectorStart + 1)
-				   from player in  this.GetSector(sx, sy).Players
+				   from player in this.GetSector(sx, sy).Players
 				   where player.GameState != null && rectangle.Contains(player)
 				   select player.GameState.Conn;
 #else
@@ -1259,7 +1259,7 @@ namespace SteamEngine.Regions {
 			//}
 		}
 
-		[Summary("Inactivate regions - unload their rectangles, boolean parameter allows us to omit dynamic regions...")]
+		/// <summary>Inactivate regions - unload their rectangles, boolean parameter allows us to omit dynamic regions...</summary>
 		internal void InactivateRegions(bool dynamicsToo) {
 			for (int sx = 0; sx < this.numXSectors; sx++) {
 				for (int sy = 0; sy < this.numYSectors; sy++) {
@@ -1320,8 +1320,10 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Summary("Take the rectangle, find all sectors it belongs to and chek every dynamic region rectangle in the" +
-				"sector that they do not intersect")]
+		/// <summary>
+		/// Take the rectangle, find all sectors it belongs to and check every dynamic region rectangle in the
+		/// sector that they do not intersect
+		/// </summary>
 		internal bool CheckDynRectIntersection(RegionRectangle rect) {
 			foreach (Sector sector in this.GetSectorsInRectangle(rect)) {//all sectors the examined rectangle belongs to
 				foreach (RegionRectangle existingRect in sector.RegionRectangles) {//all dynamic regions from the sector

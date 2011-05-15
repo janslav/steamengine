@@ -17,23 +17,19 @@
 
 using System;
 using System.Data;
-using System.Collections;
-using System.Globalization;
-using System.IO;
 using System.Net;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using SteamEngine;
+using MySql.Data.MySqlClient;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
-using MySql.Data.MySqlClient;
 
 namespace SteamEngine.CompiledScripts {
 	[HasSavedMembers]
 	public static class DbManager {
 		[SavedMember("DBConfig", "Database configuration")]
-		[Summary("This will appear as a subdialog in the settings dialog, allowing us to set " +
-				"database parametes online.")]
+		/// <summary>
+		/// This will appear as a subdialog in the settings dialog, allowing us to set 
+		/// database parametes online.
+		/// </summary>
 		private static DbConfig config = new DbConfig();
 
 		public static DbConfig Config {

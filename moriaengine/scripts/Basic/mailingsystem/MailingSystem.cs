@@ -15,31 +15,26 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System; 
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
-using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Static class for operating with clients delayed messages.")]
+	/// <summary>Static class for operating with clients delayed messages.</summary>
 	public static class MsgsBoard {
-		[Summary("A unique tag name for holding a list of client delayed messages")]
+		/// <summary>A unique tag name for holding a list of client delayed messages</summary>
 		internal static TagKey tkDelayedMsgs = TagKey.Acquire("_delayed_msgs_");
 
-		[Summary("Default senders name (if the sender was not specified)")]
+		/// <summary>Default senders name (if the sender was not specified)</summary>
 		public const string NO_SENDER = "System";
 
-		[Summary("Various comparators")]
+		/// <summary>Various comparators</summary>
 		private static MsgsSenderComparator senderComparator = new MsgsSenderComparator();
 		private static MsgsTimeComparator timeComparator = new MsgsTimeComparator();
 		private static MsgsUnreadComparator unreadComparator = new MsgsUnreadComparator();
 
 
-		[Summary("Returns a copy of the list of clients delayed messages (for sorting e.g.)")]
+		/// <summary>Returns a copy of the list of clients delayed messages (for sorting e.g.)</summary>
 		public static List<DelayedMsg> GetClientsMessages(Character whose) {
 			//get the client messages (empty list if no messages present)
 			List<DelayedMsg> list = GetMessages(whose);
@@ -51,19 +46,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Simple 'add' method.")]
+		/// <summary>Simple 'add' method.</summary>
 		public static void AddNewMessage(Character whom, DelayedMsg newMsg) {
 			GetMessages(whom).Add(newMsg);
 		}
 
-		[Summary("Simple 'remove' method.")]
+		/// <summary>Simple 'remove' method.</summary>
 		public static void DeleteMessage(Character whose, DelayedMsg newMsg) {
 			GetMessages(whose).Remove(newMsg);
 		}
 
-		[Summary("Private utility method returning the characters list of messages")]
+		/// <summary>Private utility method returning the characters list of messages</summary>
 		private static List<DelayedMsg> GetMessages(Character whose) {
-			List<DelayedMsg> retList = (List<DelayedMsg>)whose.GetTag(tkDelayedMsgs);
+			List<DelayedMsg> retList = (List<DelayedMsg>) whose.GetTag(tkDelayedMsgs);
 			if (retList == null) { // no messages previously posted
 				retList = new List<DelayedMsg>();
 				whose.SetTag(tkDelayedMsgs, retList);
@@ -71,13 +66,13 @@ namespace SteamEngine.CompiledScripts {
 			return retList;
 		}
 
-		[Summary("Sorting method used for Character: Sorting parameters available are senders name, time and read/unread messages first")]
+		/// <summary>Sorting method used for Character: Sorting parameters available are senders name, time and read/unread messages first</summary>
 		public static List<DelayedMsg> GetSortedBy(Character whom, SortingCriteria criterion) {
 			//get a new copy of the list and sort it using another version of this method			
 			return GetSortedBy(GetClientsMessages(whom), criterion);
 		}
 
-		[Summary("Sorting method when the list is obtained first: Sorting parameters available are senders name, time and read/unread messages first")]
+		/// <summary>Sorting method when the list is obtained first: Sorting parameters available are senders name, time and read/unread messages first</summary>
 		public static List<DelayedMsg> GetSortedBy(List<DelayedMsg> messages, SortingCriteria criterion) {
 			//get a new copy of the list			
 			switch (criterion) {
@@ -109,8 +104,10 @@ namespace SteamEngine.CompiledScripts {
 			return messages;
 		}
 
-		[Summary("Return the number of unread messages (those the recipient has not opened by " +
-				"'read/display detail' button")]
+		/// <summary>
+		/// Return the number of unread messages (those the recipient has not opened by 
+		/// 'read/display detail' button
+		/// </summary>
 		public static int CountUnread(List<DelayedMsg> msgs) {
 			int counter = 0;
 			foreach (DelayedMsg msg in msgs) {
@@ -121,14 +118,16 @@ namespace SteamEngine.CompiledScripts {
 			return counter;
 		}
 
-		[Summary("Return the number of unread messages for the specified player")]
+		/// <summary>Return the number of unread messages for the specified player</summary>
 		public static int CountUnread(Character whose) {
 			return CountUnread(GetMessages(whose));
 		}
 	}
 
-	[Summary("The object of the clients delayed message. Holds the info about the sender, sending time and " +
-			"the message body")]
+	/// <summary>
+	/// The object of the clients delayed message. Holds the info about the sender, sending time and 
+	/// the message body
+	/// </summary>
 	[SaveableClass]
 	public class DelayedMsg {
 		[LoadingInitializer]
@@ -147,7 +146,7 @@ namespace SteamEngine.CompiledScripts {
 		public Hues color; //messages color
 
 
-		[Summary("No sender - the message was created by server probably.")]
+		/// <summary>No sender - the message was created by server probably.</summary>
 		public DelayedMsg(string text) {
 			this.sender = null;
 			this.text = text;
@@ -161,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 			this.sender = sender;
 		}
 
-		[Summary("Allows us to specify if the message should be displayed as red")]
+		/// <summary>Allows us to specify if the message should be displayed as red</summary>
 		public DelayedMsg(string text, bool redMessage)
 			: this(text) {
 			this.color = Hues.Red;
@@ -172,32 +171,32 @@ namespace SteamEngine.CompiledScripts {
 			this.sender = sender;
 		}
 
-		[Summary("Allows uas to specify the messages color also...")]
+		/// <summary>Allows uas to specify the messages color also...</summary>
 		public DelayedMsg(AbstractCharacter sender, string text, Hues hue)
 			: this(sender, text) {
 			this.color = hue;
 		}
 	}
 
-	[Summary("Comparator serving for sorting the list of messages by sender")]
+	/// <summary>Comparator serving for sorting the list of messages by sender</summary>
 	class MsgsSenderComparator : IComparer<DelayedMsg> {
 		public int Compare(DelayedMsg a, DelayedMsg b) {
 			//if sender was not specified, consider the message as from "System"
 			string name1 = (a.sender == null) ? MsgsBoard.NO_SENDER : a.sender.Name;
 			string name2 = (b.sender == null) ? MsgsBoard.NO_SENDER : b.sender.Name;
-			
+
 			return name1.CompareTo(name2);
 		}
 	}
 
-	[Summary("Comparator serving for sorting the list of messages by their creation time")]
+	/// <summary>Comparator serving for sorting the list of messages by their creation time</summary>
 	class MsgsTimeComparator : IComparer<DelayedMsg> {
 		public int Compare(DelayedMsg a, DelayedMsg b) {
 			return a.time.CompareTo(b.time);
 		}
 	}
 
-	[Summary("Comparator serving for sorting the list of messages by their unread/status")]
+	/// <summary>Comparator serving for sorting the list of messages by their unread/status</summary>
 	class MsgsUnreadComparator : IComparer<DelayedMsg> {
 		public int Compare(DelayedMsg a, DelayedMsg b) {
 			return a.read.CompareTo(b.read);

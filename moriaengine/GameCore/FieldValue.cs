@@ -16,11 +16,8 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
-using System.Globalization;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -126,7 +123,7 @@ namespace SteamEngine {
 						if (value != null) {
 							if (value.Length > 0) {
 								if ((this.fvType == FieldValueType.Typed) && (this.type.IsArray)) {
-									
+
 									if (this.type.GetArrayRank() > 1) {
 										throw new SEException("Can't use a multirank array in a FieldValue");
 									}
@@ -135,9 +132,9 @@ namespace SteamEngine {
 									int n = sourceArray.Length;
 									Array resultArray = Array.CreateInstance(elemType, n);
 
-									for (int i = 0; i<n; i++) {
+									for (int i = 0; i < n; i++) {
 										resultArray.SetValue(ConvertTools.ConvertTo(elemType,
-											ResolveSingleValue(tempVI, sourceArray[i], null)), 
+											ResolveSingleValue(tempVI, sourceArray[i], null)),
 											i);
 									}
 
@@ -376,7 +373,7 @@ namespace SteamEngine {
 				int n = arrA.Length;
 				if ((n == arrB.Length) &&
 					(arrA.GetType().GetElementType() == arrB.GetType().GetElementType())) {
-					for (int i = 0; i<n; i++) {
+					for (int i = 0; i < n; i++) {
 						if (!CurrentAndDefaultEquals(arrA.GetValue(i), arrB.GetValue(i))) {
 							return false;
 						}
@@ -389,7 +386,7 @@ namespace SteamEngine {
 			return object.Equals(a, b);
 		}
 
-		[Summary("If true, it has not been set from scripts nor from saves nor manually")]
+		/// <summary>If true, it has not been set from scripts nor from saves nor manually</summary>
 		public bool IsDefaultCodedValue {
 			get {
 				if (this.isSetFromScripts || this.isChangedManually) {
