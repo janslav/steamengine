@@ -16,19 +16,11 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
 using System.Reflection;
-using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Configuration;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.LScript;
-using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 
 namespace SteamEngine {
 	public static class Commands {
@@ -242,8 +234,11 @@ namespace SteamEngine {
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Runs a method or function of the object self, given by name, and possible "
-		+ "one argument of numeric or string type, separated by space from the name")]
+		/// <summary>
+		/// Runs a method or function of the object self, given by name, and possible 
+		/// one argument of numeric or string type, separated by space from the name
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryRunSnippet(ISrc commandSrc, TagHolder self, string code, out string errText) {
 			Match m = commandRE.Match(code);
 			if (m.Success) {

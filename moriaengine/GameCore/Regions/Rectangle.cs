@@ -16,7 +16,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.Regions {
@@ -73,7 +72,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override string ToString() {
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture,
 				"({0}, {1})+({2}, {3})",
 				this.MinX.ToString(System.Globalization.CultureInfo.InvariantCulture),
 				this.MinY.ToString(System.Globalization.CultureInfo.InvariantCulture),
@@ -81,7 +80,9 @@ namespace SteamEngine.Regions {
 				this.MaxY.ToString(System.Globalization.CultureInfo.InvariantCulture));
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Does the rectangle contain another rectangle completely?")]
+		/// <summary>
+		/// Determines whether this rectangle contains the specified rectangle completely.
+		/// </summary>
 		public bool Contains(AbstractRectangle rect) {
 			return Contains(rect.MinX, rect.MinY)//left lower
 					&& Contains(rect.MinX, rect.MaxY) //left upper
@@ -97,11 +98,16 @@ namespace SteamEngine.Regions {
 					|| Contains(rect.MaxX, rect.MinY);//right lower
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Do the two rectangles have any intersection?")]
-		public static bool Intersects(AbstractRectangle a, AbstractRectangle b) {
+		/// <summary>
+		/// Determines whether the specified rectangles intersect
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		public static bool Intersect(AbstractRectangle a, AbstractRectangle b) {
 			return a.IntersectsWith(b) || b.IntersectsWith(a);
 		}
-
 
 		public int TilesNumber {
 			get {
@@ -142,8 +148,11 @@ namespace SteamEngine.Regions {
 			this.maxY = end.Y;
 		}*/
 
-		[Summary("Return a rectangle created from the central point with the specific range around the point" +
-				"(square 'around')")]
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ImmutableRectangle"/> class, 
+		/// created from the central point with the specific range around the point 
+		/// (square 'around')
+		/// </summary>
 		public ImmutableRectangle(int x, int y, int range) {
 			this.minX = x - range;
 			this.minY = y - range;

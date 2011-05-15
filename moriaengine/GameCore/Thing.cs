@@ -16,20 +16,16 @@
  */
 
 using System;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using System.Diagnostics;
-using System.Configuration;
-using SteamEngine.Persistence;
-using SteamEngine.Regions;
-using SteamEngine.Networking;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
+using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 	internal interface ObjectWithUid {
@@ -589,52 +585,6 @@ namespace SteamEngine {
 			}
 		}
 
-		///**
-		//	This is called by NetState once updates have been sent out for this thing. This simply
-		//	instructs the Thing to reset netStateChanged to false. (The NetState object is discarded
-		//	shortly after this is called; It is passed here only so that this Thing can verify that it
-		//	is in fact the proper NetState object)
-		// */
-		//internal void NetStateSyncDone(NetState stateObj) {
-		//	Sanity.IfTrueSay(netStateChanged==false, "NetStateSynchronized was called, but netStateChanged is false.");
-		//	Sanity.IfTrueSay(stateObj==null, "NetStateSynchronized was called, but stateObj is null.");
-		//	Sanity.IfTrueSay(stateObj==null, "NetStateSynchronized was called, but stateObj is null.");
-		//	if (netStateChanged==true && stateObj.Thing==this) {
-		//		netStateChanged=false;
-		//	}
-		//}
-
-
-		//[Summary("This should be called immediately before anything is changed which will require sending of some packets\
-		//	to inform clients of the change.")] 
-		//[Remarks("NetState will determine what has changed, what to send, and sending it.\
-		//	All you have to do it call this BEFORE making a change.\
-		//	This should be called by the setters for things like Model, Color, etc, it is not intended to be called\
-		//	from scripts or anything like that - anything they change which will result in needed resending should\
-		//	itself call this.\
-		//	Calling this more than once per cycle is harmless and perfectly OK to do.")]
-		//public void AboutToChange(NSFlags flags) {
-		//	CheckDeleted();
-		//	NetState.AboutToChange(this, flags);
-		//}
-		//
-		//[Summary("This should be called immediately before a skill is changed. which will require sending \
-		//	of some packets to inform clients of the change")]
-		//[Remarks("NetState will determine what has changed, what to send, and sending it.\
-		//	All you have to do it call this BEFORE making a change.\
-		//	This should be called by the setters of ISkill.\
-		//	Calling this more than once per cycle is harmless and perfectly OK to do.")]
-		//public void AboutToChangeSkill(ushort skillId) {
-		//	CheckDeleted();
-		//	NetState.AboutToChangeSkill(this, skillId);
-		//}
-
-
-		//internal void NSMessage(NSMsg msg, params object[] args) {
-		//	Sanity.IfTrueThrow(!netStateChanged, "You can only use NSMessage once AboutToChange has been used this cycle.");
-		//	NetState.Message(this, msg, args);
-		//}
-
 		public abstract AbstractItem FindCont(int index);
 
 		IEnumerator IEnumerable.GetEnumerator() {
@@ -698,11 +648,20 @@ namespace SteamEngine {
 		}
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("This is called after this object was is being loaded.")]
+		/// <summary>
+		/// Called after this object was loaded.
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_AfterLoad() {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("This is called when this object is being loaded, before the LoadLine calls. It exists because of ClassTemplate and it's autogenerating of the Save method itself. With this, it's possible to implement user save code...")]
+		/// <summary>
+		/// Called when this object is being loaded, before the LoadLine calls. 
+		/// It exists because of ClassTemplate and it's autogenerating of the Save method itself. 
+		/// With this, it's possible to implement custom save code...
+		/// </summary>
+		/// <param name="output">The output.</param>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Load(PropsSection output) {
 		}
 
@@ -736,7 +695,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[Summary("Sets all uids to lowest possible value. Always save & restart after doing this.")]
+		/// <summary>Sets all uids to lowest possible value. Always save & restart after doing this.</summary>
 		public static void ResetAllUids() {
 			things.ReIndexAll();
 		}
@@ -815,7 +774,13 @@ namespace SteamEngine {
 			base.Save(output);//tagholder save
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), Summary("This is called when this object is being saved. It exists because of ClassTemplate and it's autogenerating of the Save method itself. With this, it's possible to implement custom save code...")]
+		/// <summary>
+		/// This is called when this object is being saved. 
+		/// It exists because of ClassTemplate and it's autogenerating of the Save method itself. 
+		/// With this, it's possible to implement custom save code...
+		/// </summary>
+		/// <param name="output">The output.</param>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Save(SaveStream output) {
 
 		}

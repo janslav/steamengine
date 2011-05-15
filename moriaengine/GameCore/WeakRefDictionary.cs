@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SteamEngine.Common;
 
 namespace SteamEngine {
 	internal struct WeakRefDictionaryKeyEntry {
@@ -16,7 +15,7 @@ namespace SteamEngine {
 		void Purge();
 	}
 
-	[Summary("We purge the caches when saving world")]
+	/// <summary>We purge the caches when saving world</summary>
 	public static class WeakRefDictionaryUtils {
 		internal static List<WeakReference> allCaches = new List<WeakReference>();
 
@@ -33,9 +32,13 @@ namespace SteamEngine {
 		}
 	}
 
-	[Summary("Dictionary of weakly referenced keys and values. "
-	+ "That means you can put inside stuff and then later it may or may not be still inside :)"
-	+ "Depending on whether it has been deleted meanwhile (if it's IDeletable) or eaten by system garbage collection.")]
+	/// <summary>
+	/// Dictionary of weakly referenced keys and values. 
+	/// That means you can put inside stuff and then later it may or may not be still inside :)
+	/// Depending on whether it has been deleted meanwhile (if it's IDeletable) or eaten by system garbage collection.
+	/// </summary>
+	/// <typeparam name="TKey">The type of the key.</typeparam>
+	/// <typeparam name="TValue">The type of the value.</typeparam>
 	public class WeakRefDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IPurgable
 		where TKey : class
 		where TValue : class {
@@ -94,7 +97,7 @@ namespace SteamEngine {
 		}
 
 		#region IPurgable Members
-		[Summary("Clears out the entries where either the key or the value have become deleted (if they're IDeletable) or have been memory-collected")]
+		/// <summary>Clears out the entries where either the key or the value have become deleted (if they're IDeletable) or have been memory-collected</summary>
 		public void Purge() {
 			List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>> aliveEntries = new List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>>(this.dict.Count);
 			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {

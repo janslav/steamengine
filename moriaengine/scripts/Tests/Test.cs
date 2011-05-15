@@ -16,16 +16,12 @@
 */
 
 using System;
-using System.Collections;
-using SteamEngine;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[HasSavedMembers]
-	[Summary("Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.")]
+	/// <summary>Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.</summary>
 #pragma warning disable 0414 //disable the boring "private field never used warning"
 	public static class TESTSettClass {
 		[SavedMember("attr1", "Category1")]
@@ -125,8 +121,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Documentation in scripts")]
-		[Remark("Documentation attributes are allowed in scripts.")]
+		/// <summary>Documentation in scripts</summary>
+		/// <remarks>Documentation attributes are allowed in scripts.</remarks>
 		[SteamFunction]
 		public static TagHolder testInvoking(TagHolder self, string accname) {
 			Console.WriteLine("I am called on " + self + " with '" + accname + "'");

@@ -14,17 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Timers;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("A timer editing dialog")]
+	/// <summary>A timer editing dialog</summary>
 	public class D_EditTimer : CompiledGumpDef {
 		internal static readonly TagKey editedTimerTK = TagKey.Acquire("_timer_edited_");
 		private static int width = 400;

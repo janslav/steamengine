@@ -14,16 +14,13 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all character's roles")]
+	/// <summary>Dialog listing all character's roles</summary>
 	public class D_CharsRolesList : CompiledGumpDef {
 		internal static readonly TagKey listTK = TagKey.Acquire("_roles_set_");
 		internal static readonly TagKey criteriumTK = TagKey.Acquire("_roles_criterium_");
@@ -160,7 +157,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all chars roles")]
+		/// <summary>Retreives the list of all chars roles</summary>
 		private List<Role> ListifyRoles(IEnumerable<Role> roles, string criteria) {
 			List<Role> rlsList = new List<Role>();
 			foreach (Role entry in roles) {
@@ -173,7 +170,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return rlsList;
 		}
 
-		[Summary("Sorting of the roles list")]
+		/// <summary>Sorting of the roles list</summary>
 		private void SortRoles(List<Role> list, SortingCriteria criteria) {
 			switch (criteria) {
 				case SortingCriteria.NameAsc:
@@ -193,8 +190,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display a list of roles on a given character. Function accessible from the game." +
-				"The function is designed to be triggered using .x RolesList(criteria)")]
+		/// <summary>
+		/// Display a list of roles on a given character. Function accessible from the game.
+		/// The function is designed to be triggered using .x RolesList(criteria)
+		/// </summary>
 		[SteamFunction]
 		public static void RolesList(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
@@ -208,7 +207,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting roles by name asc")]
+	/// <summary>Comparer for sorting roles by name asc</summary>
 	public class RolesNameComparer : IComparer<Role> {
 		public readonly static RolesNameComparer instance = new RolesNameComparer();
 
@@ -221,7 +220,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting roles by their roledefs defname asc")]
+	/// <summary>Comparer for sorting roles by their roledefs defname asc</summary>
 	public class RolesRoleDefsDefNameComparer : IComparer<Role> {
 		public readonly static RolesRoleDefsDefNameComparer instance = new RolesRoleDefsDefNameComparer();
 

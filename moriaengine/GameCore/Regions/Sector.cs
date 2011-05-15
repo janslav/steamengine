@@ -16,12 +16,9 @@
 */
 
 using System;
-using System.IO;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using System.Diagnostics;
 
 namespace SteamEngine.Regions {
 	public partial class Map {
@@ -61,19 +58,19 @@ namespace SteamEngine.Regions {
 
 			internal LinkedList<AbstractCharacter> Players {
 				get {
-					return this.players; 
+					return this.players;
 				}
 			}
 
 			internal ThingLinkedList Disconnects {
 				get {
-					return this.disconnects; 
+					return this.disconnects;
 				}
 			}
 
 			internal MultiComponentLinkedList MultiComponents {
 				get {
-					return this.multiComponents; 
+					return this.multiComponents;
 				}
 			}
 
@@ -96,11 +93,11 @@ namespace SteamEngine.Regions {
 				get {
 					return this.m;
 				}
-			} 
+			}
 
 			public override string ToString() {
 				return string.Format(System.Globalization.CultureInfo.InvariantCulture,
-					"sector with coords {0}, {1}, mapplane {2}", 
+					"sector with coords {0}, {1}, mapplane {2}",
 					this.sx.ToString(System.Globalization.CultureInfo.InvariantCulture),
 					this.sy.ToString(System.Globalization.CultureInfo.InvariantCulture),
 					this.m.ToString(System.Globalization.CultureInfo.InvariantCulture));
@@ -357,7 +354,7 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			//[Summary("Used only for one region - we will remove only its rectangles (used e.g. when editing one region through the dialog)")]
+			///// <summary>Used only for one region - we will remove only its rectangles (used e.g. when editing one region through the dialog)</summary>
 			//internal void ClearOneRegionRectangles(Region whichRegion) {
 			//    List<RegionRectangle> copyRects = new List<RegionRectangle>(this.rectangles);
 			//    foreach (RegionRectangle regRect in this.rectangles) {

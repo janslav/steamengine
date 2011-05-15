@@ -14,16 +14,10 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog that will display possible categories of characters to track (NPC's, Animals, Players)")]
+	/// <summary>Dialog that will display possible categories of characters to track (NPC's, Animals, Players)</summary>
 	public class D_Tracking_Categories : CompiledGumpDef {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);

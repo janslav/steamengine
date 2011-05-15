@@ -17,10 +17,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
@@ -30,24 +26,24 @@ namespace SteamEngine.CompiledScripts {
 		[SavedMember]
 		public static Hashtable gmPages = new Hashtable();
 
-		[Summary("Returns a copy of the GMPages Hashtable (usable for sorting etc.)")]
+		/// <summary>Returns a copy of the GMPages Hashtable (usable for sorting etc.)</summary>
 		public static Hashtable GmPages {
 			get {
 				return new Hashtable(gmPages);
 			}
 		}
 
-		[Summary("Simple 'add' method.")]
+		/// <summary>Simple 'add' method.</summary>
 		public static void AddNewPage(GMPageEntry newPage) {
 			gmPages[newPage.sender] = newPage;
 		}
 
-		[Summary("Simple 'remove' method.")]
+		/// <summary>Simple 'remove' method.</summary>
 		public static void DeletePage(GMPageEntry thePage) {
 			gmPages.Remove(thePage.sender);
 		}
 
-		[Summary("Sorting method: Sorting criteria available are nameUp, accountUp, timeUp")]
+		/// <summary>Sorting method: Sorting criteria available are nameUp, accountUp, timeUp</summary>
 		public static ArrayList GetSortedBy(SortingCriteria criterion) {
 			ArrayList pages = new ArrayList(gmPages.Values);
 			switch (criterion) {
@@ -79,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 			return pages;
 		}
 
-		[Summary("Find all available GMs that are online and notify them of the new page.")]
+		/// <summary>Find all available GMs that are online and notify them of the new page.</summary>
 		private static void NotifyOnlineGMs(AbstractCharacter sender) {
 			bool isGMOnline = false;
 			foreach (Character plr in Networking.GameServer.GetAllPlayers()) {
@@ -95,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Return the number of unresolved pages  - that means count all pages that have not been replied (or deleted :) )")]
+		/// <summary>Return the number of unresolved pages  - that means count all pages that have not been replied (or deleted :) )</summary>
 		public static int CountUnresolved() {
 			int counter = 0;
 			foreach (GMPageEntry page in gmPages.Values) {
@@ -107,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SteamFunction]
-		[Summary("Create a new gmpage, store it in the gm pages table and notify the sender about the state")]
+		/// <summary>Create a new gmpage, store it in the gm pages table and notify the sender about the state</summary>
 		public static void Page(AbstractCharacter sender, ScriptArgs text) {
 			if (text == null || text.Args.Equals("")) {
 				sender.SysMessage("Odmitnuta prazdna page");
@@ -158,7 +154,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Comparator serving for sorting the list of pages by name of their author")]
+	/// <summary>Comparator serving for sorting the list of pages by name of their author</summary>
 	class GMPageNameComparator : IComparer {
 		public static GMPageNameComparator instance = new GMPageNameComparator();
 
@@ -173,7 +169,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Comparator serving for sorting the list of pages by name their creation time")]
+	/// <summary>Comparator serving for sorting the list of pages by name their creation time</summary>
 	class GMPageTimeComparator : IComparer {
 		public static GMPageTimeComparator instance = new GMPageTimeComparator();
 
@@ -188,7 +184,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Comparator serving for sorting the list of pages by teir creators account name")]
+	/// <summary>Comparator serving for sorting the list of pages by teir creators account name</summary>
 	class GMPageAccountComparator : IComparer {
 		public static GMPageAccountComparator instance = new GMPageAccountComparator();
 

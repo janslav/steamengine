@@ -16,12 +16,8 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 using SteamEngine.Persistence;
 
 
@@ -114,17 +110,17 @@ namespace SteamEngine.CompiledScripts {
 			lastOpen = (long) Globals.TimeInSeconds;
 		}
 
-		[Summary("Assigns a time in seconds to the lastOpen attribute representing the serverTime 'secBack' seconds before.")]
+		/// <summary>Assigns a time in seconds to the lastOpen attribute representing the serverTime 'secBack' seconds before.</summary>
 		public void SetLastopen(int secBack) {
 			lastOpen = (long) Globals.TimeInSeconds - secBack;
 		}
 
-		[Summary("Returns a time in seconds from the last treasure opening.")]
+		/// <summary>Returns a time in seconds from the last treasure opening.</summary>
 		public long GetLastopenTimeDifference() {
 			return (long) Globals.TimeInSeconds - lastOpen;
 		}
 
-		[Summary("Returns a string containing easy to read info on how long it is from the last treasure opening.")]
+		/// <summary>Returns a string containing easy to read info on how long it is from the last treasure opening.</summary>
 		public string GetLastopenTimeDifference(bool isTimeString) {
 			if (isTimeString) {
 				long d, h, m, s;
@@ -218,7 +214,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Adds new item into TreasureItem List")]
+		/// <summary>Adds new item into TreasureItem List</summary>
 		public void AddTreasureItem(ItemDef item, int amount, int chance, int periodic) {
 			EnsureListItemEntry();
 			TreasureItemEntry newItem = new TreasureItemEntry();
@@ -229,7 +225,7 @@ namespace SteamEngine.CompiledScripts {
 			treasureItems.Add(newItem);
 		}
 
-		[Summary("Overwrites attributes of one paticular TreasureItemEntry in the list of treasureItems")]
+		/// <summary>Overwrites attributes of one paticular TreasureItemEntry in the list of treasureItems</summary>
 		public void OverwriteTreasureItem(int itemIndex, ItemDef item, int amount, int chance, int periodic) {
 			if (treasureItems.Count <= itemIndex) {
 				// chyba !
@@ -241,7 +237,7 @@ namespace SteamEngine.CompiledScripts {
 			treasureItems[itemIndex].periodic = periodic;
 		}
 
-		[Summary("Removes an item from the list of treasureItems")]
+		/// <summary>Removes an item from the list of treasureItems</summary>
 		public void RemoveTreasureItem(int itemIndex) {
 			if (treasureItems.Count <= itemIndex) {
 				// chyba !
@@ -250,7 +246,7 @@ namespace SteamEngine.CompiledScripts {
 			treasureItems.RemoveAt(itemIndex);
 		}
 
-		[Summary("Adds new item into treasureSpawns List")]
+		/// <summary>Adds new item into treasureSpawns List</summary>
 		public void AddTreasureSpawn(CharacterDef charDef, int amount) {
 			EnsureListSpawnEntry();
 			TreasureSpawnEntry newSpawn = new TreasureSpawnEntry();
@@ -259,7 +255,7 @@ namespace SteamEngine.CompiledScripts {
 			treasureSpawns.Add(newSpawn);
 		}
 
-		[Summary("Overwrites attributes of one paticular TreasureSpawnEntry in the list of treasureSpawns")]
+		/// <summary>Overwrites attributes of one paticular TreasureSpawnEntry in the list of treasureSpawns</summary>
 		public void OverwriteTreasureSpawn(int spawnIndex, CharacterDef charDef, int amount) {
 			if (treasureSpawns.Count <= spawnIndex) {
 				// chyba !
@@ -269,7 +265,7 @@ namespace SteamEngine.CompiledScripts {
 			treasureSpawns[spawnIndex].amount = amount;
 		}
 
-		[Summary("Removes an item from the list of treasureSpawns")]
+		/// <summary>Removes an item from the list of treasureSpawns</summary>
 		public void RemoveTreasureSpawn(int spawnIndex) {
 			if (treasureSpawns.Count <= spawnIndex) {
 				// chyba !
@@ -322,7 +318,7 @@ namespace SteamEngine.CompiledScripts {
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("The dialog that will display the treasure menu")]
+	/// <summary>The dialog that will display the treasure menu</summary>
 	public class D_TreasureChest : CompiledGumpDef {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -466,7 +462,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 
-	[Summary("The dialog that will display items generated it the trasure.")]
+	/// <summary>The dialog that will display items generated it the trasure.</summary>
 	public class D_TreasureBounty : CompiledGumpDef {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -571,7 +567,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 
-	[Summary("The dialog that will display spawns guarding the trasure.")]
+	/// <summary>The dialog that will display spawns guarding the trasure.</summary>
 	public class D_TreasureSpawns : CompiledGumpDef {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {

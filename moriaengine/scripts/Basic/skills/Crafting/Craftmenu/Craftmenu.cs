@@ -15,18 +15,16 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[HasSavedMembers]
-	[Summary("Class containing all main crafting categories (according to the crafting skills)." +
-			"Each skill has one main category for its items and possible subcategories")]
+	/// <summary>
+	/// Class containing all main crafting categories (according to the crafting skills).
+	/// Each skill has one main category for its items and possible subcategories
+	/// </
 	public static class CraftmenuContents {
 		[SavedMember]
 		private static readonly Dictionary<SkillName, CraftmenuCategory> mainCategories = new Dictionary<SkillName, CraftmenuCategory>();
@@ -72,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("One line in the craftmenu - can be either the category of items or the particular item(def) itself")]
+	/// <summary>One line in the craftmenu - can be either the category of items or the particular item(def) itself</summary>
 	public interface ICraftmenuElement {
 		string Name {
 			get;
@@ -91,10 +89,12 @@ namespace SteamEngine.CompiledScripts {
 		void Bounce(AbstractItem whereto);
 	}
 
-	[SaveableClass]
-	[Summary("Craftmenu category class. This is the entity where all Items from the menu are stored as well " +
-			"as it is a container for another subcategories")]
 	[ViewableClass]
+	[SaveableClass]
+	/// <summary>
+	/// Craftmenu category class. This is the entity where all Items from the menu are stored as well 
+	/// as it is a container for another subcategories
+	/// </summary>
 	public class CraftmenuCategory : ICraftmenuElement, IDeletable {
 		internal bool isLoaded = false;
 
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts {
 			this.categorySkill = csd;
 		}
 
-		[Summary("Get name compound also from the possible parent's name (if any)")]
+		/// <summary>Get name compound also from the possible parent's name (if any)</summary>
 		public string FullName {
 			get {
 				ThrowIfDeleted();
@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Return the (grand)parent from this category that lies on the first hierarchy level")]
+		/// <summary>Return the (grand)parent from this category that lies on the first hierarchy level</summary>
 		public CraftmenuCategory MainParent {
 			get {
 				if (this.Parent == this) {
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Return the category's skill which is used for crafting items from it")]
+		/// <summary>Return the category's skill which is used for crafting items from it</summary>
 		public CraftingSkillDef CategorySkill {
 			get {
 				return this.MainParent.categorySkill;
@@ -193,7 +193,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Category cleaning method - clear the contents and remove from the parent")]
+		/// <summary>Category cleaning method - clear the contents and remove from the parent</summary>
 		public void Remove() {
 			if (this.Parent != null) {
 				this.Parent.Contents.Remove(this); //remove from the parent's hierarchy list
@@ -204,7 +204,7 @@ namespace SteamEngine.CompiledScripts {
 			Delete(); //will clear the reference to the parent and disable the overall usage as favourite category etc.
 		}
 
-		[Summary("After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it")]
+		/// <summary>After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it</summary>
 		public void Bounce(AbstractItem whereto) {
 			Item newPouch = (Item) ItemDef.GetByDefname("i_pouch").Create(whereto);
 			newPouch.Name = this.Name;
@@ -241,7 +241,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[SaveableClass]
 	[ViewableClass]
-	[Summary("Craftmenu item class. This is the entity representing a single Item in the craftmenu")]
+	/// <summary>Craftmenu item class. This is the entity representing a single Item in the craftmenu</summary>
 	public class CraftmenuItem : ICraftmenuElement {
 		[SaveableData]
 		public ItemDef itemDef;
@@ -268,7 +268,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("CraftmenuItem must always be in some CraftmenuCategory!")]
+		/// <summary>CraftmenuItem must always be in some CraftmenuCategory!</summary>
 		public CraftmenuCategory Parent {
 			get {
 				if (parent == null) {
@@ -282,7 +282,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Remove the item from the parent's list")]
+		/// <summary>Remove the item from the parent's list</summary>
 		public void Remove() {
 			if (this.Parent != null) {
 				this.Parent.Contents.Remove(this);
@@ -290,14 +290,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Bouncing of the item means creating an instance and putting to the specified location")]
+		/// <summary>Bouncing of the item means creating an instance and putting to the specified location</summary>
 		public void Bounce(AbstractItem whereto) {
 			Item newItm = (Item) itemDef.Create(whereto);
 		}
 		#endregion
 	}
 
-	[Summary("Target for targetting single items or containers containing items to be added to the craftmenu (to the selected category)")]
+	/// <summary>Target for targetting single items or containers containing items to be added to the craftmenu (to the selected category)</summary>
 	public class Targ_Craftmenu : CompiledTargetDef {
 		protected override void On_Start(Player self, object parameter) {
 			self.SysMessage("Zamìø pøedmìt pøípadnì konejner s pøedmìty pro pøidání do craftmenu.");
@@ -342,7 +342,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Class for describing one of the selected items and its count to be crafted")]
+	/// <summary>Class for describing one of the selected items and its count to be crafted</summary>
 	public class CraftingSelection {
 		private readonly ItemDef itemDef;
 		private int count;
@@ -368,8 +368,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Summary("Class encapsulating one instance of the crafting 'order list' - the queue of the CraftingSelections " +
-			"and the required used skill.")]
+	/// <summary>
+	/// Class encapsulating one instance of the crafting 'order list' - the queue of the CraftingSelections 
+	/// and the required used skill.
+	/// </summary>
 	public class CraftingOrder {
 		private readonly CraftingSkillDef craftingSkill;
 		private SimpleQueue<CraftingSelection> selectionQueue;

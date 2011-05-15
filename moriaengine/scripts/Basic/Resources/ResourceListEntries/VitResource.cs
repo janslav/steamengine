@@ -16,17 +16,16 @@
 */
 
 using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as characters Vitality")]
+	/// <summary>Resource as characters Vitality</summary>
 	public class StatVitResource : AbstractResourceListEntry, IResourceListEntry_Simple {
 		public static void Bootstrap() {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given string as ItemResource")]
+		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			if ("Vit".Equals(definition, StringComparison.OrdinalIgnoreCase) ||
 					"Vitality".Equals(definition, StringComparison.OrdinalIgnoreCase)) {
@@ -45,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("String from which the resource could be parsed again, used for saving")]
+		/// <summary>String from which the resource could be parsed again, used for saving</summary>
 		public override string ParsableString {
 			get {
 				return "vit";
@@ -69,10 +68,10 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		[Summary("Indicates whether this is a consumable resource")]
+		/// <summary>Indicates whether this is a consumable resource</summary>
 		public bool IsConsumable { get { return false; } }
 
-		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		/// <summary>Consumes this resource. Throws if this is not a consumable resource.</summary>
 		public void Consume(Character ch) {
 			throw new InvalidOperationException("Vitality can not be consumed as a resource.");
 		}

@@ -15,15 +15,16 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
-using System.Timers;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
-	[Summary("This class holds information about one ability the user has - the number of ability points " +
-			 "and any additional info (such as timers connected with the ability running etc.)")]
+	/// <summary>
+	/// This class holds information about one ability the user has - the number of ability points 
+	/// and any additional info (such as timers connected with the ability running etc.)
+	/// </summary>
 	public sealed class Ability {
 		private byte realPoints;
 		private sbyte modification;
@@ -46,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 			this.cont = cont;
 		}
 
-		[Summary("Character's ability points. This is the real value, i.e. unmodified by temporary effect, equipped magic items, etc.")]
+		/// <summary>Character's ability points. This is the real value, i.e. unmodified by temporary effect, equipped magic items, etc.</summary>
 		public int RealPoints {
 			get {
 				return this.realPoints;
@@ -64,16 +65,20 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Character's ability points. This is the modified value, which can be different from RealPoints when some temporary effects take place. " +
-			"When character dies, this value should become equal to RealPoints.")]
-		[Remark("This will never return a negative value, even if RealPoints+modification is negative. That's why the modification must be changed in a separate method.")]
+		/// <summary>
+		/// Character's ability points. This is the modified value, which can be different from RealPoints when some temporary effects take place.
+		/// When character dies, this value should become equal to RealPoints.
+		/// </summary>
+		/// <remarks>
+		/// This will never return a negative value, even if RealPoints+modification is negative. That's why the modification must be changed in a separate method.
+		/// </remarks>
 		public int ModifiedPoints {
 			get {
 				return Math.Max(0, this.realPoints + this.modification);
 			}
 		}
 
-		[Summary("Change the value of ModifiedPoints")]
+		/// <summary>Change the value of ModifiedPoints</summary>
 		public void ModifyPoints(int difference) {
 			if (difference != 0) {
 				int oldValue = this.ModifiedPoints;
@@ -113,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("If this is an activable ability, is it running?")]
+		/// <summary>If this is an activable ability, is it running?</summary>
 		public bool Running {
 			get {
 				ActivableAbilityDef activableAbility = this.def as ActivableAbilityDef;
@@ -130,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Character who possesses this ability")]
+		/// <summary>Character who possesses this ability</summary>
 		public Character Cont {
 			get {
 				return this.cont;
@@ -143,7 +148,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Server time of the last usage")]
+		/// <summary>Server time of the last usage</summary>
 		public TimeSpan LastUsage {
 			get {
 				return this.lastUsage;

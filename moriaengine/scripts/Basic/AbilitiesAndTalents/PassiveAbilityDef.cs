@@ -15,30 +15,28 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Special abiliy class used for implementing abilities that will automatically perform their action when the " +
-			"first point is assigned to them (e.g. Regenerations...). These actions can be performed using the included TriggerGroup or " +
-			"Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability) " +
-			"We make this class to be child of ActivableAbilityDef because we want to have the possibility to swithc (even the passive) " +
-			"ability off - e.g. hypothetical ability 'Healing nearby comrades' might be switched of in some hardcore dungeon where healing is not allowed etc.")]
+	/// <summary>
+	/// Special abiliy class used for implementing abilities that will automatically perform their action when the 
+	/// first point is assigned to them (e.g. Regenerations...). These actions can be performed using the included TriggerGroup or 
+	/// Plugin that will be attached/detached when the first point is added to the ability (last point is removed from the ability) 
+	/// We make this class to be child of ActivableAbilityDef because we want to have the possibility to swithc (even the passive) 
+	/// ability off - e.g. hypothetical ability 'Healing nearby comrades' might be switched of in some hardcore dungeon where healing is not allowed 
+	/// etc.
+	/// </summary>
 	[ViewableClass]
 	public class PassiveAbilityDef : ActivableAbilityDef {
 		public PassiveAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
 
-		[Summary("This method implements the assigning of the first point to the Ability" +
-		"Just call the activate method from parent (this will ensure assigning all TGs and Plugins")]
+		/// <summary>
+		/// This method implements the assigning of the first point to the Ability
+		/// Just call the activate method from parent (this will ensure assigning all TGs and Plugins
+		/// </summary>
 		protected override void On_Assign(Character ch, Ability ab) {
 			Activate(ch); //activate the ability automatically
 		}

@@ -14,16 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all character's abilities")]
+	/// <summary>Dialog listing all character's abilities</summary>
 	public class D_CharsAbilitiesList : CompiledGumpDef {
 		internal static readonly TagKey listTK = TagKey.Acquire("_abilities_set_");
 		internal static readonly TagKey criteriumTK = TagKey.Acquire("_abilities_criterium_");
@@ -100,15 +96,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			TimeSpan now = Globals.TimeAsSpan;
 			for (int i = firstiVal; i < imax; i++) {
 				Ability ab = abList[i];
-				
+
 				//infodialog
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((5 * i) + 10).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ab.Name).Build();
-				dlg.LastTable[rowCntr, 2] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((5 * i) + 11).Width(30).Text(""+ab.ModifiedPoints).Build();
+				dlg.LastTable[rowCntr, 2] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((5 * i) + 11).Width(30).Text("" + ab.ModifiedPoints).Build();
 				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text("/" + ab.MaxPoints).XPos(30).Build();
-			
+
 				TimeSpan ago = now - ab.LastUsage;
-				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Math.Round(ago.TotalSeconds,1) + " secs ago").Build();
+				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Math.Round(ago.TotalSeconds, 1) + " secs ago").Build();
 				AbilityDef adef = ab.Def;
 				if (adef is PassiveAbilityDef) { //PassiveAbilityDef ability nebude mit vubec nic na mackani
 					dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text("").Build();
@@ -118,11 +114,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else if (adef is ActivableAbilityDef) { //activable ability budou mit tlacitka na zapnuti i vypnuti
 					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Active(!ab.Running).Id((5 * i) + 12).Build();
 					dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Active(ab.Running).Id((5 * i) + 13).Build();
-				} else if(adef is ImmediateAbilityDef) { //immediate ability def bude mit jen zapinaci tlacitko
+				} else if (adef is ImmediateAbilityDef) { //immediate ability def bude mit jen zapinaci tlacitko
 					dlg.LastTable[rowCntr, 4] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id((5 * i) + 12).Build();
 					dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text("").Build();
 					//dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonNoOperation).Active(false).Id((5 * i) + 13).Build();
-				}					
+				}
 				dlg.LastTable[rowCntr, 6] = GUTAText.Builder.Text(ab.Def.Defname).Build();
 				//abilitydef info dialog
 				dlg.LastTable[rowCntr, 7] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((5 * i) + 14).Build();
@@ -178,13 +174,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						args.SetTag(D_CharsAbilitiesList.sortingTK, SortingCriteria.DefnameDesc);
 						args.RemoveTag(D_CharsAbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
-						break;					
+						break;
 					case 8: //pridat abilitu
 						//nacteme obsah obou input fieldu
 						string abilityDefname = gr.GetTextResponse(6);
 						double abilityPoints = gr.GetNumberResponse(7);
 						AbilityDef abDef = AbilityDef.GetByDefname(abilityDefname);
-						if(abDef == null) {
+						if (abDef == null) {
 							//zadal neexistujici abilitydefname
 							Gump newGi = D_Display_Text.ShowError("Chybnì zadáno, neznámý abilitydefname: " + abilityDefname);
 							DialogStacking.EnstackDialog(gi, newGi);
@@ -197,14 +193,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 9: //Ulozit zmeny
-						abiliter = (Character)gi.Focus;
+						abiliter = (Character) gi.Focus;
 						string result = "Výsledek zmìn hodnot abilit: <br>";
-						for(int abId = firstOnPage; abId < imax; abId++) {
+						for (int abId = firstOnPage; abId < imax; abId++) {
 							int inptID = 5 * abId + 11;
 							Ability chgdAbility = abList[abId];
 							int newAbilityValue = (int) gr.GetNumberResponse(inptID);
 							int oldAbilityValue = abiliter.GetAbility(chgdAbility.Def);
-							if(oldAbilityValue != newAbilityValue) {
+							if (oldAbilityValue != newAbilityValue) {
 								result = result + "Abilita '" + chgdAbility.Name + "' zmìnìna z " + oldAbilityValue + " na " + newAbilityValue + "<br>";
 								abiliter.SetRealAbilityPoints(chgdAbility.Def, newAbilityValue);
 							}
@@ -231,7 +227,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //de-activate ability (dostupne jen kdyz abilita bezela) - pro Activable Ability
-						((ActivableAbilityDef)ab.Def).Deactivate((Character) gi.Focus);
+						((ActivableAbilityDef) ab.Def).Deactivate((Character) gi.Focus);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //abilitydef info
@@ -242,7 +238,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all chars abilities")]
+		/// <summary>Retreives the list of all chars abilities</summary>
 		private List<Ability> ListifyAbilities(IEnumerable<Ability> abilities, string criteria) {
 			List<Ability> absList = new List<Ability>();
 			foreach (Ability entry in abilities) {
@@ -255,7 +251,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return absList;
 		}
 
-		[Summary("Sorting of the abilities list")]
+		/// <summary>Sorting of the abilities list</summary>
 		private void SortAbilities(List<Ability> list, SortingCriteria criteria) {
 			switch (criteria) {
 				case SortingCriteria.NameAsc:
@@ -282,8 +278,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display a list of roles on a given character. Function accessible from the game." +
-			   "The function is designed to be triggered using .x AbilitiessList(criteria)")]
+		/// <summary>
+		/// Display a list of roles on a given character. Function accessible from the game.
+		/// The function is designed to be triggered using .x AbilitiessList(criteria)
+		/// </summary>
 		[SteamFunction]
 		public static void AbilitiesList(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
@@ -297,7 +295,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting abilities by name asc")]
+	/// <summary>Comparer for sorting abilities by name asc</summary>
 	public class AbilitiesNameComparer : IComparer<Ability> {
 		public readonly static AbilitiesNameComparer instance = new AbilitiesNameComparer();
 
@@ -310,7 +308,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting abilities by their abilitydefs defname asc")]
+	/// <summary>Comparer for sorting abilities by their abilitydefs defname asc</summary>
 	public class AbilitiesAbilityDefsDefNameComparer : IComparer<Ability> {
 		public readonly static AbilitiesAbilityDefsDefNameComparer instance = new AbilitiesAbilityDefsDefNameComparer();
 
@@ -323,7 +321,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting abilitiys by running status")]
+	/// <summary>Comparer for sorting abilitiys by running status</summary>
 	public class AbilitiesRunningStateComparer : IComparer<Ability> {
 		public readonly static AbilitiesRunningStateComparer instance = new AbilitiesRunningStateComparer();
 

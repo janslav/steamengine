@@ -194,7 +194,10 @@
 				<include name="${communicationFileName}" />
 				<include name="${commonFileName}" />
 				<include name="System.dll" />
+				<include name="System.XML.dll" />
+				<include name="System.Xml.Linq.dll" />				
 				<include name="System.Core.dll" />
+				<include name="System.Configuration.dll" />
 			</references>
 			<arg line="${cmdLineParams}" />
 		</csc>

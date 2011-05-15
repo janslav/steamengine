@@ -14,16 +14,13 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog that will display the admin dialog")]
+	/// <summary>Dialog that will display the admin dialog</summary>
 	public class D_Admin : CompiledGumpDef {
 		internal static readonly TagKey playersListTK = TagKey.Acquire("_players_list_");
 		internal static readonly TagKey plrListSortTK = TagKey.Acquire("_players_list_sorting_");
@@ -198,7 +195,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting players (chars) by name asc")]
+	/// <summary>Comparer for sorting players (chars) by name asc</summary>
 	public class CharComparerByName<T> : IComparer<T>, IComparer where T : AbstractCharacter {
 		public readonly static CharComparerByName<T> instance = new CharComparerByName<T>();
 
@@ -211,7 +208,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting players (chars) by location name asc")]
+	/// <summary>Comparer for sorting players (chars) by location name asc</summary>
 	public class CharComparerByLocation : IComparer<Character>, IComparer {
 		public readonly static CharComparerByLocation instance = new CharComparerByLocation();
 
@@ -225,7 +222,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting players (chars) by account name asc")]
+	/// <summary>Comparer for sorting players (chars) by account name asc</summary>
 	public class CharComparerByAccount : IComparer<Character>, IComparer {
 		public readonly static CharComparerByAccount instance = new CharComparerByAccount();
 

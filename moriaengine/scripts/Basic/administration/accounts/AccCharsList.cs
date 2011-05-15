@@ -14,16 +14,11 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all characters of the account")]
+	/// <summary>Dialog listing all characters of the account</summary>
 	public class D_Acc_Characters : CompiledGumpDef {
 		private static readonly TagKey accountTK = TagKey.Acquire("_account_with_chars_");
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -100,8 +95,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display a list of characters on the account list. " +
-				"Usage - .x AccChars. or .AccChars('accname')")]
+		/// <summary>
+		/// Display a list of characters on the account list. 
+		/// Usage - .x AccChars. or .AccChars('accname')
+		/// </summary>
 		[SteamFunction]
 		public static void AccChars(AbstractCharacter target, ScriptArgs text) {
 			if (text.Argv == null || text.Argv.Length == 0) {

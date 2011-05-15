@@ -14,16 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all object(pluginholder)'s plugins")]
+	/// <summary>Dialog listing all object(pluginholder)'s plugins</summary>
 	public class D_PluginList : CompiledGumpDef {
 		internal static readonly TagKey holderTK = TagKey.Acquire("_plugin_holder_");
 		internal static readonly TagKey pluginListTK = TagKey.Acquire("_plugin_list_");
@@ -142,7 +138,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all plugins the given PluginHolder has")]
+		/// <summary>Retreives the list of all plugins the given PluginHolder has</summary>
 		private List<KeyValuePair<PluginKey, Plugin>> ListifyPlugins(IEnumerable<KeyValuePair<PluginKey, Plugin>> plugins, string criteria) {
 			List<KeyValuePair<PluginKey, Plugin>> pluginsList = new List<KeyValuePair<PluginKey, Plugin>>();
 			foreach (KeyValuePair<PluginKey, Plugin> entry in plugins) {
@@ -156,9 +152,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pluginsList;
 		}
 
-		[Summary("Display a plugin list. Function accessible from the game." +
-				"The function is designed to be triggered using .x PluginList(criteria)" +
-			   "but it can be used also normally .PluginList(criteria) to display runner's own plugins")]
+		/// <summary>
+		/// Display a plugin list. Function accessible from the game.
+		/// The function is designed to be triggered using .x PluginList(criteria)"
+		/// but it can be used also normally .PluginList(criteria) to display runner's own plugins
+		/// </summary>
 		[SteamFunction]
 		public static void PluginList(PluginHolder self, ScriptArgs text) {
 			//zavolat dialog, 
@@ -175,7 +173,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting tag dictionary entries by tags name asc")]
+	/// <summary>Comparer for sorting tag dictionary entries by tags name asc</summary>
 	public class PluginsComparer : IComparer<KeyValuePair<PluginKey, Plugin>> {
 		public readonly static PluginsComparer instance = new PluginsComparer();
 

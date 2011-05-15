@@ -17,20 +17,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.LScript;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog that will display the list of clients delayed messages")]
+	/// <summary>Dialog that will display the list of clients delayed messages</summary>
 	public class D_DelayedMessages : CompiledGumpDef {
 		internal static readonly TagKey msgsSortingTK = TagKey.Acquire("_messages_sorting_");
 		internal static readonly TagKey msgsListTK = TagKey.Acquire("_messages_list_");
 
-		[Summary("Display the list of the messages")]
+		/// <summary>Display the list of the messages</summary>
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			List<DelayedMsg> messagesList = (List<DelayedMsg>)args.GetTag(D_DelayedMessages.msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
+			List<DelayedMsg> messagesList = (List<DelayedMsg>) args.GetTag(D_DelayedMessages.msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
 			if (messagesList == null) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!

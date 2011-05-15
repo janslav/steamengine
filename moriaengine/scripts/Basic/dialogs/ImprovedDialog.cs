@@ -16,19 +16,14 @@
 */
 
 using System;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Wrapper class used to manage and create dialogs easily.")]
+	/// <summary>Wrapper class used to manage and create dialogs easily.</summary>
 	public class ImprovedDialog {
 		private static Dictionary<char, byte> charsLength = new Dictionary<char, byte>();
 
-		[Summary("Map of all main characters and their pixel length")]
+		/// <summary>Map of all main characters and their pixel length</summary>
 		static ImprovedDialog() {
 			charsLength.Add('a', 6); charsLength.Add('A', 8); charsLength.Add('1', 4);
 			charsLength.Add('b', 6); charsLength.Add('B', 8); charsLength.Add('2', 8);
@@ -58,7 +53,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			charsLength.Add('z', 6); charsLength.Add('Z', 8);
 		}
 
-		[Summary("Compute the length of the text (mainly for dialog purposes)")]
+		/// <summary>Compute the length of the text (mainly for dialog purposes)</summary>
 		public static int TextLength(string text) {
 			int retVal = 0;
 			byte val;
@@ -72,148 +67,80 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return retVal + 1; //last letter ends with its boundary (1 pixel)
 		}
 
-		[Summary("The gump instance to send gump creating method calls to")]
+		/// <summary>The gump instance to send gump creating method calls to</summary>
 		protected Gump instance;
 
-		[Summary("The deepest background of the dialog (the first GUTAMatrix where all other GumpComponents are")]
+		/// <summary>The deepest background of the dialog (the first GUTAMatrix where all other GumpComponents are</summary>
 		private GUTAMatrix background;
-		[Summary("Last added table to the background GUTAMatrix - all GumpColumns will be added to this row until" +
-				" the next GUTATable is added")]
+		/// <summary>
+		/// Last added table to the background GUTAMatrix - all GumpColumns will be added to this row until
+		///  the next GUTATable is added
+		/// </summary>
 		protected GUTATable lastTable;
-		[Summary("Last added column - the column is placed automatically to the lastTable, all LeafGumpComponents" +
-				" will be added to this column until the next GUTAColumn is added")]
+		/// <summary>
+		/// Last added column - the column is placed automatically to the lastTable, all LeafGumpComponents
+		///  will be added to this column until the next GUTAColumn is added
+		/// </summary>
 		private GUTAColumn lastColumn;
 
-		[Summary("Getter for the lastcolumn - may be needed from LScript if we have to operate with the sies or positions")]
+		/// <summary>Getter for the lastcolumn - may be needed from LScript if we have to operate with the sies or positions</summary>
 		public GUTAColumn LastColumn {
 			get {
 				return lastColumn;
 			}
 		}
 
-		[Summary("Getter for the lasttable - may be needed from LScript if we have to operate with the sizes or positions or " +
-				"if we want to add component directly to the desired column or row")]
+		/// <summary>
+		/// Getter for the lasttable - may be needed from LScript if we have to operate with the sizes or positions or 
+		/// if we want to add component directly to the desired column or row
+		/// </summary>
 		public GUTATable LastTable {
 			get {
 				return lastTable;
 			}
 		}
 
-		[Summary("The getter for the background table - usable for manual creating of the dialog structure")]
+		/// <summary>The getter for the background table - usable for manual creating of the dialog structure</summary>
 		public GUTAMatrix Background {
 			get {
 				return background;
 			}
 		}
 
-		[Summary("Create the wrapper instance and prepare set the instance variable for receiving dialog method calls")]
+		/// <summary>Create the wrapper instance and prepare set the instance variable for receiving dialog method calls</summary>
 		public ImprovedDialog(Gump dialogInstance) {
 			this.instance = dialogInstance;
 		}
 
-		[Summary("Create the dialog background and set its size")]
+		/// <summary>Create the dialog background and set its size</summary>
 		public void CreateBackground(int width) {
 			background = new GUTAMatrix(instance, width);
 		}
 
-		[Summary("Set the main table's position (all underlaying components will " +
-				"be moved too). It is up to the scripter to make sure that this method is called on the correctly" +
-				" set background")]
+		/// <summary>
+		/// Set the main table's position (all underlaying components will 
+		/// be moved too). It is up to the scripter to make sure that this method is called on the correctly 
+		/// set background
+		/// </summary>
 		public void SetLocation(int newX, int newY) {
 			background.AdjustPosition(newX - background.XPos, newY - background.YPos);
 		}
 
-		[Summary("Getter allowing us to access the underlaying GUTATable by the specified index " +
-				"(usage: this.Table[i])")]
+		/// <summary>
+		/// Getter allowing us to access the underlaying GUTATable by the specified index 
+		/// (usage: this.Table[i])
+		/// </summary>
 		public List<GUTAComponent> Table {
 			get {
 				return background.Components;
 			}
 		}
 
-		//[Summary("The main method for adding the gump components to the dialog. " +
-		//        "We can add a GUTAMatrix, GUTATable, GUTAColumn or LeafGUTAComponent. The GUTATable will be " +
-		//        "added to the background GUTAMatrix and set as a 'lastTable' which means that all following " +
-		//        "GumpColumns will be added to this row until the next GUTATable is placed. The GUTAColumn " +
-		//        "will be added to the 'lastTable' and set as a new 'lastColumn' (if there is no lastTable, the one-line row is created but this is not recommended!)" +
-		//        ". LeafGumpComponents will be added to the " +
-		//        "actual 'lastColumn'. It is also possible to add a new GUTAMatrix which will be placed into " +
-		//        "the 'lastColumn' (if no 'lastColumn' exists, it is created and placed to the whole 'lastTable') although it is not possible to make " +
-		//        "the inner GUTAMatrix extendable using this Add method so if you want to fill this inner table " +
-		//        "with rows, columns and leaf components, you have to do it manually (e.g. creating the inner " +
-		//        "table as a variable in the script and place all components into it manually. " +
-		//        " " +
-		//        "Example: Add(row1), Add(col1), Add(leaf1), Add(leaf2), Add(row2), Add(leaf3), Add(col2), Add(leaf4). " +
-		//        "The result is: leaf1, leaf2 and leaf3 are in the col1 which is in the row1; leaf4 is in the col2 " +
-		//        "which is in the row2. " +
-		//        "You can of course create the dialog structure completely manually by creating lots of variables for " +
-		//        "all rows and columns, add them to the background table and add the leaf components to the columns. " +
-		//        "This process is necessary anyway if you want to create some inner tables..." +
-
-		//        "DEPRECATED. Use table[x,y] (or table.AddToCell(row,col,comp) for LSCript) method instead." +
-		//        "Used only for adding the GUTATables")]
-		//[Obsolete("Do not use this method, use AddTable for adding GUTATables", true)]
-		//public void Add(GUTAComponent comp) {
-		//    if (comp is GUTAMatrix) {
-		//        //the GUTAMatrix can be only added to the GUTAColumn. It must be filled manually however.
-		//        lastColumn.AddComponent(comp);
-		//    } else if (comp is GUTATable) {
-		//        //the GUTATable will be added to the main background and then set as a new lastTable
-		//        background.AddComponent(comp);
-		//        lastTable = (GUTATable) comp;
-		//    } else if (comp is GUTAColumn) {
-		//        //the GUTAColumn will be added to the lastTable and then set as a new lastColumn, if no lastTable is placed, 
-		//        //create the one basic (but this is not usual and should not happen !!!)
-		//        if (lastTable == null) {
-		//            GUTATable newTable = new GUTATable(1);
-		//            newTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-		//            Add(newTable); //very simple, one row because this is probably the error of the scripter!
-		//            Logger.WriteWarning("(Add(GUTAComponent)) Dialog " + this + "je spatne navrzen, chybi specifikace radku!");
-		//        }
-		//        lastTable.AddComponent(comp);
-		//        lastColumn = (GUTAColumn) comp;
-		//    } else if (comp is LeafGUTAComponent) {
-		//        //all Leaf components are added to the lastColumn, if no lastColumn is placed, create one basic
-		//        //and make it transparent
-		//        if (lastColumn == null) {
-		//            GUTAColumn newCol = new GUTAColumn();
-		//            Add(newCol);
-		//        }
-		//        lastColumn.AddComponent(comp);
-		//    }
-		//}
-
-		[Summary("Add a single GUTATable to the dialog and set is as 'last'")]
+		/// <summary>Add a single GUTATable to the dialog and set is as 'last'</summary>
 		public void AddTable(GUTATable table) {
 			background.AddComponent(table);
 			lastTable = table;
 		}
-
-		//[Summary("Method for adding a last component to the parent - useful for columns when we want to " +
-		//        "add a column to the right side. It will recompute the previous column width to fit the space " +
-		//        "to the rest of the row to the last column (neverminding the actual width of this column)." +
-		//        "Adding anything else then GUTAColumn as 'last' has the same effect as normal Add method." +
-		//        "DEPRECATED, use GUTATable constructor instead. Converted to private method to be used in paging only!")]
-		//[Obsolete("Do not use this method, use AddLastColumn for adding last GUTAColumn.", true)]
-		//internal void AddLast(GUTAComponent comp) {
-		//    if (comp is GUTAColumn) {
-		//        if (lastTable == null || lastTable.Components.Count == 0) {
-		//            throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
-		//        }
-		//        //get the lastly added column
-		//        //GUTAColumn lastCol = (GUTAColumn) lastTable.Components[lastTable.Components.Count-1];
-		//        //the column will be added from the right side...
-		//        ((GUTAColumn) comp).IsLast = true;
-
-		//        //space between the new(last) and one-before-last (former last) columns                                  
-		//        //now we can add, the size is recomputed, the new column will fit right to the end of the row                
-		//        lastTable.AddComponent(comp);
-		//        lastColumn = (GUTAColumn) comp;
-		//    } else {
-		//        //call normal Add method
-		//        Add(comp);
-		//    }
-		//}
 
 		private void AddLastColumn(GUTAColumn col) {
 			if (lastTable == null || lastTable.Components.Count == 0) {
@@ -238,16 +165,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastColumn = col;
 		}
 
-		[Summary("Take the columns in the last row and copy their structure to the new row." +
-				"They will take the new tables's rowCount. No underlaying children will be copied!")]
+		/// <summary>
+		/// Take the columns in the last row and copy their structure to the new row.
+		/// They will take the new tables's rowCount. No underlaying children will be copied!
+		/// </summary>
 		public void CopyColsFromLastTable() {
 			//take the last row (count-1 = this, new, row; count-2 = previous row)
 			CopyColsFromTable(background.Components.Count - 2);
 		}
 
-		[Summary("Take the columns from the specified row (start counting from 0) - 0th, 1st, 2nd etc." +
-				"and copy their structure to the new row. They will get the new row's rowCount." +
-				"No underlaying columns children will be copied!")]
+		/// <summary>
+		/// Take the columns from the specified row (start counting from 0) - 0th, 1st, 2nd etc.
+		/// and copy their structure to the new row. They will get the new row's rowCount. 
+		/// No underlaying columns children will be copied!
+		/// </summary>
 		public void CopyColsFromTable(int tableNumber) {
 			GUTATable theTable = (GUTATable) background.Components[tableNumber];
 			foreach (GUTAColumn col in theTable.Components[0].Components) { //use the first (mainly only) virtual Row
@@ -258,19 +189,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Take the last table, iterate through the columns and make them all transparent")]
+		/// <summary>Take the last table, iterate through the columns and make them all transparent</summary>
 		public void MakeLastTableTransparent() {
 			lastTable.Transparent = true;
 		}
 
-		[Summary("Last method to be called - it prints out the whole dialog")]
+		/// <summary>Last method to be called - it prints out the whole dialog</summary>
 		public void WriteOut() {
 			background.WriteComponent();
 		}
 
-		[Summary("Takes care for the whole paging - gets number of items and the number of the " +
-				" topmost Item on the current page (0 for first page, other for another pages)." +
-				"We also specify the number of columns - not only single is now available for paging")]
+		/// <summary>
+		/// Takes care for the whole paging - gets number of items and the number of the 
+		/// topmost Item on the current page (0 for first page, other for another pages). 
+		/// We also specify the number of columns - not only single is now available for paging
+		/// </summary>
 		public void CreatePaging(int itemsCount, int firstNumber, int columnsCount) {
 			if (itemsCount <= ImprovedDialog.PAGE_ROWS * columnsCount) {//do we need paging at all...?
 				//...no
@@ -311,16 +244,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			lastColumn = storedLastColumn;
 		}
 
-		[Summary("Tag key using for holding information about paging actual item index for dialogs.")]
+		/// <summary>Tag key using for holding information about paging actual item index for dialogs.</summary>
 		public static readonly TagKey pagingIndexTK = TagKey.Acquire("_paging_index_");
 
-		[Summary("Look if the paging buttons has been pressed and if so, handle the actions as " +
-				" a normal OnResponse method, otherwise return to the dialog OnResponse method " +
-				" and continue there." +
-				" gi - Gump from the OnResponse method " +
-				" gr - GumpResponse object from the OnResponse method" +
-				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)" +
-				" return true or false if the button was one of the paging buttons or not")]
+		/// <summary>
+		/// Look if the paging buttons has been pressed and if so, handle the actions as 
+		/// a normal OnResponse method, otherwise return to the dialog OnResponse method 
+		/// and continue there. 
+		/// gi - Gump from the OnResponse method 
+		/// gr - GumpResponse object from the OnResponse method 
+		/// columnsCount - number of columns per page (each containing PAGES_ROWS number of rows) 
+		/// return true or false if the button was one of the paging buttons or not
+		/// </summary>
 		public static bool PagingButtonsHandled(Gump gi, GumpResponse gr, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
@@ -359,13 +294,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}
 
-		[Summary("This is the paging handler used in LScript where no GumpResponse is present" +
-				"sentTo - player who has seen the dialog; buttNo - pressed button; selPageInpt - filled " +
-				"number of page to jump to (if any, used only when 'jump page button' was pressed, " +
-				"otherwise is null);" +
-				"pagingArgumentNo - index to the paramaeters field where the paging info is stored;" +
-				" columnsCount - number of columns per page (each containing PAGES_ROWS number of rows)" +
-				"itemsCount - total count of diplayed items in the list")]
+		/// <summary>
+		/// This is the paging handler used in LScript where no GumpResponse is present
+		/// sentTo - player who has seen the dialog; buttNo - pressed button; selPageInpt - filled 
+		/// number of page to jump to (if any, used only when 'jump page button' was pressed, 
+		/// "otherwise is null); 
+		/// pagingArgumentNo - index to the paramaeters field where the paging info is stored; 
+		/// columnsCount - number of columns per page (each containing PAGES_ROWS number of rows) 
+		/// itemsCount - total count of diplayed items in the list
+		/// </summary>
 		public static bool PagingButtonsHandled(Gump actualGi, int buttNo, int selPageInpt, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
@@ -403,7 +340,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return pagingHandled;
 		}
 
-		[Summary("Dialog constants")]
+		/// <summary>Dialog constants</summary>
 		public const int D_DEFAULT_DIALOG_BORDERS = 9250; //grey borders
 		public const int D_DEFAULT_DIALOG_BACKGROUND = 9354; //beige background
 
@@ -417,9 +354,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public const int D_ROW_HEIGHT = 19;
 		public const int D_SPACE = 3;
-		[Summary("Space for delimiting the rows one from the above one")]
+		/// <summary>Space for delimiting the rows one from the above one</summary>
 		public const int D_ROW_SPACE = 2;
-		[Summary("Space for delimiting the columns in the inner row")]
+		/// <summary>Space for delimiting the columns in the inner row</summary>
 		public const int D_COL_SPACE = 1;
 		public const int D_BORDER = 10;
 		public const int D_OFFSET = 5;
@@ -428,23 +365,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public const int D_CHARACTER_HEIGHT = 18; //approximate height of the normal character
 		public const int D_TEXT_HEIGHT = 22; //approx height of the text field (character + some automatical offset)
 
-		[Summary("Number of pixels of which the label from the label-value fields will be indented from the left")]
+		/// <summary>Number of pixels of which the label from the label-value fields will be indented from the left</summary>
 		public static int ITEM_INDENT = 20;
-		[Summary("Number of pixels of which the editbox from the label-value fields will be indented from the left " +
-				"(so there is enough space for the label")]
+		/// <summary>
+		/// Number of pixels of which the editbox from the label-value fields will be indented from the left 
+		/// (so there is enough space for the label
+		/// </summary>
 		public static int INPUT_INDENT = 75;
 
-		[Summary("Number of normal rows on the various dialog pages (when paging is used)")]
+		/// <summary>Number of normal rows on the various dialog pages (when paging is used)</summary>
 		public const int PAGE_ROWS = 20;
 
-		[Summary("Empirically determined icon dimensions (mostly can be used)")]
+		/// <summary>Empirically determined icon dimensions (mostly can be used)</summary>
 		public const int ICON_WIDTH = 43;
 		public const int ICON_HEIGHT = 50;
 
-		[Summary("Good delmiting space for the icon in one row (from the top and bottom row border)")]
+		/// <summary>Good delmiting space for the icon in one row (from the top and bottom row border)</summary>
 		public const int D_ICON_SPACE = 2;
 
-		[Summary("Page navigating buttons (constant IDs, different enough from those common used :))")]
+		/// <summary>Page navigating buttons (constant IDs, different enough from those common used :))</summary>
 		public const int ID_PREV_BUTTON = 98765;
 		public const int ID_NEXT_BUTTON = 98764;
 		public const int ID_JUMP_PAGE_BUTTON = 98763;

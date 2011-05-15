@@ -14,16 +14,10 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("An account creating dialog")]
+	/// <summary>An account creating dialog</summary>
 	public class D_NewAccount : CompiledGumpDef {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -74,7 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Create a new gm account using the dialog. Function accessible from the game")]
+		/// <summary>Create a new gm account using the dialog. Function accessible from the game</summary>
 		[SteamFunction]
 		public static void NewAcc(AbstractCharacter sender, ScriptArgs text) {
 			sender.Dialog(SingletonScript<D_NewAccount>.Instance);

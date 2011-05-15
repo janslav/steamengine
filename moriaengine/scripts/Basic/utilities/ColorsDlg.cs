@@ -14,16 +14,11 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog that will display all colors examples - useful for determining which color we need.")]
+	/// <summary>Dialog that will display all colors examples - useful for determining which color we need.</summary>
 	public class D_Colors : CompiledGumpDef {
 		static readonly int lastColor = 2999;
 
@@ -99,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Prepare an array of colors to be displayed")]
+		/// <summary>Prepare an array of colors to be displayed</summary>
 		private int[] prepareColorList(int startingColor) {
 			int[] retArr = new int[lastColor - startingColor + 1];
 			for (int i = startingColor, j = 0; i <= lastColor; i++, j++) {
@@ -108,8 +103,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return retArr;
 		}
 
-		[Summary("Display a Colors dialog. Can be called without parameters (then the first displayed color will be the 0th)" +
-				"or with one parameter (number of color which will be taken as the first in the dialog)")]
+		/// <summary>
+		/// Display a Colors dialog. Can be called without parameters (then the first displayed color will be the 0th)
+		/// or with one parameter (number of color which will be taken as the first in the dialog)
+		/// </summary>
 		[SteamFunction]
 		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
 			if (text == null || text.Args.Length == 0) {

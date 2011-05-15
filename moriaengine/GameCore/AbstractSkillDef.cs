@@ -223,7 +223,7 @@ namespace SteamEngine {
 		#endregion trigger methods
 	}
 
-	[Summary("Instances of this class store the skill values of each character")]
+	/// <summary>Instances of this class store the skill values of each character</summary>
 	public interface ISkill {
 		int RealValue { get; set; }
 		int ModifiedValue { get; }

@@ -20,9 +20,11 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Abstract class - parent of counter classes for multiplicable resources (such as Items, TriggerGroups) " +
-			"used for storing information about found char's corresponding items and their amount " +
-			"allowing us also to consume the desired amount of found item's")]
+	/// <summary>
+	/// Abstract class - parent of counter classes for multiplicable resources (such as Items, TriggerGroups) 
+	/// used for storing information about found char's corresponding items and their amount 
+	/// allowing us also to consume the desired amount of found items
+	/// </summary>
 	public abstract class ItemCounter : Poolable {
 		public IResourceListEntry_ItemCounter listEntry;
 
@@ -30,25 +32,29 @@ namespace SteamEngine.CompiledScripts {
 		private int foundCount; //how many occurences have been found so far? (counted from amounts of found items)
 
 
-		[Summary("Check if the given item corresponds to this particular resource item (i.e. is of the same " +
-				"itemdef, has the desired triggergroup (as type) etc)")]
+		/// <summary>
+		/// Check if the given item corresponds to this particular resource item (i.e. is of the same 
+		/// "itemdef, has the desired triggergroup (as type) etc)
+		/// </summary>
 		internal abstract bool IsCorresponding(Item itm);
 
-		[Summary("Add the item to the found items list and count its amount for resource's multiplicity determining")]
+		/// <summary>Add the item to the found items list and count its amount for resource's multiplicity determining</summary>
 		internal void IncludeItem(Item itm) {
 			foundItems.Add(itm); //add to the list
 			this.foundCount += itm.Amount;
 		}
 
-		[Summary("How many times can we consume the desired amount of resources?")]
+		/// <summary>How many times can we consume the desired amount of resources?</summary>
 		internal double Multiplicity {
 			get {
 				return (this.foundCount / this.DesiredCount);
 			}
 		}
 
-		[Summary("Look to the foundItems list and consume desiredCount*howManyTimes items found inside. " +
-				"These should be available via their 'amounts'")]
+		/// <summary>
+		/// Look to the foundItems list and consume desiredCount*howManyTimes items found inside. 
+		/// These should be available via their 'amounts'
+		/// </summary>
 		internal void ConsumeItems(double howManyTimes) {
 			long toConsume = (long) (this.DesiredCount * howManyTimes);
 			foreach (Item itm in foundItems) {
@@ -61,8 +67,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Check how many items we have available for consuming and prepare a random number to consume " +
-				"(but do not take more than the desired count in the resource list). Then consume it")]
+		/// <summary>
+		/// Check how many items we have available for consuming and prepare a random number to consume 
+		/// (but do not take more than the desired count in the resource list). 
+		/// Then consume it
+		/// </summary>
 		internal void ConsumeSomeItems() {
 			int available = (int) Math.Min(this.foundCount, this.DesiredCount); //we can consume at most the really desired count (but no more)
 			long toConsume = (long) Math.Round((new Random().NextDouble()) * available);
@@ -94,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public abstract class ItemCounter<T> : ItemCounter where T : IResourceListEntry_ItemCounter {
 
-		[Summary("ListItem this resource counter is for.")]
+		/// <summary>ListItem this resource counter is for.</summary>
 		internal T ListEntry {
 			get {
 				return (T) this.listEntry;

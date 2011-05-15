@@ -16,11 +16,9 @@
 */
 
 using System;
-using System.Reflection;
-using System.Text;
-using System.Collections.Generic;
 using System.CodeDom;
-using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Reflection;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -42,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 			this.desc = description;
 		}
 
-		[Summary("Description provided in any SteamDocAttribute on the SteamFunction")]
+		/// <summary>Description provided in any SteamDocAttribute on the SteamFunction</summary>
 		public override string Description {
 			get {
 				return this.desc;
@@ -218,10 +216,13 @@ namespace SteamEngine.CompiledScripts {
 				if (string.IsNullOrEmpty(this.name)) {
 					this.name = method.Name;
 				}
-				SummaryAttribute sma = Attribute.GetCustomAttribute(method, typeof(SummaryAttribute)) as SummaryAttribute;
-				if (sma != null) {
-					desc = sma.Text;
-				}
+				//SummaryAttribute sma = Attribute.GetCustomAttribute(method, typeof(SummaryAttribute)) as SummaryAttribute;
+				//if (sma != null) {
+				//    desc = sma.Text;
+				//} 
+				try {
+					this.desc = XmlDocComments.GetSummaryAndRemarks(method.GetComments());
+				} catch { }
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {

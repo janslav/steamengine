@@ -14,12 +14,10 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using System;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("IDs of important and used Gumps")]
+	/// <summary>IDs of important and used Gumps</summary>
 	public enum GumpIDs : int {
 		Figurine_Orc = 0x20e0,
 		Figurine_Ogre = 0x20df,

@@ -15,19 +15,20 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
-using System.Timers;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
-	[Summary("This class holds the profession assigned to one character (cont field). " +
-			"it holds a reference to the ProfessionDef, dispatches all trigger calls etc.")]
+	/// <summary>
+	/// This class holds the profession assigned to one character (cont field). 
+	/// it holds a reference to the ProfessionDef, dispatches all trigger calls etc.
+	/// </summary>
 	public partial class ProfessionPlugin {
 		internal static PluginKey professionKey = PluginKey.Acquire("_profession_");
 
-		[Summary("Initialize the profession on the character")]
+		/// <summary>Initialize the profession on the character</summary>
 		public virtual void On_Assign() {
 			Sanity.IfTrueThrow(this.profession == null, "this.def == null on ProfessionPlugin assigning");
 
@@ -56,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private TriggerResult CheckCancelSkill(Player player, SkillSequenceArgs skillSeqArgs) {
-			if ((!player.IsGM)&& skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
+			if ((!player.IsGM) && skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 				if (!this.profession.AllowedSpells.Contains(spell)) {
 					player.RedMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,

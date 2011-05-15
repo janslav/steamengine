@@ -17,11 +17,9 @@
 
 using System;
 using System.Text.RegularExpressions;
-//using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Regions;
 using SteamEngine.Common;
+//using System.IO;
+using SteamEngine.Regions;
 
 namespace SteamEngine {
 	public interface IPoint2D {
@@ -102,7 +100,9 @@ namespace SteamEngine {
 			}
 		}
 
-		[Common.Summary("Add the diff's X and Y to owns X and Y")]
+		/// <summary>
+		/// Returns a new Point instance with coordinates of this instance + the given parameters
+		/// </summary>
 		public Point2D Add(int diffX, int diffY) {
 			return new Point2D((ushort) (x + diffX), (ushort) (y + diffY));
 		}
@@ -128,7 +128,7 @@ namespace SteamEngine {
 
 		public int Y {
 			get { return y; }
-		} 
+		}
 
 		public static bool Equals(Point2D a, Point2D b) {
 			return ((a.x == b.x) && (a.y == b.y));
@@ -197,7 +197,9 @@ namespace SteamEngine {
 			this.z = p.Z;
 		}
 
-		[Common.Summary("Add the diff's X, Y and Z to owns X, Y and Z")]
+		/// <summary>
+		/// Returns a new Point instance with coordinates of this instance + the given parameters
+		/// </summary>
 		public Point3D Add(int diffX, int diffY, int diffZ) {
 			return new Point3D((ushort) (X + diffX), (ushort) (Y + diffY), (sbyte) (z + diffZ));
 		}
@@ -214,7 +216,7 @@ namespace SteamEngine {
 			get {
 				return this.z;
 			}
-		} 		
+		}
 
 		public override string ToString() {
 			return "(" + X + "," + Y + "," + z + ")";
@@ -297,7 +299,7 @@ namespace SteamEngine {
 			get {
 				return m;
 			}
-		} 
+		}
 
 		public static bool Equals(Point4D a, Point4D b) {
 			return ((a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.m == b.m));

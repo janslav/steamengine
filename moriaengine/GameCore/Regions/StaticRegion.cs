@@ -16,15 +16,13 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {
-	[Summary("Class implementing saving/loading of regions, controlling unique defnames etc.")]
+	/// <summary>Class implementing saving/loading of regions, controlling unique defnames etc.</summary>
 	public class StaticRegion : Region {
 		internal static readonly StaticRegion voidRegion = new StaticRegion("", "void");
 		private static StaticRegion worldRegion = voidRegion;
@@ -37,7 +35,7 @@ namespace SteamEngine.Regions {
 
 		private bool isDeleted;
 
-		[Summary("Clearing of the lists of all regions")]
+		/// <summary>Clearing of the lists of all regions</summary>
 		public static void ClearAll() {
 			byName = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
 			byDefname = new Dictionary<string, StaticRegion>(StringComparer.OrdinalIgnoreCase);
@@ -214,7 +212,7 @@ namespace SteamEngine.Regions {
 			output.WriteLine();
 		}
 
-		[Summary("Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state")]
+		/// <summary>Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state</summary>
 		private static void InactivateAll() {
 			foreach (Map map in Map.AllMaps) {
 				map.InactivateRegions(false); //false - omit dynamic regions from clearing
@@ -224,9 +222,12 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state" +
-				"called after manipulation is successfully done." +
-				"Activates only activable regions")]
+		/// <summary>
+		/// Useful when editing regions - we need to manipulate with their rectangles which can be done only in unloaded state"
+		/// called after manipulation is successfully done. 
+		/// Activates only activable regions
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ActivateAll() {
 			List<StaticRegion> activeRegs = new List<StaticRegion>();
 			foreach (StaticRegion reg in AllRegions) {
@@ -260,7 +261,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Summary("Take the regions from the given list and set their rectangles to every mapplane")]
+		/// <summary>Take the regions from the given list and set their rectangles to every mapplane</summary>
 		private static void InitRectanglesToMaps(IEnumerable<StaticRegion> regionList) {
 			List<StaticRegion>[] regionsByMapplane = new List<StaticRegion>[0x100];
 			foreach (StaticRegion region in regionList) {
@@ -282,7 +283,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Summary("Check if all regions (except for the world region) have parents set")]
+		/// <summary>Check if all regions (except for the world region) have parents set</summary>
 		private static void ResolveParents() {
 			foreach (StaticRegion region in AllRegions) {
 				//(pri opakovanem reloadu - napr. po editaci regionu uz je worldregion nasetovan
@@ -305,7 +306,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Summary("Itearate through all regions and set their hierarchy indices")]
+		/// <summary>Itearate through all regions and set their hierarchy indices</summary>
 		private static void ResolveRegionsHierarchy() {
 			LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(AllRegions);//copy list of all regions
 			int lastCount = -1;
@@ -348,9 +349,11 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists"), 
-		Summary("Searches through all regions and returns the list of StaticRegions thats name contains the " +
-				"criteria string")]
+		/// <summary>
+		/// Searches through all regions and returns the list of StaticRegions the name of which contains the 
+		/// criteria string
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
 		public static List<StaticRegion> FindByString(string criteria) {
 			List<StaticRegion> regList = new List<StaticRegion>();
 			foreach (StaticRegion reg in AllRegions) {
@@ -449,20 +452,25 @@ namespace SteamEngine.Regions {
 			return retState;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists"), Summary("Looks through the list of all regions and check if the region is not a chidlren of the specified one")]
-		public static List<StaticRegion> FindRegionsChildren(StaticRegion reg) {
-			//first search the static ones (houses, stalls etc.)
+		/// <summary>
+		/// Returns a list of regions for which the specified one is parent
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+		public static List<StaticRegion> FindRegionsChildren(StaticRegion parent) {
 			List<StaticRegion> retList = new List<StaticRegion>();
 			foreach (StaticRegion stReg in AllRegions) {
-				if (stReg.Parent == reg) {
-					retList.Add(stReg); //parent is the one we are searching its choldren
+				if (stReg.Parent == parent) {
+					retList.Add(stReg);
 				}
 			}
 			return retList;
 		}
 		#endregion
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter"), Summary("Take the list of rectangles and make an array of RegionRectangles of it")]
+		/// <summary>
+		/// Set the specified rectangles as belonging to this region
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool SetRectangles<T>(IList<T> list) where T : AbstractRectangle {
 			bool result = true;
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
@@ -487,7 +495,10 @@ namespace SteamEngine.Regions {
 			return result;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter"), Summary("Initializes newly created region - set the name, home position and list of rectangles")]
+		/// <summary>
+		/// Initializes a newly created region - set the name, home position and list of rectangles
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool InitializeNewRegion<T>(string name, Point4D home, IList<T> rects) where T : AbstractRectangle {
 			bool retval;
 			this.Name = name; //nove jmeno, a zaroven ho to ulozi do prislusneho seznamu
@@ -522,7 +533,7 @@ namespace SteamEngine.Regions {
 				//zkontrolujeme, jestli stejny defname uz neexistuje... (pro jistotu)
 				if (byDefname.ContainsKey(value)) {
 					throw new OverrideNotAllowedException("Region with defname " + LogStr.Ident(value) + " already exists.");
-				} 
+				}
 				this.ThrowIfDeleted();
 				value = String.Intern(value);
 				base.Defname = value;
@@ -538,7 +549,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[Summary("Vezme region. vsechny jeho deti, napoji deti na parenta a sam sebe odstrani")]
+		/// <summary>Vezme region. vsechny jeho deti, napoji deti na parenta a sam sebe odstrani</summary>
 		public override void Delete() {
 			if (this == worldRegion) { //world region nesmime smazat
 				throw new SEException("Attempted to delete the 'world region'");

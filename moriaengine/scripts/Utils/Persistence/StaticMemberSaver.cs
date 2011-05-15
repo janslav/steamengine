@@ -1,8 +1,7 @@
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
+using System.Reflection;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -15,7 +14,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class SavedMemberAttribute : Attribute {
-		[Summary("The description will be used in settings dialog")]
+		/// <summary>The description will be used in settings dialog</summary>
 		private string description;
 		private string category;
 
@@ -34,9 +33,11 @@ namespace SteamEngine.CompiledScripts {
 		public SavedMemberAttribute() {
 		}
 
-		[Summary("Allows us to _shortly_ describe the purpose of the member..." +
-				"this info will be used for displaying it in 'settings' dialog." +
-				"We can also specify the settings category in which this member will be placed.")]
+		/// <summary>
+		/// Allows us to _shortly_ describe the purpose of the member...
+		/// this info will be used for displaying it in 'settings' dialog. 
+		/// We can also specify the settings category in which this member will be placed.
+		/// </summary>
 		public SavedMemberAttribute(string desc, string cat) {
 			this.description = desc;
 			this.category = cat;
@@ -166,8 +167,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Search through the members of the given class and find those marked with " +
-				"'SaveableData' attribute - we will use them as a settings dialog subsection")]
+		/// <summary>
+		/// Search through the members of the given class and find those marked with 
+		/// 'SaveableData' attribute - we will use them as a settings dialog subsection
+		/// </summary>
 		public static List<MemberInfo> GetSaveableDataFromClass(Type type) {
 			List<MemberInfo> retList = new List<MemberInfo>();
 			foreach (MemberInfo mi in type.GetMembers()) {
@@ -178,8 +181,10 @@ namespace SteamEngine.CompiledScripts {
 			return retList;
 		}
 
-		[Summary("Get the SavedMember resp. SaveableData attribute and fetch the value of its 'description'" +
-				"field. This will be displayed in the 'settings' dialog.")]
+		/// <summary>
+		/// Get the SavedMember resp. SaveableData attribute and fetch the value of its 'description'
+		/// field. This will be displayed in the 'settings' dialog.
+		/// </summary>
 		public static string GetSettingDescFor(MemberInfo mi) {
 			string retDesc = "";
 			//first try to find the SavedMember attribute

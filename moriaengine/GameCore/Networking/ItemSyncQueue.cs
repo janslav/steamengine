@@ -17,12 +17,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
-using System.IO;
-using System.Net;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
@@ -32,7 +29,7 @@ namespace SteamEngine.Networking {
 
 		private SimpleQueue<AbstractItem> queue = new SimpleQueue<AbstractItem>();
 
-		[Summary("Call when a thing is about to be created/changed")]
+		/// <summary>Call when a thing is about to be created/changed</summary>
 		public static void Resend(AbstractItem item) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "Resend(" + item + ") called");
@@ -40,7 +37,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when an item is about to be changed")]
+		/// <summary>Call when an item is about to be changed</summary>
 		public static void AboutToChange(AbstractItem item) {
 			ItemOnGroundUpdater.RemoveFromCache(item);
 			if (IsEnabled) {
@@ -49,7 +46,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[Summary("Call when an item is about to be changed")]
+		/// <summary>Call when an item is about to be changed</summary>
 		public static void PropertiesChanged(AbstractItem item) {
 			if (IsEnabled) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ItemPropertiesChanged(" + item + ") called");

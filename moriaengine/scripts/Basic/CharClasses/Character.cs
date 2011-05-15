@@ -16,16 +16,12 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using SteamEngine.Timers;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
-using SteamEngine.Regions;
-using SteamEngine.Networking;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -40,11 +36,13 @@ namespace SteamEngine.CompiledScripts {
 		//removed, reworked to use the Skills togeter with abilities in one distionary
 		//Skill[] skills;//this CAN be null, altough it usually isn't
 
-		//[Summary("Dictionary of character's (typically player's) abilities")]
+		///// <summary>Dictionary of character's (typically player's) abilities</summary>
 		//private Dictionary<AbilityDef, Ability> abilities = null;
 
-		[Summary("Dictionary of character's skills and abilities. Key is (ability/skill)def, value is instance of " +
-				"Ability/Skill object of the desired entity")]
+		/// <summary>
+		/// Dictionary of character's skills and abilities. Key is (ability/skill)def, value is instance of 
+		/// Ability/Skill object of the desired entity
+		/// </summary>
 		private Dictionary<AbstractDef, object> skillsabilities;
 
 		private CharModelInfo charModelInfo;
@@ -205,7 +203,7 @@ namespace SteamEngine.CompiledScripts {
 				this.IsPetOf(chr);
 		}
 
-		[Summary("The character riding this one, or null if this character doesn't have a rider.")]
+		/// <summary>The character riding this one, or null if this character doesn't have a rider.</summary>
 		public AbstractCharacter Rider {
 			get {
 				if (!this.Flag_Riding) { //otherwise I'm the rider
@@ -215,7 +213,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("The mount this character is riding, or null if this character isn't riding a mount.")]
+		/// <summary>The mount this character is riding, or null if this character isn't riding a mount.</summary>
 		public override sealed AbstractCharacter Mount {
 			get {
 				if (this.Flag_Riding) {
@@ -1081,7 +1079,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion
 
 		#region regenerace
-		[Summary("How many hitpoints is regenerated in one second")]
+		/// <summary>How many hitpoints is regenerated in one second</summary>
 		public double HitsRegenSpeed {
 			get {
 				return this.hitsRegenSpeed;
@@ -1094,7 +1092,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("How many stamina points is regenerated in one second")]
+		/// <summary>How many stamina points is regenerated in one second</summary>
 		public double ManaRegenSpeed {
 			get {
 				return this.manaRegenSpeed;
@@ -1107,7 +1105,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("How many mana points is regenerated in one second")]
+		/// <summary>How many mana points is regenerated in one second</summary>
 		public double StamRegenSpeed {
 			get {
 				return this.stamRegenSpeed;
@@ -1207,7 +1205,7 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[Summary("Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo")]
+		/// <summary>Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo</summary>
 		public void Resurrect() {
 			Corpse c = null;
 			foreach (Thing nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
@@ -1224,9 +1222,13 @@ namespace SteamEngine.CompiledScripts {
 			this.Resurrect(c);
 		}
 
-		[Summary("Resne a pokud je telo tak i lootne telo.")]
-		[Remark("Vzajemna pozice mezi telem a mrtve postavy neni kontrolovana")]
-		[Param(0, "Telo jehoz majitel je this. Muze byt null.")]
+		/// <summary>
+		/// Resne a pokud je telo tak i lootne telo.
+		/// </summary>
+		/// <param name="c">Telo jehoz majitel je this. Muze byt null.</param>
+		/// <remarks>
+		/// Vzajemna pozice mezi telem a mrtve postavy neni kontrolovana
+		/// </remarks>
 		public void Resurrect(Corpse c) {
 			if (this.Flag_Dead) {
 				if (c != null && !c.IsDeleted) {
@@ -1357,14 +1359,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Skills
-		[Summary("Enumerator of all character's skills")]
+		/// <summary>Enumerator of all character's skills</summary>
 		public override IEnumerable<ISkill> Skills {
 			get {
 				return new SkillsEnumerator(this.skillsabilities);
 			}
 		}
 
-		[Summary("Return the appropriate Skill instance by given ID, or null if given skill values are default (value 0 and lock up).")]
+		/// <summary>Return the appropriate Skill instance by given ID, or null if given skill values are default (value 0 and lock up).</summary>
 		public override ISkill GetSkillObject(int id) {
 			if (this.skillsabilities != null) {
 				AbstractSkillDef def = SkillDef.GetById(id);
@@ -1376,7 +1378,7 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		[Summary("Return the appropriate Skill instance by given def, or null if given skill values are default (value 0 and lock up).")]
+		/// <summary>Return the appropriate Skill instance by given def, or null if given skill values are default (value 0 and lock up).</summary>
 		public Skill GetSkillObject(AbstractSkillDef def) {
 			if (this.skillsabilities != null) {
 				object retVal = null;
@@ -1401,23 +1403,23 @@ namespace SteamEngine.CompiledScripts {
 			this.AcquireSkillObject(def).RealValue = value;
 		}
 
-		[Summary("Change the 'modified' value of a skill.")]
+		/// <summary>Change the 'modified' value of a skill.</summary>
 		public void ModifySkillValue(int id, int difference) {
 			AbstractSkillDef def = SkillDef.GetById(id);
 			this.AcquireSkillObject(def).ModifyValue(difference);
 		}
 
-		[Summary("Change the 'modified' value of a skill.")]
+		/// <summary>Change the 'modified' value of a skill.</summary>
 		public void ModifySkillValue(SkillName id, int difference) {
 			this.ModifySkillValue((int) id, difference);
 		}
 
-		[Summary("Change the 'modified' value of a skill.")]
+		/// <summary>Change the 'modified' value of a skill.</summary>
 		public void ModifySkillValue(AbstractSkillDef def, int difference) {
 			this.AcquireSkillObject(def).ModifyValue(difference);
 		}
 
-		[Summary("Get modified value of the skill.")]
+		/// <summary>Get modified value of the skill.</summary>
 		public override int GetSkill(int id) {
 			ISkill skl = this.GetSkillObject(id);
 			if (skl != null) {
@@ -1427,12 +1429,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Get modified value of the skill.")]
+		/// <summary>Get modified value of the skill.</summary>
 		public int GetSkill(SkillName id) {
 			return this.GetSkill((int) id);
 		}
 
-		[Summary("Get modified value of the skill.")]
+		/// <summary>Get modified value of the skill.</summary>
 		public int GetSkill(AbstractSkillDef skillDef) {
 			Skill skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
@@ -1476,7 +1478,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("Get value of the lock type of skill with given ID, if the skill is not present return default")]
+		/// <summary>Get value of the lock type of skill with given ID, if the skill is not present return default</summary>
 		public SkillLockType GetSkillLockType(int id) {
 			ISkill skl = GetSkillObject(id);
 			if (skl != null) {
@@ -1527,28 +1529,30 @@ namespace SteamEngine.CompiledScripts {
 			this.SkillsAbilities.Remove(aDef);
 		}
 
-		[Summary("Sphere's command for starting a skill")]
+		/// <summary>Sphere's command for starting a skill</summary>
 		public void Skill(int skillId) {
 			this.SelectSkill(skillId);
 		}
 
-		[Summary("Start a skill.")]
+		/// <summary>Start a skill.</summary>
 		public void SelectSkill(SkillName skillName) {
 			SelectSkill((SkillDef) AbstractSkillDef.GetById((int) skillName));
 		}
 
-		[Summary("Start a skill.")]
+		/// <summary>Start a skill.</summary>
 		public void SelectSkill(int skillId) {
 			SelectSkill((SkillDef) AbstractSkillDef.GetById(skillId));
 		}
 
-		[Summary("Start a skill. "
-		+ "Is also called when client does the useskill macro")]
+		/// <summary>
+		/// Start a skill. 
+		/// Is also called when client does the useskill macro
+		/// </summary>
 		public override void SelectSkill(AbstractSkillDef skillDef) {
 			this.SelectSkill((SkillDef) skillDef);
 		}
 
-		[Summary("Start a skill.")]
+		/// <summary>Start a skill.</summary>
 		public void SelectSkill(SkillDef skillDef) {
 			if (skillDef != null) {
 				SkillSequenceArgs args = SkillSequenceArgs.Acquire(this, skillDef);
@@ -1634,14 +1638,14 @@ namespace SteamEngine.CompiledScripts {
 			aDef.Activate(this);
 		}
 
-		[Summary("Enumerator of all character's abilities")]
+		/// <summary>Enumerator of all character's abilities</summary>
 		public IEnumerable<Ability> Abilities {
 			get {
 				return new AbilitiesEnumerator(this.skillsabilities);
 			}
 		}
 
-		[Summary("Check if character has the desired ability (according to the ability def)")]
+		/// <summary>Check if character has the desired ability (according to the ability def)</summary>
 		public bool HasAbility(AbilityDef aDef, out Ability ability) {
 			if (this.skillsabilities != null) {
 				object o;
@@ -1662,19 +1666,19 @@ namespace SteamEngine.CompiledScripts {
 			return (Ability) retVal; //either null or Ability instance if the player has it
 		}
 
-		[Summary("Get number of modified points the character has for specified AbilityDef. Equals getting the ModifiedPoints property value on the Ability object directly.")]
+		/// <summary>Get number of modified points the character has for specified AbilityDef. Equals getting the ModifiedPoints property value on the Ability object directly.</summary>
 		public int GetAbility(AbilityDef aDef) {
 			Ability retAb = GetAbilityObject(aDef);
 			return (retAb == null ? 0 : retAb.ModifiedPoints); //either null or Ability.Points if the player has it
 		}
 
-		[Summary("Modifies the points of the Ability by given diference. Equals calling ModifyPoints on the Ability object directly.")]
+		/// <summary>Modifies the points of the Ability by given diference. Equals calling ModifyPoints on the Ability object directly.</summary>
 		public void ModifyAbilityPoints(AbilityDef aDef, int difference) {
 			Ability ab = this.AcquireAbilityObject(aDef);
 			ab.ModifyPoints(difference);
 		}
 
-		[Summary("Set specified number of real points the character has for specified AbilityDef. Equals setting the RealPoints property on the Ability object directly.")]
+		/// <summary>Set specified number of real points the character has for specified AbilityDef. Equals setting the RealPoints property on the Ability object directly.</summary>
 		public void SetRealAbilityPoints(AbilityDef aDef, int points) {
 			Ability ab = this.AcquireAbilityObject(aDef);
 			ab.RealPoints = points;
@@ -1714,17 +1718,17 @@ namespace SteamEngine.CompiledScripts {
 		#endregion abilities
 
 		#region roles
-		[Summary("Check if character has been cast to the given role")]
+		/// <summary>Check if character has been cast to the given role</summary>
 		public bool HasRole(Role role) {
 			return RolesManagement.HasRole(this, role);
 		}
 
 		//these triggers might get alive if they prove to be needed. For now I dont think so
-		//[Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
+		///// <summary>Called after the character has been cast to some role (the role is already in his assignedRoles list</summary>
 		//internal virtual void On_RoleAssign(Role role) {
 		//}
 
-		//[Summary("Called after the character has been cast to some role (the role is already in his assignedRoles list")]
+		///// <summary>Called after the character has been cast to some role (the role is already in his assignedRoles list</summary>
 		//internal virtual void On_RoleUnAssign(Role role) {
 		//}
 		#endregion roles
@@ -1915,7 +1919,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Persistence
 
-		[Summary("Check if the current character has plevel greater than 1 (is more than player)")]
+		/// <summary>Check if the current character has plevel greater than 1 (is more than player)</summary>
 		public bool IsGM {
 			get {
 				AbstractAccount acc = this.Account;
@@ -1991,27 +1995,27 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion Weight
 
-		[Summary("Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)")]
+		/// <summary>Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)</summary>
 		public void RedMessage(string arg) {
 			this.SysMessage(arg, (int) Hues.Red);
 		}
 
-		[Summary("Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)")]
+		/// <summary>Message displayed in red - used for importatnt system or ingame messages (warnings, errors etc)</summary>
 		public void RedMessageCliloc(int arg) {
 			this.ClilocSysMessage(arg, (int) Hues.Red);
 		}
 
-		[Summary("Message displayed in blue - used for ingame purposes")]
+		/// <summary>Message displayed in blue - used for ingame purposes</summary>
 		public void BlueMessage(string arg) {
 			this.SysMessage(arg, (int) Hues.Blue);
 		}
 
-		[Summary("Message displayed in green - used for ingame purposes")]
+		/// <summary>Message displayed in green - used for ingame purposes</summary>
 		public void GreenMessage(string arg) {
 			this.SysMessage(arg, (int) Hues.Green);
 		}
 
-		[Summary("Message displayed in green - used for ingame purposes")]
+		/// <summary>Message displayed in green - used for ingame purposes</summary>
 		public void InfoMessage(string arg) {
 			this.SysMessage(arg, (int) Hues.Info);
 		}
@@ -2362,7 +2366,7 @@ namespace SteamEngine.CompiledScripts {
 		public void On_AfterGetSwing(WeaponSwingArgs args) {
 		}
 
-		[Summary("hodi zbran do batohu")]
+		/// <summary>hodi zbran do batohu</summary>
 		public void DisArm() {
 			Weapon w = this.Weapon;
 			if (w != null)

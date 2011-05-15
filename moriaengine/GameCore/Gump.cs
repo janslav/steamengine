@@ -16,9 +16,8 @@
 */
 
 using System;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -38,10 +37,12 @@ namespace SteamEngine {
 		internal abstract Gump InternalConstruct(Thing focused, AbstractCharacter sendTo, DialogArgs args);
 	}
 
-	[Summary("Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)" +
-			"the array's length is unmodifiable so the only way to put args into it is to put them during constructor call." +
-			"Arguments added in this way should be only the compulsory dialog arguments necessary in every case (for example " +
-			"label and text in the Info/Error dialog-messages). Other args should be added as tags!")]
+	/// <summary>
+	/// Dialog arguments holder. It can contain arguments as tags as well as an array of (e.g. hardcoded arguments)
+	/// the array's length is unmodifiable so the only way to put args into it is to put them during constructor call.
+	/// Arguments added in this way should be only the compulsory dialog arguments necessary in every case (for example 
+	/// label and text in the Info/Error dialog-messages). Other args should be added as tags!
+	/// </summary>
 	public class DialogArgs : TagHolder {
 		private object[] fldArgs;
 
@@ -135,16 +136,16 @@ namespace SteamEngine {
 		}
 
 		public int Uid {
-			get { 
-				return this.uid; 
+			get {
+				return this.uid;
 			}
 		}
 
 		public GumpDef Def {
 			get {
-				return this.def; 
+				return this.def;
 			}
-		} 
+		}
 
 		public abstract void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers);
 
@@ -157,8 +158,8 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				"{0} {1} (uid {2})", 
+			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"{0} {1} (uid {2})",
 				Tools.TypeToString(GetType()), this.def.Defname, this.uid);
 		}
 
@@ -202,7 +203,7 @@ namespace SteamEngine {
 			AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemId, int hue, int width, int height) {
 			string[] arr = new string[] {
@@ -223,7 +224,7 @@ namespace SteamEngine {
 			AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddCheckBox(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
 			string[] arr = new string[] {
@@ -587,7 +588,7 @@ namespace SteamEngine {
 			get {
 				return this.text;
 			}
-		} 
+		}
 	}
 
 	public class ResponseNumber {

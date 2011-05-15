@@ -14,17 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
-using System.Diagnostics;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Class that will display the info dialog")]
+	/// <summary>Class that will display the info dialog</summary>
 	public class D_Info : CompiledGumpDef {
 		internal static TagKey infoizedTargT = TagKey.Acquire("_info_target_");
 		internal static TagKey pagingButtonsTK = TagKey.Acquire("_paging_buttons_");
@@ -143,18 +138,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			} else { //info dialog buttons
 				int pressedButtonNo = gr.PressedButton;
-				
+
 				if (pressedButtonNo >= 1000) { //display detail of too long fields
 					Dictionary<int, IDataFieldView> detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.detailIndexPairingTK);
 					IDataFieldView idfv = (IDataFieldView) detailsPairing[pressedButtonNo];
 
 					//display the detail on the selected field
-					Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info_Detail>.Instance, new DialogArgs(idfv,target));
+					Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info_Detail>.Instance, new DialogArgs(idfv, target));
 					DialogStacking.EnstackDialog(gi, newGi); //store
 				} else {//normal field button
 					Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.btnsIndexPairingTK);
 					IDataFieldView idfv = (IDataFieldView) btnsPairing[pressedButtonNo];
-	
+
 					if (idfv.IsButtonEnabled) {
 						DialogStacking.ResendAndRestackDialog(gi);
 						//action button field - call the method
@@ -177,10 +172,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display an info dialog. Function accessible from the game." +
-				"The function is designed to be triggered using .x info" +
-				"it can be used also normally .info to display runner's own info dialog" +
-				"finally - we can use it also like .info(obj) to display the info about obj")]
+		/// <summary>
+		/// Display an info dialog. Function accessible from the game.
+		/// The function is designed to be triggered using .x info 
+		/// it can be used also normally .info to display runner's own info dialog 
+		/// finally - we can use it also like .info(obj) to display the info about obj
+		/// </summary>
 		[SteamFunction]
 		public static void Info(object self, ScriptArgs args) {
 			if (args.Argv == null || args.Argv.Length == 0) {
@@ -193,9 +190,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display a settings dialog. Function accessible from the game." +
-				"The function is designed to be triggered using .x settings, but it will be" +
-				"mainly used from the SettingsCategories dialog on a various buttons")]
+		/// <summary>
+		/// Display a settings dialog. Function accessible from the game.
+		/// The function is designed to be triggered using .x settings, but it will be 
+		/// mainly used from the SettingsCategories dialog on a various buttons
+		/// </summary>
 		[SteamFunction]
 		public static void Settings(object self, ScriptArgs args) {
 			if (args.Argv == null || args.Argv.Length == 0) {

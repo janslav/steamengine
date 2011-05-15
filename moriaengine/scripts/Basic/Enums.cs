@@ -15,11 +15,10 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Numbers of important hues")]
+	/// <summary>Numbers of important hues</summary>
 	public enum Hues : int {
 		Red = 33,
 		Blue = 99,
@@ -46,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	#region Dialog enums
-	[Summary("Various sorting criteria used in various dialogs")]
+	/// <summary>Various sorting criteria used in various dialogs</summary>
 	public enum SortingCriteria : int {
 		NameAsc,
 		NameDesc,
@@ -86,32 +85,32 @@ namespace SteamEngine.CompiledScripts {
 		Valign_Center
 	}
 
-	[Summary("Various types of GUTA Leaf Components")]
+	/// <summary>Various types of GUTA Leaf Components</summary>
 	public enum LeafComponentTypes : int {
 		//Buttons
-		[Summary("Button with the big X inside")]
+		/// <summary>Button with the big X inside</summary>
 		ButtonCross,
-		[Summary("Button with the OK inside")]
+		/// <summary>Button with the OK inside</summary>
 		ButtonOK,
-		[Summary("Button with the tick inside")]
+		/// <summary>Button with the tick inside</summary>
 		ButtonTick,
-		[Summary("Button with the reversed tick (arrow back) inside")]
+		/// <summary>Button with the reversed tick (arrow back) inside</summary>
 		ButtonBack,
-		[Summary("Button with the sheet of paper inside")]
+		/// <summary>Button with the sheet of paper inside</summary>
 		ButtonPaper,
-		[Summary("Button with flying paper")]
+		/// <summary>Button with flying paper</summary>
 		ButtonSend,
-		[Summary("Button with the crossed circle")]
+		/// <summary>Button with the crossed circle</summary>
 		ButtonNoOperation,
-		[Summary("Button for sorting (small up arrow)")]
+		/// <summary>Button for sorting (small up arrow)</summary>
 		ButtonSortUp,
-		[Summary("Button for sorting (small down arrow)")]
+		/// <summary>Button for sorting (small down arrow)</summary>
 		ButtonSortDown,
-		[Summary("Medium UP arrow")]
+		/// <summary>Medium UP arrow</summary>
 		ButtonPrev,
-		[Summary("Medium DOWN arrow")]
+		/// <summary>Medium DOWN arrow</summary>
 		ButtonNext,
-		[Summary("Button with people")]
+		/// <summary>Button with people</summary>
 		ButtonPeople,
 		CheckBox,
 		RadioButton,
@@ -132,7 +131,7 @@ namespace SteamEngine.CompiledScripts {
 	#endregion Dialog enums
 
 	[Flags]
-	[Summary("specification of various localities where to look for resources")]
+	/// <summary>specification of various localities where to look for resources</summary>
 	public enum ResourcesLocality : int {
 		NonSpecified = 0x000, //not specified where to look for resources (used for resources of type: abilities,skills,triggergroups etc)
 
@@ -152,11 +151,11 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[Flags]
-	[Summary("Urcuje, jakej rezist se ma aplikovat na dotycny damage.")]
+	/// <summary>Urcuje, jakej rezist se ma aplikovat na dotycny damage.</summary>
 	public enum DamageType : int {
-		[Summary("Damage neredukovano")]
+		/// <summary>Damage neredukovano</summary>
 		Irresistable = 0x000000,
-		[Summary("Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)")]
+		/// <summary>Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)</summary>
 		Magic = 0x000001,
 		Fire = 0x000004,
 		MagicFire = Magic | Fire,
@@ -168,24 +167,24 @@ namespace SteamEngine.CompiledScripts {
 		MagicAcid = Magic | Acid,
 		Cold = 0x000020,
 		MagicCold = Magic | Cold,
-		[Summary("Mystikuv utok")]
+		/// <summary>Mystikuv utok</summary>
 		Mystical = 0x000080,
 		MagicMystical = Magic | Mystical,
-		[Summary("Damage redukovano fyzickym rezistem (neplest s armorem)")]
+		/// <summary>Damage redukovano fyzickym rezistem (neplest s armorem)</summary>
 		Physical = 0x000002,
-		[Summary("Secne zbrane (mece, sekery) ")]
+		/// <summary>Secne zbrane (mece, sekery) </summary>
 		Slashing = 0x000100,
 		PhysicalSlashing = Physical | Slashing,
-		[Summary("Bodne zbrane (mece, dyky, vidle) (drive piercing, prejmenovano aby se to nepletlo s prubojnosti)")]
+		/// <summary>Bodne zbrane (mece, dyky, vidle) (drive piercing, prejmenovano aby se to nepletlo s prubojnosti)</summary>
 		Stabbing = 0x000200,
 		PhysicalStabbing = Physical | Stabbing,
-		[Summary("Secne bodne zbrane (mece)")]
+		/// <summary>Secne bodne zbrane (mece)</summary>
 		Sharp = Slashing | Stabbing,
 		PhysicalSharp = Physical | Sharp,
-		[Summary("Tupe zbrane (hole, palcaty)")]
+		/// <summary>Tupe zbrane (hole, palcaty)</summary>
 		Blunt = 0x000400,
 		PhysicalBlunt = Physical | Blunt,
-		[Summary("Palne zbrane (luky, kuse)")]
+		/// <summary>Palne zbrane (luky, kuse)</summary>
 		Archery = 0x000800,
 		PhysicalArchery = Physical | Archery,
 		Bleed = 0x001000,
@@ -229,7 +228,7 @@ namespace SteamEngine.CompiledScripts {
 	public enum ProjectileType : byte {
 		None = 0x00,
 		Bolt = 0x01, JaggedBolt = Jagged | Bolt,
-		Arrow = 0x02, JaggedArrow = Jagged | Arrow, 
+		Arrow = 0x02, JaggedArrow = Jagged | Arrow,
 		Throwable = 0x04, //?
 		Jagged = 0x08
 		//?
@@ -393,7 +392,7 @@ namespace SteamEngine.CompiledScripts {
 		Female = 2
 	}
 
-	[Summary("Recognized types of characters. Can be used e.g. in skills (tracking etc.)")]
+	/// <summary>Recognized types of characters. Can be used e.g. in skills (tracking etc.)</summary>
 	public enum CharacterTypes : byte {
 		All = 0,
 		Animals = 1,
@@ -415,7 +414,7 @@ namespace SteamEngine.CompiledScripts {
 	//    Ghost =		0x80
 	//}	
 
-	[Summary("Category of characters to track, tracking phases")]
+	/// <summary>Category of characters to track, tracking phases</summary>
 	public enum TrackingEnums : byte {
 		//tracking phases
 		Phase_Characters_Seek = 1, //after the category is selected - in this phase the surroundings will be checked for all trackable chars
@@ -437,7 +436,7 @@ namespace SteamEngine.CompiledScripts {
 		Allied = 1, //same realm
 		Friendly = 2 //same guild/allied guild, party
 	}
-	
+
 	[Flags]
 	public enum EffectFlag {
 		Unknown = 0x00, None = 0x00, Zero = 0x00,

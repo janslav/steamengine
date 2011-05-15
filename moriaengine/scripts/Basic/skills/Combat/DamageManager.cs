@@ -16,7 +16,6 @@
 */
 using System;
 using SteamEngine.Common;
-using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -75,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 			return modifier;
 		}
 
-		[Summary("Cause damage to defender. Returns number of hitpoints that was actually removed. Runs @Damage triggers.")]
+		/// <summary>Cause damage to defender. Returns number of hitpoints that was actually removed. Runs @Damage triggers.</summary>
 		public static int CauseDamage(Character attacker, Character defender, DamageType flags, double damage) {
 			if (!defender.IsDeleted && !defender.Flag_Dead && !defender.Flag_Insubst) {
 				defender.Trigger_HostileAction(attacker);
@@ -156,7 +155,7 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey beforeSwingTK = TriggerKey.Acquire("beforeSwing");
 		static TriggerKey beforeGetSwingTK = TriggerKey.Acquire("beforeGetSwing");
 
-		[Summary("Happens before applying armor, can be cancelled.")]
+		/// <summary>Happens before applying armor, can be cancelled.</summary>
 		public static TriggerResult Trigger_BeforeSwing(WeaponSwingArgs swingArgs) {
 			var result = swingArgs.attacker.TryCancellableTrigger(beforeSwingTK, swingArgs);
 			if (result != TriggerResult.Cancel) {
@@ -178,7 +177,7 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey causeDamageTK = TriggerKey.Acquire("causeDamage");
 		static TriggerKey damageTK = TriggerKey.Acquire("damage");
 
-		[Summary("Happens before applying armor. If a script should want to negate or alter the damage, it should 'manually' alter Hits, and/or create a new damaging event altogether.")]
+		/// <summary>Happens before applying armor. If a script should want to negate or alter the damage, it should 'manually' alter Hits, and/or create a new damaging event altogether.</summary>
 		public static void Trigger_Damage(DamageArgs damageArgs) {
 			damageArgs.attacker.TryTrigger(causeDamageTK, damageArgs);
 			try {
@@ -194,7 +193,7 @@ namespace SteamEngine.CompiledScripts {
 		static TriggerKey afterSwingTK = TriggerKey.Acquire("afterSwing");
 		static TriggerKey afterGetSwingTK = TriggerKey.Acquire("afterGetSwing");
 
-		[Summary("Happens after applying armor, can be cancelled.")]
+		/// <summary>Happens after applying armor, can be cancelled.</summary>
 		public static void Trigger_AfterSwing(WeaponSwingArgs swingArgs) {
 			swingArgs.attacker.TryTrigger(afterSwingTK, swingArgs);
 

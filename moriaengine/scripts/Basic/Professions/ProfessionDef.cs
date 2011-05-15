@@ -22,7 +22,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
-	[Summary("Def listing fields necessary for all professions. Actual profession-related active code is in ProfessionPlugin class")]
+	/// <summary>Def listing fields necessary for all professions. Actual profession-related active code is in ProfessionPlugin class</summary>
 	public class ProfessionDef : AbstractIndexedDef<ProfessionDef, string> {
 		#region Accessors
 		public static new ProfessionDef GetByDefname(string defname) {
@@ -112,32 +112,32 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Skills
-		[Summary("Return the maximal value of the given skill for this profession")]
+		/// <summary>Return the maximal value of the given skill for this profession</summary>
 		public int GetSkillCap(SkillDef skillDef) {
 			return this.GetSkillCap(skillDef.Id);
 		}
 
-		[Summary("Return the maximal value of the given skill for this profession")]
+		/// <summary>Return the maximal value of the given skill for this profession</summary>
 		public int GetSkillCap(SkillName skillName) {
 			return this.GetSkillCap((int) skillName);
 		}
 
-		[Summary("Return the maximal value of the given skill for this profession")]
+		/// <summary>Return the maximal value of the given skill for this profession</summary>
 		public int GetSkillCap(int skillId) {
 			return this.GetSkillEntry(skillId).cap;
 		}
 
-		[Summary("Return the value of the given skill at which this profession starts")]
+		/// <summary>Return the value of the given skill at which this profession starts</summary>
 		public int GetSkillMinimum(SkillDef skillDef) {
 			return this.GetSkillMinimum(skillDef.Id);
 		}
 
-		[Summary("Return the value of the given skill at which this profession starts")]
+		/// <summary>Return the value of the given skill at which this profession starts</summary>
 		public int GetSkillMinimum(SkillName skillName) {
 			return this.GetSkillMinimum((int) skillName);
 		}
 
-		[Summary("Return the value of the given skill at which this profession starts")]
+		/// <summary>Return the value of the given skill at which this profession starts</summary>
 		public int GetSkillMinimum(int skillId) {
 			return this.GetSkillEntry(skillId).minimum;
 		}
@@ -168,7 +168,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Skills
 
 		#region Abilities
-		[Summary("Return the maximal value of the given ability for this profession")]
+		/// <summary>Return the maximal value of the given ability for this profession</summary>
 		public int GetAbilityMaximumPoints(AbilityDef abilityDef) {
 			ProfessionAbilityEntry entry = this.GetAbilityEntry(abilityDef);
 			if (entry != null) {

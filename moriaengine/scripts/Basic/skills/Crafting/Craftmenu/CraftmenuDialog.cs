@@ -14,16 +14,13 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Craftmenu for the specified crafting skill")]
+	/// <summary>Craftmenu for the specified crafting skill</summary>
 	public class D_Craftmenu : CompiledGumpDef {
 		//public static readonly TagKey tkCraftmenuLastpos = TagKey.Get("_cm_lastPosition_");
 		private const string tkCraftmenuLastposPrefix = "_cm_lastPosition_";
@@ -304,8 +301,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display the craftmenu categories dialog. You can use some of the crafting skills SkillName as " +
-				"a parameter to display directly the particular skill Craftmenu")]
+		/// <summary>
+		/// Display the craftmenu categories dialog. You can use some of the crafting skills SkillName as 
+		/// a parameter to display directly the particular skill Craftmenu
+		/// </summary>
 		[SteamFunction]
 		public static void Craftmenu(Character self, ScriptArgs args) {
 			CraftingSkillDef sklDef;
@@ -353,7 +352,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Dialog listing all available craftmenu categories (one for every crafting skill)")]
+	/// <summary>Dialog listing all available craftmenu categories (one for every crafting skill)</summary>
 	public class D_CraftmenuCategories : CompiledGumpDef {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
@@ -450,7 +449,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Založení nové subkategorie v craftmenu")]
+	/// <summary>Založení nové subkategorie v craftmenu</summary>
 	public class D_Input_CraftmenuNewSubcat : CompiledInputDef {
 		public override string Label {
 			get {

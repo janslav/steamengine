@@ -1,14 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Generic-based store for singleton AbstractScript descendants, for easy access in C# scripts.")]
+	/// <summary>Generic-based store for singleton AbstractScript descendants, for easy access in C# scripts.</summary>
 	public static class SingletonScript<T> where T : AbstractScript {
 		static T instance = FindSingletonInstance();
 

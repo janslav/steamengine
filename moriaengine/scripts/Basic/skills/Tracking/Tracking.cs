@@ -16,15 +16,9 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.Regions;
-using SteamEngine.Networking;
-using SteamEngine.Communication;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
@@ -32,22 +26,22 @@ namespace SteamEngine.CompiledScripts {
 		//tag key for the tag with the list of trackers to the tracked character
 		internal static TagKey trackedByTK = TagKey.Acquire("_tracked_by_");
 
-		[Summary("Maximal age [sec] of the footsteps to be tracked at skill 0")]
+		/// <summary>Maximal age [sec] of the footsteps to be tracked at skill 0</summary>
 		private FieldValue minFootstepAge;
-		[Summary("Maximal age [sec] of the footsteps to be tracked at skill 100")]
+		/// <summary>Maximal age [sec] of the footsteps to be tracked at skill 100</summary>
 		private FieldValue maxFootstepAge;
 
-		[Summary("Maximum characters to be recognized at skill 0")]
+		/// <summary>Maximum characters to be recognized at skill 0</summary>
 		private FieldValue minCharsToTrack;
-		[Summary("Maximum characters to be recognized at skill 100")]
+		/// <summary>Maximum characters to be recognized at skill 100</summary>
 		private FieldValue maxCharsToTrack;
 
-		[Summary("Max steps before tracking chance is recomputed at skill 0")]
+		/// <summary>Max steps before tracking chance is recomputed at skill 0</summary>
 		private FieldValue minSafeSteps;
-		[Summary("Max steps before tracking chance is recomputed at skill 100")]
+		/// <summary>Max steps before tracking chance is recomputed at skill 100</summary>
 		private FieldValue maxSafeSteps;
 
-		[Summary("Similar as Effect but for tracking monsters,animals and NPCs")]
+		/// <summary>Similar as Effect but for tracking monsters,animals and NPCs</summary>
 		private FieldValue pvmEffect;
 
 		public TrackingSkillDef(string defname, string filename, int headerLine)
@@ -186,8 +180,10 @@ namespace SteamEngine.CompiledScripts {
 			skillSeqArgs.Self.SysMessage("Tracking aborted");
 		}
 
-		[Remark("Check if we are alive, have enuogh stamina etc.... Return false if the trigger above" +
-				" should be cancelled or true if we can continue")]
+		/// <summary>
+		/// Check if we are alive, have enuogh stamina etc.... Return false if the trigger above 
+		/// should be cancelled or true if we can continue
+		/// </summary>
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {

@@ -14,17 +14,15 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Craftmenu for setting of the particular part of the craftmenu - allows setting of basic and most used properties " +
-			"such as resources, skillmake or weight")]
+	/// <summary>
+	/// Craftmenu for setting of the particular part of the craftmenu - allows setting of basic and most used properties 
+	/// such as resources, skillmake or weight
+	/// </summary>
 	public class D_Craftmenu_Settings : CompiledGumpDef {
 		private static int width = 600;
 		private static readonly TagKey previousItemdefValsTK = TagKey.Acquire("_previous_itemdef_values_");
@@ -56,7 +54,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			int rowCntr = 0;
 			//precompute some common values:
-			int catRowHgth = Math.Max(ButtonMetrics.D_BUTTON_HEIGHT, GumpDimensions.Table[(int)GumpIDs.Pouch].Height + 2 * ImprovedDialog.D_ICON_SPACE);
+			int catRowHgth = Math.Max(ButtonMetrics.D_BUTTON_HEIGHT, GumpDimensions.Table[(int) GumpIDs.Pouch].Height + 2 * ImprovedDialog.D_ICON_SPACE);
 			int offset = ImprovedDialog.TextLength("Weight:  "); //offset for the weight edit field
 			int wghtLen = ImprovedDialog.TextLength("1000"); //just some number length (4 numbers) for the weight input field
 			string resources = "";
@@ -154,7 +152,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								}
 								if (newRes != null && newSkillmake != null) {
 									//set new values only all of them
-									itm.itemDef.Weight = (float)newWeight;
+									itm.itemDef.Weight = (float) newWeight;
 									itm.itemDef.Resources = newRes;
 									itm.itemDef.SkillMake = newSkillmake;
 								}

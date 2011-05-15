@@ -20,7 +20,7 @@ using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Abstract class designed for implementing by scripted and compiled version of a input dialog def")]
+	/// <summary>Abstract class designed for implementing by scripted and compiled version of a input dialog def</summary>
 	public abstract class AbstractInputDef : CompiledGumpDef {
 		protected static readonly TagKey inputParamsTK = TagKey.Acquire("_input_params_");
 
@@ -32,25 +32,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			: base(defname) {
 		}
 
-		[Summary("Static 'factory' method for getting the instance of an existing input def.")]
+		/// <summary>Static 'factory' method for getting the instance of an existing input def.</summary>
 		public static new AbstractInputDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbstractInputDef;
 		}
 
-		[Summary("Label of the input dialog")]
+		/// <summary>Label of the input dialog</summary>
 		public abstract string Label {
 			get;
 		}
 
-		[Summary("Pre-inserted default input value")]
+		/// <summary>Pre-inserted default input value</summary>
 		public abstract string DefaultInput {
 			get;
 		}
 
-		[Summary("Method called when clicked on the OK button in the dialog, sending the filled text")]
+		/// <summary>Method called when clicked on the OK button in the dialog, sending the filled text</summary>
 		public abstract void Response(Character sentTo, TagHolder focus, string filledText);
 
-		[Summary("Construct method creates the dialog itself")]
+		/// <summary>Construct method creates the dialog itself</summary>
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//there should be a input-text in the args params array
 
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		[Summary("Button pressed - exit the dialog or pass the calling onto the underlaying inputDef")]
+		/// <summary>Button pressed - exit the dialog or pass the calling onto the underlaying inputDef</summary>
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			switch (gr.PressedButton) {
 				case 0: //exit or rightclick
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Class for displaying the input dialogs from LSCript using the [inputdef foo] section")]
+	/// <summary>Class for displaying the input dialogs from LSCript using the [inputdef foo] section</summary>
 	public sealed class ScriptedInputDialogDef : AbstractInputDef {
 		private string label;
 		private string defaultInput;
@@ -157,8 +157,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return id;
 		}
 
-		[Summary("Action called when the input dialog is confirmed. The parameters of the call will be" +
-				"1st - the inputted text, followed by the params the input dialog was called with")]
+		/// <summary>
+		/// Action called when the input dialog is confirmed. The parameters of the call will be
+		/// 1st - the inputted text, followed by the params the input dialog was called with
+		/// </summary>
 		public override void Response(Character sentTo, TagHolder focus, string filledText) {
 			//prepend the input text to previous input parameters
 			object[] oldParams = GumpInstance.InputArgs.GetArgsArray();
@@ -168,12 +170,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			on_response.Run(focus, newPars); //pass the filled text value
 		}
 
-		//[Summary("Unregister the input dialog def from the other defs")]
+		///// <summary>Unregister the input dialog def from the other defs</summary>
 		//private static void UnRegisterInputDialogDef(ScriptedInputDialogDef id) {
 		//    AllScriptsByDefname.Remove(id.Defname);
 		//}
 
-		//[Summary("Register the input dialog def among the other defs")]
+		///// <summary>Register the input dialog def among the other defs</summary>
 		//private static void RegisterInputDialogDef(ScriptedInputDialogDef id) {
 		//    AllScriptsByDefname[id.Defname] = id;
 		//}
@@ -196,7 +198,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Class for using input dialogs implemented in C#")]
+	/// <summary>Class for using input dialogs implemented in C#</summary>
 	public abstract class CompiledInputDef : AbstractInputDef {
 
 	}

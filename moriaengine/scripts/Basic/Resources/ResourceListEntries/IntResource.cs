@@ -19,14 +19,14 @@ using System;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Resource as characters Intelligence")]
+	/// <summary>Resource as characters Intelligence</summary>
 	public class StatIntResource : AbstractResourceListEntry, IResourceListEntry_Simple {
 
 		public static void Bootstrap() {
 			ResourcesListParser.RegisterResourceParser(TryParse);
 		}
 
-		[Summary("Try parsing given string as ItemResource")]
+		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			if ("Int".Equals(definition, StringComparison.OrdinalIgnoreCase) ||
 					"Intelligence".Equals(definition, StringComparison.OrdinalIgnoreCase)) {
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("String from which the resource could be parsed again, used for saving")]
+		/// <summary>String from which the resource could be parsed again, used for saving</summary>
 		public override string ParsableString {
 			get {
 				return "int";
@@ -65,10 +65,10 @@ namespace SteamEngine.CompiledScripts {
 			return chr.Int >= DesiredCount;
 		}
 
-		[Summary("Indicates whether this is a consumable resource")]
+		/// <summary>Indicates whether this is a consumable resource</summary>
 		public bool IsConsumable { get { return false; } }
 
-		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		/// <summary>Consumes this resource. Throws if this is not a consumable resource.</summary>
 		public void Consume(Character ch) {
 			throw new InvalidOperationException("Intelligence can not be consumed as a resource.");
 		}

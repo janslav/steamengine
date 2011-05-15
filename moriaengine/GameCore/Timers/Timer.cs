@@ -16,13 +16,6 @@
 */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Text;
-using System.Reflection;
 using System.Threading;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -134,8 +127,8 @@ namespace SteamEngine.Timers {
 
 		protected abstract void OnTimeout();
 
-		[Summary("The time interval between invocations, using TimeSpan values to measure time intervals.")]
-		[Remark("Specify negative one (-1) second (or any other negative number) to disable periodic signaling.")]
+		/// <summary>The time interval between invocations, using TimeSpan values to measure time intervals.</summary>
+		/// <remarks>Specify negative one (-1) second (or any other negative number) to disable periodic signaling.</remarks>
 		public TimeSpan PeriodSpan {
 			get {
 				TimeSpan p = this.period;
@@ -157,8 +150,8 @@ namespace SteamEngine.Timers {
 			}
 		}
 
-		[Summary("The time interval between invocations, in seconds. ")]
-		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to disable periodic signaling.")]
+		/// <summary>The time interval between invocations, in seconds. </summary>
+		/// <remarks>Specify negative one (-1) second (or any other negative TimeSpan) to disable periodic signaling.</remarks>
 		public double PeriodInSeconds {
 			get {
 				TimeSpan p = this.period;
@@ -180,8 +173,8 @@ namespace SteamEngine.Timers {
 			}
 		}
 
-		[Summary("The amount of time to delay before the first invoking, in seconds.")]
-		[Remark("Specify negative one (-1) second (or any other negative number) to prevent the timer from starting (i.e. to pause it). Specify 0 to start the timer immediately.")]
+		/// <summary>The amount of time to delay before the first invoking, in seconds.</summary>
+		/// <remarks>Specify negative one (-1) second (or any other negative number) to prevent the timer from starting (i.e. to pause it). Specify 0 to start the timer immediately.</remarks>
 		public double DueInSeconds {
 			get {
 				return this.DueInSpan.TotalSeconds;
@@ -195,8 +188,8 @@ namespace SteamEngine.Timers {
 			}
 		}
 
-		[Summary("The amount of time to delay before the first invoking, using TimeSpan values to measure time intervals.")]
-		[Remark("Specify negative one (-1) second (or any other negative TimeSpan) to prevent the timer from starting (i.e. to pause it). Specify TimeSpan.Zero to start the timer immediately.")]
+		/// <summary>The amount of time to delay before the first invoking, using TimeSpan values to measure time intervals.</summary>
+		/// <remarks>Specify negative one (-1) second (or any other negative TimeSpan) to prevent the timer from starting (i.e. to pause it). Specify TimeSpan.Zero to start the timer immediately.</remarks>
 		public TimeSpan DueInSpan {
 			get {
 				if (this.fireAt == negativeOneSecond) {

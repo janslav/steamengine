@@ -613,7 +613,13 @@ namespace SteamEngine {
 		virtual protected void On_AfterLoadFromScripts() {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), Summary("This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		/// <summary>
+		/// Resolves all fieldvalues of all defs
+		/// </summary>
+		/// <remarks>
+		/// This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True
+		/// </remarks>
 		public static void ResolveAll() {
 			int count = AllScripts.Count;
 			Logger.WriteDebug("Resolving " + count + " defs");

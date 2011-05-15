@@ -16,12 +16,7 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
@@ -32,8 +27,10 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		[Summary("This trigger is used only when clicked the skill-list blue radio button for some crafting skill." +
-				"opens the craftmenu for the given skill")]
+		/// <summary>
+		/// This trigger is used only when clicked the skill-list blue radio button for some crafting skill.
+		/// opens the craftmenu for the given skill
+		/// </summary>
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
@@ -52,8 +49,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("This trigger is called when OK button is clicked from the craftmenu. One item from the queue is picked and its making process " +
-			"begins here (i.e. the making success and the number of strokes is pre-computed here")]
+		/// <summary>
+		/// This trigger is called when OK button is clicked from the craftmenu. One item from the queue is picked and its making process 
+		/// begins here (i.e. the making success and the number of strokes is pre-computed here)
+		/// </summary>
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
@@ -78,8 +77,10 @@ namespace SteamEngine.CompiledScripts {
 			return TriggerResult.Continue; //continue to delay, then @stroke
 		}
 
-		[Summary("This trigger is run a pre-computed number of times before the item is either created or failed." +
-				"The item-making animations and sounds are run from here")]
+		/// <summary>
+		/// This trigger is run a pre-computed number of times before the item is either created or failed.
+		/// The item-making animations and sounds are run from here
+		/// </summary>
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
@@ -100,9 +101,11 @@ namespace SteamEngine.CompiledScripts {
 			return TriggerResult.Continue; //continue to @success or @fail (the result is already prepared from the "@start" phase
 		}
 
-		[Summary("This trigger is run in case the item making succeeds. It consumes the desired number of resources, " +
-				"creates the item instance and checks if there are any other items to be created in the queue. If so, it " +
-				"re-runs the @start trigger")]
+		/// <summary>
+		/// This trigger is run in case the item making succeeds. It consumes the desired number of resources, 
+		/// creates the item instance and checks if there are any other items to be created in the queue. If so, it 
+		/// re-runs the @start trigger
+		/// </summary>
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			Player self = (Player) skillSeqArgs.Self;
 			//todo: paralyzed state etc.
@@ -145,9 +148,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("This trigger is run in case the item making fails. It consumes some of the desired number of resources (i.e. these are wasted), " +
-				"and checks if there are any other items to be created in the queue. If so, it " +
-				"re-runs the @start trigger")]
+		/// <summary>
+		/// This trigger is run in case the item making fails. It consumes some of the desired number of resources (i.e. these are wasted), 
+		/// and checks if there are any other items to be created in the queue. If so, it 
+		/// re-runs the @start trigger
+		/// </summary>
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) { //checking alive will be enough
@@ -189,32 +194,40 @@ namespace SteamEngine.CompiledScripts {
 			CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 		}
 
-		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
-				"Its purpose is to make something related to the stroke of the particular skill (such as playing some sound...)")]
+		/// <summary>
+		/// This method is intended to be overriden by particular CraftingSkillDef classes. 
+		/// Its purpose is to make something related to the stroke of the particular skill (such as playing some sound...)
+		/// </summary>
 		protected virtual void DoStroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			self.SysMessage(skillSeqArgs.SkillDef.Defname + " stroke");
 		}
 
-		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
-				"Its purpose is to make something related to the success of the particular skill (such as playing sound," +
-				"computing some special item characteristics etc.)")]
+		/// <summary>
+		/// This method is intended to be overriden by particular CraftingSkillDef classes. 
+		/// Its purpose is to make something related to the success of the particular skill (such as playing sound,
+		/// computing some special item characteristics etc.)
+		/// </summary>
 		protected virtual void DoSuccess(SkillSequenceArgs skillSeqArgs, Item newItem) {
 			//TODO pocitat nejake ty "exceptional" vlastnosti, podepisovani predmetu atp.
 			Character self = skillSeqArgs.Self;
 			self.SysMessage(skillSeqArgs.SkillDef.Defname + " success");
 		}
 
-		[Summary("This method is intended to be overriden by particular CraftingSkillDef classes. " +
-				"Its purpose is to check any additional pre-requisities for succesfull skill usage " +
-				"(e.g. for BS check if the anvil or forge is near etc...)." +
-				"Return false if the trigger above should be cancelled or true if we can continue")]
+		/// <summary>
+		/// This method is intended to be overriden by particular CraftingSkillDef classes. 
+		/// Its purpose is to check any additional pre-requisities for succesfull skill usage 
+		/// (e.g. for BS check if the anvil or forge is near etc...).
+		/// Return false if the trigger above should be cancelled or true if we can continue
+		/// </summary>
 		protected virtual bool DoCheckSpecials(SkillSequenceArgs skillSeqArgs) {
 			return true;
 		}
 
-		[Remark("Check if we are alive, have enough stats etc.... Return false if the trigger above" +
-				" should be cancelled or true if we can continue")]
+		/// <summary>
+		/// Check if we are alive, have enough stats etc. Return false if the trigger above
+		/// should be cancelled or true if we can continue
+		/// </summary>
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {
@@ -227,7 +240,7 @@ namespace SteamEngine.CompiledScripts {
 			return true;
 		}
 
-		[Summary("Check the resources and skillmake if the given character can craft this item")]
+		/// <summary>Check the resources and skillmake if the given character can craft this item</summary>
 		public static bool CanBeMade(ItemDef iDef, Character chr) {
 			if (chr.IsGM) {//GM can everything
 				return true;

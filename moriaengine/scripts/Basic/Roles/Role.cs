@@ -16,9 +16,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -135,28 +133,28 @@ namespace SteamEngine.CompiledScripts {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[Summary("Trigger called when the new role is created")]
+		/// <summary>Trigger called when the new role is created</summary>
 		protected virtual void On_Create() {
 		}
 
-		[Summary("Trigger called when the role is destroyed")]
+		/// <summary>Trigger called when the role is destroyed</summary>
 		protected virtual void On_Destroy() {
 		}
 
-		[Summary("Trigger called when the new member adding is requested from this role")]
+		/// <summary>Trigger called when the new member adding is requested from this role</summary>
 		protected virtual void On_DenyAddMember(DenyRoleTriggerArgs args) {
 		}
 
-		[Summary("Trigger called when the new member is assigned to this role")]
+		/// <summary>Trigger called when the new member is assigned to this role</summary>
 		protected virtual void On_MemberAdded(Character newMember, IRoleMembership membership) {
 			//this trigger will be run after @DenyAddMember
 		}
 
-		[Summary("Trigger called when the member remove is requested from this role")]
+		/// <summary>Trigger called when the member remove is requested from this role</summary>
 		protected virtual void On_DenyRemoveMember(DenyRoleTriggerArgs args) {
 		}
 
-		[Summary("Trigger called when the member is unassigned from this role")]
+		/// <summary>Trigger called when the member is unassigned from this role</summary>
 		protected virtual void On_MemberRemoved(Character exMember, IRoleMembership membership, bool beingDestroyed) {
 			//this trigger will be run after @DenyRemoveMember
 		}

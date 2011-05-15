@@ -16,16 +16,11 @@
 */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("War's warcry")]
+	/// <summary>War's warcry</summary>
 	[ViewableClass]
 	public class WarcryDef : ImmediateAbilityDef {
 		public WarcryDef(string defname, string filename, int headerLine)
@@ -34,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region triggerMethods
 
-		[Summary("Functional implementation of warcry ability")]
+		/// <summary>Functional implementation of warcry ability</summary>
 		protected override void On_Activate(Character chr, Ability ab) {
 			//TODO - taky nejak zarvat nebo co !
 
@@ -53,15 +48,17 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion triggerMethods
 
-		[Summary("Compute the warcry range using the information from character (using i.e char's level" +
-				" and the ability points...). Consider that 18 steps should be maximum (client limits)")]
+		/// <summary>
+		/// Compute the warcry range using the information from character (using i.e char's level
+		/// and the ability points...). Consider that 18 steps should be maximum (client limits)
+		/// </summary>
 		private int ComputeRange(Character chr) {
 			//TODO - udelat to nejak sofistikovaneji			
 			return chr.GetAbility(this);
 		}
 
 		[SteamFunction("Warcry")]
-		[Summary("Running the warcry (if the player has the ability)")]
+		/// <summary>Running the warcry (if the player has the ability)</summary>
 		public static void WarcryFunction(Character chr, ScriptArgs args) {
 			WarcryDef wcrDef = SingletonScript<WarcryDef>.Instance;
 			wcrDef.Activate(chr);
@@ -71,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class WarcryEffectPlugin {
 
-		public static readonly WarcryEffectPluginDef defInstance = 
+		public static readonly WarcryEffectPluginDef defInstance =
 			(WarcryEffectPluginDef) new WarcryEffectPluginDef("p_warcryEffect", "C# scripts", -1).Register();
 		internal static PluginKey warcyEffectPluginKey = PluginKey.Acquire("_warcryEffect_");
 

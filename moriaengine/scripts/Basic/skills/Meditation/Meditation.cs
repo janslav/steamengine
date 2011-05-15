@@ -15,12 +15,6 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -83,8 +77,10 @@ namespace SteamEngine.CompiledScripts {
 			skillSeqArgs.Self.ClilocSysMessage(501848);//You cannot focus your concentration
 		}
 
-		[Remark("Check if we are alive, don't have weapons etc.... Return false if the trigger above" +
-				" should be cancelled or true if we can continue")]
+		/// <summary>
+		/// Check if we are alive, don't have weapons etc.... Return false if the trigger above 
+		/// should be cancelled or true if we can continue
+		/// </summary>
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {

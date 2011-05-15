@@ -16,16 +16,7 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using SteamEngine;
-using SteamEngine.Timers;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -46,7 +37,10 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
+		/// <summary>
+		/// Try to obtain a string tag value - not 'toString' but regular string instance
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string SGetTag(TagHolder from, TagKey which) {
 			object tagValue = from.GetTag(which);
 			if (tagValue == null) {
@@ -65,7 +59,7 @@ namespace SteamEngine {
 			throw new SEException("Unexpected conversion attempt: " + Tools.TypeToString(tagValue.GetType()) + " -> String");
 		}
 
-		[Summary("Try to obtain a string tag value - not 'toString' but regular string instance")]
+		/// <summary>Try to obtain a string tag value - not 'toString' but regular string instance</summary>
 		public static string SGetTagNotNull(TagHolder from, TagKey which) {
 			string retVal = SGetTag(from, which);
 			if (retVal == null) {
@@ -74,8 +68,11 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Summary("Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast " +
-				"so we are able to accept a non 'int' numbers such as uints, shorts etc.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		/// <summary>
+		/// Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast 
+		/// so we are able to accept a non 'int' numbers such as uints, shorts etc.
+		/// </summary>
 		public static int IGetTag(TagHolder from, TagKey which) {
 			return ConvertTools.ToInt32(from.GetTag(which));
 		}
@@ -89,7 +86,7 @@ namespace SteamEngine {
 			}
 			return false;
 		}
-		
+
 		public static string TimeSpanToString(TimeSpan ts, string format) {
 			DateTime dt = DateTime.MinValue.Add(ts);
 			return dt.ToString(format, System.Globalization.CultureInfo.InvariantCulture);

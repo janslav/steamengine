@@ -15,18 +15,14 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Summary("Special ability class used for implementing abilities that will be run using SteamFunction." +
-			"Their effect will be immediate (e.g. warcry)")]
+	/// <summary>
+	/// Special ability class used for implementing abilities that will be run using SteamFunction.
+	/// Their effect will be immediate (e.g. warcry)
+	/// </summary>
 	[ViewableClass]
 	public class ImmediateAbilityDef : AbilityDef {
 		public ImmediateAbilityDef(string defname, string filename, int headerLine)

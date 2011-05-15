@@ -18,59 +18,63 @@
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
-	[Summary("Interface for single resource stored in resource lists")]
+	/// <summary>Interface for single resource stored in resource lists</summary>
 	public interface IResourceListEntry {
-		[Summary("Number specified in the script (85.5 hiding, 5 i_apples etc)")]
+		/// <summary>Number specified in the script (85.5 hiding, 5 i_apples etc)</summary>
 		double DesiredCount {
 			get;
 		}
 
-		[Summary("String from which the resource could be parsed again, used for saving")]
+		/// <summary>String from which the resource could be parsed again, used for saving</summary>
 		string ParsableString {
 			get;
 		}
 
-		//[Summary("Logical name of the resource (such as 'Apple', 'Stealth', 'Dexterity' atd. " +
-		//"Used for informing about missing resources")]
-		//string Name {
-		//    get;
-		//}
-
-		[Summary("Check if the 'newOne' is the same resource as the actual one.")]
+		/// <summary>Check if the 'newOne' is the same resource as the actual one.</summary>
 		bool IsSameResource(IResourceListEntry newOne);
 
-		[Summary("Determines whether the resource shall be checked / consumed as precents of all available (true) or only" +
-				 " in absolute values specified (false)")]
+		/// <summary>
+		/// Determines whether the resource shall be checked / consumed as precents of all available (true) or only 
+		/// in absolute values specified (false)
+		///  </summary>
 		bool AsPercentage { get; }
 
-		[Summary("In case some resource is missing, the mising item can be used for sending some informational message...")]
+		/// <summary>In case some resource is missing, the mising item can be used for sending some informational message...</summary>
 		string GetResourceMissingMessage(Language language);
 	}
 
-	[Summary("Interface for resource list items that cannot be multiplicated (e.g. Ability - if the resourcelist " +
-			"demands 5 a_warcry then it makes no sense using the reslist repeatedly and demad 10 a_warcry (unlike e.g. i_apple)")]
+	/// <summary>
+	/// Interface for resource list items that cannot be multiplicated (e.g. Ability - if the resourcelist 
+	/// demands 5 a_warcry then it makes no sense using the reslist repeatedly and demad 10 a_warcry (unlike e.g. i_apple)
+	/// </summary>
 	public interface IResourceListEntry_Simple : IResourceListEntry {
-		[Summary("Does the character have this particular resource? (in desired amount). Check only the presence " +
-				"do not consume.")]
+		/// <summary>
+		/// Does the character have this particular resource? (in desired amount). Check only the presence 
+		/// do not consume.
+		/// </summary>
 		bool IsResourcePresent(Character chr);
 
-		[Summary("Indicates whether this is a consumable resource")]
+		/// <summary>Indicates whether this is a consumable resource</summary>
 		bool IsConsumable { get; }
 
-		[Summary("Consumes this resource. Throws if this is not a consumable resource.")]
+		/// <summary>Consumes this resource. Throws if this is not a consumable resource.</summary>
 		void Consume(Character ch);
 	}
 
-	[Summary("Interface for single resource stored in resource lists. These items can be multiplicable - " +
-			"e.g. itemdefs, allowing us to say 'how many times the resourcelist has been found at the char's" +
-			"(usable for crafting more than 1 item at a time e.t.c)")]
+	/// <summary>
+	/// Interface for single resource stored in resource lists. These items can be multiplicable - 
+	/// e.g. itemdefs, allowing us to say 'how many times the resourcelist has been found at the char's
+	/// (usable for crafting more than 1 item at a time e.t.c
+	/// </summary>
 	public interface IResourceListEntry_ItemCounter : IResourceListEntry {
-		[Summary("Return the resource counter object for this resource, we are using the Object Pool pattern " +
-			" for acquiring and storing desired instances")]
+		/// <summary>
+		/// Return the resource counter object for this resource, we are using the Object Pool pattern 
+		/// for acquiring and storing desired instances
+		/// </summary>
 		ItemCounter GetCounter();
 	}
 
-	[Summary("Convenience base class for IResourceListItem implementors.")]
+	/// <summary>Convenience base class for IResourceListItem implementors.</summary>
 	public abstract class AbstractResourceListEntry : IResourceListEntry {
 		protected AbstractResourceListEntry(double desiredCount, bool asPercentage) {
 			this.DesiredCount = desiredCount;

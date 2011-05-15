@@ -16,18 +16,15 @@
 */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
-	[Summary("Plugin managing all characters regenerations, on timer periodically checks all regens" +
-			"and adds correct number of points to be regenerated")]
+	/// <summary>
+	/// Plugin managing all characters regenerations, on timer periodically checks all regens 
+	/// and adds correct number of points to be regenerated
+	/// </summary>
 	public partial class RegenerationPlugin {
 		//this is to initialize (create the instance) of the Regen.Plug.Def. it must be here as bellow or 
 		//somewhere in the LScript as simple [RegenerationPluginDef p_regenerations]
@@ -45,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 			Timer = MIN_TIMER; //set the basic timer for the first regen round
 		}
 
-		[Summary("Periodically check stats and regenerate computed amount of points (if any)")]
+		/// <summary>Periodically check stats and regenerate computed amount of points (if any)</summary>
 		public void On_Timer() {
 			Character holder = (Character) this.Cont;
 			//fields set once everytime the On_Timer method gets fired
@@ -128,8 +125,10 @@ namespace SteamEngine.CompiledScripts {
 			return statChange;
 		}
 
-		[Summary("Count and return the ideal timer for the given regenSpeed - this means " +
-				"number of seconds after which there will be an integer regeneration (de/in)crease")]
+		/// <summary>
+		/// Count and return the ideal timer for the given regenSpeed - this means 
+		/// number of seconds after which there will be an integer regeneration (de/in)crease
+		/// </summary>
 		private double CountIdealTimer(double regenSpeed, double currentResiduum) {
 			//the number of regenerated points (x) is as follows:
 			//x = (lastResiduum) + (regenSpeed * timer);
@@ -145,8 +144,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		[Summary("From the regeneration speed (statpoints/sec), elapsed time and the residuum from the last round " +
-				 "count the integer value to be added (substracted) to the stat, remember the new residuum for the next round")]
+		/// <summary>
+		/// From the regeneration speed (statpoints/sec), elapsed time and the residuum from the last round 
+		/// count the integer value to be added (substracted) to the stat, remember the new residuum for the next round
+		/// </summary>
 		private int CountStatChange(double regenSpeed, ref double lastResiduum, double timeElapsed) {
 			//the number of regenerated points (x) is as follows: 
 			//x = (lastResiduum) + (regenSpeed * timer);
@@ -157,7 +158,7 @@ namespace SteamEngine.CompiledScripts {
 			return retVal;
 		}
 
-		[Summary("Check if character can have this plugin and if true, add it")]
+		/// <summary>Check if character can have this plugin and if true, add it</summary>
 		public static void TryInstallPlugin(Character futureCont, int stat, int maxStat, double regenSpeed) {
 			//check if adept pluginholder is not dead
 			if (!futureCont.Flag_Dead) {

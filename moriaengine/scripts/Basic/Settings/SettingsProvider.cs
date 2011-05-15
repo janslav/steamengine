@@ -15,20 +15,22 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Class for accepting and setting all values edited in the info or settings dialogs")]
+	/// <summary>
+	/// Class for accepting and setting all values edited in the info or settings dialogs
+	/// </summary>
 	public static class SettingsProvider {
 		//sotre the used saveable prefixes for particular Types
 		private static Dictionary<Type, string> prefixTypes = new Dictionary<Type, string>();
 
-		[Summary("Try to store all edited (changed) fields from the dialog. Store the results in the special list that will be returned for " +
-				"displaying")]
+		/// <summary>
+		/// Try to store all edited (changed) fields from the dialog. Store the results in the special list that will be returned for 
+		/// displaying
+		/// </summary>
 		public static List<SettingResult> AssertSettings(Dictionary<int, IDataFieldView> editFields, GumpResponse resp, object target) {
 			List<SettingResult> resList = new List<SettingResult>();
 			SettingResult oneRes = null;
@@ -68,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return resList;
 		}
 
-		[Summary("Look on the outcome value and return the correct color for the dialog")]
+		/// <summary>Look on the outcome value and return the correct color for the dialog</summary>
 		public static Hues ResultColor(SettingResult sres) {
 			switch (sres.Outcome) {
 				case SettingsEnums.ChangedError:
@@ -80,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Count all successfully edited fields")]
+		/// <summary>Count all successfully edited fields</summary>
 		public static int CountSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
 			foreach (SettingResult sres in results) {
@@ -91,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return resCntr;
 		}
 
-		[Summary("Count all failed fields")]
+		/// <summary>Count all failed fields</summary>
 		public static int CountUnSuccessfulSettings(List<SettingResult> results) {
 			int resCntr = 0;
 			foreach (SettingResult sres in results) {
@@ -102,14 +104,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return resCntr;
 		}
 
-		[Summary("Compare case insensitively the names of enumeration values if they have changed")]
+		/// <summary>Compare case insensitively the names of enumeration values if they have changed</summary>
 		private static bool IsEnumValueChanged(IDataFieldView field, object target, string newEnumValueName) {
 			string oldEnumValuName = Enum.GetName(field.FieldType, field.GetValue(target));
 			return !StringComparer.OrdinalIgnoreCase.Equals(oldEnumValuName, newEnumValueName);
 		}
 
-		[Summary("Examine the setings value's member type and get its prefix as used in ObjectSaver." +
-				"We will use it in the info/settings dialog for displaying and identification")]
+		/// <summary>
+		/// Examine the setings value's member type and get its prefix as used in ObjectSaver.
+		/// We will use it in the info/settings dialog for displaying and identification
+		/// </summary>
 		public static string GetValuePrefix(IDataFieldView field, object target) {
 			object value = field.GetValue(target);
 			string valuePrefix = "";
@@ -142,9 +146,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return valuePrefix;
 		}
 
-		[Summary("Get the settings values prefix and surround it by brackets." +
-				"If the value has no prefix (it is of some special type, find out what" +
-				"type it is and return some description of it")]
+		/// <summary>
+		/// Get the settings values prefix and surround it by brackets.
+		/// If the value has no prefix (it is of some special type, find out what
+		/// type it is and return some description of it
+		/// </summary>
 		public static string GetTypePrefix(Type t) {
 			if (t.Equals(typeof(object))) {
 				//object is also possible ! - the member can be set to any value
@@ -182,8 +188,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Class carrying information about one edit field - its former value, its value after setting and " +
-			"the setting result value (success/fail)")]
+	/// <summary>
+	/// Class carrying information about one edit field - its former value, its value after setting and 
+	/// the setting result value (success/fail)
+	/// </summary>
 	public class SettingResult {
 		//former value of the field - before settings
 		private object formerValue;
@@ -203,7 +211,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			formerValue = field.GetValue(target);
 		}
 
-		[Summary("What is the result of the setting?")]
+		/// <summary>What is the result of the setting?</summary>
 		public SettingsEnums Outcome {
 			get {
 				return outcome;
@@ -213,14 +221,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Get the name from the IDataFieldView")]
+		/// <summary>Get the name from the IDataFieldView</summary>
 		public string Name {
 			get {
 				return field.GetName(target);
 			}
 		}
 
-		[Summary("The value attempted to store which resluted in error - filled only in case of error :)")]
+		/// <summary>The value attempted to store which resluted in error - filled only in case of error :)</summary>
 		public string ErroneousValue {
 			get {
 				//if the setting is OK, then return an empty string
@@ -231,7 +239,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Get the former value of the edited field - for comparation with the result")]
+		/// <summary>Get the former value of the edited field - for comparation with the result</summary>
 		public string FormerValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)
@@ -246,7 +254,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("The actual value of the field - after the setting is made")]
+		/// <summary>The actual value of the field - after the setting is made</summary>
 		public string CurrentValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)				

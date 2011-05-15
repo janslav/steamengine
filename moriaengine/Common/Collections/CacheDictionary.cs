@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
-using SteamEngine.Common;
 
 namespace SteamEngine {
-	[Summary("A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxCacheItems' usages of the dictionary. "
-	  + "The maxCacheItems number should typically be pretty big, in thousands or more.")]
+	/// <summary>
+	/// A Dictionary that forgets entries that it receieved if they haven't been used in the last 'maxCacheItems' usages of the dictionary.
+	/// The maxCacheItems number should typically be pretty big, in thousands or more.
+	/// </summary>
+	/// <typeparam name="TKey">The type of the key.</typeparam>
+	/// <typeparam name="TValue">The type of the value.</typeparam>
 	public sealed class CacheDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
 		private Dictionary<TKey, CacheDictionaryKeyEntry> dict;
 		private LinkedList<TKey> linkedList = new LinkedList<TKey>();

@@ -15,15 +15,13 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 using System;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.LScript;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog that will display a desired text with a desired label (e.g. displaying larger texts " +
-			"in pages dialog etc.")]
+	/// <summary>
+	/// Dialog that will display a desired text with a desired label (e.g. displaying larger texts 
+	/// in pages dialog etc.
+	/// </summary>
 	public class D_Display_Text : CompiledGumpDef {
 		private string label;
 		private string dispText;
@@ -44,7 +42,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			ShowDialog();
 		}
 
-		[Summary("Simply display the labeled text.")]
+		/// <summary>Simply display the labeled text.</summary>
 		private void ShowDialog() {
 			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
 			//create the background GUTAMatrix and set its size an transparency            
@@ -77,7 +75,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[SteamFunction]
-		[Summary("Zobrazí dialog s volitelným labelem a textem v nìm")]
+		/// <summary>Zobrazí dialog s volitelným labelem a textem v nìm</summary>
 		public static void DisplayText(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 2) {
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs(args.Args[0], args.Args[1]));
@@ -87,7 +85,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[SteamFunction]
-		[Summary("Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby")]
+		/// <summary>Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby</summary>
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
 				DialogArgs newArgs = new DialogArgs("CHYBA", args.Argv[0]);
@@ -98,14 +96,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
+		/// <summary>Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)</summary>
 		public static Gump ShowError(string text) {
 			DialogArgs newArgs = new DialogArgs("CHYBA", text);
 			newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);
 			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 		}
 
-		[Summary("Zobrazení infa použitlené jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)")]
+		/// <summary>Zobrazení infa použitlené jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)</summary>
 		public static Gump ShowInfo(string text) {
 			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("INFO", text));
 		}

@@ -15,17 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Globalization;
 using System.Text.RegularExpressions;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {
@@ -544,7 +536,10 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), Summary("Return enumerable containing all plugins")]
+		/// <summary>
+		/// Enumerate all plugins with their keys
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public IEnumerable<KeyValuePair<PluginKey, Plugin>> GetAllPluginsWithKeys() {
 			if (tags != null) {
 				foreach (DictionaryEntry entry in tags) {

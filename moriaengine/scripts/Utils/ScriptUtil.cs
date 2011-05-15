@@ -1,8 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Networking;
@@ -38,16 +35,20 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Summary("returns a number based on the bounds and ratio")]
-		[Remark("When ratio == 0, returns min; when ratio == 1.0, returns max.<br>"
-		+ "Otherwise, returns a number based on simple linear interpolation. "
-		+ "Note that ratio can also be negative or >1")]
+		/// <summary>
+		/// returns a number based on the bounds and ratio
+		/// </summary>
+		/// <remarks>
+		/// When ratio == 0, returns min; when ratio == 1.0, returns max.<br>
+		/// Otherwise, returns a number based on simple linear interpolation. 
+		/// Note that ratio can also be negative or greater than 1
+		/// </remarks>
 		public static double EvalRangeDouble(double ratio, double min, double max) {
 			double range = max - min;
 			return min + (range * ratio);
 		}
 
-		[Summary("Works like EvalRangeDouble, only the ratio parameter is in per mille (i.e. typical for skills).")]
+		/// <summary>Works like EvalRangeDouble, only the ratio parameter is in per mille (i.e. typical for skills).</summary>
 		public static double EvalRangePermille(double pmratio, double min, double max) {
 			return EvalRangeDouble(pmratio / 1000.0, min, max);
 		}
@@ -159,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 				@"Steamengine - {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
 				Globals.Version, Globals.ServerName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false) / 1024, Environment.NewLine));
-			
+
 			ScriptHolder saveInfoFunc = PeriodicSaveInformationFunction;
 			if (saveInfoFunc != null) {
 				ConvertTools.ToString(saveInfoFunc.Run(Globals.Instance, (object[]) null));

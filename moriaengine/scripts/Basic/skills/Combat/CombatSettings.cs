@@ -1,3 +1,4 @@
+using SteamEngine.CompiledScripts.Dialogs;
 /*
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,11 +15,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using System;
-using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
@@ -34,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SaveableData]
-		[Summary("How long should a character remember it's combat targets?")]
+		/// <summary>How long should a character remember it's combat targets?</summary>
 		public double secondsToRememberTargets = 300;
 
 		[SaveableData]
@@ -89,11 +86,11 @@ namespace SteamEngine.CompiledScripts {
 		public double armorClassMvP = 200; //nastaveni_global_MvP_armorfactor
 
 		[SaveableData]
-		[Summary("Every case other than (M is attacker, P is defender)")]
+		/// <summary>Every case other than (M is attacker, P is defender)</summary>
 		public double armorRandEffectMin = 0.945; //skill_parrying.effect
 
 		[SaveableData]
-		[Summary("Every case other than (M is attacker, P is defender)")]
+		/// <summary>Every case other than (M is attacker, P is defender)</summary>
 		public double armorRandEffectMax = 1.050; //skill_parrying.effect
 
 		[SaveableData]

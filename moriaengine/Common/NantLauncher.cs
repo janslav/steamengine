@@ -16,20 +16,17 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using NAnt.Core;
 
 
 namespace SteamEngine.Common {
 
 
-	[Summary("Use this class to run tasks from the ./distrib/nant/default.build and/or other NAnt build files.")]
+	/// <summary>Use this class to run tasks from the ./distrib/nant/default.build and/or other NAnt build files.</summary>
 	public class NantLauncher {
 
 		Project nantProject;
@@ -66,13 +63,13 @@ namespace SteamEngine.Common {
 			this.nantProject.Properties["defineSymbols"] = symbols;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "logger"), 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "logger"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public void SetLogger(IBuildLogger logger) {
 			this.logger = logger;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceFileNamesFile"), 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceFileNamesFile"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sourceFileNames")]
 		public void SetSourceFileNames(string[] sourceFileNames, string sourceFileNamesFile) {
 			this.sourceFileNames = sourceFileNames;
@@ -142,7 +139,7 @@ namespace SteamEngine.Common {
 #endif
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "target"), 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "target"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public void SetTarget(string target) {
 			this.target = target;
@@ -151,7 +148,7 @@ namespace SteamEngine.Common {
 		private void OnBuildFinished(object sender, BuildEventArgs e) {
 			this.exception = e.Exception;
 		}
-		
+
 		public void Execute() {
 			FileInfo fileListFile = null;
 			if (this.sourceFileNames != null) {

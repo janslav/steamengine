@@ -14,16 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all players accounts in the game")]
+	/// <summary>Dialog listing all players accounts in the game</summary>
 	public class D_AccList : CompiledGumpDef {
 		public static TagKey searchStringTK = TagKey.Acquire("_search_string_");
 		public static TagKey accListTK = TagKey.Acquire("_acc_list_");
@@ -126,7 +122,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display an account list. Function accessible from the game")]
+		/// <summary>Display an account list. Function accessible from the game</summary>
 		[SteamFunction]
 		public static void AccList(AbstractCharacter sender, ScriptArgs text) {
 			//zavolat dialog, pocatecni pismena
@@ -141,8 +137,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display an account info. " +
-				"Usage .x accinfo or .accinfo('accname')")]
+		/// <summary>
+		/// Display an account info. 
+		/// Usage .x accinfo or .accinfo('accname')
+		/// </summary>
 		[SteamFunction]
 		public static void AccInfo(AbstractCharacter target, ScriptArgs text) {
 			if (text.Argv == null || text.Argv.Length == 0) {
@@ -159,7 +157,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting accounts by account name asc")]
+	/// <summary>Comparer for sorting accounts by account name asc</summary>
 	public class AccountComparer : IComparer<ScriptedAccount> {
 		public readonly static AccountComparer instance = new AccountComparer();
 

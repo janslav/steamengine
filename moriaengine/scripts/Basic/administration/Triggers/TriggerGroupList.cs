@@ -14,16 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
-	[Summary("Dialog listing all object(pluginholder)'s trigger groups")]
+	/// <summary>Dialog listing all object(pluginholder)'s trigger groups</summary>
 	public class D_TriggerGroupsList : CompiledGumpDef {
 		internal static readonly TagKey tgListTK = TagKey.Acquire("_tg_list_");
 		internal static readonly TagKey tgCriteriumTK = TagKey.Acquire("_tg_criterium_");
@@ -140,7 +136,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Retreives the list of all trigger groups the given PluginHolder has")]
+		/// <summary>Retreives the list of all trigger groups the given PluginHolder has</summary>
 		private List<TriggerGroup> ListifyTriggerGroups(IEnumerable<TriggerGroup> tgs, string criteria) {
 			List<TriggerGroup> tgList = new List<TriggerGroup>();
 			foreach (TriggerGroup entry in tgs) {
@@ -153,9 +149,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return tgList;
 		}
 
-		[Summary("Display a trigger group list. Function accessible from the game." +
-				"The function is designed to be triggered using .x TriggerGroupList(criteria)" +
-			   "but it can be used also normally .TriggerGroupList(criteria) to display runner's own plugins")]
+		/// <summary>
+		/// Display a trigger group list. Function accessible from the game.
+		/// The function is designed to be triggered using .x TriggerGroupList(criteria)" +
+		/// but it can be used also normally .TriggerGroupList(criteria) to display runner's own plugins
+		/// </summary>
 		[SteamFunction]
 		public static void TriggerGroupList(PluginHolder self, ScriptArgs text) {
 			//zavolat dialog, 
@@ -172,7 +170,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting triggergroups by name")]
+	/// <summary>Comparer for sorting triggergroups by name</summary>
 	public class TriggerGroupsComparer : IComparer<TriggerGroup> {
 		public readonly static TriggerGroupsComparer instance = new TriggerGroupsComparer();
 

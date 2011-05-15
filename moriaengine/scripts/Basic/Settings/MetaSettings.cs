@@ -15,19 +15,13 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Extend this class in order to obtain a new Category to the settings dialog")]
+	/// <summary>Extend this class in order to obtain a new Category to the settings dialog</summary>
 	public abstract class SettingsMetaCategory {
 	}
 
-	[Summary("Viewable class representing the Settings Categories")]
+	/// <summary>Viewable class representing the Settings Categories</summary>
 	[ViewableClass("Settings Categories")]
 	public class SettingsCategories : SettingsMetaCategory {
 		/*The class or its subclasses can contain properties/fields which will be 
@@ -72,7 +66,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	public class AllAbilitiesMassSetting : MassSettings_ByClass_List<AbilityDef> {
-		
+
 		public override string Name {
 			get { return "Seznam všech abilit"; }
 		}

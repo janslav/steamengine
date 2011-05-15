@@ -14,15 +14,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
-	[Summary("Dialog listing all regions and enabling us to edit them")]
+	/// <summary>Dialog listing all regions and enabling us to edit them</summary>
 	public class D_Regions : CompiledGumpDef {
 		public static readonly TagKey regsListTK = TagKey.Acquire("_regions_list_");//bude vyuzit jeste jinde, proto public a static
 		public static readonly TagKey regsSearchTK = TagKey.Acquire("_regions_list_search_crit_");
@@ -192,10 +189,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[Summary("Display regions. Function accessible from the game." +
-				"The function is designed to be triggered using .RegionsList" +
-				"but it can be also called from other dialogs - such as info..." +
-				"Default sorting is by Name, asc.")]
+		/// <summary>
+		/// Display regions. Function accessible from the game.
+		/// The function is designed to be triggered using .RegionsList"
+		/// but it can be also called from other dialogs - such as info...
+		/// Default sorting is by Name, asc.
+		/// </summary>
 		[SteamFunction]
 		public static void RegionsList(Thing self, ScriptArgs text) {
 			//Parametry dialogu:
@@ -205,7 +204,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting regions by name asc")]
+	/// <summary>Comparer for sorting regions by name asc</summary>
 	public class RegionComparerByName : IComparer<StaticRegion> {
 		public readonly static RegionComparerByName instance = new RegionComparerByName();
 
@@ -214,7 +213,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 	}
 
-	[Summary("Comparer for sorting regions by defname name asc")]
+	/// <summary>Comparer for sorting regions by defname name asc</summary>
 	public class RegionComparerByDefname : IComparer<StaticRegion> {
 		public readonly static RegionComparerByDefname instance = new RegionComparerByDefname();
 
