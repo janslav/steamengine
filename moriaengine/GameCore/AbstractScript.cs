@@ -88,14 +88,16 @@ namespace SteamEngine {
 			}
 		}
 
-		protected AbstractScript() {
+		protected AbstractScript()
+			: base() {
 			this.defname = this.InternalFirstGetDefname();
 			if (byDefname.ContainsKey(this.defname)) {
 				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname) + " already exists!");
 			}
 		}
 
-		protected AbstractScript(string defname) {
+		protected AbstractScript(string defname)
+			: base() {
 			if (String.IsNullOrEmpty(defname)) {
 				this.defname = this.InternalFirstGetDefname();
 			} else {

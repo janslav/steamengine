@@ -28,12 +28,12 @@ using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine {
-	internal interface ObjectWithUid {
+	internal interface IObjectWithUid {
 		int Uid { get; set; }
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable<AbstractItem>, ObjectWithUid {
+	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable<AbstractItem>, IObjectWithUid {
 		private TimeSpan createdAt = Globals.TimeAsSpan;//Server time of creation
 		private ushort color;
 		private ushort model;
@@ -83,7 +83,7 @@ namespace SteamEngine {
 				output.WriteLine();
 				savedCharacters = 0;
 				savedItems = 0;
-				alreadySaved = new List<bool>(things.HighestElement);
+				alreadySaved = new List<bool>(things.HighestUsedIndex);
 				foreach (Thing t in things) {
 					SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
 				}
@@ -214,7 +214,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal void CheckAfterLoad() {
+		internal void CheckPositionValidityAfterLoad() {
 			if (this.IsLimbo || !this.GetMap().IsValidPos((IPoint2D) this)) {
 				if (this.IsPlayer) {
 					Logger.WriteWarning("Player " + LogStr.Ident(this) + " outside the world after load - P line missing. Putting to 1, 1, 0, 0.");
@@ -230,7 +230,7 @@ namespace SteamEngine {
 		//An IEnumerable for the Things represented by this class
 		public static IEnumerable<Thing> AllThings {
 			get {
-				return things.AsEnumerable();
+				return things;
 			}
 		}
 
@@ -242,7 +242,7 @@ namespace SteamEngine {
 			}
 		}
 
-		int ObjectWithUid.Uid {
+		int IObjectWithUid.Uid {
 			get {
 				return this.uid;
 			}
@@ -1638,7 +1638,7 @@ namespace SteamEngine {
 					//zkusime jestli se jedna o osloveni jmenem
 					if (!string.IsNullOrWhiteSpace(msg)) {
 						foreach (AbstractCharacter listener in chars) {
-							if (msg.StartsWith(listener.Name)) {
+							if (msg.StartsWith(listener.Name + " ")) {
 								if (listener.CanSeeLOS(speaker).Allow) {
 									listener.Trigger_Hear(sa);
 									speakerGameState.LastExclusiveConversationPartner = listener;
@@ -1651,12 +1651,14 @@ namespace SteamEngine {
 					if (runSpeechTriggers) {
 						//zkusime predchozi exkluzivne konverzujici npc (vendor apod)
 						var partner = speakerGameState.LastExclusiveConversationPartner;
-						if ((Point2D.GetSimpleDistance(speaker, partner) <= dist) && partner.CanSeeLOS(speaker).Allow) {
-							var result = partner.Trigger_Hear(sa);
-							if (result == SpeechResult.ActedUponExclusively) {
-								runSpeechTriggers = false;
-							} else {
-								listenerToExclude = partner; //nebudeme na nem znova spoustet @hear
+						if (partner != null) {
+							if ((Point2D.GetSimpleDistance(speaker, partner) <= dist) && partner.CanSeeLOS(speaker).Allow) {
+								var result = partner.Trigger_Hear(sa);
+								if (result == SpeechResult.ActedUponExclusively) {
+									runSpeechTriggers = false;
+								} else {
+									listenerToExclude = partner; //nebudeme na nem znova spoustet @hear
+								}
 							}
 						}
 					}
@@ -1670,7 +1672,7 @@ namespace SteamEngine {
 			PacketGroup pg = null;
 			try {
 				foreach (AbstractCharacter listener in chars) {
-					if ((runSpeechTriggers) && (listener != listenerToExclude) && listener.CanSeeLOS(speaker).Allow) {
+					if ((runSpeechTriggers) && (listener != speaker) && (listener != listenerToExclude) && listener.CanSeeLOS(speaker).Allow) {
 						var result = listener.Trigger_Hear(sa);
 						if (result == SpeechResult.ActedUponExclusively) {
 							if (speakerGameState != null) {

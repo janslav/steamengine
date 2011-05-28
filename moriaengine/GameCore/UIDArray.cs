@@ -18,28 +18,30 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Timers; //SimpleQueue :D
+//SimpleQueue :D
 
 namespace SteamEngine {
-	internal class UIDArray<T> : IEnumerable<T> where T : ObjectWithUid {
+	internal class UIDArray<T> : IEnumerable<T> where T : class, IObjectWithUid {
 		private T[] array = new T[minimalLength];
 		private SimpleQueue<int> freeSlots = new SimpleQueue<int>();
-		private int highestElement;
+		private int highestUsedIndex;
 		private int count;
 		private bool loadingFinished;
+
+		private int version;
 
 		private List<bool> fakeSlots = new List<bool>(minimalLength);
 		private SimpleQueue<int> freeFakeSlots = new SimpleQueue<int>();
 
 		private const int minimalLength = 1000;
-		private const int uidOffset = 1; //low uids (particularly 0) have been found to cause problems in client.
+		private const int startOffset = 1; //low uids (particularly 0) have been found to cause problems in client.
 		private const int queueMaxCount = 1000;
 
-		private const int highestUid = 0x00ffffff - 1;
+		private const int highestPossibleUid = 0x00ffffff - 1;
 
-		internal int HighestElement {
+		internal int HighestUsedIndex {
 			get {
-				return this.highestElement;
+				return this.highestUsedIndex;
 			}
 		}
 
@@ -53,14 +55,15 @@ namespace SteamEngine {
 			this.freeSlots.Clear();
 			this.freeFakeSlots.Clear();
 			this.fakeSlots.Clear();
-			this.highestElement = 0;
+			this.highestUsedIndex = 0;
 			this.count = 0;
 			this.array = new T[this.array.Length];
 			this.loadingFinished = false;
+			this.version++;
 		}
 
 		internal void AddLoaded(T o, int loadedUid) {
-			int index = loadedUid - uidOffset;
+			int index = loadedUid - startOffset;
 			if (this.loadingFinished) {
 				throw new SEException("Add(object,index) disabled after LoadingFinished");
 			}
@@ -73,11 +76,12 @@ namespace SteamEngine {
 			if (this.array[index] != null) {
 				throw new SEException("Two objects attempted to take the same UID");
 			}
-			if (index > this.highestElement) {
-				this.highestElement = index;
+			if (index > this.highestUsedIndex) {
+				this.highestUsedIndex = index;
 			}
 			this.array[index] = o;
 			this.count++;
+			this.version++;
 		}
 
 		internal void Add(T o) {
@@ -85,17 +89,18 @@ namespace SteamEngine {
 				this.FillFreeSlotQueue();
 			}
 			int index = this.freeSlots.Dequeue();
-			int uid = index + uidOffset;
-			if (uid >= (highestUid - this.fakeSlots.Count)) {
+			int uid = index + startOffset;
+			if (uid >= (highestPossibleUid - this.fakeSlots.Count)) {
 				throw new SEException("We're out of UIDs. This is baaaad.");
 			}
 			o.Uid = uid;
 			this.array[index] = o;
 			this.count++;
 
-			if (uid > this.highestElement) {
-				this.highestElement = uid;
+			if (uid > this.highestUsedIndex) {
+				this.highestUsedIndex = uid;
 			}
+			this.version++;
 		}
 
 		private void FillFreeSlotQueue() {
@@ -137,23 +142,31 @@ namespace SteamEngine {
 		}
 
 		internal T Get(int uid) { //may return a null object
-			int index = uid - uidOffset;
+			int index = uid - startOffset;
 			if (index < this.array.Length && index >= 0) {
 				return this.array[index];
 			}
-			return default(T);
+			return null;
 		}
 
 		internal void RemoveAt(int uid) {
-			int index = uid - uidOffset;
-			if (!Object.Equals(this.array[index], default(T))) { //only add to queue if not already null
-				this.array[index] = default(T);
-				if (index == this.highestElement) {
-					this.highestElement--;
+			int index = uid - startOffset;
+			if (this.array[index] != null) { //only add to queue if not already null
+				this.array[index] = null;
+				if (index == this.highestUsedIndex) {
+					//we find the next highest used index (below the one so far)
+					int i = this.highestUsedIndex;
+					for (; i >= 0; i--) {
+						if (this.array[i] != null) {
+							break;
+						}
+					}
+					this.highestUsedIndex = i;
 				} else {
 					this.freeSlots.Enqueue(index);
 				}
 				this.count--;
+				this.version++;
 			}
 		}
 
@@ -164,12 +177,13 @@ namespace SteamEngine {
 
 			for (int i = 0, newI = 0; i < n; i++) {
 				T elem = origArray[i];
-				if (!Object.Equals(elem, default(T))) {
+				if (!Object.Equals(elem, null)) {
 					newArray[newI] = elem;
-					elem.Uid = newI + uidOffset;
+					elem.Uid = newI + startOffset;
 					newI++;
 				}
 			}
+			this.version++;
 		}
 
 		internal int GetFakeUid() {
@@ -178,7 +192,7 @@ namespace SteamEngine {
 			}
 			int index = this.freeFakeSlots.Dequeue();
 			this.fakeSlots[index] = true;
-			return highestUid - index;
+			return highestPossibleUid - index;
 		}
 
 		private void FillFreeFakeSlotQueue() {
@@ -204,7 +218,7 @@ namespace SteamEngine {
 		}
 
 		internal void DisposeFakeUid(int uid) {
-			int index = highestUid - uid;
+			int index = highestPossibleUid - uid;
 			if (index < this.fakeSlots.Count) {
 				if (this.fakeSlots[index]) {
 					this.fakeSlots[index] = false;
@@ -214,69 +228,22 @@ namespace SteamEngine {
 		}
 
 		public IEnumerator<T> GetEnumerator() {
-			return new Enumerator(this);
+			int v = version;
+
+			for (int i = 0, n = this.highestUsedIndex; i <= n; i++) {
+				if (v != this.version) {
+					throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+				}
+
+				T elem = this.array[i];
+				if (elem != null) {
+					yield return elem;
+				}
+			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
-			return new Enumerator(this);
-		}
-
-		public IEnumerable<T> AsEnumerable() {
-			return new Enumerator(this);
-		}
-
-		private class Enumerator : IEnumerator<T>, IEnumerable<T> {
-			private T current;
-			private int currIdx;
-			private UIDArray<T> source;
-
-			internal Enumerator(UIDArray<T> source) {
-				this.source = source;
-				this.Reset();
-			}
-
-			public void Reset() {
-				this.currIdx = 1;
-				this.current = default(T);
-			}
-
-			public T Current {
-				get {
-					return this.current;
-				}
-			}
-
-			public void Dispose() {
-			}
-
-			object IEnumerator.Current {
-				get {
-					return this.current;
-				}
-			}
-
-			public bool MoveNext() {
-				while (this.currIdx <= this.source.HighestElement) {
-					this.current = this.source.Get(this.currIdx);
-					this.currIdx++;
-					if (!Object.Equals(this.current, default(T))) {
-						return true;
-					}
-				}
-				return false;
-			}
-
-			#region IEnumerable<T> Members
-
-			IEnumerator<T> IEnumerable<T>.GetEnumerator() {
-				return this;
-			}
-
-			IEnumerator IEnumerable.GetEnumerator() {
-				return this;
-			}
-
-			#endregion
+			return this.GetEnumerator();
 		}
 	}
 }

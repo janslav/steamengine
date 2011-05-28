@@ -1490,16 +1490,16 @@ namespace SteamEngine {
 
 		public AbstractCharacter ExclusiveListener {
 			get {
-				return (AbstractCharacter) this.Argv[1];
+				return (AbstractCharacter) this.Argv[9];
 			}
 			set {
-				this.Argv[1] = value;
+				this.Argv[9] = value;
 			}
 		}
 
 		public SpeechArgs(AbstractCharacter speaker, string speech, int clilocSpeech,
 				SpeechType type, int color, ClientFont font, string lang, int[] clilocKeywords, string[] clilocArgs) :
-			base(speaker, speech, clilocSpeech, type, color, font, lang, clilocKeywords, clilocArgs, null, false) {
+			base(speaker, speech, clilocSpeech, type, color, font, lang, clilocKeywords, clilocArgs, null) {
 		}
 	}
 }

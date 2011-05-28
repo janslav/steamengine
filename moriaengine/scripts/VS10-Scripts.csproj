@@ -768,10 +768,6 @@
   </ProjectExtensions>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="SteamDoc, Version=1.0.1984.42666, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\SteamDoc.dll</HintPath>
-    </Reference>
     <Reference Include="MySql.Data, Version=1.0.9.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\bin\MySql.Data.dll</HintPath>

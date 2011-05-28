@@ -3,3 +3,4 @@ CommandFailed                   = Command '{0}' failed - {1}
 WrongCommandArgument            = Wrong argument for that method
 UnknownCommand                  = Unknown method/function {0}
 WrongCommandFormat              = Unrecognized command format
+CommandDoesNothing              = This code line does nothing

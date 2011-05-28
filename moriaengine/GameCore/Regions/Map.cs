@@ -616,19 +616,18 @@ namespace SteamEngine.Regions {
 		}
 
 		internal static void Init() {
-			Logger.WriteDebug("Categorizing sector contents.");
+			Logger.WriteDebug("Putting things into sectors.");
 
-			foreach (Thing t in Thing.AllThings) {
+			foreach (Thing t in Thing.AllThings.ToList()) {
 				t.FixWeight();
 				if (t.IsOnGround) {
 					if (Map.IsValidPos(t)) {
 						t.GetMap().Add(t);
-						continue;
 					}
-					t.CheckAfterLoad();
+					t.CheckPositionValidityAfterLoad();
 				}
 			}
-			Logger.WriteDebug("Done categorizing sector contents.");
+			Logger.WriteDebug("Done putting things into sectors.");
 		}
 
 		/**

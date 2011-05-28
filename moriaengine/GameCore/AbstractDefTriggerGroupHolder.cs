@@ -15,12 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
 //using SteamEngine.PScript;
 
@@ -40,10 +35,14 @@ namespace SteamEngine {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			switch (param) {
 				case "event":
+				case "tevent":
 				case "events":
-				//case "type":
+				case "tevents":
+				case "speech":
+				case "tspeech":
 				case "triggergroup":
-				//case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE? NO!
+				case "triggergroups":
+					//case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE? NO!
 					tgResolvers.Add(new TGResolver(this, args, filename, line));
 					break;
 				default:
@@ -84,13 +83,6 @@ namespace SteamEngine {
 			tgResolvers = new List<TGResolver>();
 		}
 
-		/*
-			Method: AddTriggerGroup
-			Returns false if we already have the triggerGroup, true if not.
-			
-			Parameters:
-				tg - The TtriggerGroup to add. 
-		*/
 		public void AddTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return;
 			if (firstTGListNode == null) {
@@ -120,13 +112,6 @@ namespace SteamEngine {
 			}
 		}
 
-		/*
-			Method: RemoveTriggerGroup
-			Removes the triggerGroup if we have it.
-			
-			Parameters:
-				tg - The triggerGroup to remove.
-		*/
 		public void RemoveTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return;
 			if (firstTGListNode != null) {
@@ -148,17 +133,6 @@ namespace SteamEngine {
 			}
 		}
 
-		/*
-			Method: HasTriggerGroup
-			Determines if we have this TriggerGroup on us.
-			
-			Parameters:
-				tg - The triggergroup in question.
-			
-			Returns:
-				True if we have it, false if we do not.
-		*/
-
 		public bool HasTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return false;
 			PluginHolder.TGListNode curNode = firstTGListNode;
@@ -177,31 +151,22 @@ namespace SteamEngine {
 
 
 		public override void Unload() {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
-				do {
-					curNode.storedTG.Unload();
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-			}
+			//if (firstTGListNode != null) {
+			//    PluginHolder.TGListNode curNode = firstTGListNode;
+			//    do {
+			//        curNode.storedTG.Unload();
+			//        curNode = curNode.nextNode;
+			//    } while (curNode != null);
+			//}
 			firstTGListNode = null;
 			base.Unload();
 		}
 
-		/*
-			Method: Trigger
-			Triggers a trigger on this object, using the specified ScriptArgs
-			
-			Parameters:
-				sa - The arguments (other than argv) for sphere scripts
-				td - The TriggerKey for the trigger to call.
-		
-			Returns:
-				The return value(s) from the triggers called.
-		
-			See also:
-				<Trigger>, <CancellableTriggers>
-		*/
+		/// <summary>
+		/// Triggers a trigger on this object, using the specified ScriptArgs
+		/// </summary>
+		/// <param name="tk">The TriggerKey for the trigger to call.</param>
+		/// <param name="sa">The arguments (other than argv) for sphere scripts</param>
 		public virtual void Trigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;
@@ -222,21 +187,12 @@ namespace SteamEngine {
 			}
 		}
 
-		/*
-			Method: CancellableTrigger
-			Executes the trigger, reads return values, and returns true if anything returned 1 (returning false otherwise).
-			
-			Parameters:
-				td - The trigger to execute
-				sa - Arguments for scripts (argn, args, argo, argn1, argn2, etc). Can be null.
-			
-			Returns:
-				True if any called trigger scripts returned 1, false otherwise.
-			
-			See also:
-				<Trigger>, <CancellableTriggers>
-		*/
-
+		/// <summary>
+		/// Executes the trigger, reads return values, and returns true if anything returned 1 (returning false otherwise).
+		/// </summary>
+		/// <param name="tk">The trigger to execute</param>
+		/// <param name="sa">Arguments for scripts (argn, args, argo, argn1, argn2, etc). Can be null.</param>
+		/// <returns>TriggerResult.Cancel if any called trigger scripts returned 1, TriggerResult.Continue otherwise.</returns>
 		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			if (firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = firstTGListNode;

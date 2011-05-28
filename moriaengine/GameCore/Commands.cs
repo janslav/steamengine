@@ -186,7 +186,16 @@ namespace SteamEngine {
 							return;
 						}
 					}
+
 					scriptHolder.TryRun(self, (ScriptArgs) null);
+
+					//if the command does nothing, consider it an error
+					if ((scriptHolder.code is OpNode_Constant) || (scriptHolder.code is OpNode_This) || (scriptHolder.code is OpNode_Object)) {
+						string errText = Loc<CommandLoc>.Get(commandSrc.Language).CommandDoesNothing;
+						LogCommand(commandSrc, code, false, errText);
+						return;
+					}
+
 					if (scriptHolder.lastRunSuccesful) {
 						gmCommandsCache[codeAsKey] = scriptHolder;
 					} else {
@@ -340,6 +349,7 @@ namespace SteamEngine {
 		public string CommandFailed = "Command '{0}' failed - {1}";
 		public string WrongCommandArgument = "Wrong argument for that method";
 		public string UnknownCommand = "Unknown method/function {0}";
+		public string CommandDoesNothing = "This code line does nothing";
 		public string WrongCommandFormat = "Unrecognized command format";
 	}
 }

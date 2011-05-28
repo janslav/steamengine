@@ -16,23 +16,22 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.LScript;
-using SteamEngine.Networking;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.IO;
 
 namespace SteamEngine.CompiledScripts {
 
 
-	public class ScriptedSpeechDef : AbstractSpeechDef {
+	public class ScriptedSpeech : AbstractSpeech {
 		private static readonly Dictionary<string, Regex> regexes = new Dictionary<string, Regex>(StringComparer.OrdinalIgnoreCase);
 		//pattern(string) - Regex pairs
 
 		SpeechTrigger[] triggers;
 
-		public ScriptedSpeechDef(string defname)
+		public ScriptedSpeech(string defname)
 			: base(defname) {
 		}
 
@@ -48,14 +47,15 @@ namespace SteamEngine.CompiledScripts {
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
 			string name = input.HeaderName.ToLower();
 			AbstractScript s = AbstractScript.GetByDefname(name);
-			ScriptedSpeechDef ssd;
+			ScriptedSpeech ssd;
 			if (s != null) {
-				ssd = s as ScriptedSpeechDef;
+				ssd = s as ScriptedSpeech;
 				if (ssd == null) {//is not scripted, so can not be overriden
 					throw new SEException(input.Filename, input.HeaderLine, "A script called " + LogStr.Ident(name) + " already exists!");
 				}
 			} else {
-				ssd = new ScriptedSpeechDef(name);
+				ssd = new ScriptedSpeech(name);
+				ssd.Register();
 			}
 
 			//now do load the trigger code. 
@@ -78,6 +78,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			return ssd;
+		}
+
+		public override void Unload() {
+			base.Unload();
+			this.triggers = null;
 		}
 
 		protected override SpeechResult Handle(AbstractCharacter listener, SpeechArgs speechArgs) {
