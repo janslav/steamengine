@@ -15,16 +15,15 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
-	public abstract class AbstractSpeechDef : TriggerGroup {
-		protected AbstractSpeechDef()
+	public abstract class AbstractSpeech : TriggerGroup {
+		protected AbstractSpeech()
 			: base() {
 		}
 
-		protected AbstractSpeechDef(string name)
+		protected AbstractSpeech(string name)
 			: base(name) {
 		}
 
@@ -56,12 +55,16 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
+		public override string ToString() {
+			return "SpeechDef " + Defname;
+		}
+
 		protected abstract SpeechResult Handle(AbstractCharacter listener, SpeechArgs speechArgs);
 
 		protected abstract SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs);
 
-		public static new AbstractSpeechDef GetByDefname(string defname) {
-			return AbstractScript.GetByDefname(defname) as AbstractSpeechDef;
+		public static new AbstractSpeech GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as AbstractSpeech;
 		}
 	}
 }

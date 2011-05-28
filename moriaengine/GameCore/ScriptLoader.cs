@@ -124,11 +124,11 @@ namespace SteamEngine {
 					AbstractDef.ResolveAll();
 				}
 
+				ObjectSaver.LoadingFinished();
+				AbstractDef.LoadingFinished();
+
 				AbstractDefTriggerGroupHolder.LoadingFinished();
 				ScriptedGumpDef.LoadingFinished();
-				ObjectSaver.LoadingFinished();
-
-				AbstractDef.LoadingFinished();
 				//foreach (Thing t in Thing.AllThings) {
 				//    t.region = null;
 				//}

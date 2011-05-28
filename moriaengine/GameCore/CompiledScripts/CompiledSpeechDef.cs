@@ -15,15 +15,13 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Reflection;
-using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
 
-	public abstract class CompiledSpeechDef : AbstractSpeechDef {
-		public CompiledSpeechDef() {
+	public abstract class CompiledSpeech : AbstractSpeech {
+		public CompiledSpeech()
+			: base() {
 		}
 
 		protected override string InternalFirstGetDefname() {

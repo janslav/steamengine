@@ -8,7 +8,7 @@ model = c_woman
 //can = MT_NONMOVER|MT_EQUIP|MT_FEMALE // commented out by Converter 
 //maxfood = 04fff // commented out by Converter 
 //tevents = e_vendor_custom // commented out by Converter 
-//TSPEECH = spk_vendor_custom // commented out by Converter 
+EVENTS = spk_vendor_custom
 
 [PlayerVendorDef c_h_vendor]
 CATEGORY = Civilized
@@ -20,4 +20,9 @@ model = c_man
 //can = MT_NONMOVER|MT_EQUIP|MT_MALE // commented out by Converter 
 //maxfood = 04fff // commented out by Converter 
 //tevents = e_vendor_custom // commented out by Converter 
-//TSPEECH = spk_vendor_custom // commented out by Converter 
+EVENTS = spk_vendor_custom
+
+[SPEECH spk_vendor_custom]
+on=*buy*
+say("Buying")
+return 1

@@ -22,34 +22,7 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
-	public partial class ItemDef {
 
-		public bool IsWearableDef {
-			get {
-				return (this is WearableDef);
-			}
-		}
-
-		public bool IsDestroyableDef {
-			get {
-				return (this is DestroyableDef);
-			}
-		}
-
-		public bool IsWeaponDef {
-			get {
-				return (this is WeaponDef);
-			}
-		}
-
-		protected override void On_AfterLoadFromScripts() {
-			base.On_AfterLoadFromScripts();
-
-			ResourcesList.ThrowIfNotConsumable(this.Resources);
-			ResourcesList.ThrowIfNotConsumable(this.Resources2);
-		}
-	}
 
 
 	/* sphere Flags:
@@ -388,6 +361,35 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public virtual void On_Dispell(SpellEffectArgs spellEffectArgs) {
+		}
+	}
+
+	[Dialogs.ViewableClass]
+	public partial class ItemDef {
+
+		public bool IsWearableDef {
+			get {
+				return (this is WearableDef);
+			}
+		}
+
+		public bool IsDestroyableDef {
+			get {
+				return (this is DestroyableDef);
+			}
+		}
+
+		public bool IsWeaponDef {
+			get {
+				return (this is WeaponDef);
+			}
+		}
+
+		protected override void On_AfterLoadFromScripts() {
+			base.On_AfterLoadFromScripts();
+
+			ResourcesList.ThrowIfNotConsumable(this.Resources);
+			//ResourcesList.ThrowIfNotConsumable(this.Resources2);
 		}
 	}
 }
