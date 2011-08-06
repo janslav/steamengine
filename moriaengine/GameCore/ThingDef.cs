@@ -16,12 +16,9 @@
 */
 
 using System;
-using System.Text;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Regions;
 //using SteamEngine.PScript;
@@ -62,8 +59,8 @@ namespace SteamEngine {
 		//private static AbstractItemDef[] itemModelDefs = new AbstractItemDef[MaxItemModels];
 		//private static AbstractCharacterDef[] charModelDefs = new AbstractCharacterDef[MaxCharModels];
 
-		private static Dictionary<int, AbstractItemDef> itemModelDefs = new Dictionary<int, AbstractItemDef>();
-		private static Dictionary<int, AbstractCharacterDef> charModelDefs = new Dictionary<int, AbstractCharacterDef>();
+		private static ConcurrentDictionary<int, AbstractItemDef> itemModelDefs = new ConcurrentDictionary<int, AbstractItemDef>();
+		private static ConcurrentDictionary<int, AbstractCharacterDef> charModelDefs = new ConcurrentDictionary<int, AbstractCharacterDef>();
 		private static int highestItemModel;
 		private static int highestCharModel;
 

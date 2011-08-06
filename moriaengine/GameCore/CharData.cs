@@ -22,15 +22,15 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	static class CharData {
-		private static Dictionary<int, bool> knownDispids = new Dictionary<int, bool>();
+		private static HashSet<int> knownDispids = new HashSet<int>();
 
 		public static void AddDispid(int uid) {
-			knownDispids[uid] = true;
+			knownDispids.Add(uid);
 		}
 
 		public static bool Exists(int num) {
 			//Sanity.IfTrueThrow(num>ThingDef.MaxCharModels, "CharData.Exists("+num+") called: "+num+" is an invalid value (valid values are 0-"+ThingDef.MaxCharModels+")");
-			return knownDispids.ContainsKey(num);
+			return knownDispids.Contains(num);
 		}
 
 		public static void GenerateMissingDefs() {

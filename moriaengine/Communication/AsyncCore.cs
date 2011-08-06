@@ -116,13 +116,16 @@ namespace SteamEngine.Communication {
 
 		//outgoing packets
 		private void WorkerThreadMethod() {
-			foreach (var msg in this.outgoingPackets.GetConsumingEnumerable(this.exitToken)) {
-				msg.conn.ProcessSending(msg.group);
+			try {
 
-				if (this.outgoingPackets.Count == 0) {
-					this.outgoingPacketsSentEvent.Set();
+				foreach (var msg in this.outgoingPackets.GetConsumingEnumerable(this.exitToken)) {
+					msg.conn.ProcessSending(msg.group);
+
+					if (this.outgoingPackets.Count == 0) {
+						this.outgoingPacketsSentEvent.Set();
+					}
 				}
-			}
+			} catch (OperationCanceledException) { }
 		}
 	}
 }
