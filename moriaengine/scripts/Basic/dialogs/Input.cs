@@ -199,7 +199,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	/// <summary>Class for using input dialogs implemented in C#</summary>
-	public abstract class CompiledInputDef : AbstractInputDef {
+	public sealed class CompiledInputDef : AbstractInputDef {
+		readonly string label;
+		readonly string defaultInput;
+		readonly Action<Character, TagHolder, string> response;
 
+		public CompiledInputDef(string label, string defaultInput, Action<Character, TagHolder, string> response) {
+			this.label = label;
+			this.defaultInput = defaultInput;
+			this.response = response;
+		}
+
+
+		public override string Label {
+			get { return this.label; }
+		}
+
+		public override string DefaultInput {
+			get { return this.defaultInput; }
+		}
+
+		public override void Response(Character sentTo, TagHolder focus, string filledText) {
+			this.response(sentTo, focus, filledText);
+		}
 	}
 }
