@@ -1,17 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-
-using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
+using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 	public class ConsoleServer : TcpServer<ConsoleClient> {
 		public ConsoleServer()
-			: base(ConsoleServerProtocol.instance, MainClass.GlobalLock) {
+			: base(ConsoleServerProtocol.instance, MainClass.GlobalLock, MainClass.ExitSignalToken) {
 		}
 
 		private static ConsoleServer instance = new ConsoleServer();

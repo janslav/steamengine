@@ -573,18 +573,18 @@ namespace SteamEngine {
 
 				if (!exists) {
 					iniH.WriteToFile();
-					MainClass.signalExit.Set();
+					MainClass.CommandExit();
 					throw new ShowMessageAndExitException(msgBox + "SteamEngine has written a default 'steamengine.ini' for you. Please take a look at it, change whatever you want, and then run SteamEngine again to get started.", "Getting started");
 				}
 
 			} catch (ShowMessageAndExitException smaee) {
 				Logger.Show(smaee.Message);
 				smaee.Show();
-				MainClass.signalExit.Set();
+				MainClass.CommandExit();
 			} catch (Exception globalexp) {
 				Console.WriteLine();
 				Logger.WriteFatal(globalexp);
-				MainClass.signalExit.Set();
+				MainClass.CommandExit();
 			}
 		}
 
@@ -700,7 +700,7 @@ namespace SteamEngine {
 		//}
 
 		public static void Exit() {
-			MainClass.signalExit.Set();
+			MainClass.CommandExit();
 		}
 
 		public static void SetConsoleTitle(string title) {

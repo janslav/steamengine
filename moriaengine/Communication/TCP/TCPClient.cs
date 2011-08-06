@@ -15,30 +15,23 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.ComponentModel;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 
 using SteamEngine.Common;
-using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
 #if MSWIN
 	sealed
 #endif
-	public class TcpClientFactory<TState> :
+ public class TcpClientFactory<TState> :
 		AsyncCore<TcpConnection<TState>, TState, IPEndPoint>,
 		IClientFactory<TcpConnection<TState>, TState, IPEndPoint>
 		where TState : IConnectionState<TcpConnection<TState>, TState, IPEndPoint>, new() {
 
-		public TcpClientFactory(IProtocol<TcpConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
-			: base(protocol, lockObject) {
+		public TcpClientFactory(IProtocol<TcpConnection<TState>, TState, IPEndPoint> protocol, object lockObject, CancellationToken cancelToken)
+			: base(protocol, lockObject, cancelToken) {
 
 		}
 

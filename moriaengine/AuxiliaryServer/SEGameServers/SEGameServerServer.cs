@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
-using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
 	public sealed class SEGameServerServer : NamedPipeServer<SEGameServerClient> {
 		private static SEGameServerServer instance = new SEGameServerServer();
 
 		private SEGameServerServer()
-			: base(SEGameServerProtocol.instance, MainClass.GlobalLock) {
+			: base(SEGameServerProtocol.instance, MainClass.GlobalLock, MainClass.ExitSignalToken) {
 
 		}
 

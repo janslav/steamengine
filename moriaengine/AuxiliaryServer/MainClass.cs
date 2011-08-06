@@ -9,14 +9,14 @@ namespace SteamEngine.AuxiliaryServer {
 
 		private static readonly object globalLock = new object();
 
-		private static readonly ManualResetEvent setToExit = new ManualResetEvent(false);
+		private static readonly CancellationTokenSource exitTokenSource = new CancellationTokenSource();
 
 		public static object GlobalLock {
 			get { return MainClass.globalLock; }
 		}
 
-		public static ManualResetEvent SetToExit {
-			get { return MainClass.setToExit; }
+		public static CancellationToken ExitSignalToken {
+			get { return MainClass.exitTokenSource.Token; }
 		}
 
 		static void Main() {
@@ -30,12 +30,12 @@ namespace SteamEngine.AuxiliaryServer {
 
 				Thread t = new Thread(delegate() {
 					Console.ReadLine();
-					setToExit.Set();
+					exitTokenSource.Cancel();
 				});
 				t.IsBackground = true;
 				t.Start();
 
-				setToExit.WaitOne();
+				exitTokenSource.Token.WaitHandle.WaitOne();
 
 			} catch (Exception e) {
 				Logger.WriteFatal(e);
@@ -59,6 +59,10 @@ namespace SteamEngine.AuxiliaryServer {
 			LoginServer.LoginServer.Exit();
 			ConsoleServer.ConsoleServer.Exit();
 			SEGameServers.SEGameServerServer.Exit();
+		}
+
+		internal static void CommandExit() {
+			exitTokenSource.Cancel();
 		}
 	}
 }

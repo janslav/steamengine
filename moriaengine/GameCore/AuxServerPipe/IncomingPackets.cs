@@ -1,11 +1,7 @@
-using System;
-using System.Net;
-using System.Collections.Generic;
-using System.Text;
 
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
 #if MSWIN
@@ -13,7 +9,7 @@ namespace SteamEngine.AuxServerPipe {
 #else
 	public class AuxServerPipeProtocol : IProtocol<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, System.Net.IPEndPoint> {
 #endif
-	
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly AuxServerPipeProtocol instance = new AuxServerPipeProtocol();
@@ -41,7 +37,7 @@ namespace SteamEngine.AuxServerPipe {
 			return null;
 		}
 	}
-	
+
 #if MSWIN
 	public abstract class AuxServerPipeIncomingPacket : IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> {
 #else
@@ -124,7 +120,7 @@ namespace SteamEngine.AuxServerPipe {
 		protected override void Handle(NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state) {
 			if (RunLevelManager.IsAwaitingRetry) {
 				if (this.command == "exit") {//TODO? check authorisation somehow?
-					MainClass.signalExit.Set();
+					MainClass.CommandExit();
 				} else {
 					MainClass.RetryRecompilingScripts();
 				}

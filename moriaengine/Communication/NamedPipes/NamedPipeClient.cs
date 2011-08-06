@@ -15,18 +15,10 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Text;
-using System.IO;
 using System.IO.Pipes;
-using System.ComponentModel;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
-using System.Runtime.InteropServices;
 
 using SteamEngine.Common;
-using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
 	public sealed class NamedPipeClientFactory<TState> :
@@ -52,17 +44,17 @@ namespace SteamEngine.Communication.NamedPipes {
 			return newConn;
 		}
 #else
-		AsyncCore<NamedPipeConnection<TState>, TState, string>,
+ AsyncCore<NamedPipeConnection<TState>, TState, string>,
 		IClientFactory<NamedPipeConnection<TState>, TState, string>
 		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
-		public NamedPipeClientFactory(IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject)
-			: base(protocol, lockObject) {
+		public NamedPipeClientFactory(IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject, CancellationToken exitToken)
+			: base(protocol, lockObject, exitToken) {
 		}
-		
+
 		public NamedPipeConnection<TState> Connect(string pipeName) {
 
-			NamedPipeClientStream pipe = new NamedPipeClientStream(".", pipeName, 
+			NamedPipeClientStream pipe = new NamedPipeClientStream(".", pipeName,
 				PipeDirection.InOut, PipeOptions.Asynchronous);
 			pipe.Connect();
 

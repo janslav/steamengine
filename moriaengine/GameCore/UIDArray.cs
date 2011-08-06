@@ -21,8 +21,8 @@ using System.Collections.Generic;
 //SimpleQueue :D
 
 namespace SteamEngine {
-	internal class UIDArray<T> : IEnumerable<T> where T : class, IObjectWithUid {
-		private T[] array = new T[minimalLength];
+	internal class UIDArray : IEnumerable<Thing> {
+		private Thing[] array = new Thing[minimalLength];
 		private SimpleQueue<int> freeSlots = new SimpleQueue<int>();
 		private int highestUsedIndex;
 		private int count;
@@ -57,12 +57,12 @@ namespace SteamEngine {
 			this.fakeSlots.Clear();
 			this.highestUsedIndex = 0;
 			this.count = 0;
-			this.array = new T[this.array.Length];
+			this.array = new Thing[this.array.Length];
 			this.loadingFinished = false;
 			this.version++;
 		}
 
-		internal void AddLoaded(T o, int loadedUid) {
+		internal void AddLoaded(Thing o, int loadedUid) {
 			int index = loadedUid - startOffset;
 			if (this.loadingFinished) {
 				throw new SEException("Add(object,index) disabled after LoadingFinished");
@@ -84,7 +84,7 @@ namespace SteamEngine {
 			this.version++;
 		}
 
-		internal void Add(T o) {
+		internal void Add(Thing o) {
 			if (this.freeSlots.Count == 0) {	//no indexes in the freeSlots queue
 				this.FillFreeSlotQueue();
 			}
@@ -93,7 +93,7 @@ namespace SteamEngine {
 			if (uid >= (highestPossibleUid - this.fakeSlots.Count)) {
 				throw new SEException("We're out of UIDs. This is baaaad.");
 			}
-			o.Uid = uid;
+			o.InternalSetUid(uid);
 			this.array[index] = o;
 			this.count++;
 
@@ -132,7 +132,7 @@ namespace SteamEngine {
 		}
 
 		private void ResizeImpl(int newSize) {
-			T[] temp = new T[newSize];
+			Thing[] temp = new Thing[newSize];
 			Array.Copy(this.array, temp, this.array.Length);
 			this.array = temp;
 		}
@@ -141,7 +141,7 @@ namespace SteamEngine {
 			this.loadingFinished = true;
 		}
 
-		internal T Get(int uid) { //may return a null object
+		internal Thing Get(int uid) { //may return a null object
 			int index = uid - startOffset;
 			if (index < this.array.Length && index >= 0) {
 				return this.array[index];
@@ -171,15 +171,15 @@ namespace SteamEngine {
 		}
 
 		internal void ReIndexAll() {
-			T[] origArray = this.array;
+			Thing[] origArray = this.array;
 			int n = origArray.Length;
-			T[] newArray = new T[n];
+			Thing[] newArray = new Thing[n];
 
 			for (int i = 0, newI = 0; i < n; i++) {
-				T elem = origArray[i];
+				Thing elem = origArray[i];
 				if (!Object.Equals(elem, null)) {
 					newArray[newI] = elem;
-					elem.Uid = newI + startOffset;
+					elem.InternalSetUid(newI + startOffset);
 					newI++;
 				}
 			}
@@ -227,7 +227,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public IEnumerator<T> GetEnumerator() {
+		public IEnumerator<Thing> GetEnumerator() {
 			int v = version;
 
 			for (int i = 0, n = this.highestUsedIndex; i <= n; i++) {
@@ -235,7 +235,7 @@ namespace SteamEngine {
 					throw new InvalidOperationException("The collection was modified after the enumerator was created.");
 				}
 
-				T elem = this.array[i];
+				Thing elem = this.array[i];
 				if (elem != null) {
 					yield return elem;
 				}

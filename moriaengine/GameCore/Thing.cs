@@ -28,12 +28,9 @@ using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine {
-	internal interface IObjectWithUid {
-		int Uid { get; set; }
-	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable<AbstractItem>, IObjectWithUid {
+	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable<AbstractItem> {
 		private TimeSpan createdAt = Globals.TimeAsSpan;//Server time of creation
 		private ushort color;
 		private ushort model;
@@ -60,7 +57,7 @@ namespace SteamEngine {
 
 		private static List<TriggerGroup> registeredTGs = new List<TriggerGroup>();
 
-		private static UIDArray<Thing> things = new UIDArray<Thing>();
+		private static UIDArray things = new UIDArray();
 		private static int uidBeingLoaded = -1;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
@@ -242,13 +239,8 @@ namespace SteamEngine {
 			}
 		}
 
-		int IObjectWithUid.Uid {
-			get {
-				return this.uid;
-			}
-			set {
-				this.uid = value;
-			}
+		internal void InternalSetUid(int uid) {
+			this.uid = uid;
 		}
 
 		[CLSCompliant(false)]

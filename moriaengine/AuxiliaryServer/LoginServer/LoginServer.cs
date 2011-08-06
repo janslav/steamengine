@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
-using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 	public sealed class LoginServer : TcpServer<LoginClient> {
 		private LoginServer()
-			: base(LoginServerProtocol.instance, MainClass.GlobalLock) {
+			: base(LoginServerProtocol.instance, MainClass.GlobalLock, MainClass.ExitSignalToken) {
 
 		}
 

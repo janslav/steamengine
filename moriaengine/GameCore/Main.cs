@@ -33,7 +33,11 @@ namespace SteamEngine {
 
 		internal static readonly object globalLock = new object();
 
-		internal static ManualResetEvent signalExit = new ManualResetEvent(false);
+		private static readonly CancellationTokenSource exitTokenSource = new CancellationTokenSource();
+
+		public static CancellationToken ExitToken {
+			get { return exitTokenSource.Token; }
+		}
 
 		//public static bool nativeConsole = false;
 
@@ -81,7 +85,6 @@ namespace SteamEngine {
 			//name the console window for better recognizability
 			Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 
-			signalExit.Reset();
 			try {
 				//Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 
@@ -101,12 +104,12 @@ namespace SteamEngine {
 
 				Thread t = new Thread(delegate() {
 					Console.ReadLine();
-					signalExit.Set();
+					exitTokenSource.Cancel();
 				});
 				t.IsBackground = true;
 				t.Start();
 
-				signalExit.WaitOne();
+				exitTokenSource.Token.WaitHandle.WaitOne();
 
 			} catch (ShowMessageAndExitException smaee) {
 				Logger.WriteFatal(smaee);
@@ -144,7 +147,7 @@ namespace SteamEngine {
 				Console.WriteLine("Running under " + Environment.OSVersion + ", Framework version: " + Environment.Version + ".");
 
 				Globals.Init(); //reads .ini
-				if (signalExit.WaitOne(0, false)) {
+				if (exitTokenSource.Token.IsCancellationRequested) {
 					return false;
 				}
 
@@ -390,6 +393,10 @@ namespace SteamEngine {
 
 		//    Console.WriteLine("Leaving Main Loop");
 		//}
+
+		internal static void CommandExit() {
+			exitTokenSource.Cancel();
+		}
 
 		private static void Exit() {
 			RunLevelManager.SetShutdown();

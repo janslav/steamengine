@@ -35,7 +35,7 @@ namespace SteamEngine.Networking {
 		}
 
 		private GameServer()
-			: base(GameServerProtocol.instance, MainClass.globalLock) {
+			: base(GameServerProtocol.instance, MainClass.globalLock, MainClass.ExitToken) {
 
 		}
 
@@ -78,8 +78,9 @@ namespace SteamEngine.Networking {
 			}
 #else
 			return from GameState state in clients
-				   where state.Character != null
-				   select state.Character;
+				   let ch = state.Character
+				   where ch != null
+				   select ch;
 #endif
 		}
 

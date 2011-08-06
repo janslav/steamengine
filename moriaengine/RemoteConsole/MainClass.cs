@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 using SteamEngine.Common;
@@ -8,6 +7,8 @@ using SteamEngine.Common;
 namespace SteamEngine.RemoteConsole {
 	static class MainClass {
 		public static readonly object globalLock = new object();
+
+		public static readonly CancellationTokenSource exitTokenSource = new CancellationTokenSource();
 
 		public static MainForm mainForm;
 
