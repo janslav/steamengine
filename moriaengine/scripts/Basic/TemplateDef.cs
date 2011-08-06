@@ -19,11 +19,8 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections;
-using System.Configuration;
 using SteamEngine.Common;
 using SteamEngine.LScript;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -49,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 				container.CurrentValue = value;
 			}
 		}
-		
+
 		public ItemDef DefaultContainer {
 			get {
 				if (defaultContainer == null) {
@@ -72,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static new void Bootstrap() {
 			ScriptLoader.RegisterScriptType("TemplateDef",
-				new LoadSection(AbstractDef.LoadFromScripts), true);
+				AbstractDef.LoadFromScripts, true);
 		}
 		public override void LoadScriptLines(PropsSection ps) {
 			ParseText(ps, this); //is static because it was that way before a little overhaul, and there's no reason for rewriting really

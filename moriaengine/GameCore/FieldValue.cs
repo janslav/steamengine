@@ -655,7 +655,7 @@ namespace SteamEngine {
 									td = ThingDef.FindCharDef(id);
 								}
 								if (td == null) {
-									throw new SEException("There is no Char/ItemDef with model " + id);
+									throw new SEException("There is no Char/ItemDef with model " + id + "(0x" + id.ToString("x") + ")");
 								}
 								base.Value = td;
 								return;
