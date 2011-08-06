@@ -208,7 +208,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 						break;
 					case 2: //new subcategory
-						newGi = gi.Cont.Dialog(SingletonScript<D_Input_CraftmenuNewSubcat>.Instance, new DialogArgs(cat));
+						var inputDialog = new CompiledInputDef("Nová subkategtorie", "Jméno", (sentTo, focus, filledText) => {
+							CraftmenuCategory newCat = new CraftmenuCategory(filledText);
+							cat.Contents.Add(newCat);
+							newCat.Parent = cat;
+						});
+
+						newGi = gi.Cont.Dialog(inputDialog);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 3: //new items to add (target)
@@ -450,24 +456,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	/// <summary>Založení nové subkategorie v craftmenu</summary>
-	public class D_Input_CraftmenuNewSubcat : CompiledInputDef {
-		public override string Label {
-			get {
-				return "Nová subkategtorie";
-			}
-		}
+	public class D_Input_CraftmenuNewSubcat : AbstractInputDef {
 
-		public override string DefaultInput {
-			get {
-				return "Jméno";
-			}
-		}
-
-		public override void Response(Character sentTo, TagHolder focus, string filledText) {
-			CraftmenuCategory cat = (CraftmenuCategory) GumpInstance.InputArgs[0];
-			CraftmenuCategory newCat = new CraftmenuCategory(filledText);
-			cat.Contents.Add(newCat);
-			newCat.Parent = cat;
-		}
 	}
 }
