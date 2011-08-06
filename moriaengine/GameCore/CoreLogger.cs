@@ -17,8 +17,6 @@
 
 using System;
 using System.IO;
-using System.Text;
-using System.Diagnostics;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -32,7 +30,7 @@ namespace SteamEngine {
 					initInstance = new CoreLogger();
 				} catch (Exception globalexp) {
 					Logger.WriteFatal(globalexp);
-					MainClass.signalExit.Set();
+					MainClass.CommandExit();
 				}
 
 				if (Globals.LogToFiles) {

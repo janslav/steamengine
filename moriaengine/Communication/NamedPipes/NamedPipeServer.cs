@@ -16,15 +16,10 @@
 */
 
 using System;
-using System.Text;
 using System.IO.Pipes;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
-using System.Runtime.InteropServices;
 
 using SteamEngine.Common;
-using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
 	public class NamedPipeServer<TState> :
@@ -132,7 +127,7 @@ namespace SteamEngine.Communication.NamedPipes {
 			base.On_DisposeUnmanagedResources();
 		}
 #else
-		AsyncCore<NamedPipeConnection<TState>, TState, string>,
+ AsyncCore<NamedPipeConnection<TState>, TState, string>,
 		IServer<NamedPipeConnection<TState>, TState, string>
 		where TState : IConnectionState<NamedPipeConnection<TState>, TState, string>, new() {
 
@@ -141,8 +136,8 @@ namespace SteamEngine.Communication.NamedPipes {
 		private AsyncCallback onAccept;
 		private NamedPipeServerStream listener;
 
-		public NamedPipeServer(IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject)
-			: base(protocol, lockObject) {
+		public NamedPipeServer(IProtocol<NamedPipeConnection<TState>, TState, string> protocol, object lockObject, CancellationToken cancelToken)
+			: base(protocol, lockObject, cancelToken) {
 			this.onAccept = this.OnAccept;
 		}
 

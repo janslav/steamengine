@@ -1,7 +1,5 @@
 using System;
 using System.Net;
-using System.Collections.Generic;
-using System.Text;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
@@ -11,7 +9,7 @@ namespace SteamEngine.RemoteConsole {
 		IConnectionState<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
 
 		static TcpClientFactory<ConsoleClient> factory = new TcpClientFactory<ConsoleClient>(
-			ConsoleProtocol.instance, MainClass.globalLock);
+			ConsoleProtocol.instance, MainClass.globalLock, MainClass.exitTokenSource.Token);
 
 
 		private static ConsoleClient connectedInstance;
@@ -27,7 +25,7 @@ namespace SteamEngine.RemoteConsole {
 
 		public static bool IsConnected {
 			get {
-				return ((connectedInstance != null) && (connectedInstance.Conn.IsConnected));					
+				return ((connectedInstance != null) && (connectedInstance.Conn.IsConnected));
 			}
 		}
 

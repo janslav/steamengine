@@ -1,19 +1,17 @@
 using System;
+using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using System.Diagnostics;
-using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
 using NAnt.Core;
+using SteamEngine.Common;
+using SteamEngine.Communication.TCP;
 
 
 namespace SteamEngine.AuxiliaryServer {
 	public static class Commands {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "conn"), 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"),
+		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "conn"),
 		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "cmd")]
 		public static void HandleCommand(TcpConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state, string cmd) {
 			cmd = cmd.ToLowerInvariant();
@@ -78,8 +76,8 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		private class NantProjectReStarter : AuxServNantProjectStarter {
-			internal NantProjectReStarter ()
-				: base (SEBuild.Sane, ".", "buildRestarter", "restarterFileName") {
+			internal NantProjectReStarter()
+				: base(SEBuild.Sane, ".", "buildRestarter", "restarterFileName") {
 			}
 
 			public override void StartProcess(string file) {
@@ -93,7 +91,7 @@ namespace SteamEngine.AuxiliaryServer {
 #endif
 				System.Diagnostics.Process.Start(psi);
 
-				MainClass.SetToExit.Set();
+				MainClass.CommandExit();
 			}
 		}
 	}

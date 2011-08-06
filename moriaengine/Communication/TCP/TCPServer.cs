@@ -18,14 +18,9 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 
 using SteamEngine.Common;
-using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.TCP {
 	public class TcpServer<TState> :
@@ -36,8 +31,8 @@ namespace SteamEngine.Communication.TCP {
 		private AsyncCallback onAccept;
 		Socket listener;
 
-		public TcpServer(IProtocol<TcpConnection<TState>, TState, IPEndPoint> protocol, object lockObject)
-			: base(protocol, lockObject) {
+		public TcpServer(IProtocol<TcpConnection<TState>, TState, IPEndPoint> protocol, object lockObject, CancellationToken cancelToken)
+			: base(protocol, lockObject, cancelToken) {
 			this.onAccept = this.OnAccept;
 
 		}

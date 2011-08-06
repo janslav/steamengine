@@ -1,12 +1,8 @@
 using System;
 using System.Threading;
-using System.Net;
-using System.Collections.Generic;
-using System.Text;
-
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxServerPipe {
 	public class AuxServerPipeClient : //Disposable,
@@ -35,7 +31,8 @@ namespace SteamEngine.AuxServerPipe {
 		internal static void Init() {
 			clientFactory = new NamedPipeClientFactory<AuxServerPipeClient>(
 				AuxServerPipeProtocol.instance,
-				MainClass.globalLock);
+				MainClass.globalLock,
+				MainClass.ExitToken);
 
 			connectingTimer.Change(TimeSpan.Zero, TimeSpan.Zero);
 
@@ -57,16 +54,16 @@ namespace SteamEngine.AuxServerPipe {
 		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {
 			NamedPipeConnection<AuxServerPipeClient> c = null;
 			try {
-				
+
 #if MSWIN
-				c =	clientFactory.Connect(Common.Tools.commonPipeName);
+				c = clientFactory.Connect(Common.Tools.commonPipeName);
 #else
 				c = clientFactory.Connect(new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, Common.Tools.commonPort));
 #endif
-			//} catch (Exception e) {
+				//} catch (Exception e) {
 				//Logger.WriteError("Unexpected error in timer callback method", e);
 			} catch { }
-			
+
 			if (c == null) {
 				StartTryingToConnect();
 			}
