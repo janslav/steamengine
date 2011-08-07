@@ -454,9 +454,4 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 	}
-
-	/// <summary>Založení nové subkategorie v craftmenu</summary>
-	public class D_Input_CraftmenuNewSubcat : AbstractInputDef {
-
-	}
 }

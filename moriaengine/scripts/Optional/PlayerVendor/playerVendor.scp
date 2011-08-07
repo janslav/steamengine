@@ -23,6 +23,47 @@ model = c_man
 EVENTS = spk_vendor_custom
 
 [SPEECH spk_vendor_custom]
+ON=*stock* 
+ON=*sklad*
+this.Say(LocManager.GetEntry("loc_playervendor", "OneMomentPlease", argv[0].Language))
+
+argv[0].Target(targ_playerVendor_stock, this)
+
 on=*buy*
+
 say("Buying")
 return 1
+
+
+
+[ScriptedTargetDef targ_playerVendor_stock]
+on=@targon_item
+
+if (argv[1].CanStockWithMessage(this, argv[0]))
+	this.Dialog(d_playerVendor_stock_input, argv[1])
+endif
+
+[Loc loc_playervendor]
+OneMomentPlease=Okamžíèek
+TargetThingToStock=Zamìø vìc nebo zvíøe prodej
+
+
+[ContainerDef i_vendor_box]
+Model=i_backpack
+name=Kontejner prodavanych veci
+LAYER=60
+
+[ContainerDef i_vendor_tag_box]
+Model=i_backpack
+name=Hlavni nabidka
+LAYER=61
+
+[ContainerDef i_buyer_box]
+Model=i_backpack
+name=Seznam vykupovanych veci
+LAYER=62
+
+[ContainerDef i_buyer_tag_box]
+Model=i_backpack
+name=Docasny seznam veci k prodeji
+LAYER=63

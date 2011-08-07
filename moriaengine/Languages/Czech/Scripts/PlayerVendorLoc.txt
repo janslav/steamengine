@@ -1,0 +1,2 @@
+YouCantStockMoney               = Nemůžeš prodávat hotovost
+StockedContainerTooFull         = Nemůžeš prodávat kontejner s více jak 500ks zboží

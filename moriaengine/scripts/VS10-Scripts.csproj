@@ -690,6 +690,7 @@
     <None Include="converted\speech.def" />
     <None Include="defaults\chardefs\newCharDefsFromMuls.def" />
     <None Include="Optional\playerHelp.scp" />
+    <None Include="Optional\PlayerVendor\d_playerVendor_stock_input.scp" />
     <None Include="Optional\PlayerVendor\playerVendor.ct" />
     <None Include="Optional\StorageBoxes\storageBoxes.ct" />
     <None Include="Optional\StorageBoxes\storageBoxes.def" />
