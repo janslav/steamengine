@@ -347,6 +347,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsPetOf(Character cre) {
+			//TODO
 			return true;
 		}
 
@@ -359,9 +360,9 @@ namespace SteamEngine.CompiledScripts {
 		//    return true;
 		//}
 
-		public override bool CanRename(AbstractCharacter to) {
+		public override bool CanRename(AbstractCharacter beingRenamed) {
 			return (this.IsGM) ||
-				((this.IsPlayer) && (to != this) && this.IsOwnerOf((Character) to)); //can't rename self
+				((this.IsPlayer) && (beingRenamed != this) && this.IsOwnerOf((Character) beingRenamed)); //can't rename self
 		}
 		#endregion Pets / ownership
 

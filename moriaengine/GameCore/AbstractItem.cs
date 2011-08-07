@@ -125,6 +125,9 @@ namespace SteamEngine {
 			}
 		}
 
+		/// <summary>
+		/// Gets the count of items inside this item, if it is a container.
+		/// </summary>
 		public int Count {
 			get {
 				ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;

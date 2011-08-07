@@ -21,7 +21,7 @@ using System.Collections.Generic;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Wrapper class used to manage and create dialogs easily.</summary>
 	public class ImprovedDialog {
-		private static Dictionary<char, byte> charsLength = new Dictionary<char, byte>();
+		private static Dictionary<char, int> charsLength = new Dictionary<char, int>();
 
 		/// <summary>Map of all main characters and their pixel length</summary>
 		static ImprovedDialog() {
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Compute the length of the text (mainly for dialog purposes)</summary>
 		public static int TextLength(string text) {
 			int retVal = 0;
-			byte val;
+			int val;
 			for (int i = 0; i < text.Length; i++) {
 				if (charsLength.TryGetValue(text[i], out val)) {
 					retVal += val;

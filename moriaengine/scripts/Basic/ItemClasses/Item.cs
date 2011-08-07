@@ -362,6 +362,18 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual void On_Dispell(SpellEffectArgs spellEffectArgs) {
 		}
+
+		public int RecursiveCount {
+			get {
+				int c = 0;
+
+				foreach (Item i in this) {
+					c += i.RecursiveCount + 1;
+				}
+
+				return c;
+			}
+		}
 	}
 
 	[Dialogs.ViewableClass]

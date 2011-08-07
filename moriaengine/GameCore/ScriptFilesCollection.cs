@@ -17,11 +17,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.Reflection;
 using System.Globalization;	//for CultureInfo.Invariant for String.Compare for comparing filenames.
+using System.IO;
+using System.Reflection;
+using System.Text;
 
 namespace SteamEngine {
 	public interface IUnloadable {
@@ -132,7 +131,7 @@ namespace SteamEngine {
 		private void FindNewFiles(DirectoryInfo dir, List<ScriptFile> list) {
 			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
 				DirectoryInfo di = entry as DirectoryInfo;
-				if (di != null) {					
+				if (di != null) {
 					if (!IsAvoidedDirectory(di)) {
 						FindNewFiles(di, list);
 					}
@@ -231,6 +230,7 @@ namespace SteamEngine {
 				foreach (IUnloadable script in scripts) {
 					script.Unload();
 				}
+				scripts.Clear();
 			}
 		}
 
