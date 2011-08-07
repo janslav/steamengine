@@ -1,16 +1,12 @@
 using System;
-using System.Net;
-using System.Collections.Generic;
-using System.Text;
-
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
 	public class SEGameServerClient : SteamEngine.AuxiliaryServer.GameServer,
 #if MSWIN
-		IConnectionState<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> {
+ IConnectionState<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> {
 #else
 		IConnectionState<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, System.Net.IPEndPoint> {
 #endif
@@ -116,6 +112,11 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 			ConsoleLoginRequestPacket loginRequest = Pool<ConsoleLoginRequestPacket>.Acquire();
 			loginRequest.Prepare(consoleId, accName, accPassword);
 			this.Conn.SendSinglePacket(loginRequest);
+		}
+
+
+		public void On_PacketBeingHandled(IncomingPacket<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> packet) {
+
 		}
 	}
 }

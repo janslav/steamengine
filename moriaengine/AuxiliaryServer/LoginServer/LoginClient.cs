@@ -1,11 +1,8 @@
 using System;
 using System.Net;
-using System.Collections.Generic;
-using System.Text;
 
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginClient : //Disposable,
@@ -53,6 +50,10 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get {
 				return false;
 			}
+		}
+
+		public void On_PacketBeingHandled(IncomingPacket<TcpConnection<LoginClient>, LoginClient, IPEndPoint> packet) {
+
 		}
 	}
 }

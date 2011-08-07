@@ -100,6 +100,7 @@ namespace SteamEngine.Communication {
 			//}
 			lock (this.lockObject) {
 				try {
+					state.On_PacketBeingHandled(packet);
 					packet.Handle(conn, state);
 				} catch (FatalException) {
 					throw;

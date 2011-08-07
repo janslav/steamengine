@@ -151,5 +151,9 @@ namespace SteamEngine.AuxServerPipe {
 				return true;
 			}
 		}
+
+		public void On_PacketBeingHandled(IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> packet) {
+
+		}
 	}
 }
