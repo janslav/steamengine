@@ -17,13 +17,67 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 
 
+using SteamEngine.Common;
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class PlayerVendor {
+
+		public override void On_Create() {
+			base.On_Create();
+
+
+		}
+
+		public void TradeOperationStarted(Player player) {
+			//TODO: Ensure initialisation?
+		}
+
+		public bool CanTradeWith(Player player) {
+			//TODO: check realm, etc.
+			return this.IsOperational;
+		}
+
+		public bool CanBeControlledBy(Player player) {
+			//override pet system?
+			return this.IsPetOf(player);
+		}
+
+
+		public bool IsOperational { get { return true; } }
+
+
+		/// <summary>
+		/// Determines whether the specified player can stock the specified item within this vendor.
+		/// In the negative fall, sends a sysmessage to the player
+		/// </summary>
+		/// <param name="player">The player.</param>
+		/// <param name="itemBeingStocked">The item being stocked.</param>
+		/// <returns>
+		///   <c>true</c> if the specified player can stock the specified item within this vendor; otherwise, <c>false</c>.
+		/// </returns>
+		public bool CanStockWithMessage(Player player, Item itemBeingStocked) {
+			if (itemBeingStocked.Type is t_gold) {
+				player.SysMessage(Loc<PlayerVendorLoc>.Get(player.Language).YouCantStockMoney);
+				return false;
+			} else if (itemBeingStocked.RecursiveCount > 500) {
+				player.SysMessage(Loc<PlayerVendorLoc>.Get(player.Language).StockedContainerTooFull);
+				return false;
+			}
+
+			return player.CanPickUpWithMessage(itemBeingStocked);
+		}
+
+
 	}
 
 	[Dialogs.ViewableClass]
 	public partial class PlayerVendorDef {
+	}
+
+	public class PlayerVendorLoc : CompiledLocStringCollection {
+		public string YouCantStockMoney = "Nemùžeš prodávat hotovost";
+		public string StockedContainerTooFull = "Nemùžeš prodávat kontejner s více jak 500ks zboží";
+
 	}
 }
 
