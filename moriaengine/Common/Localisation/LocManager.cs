@@ -48,6 +48,8 @@ namespace SteamEngine.Common {
 					}
 					throw new SEException("Loc instance '" + className + "' was not registered.");
 				}
+			} else {
+				throw new FatalException("Parallel loading fucked up.");
 			}
 		}
 
