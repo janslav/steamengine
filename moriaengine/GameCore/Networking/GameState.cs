@@ -17,12 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
-using System.IO;
-using System.Net;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
@@ -606,6 +605,12 @@ namespace SteamEngine.Networking {
 
 		public void WriteLine(string msg) {
 			PacketSequences.SendSystemMessage(this.conn, msg, -1);
+		}
+
+
+		public void On_PacketBeingHandled(IncomingPacket<TcpConnection<GameState>, GameState, IPEndPoint> packet) {
+			ISrc src = this.character;
+			Globals.SetSrc(src);
 		}
 	}
 }

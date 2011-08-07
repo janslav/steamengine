@@ -1,11 +1,9 @@
 using System;
-using System.Net;
 using System.Collections.Generic;
-using System.Text;
-
+using System.Net;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
@@ -90,7 +88,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		public void TryLoginToGameServers() {
 			foreach (GameServer gameServer in GameServersManager.AllIdentifiedGameServers) {
 				gameServer.SendConsoleLogin(this.uid, this.accName, this.accPass);
-			}			
+			}
 		}
 
 		public void TryLoginToGameServer(GameServer gameServer) {
@@ -160,7 +158,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		public void SendLoginFailedAndClose(string reason) {
 			LoginFailedPacket packet = Pool<LoginFailedPacket>.Acquire();
-			packet.Prepare(reason);			
+			packet.Prepare(reason);
 			this.conn.SendSinglePacket(packet);
 
 			this.conn.Core.WaitForAllSent();
@@ -171,6 +169,11 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			get {
 				return true;
 			}
+		}
+
+
+		public void On_PacketBeingHandled(IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> packet) {
+
 		}
 	}
 

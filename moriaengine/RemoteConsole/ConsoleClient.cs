@@ -127,6 +127,11 @@ namespace SteamEngine.RemoteConsole {
 				return false;
 			}
 		}
+
+
+		public void On_PacketBeingHandled(IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> packet) {
+
+		}
 	}
 }
 
