@@ -14,6 +14,10 @@ import utils
 from client_gui import facade
 import client_config as config
 
+try:
+	from bspatch import patch
+except ImportError:
+	from pybspatch import patch
 
 if (config.use_proxy):	
 	schema = urlparse(config.proxy)
@@ -36,10 +40,11 @@ TOTALPERCENTAGE_UIFILE_DOWNLOAD = 0.5 * TOTALPERCENTAGE_UI
 TOTALPERCENTAGE_UIFILE_UNPACK = 0.3	* TOTALPERCENTAGE_UI
 TOTALPERCENTAGE_UIFILE_READ = 0.1 * TOTALPERCENTAGE_UI
 
-TOTALPERCENTAGE_TODOLIST = 1.0
+TOTALPERCENTAGE_TODOLIST = 0.01 * facade.PBMAX
 
-TOTALPERCENTAGE_CHECKSUMALL = 5.0
+TOTALPERCENTAGE_CHECKSUMALL = 0.20 * facade.PBMAX
 
+#downloading, unpacking, patching - vyjadreno jako pomer
 TIMEPERCENTAGE_DOWNLOADING = 5
 TIMEPERCENTAGE_UNPACKING = 3
 TIMEPERCENTAGE_PATCHING = 4
@@ -79,8 +84,9 @@ def work():
 				todo.append((path_in_uo, float(size), fi))
 		
 		for fi in uiobj.files.values():
-			if fi.forced:
-				todo.append((None, None, fi))
+			if fi.forced and not fi.todelete:
+				path_in_uo = os.path.join(config.uo_path, fi.versions_sorted[-1].filename)
+				todo.append((path_in_uo, None, fi))
 								
 		totaldone += TOTALPERCENTAGE_TODOLIST
 		facade.set_progress_overall(totaldone)
@@ -98,7 +104,7 @@ def work():
 			if fi.todelete:
 				todelete.append(path_in_uo)
 			else:
-				if path_in_uo:
+				if filesize:
 					sizefraction = filesize/totalsize
 					TOTALPERCENTAGE_CHECKSUMALL
 					def progress_callback(done):
@@ -111,10 +117,20 @@ def work():
 				
 				latestversion = fi.versions_sorted[-1]
 				if (checksum != latestversion.checksum): #nemame spravnou verzi, musime resit
-					version = ui.fi_getversionbychecksum(fi, checksum)
-					if not (version is None):
-						topatch.append((path_in_uo, filesize, fi, version))
-						patchfilessize += version.patchsize
+					vQueue = []
+					encountered = False
+					size = 0
+					for v in fi.versions_sorted: #successive patches
+						if not encountered:
+							if (v.checksum == checksum):
+								encountered = True
+						if encountered:
+							vQueue.append(v)
+							patchfilessize += v.patchsize
+							size += v.patchsize
+												
+					if encountered:
+						topatch.append((path_in_uo, size, fi, vQueue))
 					else:
 						todownload.append((path_in_uo, filesize, fi))
 						downloadsize += latestversion.archivesize
@@ -128,11 +144,12 @@ def work():
 		
 		totalwork = TIMEPERCENTAGE_DOWNLOADING * (downloadsize + patchfilessize) + \
 			TIMEPERCENTAGE_UNPACKING * downloadsize + TIMEPERCENTAGE_PATCHING * patchfilessize
-		fraction_per_byte = totaldone / totalwork
+		fraction_per_byte = (facade.PBMAX - totaldone) / totalwork
 		
 		
 		tomove = [] #(path_downloaded, path_in_uo, filesize)
 			
+		#download
 		for (path_in_uo, filesize, fi) in todownload:
 			latestversion = fi.versions_sorted[-1]
 			
@@ -148,6 +165,37 @@ def work():
 			
 			tomove.append((os.path.join(tempdir, path_downloaded), path_in_uo, filesize))
 			
+		#patch
+		for (path_in_uo, filesize, fi, vQueue) in topatch:
+			#latestversion = fi.versions_sorted[-1]
+			#download patch file
+			previous_version_result = path_in_uo
+			for i in range(len(vQueue) - 1):
+				prev_version = vQueue[i]
+				next_version = vQueue[i + 1]
+				
+				patchname = utils.get_patchname(prev_version, next_version)
+				remote_path = utils.DIRNAME_PATCHES + '/' + patchname
+				local = os.path.join(tempdir, patchname)
+				if not os.path.exists(local):
+					os.makedirs(local)
+				
+				fraction = prev_version.patchsize * fraction_per_byte * TIMEPERCENTAGE_DOWNLOADING
+				totaldone = download(local, remote_path, fraction, totaldone, prev_version.patchchecksum)
+				path_downloaded = os.path.join(local, utils.DIRNAME_PATCHES, patchname)
+				newPath = os.path.join(local, "patched")
+				
+				patch(previous_version_result, newPath, path_downloaded)
+				previous_version_result = newPath
+				fraction = prev_version.patchsize * fraction_per_byte * TIMEPERCENTAGE_PATCHING				
+				totaldone += fraction
+				facade.set_progress_overall(totaldone)
+			
+			tomove.append(previous_version_result, path_in_uo, os.path.getsize(previous_version_result))
+			
+			
+		#for (from, to, size) in tomove:
+		#	movefile(from, to)
 			
 	finally:
 		pass
