@@ -38,9 +38,8 @@ return 1
 
 [ScriptedTargetDef targ_playerVendor_stock]
 on=@targon_item
-
 if (argv[1].CanStockWithMessage(this, argv[0]))
-	this.Dialog(d_playerVendor_stock_input, argv[1])
+	argv[0].Dialog(d_playerVendor_stock_input, argv[1])
 endif
 
 [Loc loc_playervendor]
