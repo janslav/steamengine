@@ -1,0 +1,2 @@
+StockDialogHeader_Item          = Na prodej: {0} {1}
+StockDialogHeader_Char          = Na prodej: {0}

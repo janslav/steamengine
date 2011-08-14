@@ -16,8 +16,6 @@
 */
 
 using System;
-using System.Text;
-using System.Collections;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -352,7 +350,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class CompiledGump : Gump {
+	public sealed class CompiledGump : Gump {
 		public CompiledGump(CompiledGumpDef def)
 			: base(def) {
 		}
@@ -374,7 +372,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public class GumpResponse {
 		private readonly int pressedButton;
-		private readonly int[] selectedSwitches; 
+		private readonly int[] selectedSwitches;
 		private readonly ResponseText[] responseTexts;
 		private readonly ResponseNumber[] responseNumbers;
 
