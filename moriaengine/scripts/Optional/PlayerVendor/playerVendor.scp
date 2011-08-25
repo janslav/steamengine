@@ -25,22 +25,27 @@ EVENTS = spk_vendor_custom
 [SPEECH spk_vendor_custom]
 ON=*stock* 
 ON=*sklad*
-this.Say(LocManager.GetEntry("loc_playervendor", "OneMomentPlease", argv[0].Language))
 
-argv[0].Target(targ_playerVendor_stock, this)
+	if (this.CanBeControlledBy(argv[0]))
+		this.Say(LocManager.GetEntry("loc_playervendor", "OneMomentPlease", argv[0].Language))
+		argv[0].Target(targ_playerVendor_stock, this)
+		return 1
+	endif
+	return 0
+
 
 on=*buy*
 
-say("Buying")
-return 1
+	say("Buying")
+	return 1
 
 
 
 [ScriptedTargetDef targ_playerVendor_stock]
 on=@targon_item
-if (argv[1].CanStockWithMessage(this, argv[0]))
-	argv[0].Dialog(d_playerVendor_stock_input, argv[1])
-endif
+	if (argv[1].CanStockWithMessage(this, argv[0]))
+		argv[0].Dialog(D_PlayerVendor_Stock, argv[1])
+	endif
 
 [Loc loc_playervendor]
 OneMomentPlease=Okamžíèek

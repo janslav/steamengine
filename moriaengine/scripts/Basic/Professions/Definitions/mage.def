@@ -163,7 +163,7 @@ a_magic_reflection_enhancement = 2, 2, 5
 //TODO: +1 summon
 
 a_mastery_magery_greater = 3, 0, 5, 1000 magery
-a_resurrection nevim = 3, 1, 1 //jen 1 bod bo nevim co by to melo delat
+a_resurrection = 3, 1, 1 //jen 1 bod bo nevim co by to melo delat
 a_resurrection_discount = 3, 2, 5//, a_resurrection
 a_spell_damage_bonus_air = 3, 3, 5
 
