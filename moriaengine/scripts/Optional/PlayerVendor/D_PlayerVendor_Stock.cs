@@ -20,7 +20,7 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
-	public class D_PlayerVendor_Stock_Input : CompiledGumpDef {
+	public class D_PlayerVendor_Stock : CompiledGumpDef {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 
 			string header, defaultName;
@@ -48,7 +48,6 @@ namespace SteamEngine.CompiledScripts {
 			dialogHandler.CreateBackground(400);
 			dialogHandler.SetLocation(100, 175);
 
-			//first row - the label of the dialog
 			dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			dialogHandler.LastTable.AddToCell(0, 0, GUTAText.Builder.TextHeadline(header).Build());
 			dialogHandler.LastTable.AddToCell(0, 1, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build());

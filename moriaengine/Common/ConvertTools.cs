@@ -576,6 +576,33 @@ namespace SteamEngine.Common {
 		}
 		#endregion Single
 
+		#region Decimal (decimal)
+		public static Decimal ParseDecimal(string input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToDecimal(o, invariantCulture);
+			}
+			return Decimal.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+		}
+
+		public static bool TryParseDecimal(string input, out Decimal retVal) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				retVal = Convert.ToDecimal(o, invariantCulture);
+				return true;
+			}
+			return Decimal.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
+		}
+
+		public static Decimal ToDecimal(object input) {
+			object o;
+			if (TryParseSphereHex(input, out o)) {
+				return Convert.ToDecimal(o, invariantCulture);
+			}
+			return Convert.ToDecimal(input, invariantCulture);
+		}
+		#endregion Decimal
+
 		#region Byte (byte)
 		public static byte ParseByte(string input) {
 			object o;
