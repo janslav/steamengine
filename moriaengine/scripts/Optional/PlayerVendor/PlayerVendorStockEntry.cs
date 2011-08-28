@@ -16,23 +16,39 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 
-using SteamEngine.Persistence;
+using SteamEngine.CompiledScripts.Dialogs;
+
+
 namespace SteamEngine.CompiledScripts {
 
-	[SaveableClass]
-	public class PlayerVendor_StockInfo {
+	[ViewableClass]
+	partial class PlayerVendorStockEntry {
 
-		[LoadingInitializer]
-		public PlayerVendor_StockInfo() {
+		public decimal Price {
+			get { return this.price; }
+			set { this.price = value; }
 		}
 
-		[SaveableData]
-		public Thing Thing { get; set; }
 
-		[SaveableData]
-		public string Description { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether this entry is a stock category.
+		/// </summary>
+		/// <value>
+		/// 	<c>true</c> if this instance is category; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsCategory {
+			get { return this.isCategory; }
+			set { this.isCategory = value; }
+		}
 
-		[SaveableData]
-		public decimal Price { get; set; }
+		public bool SoldByUnits {
+			get { return this.soldByUnits; }
+			set { this.soldByUnits = value; }
+		}
+	}
+
+	[ViewableClass]
+	partial class PlayerVendorStockEntryDef {
+
 	}
 }

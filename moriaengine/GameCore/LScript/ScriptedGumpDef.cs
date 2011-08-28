@@ -279,7 +279,7 @@ namespace SteamEngine.LScript {
 			this.responseNumbers = responseNumbers;
 		}
 
-		public double this[int id] {
+		public decimal this[int id] {
 			get {
 				for (int i = 0, n = responseNumbers.Length; i < n; i++) {
 					ResponseNumber rn = responseNumbers[i];
@@ -428,11 +428,11 @@ namespace SteamEngine.LScript {
 			this.AddNumberEntry(x, y, widthPix, height, hue, id, textId);
 		}
 		//hypothetical 99z+ interface
-		public void NumberEntryA(int x, int y, int widthPix, int height, int hue, int id, double text) {
+		public void NumberEntryA(int x, int y, int widthPix, int height, int hue, int id, decimal text) {
 			this.AddNumberEntry(x, y, widthPix, height, hue, id, text);
 		}
 		//hypothetical 55ir interface
-		public void DNumberEntry(int x, int y, int widthPix, int widthChars, int hue, int id, double text) {
+		public void DNumberEntry(int x, int y, int widthPix, int widthChars, int hue, int id, decimal text) {
 			this.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
 		}
 

@@ -44,7 +44,7 @@ on=*buy*
 [ScriptedTargetDef targ_playerVendor_stock]
 on=@targon_item
 	if (argv[1].CanStockWithMessage(this, argv[0]))
-		argv[0].Dialog(D_PlayerVendor_Stock, argv[1])
+		argv[0].Dialog(D_PlayerVendor_Stock, argv[1], null)
 	endif
 
 [Loc loc_playervendor]
@@ -52,15 +52,15 @@ OneMomentPlease=Okamžíèek
 TargetThingToStock=Zamìø vìc nebo zvíøe prodej
 
 
-[ContainerDef i_vendor_box]
+[ContainerDef i_playervendor_stock_root]
 Model=i_backpack
 name=Kontejner prodavanych veci
 LAYER=60
 
-[ContainerDef i_vendor_tag_box]
+[PlayerVendorStockEntry i_playervendor_stock_entry]
 Model=i_backpack
-name=Hlavni nabidka
-LAYER=61
+name=VendorItem
+//LAYER=61
 
 [ContainerDef i_buyer_box]
 Model=i_backpack

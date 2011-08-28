@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			CheckBox(10, height + 30, 210, 211, true, 786);
 			TextEntryA(10, height + 50, 500, 100, 1, 762, "this is texentry ìšèøžýá");
 
-			NumberEntryA(10, height + 70, 500, 100, 1, 763, 5.5);
+			NumberEntryA(10, height + 70, 500, 100, 1, 763, 5.5m);
 
 			XmfhtmlGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
 		}

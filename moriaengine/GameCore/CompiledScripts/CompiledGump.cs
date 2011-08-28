@@ -273,11 +273,11 @@ namespace SteamEngine.CompiledScripts {
 			GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, textId);
 		}
 		//hypothetical 55ir interface
-		public void DNumberEntry(int x, int y, int widthPix, int widthChars, int hue, int id, double text) {
+		public void DNumberEntry(int x, int y, int widthPix, int widthChars, int hue, int id, decimal text) {
 			GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
 		}
 		//hypothetical 99z+ interface
-		public void NumberEntryA(int x, int y, int widthPix, int widthChars, int hue, int id, double text) {
+		public void NumberEntryA(int x, int y, int widthPix, int widthChars, int hue, int id, decimal text) {
 			GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
 		}
 
@@ -426,7 +426,7 @@ namespace SteamEngine.CompiledScripts {
 			return "";
 		}
 
-		public double GetNumberResponse(int id) {
+		public decimal GetNumberResponse(int id) {
 			for (int i = 0, n = responseNumbers.Length; i < n; i++) {
 				ResponseNumber rn = responseNumbers[i];
 				if ((rn != null) && (rn.Id == id)) {

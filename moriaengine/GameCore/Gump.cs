@@ -496,7 +496,7 @@ namespace SteamEngine {
 			this.entryTextIds[id] = textId;
 		}
 
-		public int AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, double text) {
+		public int AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, decimal text) {
 			CreateTexts();
 			string textStr = text.ToString(System.Globalization.CultureInfo.InvariantCulture);
 			this.textsList.Add(textStr);
@@ -593,9 +593,9 @@ namespace SteamEngine {
 
 	public class ResponseNumber {
 		private readonly int id;
-		private readonly double number;
+		private readonly decimal number;
 
-		public ResponseNumber(int id, double number) {
+		public ResponseNumber(int id, decimal number) {
 			this.id = id;
 			this.number = number;
 		}
@@ -606,7 +606,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public double Number {
+		public decimal Number {
 			get {
 				return this.number;
 			}

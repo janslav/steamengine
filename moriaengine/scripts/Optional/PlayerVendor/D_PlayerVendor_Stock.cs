@@ -21,24 +21,52 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
 	public class D_PlayerVendor_Stock : CompiledGumpDef {
+		const int inputId_Price = 1;
+		const int inputId_Description = 2;
+		const int inputId_SoldByUnit = 3;
+
+		const int buttonId_Sell = 1;
+		const int buttonId_SellByUnit = 2;
+		const int buttonId_NewSection = 3;
+
+
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 
-			string header, defaultName;
+			var vendor = (PlayerVendor) args[0];
+			var stockEntry = (PlayerVendorStockEntry) args[1];
+
+			decimal price = 0;
+			int amount = 1;
+			string header, description;
+			bool enableSoldByUnit = false;
 
 			var asItem = focus as Item;
+
+			if (stockEntry != null) {
+				price = stockEntry.Price;
+				description = stockEntry.Name;
+
+				if (asItem != null) {
+					amount = stockEntry.RecursiveCount;
+				}
+			} else if (asItem != null) {
+				amount = asItem.Amount;
+			}
+
 			if (asItem != null) {
-				int amount = asItem.Amount;
-				header = string.Format(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).StockDialogHeader_Item,
+				enableSoldByUnit = asItem.IsContainer;
+
+				header = string.Format(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Header_Item,
 					amount, asItem.Name);
 				if (amount == 1) {
-					defaultName = asItem.Name;
+					description = asItem.Name;
 				} else {
-					defaultName = string.Concat(amount, " ", asItem.Name);
+					description = string.Concat(amount, " ", asItem.Name);
 				}
 			} else {
-				header = string.Format(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).StockDialogHeader_Char,
-					focus.Name);
-				defaultName = focus.Def.Name;
+				header = string.Format(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Header_Char,
+					focus.Def.Name);
+				description = focus.Def.Name;
 			}
 
 
@@ -48,21 +76,31 @@ namespace SteamEngine.CompiledScripts {
 			dialogHandler.CreateBackground(400);
 			dialogHandler.SetLocation(100, 175);
 
-			dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dialogHandler.LastTable.AddToCell(0, 0, GUTAText.Builder.TextHeadline(header).Build());
-			dialogHandler.LastTable.AddToCell(0, 1, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build());
-			dialogHandler.MakeLastTableTransparent();
+			//header
+			var t = dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			t.AddToCell(0, 0, GUTAText.Builder.TextHeadline(header).Build());
+			t.AddToCell(0, 1, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build());
+			t.Transparent = true;
 
-			//second row - the basic, whole row, input field
-			dialogHandler.AddTable(new GUTATable(1, 0));
-			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-			dialogHandler.LastTable.AddToCell(0, 0, GUTAInput.Builder.Id(1).Text(defaultName).Build());
-			dialogHandler.MakeLastTableTransparent();
+			//textentries: description, price
+			t = dialogHandler.AddTable(new GUTATable(2, 80, 0));
+			t.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
+			t.AddToCell(0, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_Description).Build());
+			t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Description).Text(description).Build());
+			t.AddToCell(1, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_Price).Build());
+			t.AddToCell(1, 1, GUTAInput.Builder.Id(inputId_Price).Text(price.ToString()).Type(LeafComponentTypes.InputNumber).Build());
+			t.Transparent = true;
 
 			//last row with buttons
-			dialogHandler.AddTable(new GUTATable(1, ButtonMetrics.D_BUTTON_WIDTH, 0));
-			dialogHandler.LastTable.AddToCell(0, 0, GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).Id(1).Build());
-			dialogHandler.MakeLastTableTransparent();
+			t = dialogHandler.AddTable(new GUTATable(1, 30, 70, 30, 120, 30, 0));
+			t.AddToCell(0, 0, GUTAButton.Builder.Id(buttonId_Sell).Build());
+			t.AddToCell(0, 1, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_Sell).Build());
+			t.AddToCell(0, 2, GUTAButton.Builder.Id(buttonId_Sell).Build());
+			t.AddToCell(0, 3, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_SoldByUnits).Build());
+			t.AddToCell(0, 4, GUTAButton.Builder.Id(buttonId_Sell).Build());
+			t.AddToCell(0, 5, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_NewSection).Build());
+			t.Transparent = true;
+
 
 			dialogHandler.WriteOut();
 
@@ -110,7 +148,12 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class Loc_PlayerVendor_Stock_Input : CompiledLocStringCollection {
-		public string StockDialogHeader_Item = "Na prodej: {0} {1}";
-		public string StockDialogHeader_Char = "Na prodej: {0}";
+		public string Header_Item = "Na prodej: {0} {1}";
+		public string Header_Char = "Na prodej: {0}";
+		public string Label_Price = "Cena";
+		public string Label_Description = "Popis";
+		public string Label_Sell = "Prodej";
+		public string Label_SoldByUnits = "Jednotkový prodej";
+		public string Label_NewSection = "Nová sekce";
 	}
 }

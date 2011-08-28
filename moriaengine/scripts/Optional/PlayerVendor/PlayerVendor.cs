@@ -74,6 +74,26 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class PlayerVendorDef {
+
+		private static ContainerDef i_playervendor_stock_root;
+		private static ContainerDef StockRootDef {
+			get {
+				if (i_playervendor_stock_root == null) {
+					i_playervendor_stock_root = (ContainerDef) ThingDef.GetByDefname("i_playervendor_stock_root");
+				}
+				return i_playervendor_stock_root;
+			}
+		}
+
+		private static PlayerVendorStockEntryDef i_playervendor_stock_entry;
+		private static PlayerVendorStockEntryDef StockEntryDef {
+			get {
+				if (i_playervendor_stock_entry == null) {
+					i_playervendor_stock_entry = (PlayerVendorStockEntryDef) ThingDef.GetByDefname("i_playervendor_stock_entry");
+				}
+				return i_playervendor_stock_entry;
+			}
+		}
 	}
 
 	public class PlayerVendorLoc : CompiledLocStringCollection {

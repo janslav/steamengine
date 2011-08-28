@@ -817,7 +817,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				case LeafComponentTypes.InputNumber: {
 						if (textId == 0) {//no text ID was specified, use the text version (but send it as double!)
 							//if the text is empty (the input field will be empty), then display zero
-							double textToDisp = text.Equals("") ? default(double) : double.Parse(text);
+							decimal textToDisp = string.IsNullOrWhiteSpace(text) ? default(decimal) : decimal.Parse(text);
 							gump.AddNumberEntry(xPos, yPos, width, height, textHue, id, textToDisp);
 						} else {
 							gump.AddNumberEntry(xPos, yPos, width, height, textHue, id, textId);

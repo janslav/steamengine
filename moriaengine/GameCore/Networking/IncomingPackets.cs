@@ -1462,8 +1462,8 @@ namespace SteamEngine.Networking {
 				for (int i = 0; i < n; i++) {
 					foreach (ResponseText rt in responseTexts) {
 						if (gi.numEntryIDs[i] == rt.Id) {
-							double number;
-							if (ConvertTools.TryParseDouble(rt.Text, out number)) {
+							decimal number;
+							if (ConvertTools.TryParseDecimal(rt.Text, out number)) {
 								responseNumbers[i] = new ResponseNumber(rt.Id, number);
 							} else {
 								state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
