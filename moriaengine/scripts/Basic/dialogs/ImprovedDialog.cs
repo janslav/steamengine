@@ -137,9 +137,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		/// <summary>Add a single GUTATable to the dialog and set is as 'last'</summary>
-		public void AddTable(GUTATable table) {
+		public GUTATable AddTable(GUTATable table) {
 			background.AddComponent(table);
 			lastTable = table;
+			return table;
 		}
 
 		private void AddLastColumn(GUTAColumn col) {

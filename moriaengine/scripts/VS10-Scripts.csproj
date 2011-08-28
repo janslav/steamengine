@@ -52,6 +52,8 @@
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Throwing\ThrowingAbilityDef.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Warcry\Warcry.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Abilities\Warcry\Warcry.Generated.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Talents\Bloodritual\Bloodritual.Generated.cs" />
+    <Compile Include="Basic\AbilitiesAndTalents\Talents\Bloodritual\BloodritualPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.Generated.cs" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\CoolDownSpeedup\CoolDownSpeedupPlugin.cs" />
@@ -385,9 +387,9 @@
     <Compile Include="Basic\TemplateDef.cs" />
     <Compile Include="Basic\TimerPlugin.cs" />
     <Compile Include="Basic\utilities\ItemTypeNames.cs" />
-    <Compile Include="Optional\PlayerVendor\PlayerVendor_StockInfo.cs" />
     <Compile Include="Optional\PlayerVendor\PlayerVendor.cs" />
     <Compile Include="Optional\PlayerVendor\playerVendor.Generated.cs" />
+    <Compile Include="Optional\PlayerVendor\PlayerVendorStockEntry.cs" />
     <Compile Include="Optional\StorageBoxes\GemBox.cs" />
     <Compile Include="Optional\StorageBoxes\PotionKeg.cs" />
     <Compile Include="Optional\StorageBoxes\RegBox.cs" />
@@ -440,6 +442,8 @@
     <None Include="Basic\AbilitiesAndTalents\Abilities\Throwing\throwing.scp" />
     <None Include="Basic\AbilitiesAndTalents\Abilities\Warcry\Warcry.ct" />
     <None Include="Basic\AbilitiesAndTalents\Abilities\Warcry\warcry.scp" />
+    <None Include="Basic\AbilitiesAndTalents\Talents\Bloodritual\Bloodritual.ct" />
+    <None Include="Basic\AbilitiesAndTalents\Talents\Bloodritual\bloodritual.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\clearCast.scp" />
     <None Include="Basic\AbilitiesAndTalents\Talents\ClearCast\ClearCastPlugin.ct" />
     <Compile Include="Basic\AbilitiesAndTalents\Talents\WeaponSkillDmgBonus\WeaponSkillDmgBonusPlugin.Generated.cs" />

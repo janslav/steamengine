@@ -135,13 +135,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						newGi = gi.Cont.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(cat));
 						break;
 					case 3: //store the changes on page
-						ResourcesList newRes = null;
-						ResourcesList newSkillmake = null;
-						double newWeight = 0;
 						for (int i = firstiVal; i < imax; i++) {
+
 							ICraftmenuElement elem = cat.Contents[i];
 							CraftmenuItem itm = elem as CraftmenuItem;
 							if (itm != null) {//set this item's values (but only for items, leave categories)
+								ResourcesList newRes = null;
+								ResourcesList newSkillmake = null;
+								decimal newWeight = 0;
 								try {
 									newWeight = gr.GetNumberResponse(5 * i + 11);
 									//newRes = (ResourcesList) ObjectSaver.Load(gr.ResponseTexts[5 * i + 13].Text);

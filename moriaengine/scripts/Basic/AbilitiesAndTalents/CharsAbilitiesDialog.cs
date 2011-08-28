@@ -178,7 +178,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 8: //pridat abilitu
 						//nacteme obsah obou input fieldu
 						string abilityDefname = gr.GetTextResponse(6);
-						double abilityPoints = gr.GetNumberResponse(7);
+						decimal abilityPoints = gr.GetNumberResponse(7);
 						AbilityDef abDef = AbilityDef.GetByDefname(abilityDefname);
 						if (abDef == null) {
 							//zadal neexistujici abilitydefname

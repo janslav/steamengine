@@ -18,3 +18,10 @@ Def:	//vars on the def
 
 Vars:	//vars defined in the class, so they basically do what tags do, but better
 
+[ThingTemplate PlayerVendorStockEntry : Container]
+Def:
+
+Vars:
+		decimal price = 0
+		bool isCategory = false
+		bool soldByUnits = false
