@@ -23,53 +23,51 @@ using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Timers;
 using SteamEngine.Persistence;
+using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts {
-        [Dialogs.ViewableClass]
-        public partial class BloodritualPlugin {
+	[Dialogs.ViewableClass]
+	public partial class BloodritualPlugin
+	{
 
-            private static ActivableAbilityDef a_bloodritual;
-            public static ActivableAbilityDef BloodritualDef {
-                get {
-                    if ( a_bloodritual == null ) {
-                        a_bloodritual = (ActivableAbilityDef) AbilityDef.GetByDefname("a_bloodritual");
-                    }
-                    return a_bloodritual;
-                }
-            }
+		private static ActivableAbilityDef a_bloodritual;
+		public static ActivableAbilityDef BloodritualDef
+		{
+			get
+			{
+				if (a_bloodritual == null)
+				{
+					a_bloodritual = (ActivableAbilityDef)AbilityDef.GetByDefname("a_bloodritual");
+				}
+				return a_bloodritual;
+			}
+		}
 
-            private short currentPoints {
-                get {
-                    return this.currentPoints;
-                }
-                set {
-                    this.currentPoints = value;
-                }
-            }
+		public void On_Assign()
+		{
+			Player self = (Player)this.Cont;
+			short statDifference;
 
-            public void On_Assign(Ability ab) {
-                this.currentPoints = (short) ab.ModifiedPoints;
+			self.Vit = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Vit, (short)this.EffectPower, out statDifference);
+			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, (short)this.EffectPower, out statDifference);
+		}
 
-                Player self = (Player) this.Cont;
+		public override void On_UnAssign(Character cont)
+		{
+			base.On_UnAssign(cont);
+		}
+	}
 
-                self.Vit -= (short) (this.EffectPower * this.currentPoints); // 30 stat points is maximum
-                self.Int += (short) (this.EffectPower * this.currentPoints);
-            }
+	[Dialogs.ViewableClass]
+	public partial class BloodritualPluginDef
+	{
+	}
 
-            public override void On_UnAssign(Character cont) {
-                base.On_UnAssign(cont);
-
-                Player self = (Player) this.Cont;
-
-                self.Vit += (short) (this.EffectPower * this.currentPoints);
-                self.Int -= (short) (this.EffectPower * this.currentPoints);
-            }
-        }
-
-    [Dialogs.ViewableClass]
-    public partial class BloodritualPluginDef {
-    }
-
-    public class BloodritualLoc : CompiledLocStringCollection {
-    }
+	public class BloodritualLoc : CompiledLocStringCollection
+	{
+	// TODO doplnit hlasky
+		private string BloodritualActivated = "";
+		private string BloodritualDeactivated = "";
+		private string StatsTooLowToActivate = "";
+	}
 }
