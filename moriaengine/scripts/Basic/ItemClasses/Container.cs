@@ -16,10 +16,9 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
@@ -79,7 +78,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Open() {
-			OpenTo(Globals.SrcCharacter);
+			this.OpenTo(Globals.SrcCharacter);
 		}
 
 		public override sealed bool IsContainer {
