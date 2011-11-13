@@ -1,5 +1,3 @@
-StockDialogHeader_Item          = Na prodej: {0} {1}
-StockDialogHeader_Char          = Na prodej: {0}
 Header_Item                     = Na prodej: {0} {1}
 Header_Char                     = Na prodej: {0}
 Label_Price                     = Cena

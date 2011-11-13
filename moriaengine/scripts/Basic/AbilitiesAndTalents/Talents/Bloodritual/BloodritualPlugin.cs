@@ -15,59 +15,43 @@
    Or visit http://www.gnu.org/copyleft/gpl.html
    */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.Timers;
-using SteamEngine.Persistence;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class BloodritualPlugin
-	{
+	public partial class BloodritualPlugin {
 
 		private static ActivableAbilityDef a_bloodritual;
-		public static ActivableAbilityDef BloodritualDef
-		{
-			get
-			{
-				if (a_bloodritual == null)
-				{
-					a_bloodritual = (ActivableAbilityDef)AbilityDef.GetByDefname("a_bloodritual");
+		public static ActivableAbilityDef BloodritualDef {
+			get {
+				if (a_bloodritual == null) {
+					a_bloodritual = (ActivableAbilityDef) AbilityDef.GetByDefname("a_bloodritual");
 				}
 				return a_bloodritual;
 			}
 		}
 
-		public void On_Assign()
-		{
-			Player self = (Player)this.Cont;
+		public void On_Assign() {
+			Player self = (Player) this.Cont;
 			short statDifference;
 
-			self.Vit = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Vit, (short)this.EffectPower, out statDifference);
-			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, (short)this.EffectPower, out statDifference);
+			self.Vit = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Vit, (short) this.EffectPower, out statDifference);
+			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, (short) this.EffectPower, out statDifference);
 		}
 
-		public override void On_UnAssign(Character cont)
-		{
+		public override void On_UnAssign(Character cont) {
 			base.On_UnAssign(cont);
 		}
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class BloodritualPluginDef
-	{
+	public partial class BloodritualPluginDef {
 	}
 
-	public class BloodritualLoc : CompiledLocStringCollection
-	{
-	// TODO doplnit hlasky
-		private string BloodritualActivated = "";
-		private string BloodritualDeactivated = "";
-		private string StatsTooLowToActivate = "";
+	public class BloodritualLoc : CompiledLocStringCollection {
+		// TODO doplnit hlasky
+		//public string BloodritualActivated = "";
+		//public string BloodritualDeactivated = "";
+		//public string StatsTooLowToActivate = "";
 	}
 }
