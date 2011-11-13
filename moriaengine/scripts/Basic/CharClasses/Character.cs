@@ -1867,7 +1867,7 @@ namespace SteamEngine.CompiledScripts {
             return i;
         }
 
-        public sealed override AbstractItem GetBankbox()
+/*        public sealed override AbstractItem GetBankbox()
         {
             AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
             if (foundBankbox == null)
@@ -1876,10 +1876,16 @@ namespace SteamEngine.CompiledScripts {
             }
             return foundBankbox;
         }
-
+*/
         public Bank Bank {
-            get {
-                return (Container)this.GetBankbox();
+            get
+            {
+                AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
+                if (foundBankbox == null)
+                {
+                    foundBankbox = this.AddBankbox();
+                }
+                return foundBankbox;
             }
         }
 

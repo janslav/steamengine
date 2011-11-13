@@ -157,6 +157,8 @@
     <Compile Include="Basic\CharClasses\Player.Generated.cs" />
     <Compile Include="Basic\EffectDuration\FadingEffectDurationPlugin.cs" />
     <Compile Include="Basic\EffectDuration\FadingEffectDurationPlugin.Generated.cs" />
+    <Compile Include="Basic\ItemClasses\Bank\Bank.cs" />
+    <Compile Include="Basic\ItemClasses\Bank\Bank.Generated.cs" />
     <Compile Include="Basic\ItemClasses\ShiningItem\ShiningItem.cs" />
     <Compile Include="Basic\ItemClasses\ShiningItem\ShiningItem.Generated.cs" />
     <Compile Include="Basic\Localization\LocDenyResult.cs" />
@@ -499,6 +501,7 @@
     <None Include="Basic\EffectDuration\EffectDurationPlugin.ct" />
     <None Include="Basic\EffectDuration\FadingEffectDurationPlugin.ct" />
     <None Include="Basic\EffectDuration\StatDrainingEffectDurationPlugin.ct" />
+    <None Include="Basic\ItemClasses\Bank\Bank.ct" />
     <None Include="Basic\ItemClasses\ColoredArmor.ct" />
     <None Include="Basic\ItemClasses\ColoredProjectile.ct" />
     <None Include="Basic\ItemClasses\ColoredStaff.ct" />
