@@ -1842,52 +1842,44 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-        private static BankDef bankDef = null;
-        private AbstractItem AddBankbox()
-        {
-            ThrowIfDeleted();
-            if (bankDef == null)
-            {
-                bankDef = ThingDef.FindItemDef(0xe7c) as BankDef;
-                if (bankDef == null)
-                {
-                    throw new SEException("Unable to find itemdef 0xe7c in scripts.");
-                }
-                else if (bankDef.Layer != (int)LayerNames.Bankbox)
-                {
-                    throw new SEException("Wrong layer of bankbox itemdef.");
-                }
-            }
+		private static BankDef bankDef = null;
+		private AbstractItem AddBankbox() {
+			ThrowIfDeleted();
+			if (bankDef == null) {
+				bankDef = ThingDef.FindItemDef(0xe7c) as BankDef;
+				if (bankDef == null) {
+					throw new SEException("Unable to find itemdef 0xe7c in scripts.");
+				} else if (bankDef.Layer != (int) LayerNames.Bankbox) {
+					throw new SEException("Wrong layer of bankbox itemdef.");
+				}
+			}
 
-            AbstractItem i = (AbstractItem)bankDef.Create(this);
-            if (i == null)
-            {
-                throw new SEException("Unable to create bankbox.");
-            }
-            return i;
-        }
+			AbstractItem i = (AbstractItem) bankDef.Create(this);
+			if (i == null) {
+				throw new SEException("Unable to create bankbox.");
+			}
+			return i;
+		}
 
-/*        public sealed override AbstractItem GetBankbox()
-        {
-            AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
-            if (foundBankbox == null)
-            {
-                foundBankbox = this.AddBankbox();
-            }
-            return foundBankbox;
-        }
-*/
-        public Bank Bank {
-            get
-            {
-                AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
-                if (foundBankbox == null)
-                {
-                    foundBankbox = this.AddBankbox();
-                }
-                return foundBankbox;
-            }
-        }
+		/*        public sealed override AbstractItem GetBankbox()
+				{
+					AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
+					if (foundBankbox == null)
+					{
+						foundBankbox = this.AddBankbox();
+					}
+					return foundBankbox;
+				}
+		*/
+		public Bank Bank {
+			get {
+				AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
+				if (foundBankbox == null) {
+					foundBankbox = this.AddBankbox();
+				}
+				return (Bank) foundBankbox;
+			}
+		}
 
 		public override sealed AbstractItem NewItem(IThingFactory arg, int amount) {
 			return this.Backpack.NewItem(arg, amount);

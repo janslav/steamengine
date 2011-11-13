@@ -15,19 +15,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using SteamEngine.Common;
-using SteamEngine.Networking;
-using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class BankDef {
 	}
 
-    [Dialogs.ViewableClass]
-    public partial class Bankbox
-    {
-  }
+	[Dialogs.ViewableClass]
+	public partial class Bank {
+	}
 }
