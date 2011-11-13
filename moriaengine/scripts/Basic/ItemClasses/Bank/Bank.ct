@@ -14,5 +14,3 @@
 //	Or visit http://www.gnu.org/copyleft/gpl.html
 
 [ThingTemplate Bank : Container]
-Def:	//vars on the def
-	short Gump = -1
