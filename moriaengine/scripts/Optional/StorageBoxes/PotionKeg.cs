@@ -28,6 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class PotionKeg {
 
 		public override void On_DClick (AbstractCharacter ac) {
+            ((Player)ac.Cont).Target(SingletonScript<Targ_PotionKeg>.Instance, this);
 			base.On_DClick (ac);
 		}
 
@@ -42,19 +43,24 @@ namespace SteamEngine.CompiledScripts {
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			PotionKeg focus = parameter as PotionKeg;
 			if (!self.CanReachWithMessage (focus)) {
+                self.SysMessage ("CanReachWithMessage");
 				return TargetResult.RestartTargetting;
 			}
-			if (targetted.Type.Defname == "t_potion") {
-				if (focus.potionsCount + (int)targetted.Amount > focus.TypeDef.Capacity) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
-					int potionsToTake = focus.TypeDef.Capacity - focus.potionsCount;
-					targetted.Amount -= potionsToTake;
-					focus.potionsCount += potionsToTake;
-				} else {
-					focus.potionsCount += (int)targetted.Amount;
-				}
-			} else {
-				self.SysMessage ("Muzes nalit jenom potiony");
+			if (targetted.Type.Defname == "t_allpotions") {
+              if ((focus.TypeDef.Capacity - focus.potionsCount) < (int)targetted.Amount) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
+                int potionsToTake = focus.TypeDef.Capacity - focus.potionsCount;
+                targetted.Amount -= potionsToTake;
+                focus.potionsCount += potionsToTake;
+              } else {
+                focus.potionsCount += (int)targetted.Amount;
+                targetted.Delete();
+              }
+			} else if(targetted.Type.Defname == "t_bottle_empty"){
+                self.SysMessage("Láhev je prázdná.");
+            } else {
+				self.SysMessage ("Můžeš nalít jenom potiony.");
 			}
+         
 			return TargetResult.Done;
 		}
 
