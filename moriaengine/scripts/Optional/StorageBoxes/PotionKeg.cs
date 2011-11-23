@@ -21,6 +21,9 @@ using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.LScript;
+using SteamEngine.Common;
+using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 
 
 namespace SteamEngine.CompiledScripts {
@@ -28,8 +31,16 @@ namespace SteamEngine.CompiledScripts {
 	public partial class PotionKeg {
 
 		public override void On_DClick (AbstractCharacter ac) {
-            ((Player)ac.Cont).Target(SingletonScript<Targ_PotionKeg>.Instance, this);
+			((Player)ac).Target(SingletonScript<Targ_PotionKeg>.Instance, this);
 			base.On_DClick (ac);
+		}
+
+		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
+			base.On_Click(clicker, clickerState, clickerConn);
+			Language language = clickerState.Language;
+			Networking.PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
+				String.Concat(this.potionsCount.ToString(), " potions"),
+				0);
 		}
 
 	}
@@ -41,23 +52,57 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			PotionKeg focus = parameter as PotionKeg;
-			if (!self.CanReachWithMessage (focus)) {
-                self.SysMessage ("CanReachWithMessage");
+			PotionKeg keg = (PotionKeg)parameter;
+			Potion potion = targetted as Potion;
+			
+			if (!self.CanReachWithMessage (keg)) {
+				self.SysMessage ("CanReachWithMessage");
 				return TargetResult.RestartTargetting;
 			}
-			if (targetted.Type.Defname == "t_allpotions") {
-              if ((focus.TypeDef.Capacity - focus.potionsCount) < (int)targetted.Amount) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
-                int potionsToTake = focus.TypeDef.Capacity - focus.potionsCount;
-                targetted.Amount -= potionsToTake;
-                focus.potionsCount += potionsToTake;
-              } else {
-                focus.potionsCount += (int)targetted.Amount;
-                targetted.Delete();
-              }
+			if (potion != null) {
+				if (keg.potionDef == null) {
+				    keg.potionDef = potion.TypeDef;
+				    keg.Color = potion.Color;
+				}
+				
+				if (keg.potionDef == potion.TypeDef) {
+				    ThingDef.GetByDefname("i_bottle_empty").Create(((Player)self).Backpack);
+				    if ((keg.TypeDef.Capacity - keg.potionsCount) < targetted.Amount) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
+				        int potionsToTake = keg.TypeDef.Capacity - keg.potionsCount;
+				        targetted.Amount -= potionsToTake;
+				        keg.potionsCount += potionsToTake;
+				        Globals.LastNewItem.Amount = potionsToTake;
+				    } else {
+				        keg.potionsCount += targetted.Amount;
+				        potion.Delete();
+				        Globals.LastNewItem.Amount = targetted.Amount;
+				    }
+				} else {
+				    self.SysMessage("Tim bys to celé skazil!");
+				}
 			} else if(targetted.Type.Defname == "t_bottle_empty"){
-                self.SysMessage("Láhev je prázdná.");
-            } else {
+			    if (keg.potionDef != null) {
+			        if (targetted.Amount < keg.potionsCount) {
+			            keg.potionDef.Create(((Player)self).Backpack);
+			            Globals.LastNewItem.Amount = targetted.Amount;
+			            keg.potionsCount -= targetted.Amount;
+			            targetted.Delete();
+			        } else {
+			            keg.potionDef.Create(((Player)self).Backpack);
+			            Globals.LastNewItem.Amount = keg.potionsCount;
+						
+						if (targetted.Amount == keg.potionsCount) {
+						    targetted.Delete();
+						} else {
+						    targetted.Amount -= keg.potionsCount;
+						}
+
+						keg.Color = 0;
+						keg.potionDef = null;
+						keg.potionsCount = 0;
+					}
+				}
+			} else {
 				self.SysMessage ("Můžeš nalít jenom potiony.");
 			}
          
