@@ -1,10 +1,10 @@
 import os 
-import sys
+import shutil
+
 import urllib
 from urlparse import urlparse, urljoin
 from tempfile import mkdtemp
 import logging
-from shutil import rmtree
 from zipfile import ZipFile, ZIP_DEFLATED
 
 import gnosis.xml.pickle
@@ -14,9 +14,11 @@ import utils
 from client_gui import facade
 import client_config as config
 
+usingpybspatchimpl = False
 try:
 	from bspatch import patch
 except ImportError:
+	usingpybspatchimpl = True
 	from pybspatch import patch
 
 if (config.use_proxy):	
@@ -26,7 +28,8 @@ if (config.use_proxy):
 	
 
 def main(arg=None):	
-	logging.basicConfig(level=logging.INFO)	
+	log_level = logging.getLevelName(config.log_level)
+	logging.basicConfig(level=log_level, filename="log.txt")	
 	facade.start_gui(work)	
 	
 #fractions of download progress
@@ -51,10 +54,16 @@ TIMEPERCENTAGE_PATCHING = 4
 
 	
 def work():
+	if usingpybspatchimpl:
+		logging.debug("using pybspatch")
+	
 	tempdir = mkdtemp()
 	
 	try:
 		totaldone = 0 
+		
+		logging.info("UO instalace: '"+config.uo_path+"'")
+		
 		
 		logging.info("Stazeni metainfo souboru...")
 		#download ui archive checksum file
@@ -114,6 +123,10 @@ def work():
 					
 					checksum = utils.calculate_checksum(path_in_uo, progress_callback) 
 					totaldone += sizefraction * TOTALPERCENTAGE_CHECKSUMALL
+				elif os.path.exists(path_in_uo): #size 0 but it does exist
+					checksum = utils.calculate_checksum(path_in_uo, None) 
+				else:
+					checksum = 0
 				
 				latestversion = fi.versions_sorted[-1]
 				if (checksum != latestversion.checksum): #nemame spravnou verzi, musime resit
@@ -128,15 +141,26 @@ def work():
 							vQueue.append(v)
 							patchfilessize += v.patchsize
 							size += v.patchsize
+							
+					if not encountered: #not found as successive, patch right from the original
+						for v in fi.versions_byname.values():
+							if v.isoriginal and checksum == v.checksum:
+								vQueue.append(v)
+								vQueue.append(latestversion)
+								patchfilessize += v.patchsize
+								size += v.patchsize
+								break
 												
-					if encountered:
+					if vQueue:
 						topatch.append((path_in_uo, size, fi, vQueue))
 					else:
 						todownload.append((path_in_uo, filesize, fi))
 						downloadsize += latestversion.archivesize
 		
 		if todownload or topatch or todelete:
-			logging.info("Souboru ke stazeni:"+str(len(todownload))+", k patchnuti:"+str(len(topatch))+", ke smazani:"+str(len(todelete)))
+			megabytestodownload = downloadsize/1024.0/1024.0
+			template = "Souboru ke stazeni: {0}, k patchnuti:{1}, ke smazani:{2}. Celkovy download: {3:.1f} MB"
+			logging.info(template.format(len(todownload), len(topatch), len(todelete), megabytestodownload))			
 		else:
 			logging.info("Vsechny soubory v aktualni verzi.")
 			facade.set_progress_overall(facade.PBMAX)
@@ -144,7 +168,10 @@ def work():
 		
 		totalwork = TIMEPERCENTAGE_DOWNLOADING * (downloadsize + patchfilessize) + \
 			TIMEPERCENTAGE_UNPACKING * downloadsize + TIMEPERCENTAGE_PATCHING * patchfilessize
-		fraction_per_byte = (facade.PBMAX - totaldone) / totalwork
+		if totalwork > 0:
+			fraction_per_byte = (facade.PBMAX - totaldone) / totalwork
+		else:
+			fraction_per_byte = 0
 		
 		
 		tomove = [] #(path_downloaded, path_in_uo, filesize)
@@ -185,28 +212,44 @@ def work():
 				path_downloaded = os.path.join(local, utils.DIRNAME_PATCHES, patchname)
 				newPath = os.path.join(local, "patched")
 				
+				logging.debug("patching file '" + previous_version_result + "' to '" + newPath + "' using '" + path_downloaded + "'")
 				patch(previous_version_result, newPath, path_downloaded)
 				previous_version_result = newPath
 				fraction = prev_version.patchsize * fraction_per_byte * TIMEPERCENTAGE_PATCHING				
 				totaldone += fraction
 				facade.set_progress_overall(totaldone)
 			
-			tomove.append(previous_version_result, path_in_uo, os.path.getsize(previous_version_result))
+			tomove.append((previous_version_result, path_in_uo, os.path.getsize(previous_version_result)))
 			
+		if todelete:
+			logging.info("Smazani nadbytecnych souboru v UO slozce...")
+			for f in todelete:
+				if os.path.isdir(f):
+					logging.debug("deleting directory '"+f+"'")
+					shutil.rmtree(f)
+				else:
+					logging.debug("deleting file '"+f+"'")
+					os.remove(f)
 			
-		#for (from, to, size) in tomove:
-		#	movefile(from, to)
+		if tomove:
+			logging.info("Presunuti souboru z temporary lokace do UO slozky...")
+			for (source, target, size) in tomove:
+				dirname = os.path.dirname(target)
+				if not os.path.exists(dirname):
+					os.makedirs(dirname)
+				shutil.move(source, target)
 			
 	finally:
-		pass
-		#rmtree(tempdir)
+		shutil.rmtree(tempdir)
+		#pass
+		
 		
 	
 #	facade.set_progress_current(50)
 #	facade.set_progress_overall(20)
 
 def download(localroot, remote_filepath, totalfraction, totaldone, checksum = None):
-	logging.info("downloading file '" + remote_filepath + "'")
+	logging.debug("downloading file '" + remote_filepath + "'")
 
 	if (checksum):
 		percentage_download = PERCENTAGE_DOWNLOAD_WITHOUT_CHECKSUM
@@ -228,9 +271,9 @@ def download(localroot, remote_filepath, totalfraction, totaldone, checksum = No
 	url = urljoin(config.server_url, remote_filepath)
 	local_filepath = os.path.join(localroot, remote_filepath)
 	
-	dir = os.path.dirname(local_filepath)
-	if not os.path.exists(dir):
-		os.makedirs(dir)
+	d = os.path.dirname(local_filepath)
+	if not os.path.exists(d):
+		os.makedirs(d)
 	
 	(downloaded_filepath, _) = urllib.urlretrieve(url, local_filepath, reporthook)
 	if downloaded_filepath != local_filepath:

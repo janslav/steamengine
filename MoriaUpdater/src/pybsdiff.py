@@ -41,20 +41,20 @@ import os
 #implementation of bspatch using the binary bspatch module
 def diff(old_file_name, new_file_name, patch_file_name):    
     old_filesize = os.path.getsize(old_file_name)
-    logging.info("opening old file '" + old_file_name + \
+    logging.debug("opening old file '" + old_file_name + \
                  "' (checksum '" + server_utils.get_checksum(old_file_name) + \
                  "', size " + server_utils.filesize_to_str(old_filesize) + ")")
     with open(old_file_name, "rb") as old_file:
         old_data = old_file.read()
     
     new_filesize = os.path.getsize(old_file_name)
-    logging.info("opening new file '" + new_file_name + \
+    logging.debug("opening new file '" + new_file_name + \
                  "' (checksum '" + server_utils.get_checksum(new_file_name) + \
                  "', size " + server_utils.filesize_to_str(new_filesize) + ")")    
     with open(new_file_name, "rb") as new_file:   
         new_data = new_file.read()
 
-    logging.info("invoking the bsdiff.Diff function (progress bar unavailable :( )")
+    logging.debug("invoking the bsdiff.Diff function (progress bar unavailable :( )")
     (control_tuples_list, diff_string, extra_string) = bsdiff.Diff(old_data, new_data)
  
     control_stream = StringIO.StringIO()    
