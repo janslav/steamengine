@@ -18,7 +18,7 @@ def calculate_checksum(filename, progress_callback = None):
 	m = hashlib.md5()
 	
 	filesize = os.path.getsize(filename)
-	logging.info("computing checksum of file " + filename + " - " + str(int(round((filesize / 1024))))+" kB")
+	logging.debug("computing checksum of file " + filename + " - " + str(int(round((filesize / 1024))))+" kB")
 	
 	with open(filename, 'rb') as fp:
 		done = 0
@@ -41,12 +41,12 @@ def get_patchname(origversion, newversion):
 	#filename = filename.replace("/", ".-.")
 	return origversion.filename.lower()+"."+origversionname+"."+newversionname+".patch"
 
-def listfiles_recursive(basedir): #makes a recursive file list, with paths starting from currentdir
+def listfiles_recursive(basedir): #makes a recursive file list, with paths starting from basedir
 	filelist = []
 	listfiles_recursive_impl(basedir, "", filelist)
 	return filelist
 
-def listfiles_recursive_impl(basedir, currentdir, filelist): #makes a recursive file list, with paths starting from currentdir
+def listfiles_recursive_impl(basedir, currentdir, filelist): #makes a recursive file list, with paths starting from basedir
 	for name in os.listdir(basedir):
 		filepath = os.path.join(basedir, name)
 		relativepath = os.path.join(currentdir, name)

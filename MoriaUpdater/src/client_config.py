@@ -14,7 +14,8 @@ config = ConfigParser({
 					'Proxy':'http://yourproxy.com',
 					'UoPath':get_uodir_from_registry(),
 					'DeleteVerdata':'True',
-					'ServerUrl':'http://tar.dyndns-server.com/~tar/moriaUpdaterStorage/'							
+					'ServerUrl':'http://tar.dyndns-server.com/~tar/moriaUpdaterStorage/',
+					'LogLevel':'INFO'							
 					})
 
 config.read(CONFIG_FILENAME)
@@ -24,6 +25,7 @@ proxy = config.get(DEFAULTSECT, 'Proxy')
 uo_path = os.path.abspath(os.path.normpath(config.get(DEFAULTSECT, 'UoPath')))
 delete_verdata = config.getboolean(DEFAULTSECT, 'DeleteVerdata')
 server_url = config.get(DEFAULTSECT, 'ServerUrl')
+log_level = config.get(DEFAULTSECT, 'LogLevel')
 
 with file(CONFIG_FILENAME, mode="w") as f:
 	config.write(f)

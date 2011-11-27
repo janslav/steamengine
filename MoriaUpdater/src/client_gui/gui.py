@@ -75,6 +75,8 @@ def start():
     root = Tk()
     root.title('Moria_Updater')
     root.geometry('465x300+576+197')
+    root.resizable(0,0)
+    
     w = Moria_Updater(root)
     w.aw_alarm = root.after_idle(w.periodicCheckForMessages)
     root.mainloop()
