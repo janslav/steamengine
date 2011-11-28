@@ -984,30 +984,51 @@ namespace SteamEngine {
 
 			//equip into dragging layer
 			if (result.Allow) {
-				IPoint4D oldPoint = item.TopObj();
-				if (oldPoint != this) {
-					if (oldPoint == item) {
-						oldPoint = item.P();
-					}
-				} else {
-					oldPoint = null;
-				}
-
-				int amountSum = item.Amount;
-				if (!item.IsEquipped && amountToPick < amountSum) {
-					AbstractItem dupedItem = (AbstractItem) item.Dupe();
-					dupedItem.Amount = (amountSum - amountToPick);
-					item.Amount = amountToPick;
-					item.Trigger_SplitFromStack(dupedItem);
-				}
-
-				item.MakeLimbo();
-				item.Trigger_EnterChar(this, (int) LayerNames.Dragging);
-				if (oldPoint != null) {
-					this.SendMovingItemAnimation(oldPoint, this, item);
-				}
+				this.PickupImpl(item, amountToPick);
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// Pickups the item. No "Can" checks done, except for throwing away the previously held item - use with care.
+		/// </summary>
+		/// <param name="item">The item.</param>
+		/// <param name="amountToPick">The amount to pick.</param>
+		public void PickupItem(AbstractItem item, int amountToPick) {
+			this.ThrowIfDeleted();
+			item.ThrowIfDeleted();
+
+			if (!this.TryGetRidOfDraggedItem()) {
+				throw new SEException("Can't pick up a new item because can't get rid of item currently being held.");
+			}
+
+			//equip into dragging layer
+			this.PickupImpl(item, amountToPick);
+		}
+
+		private void PickupImpl(AbstractItem item, int amountToPick) {
+			IPoint4D oldPoint = item.TopObj();
+			if (oldPoint != this) {
+				if (oldPoint == item) {
+					oldPoint = item.P();
+				}
+			} else {
+				oldPoint = null;
+			}
+
+			int amountSum = item.Amount;
+			if (!item.IsEquipped && amountToPick < amountSum) {
+				AbstractItem dupedItem = (AbstractItem) item.Dupe();
+				dupedItem.Amount = (amountSum - amountToPick);
+				item.Amount = amountToPick;
+				item.Trigger_SplitFromStack(dupedItem);
+			}
+
+			item.MakeLimbo();
+			item.Trigger_EnterChar(this, (int) LayerNames.Dragging);
+			if (oldPoint != null) {
+				this.SendMovingItemAnimation(oldPoint, this, item);
+			}
 		}
 
 		public DenyResult CanPickup(AbstractItem item) {
@@ -1118,31 +1139,59 @@ namespace SteamEngine {
 				}
 
 				if (retVal.Allow) {
-					int minX, minY, maxX, maxY;
-					targetCont.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
-					if (x < minX) {
-						x = minX;
-					} else if (x > maxX) {
-						x = maxX;
-					}
-					if (y < minY) {
-						y = minY;
-					} else if (y > maxY) {
-						y = maxY;
-					}
-
-					item.MakeLimbo();
-					item.Trigger_EnterItem(targetCont, x, y);
-					if (tryStacking) {
-						targetCont.TryStackToAnyInside(item);
-					}
-					if (targetCont.TopObj() != this) {
-						this.SendMovingItemAnimation(this, targetCont, item);
-					}
+					this.PutItemInItemImpl(targetCont, x, y, tryStacking, item);
 				}
 				return retVal;
 			} else {
 				throw new SEException("The item (" + targetCont + ") is not a container");
+			}
+		}
+
+		/// <summary>
+		/// Puts the item in an container. No "Can" checks are done - use with care.
+		/// </summary>
+		/// <param name="targetCont">The target cont.</param>
+		/// <param name="x">The x coordinate inside the target cont.</param>
+		/// <param name="y">The y.</param>
+		/// <param name="tryStacking">if set to <c>true</c> [try stacking].</param>
+		public void PutItemInItem(AbstractItem targetCont, int x, int y, bool tryStacking) {
+			this.ThrowIfDeleted();
+			targetCont.ThrowIfDeleted();
+
+			AbstractItem item = this.draggingLayer;
+			if (item == null) {
+				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + targetCont + "'");
+			}
+			item.ThrowIfDeleted();
+
+			if (targetCont.IsContainer) {
+				this.PutItemInItemImpl(targetCont, x, y, tryStacking, item);
+			} else {
+				throw new SEException("The item (" + targetCont + ") is not a container");
+			}
+		}
+
+		private void PutItemInItemImpl(AbstractItem targetCont, int x, int y, bool tryStacking, AbstractItem item) {
+			int minX, minY, maxX, maxY;
+			targetCont.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
+			if (x < minX) {
+				x = minX;
+			} else if (x > maxX) {
+				x = maxX;
+			}
+			if (y < minY) {
+				y = minY;
+			} else if (y > maxY) {
+				y = maxY;
+			}
+
+			item.MakeLimbo();
+			item.Trigger_EnterItem(targetCont, x, y);
+			if (tryStacking) {
+				targetCont.TryStackToAnyInside(item);
+			}
+			if (targetCont.TopObj() != this) {
+				this.SendMovingItemAnimation(this, targetCont, item);
 			}
 		}
 

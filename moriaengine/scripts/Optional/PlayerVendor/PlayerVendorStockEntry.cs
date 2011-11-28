@@ -24,27 +24,9 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	partial class PlayerVendorStockEntry {
 
-		public decimal Price {
-			get { return this.price; }
-			set { this.price = value; }
-		}
 
 
-		/// <summary>
-		/// Gets or sets a value indicating whether this entry is a stock category.
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is category; otherwise, <c>false</c>.
-		/// </value>
-		public bool IsCategory {
-			get { return this.isCategory; }
-			set { this.isCategory = value; }
-		}
 
-		public bool SoldByUnits {
-			get { return this.soldByUnits; }
-			set { this.soldByUnits = value; }
-		}
 	}
 
 	[ViewableClass]
