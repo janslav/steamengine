@@ -56,7 +56,14 @@ namespace SteamEngine.CompiledScripts {
 		#region Stock methods
 		public Container StockRoot {
 			get {
-				return (Container) this.FindLayer(PlayerVendorDef.StockContainerDef.Layer);
+				var def = PlayerVendorDef.StockContainerDef;
+				var root = this.FindLayer(def.Layer);
+
+				if (root == null) {
+					def.Create(this);
+				}
+
+				return (Container) root;
 			}
 		}
 

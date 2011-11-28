@@ -1,3 +1,4 @@
+using System.IO;
 /*
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,15 +15,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine;
 using SteamEngine.Common;
-using System.Collections;
-using System;
-using System.IO;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	public class GumpDimensions {
-		private static readonly string datafilePath = "/systems/dialogs/Bounds.bin";
+		private static readonly string datafilePath = "/Basic/dialogs/Bounds.bin";
 
 		private static GumpArtDimension[] bounds;
 
@@ -51,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					bin.Close();
 				}
 			} else {
-				LogStr.Warning("Warning: "+datafilePath+" does not exist");
+				LogStr.Warning("Warning: " + datafilePath + " does not exist");
 
 				bounds = new GumpArtDimension[0x4000];
 			}
@@ -62,20 +59,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private Point2D start, end;
 
 		public void Set(int x, int y, int width, int height) {
-			start = new Point2D((ushort)x, (ushort)y);
-			end = new Point2D((ushort)(x + width), (ushort)(y + height));
+			start = new Point2D((ushort) x, (ushort) y);
+			end = new Point2D((ushort) (x + width), (ushort) (y + height));
 		}
 
 		public int X {
 			get {
 				return start.X;
-			}			
+			}
 		}
 
 		public int Y {
 			get {
 				return start.Y;
-			}			
+			}
 		}
 
 		public int Width {
