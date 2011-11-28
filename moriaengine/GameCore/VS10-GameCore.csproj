@@ -88,6 +88,7 @@
     <Compile Include="3rdParty\Jolt.XmlDocCommentReader\XmlDocCommentReader.cs" />
     <Compile Include="3rdParty\Jolt.XmlDocCommentReader\XmlDocCommentReaderSettings.cs" />
     <Compile Include="CompiledScripts\XmlDocComments.cs" />
+    <Compile Include="LocalisationExtensions.cs" />
     <Compile Include="LScript\ScriptedSpeechDef.cs" />
     <Compile Include="SpeechDef.cs" />
     <Compile Include="AI\AI.cs" />

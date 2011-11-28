@@ -17,11 +17,12 @@
 Def:	//vars on the def
 
 Vars:	//vars defined in the class, so they basically do what tags do, but better
+	bool isOperational = true
 
 [ThingTemplate PlayerVendorStockEntry : Container]
 Def:
 
 Vars:
-		decimal price = 0
-		bool isCategory = false
-		bool soldByUnits = false
+	public decimal price = 0
+	public string origDescription = null
+	public bool soldByUnits = false

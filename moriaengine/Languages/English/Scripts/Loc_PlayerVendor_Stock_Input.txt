@@ -5,3 +5,4 @@ Label_Description               = Popis
 Label_Sell                      = Prodej
 Label_SoldByUnits               = Jednotkový prodej
 Label_NewSection                = Nová sekce
+InvalidPrice                    = Cena musí být celé číslo větší než 0

@@ -23,7 +23,6 @@ namespace SteamEngine.CompiledScripts {
 	public class D_PlayerVendor_Stock : CompiledGumpDef {
 		const int inputId_Price = 1;
 		const int inputId_Description = 2;
-		const int inputId_SoldByUnit = 3;
 
 		const int buttonId_Sell = 1;
 		const int buttonId_SellByUnit = 2;
@@ -32,8 +31,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 
-			var vendor = (PlayerVendor) args[0];
-			var stockEntry = (PlayerVendorStockEntry) args[1];
+			var stockSection = (Container) args[0];
+			var vendor = (PlayerVendor) stockSection.TopObj();
 
 			decimal price = 0;
 			int amount = 1;
@@ -41,19 +40,9 @@ namespace SteamEngine.CompiledScripts {
 			bool enableSoldByUnit = false;
 
 			var asItem = focus as Item;
-
-			if (stockEntry != null) {
-				price = stockEntry.Price;
-				description = stockEntry.Name;
-
-				if (asItem != null) {
-					amount = stockEntry.RecursiveCount;
-				}
-			} else if (asItem != null) {
-				amount = asItem.Amount;
-			}
-
 			if (asItem != null) {
+				amount = asItem.Amount;
+
 				enableSoldByUnit = asItem.IsContainer;
 
 				header = string.Format(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Header_Item,
@@ -95,10 +84,13 @@ namespace SteamEngine.CompiledScripts {
 			t = dialogHandler.AddTable(new GUTATable(1, 30, 70, 30, 120, 30, 0));
 			t.AddToCell(0, 0, GUTAButton.Builder.Id(buttonId_Sell).Build());
 			t.AddToCell(0, 1, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_Sell).Build());
-			t.AddToCell(0, 2, GUTAButton.Builder.Id(buttonId_Sell).Build());
-			t.AddToCell(0, 3, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_SoldByUnits).Build());
-			t.AddToCell(0, 4, GUTAButton.Builder.Id(buttonId_Sell).Build());
+			if (enableSoldByUnit) {
+				t.AddToCell(0, 2, GUTAButton.Builder.Id(buttonId_SellByUnit).Build());
+				t.AddToCell(0, 3, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_SoldByUnits).Build());
+			}
+			t.AddToCell(0, 4, GUTAButton.Builder.Id(buttonId_NewSection).Build());
 			t.AddToCell(0, 5, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_NewSection).Build());
+
 			t.Transparent = true;
 
 
@@ -143,7 +135,51 @@ namespace SteamEngine.CompiledScripts {
 		//[DIALOG d_playerVendor_stock_input TEXT]
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+			try {
+				var button = gr.PressedButton;
 
+				if (button == 0) {
+					return;
+				}
+
+				var stockSection = (Container) args[0];
+				var vendor = (PlayerVendor) stockSection.TopObj();
+
+				var focus = gi.Focus;
+				var player = (Player) gi.Cont;
+
+				var description = gr.GetTextResponse(inputId_Description);
+
+				if (button == buttonId_NewSection) {
+
+					//new section, we need no hardcore checks because nothing from the outside world is actually being manipulated
+					int sectionModel = focus.Model;
+					if (focus.IsChar) {
+						sectionModel = ((Character) focus).TypeDef.Icon;
+					}
+					vendor.AddNewStockSection(stockSection, description, sectionModel, focus.Color);
+				} else {
+
+					//we're actually stocking something, need all possible checks
+					if (!vendor.CanStockWithMessage(player, focus)) {
+						return;
+					}
+
+					var price = gr.GetNumberResponse(inputId_Price);
+					if (!(price > 0)) {
+						player.WriteLineLoc<Loc_PlayerVendor_Stock_Input>(l => l.InvalidPrice);
+						return;
+					}
+
+					if (button == buttonId_Sell) {
+						vendor.StockThing(player, focus, stockSection, description, price);
+					} else if (button == buttonId_SellByUnit) {
+						vendor.StockThingSoldByUnit(player, (Container) focus, stockSection, description, price);
+					}
+				}
+			} finally {
+				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+			}
 		}
 	}
 
@@ -155,5 +191,7 @@ namespace SteamEngine.CompiledScripts {
 		public string Label_Sell = "Prodej";
 		public string Label_SoldByUnits = "Jednotkový prodej";
 		public string Label_NewSection = "Nová sekce";
+
+		public string InvalidPrice = "Cena musí být vìtší než 0";
 	}
 }
