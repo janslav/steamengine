@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 
 				enableSoldByUnit = asItem.IsContainer;
 
-				header = string.Format(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Header_Item,
+				header = string.Format(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Header_Item,
 					amount, asItem.Name);
 				if (amount == 1) {
 					description = asItem.Name;
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 					description = string.Concat(amount, " ", asItem.Name);
 				}
 			} else {
-				header = string.Format(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Header_Char,
+				header = string.Format(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Header_Char,
 					focus.Def.Name);
 				description = focus.Def.Name;
 			}
@@ -74,22 +74,22 @@ namespace SteamEngine.CompiledScripts {
 			//textentries: description, price
 			t = dialogHandler.AddTable(new GUTATable(2, 80, 0));
 			t.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-			t.AddToCell(0, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_Description).Build());
+			t.AddToCell(0, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Label_Description).Build());
 			t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Description).Text(description).Build());
-			t.AddToCell(1, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_Price).Build());
+			t.AddToCell(1, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Label_Price).Build());
 			t.AddToCell(1, 1, GUTAInput.Builder.Id(inputId_Price).Text(price.ToString()).Type(LeafComponentTypes.InputNumber).Build());
 			t.Transparent = true;
 
 			//last row with buttons
 			t = dialogHandler.AddTable(new GUTATable(1, 30, 70, 30, 120, 30, 0));
 			t.AddToCell(0, 0, GUTAButton.Builder.Id(buttonId_Sell).Build());
-			t.AddToCell(0, 1, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_Sell).Build());
+			t.AddToCell(0, 1, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Label_Sell).Build());
 			if (enableSoldByUnit) {
 				t.AddToCell(0, 2, GUTAButton.Builder.Id(buttonId_SellByUnit).Build());
-				t.AddToCell(0, 3, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_SoldByUnits).Build());
+				t.AddToCell(0, 3, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Label_SoldByUnits).Build());
 			}
 			t.AddToCell(0, 4, GUTAButton.Builder.Id(buttonId_NewSection).Build());
-			t.AddToCell(0, 5, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock_Input>.Get(sendTo.Language).Label_NewSection).Build());
+			t.AddToCell(0, 5, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Label_NewSection).Build());
 
 			t.Transparent = true;
 
@@ -132,7 +132,6 @@ namespace SteamEngine.CompiledScripts {
 			// argo.textA(lastxpos+280,lastypos,2301,Nova sekce)
 			//endif
 		}
-		//[DIALOG d_playerVendor_stock_input TEXT]
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			try {
@@ -167,7 +166,7 @@ namespace SteamEngine.CompiledScripts {
 
 					var price = gr.GetNumberResponse(inputId_Price);
 					if (!(price > 0)) {
-						player.WriteLineLoc<Loc_PlayerVendor_Stock_Input>(l => l.InvalidPrice);
+						player.WriteLineLoc<Loc_PlayerVendor_Stock>(l => l.InvalidPrice);
 						return;
 					}
 
@@ -183,7 +182,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class Loc_PlayerVendor_Stock_Input : CompiledLocStringCollection {
+	public class Loc_PlayerVendor_Stock : CompiledLocStringCollection {
 		public string Header_Item = "Na prodej: {0} {1}";
 		public string Header_Char = "Na prodej: {0}";
 		public string Label_Price = "Cena";

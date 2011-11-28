@@ -164,6 +164,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			buttonGumps.Add(LeafComponentTypes.ButtonSortDown, new ButtonGump(2437, 2438));
 			//0fb4, 0fb6 Crossed circle button 
 			buttonGumps.Add(LeafComponentTypes.ButtonNoOperation, new ButtonGump(4020, 4022));
+			//9905,9904 Triangle button pointing right
+			buttonGumps.Add(LeafComponentTypes.ButtonTriangle, new ButtonGump(9905, 9904));
 
 			//0d2, 0d3 Checkbox (unchecked, checked)
 			buttonGumps.Add(LeafComponentTypes.CheckBox, new ButtonGump(210, 211));

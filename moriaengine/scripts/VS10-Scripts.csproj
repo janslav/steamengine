@@ -389,6 +389,7 @@
     <Compile Include="Basic\TemplateDef.cs" />
     <Compile Include="Basic\TimerPlugin.cs" />
     <Compile Include="Basic\utilities\ItemTypeNames.cs" />
+    <Compile Include="Optional\PlayerVendor\D_PlayerVendor_ListStock.cs" />
     <Compile Include="Optional\PlayerVendor\PlayerVendor.cs" />
     <Compile Include="Optional\PlayerVendor\playerVendor.Generated.cs" />
     <Compile Include="Optional\PlayerVendor\PlayerVendorStockEntry.cs" />

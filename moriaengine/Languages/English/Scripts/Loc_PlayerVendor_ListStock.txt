@@ -1,0 +1,3 @@
+Buy                             = kup
+Description                     = Název zboží
+PriceInGp                       = Cena/gp

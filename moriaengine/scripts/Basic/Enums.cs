@@ -112,6 +112,9 @@ namespace SteamEngine.CompiledScripts {
 		ButtonNext,
 		/// <summary>Button with people</summary>
 		ButtonPeople,
+		/// <summary>Triangular button</summary>
+		ButtonTriangle,
+
 		CheckBox,
 		RadioButton,
 		//Inputs
