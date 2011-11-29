@@ -57,12 +57,12 @@ ON=*wares*
 
 
 [ScriptedTargetDef targ_playerVendor_stock]
-on=@targon_item
+on=@targon_thing
 	local vendor = argv[1]
 	local targetted = argv[0]
 
 	if (vendor.CanStockWithMessage(this, targetted))
-		targetted.Dialog(D_PlayerVendor_Stock, vendor.StockRoot)
+		targetted.Dialog(D_PlayerVendor_Stock, <vendor.StockRoot>)
 	endif
 
 [Loc loc_playervendor]

@@ -17,6 +17,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 
 using System;
+using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
@@ -72,27 +73,29 @@ namespace SteamEngine.CompiledScripts {
 
 
 			//rows with item descriptions
-			t = dialogHandler.AddTable(new GUTATable(1, 20, 40, 450, 0));
+			t = dialogHandler.AddTable(new GUTATable(rows, 20, 40, 450, 0));
 
 			bool isMyVendor = vendor.CanBeControlledBy(player);
 
-			int index = -1;
+			int index = 0;
 			int row = 0;
 			foreach (var item in section) {
-				index++;
 				if (index < firstIndex) {
 					continue;
 				} else if (index >= iMax) {
 					break;
 				}
 
-				//if (isMyVendor) {
-				//    argo.button(<argo.tag(sloupec_x[3])>-35,ypos,0984,0983,1,0,(index*3)+101) 
-				//    argo.button(<argo.tag(sloupec_x[3])>-20,ypos,0984,0984,1,0,(index*3)+102)
-				//    argo.button(<argo.tag(sloupec_x[3])>-20,ypos+8,0983,0983,1,0,(index*3)+102)
-				//}
+				if (isMyVendor) {
+					t.AddToCell(row, 3, GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(index * Rows_ButtonCount + buttonId_Rows_Offset + buttonId_Rows_MoveUp)
+						.Valign(DialogAlignment.Valign_Top).XPos(-35).Build()); //
+					t.AddToCell(row, 3, GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(index * Rows_ButtonCount + buttonId_Rows_Offset + buttonId_Rows_MoveTop)
+						.Valign(DialogAlignment.Valign_Top).XPos(-20).Build()); //
+					t.AddToCell(row, 3, GUTAButton.Builder.Type(LeafComponentTypes.ButtonSortUp).Id(index * Rows_ButtonCount + buttonId_Rows_Offset + buttonId_Rows_MoveTop)
+						.Valign(DialogAlignment.Valign_Top).YPos(8).XPos(-20).Build()); //
+				}
 
-				t.AddToCell(row, 0, GUTAButton.Builder.Type(LeafComponentTypes.ButtonTriangle).Id(index * Rows_ButtonCount + buttonId_Rows_Detail).Build());
+				t.AddToCell(row, 0, GUTAButton.Builder.Type(LeafComponentTypes.ButtonTriangle).Id(index * Rows_ButtonCount + buttonId_Rows_Offset + buttonId_Rows_Detail).Build());
 
 				t.AddToCell(row, 1, GUTAImage.Builder.Gump(item.Model).Color(item.Color).Build());
 				t.AddToCell(row, 2, GUTAText.Builder.Text(item.Name).Build());
@@ -110,6 +113,7 @@ namespace SteamEngine.CompiledScripts {
 
 			dialogHandler.WriteOut();
 
+			#region orig. spherescript
 			//SetLocation=10,10
 			//argo.tag(firsti,<eval argv(0)>)//<eval argv(1)>
 			//if (argo.tag(firsti)<0)
@@ -193,60 +197,90 @@ namespace SteamEngine.CompiledScripts {
 			//else
 			// argo.texta(<argo.dialog_textpos(3,0)>,2301,Vase konto: <eval src.findlayer(21).rescount(t_gold)+src.bankbalance> gp)
 			//endif
-			//var(d_def_radek_vyska,"")
+			//var(d_def_radek_vyska,"") 
+			#endregion
 		}
 
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			try {
 
-				var section = (Container) gi.Focus;
-				var vendor = (PlayerVendor) section.TopObj();
-				var player = (Player) gi.Cont;
+			var section = (Container) gi.Focus;
+			var vendor = (PlayerVendor) section.TopObj();
+			var player = (Player) gi.Cont;
 
-				int buttonId = gr.PressedButton;
+			int buttonId = gr.PressedButton;
 
-				switch (buttonId) {
-					case 0:
-						return;
+			switch (buttonId) {
+				case 0:
+					DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+					return;
 
-					case buttonId_Stock:
-						player.WriteLine("stock");
-						return;
-					case buttonId_DeleteSection:
-						player.WriteLine("DeleteSection");
-						return;
-					case buttonId_ReverseOrder:
-						player.WriteLine("ReverseOrder");
-						return;
-					case buttonId_ChangeIcon:
-						player.WriteLine("ChangeIco");
-						return;
-					default:
-						var index = (buttonId - buttonId_Rows_Offset) / Rows_ButtonCount;
-						var modulo = (buttonId - buttonId_Rows_Offset) % Rows_ButtonCount;
+				case buttonId_Stock:
+					player.WriteLine("stock");
+					return;
+				case buttonId_DeleteSection:
+					player.WriteLine("DeleteSection");
+					return;
+				case buttonId_ReverseOrder:
+					player.WriteLine("ReverseOrder");
+					return;
+				case buttonId_ChangeIcon:
+					player.WriteLine("ChangeIco");
+					return;
+				default:
+					var index = (buttonId - buttonId_Rows_Offset) / Rows_ButtonCount;
+					var modulo = (buttonId - buttonId_Rows_Offset) % Rows_ButtonCount;
 
-						var item = section.FindCont(index);
-						player.WriteLine("radek: " + item.Name);
+					var item = section.FindCont(index);
+					player.WriteLine("radek: " + item.Name);
 
-						switch (modulo) {
-
-							case buttonId_Rows_Detail:
+					switch (modulo) {
+						case buttonId_Rows_Detail:
+							var asEntry = item as PlayerVendorStockEntry;
+							if (asEntry != null) {
 								player.WriteLine("Detail");
-								return;
+							} else { //section
+								var newGi = item.Dialog(player, this);
+								DialogStacking.EnstackDialog(gi, newGi);
+							}
+							return;
 
-							case buttonId_Rows_MoveUp:
-								player.WriteLine("MoveUp");
-								return;
-							case buttonId_Rows_MoveTop:
-								player.WriteLine("MoveTop");
-								return;
-						}
-						return;
-				}
-			} finally {
-				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+						case buttonId_Rows_MoveUp:
+							if (vendor.CanBeControlledBy(player)) {
+								MoveUpInContainer(section, index, item, vendor.Backpack);
+								DialogStacking.ResendAndRestackDialog(gi);
+							}
+							return;
+
+						case buttonId_Rows_MoveTop:
+							if (vendor.CanBeControlledBy(player)) {
+								MoveToTopInContainer(section, item, vendor.Backpack);
+								DialogStacking.ResendAndRestackDialog(gi);
+							}
+							return;
+					}
+					return;
 			}
+		}
+
+
+		public static void MoveUpInContainer(Container section, int index, AbstractItem entry, Container tempCont) {
+			var list = new List<AbstractItem>(index);
+			for (int i = 0; i < index - 1; i++) {
+				var e = section.FindCont(0);
+				list.Add(e);
+				e.Cont = tempCont;
+			}
+			list.Add(entry);
+			entry.Cont = tempCont;
+			for (int i = list.Count - 1; i >= 0; i--) {
+				list[i].Cont = section;
+			}
+		}
+
+		public static void MoveToTopInContainer(Container section, AbstractItem entry, Container tempCont) {
+			entry.Cont = tempCont;
+			entry.Cont = section;
 		}
 	}
 

@@ -147,7 +147,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		/// <summary>
-		/// Stocks a new thing - i.e. puts it into vendor to be sold. CanStockWithMessage or equivalent is supposed to be already called on this.
+		/// Stocks a new thing - i.e. puts it into vendor to be sold. CanStockWithMessage or equivalent is supposed to have been already called on the thing.
 		/// </summary>
 		/// <param name="player">The player.</param>
 		/// <param name="thingToStock">The thing to stock.</param>

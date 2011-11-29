@@ -20,6 +20,9 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 
+	/// <summary>
+	/// Adding a new item in vendor to be sold - item or char(pet)
+	/// </summary>
 	public class D_PlayerVendor_Stock : CompiledGumpDef {
 		const int inputId_Price = 1;
 		const int inputId_Description = 2;
@@ -93,9 +96,9 @@ namespace SteamEngine.CompiledScripts {
 
 			t.Transparent = true;
 
-
 			dialogHandler.WriteOut();
 
+			#region orig. spherescript
 			//100,175
 			//argo.tag(sirka,400)
 			//argo.tag(vyska,<eval (4*d_def_radek_vyska)+(5*d_def_skvira)+(2*d_def_okraj)>)
@@ -131,6 +134,7 @@ namespace SteamEngine.CompiledScripts {
 			// argo.button(lastxpos+250,lastypos-1,9905,9904,1,0,2)
 			// argo.textA(lastxpos+280,lastypos,2301,Nova sekce)
 			//endif
+			#endregion
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
