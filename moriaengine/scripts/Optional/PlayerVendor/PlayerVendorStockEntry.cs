@@ -24,9 +24,6 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	partial class PlayerVendorStockEntry {
 
-
-
-
 	}
 
 	[ViewableClass]

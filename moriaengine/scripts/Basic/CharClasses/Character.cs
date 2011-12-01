@@ -1841,43 +1841,24 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-
-		private static BankDef bankDef = null;
-		private AbstractItem AddBankbox() {
-			ThrowIfDeleted();
-			if (bankDef == null) {
-				bankDef = ThingDef.FindItemDef(0xe7c) as BankDef;
-				if (bankDef == null) {
-					throw new SEException("Unable to find itemdef 0xe7c in scripts.");
-				} else if (bankDef.Layer != (int) LayerNames.Bankbox) {
-					throw new SEException("Wrong layer of bankbox itemdef.");
-				}
-			}
-
-			AbstractItem i = (AbstractItem) bankDef.Create(this);
-			if (i == null) {
-				throw new SEException("Unable to create bankbox.");
-			}
-			return i;
-		}
-
-		/*        public sealed override AbstractItem GetBankbox()
-				{
-					AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
-					if (foundBankbox == null)
-					{
-						foundBankbox = this.AddBankbox();
-					}
-					return foundBankbox;
-				}
-		*/
-		public Bank Bank {
+		public BankBox Bank {
 			get {
 				AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
+
 				if (foundBankbox == null) {
-					foundBankbox = this.AddBankbox();
+					var def = SingletonScript<BankBoxDef>.Instance;
+					if (def == null) {
+						throw new SEException("Unable to find a BankBoxDef in scripts.");
+					} else if (def.Layer != (int) LayerNames.Bankbox) {
+						throw new SEException("Wrong layer of bankbox itemdef.");
+					}
+
+					AbstractItem i = (AbstractItem) def.Create(this);
+					if (i == null) {
+						throw new SEException("Unable to create bankbox.");
+					}
 				}
-				return (Bank) foundBankbox;
+				return (BankBox) foundBankbox;
 			}
 		}
 

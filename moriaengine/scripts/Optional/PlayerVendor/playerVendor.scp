@@ -29,7 +29,7 @@ ON=*sklad*
 
 	if (this.CanBeControlledBy(player))
 		this.Say(LocManager.GetEntry("loc_playervendor", "OneMomentPlease", player.Language))
-		player.Target(targ_playerVendor_stock, this)
+		player.Target(targ_playerVendor_stock, <this.StockRoot>)
 		return 1
 	endif
 	return 0
@@ -58,11 +58,11 @@ ON=*wares*
 
 [ScriptedTargetDef targ_playerVendor_stock]
 on=@targon_thing
-	local vendor = argv[1]
+	local vendor = argv[1].TopObj
 	local targetted = argv[0]
 
 	if (vendor.CanStockWithMessage(this, targetted))
-		targetted.Dialog(D_PlayerVendor_Stock, <vendor.StockRoot>)
+		targetted.Dialog(D_PlayerVendor_Stock, <argv[1]>)
 	endif
 
 [Loc loc_playervendor]
