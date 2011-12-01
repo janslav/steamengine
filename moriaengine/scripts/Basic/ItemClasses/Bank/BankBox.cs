@@ -18,10 +18,10 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
-	public partial class BankDef {
+	public partial class BankBoxDef {
 	}
 
 	[Dialogs.ViewableClass]
-	public partial class Bank {
+	public partial class BankBox {
 	}
 }
