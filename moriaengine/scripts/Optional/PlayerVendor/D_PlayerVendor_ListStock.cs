@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	public class D_PlayerVendor_ListStock : CompiledGumpDef {
 		public const int width = 640;
 
-		const int buttonId_Stock = 3;
+		const int buttonId_NewStock = 3;
 		const int buttonId_DeleteSection = 4;
 		const int buttonId_ReverseOrder = 5;
 		const int buttonId_ChangeIcon = 6;
@@ -41,6 +41,7 @@ namespace SteamEngine.CompiledScripts {
 			var section = (Container) focus;
 			var vendor = (PlayerVendor) focus.TopObj();
 			var player = (Player) sendTo;
+			var loc = Loc<Loc_PlayerVendor_ListStock>.Get(player.Language);
 
 			var dialogHandler = new ImprovedDialog(this.GumpInstance);
 
@@ -65,7 +66,6 @@ namespace SteamEngine.CompiledScripts {
 			t.Transparent = true;
 
 			t = dialogHandler.AddTable(new GUTATable(1, 20 + ImprovedDialog.D_COL_SPACE + 40, 450, 0));
-			var loc = Loc<Loc_PlayerVendor_ListStock>.Get(player.Language);
 			t.AddToCell(0, 0, GUTAText.Builder.TextHeadline(loc.Buy).Build());
 			t.AddToCell(0, 1, GUTAText.Builder.TextHeadline(loc.Description).Build());
 			t.AddToCell(0, 2, GUTAText.Builder.TextHeadline(loc.PriceInGp).Build());
@@ -77,9 +77,11 @@ namespace SteamEngine.CompiledScripts {
 
 			bool isMyVendor = vendor.CanBeControlledBy(player);
 
-			int index = 0;
+			int index = -1;
 			int row = 0;
 			foreach (var item in section) {
+				index++;
+
 				if (index < firstIndex) {
 					continue;
 				} else if (index >= iMax) {
@@ -106,10 +108,40 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				row++;
-				index++;
 			}
 
 			t.Transparent = true;
+
+			dialogHandler.CreatePaging(section.Count, firstIndex, 1);
+
+			if (isMyVendor) {
+
+				t = dialogHandler.AddTable(new GUTATable(1, 170, 170, 170, 0));
+
+				t.AddToCell(0, 0, GUTAButton.Builder.Type(LeafComponentTypes.ButtonTriangle).Id(buttonId_NewStock).Build());
+				t.AddToCell(0, 0, GUTAText.Builder.TextHeadline(loc.NewStock).XPos(30).Build());
+
+				//empty section can be deleted
+				if (section.Count == 0) {
+					t.AddToCell(0, 1, GUTAButton.Builder.Type(LeafComponentTypes.ButtonTriangle).Id(buttonId_DeleteSection).Build());
+					t.AddToCell(0, 1, GUTAText.Builder.TextHeadline(loc.DeleteSection).XPos(30).Build());
+				}
+
+				t.AddToCell(0, 2, GUTAButton.Builder.Type(LeafComponentTypes.ButtonTriangle).Id(buttonId_ReverseOrder).Build());
+				t.AddToCell(0, 2, GUTAText.Builder.TextHeadline(loc.ReverseOrder).XPos(30).Build());
+
+				//if we're not the uppermost section, we can change icon
+				if (section.Cont is Container) {
+					t.AddToCell(0, 3, GUTAButton.Builder.Type(LeafComponentTypes.ButtonTriangle).Id(buttonId_ChangeIcon).Build());
+					t.AddToCell(0, 3, GUTAText.Builder.TextHeadline(loc.ChangeIcon).XPos(30).Build());
+				}
+
+				t.Transparent = true;
+
+			} else {
+				// argo.texta(<argo.dialog_textpos(3,0)>,2301,Vase konto: <eval src.findlayer(21).rescount(t_gold)+src.bankbalance> gp)
+			}
+
 
 			dialogHandler.WriteOut();
 
@@ -215,24 +247,40 @@ namespace SteamEngine.CompiledScripts {
 					DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 					return;
 
-				case buttonId_Stock:
-					player.WriteLine("stock");
+				case buttonId_NewStock:
+					if (vendor.CanBeControlledBy(player)) {
+						player.Target(StockTargetDef, section);
+						//show previous dialog after, somehow?
+					}
 					return;
 				case buttonId_DeleteSection:
-					player.WriteLine("DeleteSection");
+					if (vendor.CanBeControlledBy(player) && section.Count == 0) {
+						section.Delete();
+						DialogStacking.ShowPreviousDialog(gi); //previous should be the upper section
+					}
 					return;
 				case buttonId_ReverseOrder:
-					player.WriteLine("ReverseOrder");
+					if (vendor.CanBeControlledBy(player)) {
+						ReverseOrderInContainer(section, vendor.Backpack);
+						DialogStacking.ResendAndRestackDialog(gi);
+					}
 					return;
 				case buttonId_ChangeIcon:
-					player.WriteLine("ChangeIco");
+					if (vendor.CanBeControlledBy(player) && (section.Cont is Container)) {
+						var prevGi = DialogStacking.PopStackedDialog(gi);
+						player.Target(SingletonScript<Targ_PlayerVendor_CopyIcon>.Instance,
+							Tuple.Create(section, prevGi));
+					}
 					return;
 				default:
+					if (ImprovedDialog.PagingButtonsHandled(gi, gr, section.Count, 1)) {
+						return;
+					}
+
 					var index = (buttonId - buttonId_Rows_Offset) / Rows_ButtonCount;
 					var modulo = (buttonId - buttonId_Rows_Offset) % Rows_ButtonCount;
 
 					var item = section.FindCont(index);
-					player.WriteLine("radek: " + item.Name);
 
 					switch (modulo) {
 						case buttonId_Rows_Detail:
@@ -278,15 +326,75 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public static void ReverseOrderInContainer(Container section, Container tempCont) {
+			var n = section.Count;
+			var list = new List<AbstractItem>(n);
+			foreach (var e in section) {
+				list.Add(e);
+				e.Cont = tempCont;
+			}
+			for (int i = 0; i < n; i++) {
+				list[i].Cont = section;
+			}
+		}
+
 		public static void MoveToTopInContainer(Container section, AbstractItem entry, Container tempCont) {
 			entry.Cont = tempCont;
 			entry.Cont = section;
+		}
+
+		private static AbstractTargetDef targ_playerVendor_stock;
+		public static AbstractTargetDef StockTargetDef {
+			get {
+				if (targ_playerVendor_stock == null) {
+					targ_playerVendor_stock = AbstractTargetDef.GetByDefname("targ_playerVendor_stock");
+				}
+				return targ_playerVendor_stock;
+			}
+		}
+	}
+
+	public class Targ_PlayerVendor_CopyIcon : CompiledTargetDef {
+		protected override void On_Start(Player self, object parameter) {
+			self.WriteLineLoc<Loc_PlayerVendor_ListStock>(l => l.TargetIconSource);
+
+			base.On_Start(self, parameter);
+		}
+
+		protected override TargetResult On_TargonThing(Player self, Thing targetted, object parameter) {
+			var t = (Tuple<Container, Gump>) parameter;
+
+			Container section = t.Item1;
+			if (section != null) {
+				PlayerVendor vendor = section.TopObj() as PlayerVendor;
+
+				if (vendor != null && vendor.CanBeControlledBy(self)) {
+					var asChar = targetted as Character;
+					if (asChar == null) {
+						section.Model = targetted.Model;
+					} else {
+						section.Model = asChar.TypeDef.Icon;
+					}
+
+					DialogStacking.ResendAndRestackDialog(t.Item2);
+				}
+			}
+
+			return TargetResult.Done;
 		}
 	}
 
 	public class Loc_PlayerVendor_ListStock : CompiledLocStringCollection {
 		public string Buy = "kup";
 		public string Description = "Název zboží";
-		public string PriceInGp = "Cena/gp";
+		public string PriceInGp = "Cena (gp)";
+
+		public string NewStock = "Pøidat dalši zboží";
+		public string DeleteSection = "Odebrat sekci";
+		public string ReverseOrder = "Pøevrátit nabídku";
+		public string ChangeIcon = "Ikona";
+		public string YourAccount = "Vaše konto: {0} gp";
+
+		public string TargetIconSource = "Target something to copy icon from.";
 	}
 }
