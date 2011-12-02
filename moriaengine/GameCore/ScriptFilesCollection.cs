@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;	//for CultureInfo.Invariant for String.Compare for comparing filenames.
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -272,6 +272,10 @@ namespace SteamEngine {
 
 		internal StreamReader OpenText() {
 			return new StreamReader(file.FullName, Encoding.Default);
+
+			//var bytes = File.ReadAllBytes(file.FullName);
+
+			//return new StreamReader(new MemoryStream(bytes), Encoding.Default);
 		}
 	}
 }

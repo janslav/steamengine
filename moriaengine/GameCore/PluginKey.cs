@@ -16,25 +16,16 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine {
-	public sealed class PluginKey : AbstractKey {
-		private static Dictionary<string, PluginKey> byName = new Dictionary<string, PluginKey>(StringComparer.OrdinalIgnoreCase);
-
+	public sealed class PluginKey : AbstractKey<PluginKey> {
 		private PluginKey(string name, int uid)
 			: base(name, uid) {
 		}
 
 		public static PluginKey Acquire(string name) {
-			PluginKey key;
-			if (byName.TryGetValue(name, out key)) {
-				return key;
-			}
-			key = new PluginKey(name, AbstractKey.GetNewUid());
-			byName[name] = key;
-			return key;
+			return Acquire(name, (n, u) => new PluginKey(n, u));
 		}
 	}
 

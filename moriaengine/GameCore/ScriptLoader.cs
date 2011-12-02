@@ -55,19 +55,35 @@ namespace SteamEngine {
 				//ObjectSaver.StartingLoading();
 				AbstractSkillDef.StartingLoading();
 
-				var loadedBytes = files.AsParallel().Aggregate(
-					() => 0L,
-					(alreadyloaded, sf) => {
-						Logger.WriteDebug("Loading " + sf.Name);
-						LoadFile(sf);
-						return alreadyloaded + sf.Length;
-					},
-					(a, b) => {
-						var alreadyloaded = a + b;
-						Logger.SetTitle("Loading scripts: " + ((alreadyloaded * 100) / lengthSum) + " %");
-						return alreadyloaded;
-					},
-					a => a);
+				long loadedBytes;
+
+				//load either paralell or sequentially, depending on .ini setting
+				Func<long, ScriptFile, long> loadAndAggregate = (alreadyloaded, sf) => {
+					Logger.WriteDebug("Loading " + sf.Name);
+					LoadFile(sf);
+					return alreadyloaded + sf.Length;
+				};
+				Action<long> showLoaded = alreadyloaded => Logger.SetTitle("Loading scripts: " + ((alreadyloaded * 100) / lengthSum) + " %");
+
+				if (Globals.ParallelStartUp) {
+					loadedBytes = files.AsParallel().Aggregate(
+						() => 0L,
+						loadAndAggregate,
+						(a, b) => {
+							var alreadyloaded = a + b;
+							showLoaded(alreadyloaded);
+							return alreadyloaded;
+						},
+						a => a);
+				} else {
+					loadedBytes = files.Aggregate(
+						0L,
+						(alreadyloaded, sf) => {
+							alreadyloaded = loadAndAggregate(alreadyloaded, sf);
+							showLoaded(alreadyloaded);
+							return alreadyloaded;
+						});
+				}
 
 				Sanity.IfTrueSay(lengthSum != loadedBytes, "ScriptLoader.Load: lengthSum != loadedBytes");
 

@@ -16,25 +16,16 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.Timers {
-	public sealed class TimerKey : AbstractKey {
-		private static Dictionary<string, TimerKey> byName = new Dictionary<string, TimerKey>(StringComparer.OrdinalIgnoreCase);
-
+	public sealed class TimerKey : AbstractKey<TimerKey> {
 		private TimerKey(string name, int uid)
 			: base(name, uid) {
 		}
 
 		public static TimerKey Acquire(string name) {
-			TimerKey key;
-			if (byName.TryGetValue(name, out key)) {
-				return key;
-			}
-			key = new TimerKey(name, AbstractKey.GetNewUid());
-			byName[name] = key;
-			return key;
+			return Acquire(name, (n, u) => new TimerKey(n, u));
 		}
 	}
 

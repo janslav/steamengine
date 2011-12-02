@@ -15,19 +15,26 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System;
+using System.Collections.Concurrent;
+using System.Threading;
+
 namespace SteamEngine {
-	using System;
-	using System.Collections;
+
+	public interface IAbstractKey {
+		string Name { get; }
+		int Uid { get; }
+	}
 
 	/// <summary>
 	/// AbstractKey is used as an ID for tags, to make tag lookups
 	/// fast and not use a lot of memory, etc. base class for all
 	/// "key" classes
-	/// 
-	/// 
-	/// </summary>                                                
-	public abstract class AbstractKey {
+	/// </summary>
+	public abstract class AbstractKey<T> : IAbstractKey where T : IAbstractKey {
 		private static int uids;
+
+		private static ConcurrentDictionary<string, T> byName = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
 		private readonly string name;
 		private readonly int uid;
@@ -43,23 +50,28 @@ namespace SteamEngine {
 
 		public int Uid {
 			get { return uid; }
-		} 
+		}
 
-		public override int GetHashCode() {
+		public sealed override int GetHashCode() {
 			return uid;
 		}
 
-		public override string ToString() {
+		public sealed override string ToString() {
 			return name;
 		}
 
-		public override bool Equals(Object obj) {
+		public sealed override bool Equals(Object obj) {
 			return Object.ReferenceEquals(this, obj);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-		public static int GetNewUid() {
-			return uids++;
+		protected static T Acquire(string name, Func<string, int, T> factory) {
+			var k = byName.GetOrAdd(name,
+				n => {
+					var uid = Interlocked.Increment(ref uids);
+					return factory(n, uid);
+				});
+
+			return k;
 		}
 	}
 }

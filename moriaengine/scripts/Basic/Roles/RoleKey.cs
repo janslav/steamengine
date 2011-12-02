@@ -16,28 +16,18 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using SteamEngine.Common;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	public class RoleKey : AbstractKey {
-		private static Dictionary<string, RoleKey> byName = new Dictionary<string, RoleKey>(StringComparer.OrdinalIgnoreCase);
 
+	public sealed class RoleKey : AbstractKey<RoleKey> {
 		private RoleKey(string name, int uid)
 			: base(name, uid) {
 		}
 
 		public static RoleKey Acquire(string name) {
-			RoleKey key;
-			if (byName.TryGetValue(name, out key)) {
-				return key;
-			}
-			key = new RoleKey(name, AbstractKey.GetNewUid());
-			byName[name] = key;
-			return key;
+			return Acquire(name, (n, u) => new RoleKey(n, u));
 		}
 	}
 

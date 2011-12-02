@@ -14,26 +14,15 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace SteamEngine {
-	public sealed class TagKey : AbstractKey {
-		private static Dictionary<string, TagKey> byName = new Dictionary<string, TagKey>(StringComparer.OrdinalIgnoreCase);
-
+	public sealed class TagKey : AbstractKey<TagKey> {
 		private TagKey(string name, int uid)
 			: base(name, uid) {
 		}
 
 		public static TagKey Acquire(string name) {
-			TagKey key;
-			if (byName.TryGetValue(name, out key)) {
-				return key;
-			}
-			key = new TagKey(name, AbstractKey.GetNewUid());
-			byName[name] = key;
-			return key;
+			return Acquire(name, (n, u) => new TagKey(n, u));
 		}
 	}
 }

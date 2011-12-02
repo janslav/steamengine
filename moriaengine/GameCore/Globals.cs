@@ -199,6 +199,11 @@ namespace SteamEngine {
 			get { return Globals.fastStartUp; }
 		}
 
+		private static bool parallelStartUp;
+		public static bool ParallelStartUp {
+			get { return Globals.parallelStartUp; }
+		}
+
 		private static bool netSyncingTracingOn;
 		public static bool NetSyncingTracingOn {
 			get { return Globals.netSyncingTracingOn; }
@@ -562,6 +567,7 @@ namespace SteamEngine {
 				IniFileSection temporary = iniH.GetNewOrParsedSection("temporary");
 				temporary.AddComment("These are temporary INI settings, which will be going away in future versions.");
 				fastStartUp = temporary.GetValue<bool>("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
+				parallelStartUp = temporary.GetValue<bool>("parallelStartUp", false, "If set to true, some parts of startup will run multi-threaded. Not recommended for production.");
 				sendTileDataSpam = temporary.GetValue<bool>("sendTileDataSpam", false, "Set this to true, and you'll be sent lots of spam when you walk. Yeah, this is temporary. I need it for testing tiledata stuff. -SL");
 				netSyncingTracingOn = temporary.GetValue<bool>("netSyncingTracingOn", false, "Networking.SyncQueue info messages");
 				mapTracingOn = temporary.GetValue<bool>("mapTracingOn", false, "Regions.Map info messages");
