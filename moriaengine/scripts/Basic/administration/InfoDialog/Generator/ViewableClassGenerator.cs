@@ -1338,18 +1338,18 @@ namespace SteamEngine.CompiledScripts {
 				get {
 					return fieldLabel;
 				}
-				set {
-					fieldLabel = value;
-				}
+				//set {
+				//    fieldLabel = value;
+				//}
 			}
 
 			internal Type FieldType {
 				get {
 					return fieldType;
 				}
-				set {
-					FieldType = value;
-				}
+				//set {
+				//    this.fieldType = value;
+				//}
 			}
 
 			internal MethodInfo GetMethod {

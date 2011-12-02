@@ -15,12 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Timers;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Character), "Character")]
@@ -46,6 +40,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Button("Resurrect")]
 		public static void Resurrect(object target) {
 			((Character) target).Resurrect();
+		}
+
+		[GetMethod("Edit", typeof(ContainerView.ThingAsContainer))]
+		public static object Edit(object target) {
+			return new ContainerView.ThingAsContainer((Thing) target);
 		}
 	}
 }
