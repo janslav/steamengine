@@ -16,28 +16,23 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine {
-	//TriggerKeys are used when calling triggers. You should call Get(name) once to get a TriggerKey, and then use
-	//that from then on for calling that trigger.
-	public sealed class TriggerKey : AbstractKey {
-		private static Dictionary<string, TriggerKey> byName = new Dictionary<string, TriggerKey>(StringComparer.OrdinalIgnoreCase);
 
+	/// <summary>
+	/// TriggerKeys are used when calling triggers. You should call Get(name) once to get a TriggerKey, and then use
+	/// that from then on for calling that trigger.
+	/// </summary>
+	public sealed class TriggerKey : AbstractKey<TriggerKey> {
 		private TriggerKey(string name, int uid)
 			: base(name, uid) {
 		}
 
 		public static TriggerKey Acquire(string name) {
-			TriggerKey key;
-			if (byName.TryGetValue(name, out key)) {
-				return key;
-			}
-			key = new TriggerKey(name, AbstractKey.GetNewUid());
-			byName[name] = key;
-			return key;
+			return Acquire(name, (n, u) => new TriggerKey(n, u));
 		}
+
 
 		//Triggers defined as fields for faster access (Won't have to look up the string every time)
 
@@ -73,7 +68,7 @@ namespace SteamEngine {
 		public static readonly TriggerKey leaveChar = Acquire("leaveChar");
 		public static readonly TriggerKey leaveRegion = Acquire("leaveRegion");
 
-		public static readonly TriggerKey splitFromStack = Acquire("splitFromStack");		
+		public static readonly TriggerKey splitFromStack = Acquire("splitFromStack");
 
 		public static readonly TriggerKey itemEnter = Acquire("itemEnter");
 		public static readonly TriggerKey enterItem = Acquire("enterItem");

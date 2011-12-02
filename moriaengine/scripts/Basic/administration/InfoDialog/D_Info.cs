@@ -190,26 +190,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		/// <summary>
-		/// Display a settings dialog. Function accessible from the game.
-		/// The function is designed to be triggered using .x settings, but it will be 
-		/// mainly used from the SettingsCategories dialog on a various buttons
-		/// </summary>
-		[SteamFunction]
-		public static void Settings(object self, ScriptArgs args) {
-			if (args.Argv == null || args.Argv.Length == 0) {
-				//call the default settings dialog
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(SettingsCategories.instance));
-			} else {
-				//get the arguments to be sent to the dialog (especialy the first one which is the 
-				//desired object for infoizing)
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(args.Argv[0]));
-			}
-		}
-
-		[SteamFunction]
-		public static void Inf(object self, ScriptArgs args) {
-			Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(new SimpleClass()));
-		}
+		//[SteamFunction]
+		//public static void Inf(object self, ScriptArgs args) {
+		//    Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(new SimpleClass()));
+		//}
 	}
 }

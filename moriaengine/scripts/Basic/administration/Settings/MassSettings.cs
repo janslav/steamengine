@@ -16,11 +16,8 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
@@ -144,7 +141,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		protected abstract class FieldView_ByClass_ThingDef : FieldView_ByClass_SingleField {
-			protected FieldView_ByClass_ThingDef(int index) : base(index) {
+			protected FieldView_ByClass_ThingDef(int index)
+				: base(index) {
 			}
 
 			public override string GetName(object target) {
@@ -192,7 +190,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DefType def = scp as DefType;
 						if ((def != null) &&
 								(def.Model == model) &&
-								CheckIfAppies(def)) {
+								CheckIfApplies(def)) {
 							list.Add(def);
 						}
 					}
@@ -219,7 +217,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		internal virtual bool CheckIfAppies(DefType def) {
+		internal virtual bool CheckIfApplies(DefType def) {
 			return true;
 		}
 
@@ -278,50 +276,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public abstract IDataFieldView GetFieldView(int index);
 	}
 
-	public class MassSettingsView : IDataView {
-
-		public Type HandledType {
-			get {
-				return typeof(IMassSettings);
-			}
-		}
-
-		public bool HandleSubclasses {
-			get {
-				return true;
-			}
-		}
-
-		public string GetName(object instance) {
-			return ((IMassSettings) instance).Name;
-		}
-
-		public int GetActionButtonsCount(object instance) {
-			return 0;
-		}
-
-		public int GetFieldsCount(object instance) {
-			return ((IMassSettings) instance).Count;
-		}
-
-		public System.Collections.Generic.IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
-			IMassSettings holder = (IMassSettings) target;
-			for (int i = firstLineIndex, n = holder.Count; i < n; i++) {
-				yield return holder.GetFieldView(i);
-			}
-		}
-
-		public System.Collections.Generic.IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target) {
-			yield break;
-		}
-
-	}
-
-
 	public abstract class MassSettingByMaterial<DefType, FieldType> : MassSettings_ByModel<DefType, FieldType> where DefType : ThingDef, IObjectWithMaterial {
 		public Material material;
 
-		internal override bool CheckIfAppies(DefType def) {
+		internal override bool CheckIfApplies(DefType def) {
 			return ((IObjectWithMaterial) def).Material == this.material;
 		}
 	}

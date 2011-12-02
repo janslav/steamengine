@@ -409,7 +409,7 @@ namespace SteamEngine.CompiledScripts {
 			internal CodeTypeDeclaration GetGeneratedType() {
 				codeTypeDeclaration.TypeAttributes = TypeAttributes.Public;
 				if (this.parentGI == null) {
-					codeTypeDeclaration.BaseTypes.Add(typeof(AbstractDataView)); //default parent class name
+					codeTypeDeclaration.BaseTypes.Add(typeof(ViewableClassDataView)); //default parent class name
 				} else {
 					codeTypeDeclaration.BaseTypes.Add(this.parentGI.generatedClassName); //inheritance between generated classes
 				}
@@ -829,7 +829,7 @@ namespace SteamEngine.CompiledScripts {
 				string newClassName = type.Name + "ActionButtonsPage";
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				retVal.BaseTypes.Add(typeof(AbstractDataView.AbstractPage<ButtonDataFieldView>));
+				retVal.BaseTypes.Add(typeof(ViewableClassDataView.AbstractPage<ButtonDataFieldView>));
 				retVal.IsClass = true;
 
 				//constructor with two parameters (calling the base(,))
@@ -901,7 +901,7 @@ namespace SteamEngine.CompiledScripts {
 				string newClassName = type.Name + "DataFieldsPage";
 				CodeTypeDeclaration retVal = new CodeTypeDeclaration(newClassName);
 				retVal.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				retVal.BaseTypes.Add(typeof(AbstractDataView.AbstractPage<IDataFieldView>));
+				retVal.BaseTypes.Add(typeof(ViewableClassDataView.AbstractPage<IDataFieldView>));
 				retVal.IsClass = true;
 
 				//constructor with two parameters (calling the base(,))

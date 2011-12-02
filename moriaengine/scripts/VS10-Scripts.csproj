@@ -97,6 +97,27 @@
     <Compile Include="Basic\administration\firewall\Firewall.cs" />
     <Compile Include="Basic\administration\firewall\D_Firewall.cs" />
     <Compile Include="Basic\administration\Functions\FunctionsList.cs" />
+    <Compile Include="Basic\administration\InfoDialog\DataViewProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Basic\administration\InfoDialog\D_Info.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Basic\administration\InfoDialog\D_InfoDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Basic\administration\InfoDialog\FieldViewBaseImpls\ButtonDataFieldView.cs" />
+    <Compile Include="Basic\administration\InfoDialog\FieldViewBaseImpls\ReadOnlyDataFieldView.cs" />
+    <Compile Include="Basic\administration\InfoDialog\FieldViewBaseImpls\ReadWriteDataFieldView.cs" />
+    <Compile Include="Basic\administration\InfoDialog\Generator\ViewableClassAttributes.cs" />
+    <Compile Include="Basic\administration\InfoDialog\Generator\ViewableClassDataView.cs" />
+    <Compile Include="Basic\administration\InfoDialog\Generator\ViewableClassGenerator.cs" />
+    <Compile Include="Basic\administration\InfoDialog\IDataView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Basic\administration\InfoDialog\InfoDialogHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Basic\administration\Pages\GMPage.cs" />
     <Compile Include="Basic\administration\plugins\PluginList.cs" />
     <Compile Include="Basic\administration\Regions\MutableRectangle.cs" />
@@ -107,6 +128,24 @@
     <Compile Include="Basic\administration\Regions\SelectParent.cs" />
     <Compile Include="Basic\administration\Register\RegisterDialogs.cs" />
     <Compile Include="Basic\administration\Register\RegisterHandling.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\DataViews\DictionaryDataView.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\DataViews\EnumDataView.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\DataViews\ListDataView.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\AbilityDefDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\AccountDescriptors.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\CharacterDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\ItemDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\PluginDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\PluginHolderDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\RectanglesDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\RegionsDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\implementations\Descriptors\TagHolderDescriptor.cs" />
+    <Compile Include="Basic\administration\Settings\MassSettings.cs" />
+    <Compile Include="Basic\administration\Settings\MassSettingsView.cs" />
+    <Compile Include="Basic\administration\Settings\MetaSettings.cs" />
+    <Compile Include="Basic\administration\Settings\SettingsInfo.cs" />
+    <Compile Include="Basic\administration\Settings\SettingsProvider.cs" />
+    <Compile Include="Basic\administration\Settings\SettingsResult.cs" />
     <Compile Include="Basic\administration\tags\TagCreate.cs" />
     <Compile Include="Basic\administration\tags\TagList.cs" />
     <Compile Include="Basic\administration\timers\TimerEdit.cs" />
@@ -167,9 +206,6 @@
     <Compile Include="Basic\db\DbUtils.cs" />
     <Compile Include="Basic\db\LoginLogsContainer.cs" />
     <Compile Include="Basic\dialogs\displaytext\DisplayText.cs" />
-    <Compile Include="Basic\dialogs\info\Info.cs" />
-    <Compile Include="Basic\dialogs\info\InfoDetail.cs" />
-    <Compile Include="Basic\dialogs\info\InfoDialogHandler.cs" />
     <Compile Include="Basic\dialogs\DialogStacking.cs" />
     <Compile Include="Basic\dialogs\DialogUtils.cs" />
     <Compile Include="Basic\dialogs\GumpComponents.cs" />
@@ -253,25 +289,6 @@
     <Compile Include="Basic\Roles\RoleMembership.cs" />
     <Compile Include="Basic\Roles\RolesDialog.cs" />
     <Compile Include="Basic\Roles\RolesManagement.cs" />
-    <Compile Include="Basic\Settings\implementations\DataViews\DictionaryDataView.cs" />
-    <Compile Include="Basic\Settings\implementations\DataViews\EnumDataView.cs" />
-    <Compile Include="Basic\Settings\implementations\DataViews\ListDataView.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\AbilityDefDescriptor.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\AccountDescriptors.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\CharacterDescriptor.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\ItemDescriptor.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\PluginDescriptor.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\PluginHolderDescriptor.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\RectanglesDescriptor.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\RegionsDescriptor.cs" />
-    <Compile Include="Basic\Settings\implementations\Descriptors\TagHolderDescriptor.cs" />
-    <Compile Include="Basic\Settings\DataView.cs" />
-    <Compile Include="Basic\Settings\MassSettings.cs" />
-    <Compile Include="Basic\Settings\MetaSettings.cs" />
-    <Compile Include="Basic\Settings\SettingsInfo.cs" />
-    <Compile Include="Basic\Settings\SettingsProvider.cs" />
-    <Compile Include="Basic\Settings\SettingsResult.cs" />
-    <Compile Include="Basic\Settings\ViewableClassGenerator.cs" />
     <Compile Include="Basic\skills\Combat\CombatCalculator.cs" />
     <Compile Include="Basic\skills\Combat\CombatSettings.cs" />
     <Compile Include="Basic\skills\Combat\DamageManager.cs" />
@@ -494,6 +511,7 @@
     <None Include="Basic\administration\Pages\pages.scp" />
     <None Include="Basic\administration\d_defs.scp" />
     <None Include="Basic\administration\helperFunctions.scp" />
+    <None Include="Basic\administration\Settings\nastaveni.scp" />
     <None Include="Basic\BasicTypes\moriatypes.scp" />
     <None Include="Basic\CharClasses\Character.ct" />
     <None Include="Basic\CharClasses\NPC.ct" />
@@ -527,7 +545,6 @@
     <None Include="Basic\Professions\ProfessionPlugin.ct" />
     <None Include="Basic\Professions\ProfessionPlugin.def" />
     <None Include="Basic\Regeneration\RegenerationPlugin.ct" />
-    <None Include="Basic\Settings\nastaveni.scp" />
     <None Include="Basic\skills\Combat\Destroyable.ct" />
     <None Include="Basic\skills\Combat\Plugins.ct" />
     <None Include="Basic\skills\Combat\Projectile.ct" />
@@ -803,4 +820,5 @@
   <ItemGroup>
     <None Include="Basic\ItemClasses\Bank\bankBox.def" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

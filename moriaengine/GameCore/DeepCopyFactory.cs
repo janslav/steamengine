@@ -16,11 +16,7 @@
 */
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
@@ -70,7 +66,7 @@ namespace SteamEngine {
 				|| typeof(AbstractScript).IsAssignableFrom(type)
 				|| typeof(Region).IsAssignableFrom(type)
 				|| typeof(Globals).IsAssignableFrom(type)
-				|| typeof(AbstractKey).IsAssignableFrom(type)
+				|| typeof(IAbstractKey).IsAssignableFrom(type)
 				|| typeof(AbstractAccount).IsAssignableFrom(type));
 		}
 
