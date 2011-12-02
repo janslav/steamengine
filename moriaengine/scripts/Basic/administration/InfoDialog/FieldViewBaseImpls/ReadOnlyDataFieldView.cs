@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Abstract class providing basics to display a non editable 'label-value' in the dialog</summary>
 	public abstract class ReadOnlyDataFieldView : IDataFieldView {
 		/// <summary>There is no button for this dataview field</summary>
-		public bool IsButtonEnabled {
+		public virtual bool IsButtonEnabled {
 			get {
 				return false;
 			}
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		/// <summary>This field does not have any buttons too - buttons have another type of data view</summary>
-		public void OnButton(object target) {
+		public virtual void OnButton(object target) {
 			throw new SEException(LogStr.Error("This dataview cannot have any buttons"));
 		}
 

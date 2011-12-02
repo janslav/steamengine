@@ -128,6 +128,7 @@
     <Compile Include="Basic\administration\Regions\SelectParent.cs" />
     <Compile Include="Basic\administration\Register\RegisterDialogs.cs" />
     <Compile Include="Basic\administration\Register\RegisterHandling.cs" />
+    <Compile Include="Basic\administration\InfoDialog\ContainerView.cs" />
     <Compile Include="Basic\administration\Settings\implementations\DataViews\DictionaryDataView.cs" />
     <Compile Include="Basic\administration\Settings\implementations\DataViews\EnumDataView.cs" />
     <Compile Include="Basic\administration\Settings\implementations\DataViews\ListDataView.cs" />

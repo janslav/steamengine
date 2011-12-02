@@ -15,12 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Timers;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Item), "Item")]
@@ -37,6 +31,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[Button("EmptyCont")]
 		public static void EmptyCont(object target) {
 			((Container) target).EmptyCont();
+		}
+
+		[GetMethod("Edit", typeof(ContainerView.ThingAsContainer))]
+		public static object Edit(object target) {
+			return new ContainerView.ThingAsContainer((Thing) target);
 		}
 	}
 
