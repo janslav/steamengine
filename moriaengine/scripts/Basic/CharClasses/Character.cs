@@ -348,10 +348,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool IsPetOf(Character cre) {
 			//TODO
-			return true;
+			return cre.IsGM;
 		}
 
 		public override bool CanEquipItemsOn(AbstractCharacter chr) {
+			if (chr == this) {
+				return true;
+			}
 			Character target = (Character) chr;
 			return (this.IsPetOf(target)) && (this.CanReach(target).Allow);
 		}

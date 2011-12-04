@@ -1,6 +1,6 @@
 Buy                             = kup
 Description                     = Název zboží
-PriceInGp                       = Cena/gp
+PriceInGp                       = Cena (gp)
 NewStock                        = Přidat dalši zboží
 DeleteSection                   = Odebrat sekci
 ReverseOrder                    = Převrátit nabídku
