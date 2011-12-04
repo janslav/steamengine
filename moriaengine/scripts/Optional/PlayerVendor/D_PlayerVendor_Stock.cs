@@ -75,10 +75,13 @@ namespace SteamEngine.CompiledScripts {
 			t.Transparent = true;
 
 			//textentries: description, price
-			t = dialogHandler.AddTable(new GUTATable(2, 80, 0));
-			t.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
+			t = dialogHandler.AddTable(new GUTATable(1, 80, 0));
+			//t.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			t.AddToCell(0, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Label_Description).Build());
 			t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Description).Text(description).Build());
+			t.Transparent = true;
+
+			t = dialogHandler.AddTable(new GUTATable(1, 80, 0));
 			t.AddToCell(1, 0, GUTAText.Builder.Text(Loc<Loc_PlayerVendor_Stock>.Get(sendTo.Language).Label_Price).Build());
 			t.AddToCell(1, 1, GUTAInput.Builder.Id(inputId_Price).Text(price.ToString()).Type(LeafComponentTypes.InputNumber).Build());
 			t.Transparent = true;

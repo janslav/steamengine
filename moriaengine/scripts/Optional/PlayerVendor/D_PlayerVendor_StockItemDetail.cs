@@ -16,8 +16,10 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 
+using System.Linq;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
 
 
@@ -27,22 +29,34 @@ namespace SteamEngine.CompiledScripts {
 	/// </summary>
 	public class D_PlayerVendor_StockItemDetail : CompiledGumpDef {
 		const int inputId_Price = 1;
-		const int inputId_Description = 2;
+		const int inputId_Units = 2;
 
-		const int buttonId_Sell = 1;
-		const int buttonId_SellByUnit = 2;
-		const int buttonId_NewSection = 3;
+		const int buttonId_ChangePrice = 1;
+		const int buttonId_BuyOrRecall = 2;
+		const int buttonId_AddMoreUnits = 3;
+		const int buttonId_Examine = 4;
 
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			var entry = (PlayerVendorStockEntry) focus;
+			var item = (Item) entry.FindCont(0);
+			var vendor = (PlayerVendor) entry.TopObj();
+			var player = (Player) sendTo;
 
-			//var stockSection = (Container) args[0];
-			//var vendor = (PlayerVendor) stockSection.TopObj();
+			var playerIsOwner = vendor.CanBeControlledBy(player);
 
-			//decimal price = 0;
-			//int amount = 1;
-			//string header, description;
-			//bool enableSoldByUnit = false;
+			var loc = Loc<Loc_D_PlayerVendor_StockItemDetail>.Get(sendTo.Language);
+
+			string header;
+			int amount;
+			if (entry.soldByUnits) {
+				amount = entry.Aggregate(0, (a, i) => i.Amount + a); //countamount
+				header = item.Name;
+			} else {
+				amount = item.Amount;
+				header = string.Concat(amount.ToString(), " ", item.Name);
+			}
+
 
 			//var asItem = focus as Item;
 			//if (asItem != null) {
@@ -64,77 +78,135 @@ namespace SteamEngine.CompiledScripts {
 			//}
 
 
-			//var dialogHandler = new ImprovedDialog(this.GumpInstance);
+			var dialogHandler = new ImprovedDialog(this.GumpInstance);
 
-			////create the background GUTAMatrix and set its size       
-			//dialogHandler.CreateBackground(400);
-			//dialogHandler.SetLocation(100, 175);
+			//create the background GUTAMatrix and set its size       
+			dialogHandler.CreateBackground(300);
+			dialogHandler.SetLocation(100, 100);
 
-			////header
-			//var t = dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			//t.AddToCell(0, 0, GUTAText.Builder.TextHeadline(header).Build());
-			//t.AddToCell(0, 1, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build());
-			//t.Transparent = true;
 
-			////textentries: description, price
-			//t = dialogHandler.AddTable(new GUTATable(2, 80, 0));
-			//t.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
-			//t.AddToCell(0, 0, GUTAText.Builder.Text(Loc<Loc_D_PlayerVendor_StockItemDetail>.Get(sendTo.Language).Label_Description).Build());
-			//t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Description).Text(description).Build());
-			//t.AddToCell(1, 0, GUTAText.Builder.Text(Loc<Loc_D_PlayerVendor_StockItemDetail>.Get(sendTo.Language).Label_Price).Build());
-			//t.AddToCell(1, 1, GUTAInput.Builder.Id(inputId_Price).Text(price.ToString()).Type(LeafComponentTypes.InputNumber).Build());
-			//t.Transparent = true;
 
-			////last row with buttons
-			//t = dialogHandler.AddTable(new GUTATable(1, 30, 70, 30, 120, 30, 0));
-			//t.AddToCell(0, 0, GUTAButton.Builder.Id(buttonId_Sell).Build());
-			//t.AddToCell(0, 1, GUTAText.Builder.Text(Loc<Loc_D_PlayerVendor_StockItemDetail>.Get(sendTo.Language).Label_Sell).Build());
-			//if (enableSoldByUnit) {
-			//    t.AddToCell(0, 2, GUTAButton.Builder.Id(buttonId_SellByUnit).Build());
-			//    t.AddToCell(0, 3, GUTAText.Builder.Text(Loc<Loc_D_PlayerVendor_StockItemDetail>.Get(sendTo.Language).Label_SoldByUnits).Build());
-			//}
-			//t.AddToCell(0, 4, GUTAButton.Builder.Id(buttonId_NewSection).Build());
-			//t.AddToCell(0, 5, GUTAText.Builder.Text(Loc<Loc_D_PlayerVendor_StockItemDetail>.Get(sendTo.Language).Label_NewSection).Build());
+			//header
+			var t = dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
+			t.AddToCell(0, 0, GUTAText.Builder.TextHeadline(header).Build());
+			t.AddToCell(0, 1, GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build());
+			t.Transparent = true;
 
-			//t.Transparent = true;
+			//htmlgump - description
+			t = dialogHandler.AddTable(new GUTATable(3, 0));
+			t.AddToCell(0, 0, GUTAHTMLText.Builder.Text(entry.Name).Build());
+			t.Transparent = true;
 
-			//dialogHandler.WriteOut();
+			//color
+			t = dialogHandler.AddTable(new GUTATable(1, 80, 0));
+			t.AddToCell(0, 0, GUTAText.Builder.Text(loc.Label_Color).Build());
+			t.AddToCell(0, 1, GUTAText.Builder.Hue(item.Color - 1).Text("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||").Build());
+			t.Transparent = true;
+
+			//price (entry if my vendor)
+			if (playerIsOwner) {
+				t = dialogHandler.AddTable(new GUTATable(1, 80, 100, 0));
+				t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Price).Text(entry.price.ToString()).Build());
+				//change price button
+				t.AddToCell(0, 2, GUTAButton.Builder.Id(buttonId_ChangePrice).Build());
+				t.AddToCell(0, 2, GUTAText.Builder.Text(loc.Label_Change).XPos(30).Build());
+			} else {
+				t = dialogHandler.AddTable(new GUTATable(1, 80, 0));
+				t.AddToCell(0, 1, GUTAText.Builder.Text(entry.price.ToString()).Build());
+			}
+			t.AddToCell(0, 0, GUTAText.Builder.Text(loc.Label_Price).Build());
+			t.Transparent = true;
+
+			//units
+			if (entry.soldByUnits) {
+				t = dialogHandler.AddTable(new GUTATable(1, 80, 0));
+				t.AddToCell(0, 0, GUTAText.Builder.Text(loc.Label_Units).Build());
+				string entryText = playerIsOwner ? "" : "1";
+
+				t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Price).Text(entryText).Build());
+				t.AddToCell(0, 1, GUTAText.Builder.Text(amount.ToString()).XPos(100).Build());
+
+				t.Transparent = true;
+			}
+
+			//last row with buttons
+			t = dialogHandler.AddTable(new GUTATable(1, 100, 90, 0));
+			t.AddToCell(0, 0, GUTAButton.Builder.Id(buttonId_BuyOrRecall).Type(LeafComponentTypes.ButtonTick).Build());
+			string buyOrRecall = playerIsOwner ? loc.Label_Recall : loc.Label_Buy;
+			t.AddToCell(0, 0, GUTAText.Builder.Text(buyOrRecall).XPos(35).Build());
+			if (entry.soldByUnits) {
+				t.AddToCell(0, 1, GUTAText.Builder.Text(loc.Label_Add).Build());
+				t.AddToCell(0, 1, GUTAButton.Builder.Id(buttonId_AddMoreUnits).XPos(35).Build());
+			}
+			t.AddToCell(0, 2, GUTAButton.Builder.Id(buttonId_Examine).Build());
+			t.AddToCell(0, 2, GUTAText.Builder.Text(loc.Label_Examine).XPos(35).Build());
+
+			t.Transparent = true;
+
+			dialogHandler.WriteOut();
 
 			#region orig. spherescript
-			//100,175
-			//argo.tag(sirka,400)
-			//argo.tag(vyska,<eval (4*d_def_radek_vyska)+(5*d_def_skvira)+(2*d_def_okraj)>)
+			//[DIALOG d_vendor_item]
+			//SetLocation=100,100
+			//argo.tag(sirka,300)
+			//argo.tag(vyska,<eval (8*d_def_radek_vyska)+(7*d_def_skvira)+(2*d_def_okraj)>)
 			//argo.dialog_prvni
 			//argo.dialog_pozadi(<argo.tag(nexty)>,1)
+			//argo.dialog_pozadi(<argo.tag(nexty)>,3)
+			//argo.dialog_pozadi(<argo.tag(nexty)>,1,80)
 			//argo.dialog_pozadi(<argo.tag(nexty)>,1,80)
 			//argo.dialog_pozadi(<argo.tag(nexty)>,1,80)
 			//argo.dialog_pozadi(<argo.tag(nexty)>,1)
 			//argo.dialog_zpruhledni
-			//if (isitem)
-			// argo.texta(<argo.dialog_textpos(0,0)>,0481,Na prodej: <amount> <name>)
-			// argo.settext(10,<qval((amount==1), ,<amount>)><name>)
+
+			//button((<argo.tag(sirka)>-<d_def_okraj>)-33,<argo.tag(obj_y[0])>,0fb1,0fb3,1,0,0)
+			//argo.settext(100,<tag(description)>)//(d_Def_odsazeni(2*(d_def_okraj+d_def_skvira)))
+			//argo.HTMLGUMP(<argo.dialog_textpos(1,0)>,argo.tag(sirka)-(d_Def_odsazeni+(2*(d_def_okraj+d_def_skvira))),3*d_def_radek_vyska,100,0,1)
+
+			//argo.texta(<argo.dialog_textpos(0,0)>,0481,<amount> <name>)
+			//argo.texta(<argo.dialog_textpos(2,0)>,0481,Barva)
+			//argo.texta(<argo.dialog_textpos(2,1)>,<EVAL <color>-1>,"||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+			//argo.texta(<argo.dialog_textpos(3,0)>,0481,Cena)
+			//settext(105,<tag.PRICE>)
+			//if (topobj.ismypet)
+			// argo.textentry(<argo.dialog_textpos(3,1)>,100,d_def_radek_vyska,0481,1,105)
+			// argo.button(lastxpos+100,lastypos,4005,4007,1,0,4)//zmenit cenu
+			// argo.texta(lastxpos+135,lastypos,0481,Zmenit)//zmenit cenu 
 			//else
-			// argo.texta(<argo.dialog_textpos(0,0)>,0481,Na prodej: <name>)
-			// argo.settext(10,<typedef.name>)
+			// argo.text(<argo.dialog_textpos(3,1)>,0481,105) 
 			//endif
-			//argo.text(<argo.dialog_textpos(0,0)>,0481,100)
-			//
-			//argo.settext(110,<?EVAL <src.findID(i_vendor_stock).tag.PRICE>?>)
-			//argo.texta(<argo.dialog_textpos(1,0)>,0481,Popis)
-			//argo.textentry(<argo.dialog_textpos(1,1)>,argo.tag(sirka)-(d_Def_odsazeni+(2*(d_def_okraj+d_def_skvira))),d_def_radek_vyska,0481,0,10)
-			//argo.texta(<argo.dialog_textpos(2,0)>,0481,Cena)
-			//argo.textentry(<argo.dialog_textpos(2,1)>,argo.tag(sirka)-(d_Def_odsazeni+(2*(d_def_okraj+d_def_skvira))),d_def_radek_vyska,0481,1,110)
-			//
-			//button((<argo.tag(sirka)>-<d_def_okraj>)-33,<argo.tag(obj_y[0])>,0fb1,0fb3,1,0,9)//cancel
-			//
-			//argo.dialog_textpos(3,0,1)
-			//argo.button(lastxpos,lastypos-1,9905,9904,1,0,3)
-			//argo.textA(lastxpos+30,lastypos,2301,Prodat)
-			//if (iscontainer) && !(ID==i_truhla_heslo)
-			// argo.button(lastxpos+100,lastypos-1,9905,9904,1,0,1)
-			// argo.textA(lastxpos+130,lastypos,2301,Jednotkovy prodej)
-			// argo.button(lastxpos+250,lastypos-1,9905,9904,1,0,2)
-			// argo.textA(lastxpos+280,lastypos,2301,Nova sekce)
+			//if (tag(jednot))
+			// argo.texta(<argo.dialog_textpos(4,0)>,0481,Jednotek?)
+			// if (topobj.ismypet)
+			//  argo.dialog_textpos(5,0,1)
+			//  argo.button(lastxpos+100,lastypos,4005,4007,1,0,3)//
+			//  argo.texta(lastxpos+135,lastypos,0481,Pridat)//
+			//  argo.settext(110,)
+			// else
+			//  argo.settext(110,1)
+			// endif
+			// argo.textentry(<argo.dialog_textpos(4,1)>,100,d_def_radek_vyska,0481,0,110)
+			// argo.texta(lastxpos+100,lastypos,0481,<link.countamount>)
+			//endif
+
+			//argo.button(<argo.dialog_textpos(5,0,1)>,4005,4007,1,0,1)//koupit / stahnout
+			//if (topobj.ismypet)
+			// argo.texta(lastxpos+35,lastypos,0481,Stahnout)
+			//else
+			// argo.texta(lastxpos+35,lastypos,0481,Koupit)
+			//endif
+			//if (link.type==t_container)&&(safe link.rescount) && !(link.id==i_truhla_heslo)//
+			// argo.button(lastxpos+190,lastypos,4005,4007,1,0,2)//
+			// argo.texta(lastxpos+225,lastypos,0481,Projit)//
+			// return -2
+			// break
+			//endif
+
+			//if (link.cont.baseid==i_pouch)
+			// if (link.cont.rescount==1) && !(link.id==i_truhla_heslo)//if (cont.baseid==i_pouch)&&(cont.rescount==1)
+			//  argo.button(lastxpos+190,lastypos,4005,4007,1,0,5)//
+			//  argo.texta(lastxpos+221,lastypos,0481,Prohledni)//
+			// endif
 			//endif
 			#endregion
 		}
@@ -147,11 +219,12 @@ namespace SteamEngine.CompiledScripts {
 				//    return;
 				//}
 
-				//var stockSection = (Container) args[0];
-				//var vendor = (PlayerVendor) stockSection.TopObj();
+				var entry = (PlayerVendorStockEntry) gi.Focus;
+				var item = (Item) entry.FindCont(0);
+				var vendor = (PlayerVendor) entry.TopObj();
+				var player = (Player) gi.Cont;
 
-				//var focus = gi.Focus;
-				//var player = (Player) gi.Cont;
+				var playerIsOwner = vendor.CanBeControlledBy(player);
 
 				//var description = gr.GetTextResponse(inputId_Description);
 
@@ -189,13 +262,14 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class Loc_D_PlayerVendor_StockItemDetail : CompiledLocStringCollection {
-		//public string Header_Item = "Na prodej: {0} {1}";
-		//public string Header_Char = "Na prodej: {0}";
-		//public string Label_Price = "Cena";
-		//public string Label_Description = "Popis";
-		//public string Label_Sell = "Prodej";
-		//public string Label_SoldByUnits = "Jednotkový prodej";
-		//public string Label_NewSection = "Nová sekce";
+		public string Label_Price = "Cena";
+		public string Label_Color = "Barva";
+		public string Label_Change = "Zmìnit";
+		public string Label_Units = "Jednotek?";
+		public string Label_Add = "Pøidat";
+		public string Label_Recall = "Stáhnout";
+		public string Label_Buy = "Koupit";
+		public string Label_Examine = "Projít";
 
 		//public string InvalidPrice = "Cena musí být vìtší než 0";
 	}

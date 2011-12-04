@@ -286,7 +286,8 @@ namespace SteamEngine.CompiledScripts {
 						case buttonId_Rows_Detail:
 							var asEntry = item as PlayerVendorStockEntry;
 							if (asEntry != null) {
-								player.WriteLine("Detail");
+								var newGi = asEntry.Dialog(player, SingletonScript<D_PlayerVendor_StockItemDetail>.Instance);
+								DialogStacking.EnstackDialog(gi, newGi);
 							} else { //section
 								var newGi = item.Dialog(player, this);
 								DialogStacking.EnstackDialog(gi, newGi);
