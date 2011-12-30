@@ -27,7 +27,7 @@ ON=*stock*
 ON=*sklad*
 	arg player = argv[0]
 
-	if (this.CanBeControlledBy(player))
+	if (this.CanVendorBeControlledByWithMessage(player))
 		this.Say(LocManager.GetEntry("loc_playervendor", "OneMomentPlease", player.Language))
 		player.Target(targ_playerVendor_stock, <this.StockRoot>)
 		return 1

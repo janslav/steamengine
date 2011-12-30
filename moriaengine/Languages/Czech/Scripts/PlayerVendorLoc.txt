@@ -5,3 +5,4 @@ VendorOffline                   = Tento prodejce má zavřeno
 VendorIsntYours                 = Tento prodejce ti není podřízen.
 ThisNpcIsntYours                = Tento tvor ti nepatří.
 CanOnlySellAnimals              = Prodávat lze jen zvířata
+PriceCalculationError           = Cenu nelze vypočítat.

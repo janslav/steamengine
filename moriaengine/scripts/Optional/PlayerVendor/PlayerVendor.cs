@@ -15,7 +15,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -35,17 +37,52 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool CanTradeWithMessage(Player player) {
 			//TODO: check realm, etc.
-			if (!this.IsOperational) {
-				player.WriteLineLoc<PlayerVendorLoc>(l => l.VendorOffline);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Determines whether the specified player can control this vendor (i.e. is the owner). If not, sends deny message.
+		/// </summary>
+		public bool CanVendorBeControlledByWithMessage(Player player) {
+			//TODO? override pet system?
+
+			//does player own the vendor?
+			if (!this.CanVendorBeControlledBy(player)) {
+				player.WriteLineLoc<PlayerVendorLoc>(l => l.VendorIsntYours);
 				return false;
 			}
 
 			return true;
 		}
 
-		public bool CanBeControlledBy(Player player) {
-			//override pet system?
+		/// <summary>
+		/// Determines whether the specified player can control this vendor (i.e. is the owner).
+		/// </summary>
+		public bool CanVendorBeControlledBy(Player player) {
 			return this.IsPetOf(player);
+		}
+
+		/// <summary>
+		/// Determines whether the specified player can interact with the vendor.
+		/// </summary>
+		/// <param name="player">The player.</param>
+		/// <returns>
+		///   <c>true</c> if this instance [can interact with vendor message] the specified player; otherwise, <c>false</c>.
+		/// </returns>
+		public bool CanInteractWithVendorMessage(Player player) {
+
+			if (!this.IsOperational) {
+				player.WriteLineLoc<PlayerVendorLoc>(l => l.VendorOffline);
+				return false;
+			}
+
+			//is player close to vendor?
+			if (!player.CanReachWithMessage(this)) {
+				return false;
+			}
+
+			return true;
 		}
 
 		public bool IsOperational {
@@ -79,19 +116,7 @@ namespace SteamEngine.CompiledScripts {
 		/// </returns>
 		public bool CanStockWithMessage(Player player, Thing thingBeingStocked) {
 
-			//does player own the vendor?
-			if (!this.CanBeControlledBy(player)) {
-				player.WriteLineLoc<PlayerVendorLoc>(l => l.VendorIsntYours);
-				return false;
-			}
-
-			//does the vendor want to talk with the player?
-			if (!this.CanTradeWithMessage(player)) {
-				return false;
-			}
-
-			//is player close to vendor?
-			if (!player.CanReachWithMessage(this)) {
+			if (!this.CanVendorBeControlledByWithMessage(player) || !this.CanInteractWithVendorMessage(player)) {
 				return false;
 			}
 
@@ -128,7 +153,6 @@ namespace SteamEngine.CompiledScripts {
 				return player.CanReachWithMessage(pet);
 			}
 		}
-
 
 		/// <summary>
 		/// Adds new stock section.
@@ -183,7 +207,7 @@ namespace SteamEngine.CompiledScripts {
 			} else {
 				try {
 					var petToStock = (Character) thingToStock;
-					petToStock.LogoutFully();
+					petToStock.Disconnect();
 
 					entry.Link = petToStock;
 					entry.soldByUnits = false;
@@ -265,6 +289,78 @@ namespace SteamEngine.CompiledScripts {
 				"x ", description);
 		}
 		#endregion
+
+		internal void RecallEntry(Player player, PlayerVendorStockEntry entry, int units) {
+			this.BuyOrRecallImpl(player, entry, units, false);
+		}
+
+		internal bool TryBuyEntry(Player player, PlayerVendorStockEntry entry, int units) {
+			return this.BuyOrRecallImpl(player, entry, units, true);
+		}
+
+		private bool BuyOrRecallImpl(Player player, PlayerVendorStockEntry entry, int units, bool buying) {
+			if (entry.soldByUnits) {
+
+				var totalUnits = entry.Aggregate(0, (a, i) => i.Amount + a); //countamount
+				units = Math.Min(units, totalUnits);
+
+				if (buying) {
+					decimal priceTotal;
+					try {
+						priceTotal = entry.price * units;
+					} catch {
+						player.WriteLineLoc<PlayerVendorLoc>(l => l.PriceCalculationError);
+						return false;
+					}
+
+					if (!player.Pay(priceTotal)) {
+						return false;
+					}
+				}
+
+				var toMoveTotal = units;
+				var backpack = player.Backpack;
+
+				while (toMoveTotal > 0) {
+					var item = entry.FindCont(0);
+
+					var toMove = Math.Min(item.Amount, toMoveTotal);
+
+					player.PickupItem(item, toMove);
+					int x, y;
+					entry.GetRandomXYInside(out x, out y);
+					player.PutItemInItem(backpack, x, y, true);
+
+					toMoveTotal -= toMove;
+				}
+
+			} else {
+				if (buying && !player.Pay(entry.price)) {
+					return false;
+				}
+
+				var asChar = (Character) entry.Link;
+				if (asChar != null) {
+					asChar.P(player.P());
+					asChar.Reconnect();
+					entry.Delete();
+					return true;
+				} else {
+					var item = entry.FindCont(0);
+
+					player.PickupItem(item, item.Amount);
+					int x, y;
+					entry.GetRandomXYInside(out x, out y);
+					player.PutItemInItem(player.Backpack, x, y, true);
+				}
+			}
+
+
+			if (entry.Count == 0) {
+				entry.Delete();
+			}
+			return true;
+		}
 	}
 
 	[Dialogs.ViewableClass]
@@ -302,25 +398,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public string ThisNpcIsntYours = "Tento tvor ti nepatøí.";
 		public string CanOnlySellAnimals = "Prodávat lze jen zvíøata";
-	}
-}
 
-namespace SteamEngine.CompiledScripts.Dialogs {
-
-	/// <summary>Surprisingly the dialog that will display the RegBox guts</summary>
-	public class D_PV : CompiledGumpDef {
-
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-		}
-
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-		}
-	}
-
-	public class Targ_PV : CompiledTargetDef {
-
-		protected override void On_Start(Player self, object parameter) {
-			base.On_Start(self, parameter);
-		}
+		public string PriceCalculationError = "Cenu nelze vypoèítat.";
 	}
 }

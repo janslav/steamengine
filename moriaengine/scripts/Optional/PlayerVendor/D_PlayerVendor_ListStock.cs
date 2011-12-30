@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 			//rows with item descriptions
 			t = dialogHandler.AddTable(new GUTATable(rows, 20, 40, 450, 0));
 
-			bool isMyVendor = vendor.CanBeControlledBy(player);
+			bool isMyVendor = vendor.CanVendorBeControlledBy(player);
 
 			int index = -1;
 			int row = 0;
@@ -235,7 +235,6 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-
 			var section = (Container) gi.Focus;
 			var vendor = (PlayerVendor) section.TopObj();
 			var player = (Player) gi.Cont;
@@ -248,25 +247,25 @@ namespace SteamEngine.CompiledScripts {
 					return;
 
 				case buttonId_NewStock:
-					if (vendor.CanBeControlledBy(player)) {
+					if (vendor.CanVendorBeControlledByWithMessage(player) && vendor.CanInteractWithVendorMessage(player)) {
 						player.Target(StockTargetDef, section);
 						//show previous dialog after, somehow?
 					}
 					return;
 				case buttonId_DeleteSection:
-					if (vendor.CanBeControlledBy(player) && section.Count == 0) {
+					if (vendor.CanVendorBeControlledByWithMessage(player) && vendor.CanInteractWithVendorMessage(player) && section.Count == 0) {
 						section.Delete();
 						DialogStacking.ShowPreviousDialog(gi); //previous should be the upper section
 					}
 					return;
 				case buttonId_ReverseOrder:
-					if (vendor.CanBeControlledBy(player)) {
+					if (vendor.CanVendorBeControlledByWithMessage(player) && vendor.CanInteractWithVendorMessage(player)) {
 						ReverseOrderInContainer(section, vendor.Backpack);
 						DialogStacking.ResendAndRestackDialog(gi);
 					}
 					return;
 				case buttonId_ChangeIcon:
-					if (vendor.CanBeControlledBy(player) && (section.Cont is Container)) {
+					if (vendor.CanVendorBeControlledByWithMessage(player) && vendor.CanInteractWithVendorMessage(player) && (section.Cont is Container)) {
 						var prevGi = DialogStacking.PopStackedDialog(gi);
 						player.Target(SingletonScript<Targ_PlayerVendor_CopyIcon>.Instance,
 							Tuple.Create(section, prevGi));
@@ -295,14 +294,14 @@ namespace SteamEngine.CompiledScripts {
 							return;
 
 						case buttonId_Rows_MoveUp:
-							if (vendor.CanBeControlledBy(player)) {
+							if (vendor.CanVendorBeControlledByWithMessage(player) && vendor.CanInteractWithVendorMessage(player)) {
 								MoveUpInContainer(section, index, item, vendor.Backpack);
 								DialogStacking.ResendAndRestackDialog(gi);
 							}
 							return;
 
 						case buttonId_Rows_MoveTop:
-							if (vendor.CanBeControlledBy(player)) {
+							if (vendor.CanVendorBeControlledByWithMessage(player) && vendor.CanInteractWithVendorMessage(player)) {
 								MoveToTopInContainer(section, item, vendor.Backpack);
 								DialogStacking.ResendAndRestackDialog(gi);
 							}
@@ -369,7 +368,7 @@ namespace SteamEngine.CompiledScripts {
 			if (section != null) {
 				PlayerVendor vendor = section.TopObj() as PlayerVendor;
 
-				if (vendor != null && vendor.CanBeControlledBy(self)) {
+				if (vendor != null && vendor.CanVendorBeControlledBy(self)) {
 					var asChar = targetted as Character;
 					if (asChar == null) {
 						section.Model = targetted.Model;

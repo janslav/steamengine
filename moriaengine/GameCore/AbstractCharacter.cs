@@ -368,6 +368,8 @@ namespace SteamEngine {
 					this.GameState.Conn.Close("LogoutFully called.");
 					this.SetFlag_Disconnected(true);
 				}	//else already logged out fully, do nothing
+			} else {
+				throw new InvalidOperationException("LogoutFully can only be called on player characters");
 			}
 		}
 
@@ -397,6 +399,8 @@ namespace SteamEngine {
 		public void Reconnect() {
 			if (!this.IsPlayer) {
 				this.SetFlag_Disconnected(false);
+			} else {
+				throw new InvalidOperationException("LogoutFully can only be called on npc characters");
 			}
 		}
 
