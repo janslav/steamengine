@@ -510,6 +510,7 @@ namespace SteamEngine.CompiledScripts {
 					return result;
 				}
 			}
+
 			return DenyResultMessages.Allow;
 		}
 

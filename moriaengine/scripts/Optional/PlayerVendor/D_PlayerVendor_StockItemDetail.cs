@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 			var vendor = (PlayerVendor) entry.TopObj();
 			var player = (Player) sendTo;
 
-			var playerIsOwner = vendor.CanBeControlledBy(player);
+			var isMyVendor = vendor.CanVendorBeControlledBy(player);
 
 			var loc = Loc<Loc_D_PlayerVendor_StockItemDetail>.Get(sendTo.Language);
 
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 			t.Transparent = true;
 
 			//price (entry if my vendor)
-			if (playerIsOwner) {
+			if (isMyVendor) {
 				t = dialogHandler.AddTable(new GUTATable(1, 80, 100, 0));
 				t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Price).Text(entry.price.ToString()).Build());
 				//change price button
@@ -121,9 +121,9 @@ namespace SteamEngine.CompiledScripts {
 			if (entry.soldByUnits) {
 				t = dialogHandler.AddTable(new GUTATable(1, 80, 0));
 				t.AddToCell(0, 0, GUTAText.Builder.Text(loc.Label_Units).Build());
-				string entryText = playerIsOwner ? "" : "1";
+				string entryText = isMyVendor ? "" : "1";
 
-				t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Price).Text(entryText).Build());
+				t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Units).Text(entryText).Build());
 				t.AddToCell(0, 1, GUTAText.Builder.Text(amount.ToString()).XPos(100).Build());
 
 				t.Transparent = true;
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
 			//last row with buttons
 			t = dialogHandler.AddTable(new GUTATable(1, 100, 90, 0));
 			t.AddToCell(0, 0, GUTAButton.Builder.Id(buttonId_BuyOrRecall).Type(LeafComponentTypes.ButtonTick).Build());
-			string buyOrRecall = playerIsOwner ? loc.Label_Recall : loc.Label_Buy;
+			string buyOrRecall = isMyVendor ? loc.Label_Recall : loc.Label_Buy;
 			t.AddToCell(0, 0, GUTAText.Builder.Text(buyOrRecall).XPos(35).Build());
 			if (entry.soldByUnits) {
 				t.AddToCell(0, 1, GUTAText.Builder.Text(loc.Label_Add).Build());
@@ -212,52 +212,92 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			try {
-				//var button = gr.PressedButton;
+			//try {
+			var button = gr.PressedButton;
 
-				//if (button == 0) {
-				//    return;
-				//}
-
-				var entry = (PlayerVendorStockEntry) gi.Focus;
-				var item = (Item) entry.FindCont(0);
-				var vendor = (PlayerVendor) entry.TopObj();
-				var player = (Player) gi.Cont;
-
-				var playerIsOwner = vendor.CanBeControlledBy(player);
-
-				//var description = gr.GetTextResponse(inputId_Description);
-
-				//if (button == buttonId_NewSection) {
-
-				//    //new section, we need no hardcore checks because nothing from the outside world is actually being manipulated
-				//    int sectionModel = focus.Model;
-				//    if (focus.IsChar) {
-				//        sectionModel = ((Character) focus).TypeDef.Icon;
-				//    }
-				//    vendor.AddNewStockSection(stockSection, description, sectionModel, focus.Color);
-				//} else {
-
-				//    //we're actually stocking something, need all possible checks
-				//    if (!vendor.CanStockWithMessage(player, focus)) {
-				//        return;
-				//    }
-
-				//    var price = gr.GetNumberResponse(inputId_Price);
-				//    if (!(price > 0)) {
-				//        player.WriteLineLoc<Loc_D_PlayerVendor_StockItemDetail>(l => l.InvalidPrice);
-				//        return;
-				//    }
-
-				//    if (button == buttonId_Sell) {
-				//        vendor.StockThing(player, focus, stockSection, description, price);
-				//    } else if (button == buttonId_SellByUnit) {
-				//        vendor.StockThingSoldByUnit(player, (Container) focus, stockSection, description, price);
-				//    }
-				//}
-			} finally {
-				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+			if (button == 0) {
+				return;
 			}
+
+			var entry = (PlayerVendorStockEntry) gi.Focus;
+			var item = (Item) entry.FindCont(0);
+			var vendor = (PlayerVendor) entry.TopObj();
+			var player = (Player) gi.Cont;
+
+			if (!vendor.CanInteractWithVendorMessage(player)) {
+				return;
+			}
+
+			var isMyVendor = vendor.CanVendorBeControlledBy(player);
+
+			switch (button) {
+				case buttonId_ChangePrice:
+					if (isMyVendor) {
+						var price = gr.GetNumberResponse(inputId_Price);
+						if (!(price > 0)) {
+							player.WriteLineLoc<Loc_PlayerVendor_Stock>(l => l.InvalidPrice);
+							DialogStacking.ResendAndRestackDialog(gi);
+							return;
+						}
+
+						entry.price = price;
+					}
+					return;
+
+				case buttonId_BuyOrRecall:
+					var units = 1;
+					if (entry.soldByUnits) {
+						units = (int) gr.GetNumberResponse(inputId_Units);
+					}
+
+					if (isMyVendor) {
+						vendor.RecallEntry(player, entry, units);
+					} else {
+						vendor.TryBuyEntry(player, entry, units);
+					}
+
+					return;
+
+				case buttonId_AddMoreUnits:
+					if (isMyVendor) {
+
+					}
+					return;
+
+				case buttonId_Examine:
+					return;
+			}
+
+
+
+			//var description = gr.GetTextResponse(inputId_Description);
+
+			//if (button == buttonId_NewSection) {
+
+			//    //new section, we need no hardcore checks because nothing from the outside world is actually being manipulated
+			//    int sectionModel = focus.Model;
+			//    if (focus.IsChar) {
+			//        sectionModel = ((Character) focus).TypeDef.Icon;
+			//    }
+			//    vendor.AddNewStockSection(stockSection, description, sectionModel, focus.Color);
+			//} else {
+
+			//    //we're actually stocking something, need all possible checks
+			//    if (!vendor.CanStockWithMessage(player, focus)) {
+			//        return;
+			//    }
+
+
+
+			//    if (button == buttonId_Sell) {
+			//        vendor.StockThing(player, focus, stockSection, description, price);
+			//    } else if (button == buttonId_SellByUnit) {
+			//        vendor.StockThingSoldByUnit(player, (Container) focus, stockSection, description, price);
+			//    }
+			//}
+			//} finally {
+			//    DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+			//}
 		}
 	}
 

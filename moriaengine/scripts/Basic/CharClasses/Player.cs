@@ -529,5 +529,14 @@ namespace SteamEngine.CompiledScripts {
 				state.SendGlobalLightLevel(globalLight);
 			}
 		}
+
+		public bool Pay(decimal priceTotal) {
+			//TODO
+			if (priceTotal < 0) {
+				return false;
+			}
+
+			return this.IsGM;
+		}
 	}
 }
