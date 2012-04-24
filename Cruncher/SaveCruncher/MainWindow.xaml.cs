@@ -13,7 +13,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using CrunchyUtils;
 using Microsoft.Win32;
+using SaveCruncher.Properties;
 
 namespace SaveCruncher {
 	/// <summary>
@@ -21,7 +23,7 @@ namespace SaveCruncher {
 	/// </summary>
 	public partial class MainWindow : Window {
 
-		static readonly string dataDirectory = ConfigurationManager.AppSettings["dataDir"];
+		static readonly string dataDirectory = Settings.Default.DataDir;
 
 		public MainWindow() {
 			InitializeComponent();
@@ -75,9 +77,9 @@ namespace SaveCruncher {
 				setter(File.ReadAllText(dlg.FileName));
 			}
 		}
-
+		
 		private void bLoadWorldSave_Click(object sender, RoutedEventArgs e) {
-
+			Logger.Write("huuu");
 		}
 
 		private void bLoadCharsSave_Click(object sender, RoutedEventArgs e) {

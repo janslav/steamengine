@@ -147,6 +147,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrunchyUtils\CrunchyUtils.csproj">
+      <Project>{e8bb0595-41f8-44d1-9c58-39a9870c2839}</Project>
+      <Name>CrunchyUtils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
