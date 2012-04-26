@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,16 +75,18 @@ namespace SaveCruncher {
 			var result = dlg.ShowDialog();
 
 			if (result.HasValue && result.Value) {
-				setter(File.ReadAllText(dlg.FileName));
+				setter(dlg.FileName);
 			}
 		}
-		
-		private void bLoadWorldSave_Click(object sender, RoutedEventArgs e) {
-			Logger.Write("huuu");
+
+		private async void bLoadWorldSave_Click(object sender, RoutedEventArgs e) {
+			string worldSavePath = this.tbWorldSavePath.Text;
+			await SaveParser.Parse(worldSavePath);
 		}
 
-		private void bLoadCharsSave_Click(object sender, RoutedEventArgs e) {
-
+		private async void bLoadCharsSave_Click(object sender, RoutedEventArgs e) {
+			string charsSavePath = this.tbCharsSavePath.Text;			
+			await SaveParser.Parse(charsSavePath);			
 		}
 	}
 }
