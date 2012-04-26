@@ -16,7 +16,12 @@ namespace CrunchyUtils
 
 			var tbLog = (RichTextBox) w.FindName("tbLog");
 
-			tbLog.AppendText(string.Concat(msg, Environment.NewLine));
+			var asException = msg as Exception;
+			if (asException != null) {
+				tbLog.AppendText(string.Concat("ERROR: ", asException.Message, Environment.NewLine));
+			} else {
+				tbLog.AppendText(string.Concat(msg, Environment.NewLine));
+			}
 		}
 
     }
