@@ -5,24 +5,39 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
-namespace CrunchyUtils
-{
-    public static class Logger
-    {
+namespace CrunchyUtils {
+	public static class Logger {
 		public static void Write(object msg) {
 
-			var w = Application.Current.MainWindow;
+			var dispatcher = Application.Current.Dispatcher;
 
-			var tbLog = (RichTextBox) w.FindName("tbLog");
+			Action action = () => {
 
-			var asException = msg as Exception;
-			if (asException != null) {
-				tbLog.AppendText(string.Concat("ERROR: ", asException.Message, Environment.NewLine));
+				var w = Application.Current.MainWindow;
+
+				var tbLog = (RichTextBox) w.FindName("tbLog");
+
+
+
+
+				var asException = msg as Exception;
+				if (asException != null) {
+					tbLog.AppendText(string.Concat("ERROR: ", asException.Message, Environment.NewLine));
+				} else {
+					tbLog.AppendText(string.Concat(msg, Environment.NewLine));
+				}
+			};
+
+			if (dispatcher.CheckAccess()) {
+				// The calling thread owns the dispatcher, and hence the UI element
+				action();
 			} else {
-				tbLog.AppendText(string.Concat(msg, Environment.NewLine));
+				// Invokation required
+				dispatcher.Invoke(DispatcherPriority.Normal, action);
 			}
 		}
 
-    }
+	}
 }

@@ -5,5 +5,8 @@
     <Setting Name="DataDir" Type="System.String" Scope="User">
       <Value Profile="(Default)">F:\Development\SE\Cruncher\data</Value>
     </Setting>
+    <Setting Name="DatabaseSubDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Database</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
