@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -81,12 +82,51 @@ namespace SaveCruncher {
 
 		private async void bLoadWorldSave_Click(object sender, RoutedEventArgs e) {
 			string worldSavePath = this.tbWorldSavePath.Text;
-			await SaveParser.Parse(worldSavePath);
+
+			await ParseAndInsert(worldSavePath);
 		}
 
 		private async void bLoadCharsSave_Click(object sender, RoutedEventArgs e) {
-			string charsSavePath = this.tbCharsSavePath.Text;			
-			await SaveParser.Parse(charsSavePath);			
+			string charsSavePath = this.tbCharsSavePath.Text;
+			await ParseAndInsert(charsSavePath);
+		}
+
+		private static async Task ParseAndInsert(string saveFilePath) {
+			var db = await SaveDb.GetStoreAsync();
+
+
+			await SaveParser.Parse(saveFilePath, entries => {
+				using (var session = db.OpenSession()) {
+					Logger.Write("Starting saving loadedentries to database (from '" + saveFilePath + "')");
+					foreach (var e in entries) {
+						session.Store(e);
+					}					
+					session.SaveChanges();
+					Logger.Write("Finished saving loadedentries to database (from '" + saveFilePath + "')");
+				}
+			});
+		}
+
+
+		private async void bRunQuery_Click(object sender, RoutedEventArgs e) {
+
+			var where = this.tbWhere.Text;
+			var fieldNames = this.tbFieldNames.Text.Split(';').Select(s => s.Trim()).ToArray();
+
+			this.dgResults.Columns.Clear();
+			this.dgResults.AutoGenerateColumns = false;
+			for (int i = 0; i < fieldNames.Length; i++) {
+				var col = new DataGridTextColumn();
+				col.Header = fieldNames[i];
+				//Here i bind to the various indices.
+				var binding = new Binding("[" + fieldNames[i] + "]");
+				col.Binding = binding;
+				this.dgResults.Columns.Add(col);
+			}
+
+			var result = await SaveDb.Query(where, fieldNames);
+
+			this.dgResults.ItemsSource = result;
 		}
 	}
 }

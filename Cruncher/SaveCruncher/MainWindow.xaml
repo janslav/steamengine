@@ -12,10 +12,10 @@
         <Style BasedOn="{StaticResource ControlStyle}" TargetType="TextBox">
         </Style>
         <Style BasedOn="{StaticResource ControlStyle}" TargetType="CheckBox">
-        </Style>        
+        </Style>
         <Style BasedOn="{StaticResource ControlStyle}" TargetType="Button">
         </Style>
-        
+
         <Style TargetType="{x:Type Paragraph}">
             <Setter Property="Margin" Value="0"/>
         </Style>
@@ -25,7 +25,8 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition/>
+            <RowDefinition  />
+            <RowDefinition  Height="Auto" />
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -41,7 +42,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            
+
             <TextBox x:Name="tbWorldSavePath" Text="sphereworld.scp" HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="1" />
             <TextBox x:Name="tbCharsSavePath" Text="spherechars.scp" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" />
             <Button x:Name="bWorldSavePathSelectFile" Content=" ... " Grid.Row="0" Grid.Column="2" Click="bWorldSavePathSelectFile_Click"/>
@@ -53,6 +54,31 @@
             <CheckBox x:Name="chbWorldSaveLoaded" Grid.Row="0" Grid.Column="4" IsHitTestVisible="False"/>
             <CheckBox x:Name="chbCharSaveLoaded" Grid.Row="1" Grid.Column="4" IsHitTestVisible="False"/>
         </Grid>
-        <RichTextBox x:Name="tbLog" Grid.Row="3"/>
+        <StackPanel x:Name="spTemplateButtons" Grid.Row="1" />
+
+        <Grid Grid.Row="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBox x:Name="tbWhere" HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="1" Text="Uid:&quot;#0402D472F&quot;" />
+            <TextBox x:Name="tbFieldNames" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" Text="SectionType;SectionName" />
+            <Label Content="Filtr:" Grid.Row="0" Grid.Column="0"/>
+            <Label Content="Sloupce:" Grid.Row="1" Grid.Column="0" />
+            <Button x:Name="bRunQuery" Content="Zobrazit" Grid.Row="2" Grid.Column="0" Click="bRunQuery_Click"/>
+        </Grid>
+
+
+        <DataGrid x:Name="dgResults" Grid.Row="3" />
+        <RichTextBox x:Name="tbLog" Grid.Row="4"/>
     </Grid>
 </Window>

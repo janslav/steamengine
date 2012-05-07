@@ -34,5 +34,17 @@ namespace SaveCruncher.Properties {
                 this["DataDir"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Database")]
+        public string DatabaseSubDir {
+            get {
+                return ((string)(this["DatabaseSubDir"]));
+            }
+            set {
+                this["DatabaseSubDir"] = value;
+            }
+        }
     }
 }
