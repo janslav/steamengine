@@ -65,6 +65,9 @@ namespace SaveCruncher {
 				}
 				c++;
 			}
+			if (sectionLines != null) {
+				yield return sectionLines;
+			}
 			//Logger.Write("Lines: " + c);
 		}
 
@@ -96,7 +99,7 @@ namespace SaveCruncher {
 				string value;
 
 				if (equalsSignAt > -1) {
-					key = line.Substring(0, equalsSignAt).Trim();
+					key = line.Substring(0, equalsSignAt).Trim().Replace(".", "_");
 					value = line.Substring(equalsSignAt + 1).Trim();
 				} else {
 					key = line.Trim();

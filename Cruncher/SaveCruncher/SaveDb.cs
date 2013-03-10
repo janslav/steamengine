@@ -48,6 +48,7 @@ namespace SaveCruncher {
 		}
 
 		public static async Task<List<Dictionary<string, object>>> Query(string where, string[] fieldNames) {
+		//public static async Task<List<SaveEntry>> Query(string where, string[] fieldNames) {
 			Logger.Write("Starting query");
 
 			var db = Store.Value;
@@ -59,7 +60,8 @@ namespace SaveCruncher {
 				var e2 = await Task.Run(() =>
 					session.Advanced.LuceneQuery<SaveEntry>()
 					.Where(where)
-					.SelectFields<Dictionary<string, object>>(fieldNames).ToList());
+					.SelectFields<Dictionary<string, object>>(fieldNames)
+					.ToList());
 
 				//var e2 = session.Query<SaveEntry>().Where(e => e.Id == id).ToList();
 

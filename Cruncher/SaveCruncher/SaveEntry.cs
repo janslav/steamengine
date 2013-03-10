@@ -16,6 +16,6 @@ namespace SaveCruncher {
 		public string Id { get; set; }
 		public string SectionType { get; set; }
 		public string SectionName { get; set; }
-		public Dictionary<string, object> Data = new Dictionary<string, object>();
+		public Dictionary<string, string> Data = new Dictionary<string, string>();
 	}
 }
