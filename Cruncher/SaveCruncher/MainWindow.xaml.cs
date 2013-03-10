@@ -120,6 +120,7 @@ namespace SaveCruncher {
 				col.Header = fieldNames[i];
 				//Here i bind to the various indices.
 				var binding = new Binding("[" + fieldNames[i] + "]");
+				//var binding = new Binding(fieldNames[i]);
 				col.Binding = binding;
 				this.dgResults.Columns.Add(col);
 			}

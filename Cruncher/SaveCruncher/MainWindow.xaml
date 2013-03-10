@@ -70,7 +70,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBox x:Name="tbWhere" HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="1" Text="Uid:&quot;#0402D472F&quot;" />
+            <TextBox x:Name="tbWhere" HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="1" Text="Data.Serial:0402D472F" />
             <TextBox x:Name="tbFieldNames" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" Text="SectionType;SectionName" />
             <Label Content="Filtr:" Grid.Row="0" Grid.Column="0"/>
             <Label Content="Sloupce:" Grid.Row="1" Grid.Column="0" />
