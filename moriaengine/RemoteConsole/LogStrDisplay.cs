@@ -86,7 +86,7 @@ namespace SteamEngine.RemoteConsole {
 				this.txtBox.ScrollToBottom();
 			}
 
-			if (this.chkContract.Checked) {				
+			if (this.chkCompress.Checked) {				
 				this.TryContract(prevLen);				
 			}
 			//this.txtBox.EndUpdate();
