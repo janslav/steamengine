@@ -58,9 +58,9 @@
     <Compile Include="PacketGroup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\VS08-Common.csproj">
+    <ProjectReference Include="..\Common\SteamEngine.Common.csproj">
       <Project>{7B3428BD-F9AF-448E-92BB-85A72505DF50}</Project>
-      <Name>VS08-Common</Name>
+      <Name>SteamEngine.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

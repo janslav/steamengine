@@ -69,17 +69,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\VS10-Common.csproj">
+    <ProjectReference Include="..\Common\SteamEngine.Common.csproj">
       <Project>{7B3428BD-F9AF-448E-92BB-85A72505DF50}</Project>
-      <Name>VS10-Common</Name>
+      <Name>SteamEngine.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameCore\VS10-GameCore.csproj">
+    <ProjectReference Include="..\GameCore\SteamEngine.GameCore.csproj">
       <Project>{91710DA9-56BA-44A1-8E86-9A8EAFCDE88A}</Project>
-      <Name>VS10-GameCore</Name>
+      <Name>SteamEngine.GameCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\scripts\VS10-Scripts.csproj">
+    <ProjectReference Include="..\scripts\SteamEngine.Scripts.csproj">
       <Project>{C70C4C3E-FEC0-47BB-BB30-608951B723D5}</Project>
-      <Name>VS10-Scripts</Name>
+      <Name>SteamEngine.Scripts</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -743,17 +743,17 @@
     <None Include="scriptSources.Generated.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\VS10-Common.csproj">
+    <ProjectReference Include="..\Common\SteamEngine.Common.csproj">
       <Project>{7B3428BD-F9AF-448E-92BB-85A72505DF50}</Project>
-      <Name>VS10-Common</Name>
+      <Name>SteamEngine.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Communication\VS10-Communication.csproj">
+    <ProjectReference Include="..\Communication\SteamEngine.Communication.csproj">
       <Project>{42DC5FFC-D58D-48B2-8035-3123D4F0A84F}</Project>
-      <Name>VS10-Communication</Name>
+      <Name>SteamEngine.Communication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameCore\VS10-GameCore.csproj">
+    <ProjectReference Include="..\GameCore\SteamEngine.GameCore.csproj">
       <Project>{91710DA9-56BA-44A1-8E86-9A8EAFCDE88A}</Project>
-      <Name>VS10-GameCore</Name>
+      <Name>SteamEngine.GameCore</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
