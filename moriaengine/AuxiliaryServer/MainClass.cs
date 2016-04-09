@@ -23,7 +23,7 @@ namespace SteamEngine.AuxiliaryServer {
 			//name the console window for better recognizability
 			Console.Title = "SE Auxiliary Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 
-			Tools.ExitBinDirectory();
+			//Tools.ExitBinDirectory();
 
 			try {
 				Init();

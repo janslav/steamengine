@@ -121,31 +121,30 @@ namespace SteamEngine.AuxiliaryServer {
 		public override void TaskStarted(object sender, BuildEventArgs e) { }
 
 		protected override void Log(string pMessage) {
-			object o = NantLauncher.GetDecoratedLogMessage(pMessage);
-			if (o != null) {
-				Logger.StaticWriteLine(o);
-			}
-			//Console.WriteLine(pMessage);
+			//object o = NantLauncher.GetDecoratedLogMessage(pMessage);
+			//if (o != null) {
+			//	Logger.StaticWriteLine(o);
+			//}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public virtual void CompileAndStart() {
 			try {
-				NantLauncher nant = new NantLauncher(Path.Combine(this.seRootPath, NantLauncher.defaultPathInProject));
-				nant.SetLogger(this);
-				nant.SetPropertiesAndSymbols(this.build);
-				//nant.SetDebugMode(this.build == SEBuild.Debug);
-				//nant.SetOptimizeMode(this.build == SEBuild.Optimised);
+				//NantLauncher nant = new NantLauncher(Path.Combine(this.seRootPath, NantLauncher.defaultPathInProject));
+				//nant.SetLogger(this);
+				//nant.SetPropertiesAndSymbols(this.build);
+				////nant.SetDebugMode(this.build == SEBuild.Debug);
+				////nant.SetOptimizeMode(this.build == SEBuild.Optimised);
 
-				nant.SetTarget(this.targetTask);
-				nant.Execute();
+				//nant.SetTarget(this.targetTask);
+				//nant.Execute();
 
-				if (nant.WasSuccess()) {
-					string file = nant.GetCompiledAssemblyName(this.seRootPath, filenameProperty);
+				//if (nant.WasSuccess()) {
+				//	string file = nant.GetCompiledAssemblyName(this.seRootPath, filenameProperty);
 
-					Console.WriteLine("Starting " + file);
-					StartProcess(file);
-				}
+				//	Console.WriteLine("Starting " + file);
+				//	StartProcess(file);
+				//}
 			} catch (Exception e) {
 				Logger.WriteError(e);
 			}
