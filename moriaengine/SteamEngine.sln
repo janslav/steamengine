@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamEngine.Common", "Common\SteamEngine.Common.csproj", "{7B3428BD-F9AF-448E-92BB-85A72505DF50}"
 EndProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamEngine.RemoteConsole",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamEngine.ProcessRestarter", "ProcessRestarter\SteamEngine.ProcessRestarter.csproj", "{0A6BEB83-CF08-4946-BA88-2A74480F9777}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamEngine.Generated", "bin\Generated\SteamEngine.Generated.csproj", "{36CC1B5F-5F1B-406D-AE88-2DC3762CBDB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamEngine.Generated", "Generated\SteamEngine.Generated.csproj", "{36CC1B5F-5F1B-406D-AE88-2DC3762CBDB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamEngine.Scripts", "scripts\SteamEngine.Scripts.csproj", "{C70C4C3E-FEC0-47BB-BB30-608951B723D5}"
 EndProject

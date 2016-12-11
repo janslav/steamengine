@@ -29,7 +29,6 @@ using System.Text;
 using System.Globalization;
 using SteamEngine.Timers;
 using SteamEngine.Common;
-using NAnt.Core;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -60,68 +59,78 @@ namespace SteamEngine.CompiledScripts {
 				//then try to compile scripts
 				compilenumber++;
 
-				success = success && CompileScriptsUsingNAnt();
+				success = success && CompileScriptsUsingMsBuild();
 
 				success = success && ClassManager.InitClasses(compiledScripts.assembly);
 
-				success = success && GeneratedCodeUtil.DumpAndCompile();
+				//success = success && GeneratedCodeUtil.DumpAndCompile();
 
-				if (success) {
-					success = success && ClassManager.InitClasses(GeneratedCodeUtil.generatedAssembly);
-				}
+				//if (success) {
+				//	success = success && ClassManager.InitClasses(GeneratedCodeUtil.generatedAssembly);
+				//}
 
 				return success;
 			}
 		}
 
-		private static bool CompileScriptsUsingNAnt() {
-			CompScriptFileCollection fileCollection = new CompScriptFileCollection(Globals.ScriptsPath, ".cs");
+	    private static bool CompileScriptsUsingMsBuild()
+	    {
+	        //var msBuild = new MsBuildLauncher();
+         //   msBuild.Start(".");
 
-			NantLauncher nant = new NantLauncher();
-			nant.SetLogger(new CoreNantLogger());
-			nant.SetPropertiesAndSymbolsAsSelf();			
-#if SANE
-			nant.SetProperty("cmdLineParams", "/debug+"); //in sane builds, scripts should still have debug info
-			//nant.SetDebugMode(true); - do not use, would make Debug out of Sane
-#endif
-			nant.SetTarget("buildScripts");
 
-			nant.SetProperty("scriptsNumber", compilenumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
-			nant.SetProperty("scriptsReferencesListPath",
-				Path.Combine(Globals.ScriptsPath, "referencedAssemblies.txt"));
-			nant.SetSourceFileNames(fileCollection.GetAllFileNames(),
-				Path.Combine(Globals.ScriptsPath, "scriptSources.Generated.txt"));
+            return false;
+	    }
 
-			Logger.StopListeningConsole();//stupid defaultlogger writes to Console.Out
-			nant.Execute();
-			Logger.ResumeListeningConsole();
 
-			if (nant.WasSuccess()) {
-				Console.WriteLine("Done compiling C# scripts.");
-				fileCollection.assembly = nant.GetCompiledAssembly(".", "scriptsFileName");
-				//Logger.scriptsAssembly = fileCollection.assembly;
-				compiledScripts = fileCollection;
-				return true;
-			} else {
-				return false;
-			}
-		}
+//		private static bool CompileScriptsUsingNAnt() {
+//			CompScriptFileCollection fileCollection = new CompScriptFileCollection(Globals.ScriptsPath, ".cs");
 
-		internal class CoreNantLogger : DefaultLogger {
-			public override void BuildFinished(object sender, BuildEventArgs e) { }
-			public override void BuildStarted(object sender, BuildEventArgs e) { }
-			public override void TargetFinished(object sender, BuildEventArgs e) { }
-			public override void TargetStarted(object sender, BuildEventArgs e) { }
-			public override void TaskFinished(object sender, BuildEventArgs e) { }
-			public override void TaskStarted(object sender, BuildEventArgs e) { }
+//			NantLauncher nant = new NantLauncher();
+//			nant.SetLogger(new CoreNantLogger());
+//			nant.SetPropertiesAndSymbolsAsSelf();			
+//#if SANE
+//			nant.SetProperty("cmdLineParams", "/debug+"); //in sane builds, scripts should still have debug info
+//			//nant.SetDebugMode(true); - do not use, would make Debug out of Sane
+//#endif
+//			nant.SetTarget("buildScripts");
 
-			protected override void Log(string pMessage) {
-				object o = NantLauncher.GetDecoratedLogMessage(pMessage);
-				if (o != null) {
-					Logger.StaticWriteLine(o);
-				}
-				//Console.WriteLine(pMessage);
-			}
-		}
+//			nant.SetProperty("scriptsNumber", compilenumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
+//			nant.SetProperty("scriptsReferencesListPath",
+//				Path.Combine(Globals.ScriptsPath, "referencedAssemblies.txt"));
+//			nant.SetSourceFileNames(fileCollection.GetAllFileNames(),
+//				Path.Combine(Globals.ScriptsPath, "scriptSources.Generated.txt"));
+
+//			Logger.StopListeningConsole();//stupid defaultlogger writes to Console.Out
+//			nant.Execute();
+//			Logger.ResumeListeningConsole();
+
+//			if (nant.WasSuccess()) {
+//				Console.WriteLine("Done compiling C# scripts.");
+//				fileCollection.assembly = nant.GetCompiledAssembly(".", "scriptsFileName");
+//				//Logger.scriptsAssembly = fileCollection.assembly;
+//				compiledScripts = fileCollection;
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}
+
+		//internal class CoreNantLogger : DefaultLogger {
+		//	public override void BuildFinished(object sender, BuildEventArgs e) { }
+		//	public override void BuildStarted(object sender, BuildEventArgs e) { }
+		//	public override void TargetFinished(object sender, BuildEventArgs e) { }
+		//	public override void TargetStarted(object sender, BuildEventArgs e) { }
+		//	public override void TaskFinished(object sender, BuildEventArgs e) { }
+		//	public override void TaskStarted(object sender, BuildEventArgs e) { }
+
+		//	protected override void Log(string pMessage) {
+		//		object o = NantLauncher.GetDecoratedLogMessage(pMessage);
+		//		if (o != null) {
+		//			Logger.StaticWriteLine(o);
+		//		}
+		//		//Console.WriteLine(pMessage);
+		//	}
+		//}
 	}
 }
