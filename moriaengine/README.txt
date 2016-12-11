@@ -3,10 +3,11 @@ Starting SteamEngine
 The server part of SE consists of 2 executables/processes - GameCore and AuxiliaryServer. GameCore is the one where all the UO stuff is happening, while Auxiliary is for secondary tasks - it server connections from remote consoles (the third major SE executable) and it serves as login server for the gamecore(s) running on the same server computer. It can also update sources from SVN and restart both itself and the nearby gameserver(s) when commanded so from remote console(s).
 
 
-Running SE for the first time, start by launching gamecore (Sane_ or Debug_) - it will create steamengine.ini config file. Look at the file, fix the settings if needed (theyre commented inside) and then run both GameCore and AuxiliaryServer (most likely Sane_). Then you can connect with either UO client or remoteconsole - in both cases, using any username/password will result in creating the first account - with admin priviledges.
+Running SE for the first time, start by launching gamecore (Release_ or Debug_) - it will create steamengine.ini config file. Look at the file, fix the settings if needed (theyre commented inside) and then run both GameCore and AuxiliaryServer (most likely Release_). Then you can connect with either UO client or remoteconsole - in both cases, using any username/password will result in creating the first account - with admin priviledges.
 
 RemoteConsole - the GUI program - supports adding buttons as shortcuts for simple commands. For the basic set of recommendes buttons, look in steamrc.example.ini, where you can directly copy the buttons from.
 
+We used to use NANT for building, but we converted to msbuild.
 
 -tar
 

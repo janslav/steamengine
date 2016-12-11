@@ -50,10 +50,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AuxServMsBuildProjectStarter.cs" />
     <Compile Include="ConsoleServer\ConsoleClient.cs" />
     <Compile Include="ConsoleServer\ConsoleServer.cs" />
     <Compile Include="ConsoleServer\IncomingPackets.cs" />
     <Compile Include="ConsoleServer\OutgoingPackets.cs" />
+    <Compile Include="MsBuildLogger.cs" />
     <Compile Include="LoginServer\IncomingPackets.cs" />
     <Compile Include="LoginServer\LoginClient.cs" />
     <Compile Include="LoginServer\LoginEncryption.cs" />
@@ -93,6 +95,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="System" />
     <Reference Include="NAnt.Core, Version=0.90.3759.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>

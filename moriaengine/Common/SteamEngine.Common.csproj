@@ -56,6 +56,7 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="HighPerformanceTimer.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="MsBuildLauncher.cs" />
     <Compile Include="NantLauncher.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="Poolable.cs" />
@@ -84,6 +85,8 @@
     <None Include="Tests\TestRunner.cs.ignored" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="SharpSvn, Version=1.8015.3829.125, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
       <HintPath>..\packages\SharpSvn.1.8-x64.1.8015.3829.125\lib\net40\SharpSvn.dll</HintPath>
       <Private>True</Private>

@@ -2,8 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading;
-using NAnt.Core;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 
@@ -70,13 +68,12 @@ namespace SteamEngine.AuxiliaryServer {
 			state.WriteLine(GameUid.AuxServer, message.ToString());
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.Commands+NantProjectReStarter")]
 		public static void CmdRestart() {
-			new NantProjectReStarter();
+			new MsBuildProjectReStarter();
 		}
 
-		private class NantProjectReStarter : AuxServNantProjectStarter {
-			internal NantProjectReStarter()
+		private class MsBuildProjectReStarter : AuxServMsBuildProjectStarter {
+			internal MsBuildProjectReStarter()
 				: base(SEBuild.Sane, ".", "buildRestarter", "restarterFileName") {
 			}
 
@@ -97,63 +94,4 @@ namespace SteamEngine.AuxiliaryServer {
 	}
 
 	//Nant logger class and a helper threading class combined
-	internal class AuxServNantProjectStarter : DefaultLogger {
-		private SEBuild build;
-		private string seRootPath;
-		private string targetTask;
-		private string filenameProperty;
-
-		internal AuxServNantProjectStarter(SEBuild build, string seRootPath, string targetTask, string filenameProperty) {
-			this.build = build;
-			this.seRootPath = seRootPath;
-			this.targetTask = targetTask;
-			this.filenameProperty = filenameProperty;
-
-			Thread t = new Thread(this.CompileAndStart);
-			t.Start();
-		}
-
-		public override void BuildFinished(object sender, BuildEventArgs e) { }
-		public override void BuildStarted(object sender, BuildEventArgs e) { }
-		public override void TargetFinished(object sender, BuildEventArgs e) { }
-		public override void TargetStarted(object sender, BuildEventArgs e) { }
-		public override void TaskFinished(object sender, BuildEventArgs e) { }
-		public override void TaskStarted(object sender, BuildEventArgs e) { }
-
-		protected override void Log(string pMessage) {
-			//object o = NantLauncher.GetDecoratedLogMessage(pMessage);
-			//if (o != null) {
-			//	Logger.StaticWriteLine(o);
-			//}
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public virtual void CompileAndStart() {
-			try {
-				//NantLauncher nant = new NantLauncher(Path.Combine(this.seRootPath, NantLauncher.defaultPathInProject));
-				//nant.SetLogger(this);
-				//nant.SetPropertiesAndSymbols(this.build);
-				////nant.SetDebugMode(this.build == SEBuild.Debug);
-				////nant.SetOptimizeMode(this.build == SEBuild.Optimised);
-
-				//nant.SetTarget(this.targetTask);
-				//nant.Execute();
-
-				//if (nant.WasSuccess()) {
-				//	string file = nant.GetCompiledAssemblyName(this.seRootPath, filenameProperty);
-
-				//	Console.WriteLine("Starting " + file);
-				//	StartProcess(file);
-				//}
-			} catch (Exception e) {
-				Logger.WriteError(e);
-			}
-		}
-
-		public virtual void StartProcess(string file) {
-			System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(file);
-			psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-			System.Diagnostics.Process.Start(psi);
-		}
-	}
 }

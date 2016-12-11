@@ -92,7 +92,6 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			return ReadPacketResult.Success;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.AuxServNantProjectStarter")]
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			GameServer cli = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (cli != null) {

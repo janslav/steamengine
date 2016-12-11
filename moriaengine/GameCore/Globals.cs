@@ -657,7 +657,6 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static string GetVersion() {
 			using (SvnClient client = new SvnClient()) {
 				SvnInfoEventArgs info;
