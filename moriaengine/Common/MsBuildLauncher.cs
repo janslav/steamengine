@@ -18,65 +18,41 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.Build;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Logging;
 
-namespace SteamEngine.Common
-{
+namespace SteamEngine.Common {
 
 
-    /// <summary>Use this class to run tasks from the sln/csproj files.</summary>
-    public class MsBuildLauncher
-    {
-        private string slnName = "SteamEngine.sln";
+	/// <summary>Use this class to run tasks from the sln/csproj files.</summary>
+	public static class MsBuildLauncher {
+		private static string slnName = "SteamEngine.sln";
 
-        public string Compile(string seRootPath, SEBuild build, string targetTask, ILogger msBuildLogger)
-        {
-            var slnPath = Path.Combine(seRootPath, slnName);
-            var globalProperties = new Dictionary<string, string>();
-            var buildRequest = new BuildRequestData(slnPath, globalProperties, null, new string[] { targetTask }, null);
-            var pc = new ProjectCollection();
-            pc.SetGlobalProperty("Configuration", build.ToString());
-            var buildParameters = new BuildParameters(pc) { Loggers = new[] { msBuildLogger } };
-            var result = BuildManager.DefaultBuildManager.Build(buildParameters, buildRequest);
+		public static string Compile(string seRootPath, BuildType build, string targetTask, int? scriptAssemblyNumber = null) {
+			var slnPath = Path.Combine(seRootPath, slnName);
+			var globalProperties = new Dictionary<string, string>();
+			var buildRequest = new BuildRequestData(slnPath, globalProperties, null, new string[] { targetTask }, null);
+			var pc = new ProjectCollection();
+			pc.SetGlobalProperty("Configuration", build.ToString());
+			if (scriptAssemblyNumber.HasValue) {
+				pc.SetGlobalProperty("ScriptsAssemblyNumber", scriptAssemblyNumber.ToString());
+			}
 
-            if (result.OverallResult == BuildResultCode.Success)
-            {
-                var compiledFilePath = result.ResultsByTarget[targetTask].Items[0].ItemSpec;
-                if (File.Exists(compiledFilePath))
-                {
-                    return compiledFilePath;
-                }
-                else
-                {
-                    throw new Exception("The compiled file '" + compiledFilePath + "' doesn't exist.");
-                }
-            }
+			var buildParameters = new BuildParameters(pc) { Loggers = new[] { new MsBuildLogger(),  } };
+			var result = BuildManager.DefaultBuildManager.Build(buildParameters, buildRequest);
 
-            throw new Exception("Compilation failed.", result.Exception);
-        }
+			if (result.OverallResult == BuildResultCode.Success) {
+				var compiledFilePath = result.ResultsByTarget[targetTask].Items[0].ItemSpec;
+				if (File.Exists(compiledFilePath)) {
+					return compiledFilePath;
+				} else {
+					throw new Exception($"The compiled file \'{compiledFilePath}\' doesn\'t exist.");
+				}
+			}
 
-        //private class Logger : ILogger
-        //{
-        //    public void Initialize(IEventSource eventSource)
-        //    {
-
-        //    }
-
-        //    public void Shutdown()
-        //    {
-
-        //    }
-
-        //    public LoggerVerbosity Verbosity { get; set; }
-        //    public string Parameters { get; set; }
-        //}
-
-    }
+			throw new Exception("Compilation failed.", result.Exception);
+		}
+	}
 }
+

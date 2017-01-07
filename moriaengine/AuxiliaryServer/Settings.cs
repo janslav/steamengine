@@ -23,7 +23,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 		void InternalSetIniID(int iniID);
 
-		void StartGameServerProcess(SEBuild build);
+		void StartGameServerProcess(BuildType build);
 
 		void SvnUpdate(ConsoleServer.ConsoleClient console);
 

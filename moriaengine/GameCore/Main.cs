@@ -86,10 +86,8 @@ namespace SteamEngine {
 			Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
 
 			try {
-				//Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
-
 				HighPerformanceTimer.Init();
-				//Common.Tools.ExitBinDirectory();
+				Tools.ExitBinDirectory();
 				if (!Init()) {
 					RunLevelManager.SetDead();
 					return;
@@ -98,11 +96,11 @@ namespace SteamEngine {
 				//Thread t = new Thread(Cycle);
 				//t.IsBackground = true;
 				//t.Name = "Main cycle thread";
-				//t.Start();
+				//t.Start();lk
 
 				Console.WriteLine("Init done.");
 
-				Thread t = new Thread(delegate() {
+				Thread t = new Thread(delegate () {
 					Console.ReadLine();
 					exitTokenSource.Cancel();
 				});
@@ -134,17 +132,9 @@ namespace SteamEngine {
 				AuxServerPipeClient.Init();
 				System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
 
-#if DEBUG
-				Console.WriteLine("Starting SteamEngine (" + Globals.Version + ", DEBUG build)" + " - " + Globals.ServerName);
-#elif SANE
-				Console.WriteLine("Starting SteamEngine (" + Globals.Version + ", SANE build)"+" - " + Globals.ServerName);
-#elif OPTIMIZED
-				Console.WriteLine("Starting SteamEngine (" + Globals.Version + ", OPTIMIZED build)"+" - " + Globals.ServerName);
-#else
-				throw new SanityCheckException("None of these flags were set: DEBUG, SANE, or OPTIMIZED?");
-#endif
-				Console.WriteLine("http://kec.cz:8008/trac");
-				Console.WriteLine("Running under " + Environment.OSVersion + ", Framework version: " + Environment.Version + ".");
+				Console.WriteLine($"Starting SteamEngine ({Globals.Version}, {Build.Type} build)" + " - " + Globals.ServerName);
+				Console.WriteLine("https://sourceforge.net/projects/streamengine/");
+				Console.WriteLine($"Running under {Environment.OSVersion}, Framework version: {Environment.Version}.");
 
 				Globals.Init(); //reads .ini
 				if (exitTokenSource.Token.IsCancellationRequested) {
@@ -263,8 +253,8 @@ namespace SteamEngine {
 							System.Windows.Forms.Application.DoEvents();
 							System.Threading.Thread.Sleep(20);
 						}*/
-					} else {	//If recompiling fails, we do not run this section. Instead, after a recompile succeeds,
-						//the same code will be run in RetryRecompilingScripts.
+					} else {    //If recompiling fails, we do not run this section. Instead, after a recompile succeeds,
+								//the same code will be run in RetryRecompilingScripts.
 						ScriptRecompilingSucceeded();
 					}
 				} else {//saving failed
@@ -310,11 +300,11 @@ namespace SteamEngine {
 			//CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
 			ClassManager.ForgetScripts();//bye-bye to all storec types
 			GeneratedCodeUtil.ForgetScripts();//bye-bye to scripted code generators
-			//TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
+											  //TriggerGroup.UnloadAll();//bye-bye to all triggergroups and their triggers
 			ScriptHolder.ForgetAllFunctions();//bye-bye to all scripted functions
 			ThingDef.ForgetAll();//clear thingdef constructors etc.
 			PluginDef.ForgetAll();//clear plugindef constructors etc.
-			//GroundTileType.ForgetScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
+								  //GroundTileType.ForgetScripts();			//unload all the Script objects which Script itself keeps (for getting scripts by name - used by Map for asking t_rock, etc, if it is the type of a specific map tileID).
 			AbstractScript.ForgetAll();//all abstractscripts go bye-bye. This includes triggergroups, gumps, etc.
 			Constant.ForgetAll();
 			TestSuite.ForgetAll();

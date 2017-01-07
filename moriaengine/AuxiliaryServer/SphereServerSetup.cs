@@ -179,7 +179,7 @@ namespace SteamEngine.AuxiliaryServer {
 			return StringComparer.OrdinalIgnoreCase.GetHashCode(this.hardDiscIniPath);
 		}
 
-		public void StartGameServerProcess(SEBuild build) {
+		public void StartGameServerProcess(BuildType build) {
 			string path = Path.Combine(this.ramdiscIniPath, sphereExeName);
 			Console.WriteLine("Starting Sphereserver: " + this.IniPath);
 			System.Diagnostics.Process.Start(path);

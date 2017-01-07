@@ -47,9 +47,9 @@ namespace SteamEngine.RemoteConsole {
 
 	public class RequestStartGameServer : OutgoingPacket {
 		private byte serverNum;
-		private SEBuild build;
+		private BuildType build;
 
-		public void Prepare(int serverNum, SEBuild build) {
+		public void Prepare(int serverNum, BuildType build) {
 			this.serverNum = (byte) serverNum;
 			this.build = build;
 		}

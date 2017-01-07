@@ -80,21 +80,21 @@
 //			this.nantProject.Properties[name] = value;
 //		}
 
-//		public void SetPropertiesAndSymbols(SEBuild build) {
+//		public void SetPropertiesAndSymbols(BuildType build) {
 //			StringBuilder symbols;
 //			switch (build) {
-//				case SEBuild.Debug:
+//				case BuildType.Debug:
 //					this.SetDebugMode(true);
 //					this.SetOptimizeMode(false);
 //					symbols = new StringBuilder("TRACE,DEBUG");
 //					break;
-//				case SEBuild.Sane:
+//				case BuildType.Release:
 //					this.SetDebugMode(false);
 //					this.SetOptimizeMode(false);
 //					symbols = new StringBuilder("TRACE,SANE");
 //					this.SetProperty("cmdLineParams", "/debug+");
 //					break;
-//				case SEBuild.Optimized:
+//				case BuildType.Optimized:
 //					this.SetDebugMode(false);
 //					this.SetOptimizeMode(true);
 //					symbols = new StringBuilder("OPTIMIZED");
@@ -109,12 +109,12 @@
 
 //		public void SetPropertiesAndSymbolsAsSelf() {
 //#if DEBUG
-//			this.SetPropertiesAndSymbols(SEBuild.Debug);
+//			this.SetPropertiesAndSymbols(BuildType.Debug);
 //#elif SANE
-//			this.SetPropertiesAndSymbols(SEBuild.Sane);
+//			this.SetPropertiesAndSymbols(BuildType.Release);
 
 //#elif OPTIMIZED
-//			this.SetPropertiesAndSymbols(SEBuild.Optimized);
+//			this.SetPropertiesAndSymbols(BuildType.Optimized);
 //#else
 //#error DEBUG, SANE or OPTIMIZED must be defined
 //#endif
