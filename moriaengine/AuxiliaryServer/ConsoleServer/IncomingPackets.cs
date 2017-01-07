@@ -83,11 +83,11 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 	public class RequestStartGameServer : ConsoleIncomingPacket {
 		private byte iniID;
-		private SEBuild build;
+		private BuildType build;
 
 		protected override ReadPacketResult Read() {
 			this.iniID = this.DecodeByte();
-			this.build = (SEBuild) this.DecodeByte();
+			this.build = (BuildType) this.DecodeByte();
 
 			return ReadPacketResult.Success;
 		}

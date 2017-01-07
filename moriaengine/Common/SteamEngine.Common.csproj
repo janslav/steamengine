@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -13,7 +13,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -39,6 +39,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +49,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -56,11 +58,13 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="HighPerformanceTimer.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="MsBuildLogger.cs" />
     <Compile Include="MsBuildLauncher.cs" />
     <Compile Include="NantLauncher.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="Poolable.cs" />
     <Compile Include="Sanity.cs" />
+    <Compile Include="BuildType.cs" />
     <Compile Include="TestSuite.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="VersionControl.cs" />
@@ -85,8 +89,8 @@
     <None Include="Tests\TestRunner.cs.ignored" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build" />
-    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Build.Framework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="SharpSvn, Version=1.8015.3829.125, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
       <HintPath>..\packages\SharpSvn.1.8-x64.1.8015.3829.125\lib\net40\SharpSvn.dll</HintPath>
       <Private>True</Private>

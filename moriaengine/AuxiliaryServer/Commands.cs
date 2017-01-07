@@ -74,7 +74,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		private class MsBuildProjectReStarter : AuxServMsBuildProjectStarter {
 			internal MsBuildProjectReStarter()
-				: base(SEBuild.Sane, ".", "buildRestarter", "restarterFileName") {
+				: base(BuildType.Release, ".", "buildRestarter") {
 			}
 
 			public override void StartProcess(string file) {

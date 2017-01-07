@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 
 	internal static class CompilerInvoker {
 		internal static CompScriptFileCollection compiledScripts;//CompScriptFileCollection instances
-		//all types of Steamengine namespace, regardless if from scripts or core. 
+																 //all types of Steamengine namespace, regardless if from scripts or core. 
 
 		//removes all non-core references
 		//internal static void UnLoadScripts() {
@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		internal static uint compilenumber;
+		private static int compilationNumber;
 
 		internal static bool CompileScripts(bool firstCompiling) {
 			using (StopWatch.StartAndDisplay("Compiling...")) {
@@ -57,80 +57,34 @@ namespace SteamEngine.CompiledScripts {
 					success = ClassManager.InitClasses(ClassManager.CoreAssembly);
 				}
 				//then try to compile scripts
-				compilenumber++;
+				compilationNumber++;
 
 				success = success && CompileScriptsUsingMsBuild();
 
 				success = success && ClassManager.InitClasses(compiledScripts.assembly);
 
-				//success = success && GeneratedCodeUtil.DumpAndCompile();
+				success = success && GeneratedCodeUtil.WriteOutAndCompile(compilationNumber);
 
-				//if (success) {
-				//	success = success && ClassManager.InitClasses(GeneratedCodeUtil.generatedAssembly);
-				//}
+				if (success) {
+					success = ClassManager.InitClasses(GeneratedCodeUtil.generatedAssembly);
+				}
 
 				return success;
 			}
 		}
 
-	    private static bool CompileScriptsUsingMsBuild()
-	    {
-	        //var msBuild = new MsBuildLauncher();
-         //   msBuild.Start(".");
-
-
-            return false;
-	    }
-
-
-//		private static bool CompileScriptsUsingNAnt() {
-//			CompScriptFileCollection fileCollection = new CompScriptFileCollection(Globals.ScriptsPath, ".cs");
-
-//			NantLauncher nant = new NantLauncher();
-//			nant.SetLogger(new CoreNantLogger());
-//			nant.SetPropertiesAndSymbolsAsSelf();			
-//#if SANE
-//			nant.SetProperty("cmdLineParams", "/debug+"); //in sane builds, scripts should still have debug info
-//			//nant.SetDebugMode(true); - do not use, would make Debug out of Sane
-//#endif
-//			nant.SetTarget("buildScripts");
-
-//			nant.SetProperty("scriptsNumber", compilenumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
-//			nant.SetProperty("scriptsReferencesListPath",
-//				Path.Combine(Globals.ScriptsPath, "referencedAssemblies.txt"));
-//			nant.SetSourceFileNames(fileCollection.GetAllFileNames(),
-//				Path.Combine(Globals.ScriptsPath, "scriptSources.Generated.txt"));
-
-//			Logger.StopListeningConsole();//stupid defaultlogger writes to Console.Out
-//			nant.Execute();
-//			Logger.ResumeListeningConsole();
-
-//			if (nant.WasSuccess()) {
-//				Console.WriteLine("Done compiling C# scripts.");
-//				fileCollection.assembly = nant.GetCompiledAssembly(".", "scriptsFileName");
-//				//Logger.scriptsAssembly = fileCollection.assembly;
-//				compiledScripts = fileCollection;
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		}
-
-		//internal class CoreNantLogger : DefaultLogger {
-		//	public override void BuildFinished(object sender, BuildEventArgs e) { }
-		//	public override void BuildStarted(object sender, BuildEventArgs e) { }
-		//	public override void TargetFinished(object sender, BuildEventArgs e) { }
-		//	public override void TargetStarted(object sender, BuildEventArgs e) { }
-		//	public override void TaskFinished(object sender, BuildEventArgs e) { }
-		//	public override void TaskStarted(object sender, BuildEventArgs e) { }
-
-		//	protected override void Log(string pMessage) {
-		//		object o = NantLauncher.GetDecoratedLogMessage(pMessage);
-		//		if (o != null) {
-		//			Logger.StaticWriteLine(o);
-		//		}
-		//		//Console.WriteLine(pMessage);
-		//	}
-		//}
+		private static bool CompileScriptsUsingMsBuild() {
+			try {
+				var file = MsBuildLauncher.Compile(".", Build.Type, "SteamEngine_Scripts", compilationNumber);
+				var fileCollection = new CompScriptFileCollection(Globals.ScriptsPath, ".cs");
+				fileCollection.assembly = Assembly.LoadFile(file);
+				compiledScripts = fileCollection;
+				Console.WriteLine("Done compiling C# scripts.");
+				return true;
+			} catch (Exception e) {
+				Logger.WriteError(e);
+				return false;
+			}
+		}
 	}
 }

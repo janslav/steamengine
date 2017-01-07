@@ -90,9 +90,9 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 
-		public void StartGameServerProcess(SEBuild build) {
+		public void StartGameServerProcess(BuildType build) {
 			Console.WriteLine("Compiling " + build + " build of server at " + this.IniPath);
-			new AuxServMsBuildProjectStarter(build, this.IniPath, "SteamEngine_GameCore", "gameCoreFileName").Start();
+			new AuxServMsBuildProjectStarter(build, this.IniPath, "SteamEngine_GameCore").Start();
 		}
 
 
