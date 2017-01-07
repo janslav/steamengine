@@ -30,11 +30,13 @@ namespace SteamEngine.LScript {
 		protected OpNode defaultNode;
 
 		private class TempParent : LScriptHolder, IOpNodeHolder {
+			internal TempParent(string filename) : base(filename) {
+			}
+
 			void IOpNodeHolder.Replace(OpNode oldNode, OpNode newNode) {
 				throw new SEException("The method or operation is not implemented.");
 			}
 		}
-		private static TempParent tempParent = new TempParent();
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 		internal class NullOpNode : OpNode {
@@ -57,26 +59,26 @@ namespace SteamEngine.LScript {
 
 			//LScript.DisplayTree(code);
 
-			Production switchProd = (Production) code;
+			Production switchProd = (Production)code;
 			int caseBlocksCount = switchProd.GetChildCount() - 4;
 			if (caseBlocksCount == 0) {//we just run the expression
 				return LScriptMain.CompileNode(parent, switchProd.GetChildAt(1));
 			} else {
-				OpNode switchNode = LScriptMain.CompileNode(parent, switchProd.GetChildAt(1));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+				OpNode switchNode = LScriptMain.CompileNode(parent, switchProd.GetChildAt(1));//the parent here is fake, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 				OpNode defaultNode = null;
 				ArrayList tempCases = new ArrayList();
 				Hashtable cases = new Hashtable(StringComparer.OrdinalIgnoreCase);
 				bool isString = false;
 				bool isInteger = false;
 				for (int i = 0; i < caseBlocksCount; i++) {
-					Production caseProd = (Production) switchProd.GetChildAt(i + 3);
+					Production caseProd = (Production)switchProd.GetChildAt(i + 3);
 					Node caseValue = caseProd.GetChildAt(1);
 					object key = null;
 					bool isDefault = false;
 					if (IsType(caseValue, StrictConstants.DEFAULT)) {//default
 						isDefault = true;
 					} else {
-						OpNode caseValueNode = LScriptMain.CompileNode(tempParent, caseValue);//the parent here is false, it doesn't matter tho.
+						OpNode caseValueNode = LScriptMain.CompileNode(new TempParent(filename), caseValue);//the parent here is fake, it doesn't matter tho.
 						key = caseValueNode.Run(new ScriptVars(null, new object(), 0));
 						try {
 							key = ConvertTools.ToInt32(key);
@@ -140,7 +142,7 @@ namespace SteamEngine.LScript {
 				}
 				foreach (DictionaryEntry entry in cases) {
 					if (entry.Value != null) {
-						((OpNode) entry.Value).parent = constructed;
+						((OpNode)entry.Value).parent = constructed;
 					}
 				}
 				return constructed;
@@ -204,7 +206,7 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			object value = String.Concat(switchNode.Run(vars));
-			OpNode node = (OpNode) cases[value];
+			OpNode node = (OpNode)cases[value];
 			if (node != nullOpNodeInstance) {
 				if (node == null) {
 					node = defaultNode;
@@ -231,7 +233,7 @@ namespace SteamEngine.LScript {
 				throw new InterpreterException("Exception while parsing integer",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
-			OpNode node = (OpNode) cases[value];
+			OpNode node = (OpNode)cases[value];
 			if (node != nullOpNodeInstance) {
 				if (node == null) {
 					node = defaultNode;

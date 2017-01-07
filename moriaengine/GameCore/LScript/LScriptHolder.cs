@@ -51,6 +51,12 @@ namespace SteamEngine.LScript {
 		//    Compile(input);
 		//}
 
+		internal LScriptHolder(string filename)
+			: base("temporary")
+		{
+			this.filename = filename;
+		}
+
 		internal LScriptHolder()
 			: base("temporary") {
 		}
