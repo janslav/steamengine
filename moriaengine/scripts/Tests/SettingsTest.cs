@@ -60,9 +60,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		[NoShow]
-		public int bar = 0;
+		public int bar;
 		[NoShow]
-		public int baz = 0;
+		public int baz;
 
 		[Button("List doublify")]
 		public void SomeMethod() {

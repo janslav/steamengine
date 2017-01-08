@@ -16,11 +16,12 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_For : OpNode, IOpNodeHolder {
 		private int localIndex;
 		private string localName;//just for the ToString()
@@ -58,19 +59,19 @@ namespace SteamEngine.LScript {
 			Token asToken = node as Token;
 			if (asToken != null) {
 				return asToken.GetImage().Trim();
-			} else {
-				return ((Token) node.GetChildAt(2)).GetImage().Trim();
 			}
+			return ((Token) node.GetChildAt(2)).GetImage().Trim();
 		}
 
-		private static Production GetHeaderCode(Node node) {
+		private static Production GetHeaderCode(Node node)
+		{
 			if (IsType(node, StrictConstants.FOR_HEADER_CODE)) {
 				return (Production) node;
-			} else if (IsType(node, StrictConstants.FOR_HEADER_IN_PARENS)) {
-				return GetHeaderCode(node.GetChildAt(1));
-			} else {
-				throw new SEException("Unexpected node. This should not happen.");
 			}
+			if (IsType(node, StrictConstants.FOR_HEADER_IN_PARENS)) {
+				return GetHeaderCode(node.GetChildAt(1));
+			}
+			throw new SEException("Unexpected node. This should not happen.");
 		}
 
 		private OpNode_For(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
@@ -94,7 +95,8 @@ namespace SteamEngine.LScript {
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
-		internal override object Run(ScriptVars vars) {
+		internal override object Run(ScriptVars vars)
+		{
 			if (this.blockNode != null) {
 				try {
 					int leftBound = Convert.ToInt32(this.leftBoundNode.Run(vars), CultureInfo.InvariantCulture);
@@ -125,9 +127,8 @@ namespace SteamEngine.LScript {
 					throw new InterpreterException("Expression while evaluating FOR statement",
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 				}
-			} else {
-				return null;//if there is no code to run, we dont do anything.
 			}
+			return null;//if there is no code to run, we dont do anything.
 		}
 
 		public override string ToString() {

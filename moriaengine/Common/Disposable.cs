@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SteamEngine.Common {
 	//taken from http://www.geocities.com/Jeff_Louie/OOP/oop28.htm
@@ -24,17 +25,17 @@ namespace SteamEngine.Common {
 		internal bool disposed;
 
 		// subclass should to implement these two methods
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		protected virtual void On_DisposeManagedResources() {
 
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		protected virtual void On_DisposeUnmanagedResources() {
 
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
+		[SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
 		public virtual void Dispose() {
 			this.Dispose(true);
 			GC.SuppressFinalize(this); // remove this from gc finalizer list

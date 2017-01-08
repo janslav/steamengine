@@ -7,7 +7,6 @@
  */
 
 using System.IO;
-
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {

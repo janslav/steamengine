@@ -17,13 +17,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_If : OpNode, IOpNodeHolder {
 		//accepts
 		private OpNode[] conditions;
@@ -130,19 +131,19 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("If (");
-			str.Append(this.conditions[0].ToString()).Append(")").Append(Environment.NewLine);
+			str.Append(this.conditions[0]).Append(")").Append(Environment.NewLine);
 			if (this.blocks[0] != null) {
-				str.Append(this.blocks[0].ToString());
+				str.Append(this.blocks[0]);
 			}
 			for (int i = 1, n = this.conditions.Length; i < n; i++) {
-				str.Append("ElseIf (").Append(this.conditions[i].ToString()).Append(")").Append(Environment.NewLine);
+				str.Append("ElseIf (").Append(this.conditions[i]).Append(")").Append(Environment.NewLine);
 				if (this.blocks[i] != null) {
-					str.Append(this.blocks[i].ToString());
+					str.Append(this.blocks[i]);
 				}
 			}
 			if (this.elseBlock != null) {
 				str.Append("Else").Append(Environment.NewLine);
-				str.Append(this.elseBlock.ToString());
+				str.Append(this.elseBlock);
 			}
 			str.Append("Endif");
 			return str.ToString();

@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -177,7 +178,7 @@ namespace SteamEngine {
 			return null;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {
 			if (this.tags != null) {
 				foreach (DictionaryEntry entry in this.tags) {
@@ -191,7 +192,7 @@ namespace SteamEngine {
 		#endregion Timers
 
 		#region Tags
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {
 			if (this.tags != null) {
 				foreach (DictionaryEntry entry in this.tags) {
@@ -274,9 +275,8 @@ namespace SteamEngine {
 			}
 			if (tagcount > 0) {
 				return sb.ToString();
-			} else {
-				return "Object '" + this + "' has no tags";
 			}
+			return "Object '" + this + "' has no tags";
 		}
 		#endregion Tags
 
@@ -336,7 +336,7 @@ namespace SteamEngine {
 		#region save/load
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual void Save(SaveStream output) {
 			if (this.tags != null) {
 				ArrayList forDeleting = null;
@@ -356,7 +356,7 @@ namespace SteamEngine {
 						}
 						output.WriteValue("tag." + key, value);
 					} else if (key is TimerKey) {
-						output.WriteValue("%" + key.ToString(), value);
+						output.WriteValue("%" + key, value);
 						//} else {
 						//Logger.WriteError(string.Format("This should not happen. Unknown key-value pair: {0} - {1}", key, value));
 					}
@@ -376,7 +376,7 @@ namespace SteamEngine {
 
 		internal static Regex timerKeyRE = new Regex(@"^\%(?<name>.+)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "3#")]
+		[SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "3#")]
 		public virtual void LoadLine(string filename, int line, string valueName, string valueString) {
 			Match m = tagRE.Match(valueName);
 			if (m.Success) {	//If the name begins with 'tag.'
@@ -396,7 +396,7 @@ namespace SteamEngine {
 		}
 
 		//used by loaders (Thing, GameAccount...)
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void LoadSectionLines(PropsSection ps) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
@@ -423,7 +423,7 @@ namespace SteamEngine {
 
 		#region IDeletable
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void ThrowIfDeleted() {
 			if (this.IsDeleted) {
 				throw new DeletedException("You can not manipulate a deleted object (" + this + ")");

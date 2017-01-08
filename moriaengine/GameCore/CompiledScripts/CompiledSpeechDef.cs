@@ -20,10 +20,6 @@ namespace SteamEngine.CompiledScripts {
 
 
 	public abstract class CompiledSpeech : AbstractSpeech {
-		public CompiledSpeech()
-			: base() {
-		}
-
 		protected override string InternalFirstGetDefname() {
 			return this.GetType().Name;
 		}

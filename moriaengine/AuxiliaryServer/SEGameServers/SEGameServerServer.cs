@@ -1,4 +1,5 @@
 
+using SteamEngine.Common;
 using SteamEngine.Communication.NamedPipes;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
@@ -12,7 +13,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 
 		internal static void Init() {
 #if MSWIN
-			instance.Bind(Common.Tools.commonPipeName);
+			instance.Bind(Tools.commonPipeName);
 #else
 			instance.Bind(new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, Common.Tools.commonPort));
 #endif

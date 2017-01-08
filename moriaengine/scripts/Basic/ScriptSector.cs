@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using SteamEngine.Communication;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
 using SteamEngine.Timers;
@@ -25,7 +26,7 @@ using SteamEngine.Timers;
 namespace SteamEngine.CompiledScripts {
 
 	/// <summary>Sector-defining class used in various scripts</summary>
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class ScriptSector {
 		/// <summary>
 		/// Dictionary mapping the computed SectorKey to the ScriptSector 
@@ -203,7 +204,6 @@ namespace SteamEngine.CompiledScripts {
 
 						Point4D loc = tp.Location;
 						if (!rect.Contains(tp.Location)) { //not interesting
-							continue;
 						} else {
 							TimeSpan tpCreatedAt = tp.CreatedAt;
 							if (tpCreatedAt > minTimeToYield) { //the footprint is not too old
@@ -213,9 +213,8 @@ namespace SteamEngine.CompiledScripts {
 										//previousInDict.Queue.Remove(previousInDict);
 										//uniqueFootsteps[loc] = tp;
 										throw new SEException("previousInDict.CreatedAt < tpCreatedAt. This should not happen.");
-									} else { //this one is older. 
-										charPoints.RemoveAndDispose(tp);
-									}
+									} //this one is older. 
+									charPoints.RemoveAndDispose(tp);
 								} else {
 									uniqueFootsteps.Add(loc, tp);
 								}
@@ -335,7 +334,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Dialogs.InfoField("Sector size")]
+		[InfoField("Sector size")]
 		public static int ScriptSectorSize {
 			get {
 				return scriptSectorSize;

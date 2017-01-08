@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class CarpentrySkillDef : CraftingSkillDef {
 
 		public CarpentrySkillDef(string defname, string filename, int headerLine)

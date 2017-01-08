@@ -18,20 +18,20 @@
 //This basically uses Windows' high performance timer via P/Invoke, and provides methods for 
 //converting to and from milliseconds, seconds, and ticks.
 
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+
 namespace SteamEngine.Common {
-	using System;
-	using System.Runtime.InteropServices;
-
-
 	public static class HighPerformanceTimer {
 
 		private static class NativeMethods {
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"),
+			[SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"),
 			DllImport("kernel32.dll")]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			internal static extern bool QueryPerformanceCounter(out long counter);
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"),
+			[SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#"),
 			DllImport("kernel32.dll")]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			internal static extern bool QueryPerformanceFrequency(out long frequency);
@@ -43,13 +43,13 @@ namespace SteamEngine.Common {
 		private static double dmFrequency;
 
 		private static double timeSpanTicksFrequency;
-		private static bool fallback=false;
+		private static bool fallback;
 
 		static HighPerformanceTimer() {
 			try {
 				bool success = NativeMethods.QueryPerformanceFrequency(out frequency);
 				if (success) {
-					dFrequency = (double) frequency;
+					dFrequency = frequency;
 					dmFrequency = dFrequency / 1000.0;
 					timeSpanTicksFrequency = frequency / 10000000.0;
 					return;
@@ -68,76 +68,74 @@ namespace SteamEngine.Common {
 			get {
 				if (fallback) {
 				    return Environment.TickCount;
-				} else {
-					long count;
-					bool success = NativeMethods.QueryPerformanceCounter(out count);
-					if (success) {
-						return count;
-					} else {
-						throw new FatalException("Unable to access high performance timer.");
-						//Debug.WriteLine("Attempt to read the high performance timer failed.");
-						//Sanity.IfTrueSay(true, "Attempt to read the high performance timer failed.");
-						//return Environment.TickCount;
-					}
 				}
+				long count;
+				bool success = NativeMethods.QueryPerformanceCounter(out count);
+				if (success) {
+					return count;
+				}
+				throw new FatalException("Unable to access high performance timer.");
+				//Debug.WriteLine("Attempt to read the high performance timer failed.");
+				//Sanity.IfTrueSay(true, "Attempt to read the high performance timer failed.");
+				//return Environment.TickCount;
 			}
 		}
 
-		public static double TicksToSeconds(long count) {
+		public static double TicksToSeconds(long count)
+		{
 			if (fallback) {
 			    return count/1000.0;
-			} else {
-				return count / dFrequency;
 			}
+			return count / dFrequency;
 		}
 		
-		public static long TicksToMilliseconds(long count) {
+		public static long TicksToMilliseconds(long count)
+		{
 			if (fallback) {
 			    return count;
-			} else {
-				return (long) (count / dmFrequency);
 			}
+			return (long) (count / dmFrequency);
 		}
 		
-		public static double TicksToDMilliseconds(long count) {
+		public static double TicksToDMilliseconds(long count)
+		{
 			if (fallback) {
 			    return count;
-			} else {
-				return (count / dmFrequency);
 			}
+			return (count / dmFrequency);
 		}
 
 		//TimeSpan ticks have 100 nanoseconds, that means frequency 10 000 000 ticks per second
 		//our ticks probably have the same
-		public static TimeSpan TicksToTimeSpan(long count) {
+		public static TimeSpan TicksToTimeSpan(long count)
+		{
 			if (fallback) {
 			    return new TimeSpan(count);
-			} else {
-				return new TimeSpan((long) (count / timeSpanTicksFrequency));
 			}
+			return new TimeSpan((long) (count / timeSpanTicksFrequency));
 		}
 		
-		public static long TimeSpanToTicks(TimeSpan span) {
+		public static long TimeSpanToTicks(TimeSpan span)
+		{
 			if (fallback) {
 			    return span.Ticks;
-			} else {
-			return (long) (span.Ticks * timeSpanTicksFrequency);
 			}
+			return (long) (span.Ticks * timeSpanTicksFrequency);
 		}
 
-		public static long SecondsToTicks(double count) {
+		public static long SecondsToTicks(double count)
+		{
 			if (fallback) {
 			    return (long) (count*1000);
-			} else {
-				return (long) (count * dFrequency);
 			}
+			return (long) (count * dFrequency);
 		}
-		public static long MillisecondsToTicks(long count) {
+		public static long MillisecondsToTicks(long count)
+		{
 			if (fallback) {
 			    return count;
-			} else {
-				return (long) (count * dmFrequency);	//(count/1000.0)*dFrequency);
 			}
+			return (long) (count * dmFrequency);	//(count/1000.0)*dFrequency);
 		}
 	}
 
@@ -164,7 +162,7 @@ namespace SteamEngine.Common {
 				long ticksOnEnd = HighPerformanceTimer.TickCount;
 				long diff = ticksOnEnd - this.ticksOnStart;
 				Logger.indentation = Logger.indentation.Substring(0, Logger.indentation.Length - 1);
-				Logger.StaticWriteLine("...took " + HighPerformanceTimer.TicksToTimeSpan(diff).ToString());
+				Logger.StaticWriteLine("...took " + HighPerformanceTimer.TicksToTimeSpan(diff));
 				this.disposed = true;
 			}
 		}

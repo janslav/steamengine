@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using SteamEngine.Common;
 
@@ -411,7 +412,7 @@ namespace SteamEngine.CompiledScripts {
 					weapMindPowerVsP = MagerySettings.instance.bareHandsMindPowerVsP;
 					weapMindPowerVsM = MagerySettings.instance.bareHandsMindPowerVsP;
 				}
-				double delay = Math.Sqrt((double) self.Dex);
+				double delay = Math.Sqrt(self.Dex);
 				delay *= weapSpeed;
 				delay *= CombatSettings.instance.weaponSpeedGlobal;
 				retVal.delay = TimeSpan.FromSeconds((0xfffff / 1000.0) / delay);//dedictvi z morie. funguje to tak proc to menit :)

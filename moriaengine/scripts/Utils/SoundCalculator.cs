@@ -124,9 +124,9 @@ namespace SteamEngine.CompiledScripts {
 			int sound;
 			if ((cmi.charAnimType & CharAnimType.Human) == CharAnimType.Human) {
 				if (cmi.isFemale) {
-					sound = (int) (Globals.dice.Next(4) + 788);
+					sound = Globals.dice.Next(4) + 788;
 				} else {
-					sound = (int) (Globals.dice.Next(5) + 1059);
+					sound = Globals.dice.Next(5) + 1059;
 				}
 				self.Sound(sound);
 			} else {

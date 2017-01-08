@@ -16,9 +16,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.CodeDom;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -29,15 +30,11 @@ namespace SteamEngine.CompiledScripts {
 			This class provides automatic linking of methods intended for use as triggers
 	*/
 	public abstract class CompiledTriggerGroup : TriggerGroup {
-		protected CompiledTriggerGroup()
-			: base() {
-		}
-
 		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
 			throw new SEException("CompiledTriggerGroup without overriden Run method?! This should not happen.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			try {
 				return this.Run(self, tk, sa);
@@ -62,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 	internal sealed class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
 		static List<Type> compiledTGs = new List<Type>();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<CompiledTriggerGroup>(AddCompiledTGType);
 		}
@@ -76,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();

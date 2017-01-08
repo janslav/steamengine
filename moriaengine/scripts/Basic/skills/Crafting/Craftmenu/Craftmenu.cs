@@ -16,6 +16,7 @@
  */
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
@@ -97,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	[SaveableClass]
 	public class CraftmenuCategory : ICraftmenuElement, IDeletable {
-		internal bool isLoaded = false;
+		internal bool isLoaded;
 
 		//lazily loaded reference to the crafting skill connected to this category (main categories only)
 		internal CraftingSkillDef categorySkill;
@@ -106,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 		public string name; //name of the category
 		[SaveableData]
 		public List<ICraftmenuElement> contents = new List<ICraftmenuElement>(); //itemdefs and subcategorties contained in the category
-		private CraftmenuCategory parent = null;
+		private CraftmenuCategory parent;
 
 		[LoadingInitializer]
 		public CraftmenuCategory() {
@@ -128,9 +129,8 @@ namespace SteamEngine.CompiledScripts {
 				this.ThrowIfDeleted();
 				if (this.Parent == this) {//main Categories have Parental reference on themselves
 					return this.name;
-				} else {
-					return this.Parent.FullName + "->" + this.name;
 				}
+				return this.Parent.FullName + "->" + this.name;
 			}
 		}
 
@@ -148,12 +148,12 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Return the (grand)parent from this category that lies on the first hierarchy level</summary>
 		public CraftmenuCategory MainParent {
-			get {
+			get
+			{
 				if (this.Parent == this) {
 					return this;
-				} else {
-					return this.Parent.MainParent;
 				}
+				return this.Parent.MainParent;
 			}
 		}
 
@@ -219,7 +219,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool IsDeleted {
 			get {
-				return (this.isLoaded == true && this.parent == null);//has been loaded but the parent is null? (this can happen only if the category was deleted)
+				return (this.isLoaded && this.parent == null);//has been loaded but the parent is null? (this can happen only if the category was deleted)
 			}
 		}
 
@@ -232,7 +232,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		#endregion
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void ThrowIfDeleted() {
 			if (this.IsDeleted) {
 				throw new DeletedException("Invalid usage of deleted Craftmenu Category (" + this + ")");
@@ -246,7 +246,7 @@ namespace SteamEngine.CompiledScripts {
 	public class CraftmenuItem : ICraftmenuElement {
 		[SaveableData]
 		public ItemDef itemDef;
-		private CraftmenuCategory parent = null;
+		private CraftmenuCategory parent;
 
 		[LoadingInitializer]
 		public CraftmenuItem() {

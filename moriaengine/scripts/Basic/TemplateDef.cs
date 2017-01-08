@@ -114,10 +114,9 @@ namespace SteamEngine.CompiledScripts {
 										td.Unregister();
 										throw new OverrideNotAllowedException(
 											"TemplateDef " + LogStr.Ident(td.Defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
-									} else {
-										td.Altdefname = altdefname;
-										td.Unregister(); //will be reregistred later by AbstractDef
 									}
+									td.Altdefname = altdefname;
+									td.Unregister(); //will be reregistred later by AbstractDef
 								} else if (t == td) {
 									Logger.WriteWarning(input.Filename, linenumber,
 										"Defname redundantly specified for TemplateDef " + LogStr.Ident(altdefname) + ".");

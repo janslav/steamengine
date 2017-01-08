@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using SteamEngine.Common;
 
@@ -35,7 +36,7 @@ namespace SteamEngine.Networking {
 		//private readonly long RidingWalkStepTime = HighPerformanceTimer.SecondsToTicks(0.18);
 
 		private static LinkedList<MovementState> queue = new LinkedList<MovementState>();
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+		[SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
 		private static Thread thread = InitThread();
 		private static ManualResetEvent manualResetEvent = new ManualResetEvent(false);
 
@@ -164,15 +165,14 @@ namespace SteamEngine.Networking {
 				this.lastStepReserve = Math.Max(diff, 0);
 				//lastMovementTime = currentTime;//...because sometimes the client tends to send more steps at once (or it looks like that), but it still isn't speedhacking
 				return true;
-			} else {
-				////Logger.WriteInfo(MovementTracingOn, "Delaying movement, the packet is "+seconds+" seconds early.");
-				//if (MovementTracingOn) { 
-				//    //we need not spam the console with warnings. Players simply can't speedhack, end of story.
-				//    Logger.WriteWarning("The client "+LogStr.Ident(this)+" is moving too fast. The packet came "+
-				//        LogStr.Number(HighPerformanceTimer.TicksToSeconds(-(diff + reserves)))+" s earlier than allowed.");
-				//}
-				return false;
 			}
+			////Logger.WriteInfo(MovementTracingOn, "Delaying movement, the packet is "+seconds+" seconds early.");
+			//if (MovementTracingOn) { 
+			//    //we need not spam the console with warnings. Players simply can't speedhack, end of story.
+			//    Logger.WriteWarning("The client "+LogStr.Ident(this)+" is moving too fast. The packet came "+
+			//        LogStr.Number(HighPerformanceTimer.TicksToSeconds(-(diff + reserves)))+" s earlier than allowed.");
+			//}
+			return false;
 		}
 
 		private void Movement(Direction dir, bool running, byte sequence) {
@@ -193,7 +193,6 @@ namespace SteamEngine.Networking {
 				this.gameState.Conn.SendSinglePacket(packet);
 
 				this.ResetMovementSequence();
-				return;
 			}
 		}
 

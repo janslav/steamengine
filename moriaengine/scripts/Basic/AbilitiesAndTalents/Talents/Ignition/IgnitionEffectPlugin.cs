@@ -16,11 +16,12 @@
  */
 
 using System;
-using SteamEngine.Timers;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	//the similarity to Poison is not random :)
 	public partial class IgnitionEffectPlugin {
 		public const double minimumIgnitionEffect = 0.1; //plugin gets removed when the regen modifier goes below this
@@ -95,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class IgnitionEffectPluginDef {
 		public static readonly IgnitionEffectPluginDef instance =
 			(IgnitionEffectPluginDef) new IgnitionEffectPluginDef("p_ignitionEffect", "C# scripts", -1).Register();

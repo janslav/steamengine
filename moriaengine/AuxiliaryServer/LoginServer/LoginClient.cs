@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 

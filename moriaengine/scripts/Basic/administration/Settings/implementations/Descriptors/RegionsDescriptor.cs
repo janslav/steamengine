@@ -16,12 +16,12 @@
 */
 
 using System;
-using SteamEngine.Regions;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Region), "Region",
-	 new string[] { "Parent", "Rectangles", "WorldRegion", "IsWorldRegion", "P", "HierarchyName", "CreatedAt" }
+	 new[] { "Parent", "Rectangles", "WorldRegion", "IsWorldRegion", "P", "HierarchyName", "CreatedAt" }
 		)]
 	public static class RegionDescriptor {
 		//automaticky se zobrazi defname, createdAt, hierarchy index, mapplane
@@ -32,7 +32,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(parent));
 			} else {
 				D_Display_Text.ShowError("Neexistuje rodièovský region");
-				return;
 			}
 		}
 
@@ -60,17 +59,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (reg.ContainsPoint(point)) {
 				reg.P = point;
 			} else {
-				throw new SEException("Specified point " + point.ToString() + " must lay in the region");
+				throw new SEException("Specified point " + point + " must lay in the region");
 			}
 		}
 
 		[GetMethod("Parent name", typeof(string))]
-		public static object GetParentName(object target) {
+		public static object GetParentName(object target)
+		{
 			if (((Region) target).Parent != null) {
 				return ((Region) target).Parent.Name;
-			} else {
-				return "";
 			}
+			return "";
 		}
 
 		//Tohle v sobe nese informaci v podstate o poslednim resyncu :) (tehdy se reloadnou a znovu vzniknou)

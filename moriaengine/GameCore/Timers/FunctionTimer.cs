@@ -18,23 +18,24 @@
 //will be alternative to Timer that runs triggers...
 //this runs scripted methods - functional ScriptHolders
 
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
 	[SaveableClass, DeepCopyableClass]
 	public sealed class FunctionTimer : BoundTimer {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		public ScriptHolder function;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData, CopyableData]
 		public string formatString;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData, CopyableData]
 		public object[] args;
 
-		protected sealed override void OnTimeout(TagHolder cont) {
+		protected override void OnTimeout(TagHolder cont) {
 			ScriptArgs sa = new ScriptArgs(this.args);
 			sa.FormatString = this.formatString;
 			this.function.TryRun(cont, sa);
@@ -55,13 +56,13 @@ namespace SteamEngine.Timers {
 			this.args = args;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public override void Save(SaveStream output) {
 			output.WriteValue("function", this.function.Name);
 			base.Save(output);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), LoadLine]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), LoadLine]
 		public override void LoadLine(string filename, int line, string name, string value) {
 			if (name.Equals("function")) {
 				this.function = ScriptHolder.GetFunction((string) ObjectSaver.OptimizedLoad_String(value));

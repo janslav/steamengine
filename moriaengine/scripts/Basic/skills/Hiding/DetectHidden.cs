@@ -17,9 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class DetectHiddenSkillDef : SkillDef {
 
 		public DetectHiddenSkillDef(string defname, string filename, int headerLine)
@@ -62,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 				} else if (ssp.hadDetectedMe.Contains(self)) {
 					return;
 				}
-				Networking.CharSyncQueue.AboutToChangeVisibility(target);
+				CharSyncQueue.AboutToChangeVisibility(target);
 				ssp.hadDetectedMe.AddFirst(self);
 			}
 		}

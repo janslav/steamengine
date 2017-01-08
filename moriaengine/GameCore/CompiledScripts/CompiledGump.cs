@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -37,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected CompiledGumpDef()
-			: base() {
+		{
 		}
 
 		protected CompiledGumpDef(string defName)
@@ -52,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		//public override void Unload() {
 		//}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			Gump gi = new CompiledGump(this);
 
@@ -284,7 +285,7 @@ namespace SteamEngine.CompiledScripts {
 		//RunUO interface
 		public int X {
 			get {
-				return (int) this.GumpInstance.X;
+				return this.GumpInstance.X;
 			}
 			set {
 				this.GumpInstance.X = value;
@@ -354,7 +355,7 @@ namespace SteamEngine.CompiledScripts {
 		public CompiledGump(CompiledGumpDef def)
 			: base(def) {
 		}
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
 			CompiledGumpDef gdef = (CompiledGumpDef) this.Def;
 			gdef.gumpInstance = this;

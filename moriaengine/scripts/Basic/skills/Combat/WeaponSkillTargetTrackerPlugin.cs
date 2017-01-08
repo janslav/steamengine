@@ -16,10 +16,11 @@
 */
 
 using System.Collections.Generic;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	partial class WeaponSkillTargetTrackerPlugin {
 		HashSet<Character> attackers = new HashSet<Character>();
 
@@ -83,7 +84,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	partial class WeaponSkillTargetTrackerPluginDef {
 		public static WeaponSkillTargetTrackerPluginDef instance = (WeaponSkillTargetTrackerPluginDef) 
 			new WeaponSkillTargetTrackerPluginDef("p_weaponSkillTargetTracker", "C# scripts", -1).Register();

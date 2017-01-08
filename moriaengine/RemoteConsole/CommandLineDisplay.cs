@@ -59,7 +59,7 @@ namespace SteamEngine.RemoteConsole {
 				Button button = new Button();
 				button.Text = line.Name;
 				button.Tag = line.GetValue<string>();
-				button.Click += new EventHandler(this.btnCommand_Click);
+				button.Click += this.btnCommand_Click;
 				this.pnlGameServerButtons.Controls.Add(button);
 			}
 			ini.WriteToFile();

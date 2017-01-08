@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
@@ -164,11 +165,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, notesList.Count, 1)) {//kliknuto na paging?
 				//1 sloupecek
-				return;
 			} else {
 				//zjistime si radek
-				int row = ((int) gr.PressedButton - 10) / 4;
-				int buttNo = ((int) gr.PressedButton - 10) % 4;
+				int row = (gr.PressedButton - 10) / 4;
+				int buttNo = (gr.PressedButton - 10) % 4;
 				AccountNote note = notesList[row];
 				Gump newGi;
 				switch (buttNo) {
@@ -226,7 +226,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.GetByName(text.Argv[0].ToString());
 				if (acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0].ToString() + " neexistuje.", (int) Hues.Red);
+					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0] + " neexistuje.", (int) Hues.Red);
 					return;
 				}
 				newArgs.SetTag(accountTK, acc);//nastavit account					
@@ -385,11 +385,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, crimesList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
 				//1 sloupecek
-				return;
 			} else {
 				//zjistime si radek
-				int row = ((int) gr.PressedButton - 10) / 5;
-				int buttNo = ((int) gr.PressedButton - 10) % 5;
+				int row = (gr.PressedButton - 10) / 5;
+				int buttNo = (gr.PressedButton - 10) % 5;
 				AccountCrime crime = crimesList[row];
 				Gump newGi;
 				switch (buttNo) {
@@ -451,7 +450,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				ScriptedAccount acc = (ScriptedAccount) AbstractAccount.GetByName(text.Argv[0].ToString());
 				if (acc == null) {
-					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0].ToString() + " neexistuje.", (int) Hues.Red);
+					Globals.SrcCharacter.SysMessage("Account se jménem " + text.Argv[0] + " neexistuje.", (int) Hues.Red);
 					return;
 				}
 				newArgs.SetTag(D_AccountNotes.accountTK, acc);

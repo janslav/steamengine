@@ -16,13 +16,14 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using SharpSvn;
 using SteamEngine.Common;
+using SteamEngine.Communication.TCP;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
-using SteamEngine.Communication.TCP;
-using System.Diagnostics;
-using SharpSvn;
 #if MSWIN
 using Microsoft.Win32;	//for RegistryKey
 #endif
@@ -41,7 +42,7 @@ namespace SteamEngine {
 		public const int MaxUpdateRange = 18;
 		public const int MaxUpdateRangeSquared = MaxUpdateRange * MaxUpdateRange;
 		public const int MinUpdateRange = 5;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const int defaultWarningLevel = 4;
 
 		private static int port;
@@ -388,8 +389,8 @@ namespace SteamEngine {
 		 * Field: dice
 		 * Call dice.Next(int min, int max) to generate a random number.
 		 */
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly Random dice = new Random();
 
 		private static Globals instance = new Globals();
@@ -410,35 +411,35 @@ namespace SteamEngine {
 		internal static void Init() {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void LoadIni() {
 			try {
 				Logger.WriteDebug("Loading steamengine.ini");
 				IniFile iniH = new IniFile("steamengine.ini");
 				IniFileSection setup = iniH.GetNewOrParsedSection("setup");
 
-				serverName = setup.GetValue<string>("name", "Unnamed SteamEngine Shard", "The name of your shard");
-				adminEmail = setup.GetValue<string>("adminEmail", "admin@email.com", "Your Email to be displayed in status web, etc.");
-				hashPasswords = setup.GetValue<bool>("hashPasswords", false, "This hashes passwords (for accounts) using SHA512, which isn't reversable. Instead of writing passwords to the save files, the hash is written. If you disable this, then passwords will be recorded instead of the hashes, and will be stored instead of the hashes, which means that if someone obtains access to your accounts file, they will be able to read the passwords. It's recommended to leave this on. Note: If you switch this off after it's been on, passwords that are hashed will stay hashed, because hashing is one-way, until that account logs in, at which point the password (if it matches) will be recorded again in place of the hash. If you use text saves, you should be able to write password=whatever in the account save, and the password will be changed to that when that save is loaded, even if you're using hashed passwords.");
+				serverName = setup.GetValue("name", "Unnamed SteamEngine Shard", "The name of your shard");
+				adminEmail = setup.GetValue("adminEmail", "admin@email.com", "Your Email to be displayed in status web, etc.");
+				hashPasswords = setup.GetValue("hashPasswords", false, "This hashes passwords (for accounts) using SHA512, which isn't reversable. Instead of writing passwords to the save files, the hash is written. If you disable this, then passwords will be recorded instead of the hashes, and will be stored instead of the hashes, which means that if someone obtains access to your accounts file, they will be able to read the passwords. It's recommended to leave this on. Note: If you switch this off after it's been on, passwords that are hashed will stay hashed, because hashing is one-way, until that account logs in, at which point the password (if it matches) will be recorded again in place of the hash. If you use text saves, you should be able to write password=whatever in the account save, and the password will be changed to that when that save is loaded, even if you're using hashed passwords.");
 
 				//kickOnSuspiciousErrors = setup.GetValue<bool>("kickOnSuspiciousErrors", true, "Kicks the user if a suspiciously erroneous value is recieved in a packet from their client.");
 
-				allowUnencryptedClients = setup.GetValue<bool>("allowUnencryptedClients", true, "Allow clients with no encryption to connect. There's no problem with that, except for lower security.");
+				allowUnencryptedClients = setup.GetValue("allowUnencryptedClients", true, "Allow clients with no encryption to connect. There's no problem with that, except for lower security.");
 
 				IniFileSection files = iniH.GetNewOrParsedSection("files");
-				logPath = Path.GetFullPath(files.GetValue<string>("logPath", "./logs/", "Path to the log files"));
-				logToFiles = files.GetValue<bool>("logToFiles", true, "Whether to log console output to a file");
+				logPath = Path.GetFullPath(files.GetValue("logPath", "./logs/", "Path to the log files"));
+				logToFiles = files.GetValue("logToFiles", true, "Whether to log console output to a file");
 				CoreLogger.Init();
-				savePath = Path.GetFullPath(files.GetValue<string>("savePath", "./saves/", "Path to the save files"));
+				savePath = Path.GetFullPath(files.GetValue("savePath", "./saves/", "Path to the save files"));
 #if MSWIN
-				ndocExe = Path.GetFullPath(files.GetValue<string>("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc)."));
+				ndocExe = Path.GetFullPath(files.GetValue("ndocExe", "C:\\Program Files\\NDoc\\bin\\.net-1.1\\NDocConsole.exe", "Command for NDoc invocation (leave it blank, if you don't want use NDoc)."));
 #endif
-				docsPath = Path.GetFullPath(files.GetValue<string>("docsPath", "./docs/", "Path to the docs (Used when writing out some information from MUL files, like map tile info)"));
-				useMap = files.GetValue<bool>("useMap", true, "Whether to load map0.mul and statics0.mul and use them or not.");
-				generateMissingDefs = files.GetValue<bool>("generateMissingDefs", false, "Whether to generate missing scripts based on tiledata.");
-				useMultiItems = files.GetValue<bool>("useMultiItems", true, "Whether to use multi items...");
-				readBodyDefs = files.GetValue<bool>("readBodyDefs", true, "Whether to read Bodyconv.def (a client file) in order to determine what character models lack defs (and then to write new ones for them to 'scripts/defaults/chardefs/newCharDefsFromMuls.def').");
-				writeMulDocsFiles = files.GetValue<bool>("writeMulDocsFiles", false, "If this is true/on/1, then SteamEngine will write out some files with general information gathered from various MUL files into the 'docs/MUL file docs' folder. These should be distributed with SteamEngine anyways, but this is useful sometimes (like when a new UO expansion is released).");
+				docsPath = Path.GetFullPath(files.GetValue("docsPath", "./docs/", "Path to the docs (Used when writing out some information from MUL files, like map tile info)"));
+				useMap = files.GetValue("useMap", true, "Whether to load map0.mul and statics0.mul and use them or not.");
+				generateMissingDefs = files.GetValue("generateMissingDefs", false, "Whether to generate missing scripts based on tiledata.");
+				useMultiItems = files.GetValue("useMultiItems", true, "Whether to use multi items...");
+				readBodyDefs = files.GetValue("readBodyDefs", true, "Whether to read Bodyconv.def (a client file) in order to determine what character models lack defs (and then to write new ones for them to 'scripts/defaults/chardefs/newCharDefsFromMuls.def').");
+				writeMulDocsFiles = files.GetValue("writeMulDocsFiles", false, "If this is true/on/1, then SteamEngine will write out some files with general information gathered from various MUL files into the 'docs/MUL file docs' folder. These should be distributed with SteamEngine anyways, but this is useful sometimes (like when a new UO expansion is released).");
 
 				IniFileSection login = iniH.GetNewOrParsedSection("login");
 				//alwaysUpdateRouterIPOnStartup = (bool) login.GetValue<bool>("alwaysUpdateRouterIPOnStartup", false, "Automagically determine the routerIP every time SteamEngine is run, instead of using the setting for it in steamengine.ini.");
@@ -458,14 +459,14 @@ namespace SteamEngine {
 					////if (routerIP.Length>0) {
 					//Server.SetRouterIP(routerIP);
 					////}
-					mulPath = files.GetValue<string>("mulPath", "muls", "Path to the mul files");
+					mulPath = files.GetValue("mulPath", "muls", "Path to the mul files");
 				} else {
 					string mulsPath = GetMulsPath();
 					if (mulsPath == null) {
 						msgBox += "Unable to locate the UO MUL files. Please either place them in the 'muls' folder or specify the proper path in steamengine.ini (change mulPath=muls to the proper path)\n\n";
-						mulsPath = files.GetValue<string>("mulPath", "muls", "Path to the mul files");
+						mulsPath = files.GetValue("mulPath", "muls", "Path to the mul files");
 					} else {
-						mulsPath = files.GetValue<string>("mulPath", mulsPath, "Path to the mul files");
+						mulsPath = files.GetValue("mulPath", mulsPath, "Path to the mul files");
 					}
 					exists = false;
 					//string[] ret = Server.FindMyIP();
@@ -478,16 +479,16 @@ namespace SteamEngine {
 					//}
 				}
 				//timeZone = login.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
-				maxConnections = login.GetValue<int>("maxConnections", 100, "The cap on # of connections. Affects the percentage-full number sent to UO client.");
-				autoAccountCreation = login.GetValue<bool>("autoAccountCreation", false, "Automatically create accounts when someone attempts to log in");
-				blockOSI3DClient = login.GetValue<bool>("blockOSI3DClient", true, "Block the OSI 3D client from connecting. Said client is not supported, since it tends to do things in a stupid manner.");
+				maxConnections = login.GetValue("maxConnections", 100, "The cap on # of connections. Affects the percentage-full number sent to UO client.");
+				autoAccountCreation = login.GetValue("autoAccountCreation", false, "Automatically create accounts when someone attempts to log in");
+				blockOSI3DClient = login.GetValue("blockOSI3DClient", true, "Block the OSI 3D client from connecting. Said client is not supported, since it tends to do things in a stupid manner.");
 
 				IniFileSection ports = iniH.GetNewOrParsedSection("ports");
 				port = ports.GetValue<ushort>("game", 2595, "The port to listen on for client connections");
 
 				IniFileSection text = iniH.GetNewOrParsedSection("text");
-				commandPrefix = text.GetValue<string>("commandPrefix", ".", "The command prefix. You can make it 'Computer, ' if you really want.");
-				alternateCommandPrefix = text.GetValue<string>("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
+				commandPrefix = text.GetValue("commandPrefix", ".", "The command prefix. You can make it 'Computer, ' if you really want.");
+				alternateCommandPrefix = text.GetValue("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
 				//supportUnicode = text.GetValue<bool>("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
 				//asciiForNames = text.GetValue<bool>("asciiForNames", false, "If this is on, names are always sent in ASCII regardless of what supportUnicode is set to. NOTE: Names in paperdolls and status bars can only be shown in ASCII, and this ensures that name colors come out right.");
 				defaultAsciiMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
@@ -498,21 +499,21 @@ namespace SteamEngine {
 				squaredReachRange = reachRange * reachRange;
 				//sightRange = ranges.GetValue<ushort>("sightRange", 15, "The distance (in spaces) a character can see.");
 
-				speechDistance = ranges.GetValue<int>("speechDistance", 10, "The maximum distance from which normal speech can be heard.");
-				emoteDistance = ranges.GetValue<int>("emoteDistance", 10, "The maximum distance from which an emote can be heard/seen.");
-				whisperDistance = ranges.GetValue<int>("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
-				yellDistance = ranges.GetValue<int>("yellDistance", 20, "The maximum distance from which a yell can be heard.");
+				speechDistance = ranges.GetValue("speechDistance", 10, "The maximum distance from which normal speech can be heard.");
+				emoteDistance = ranges.GetValue("emoteDistance", 10, "The maximum distance from which an emote can be heard/seen.");
+				whisperDistance = ranges.GetValue("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
+				yellDistance = ranges.GetValue("yellDistance", 20, "The maximum distance from which a yell can be heard.");
 
 				IniFileSection plevels = iniH.GetNewOrParsedSection("plevels");
 				maximalPlevel = plevels.GetValue<byte>("maximalPlevel", 7, "Maximal plevel - the highest possible plevel (the owner's plevel)");
-				plevelOfGM = plevels.GetValue<int>("plevelOfGM", 4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
-				plevelForLscriptCommands = plevels.GetValue<int>("plevelForLscriptCommands", 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
+				plevelOfGM = plevels.GetValue("plevelOfGM", 4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
+				plevelForLscriptCommands = plevels.GetValue("plevelForLscriptCommands", 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
 
 				IniFileSection scripts = iniH.GetNewOrParsedSection("scripts");
-				resolveEverythingAtStart = scripts.GetValue<bool>("resolveEverythingAtStart", false, "If this is false, Constants and fields of scripted defs (ThingDef,Skilldef, etc.) will be resolved from the text on demand (and probably at the first save). Otherwise, everything is resolved on the start. Leave this to false on your development server, but set it to true for a live shard, because it's more secure.");
+				resolveEverythingAtStart = scripts.GetValue("resolveEverythingAtStart", false, "If this is false, Constants and fields of scripted defs (ThingDef,Skilldef, etc.) will be resolved from the text on demand (and probably at the first save). Otherwise, everything is resolved on the start. Leave this to false on your development server, but set it to true for a live shard, because it's more secure.");
 				defaultItemModel = scripts.GetValue<ushort>("defaultItemModel", 0xeed, "The item model # to use when an itemdef has no model specified.");
 				defaultCharModel = scripts.GetValue<ushort>("defaultCharModel", 0x0190, "The character body/model # to use when a chardef has no model specified.");
-				scriptFloats = scripts.GetValue<bool>("scriptFloats", true, "If this is off, dividing/comparing 2 numbers in Lscript is treated as if they were 2 integers (rounds before the computing if needed), effectively making the scripting engine it backward compatible to old spheres. Otherwise, the precision of the .NET Double type is used in scripts.");
+				scriptFloats = scripts.GetValue("scriptFloats", true, "If this is off, dividing/comparing 2 numbers in Lscript is treated as if they were 2 integers (rounds before the computing if needed), effectively making the scripting engine it backward compatible to old spheres. Otherwise, the precision of the .NET Double type is used in scripts.");
 				//Logger.showCoreExceptions = scripts.GetValue<bool>("showCoreExceptions", true, "If this is off, only the part of Exception stacktrace that occurs in the scripts is shown. If you're debugging core, have it on. If you're debugging scripts, have it off to save some space on console.");
 
 				//loginFlags = 0;
@@ -520,7 +521,7 @@ namespace SteamEngine {
 
 				IniFileSection features = iniH.GetNewOrParsedSection("features");
 				//features.Comment("These are features which can be toggled on or off.");
-				useAosToolTips = features.GetValue<bool>("useAosToolTips", true, "If this is on, AOS tooltips (onmouseover little windows instead of onclick texts) are enabled. Applies for clients > 3.0.8o");
+				useAosToolTips = features.GetValue("useAosToolTips", true, "If this is on, AOS tooltips (onmouseover little windows instead of onclick texts) are enabled. Applies for clients > 3.0.8o");
 				//OneCharacterOnly = (bool) features.IniEntry("OneCharacterOnly", (bool)false, "Limits accounts to one character each (except GMs)).");
 
 				featuresFlags |= 0x2;
@@ -566,11 +567,11 @@ namespace SteamEngine {
 
 				IniFileSection temporary = iniH.GetNewOrParsedSection("temporary");
 				temporary.AddComment("These are temporary INI settings, which will be going away in future versions.");
-				fastStartUp = temporary.GetValue<bool>("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
-				parallelStartUp = temporary.GetValue<bool>("parallelStartUp", false, "If set to true, some parts of startup will run multi-threaded. Not recommended for production.");
-				sendTileDataSpam = temporary.GetValue<bool>("sendTileDataSpam", false, "Set this to true, and you'll be sent lots of spam when you walk. Yeah, this is temporary. I need it for testing tiledata stuff. -SL");
-				netSyncingTracingOn = temporary.GetValue<bool>("netSyncingTracingOn", false, "Networking.SyncQueue info messages");
-				mapTracingOn = temporary.GetValue<bool>("mapTracingOn", false, "Regions.Map info messages");
+				fastStartUp = temporary.GetValue("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
+				parallelStartUp = temporary.GetValue("parallelStartUp", false, "If set to true, some parts of startup will run multi-threaded. Not recommended for production.");
+				sendTileDataSpam = temporary.GetValue("sendTileDataSpam", false, "Set this to true, and you'll be sent lots of spam when you walk. Yeah, this is temporary. I need it for testing tiledata stuff. -SL");
+				netSyncingTracingOn = temporary.GetValue("netSyncingTracingOn", false, "Networking.SyncQueue info messages");
+				mapTracingOn = temporary.GetValue("mapTracingOn", false, "Regions.Map info messages");
 
 				temporary.AddComment("");
 				temporary.AddComment("SteamEngine determines if someone is on your LAN by comparing their IP with all of yours. If the first three parts of the IPs match, they're considered to be on your LAN. Note that this will probably not work for people on very big LANs. If you're on one, please post a feature request on our SourceForge site.");
@@ -598,7 +599,7 @@ namespace SteamEngine {
 			Looks in the registry to find the path to the MUL files. If both 2d and 3d are installed,
 			it isn't specified which this will find.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static string GetMulsPath() {
 #if MSWIN
 			RegistryKey soft = Registry.LocalMachine.OpenSubKey("SOFTWARE");
@@ -642,7 +643,7 @@ namespace SteamEngine {
 
 		//public static readonly string version="1.0.0"; 
 		private static string version;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static string Version {
 			get {
 				if (version == null) {
@@ -835,7 +836,7 @@ namespace SteamEngine {
 			ndocProcess = null;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void CompileDocs() {
 			if (ndocProcess != null) {
 				Logger.WriteError("NDoc is already running.");
@@ -878,7 +879,7 @@ namespace SteamEngine {
 					info.UseShellExecute = true;
 					ndocProcess = new Process();
 					ndocProcess.StartInfo = info;
-					ndocProcess.Exited += new EventHandler(ndocExited);
+					ndocProcess.Exited += ndocExited;
 					ndocProcess.EnableRaisingEvents = true;
 					ndocProcess.Start();
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -965,10 +966,9 @@ namespace SteamEngine {
 			get {
 				if (paused > 0) {
 					return lastMarkServerTime;
-				} else {
-					DateTime current = DateTime.Now;
-					return lastMarkServerTime + (current - lastMarkRealTime);
 				}
+				DateTime current = DateTime.Now;
+				return lastMarkServerTime + (current - lastMarkRealTime);
 			}
 		}
 

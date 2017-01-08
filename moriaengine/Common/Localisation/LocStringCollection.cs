@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -11,15 +12,12 @@ namespace SteamEngine.Common {
 		internal const string defaultText = "<LocalisationEntryNotAvailable>";
 
 		//name=value //comment
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly Regex valueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private Dictionary<string, string> entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		private Language language;
-
-		protected LocStringCollection() {
-		}
 
 		public string GetEntry(string entryName) {
 			string value;
@@ -53,7 +51,7 @@ namespace SteamEngine.Common {
 			get;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerator<KeyValuePair<string, string>> GetEnumerator() {
 			return this.entriesByName.GetEnumerator();
 		}
@@ -62,7 +60,7 @@ namespace SteamEngine.Common {
 			return this.entriesByName.GetEnumerator();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "entriesByName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "language"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "entriesByName"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "language"), SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		protected internal virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {
 			this.entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			Dictionary<string, string> helperList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

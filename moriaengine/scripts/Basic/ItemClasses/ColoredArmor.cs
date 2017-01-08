@@ -15,6 +15,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
 
 	public interface IObjectWithMaterial {
@@ -23,11 +25,11 @@ namespace SteamEngine.CompiledScripts {
 		int Color { get; set; }
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ColoredArmorDef : IObjectWithMaterial {
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ColoredArmor : Wearable {
 
 	}

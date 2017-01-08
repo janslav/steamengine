@@ -16,10 +16,10 @@
 */
 
 using System;
-using SteamEngine.Timers;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
-using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -88,9 +88,8 @@ namespace SteamEngine.CompiledScripts {
 				SpellEffectItem item = (SpellEffectItem) this.Create(x, y, z, map.M);
 				item.Init(spellPower, duration, dispellable);
 				return item;
-			} else {
-				return null;
 			}
+			return null;
 		}
 	}
 }

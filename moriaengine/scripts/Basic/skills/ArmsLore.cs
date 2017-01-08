@@ -1,5 +1,7 @@
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class ArmsLoreSkillDef : SkillDef {
 		public ArmsLoreSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -23,9 +25,8 @@ namespace SteamEngine.CompiledScripts {
 			if (self.CanReachWithMessage((Item) skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 				return TriggerResult.Continue;
-			} else {
-				return TriggerResult.Cancel;
 			}
+			return TriggerResult.Cancel;
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
@@ -68,10 +69,9 @@ namespace SteamEngine.CompiledScripts {
 				skillSeq.Target1 = targetted;
 				skillSeq.PhaseStart();
 				return TargetResult.Done;
-			} else {
-				self.SysMessage("Zamìøuj pouze zbranì a zbroje!");
-				return TargetResult.RestartTargetting;
 			}
+			self.SysMessage("Zamìøuj pouze zbranì a zbroje!");
+			return TargetResult.RestartTargetting;
 		}
 	}
 }

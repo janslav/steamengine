@@ -16,10 +16,13 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+using EQATEC.Profiler;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
+using SteamEngine.Timers;
 
 namespace SteamEngine.LScript {
 
@@ -149,7 +152,7 @@ namespace SteamEngine.LScript {
 			return sc;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static OpNode TryCompile(LScriptHolder parent, TextReader stream, int startLine) {
 			try {
 				return Compile(parent, stream, startLine);
@@ -182,7 +185,7 @@ namespace SteamEngine.LScript {
 			return finishedNode;
 		}
 
-		[EQATEC.Profiler.SkipInstrumentation]
+		[SkipInstrumentation]
 		internal static OpNode CompileNode(IOpNodeHolder parent, Node code, bool mustEval) {
 			switch ((StrictConstants) code.GetId()) {
 				case StrictConstants.STRONG_EVAL_EXPRESSION:
@@ -242,9 +245,8 @@ namespace SteamEngine.LScript {
 				throw new InterpreterException("Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) + "'(Node type " + LogStr.Ident(code.ToString()) + ") in an invalid way.",
 					startLine + code.GetStartLine(), code.GetStartColumn(),
 					GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName());
-			} else {
-				return CompileNode(parent, code);
 			}
+			return CompileNode(parent, code);
 		}
 
 		internal static OpNode CompileNode(IOpNodeHolder parent, Node code) {
@@ -280,7 +282,7 @@ namespace SteamEngine.LScript {
 					return OpNode_Object.Construct(parent, (object) null);
 
 				case StrictConstants.TIMER_KEY:
-					return OpNode_Object.Construct(parent, Timers.TimerKey.Acquire(
+					return OpNode_Object.Construct(parent, TimerKey.Acquire(
 						((Token) code.GetChildAt(1)).GetImage()));
 
 				case StrictConstants.TRIGGER_KEY:
@@ -369,9 +371,8 @@ namespace SteamEngine.LScript {
 					}
 					if ((i <= int.MaxValue) && (i >= int.MinValue)) {
 						return OpNode_Object.Construct(parent, (int) i);
-					} else {
-						return OpNode_Object.Construct(parent, i);
 					}
+					return OpNode_Object.Construct(parent, i);
 
 				case StrictConstants.HEXNUMBER:
 					ulong h;
@@ -384,9 +385,8 @@ namespace SteamEngine.LScript {
 					}
 					if ((h <= uint.MaxValue) && (h >= uint.MinValue)) {
 						return OpNode_Object.Construct(parent, (uint) h);
-					} else {
-						return OpNode_Object.Construct(parent, h);
 					}
+					return OpNode_Object.Construct(parent, h);
 
 				case StrictConstants.FLOAT:
 					double d;
@@ -409,14 +409,13 @@ namespace SteamEngine.LScript {
 			OpNode parentNode = holder as OpNode;
 			if (parentNode != null) {
 				return parentNode.ParentScriptHolder;
-			} else {
-				return (LScriptHolder) holder;
 			}
+			return (LScriptHolder) holder;
 		}
 
 		private static string indent;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void DisplayTree(Node node) {
 			Console.WriteLine(indent + node + " : " + GetString(node));
 			//Console.WriteLine(indent+node);
@@ -428,12 +427,12 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		internal static string GetFirstTokenString(Node node) {
+		internal static string GetFirstTokenString(Node node)
+		{
 			if (node.GetChildCount() > 0) {
 				return GetFirstTokenString(node.GetChildAt(0));
-			} else {
-				return GetString(node);
 			}
+			return GetString(node);
 		}
 
 		internal static string GetString(Node node) {

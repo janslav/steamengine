@@ -16,8 +16,8 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Text;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
@@ -65,13 +65,13 @@ namespace SteamEngine.Communication {
 			return result;
 		}
 
-		[System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("DEBUG")]
 		public void OutputPacketLog() {
 			Logger.WriteDebug("Incoming packet 0x" + this.buffer[this.offset - 1].ToString("x"));
 			CommunicationUtils.OutputPacketLog(this.buffer, this.offset, this.length);
 		}
 
-		[System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("DEBUG")]
 		public void OutputPacketLog(string message) {
 			Logger.WriteDebug(string.Concat(message, " (packet 0x", this.buffer[this.offset - 1].ToString("x"), ")"));
 			CommunicationUtils.OutputPacketLog(this.buffer, this.offset, this.length);
@@ -134,9 +134,8 @@ namespace SteamEngine.Communication {
 			this.SeekFromCurrent(len);
 			if (truncateEndlines) {
 				return ConvertTools.RemoveIllegalChars(str);
-			} else {
-				return str;
 			}
+			return str;
 		}
 
 		/// <summary>Decodes an ascii string, which is expected to be null-terminated, truncating it if it contains endlines (and replacing tabs with spaces).</summary>
@@ -185,9 +184,8 @@ namespace SteamEngine.Communication {
 			this.SeekFromCurrent(len);
 			if (truncateEndlines) {
 				return ConvertTools.RemoveIllegalChars(str);
-			} else {
-				return str;
 			}
+			return str;
 		}
 
 		protected int DecodeInt() {

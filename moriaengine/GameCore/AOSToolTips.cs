@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
 
 namespace SteamEngine {
 
@@ -37,9 +38,6 @@ namespace SteamEngine {
 
 		private static int uids;
 
-		public AosToolTips() {
-		}
-
 		public static AosToolTips GetFromCache(Thing thing, Language language) {
 			AosToolTips toolTips;
 			cachesByLanguage[(int) language].TryGetValue(thing, out toolTips);
@@ -56,7 +54,7 @@ namespace SteamEngine {
 			}
 		}
 
-		protected sealed override void On_Reset() {
+		protected override void On_Reset() {
 			base.On_Reset();
 
 			this.uid = uids++;
@@ -70,7 +68,7 @@ namespace SteamEngine {
 			this.nameValueClilocsUsed = 0;
 		}
 
-		public sealed override void Dispose() {
+		public override void Dispose() {
 			try {
 				if (this.initDone) {
 					cachesByLanguage[(int) this.language].Remove(this.thing);
@@ -81,7 +79,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "thing")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "thing")]
 		public void InitDone(Thing thing) {
 			this.thing = thing;
 			cachesByLanguage[(int) this.language][thing] = this;
@@ -151,7 +149,7 @@ namespace SteamEngine {
 		//1060662	~1_val~: ~2_val~
 		//1060663	~1_val~: ~2_val~
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void SendIdPacket(GameState state, TcpConnection<GameState> conn) {
 			if (state.Version.OldAosToolTips) {
 				if (this.oldIdNGroup == null) {

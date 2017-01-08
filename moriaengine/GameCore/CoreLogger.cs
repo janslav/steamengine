@@ -16,12 +16,14 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using SteamEngine.Common;
 
 namespace SteamEngine {
 	public class CoreLogger : Logger {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+		[SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
 		private static CoreLogger initInstance;
 
 		internal static void Init() {
@@ -42,11 +44,11 @@ namespace SteamEngine {
 		protected override string GetFilepath() {
 			//DateTime.Now.GetDateTimeFormats()[4]
 			DateTime dtnow = DateTime.Now;
-			string filename = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+			string filename = string.Format(CultureInfo.InvariantCulture,
 				"SteamEngine.GameServer.{0}-{1}-{2}.log",
-				dtnow.Year.ToString("0000", System.Globalization.CultureInfo.InvariantCulture),
-				dtnow.Month.ToString("00", System.Globalization.CultureInfo.InvariantCulture),
-				dtnow.Day.ToString("00", System.Globalization.CultureInfo.InvariantCulture));
+				dtnow.Year.ToString("0000", CultureInfo.InvariantCulture),
+				dtnow.Month.ToString("00", CultureInfo.InvariantCulture),
+				dtnow.Day.ToString("00", CultureInfo.InvariantCulture));
 			return Path.Combine(Globals.LogPath, filename);
 		}
 	}

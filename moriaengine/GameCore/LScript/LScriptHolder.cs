@@ -16,9 +16,10 @@
 */
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using SteamEngine.Common;
+
 //using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
@@ -114,9 +115,8 @@ namespace SteamEngine.LScript {
 				this.lastRunSuccesful = true;
 				if (sv.returned) {
 					return retVal;
-				} else {
-					return null;//we should not randomly return the last expression...
 				}
+				return null;//we should not randomly return the last expression...
 			} catch (Exception e) {
 				this.lastRunException = e;
 				throw;

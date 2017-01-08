@@ -17,15 +17,16 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ProjectileDef {
 
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Projectile : IPoisonableItem {
 
 		public ProjectileType ProjectileType {

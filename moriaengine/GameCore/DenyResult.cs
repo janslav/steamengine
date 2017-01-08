@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Networking;
@@ -117,7 +119,7 @@ namespace SteamEngine {
 
 		public override void SendDenyMessage(AbstractCharacter ch, GameState state, TcpConnection<GameState> conn) {
 			Logger.WriteWarning("Can't send DenyMessage when the result is Allow.", 
-				new System.Diagnostics.StackTrace());
+				new StackTrace());
 		}
 	}
 	
@@ -128,44 +130,44 @@ namespace SteamEngine {
 
 	public static class DenyResultMessages {
 	    //item manipulation denials
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_YouCannotPickThatUp = 
 	        new DenyResult_ClilocSysMessage(3000267); //You cannot pick that up.
 
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_ThatIsTooFarAway = //do we want to tell players what's invisible and what's far away?
 	        new DenyResult_ClilocSysMessage(3000268);	//That is too far away.
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_ThatDoesntExist = //do we want to tell players what's invisible and what's far away?
 			new DenyResult_ClilocSysMessage(3000268);	//That is too far away.
 
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_ThatIsInvisible = //do we want to tell players what's invisible and what's far away?
 			new DenyResult_ClilocSysMessage(3000268);	//That is too far away.
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_ThatIsOutOfLOS = //do we want to tell players what's invisible and what's far away?
 			new DenyResult_ClilocSysMessage(3000269);	//That is out of sight.
 
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_ThatDoesNotBelongToYou = 
 	        new DenyResult_ClilocSysMessage(500364);		//You can't use that, it belongs to someone else.
 
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_YouAreAlreadyHoldingAnItem = 
 	        new DenyResult_ClilocSysMessage(3000271);	//You are already holding an item.
 
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_NoMessage = new DenyResult_NoMessage();
 
 		public static readonly DenyResult Allow = new DenyResult_Allow();
 
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_ThatIsLocked = 
 	        new DenyResult_ClilocSysMessage(501283);		//That is locked.
 
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+	    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static readonly DenyResult Deny_ContainerClosed =
 			new DenyResult_ClilocSysMessage(500209);		//You cannot peek into the container.
 		//SendSystemMessage(c, "Tento kontejner není otevøený.", 0);

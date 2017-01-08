@@ -18,10 +18,12 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 using SteamEngine.LScript;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
@@ -162,7 +164,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadFile(ScriptFile file) {
 			//string filepath = file.Name;
 			//WorldSaver.currentfile = filepath;
@@ -170,7 +172,7 @@ namespace SteamEngine {
 
 				using (StreamReader stream = file.OpenText()) {
 					foreach (PropsSection section in PropsFileParser.Load(
-							file.FullName, stream, new CanStartAsScript(StartsAsScript), false)) {
+							file.FullName, stream, StartsAsScript, false)) {
 
 						try {
 							string type = section.HeaderType.ToLowerInvariant();
@@ -267,7 +269,7 @@ namespace SteamEngine {
 		}
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadNewFile(string filename) {
 			FileInfo fi = new FileInfo(filename);
 			if (!fi.Exists) {
@@ -304,10 +306,9 @@ namespace SteamEngine {
 				(n, rs) => {
 					if (rs.deleg.Method != deleg.Method) {
 						throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(rs) + ") registered for handling the section name " + LogStr.Ident(name));
-					} else {
-						rs.startAsScript = rs.startAsScript || startAsScript; //if any wants true, it stays true. This is here because of AbstractDef and TemplateDef... yeah not exactly clean
-						return rs;
 					}
+					rs.startAsScript = rs.startAsScript || startAsScript; //if any wants true, it stays true. This is here because of AbstractDef and TemplateDef... yeah not exactly clean
+					return rs;
 				});
 		}
 
@@ -331,7 +332,7 @@ namespace SteamEngine {
 		internal static void ForgetScripts() {
 			allFiles.Clear();
 
-			Assembly coreAssembly = CompiledScripts.ClassManager.CoreAssembly;
+			Assembly coreAssembly = ClassManager.CoreAssembly;
 
 			var origScripts = scriptTypesByName.ToArray();
 			scriptTypesByName = new ConcurrentDictionary<string, RegisteredScript>(StringComparer.OrdinalIgnoreCase);

@@ -16,14 +16,15 @@
 */
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_Indexer : OpNode, IOpNodeHolder {
 		private OpNode index;
 		internal OpNode arg;
@@ -76,7 +77,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily"), SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal override object Run(ScriptVars vars) {
 			OpNode newNode = null; //return this one to my parent if something failed
 			if (vars.self == null) {
@@ -120,158 +121,159 @@ namespace SteamEngine.LScript {
 			if (matches.Count == 0) {
 				throw new InterpreterException("The type " + vars.self.GetType() + " is not indexable",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
-			} else {
-				if (this.arg == null) {//getter
-					object indexResult;
-					object oSelf = vars.self;
-					vars.self = vars.defaultObject;
-					try {
-						indexResult = this.index.Run(vars);
-					} finally {
-						vars.self = oSelf;
-					}
-					List<MethodInfo> exactMatches = new List<MethodInfo>();
-					List<MethodInfo> stringMatches = new List<MethodInfo>();
-					foreach (MethodInfo mi in matches) {
-						Type desiredIndexType = mi.GetParameters()[0].ParameterType;
-						if (MemberResolver.IsCompatibleType(desiredIndexType, indexResult)) {
-							exactMatches.Add(mi);
-						} else if (desiredIndexType == typeof(string)) {
-							stringMatches.Add(mi);
-						}
-					}
-					if (exactMatches.Count == 1) {
-						MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) exactMatches[0]);
-						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-							method, new OpNode[] {this.index });
-						this.index.parent = (IOpNodeHolder) newNode;
-						this.ReplaceSelf(newNode);
-						return ((ITriable) newNode).TryRun(vars, new object[] { indexResult });
-					} else if (exactMatches.Count == 0) {
-						if (stringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
-							this.index.parent = toStringNode;
-							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) stringMatches[0]);
-							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-								method, new OpNode[] {this.index });
-							this.ReplaceSelf(newNode);
-							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult) });
-						} else {
-							throw new InterpreterException("No suitable indexer found for type " + vars.self.GetType(),
-								this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
-						}
-					} else {//exactMatches.Count >1
-						StringBuilder sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
-						foreach (object obj in exactMatches) {
-							sb.Append(Environment.NewLine).Append(obj.ToString());
-						}
-						throw new InterpreterException(sb.ToString(),
-							this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
-					}
-				} else {
-					object indexResult;
-					object argResult;
-					object oSelf = vars.self;
-					vars.self = vars.defaultObject;
-					try {
-						indexResult = this.index.Run(vars);
-						argResult = this.arg.Run(vars);
-					} finally {
-						vars.self = oSelf;
-					}
-
-					List<MethodInfo> exactMatches = new List<MethodInfo>();
-					List<MethodInfo> argStringMatches = new List<MethodInfo>();
-					List<MethodInfo> indexStringMatches = new List<MethodInfo>();
-					List<MethodInfo> bothStringMatches = new List<MethodInfo>();
-
-					foreach (MethodInfo mi in matches) {
-						ParameterInfo[] pars = mi.GetParameters();
-						Type desiredIndexType = pars[0].ParameterType;
-						Type desiredArgType = pars[1].ParameterType;
-						bool indexIsCompatible = MemberResolver.IsCompatibleType(desiredIndexType, indexResult);
-						bool argIsCompatible = MemberResolver.IsCompatibleType(desiredArgType, argResult);
-
-						if (indexIsCompatible && argIsCompatible) {
-							exactMatches.Add(mi);
-						} else if (indexIsCompatible && (desiredArgType == typeof(string))) {
-							argStringMatches.Add(mi);
-						} else if ((desiredIndexType == typeof(string)) && argIsCompatible) {
-							indexStringMatches.Add(mi);
-						} else if ((desiredIndexType == typeof(string)) && (desiredArgType == typeof(string))) {
-							bothStringMatches.Add(mi);
-						}
-					}
-
-					if (exactMatches.Count == 1) {
-						MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) exactMatches[0]);
-						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-							method, new OpNode[] {this.index, this.arg });
-						this.index.parent = (IOpNodeHolder) newNode;
-						this.arg.parent = (IOpNodeHolder) newNode;
-						this.ReplaceSelf(newNode);
-						return ((ITriable) newNode).TryRun(vars, new object[] { indexResult, argResult }); ;
-					} else if (exactMatches.Count == 0) {
-						if (argStringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
-							this.arg.parent = toStringNode;
-							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) argStringMatches[0]);
-							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-								method, new OpNode[] {this.index, toStringNode });
-							this.index.parent = (IOpNodeHolder) newNode;
-							toStringNode.parent = (IOpNodeHolder) newNode;
-							this.ReplaceSelf(newNode);
-							return ((ITriable) newNode).TryRun(vars, new object[] { indexResult, string.Concat(argResult) }); ;
-						} else if (indexStringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
-							this.index.parent = toStringNode;
-							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) indexStringMatches[0]);
-							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-								method, new OpNode[] { toStringNode, this.arg });
-							toStringNode.parent = (IOpNodeHolder) newNode;
-							this.arg.parent = (IOpNodeHolder) newNode;
-							this.ReplaceSelf(newNode);
-							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult), argResult }); ;
-						} else if (bothStringMatches.Count == 1) {
-							OpNode_ToString indexToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
-							this.index.parent = indexToStringNode;
-							OpNode_ToString argToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
-							this.arg.parent = argToStringNode;
-							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) indexStringMatches[0]);
-							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-								method, new OpNode[] { indexToStringNode, argToStringNode });
-							indexToStringNode.parent = (IOpNodeHolder) newNode;
-							argToStringNode.parent = (IOpNodeHolder) newNode;
-							this.ReplaceSelf(newNode);
-							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult), string.Concat(argResult) });
-						} else {
-							throw new InterpreterException("No suitable indexer found for type " + vars.self.GetType(),
-								this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
-						}
-					} else { //exactMatches.Count >1
-
-						//List<MethodInfo> resolvedAmbiguities;
-						//if (TryResolveAmbiguity(ambiguities, results, out resolvedAmbiguities)) {
-
-						//}
-
-						StringBuilder sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
-						foreach (object obj in exactMatches) {
-							sb.Append(Environment.NewLine).Append(obj.ToString());
-						}
-						throw new InterpreterException(sb.ToString(),
-							this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
+			}
+			if (this.arg == null) {//getter
+				object indexResult;
+				object oSelf = vars.self;
+				vars.self = vars.defaultObject;
+				try {
+					indexResult = this.index.Run(vars);
+				} finally {
+					vars.self = oSelf;
+				}
+				List<MethodInfo> exactMatches = new List<MethodInfo>();
+				List<MethodInfo> stringMatches = new List<MethodInfo>();
+				foreach (MethodInfo mi in matches) {
+					Type desiredIndexType = mi.GetParameters()[0].ParameterType;
+					if (MemberResolver.IsCompatibleType(desiredIndexType, indexResult)) {
+						exactMatches.Add(mi);
+					} else if (desiredIndexType == typeof(string)) {
+						stringMatches.Add(mi);
 					}
 				}
+				if (exactMatches.Count == 1) {
+					MethodInfo method = MemberWrapper.GetWrapperFor(exactMatches[0]);
+					newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
+						method, this.index);
+					this.index.parent = (IOpNodeHolder) newNode;
+					this.ReplaceSelf(newNode);
+					return ((ITriable) newNode).TryRun(vars, new[] { indexResult });
+				}
+				if (exactMatches.Count == 0)
+				{
+					if (stringMatches.Count == 1) {
+						OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+						this.index.parent = toStringNode;
+						MethodInfo method = MemberWrapper.GetWrapperFor(stringMatches[0]);
+						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
+							method, this.index);
+						this.ReplaceSelf(newNode);
+						return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult) });
+					}
+					throw new InterpreterException("No suitable indexer found for type " + vars.self.GetType(),
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
+				} //exactMatches.Count >1
+				StringBuilder sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
+				foreach (object obj in exactMatches) {
+					sb.Append(Environment.NewLine).Append(obj);
+				}
+				throw new InterpreterException(sb.ToString(),
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
+			} else {
+				object indexResult;
+				object argResult;
+				object oSelf = vars.self;
+				vars.self = vars.defaultObject;
+				try {
+					indexResult = this.index.Run(vars);
+					argResult = this.arg.Run(vars);
+				} finally {
+					vars.self = oSelf;
+				}
+
+				List<MethodInfo> exactMatches = new List<MethodInfo>();
+				List<MethodInfo> argStringMatches = new List<MethodInfo>();
+				List<MethodInfo> indexStringMatches = new List<MethodInfo>();
+				List<MethodInfo> bothStringMatches = new List<MethodInfo>();
+
+				foreach (MethodInfo mi in matches) {
+					ParameterInfo[] pars = mi.GetParameters();
+					Type desiredIndexType = pars[0].ParameterType;
+					Type desiredArgType = pars[1].ParameterType;
+					bool indexIsCompatible = MemberResolver.IsCompatibleType(desiredIndexType, indexResult);
+					bool argIsCompatible = MemberResolver.IsCompatibleType(desiredArgType, argResult);
+
+					if (indexIsCompatible && argIsCompatible) {
+						exactMatches.Add(mi);
+					} else if (indexIsCompatible && (desiredArgType == typeof(string))) {
+						argStringMatches.Add(mi);
+					} else if ((desiredIndexType == typeof(string)) && argIsCompatible) {
+						indexStringMatches.Add(mi);
+					} else if ((desiredIndexType == typeof(string)) && (desiredArgType == typeof(string))) {
+						bothStringMatches.Add(mi);
+					}
+				}
+
+				if (exactMatches.Count == 1) {
+					MethodInfo method = MemberWrapper.GetWrapperFor(exactMatches[0]);
+					newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
+						method, this.index, this.arg);
+					this.index.parent = (IOpNodeHolder) newNode;
+					this.arg.parent = (IOpNodeHolder) newNode;
+					this.ReplaceSelf(newNode);
+					return ((ITriable) newNode).TryRun(vars, new[] { indexResult, argResult }); ;
+				}
+				if (exactMatches.Count == 0)
+				{
+					if (argStringMatches.Count == 1) {
+						OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
+						this.arg.parent = toStringNode;
+						MethodInfo method = MemberWrapper.GetWrapperFor(argStringMatches[0]);
+						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
+							method, this.index, toStringNode);
+						this.index.parent = (IOpNodeHolder) newNode;
+						toStringNode.parent = (IOpNodeHolder) newNode;
+						this.ReplaceSelf(newNode);
+						return ((ITriable) newNode).TryRun(vars, new[] { indexResult, string.Concat(argResult) }); ;
+					}
+					if (indexStringMatches.Count == 1) {
+						OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+						this.index.parent = toStringNode;
+						MethodInfo method = MemberWrapper.GetWrapperFor(indexStringMatches[0]);
+						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
+							method, toStringNode, this.arg);
+						toStringNode.parent = (IOpNodeHolder) newNode;
+						this.arg.parent = (IOpNodeHolder) newNode;
+						this.ReplaceSelf(newNode);
+						return ((ITriable) newNode).TryRun(vars, new[] { string.Concat(indexResult), argResult }); ;
+					}
+					if (bothStringMatches.Count == 1) {
+						OpNode_ToString indexToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+						this.index.parent = indexToStringNode;
+						OpNode_ToString argToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
+						this.arg.parent = argToStringNode;
+						MethodInfo method = MemberWrapper.GetWrapperFor(indexStringMatches[0]);
+						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
+							method, indexToStringNode, argToStringNode);
+						indexToStringNode.parent = (IOpNodeHolder) newNode;
+						argToStringNode.parent = (IOpNodeHolder) newNode;
+						this.ReplaceSelf(newNode);
+						return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult), string.Concat(argResult) });
+					}
+					throw new InterpreterException("No suitable indexer found for type " + vars.self.GetType(),
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
+				} //exactMatches.Count >1
+
+				//List<MethodInfo> resolvedAmbiguities;
+				//if (TryResolveAmbiguity(ambiguities, results, out resolvedAmbiguities)) {
+
+				//}
+
+				StringBuilder sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
+				foreach (object obj in exactMatches) {
+					sb.Append(Environment.NewLine).Append(obj);
+				}
+				throw new InterpreterException(sb.ToString(),
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			if (this.arg != null) {
 				return string.Concat("INDEX(", this.index, ") = ", this.arg);
-			} else {
-				return ("INDEX(" + this.index + ")");
 			}
+			return ("INDEX(" + this.index + ")");
 		}
 	}
 }

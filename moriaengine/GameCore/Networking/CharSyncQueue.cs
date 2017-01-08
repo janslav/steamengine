@@ -17,13 +17,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+	[SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public sealed class CharSyncQueue : SyncQueue {
 		internal static CharSyncQueue instance = new CharSyncQueue();
 
@@ -176,7 +178,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+		[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 		internal class CharState : Poolable {
 			internal AbstractCharacter thing;
 			internal CharSyncFlags changeFlags;
@@ -281,7 +283,7 @@ namespace SteamEngine.Networking {
 
 			private bool GetDirectionChanged() {
 				bool retVal = (((this.changeFlags & CharSyncFlags.Direction) == CharSyncFlags.Direction)
-					&& (this.direction != ((AbstractCharacter) this.thing).Direction));
+					&& (this.direction != this.thing.Direction));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetDirectionChanged: " + retVal);
 				return retVal;
 			}
@@ -545,7 +547,7 @@ namespace SteamEngine.Networking {
 			private static PacketGroup[] myCharInfos = new PacketGroup[Tools.GetEnumLength<HighlightColor>()];
 			private static PacketGroup[] myMovings = new PacketGroup[Tools.GetEnumLength<HighlightColor>()];
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1809:AvoidExcessiveLocals"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+			[SuppressMessage("Microsoft.Performance", "CA1809:AvoidExcessiveLocals"), SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 			private void ProcessCharUpdate(AbstractCharacter ch) {
 				//TODO: party update
 				//triggers - @seenewplayer and stuff?
@@ -900,14 +902,14 @@ namespace SteamEngine.Networking {
 						pgRemoveMount = PacketGroup.AcquireMultiUsePG();
 						pgRemoveMount.AcquirePacket<DeleteObjectOutPacket>().Prepare(this.mountUid | 0x40000000);
 					}
-					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing mount (#" + this.mountUid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ") for " + viewerConn.State.Character);
+					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing mount (#" + this.mountUid.ToString("x", CultureInfo.InvariantCulture) + ") for " + viewerConn.State.Character);
 					viewerConn.SendPacketGroup(pgRemoveMount);
 				} else {
 					if (pgUpdateMount == null) {
 						pgUpdateMount = PacketGroup.AcquireMultiUsePG();
 						pgUpdateMount.AcquirePacket<WornItemOutPacket>().PrepareMount(ch.FlaggedUid, myMount);
 					}
-					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending mount (#" + this.mountUid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ") to " + viewerConn.State.Character);
+					Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending mount (#" + this.mountUid.ToString("x", CultureInfo.InvariantCulture) + ") to " + viewerConn.State.Character);
 					viewerConn.SendPacketGroup(pgUpdateMount);
 				}
 			}

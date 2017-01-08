@@ -16,15 +16,16 @@
 */
 
 using System;
-using System.Text;
-using System.Reflection;
-using PerCederberg.Grammatica.Parser;
-using SteamEngine.Timers;
-using SteamEngine.Common;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Text;
+using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
+using SteamEngine.Timers;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_AddTimer : OpNode, IOpNodeHolder {
 		//accepts AddTimerExpression
 		//STRING , SimpleCode , (STRING | TRIGGERNAME) [, ArgsList];  
@@ -125,11 +126,10 @@ namespace SteamEngine.LScript {
 				if (memberNameMatched) {
 					throw new InterpreterException("Method '" + LogStr.Ident(this.funcName) + "' is getting bad arguments",
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
-				} else {
-					throw new InterpreterException("Undefined identifier '" + LogStr.Ident(this.funcName) + "'",
-						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
-			//}
+				throw new InterpreterException("Undefined identifier '" + LogStr.Ident(this.funcName) + "'",
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
+				//}
 
 runit:	//I know that goto is usually considered dirty, but I find this case quite suitable for it...
 				if (resolver != null) {
@@ -144,13 +144,11 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 				this.ReplaceSelf(finalOpNode);
 				if (this.results != null) {
 					return ((ITriable) finalOpNode).TryRun(vars, this.results);
-				} else {
-					return finalOpNode.Run(vars);
 				}
-			} else {
-				throw new InterpreterException("AddTimer must be called on PluginHolder, not " + vars.self,
-					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
+				return finalOpNode.Run(vars);
 			}
+			throw new InterpreterException("AddTimer must be called on PluginHolder, not " + vars.self,
+				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
 		private void SetNewParentToArgs(IOpNodeHolder newParent) {
@@ -223,7 +221,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 				this.formatString = sb.ToString();
 			} else {
 				OpNode compiled = LScriptMain.CompileNode(this, arg);
-				this.args = new OpNode[] { compiled };
+				this.args = new[] { compiled };
 				this.str = OpNode_ToString.Construct(this, arg);
 				this.formatString = "{0}";
 			}
@@ -259,13 +257,13 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer(");
-			sb.Append("(").Append(this.name.Name).Append(", ").Append(this.secondsNode.ToString());
+			sb.Append("(").Append(this.name.Name).Append(", ").Append(this.secondsNode);
 			sb.Append(this.funcName).Append(", ");
 			int n = this.args.Length;
 			if (n > 0) {
 				sb.Append(", ");
 				for (int i = 0; i < n; i++) {
-					sb.Append(this.args[i].ToString()).Append(", ");
+					sb.Append(this.args[i]).Append(", ");
 				}
 			}
 			return sb.Append(")").ToString();

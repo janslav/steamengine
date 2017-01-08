@@ -42,11 +42,10 @@ namespace SteamEngine.CompiledScripts {
 
 			if (skillSeqArgs.Param1 != null) {
 				return TriggerResult.Continue; //do not stop, we have some item here, we can start crafting now
-			} else {//no item pre-selected, open the craftmenu
-				self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName) this.Id]));
-				//do not continue, the rest will be solved from the craftmenu
-				return TriggerResult.Cancel; //F = continue to @start, T = stop
-			}
+			} //no item pre-selected, open the craftmenu
+			self.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(CraftmenuContents.MainCategories[(SkillName) this.Id]));
+			//do not continue, the rest will be solved from the craftmenu
+			return TriggerResult.Cancel; //F = continue to @start, T = stop
 		}
 
 		/// <summary>

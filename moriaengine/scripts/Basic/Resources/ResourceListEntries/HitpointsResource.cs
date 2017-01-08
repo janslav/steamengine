@@ -57,12 +57,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region IResourceListEntry_Simple Members
-		public bool IsResourcePresent(Character chr) {
+		public bool IsResourcePresent(Character chr)
+		{
 			if (this.AsPercentage) {
 				return (chr.Hits * 100.0 / chr.MaxHits) >= this.DesiredCount;
-			} else {
-				return chr.Hits >= this.DesiredCount;
 			}
+			return chr.Hits >= this.DesiredCount;
 		}
 
 		/// <summary>Indicates whether this is a consumable resource</summary>

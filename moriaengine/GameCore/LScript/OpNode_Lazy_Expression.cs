@@ -17,15 +17,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 using SteamEngine.Regions;
 
 namespace SteamEngine.LScript {
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_Expression : OpNode, IOpNodeHolder {
 		//accepts STRING, SimpleExpression, 
 		private string name;
@@ -57,19 +60,24 @@ namespace SteamEngine.LScript {
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "args")) { //true for case insensitive
 					/*args*/
 					return new OpNode_GetArgs(parent, filename, line, column, code);
-				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "this")) { //true for case insensitive
+				}
+				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "this")) { //true for case insensitive
 					/*this*/
 					return new OpNode_This(parent, filename, line, column, code);
-				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "argvcount")) { //true for case insensitive
+				}
+				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "argvcount")) { //true for case insensitive
 					/*argvcount*/
 					return new OpNode_ArgvCount(parent, filename, line, column, code);
-				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "true")) { //true for case insensitive
+				}
+				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "true")) { //true for case insensitive
 					/*true*/
 					return OpNode_Object.Construct(parent, true);
-				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "false")) { //true for case insensitive
+				}
+				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "false")) { //true for case insensitive
 					/*false*/
 					return OpNode_Object.Construct(parent, false);
-				} else if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "null")) { //true for case insensitive
+				}
+				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "null")) { //true for case insensitive
 					/*null*/
 					return OpNode_Object.Construct(parent, (object) null);
 				}
@@ -80,7 +88,8 @@ namespace SteamEngine.LScript {
 				constructed.args = new OpNode[0];
 				constructed.noArgs = true;
 				return constructed;
-			} else if (IsType(code, StrictConstants.SIMPLE_EXPRESSION)) {
+			}
+			if (IsType(code, StrictConstants.SIMPLE_EXPRESSION)) {
 				constructed.name = LScriptMain.GetFirstTokenString(code);
 				int current = 1;
 				Node caller = code.GetChildAt(current);
@@ -89,7 +98,7 @@ namespace SteamEngine.LScript {
 					current++;
 				}
 
-                List<OpNode> indexersList = new List<OpNode>();
+				List<OpNode> indexersList = new List<OpNode>();
 				while (IsType(code.GetChildAt(current), StrictConstants.INDEXER)) {
 					Production indexer = (Production) code.GetChildAt(current);
 					//"identifier[...] = ..." - then the assignment "belongs" to the indexer
@@ -124,12 +133,11 @@ namespace SteamEngine.LScript {
 					return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, code, chain);
 				}
 				return constructed;
-			} else {
-				throw new SEException("Passed bad Node type construct. This should not happen.");
 			}
+			throw new SEException("Passed bad Node type construct. This should not happen.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		protected void GetArgsFrom(Node caller) {
 			//caller / assigner
 			Node arg = caller.GetChildAt(1); //ArgsList or just one expression
@@ -158,7 +166,7 @@ namespace SteamEngine.LScript {
 				this.formatString = sb.ToString();
 			} else {
 				OpNode compiled = LScriptMain.CompileNode(this, arg);
-				this.args = new OpNode[] { compiled };
+				this.args = new[] { compiled };
 				this.formatString = "{0}";
 			}
 		}
@@ -171,12 +179,11 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.args[index] = newNode;
 			}
+			this.args[index] = newNode;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal override object Run(ScriptVars vars) {
 			//Console.WriteLine("OpNode_Lazy_Expression.Run on "+vars.self);
 			//Console.WriteLine("Running as lazyexpression: "+LScript.GetString(origNode));
@@ -252,20 +259,18 @@ namespace SteamEngine.LScript {
 							throw new NameRefException(this.line, this.column, this.filename,
 								new NameSpaceRef(className), this.ParentScriptHolder.GetDecoratedName());
 							//in fact we dunno if it`s a _valid_ namespace name, but there seems to be no way to confirm that
-						} else {
-							if (this.noArgs) {//it`s just reference to class, so that the next in chain is a static member, or is it wrong
-								throw new NameRefException(this.line, this.column,
-									this.filename, new ClassNameRef(className), this.ParentScriptHolder.GetDecoratedName());
-							} else {//it`s a constructor/member with same name
-								tryInstance = false;
-								//Console.WriteLine("tryInstance = false: {0} ({1}) at {2}:{3}", type, className, this.line, this.column);
-							}
 						}
+						if (this.noArgs) {//it`s just reference to class, so that the next in chain is a static member, or is it wrong
+							throw new NameRefException(this.line, this.column,
+								this.filename, new ClassNameRef(className), this.ParentScriptHolder.GetDecoratedName());
+						} //it`s a constructor/member with same name
+						tryInstance = false;
+						//Console.WriteLine("tryInstance = false: {0} ({1}) at {2}:{3}", type, className, this.line, this.column);
 					} else {
 						ClassNameRef classRef = (ClassNameRef) vars.self;
 						type = Type.GetType(classRef.name, false, true);
 						if (type == null) {
-							type = CompiledScripts.ClassManager.GetType(classRef.name);
+							type = ClassManager.GetType(classRef.name);
 						}
 						if (type == null) {
 							throw new SEException("We have not found class named " + classRef.name + ", thought we were supposed to. This should not happen.");
@@ -274,7 +279,7 @@ namespace SteamEngine.LScript {
 						tryInstance = false;//we look for a static member
 					}
 				} else if (vars.self == vars.defaultObject) {
-					seType = CompiledScripts.ClassManager.GetType(this.name);//some SteamEngine class from our ClassManager class
+					seType = ClassManager.GetType(this.name);//some SteamEngine class from our ClassManager class
 					type = vars.self.GetType();
 				} else {
 					type = vars.self.GetType();
@@ -379,10 +384,11 @@ namespace SteamEngine.LScript {
 						finalOpNode = new OpNode_SkillKey_Get(this.parent, this.filename, this.line, this.column, this.OrigNode,
 							sd.Id);
 						goto runit;
-					} else if (this.args.Length == 1) {
+					}
+					if (this.args.Length == 1) {
 						resolver.RunArgs();
 						try {
-							Convert.ToInt32(resolver.results[0], System.Globalization.CultureInfo.InvariantCulture);
+							Convert.ToInt32(resolver.results[0], CultureInfo.InvariantCulture);
 							finalOpNode = new OpNode_SkillKey_Set(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								sd.Id, this.args[0]);
 							goto runit;
@@ -444,27 +450,27 @@ namespace SteamEngine.LScript {
 			//				}
 			//				Logger.WriteWarning(filename, line, sb.ToString());
 			//			} else if (matches.Count < 1) {
-			if (this.mustEval) {
+			if (this.mustEval)
+			{
 				if (memberNameMatched) {
 					throw new InterpreterException(
 						"Class member (method/property/field/constructor) '" + LogStr.Ident(this.name) + "' is getting wrong arguments",
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
-				} else if (skillKeyMatched) {
+				}
+				if (skillKeyMatched) {
 					throw new InterpreterException(
 						"The skill is getting wrong number or type of arguments",
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
-				} else {
-					throw new InterpreterException("Undefined identifier '" + LogStr.Ident(this.name) + "'",
-						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
-			} else {
-				string thisNodeString = this.OrigString;
-				//Console.WriteLine("OpNode_Object.Construct from !mustEval");
-				OpNode finalStringOpNode = OpNode_Object.Construct(this.parent, thisNodeString);
-				this.ReplaceSelf(finalStringOpNode);
-				return thisNodeString;
+				throw new InterpreterException("Undefined identifier '" + LogStr.Ident(this.name) + "'",
+					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
-		//			}
+			string thisNodeString = this.OrigString;
+			//Console.WriteLine("OpNode_Object.Construct from !mustEval");
+			OpNode finalStringOpNode = OpNode_Object.Construct(this.parent, thisNodeString);
+			this.ReplaceSelf(finalStringOpNode);
+			return thisNodeString;
+			//			}
 
 
 
@@ -481,12 +487,11 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 			this.ReplaceSelf(finalOpNode);
 			if ((this.results != null) && (this.results.Length > 0)) {
 				return ((ITriable) finalOpNode).TryRun(vars, this.results);
-			} else {
-				return finalOpNode.Run(vars);
 			}
+			return finalOpNode.Run(vars);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+		[SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
 		private bool ResolveAsClassMember(MemberDescriptor desc, out OpNode finalOpNode) {
 			//Console.WriteLine("ResolveAsClassMember: "+desc);
 			finalOpNode = null;
@@ -582,7 +587,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 		public override string ToString() {
 			StringBuilder str = new StringBuilder(this.name).Append("(");
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append(")").ToString();
 		}

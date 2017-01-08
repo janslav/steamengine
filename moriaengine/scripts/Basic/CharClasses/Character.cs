@@ -20,7 +20,9 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
+using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
@@ -31,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 	//    Disconnected = 0x01,
 	//}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Character : AbstractCharacter {
 		//removed, reworked to use the Skills togeter with abilities in one distionary
 		//Skill[] skills;//this CAN be null, altough it usually isn't
@@ -422,12 +424,11 @@ namespace SteamEngine.CompiledScripts {
 			if (target.Flag_Hidden) {
 				if (this.IsGM) {
 					return true;
-				} else {
-					HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
-					return ((ssp != null) &&
-						(ssp.hadDetectedMe != null) &&
-						(ssp.hadDetectedMe.Contains(this)));
 				}
+				HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+				return ((ssp != null) &&
+				        (ssp.hadDetectedMe != null) &&
+				        (ssp.hadDetectedMe.Contains(this)));
 			}
 			return true;
 		}
@@ -468,9 +469,11 @@ namespace SteamEngine.CompiledScripts {
 		public DenyResult CheckAlive() {
 			if ((this.Flag_Disconnected) || (this.IsDeleted)) {
 				return DenyResultMessages.Deny_NoMessage;
-			} else if (this.Flag_Dead) {
+			}
+			if (this.Flag_Dead) {
 				return DenyResultMessages_Character.Deny_IAmDeadAndCannotDoThat;
-			} else if (this.Flag_Insubst && !this.IsGM) {
+			}
+			if (this.Flag_Insubst && !this.IsGM) {
 				return DenyResultMessages_Character.Deny_YoureAGhostAndCantDoThat;
 			}
 			return DenyResultMessages.Allow;
@@ -527,20 +530,18 @@ namespace SteamEngine.CompiledScripts {
 			DenyResult result = this.CanPickup(target);
 			if (result.Allow) {
 				return true;
-			} else {
-				result.SendDenyMessage(this);
-				return false;
 			}
+			result.SendDenyMessage(this);
+			return false;
 		}
 
 		public bool CanReachWithMessage(Thing target) {
 			DenyResult result = this.CanReach(target);
 			if (result.Allow) {
 				return true;
-			} else {
-				result.SendDenyMessage(this);
-				return false;
 			}
+			result.SendDenyMessage(this);
+			return false;
 		}
 
 		public override DenyResult CanPutItemsInContainer(AbstractItem targetContainer) {
@@ -561,7 +562,8 @@ namespace SteamEngine.CompiledScripts {
 				Item contAsItem = c as Item;
 				if (contAsItem != null) {
 					return OpenedContainers.HasContainerOpen(this, contAsItem);
-				} else if (c != this) {
+				}
+				if (c != this) {
 					result = this.CanReach(c);
 					if (result.Allow) {
 						Character contAsChar = (Character) c;
@@ -1215,12 +1217,12 @@ namespace SteamEngine.CompiledScripts {
 			Corpse c = null;
 			foreach (Thing nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
 				c = nearbyThing as Corpse;
-				if (c != null) {
+				if (c != null)
+				{
 					if (c.Owner == this) {
 						break;
-					} else {
-						c = null;
 					}
+					c = null;
 				}
 			}
 
@@ -1429,9 +1431,8 @@ namespace SteamEngine.CompiledScripts {
 			ISkill skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.ModifiedValue;
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 
 		/// <summary>Get modified value of the skill.</summary>
@@ -1444,9 +1445,8 @@ namespace SteamEngine.CompiledScripts {
 			Skill skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
 				return skl.ModifiedValue;
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 
 		public int GetModifiedSkillValue(int id) {
@@ -1465,9 +1465,8 @@ namespace SteamEngine.CompiledScripts {
 			ISkill skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.ModifiedValue;
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 
 		public int GetRealSkillValue(SkillName id) {
@@ -1478,9 +1477,8 @@ namespace SteamEngine.CompiledScripts {
 			Skill skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
 				return skl.ModifiedValue;
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 
 		/// <summary>Get value of the lock type of skill with given ID, if the skill is not present return default</summary>
@@ -1488,9 +1486,8 @@ namespace SteamEngine.CompiledScripts {
 			ISkill skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.Lock;
-			} else {
-				return SkillLockType.Up; //default value
 			}
+			return SkillLockType.Up; //default value
 		}
 
 		public SkillLockType GetSkillLockType(SkillName id) {
@@ -1501,9 +1498,8 @@ namespace SteamEngine.CompiledScripts {
 			Skill skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
 				return skl.Lock;
-			} else {
-				return SkillLockType.Up; //default value
 			}
+			return SkillLockType.Up; //default value
 		}
 
 		//instantiate new skill object, if needed
@@ -1812,14 +1808,15 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-		private static ContainerDef backpackDef = null;
+		private static ContainerDef backpackDef;
 		private AbstractItem AddBackpack() {
 			this.ThrowIfDeleted();
 			if (backpackDef == null) {
 				backpackDef = ThingDef.FindItemDef(0xe75) as ContainerDef;
 				if (backpackDef == null) {
 					throw new SEException("Unable to find itemdef 0xe75 in scripts.");
-				} else if (backpackDef.Layer != (int) LayerNames.Pack) {
+				}
+				if (backpackDef.Layer != (int) LayerNames.Pack) {
 					throw new SEException("Wrong layer of backpack itemdef.");
 				}
 			}
@@ -1853,7 +1850,8 @@ namespace SteamEngine.CompiledScripts {
 					var def = SingletonScript<BankBoxDef>.Instance;
 					if (def == null) {
 						throw new SEException("Unable to find a BankBoxDef in scripts.");
-					} else if (def.Layer != (int) LayerNames.Bankbox) {
+					}
+					if (def.Layer != (int) LayerNames.Bankbox) {
 						throw new SEException("Wrong layer of bankbox itemdef.");
 					}
 
@@ -1905,7 +1903,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Persistence
-		public override void On_Save(Persistence.SaveStream output) {
+		public override void On_Save(SaveStream output) {
 			if (this.skillsabilities != null) {
 				foreach (object o in this.skillsabilities.Values) {
 					Ability a = o as Ability;
@@ -2402,7 +2400,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_LogOut() {
 			this.AbortSkill();
-			Dialogs.DialogStacking.ClearDialogStack(this);
+			DialogStacking.ClearDialogStack(this);
 			base.On_LogOut();
 		}
 
@@ -2490,7 +2488,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class CharacterDef {
 		private CharModelInfo charModelInfo;
 

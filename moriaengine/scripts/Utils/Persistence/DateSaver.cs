@@ -16,8 +16,8 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
@@ -115,7 +115,7 @@ namespace SteamEngine.CompiledScripts {
 		public string Save(object objToSave) {
 			//return ":"+((TimeSpan) value).Ticks;
 			//the TimeSpan has it own way how to transform to string, no need to rewrite this
-			return ":" + ((TimeSpan) objToSave).ToString();
+			return ":" + ((TimeSpan) objToSave);
 		}
 
 		public object Load(Match match) {

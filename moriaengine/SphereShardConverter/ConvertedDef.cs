@@ -39,10 +39,10 @@ namespace SteamEngine.Converter {
 		//protected string origFile;
 		protected List<string> writtenData = new List<string>();
 		private ConvertedFile convertedFile;
-		public string headerType = null;
-		public string headerName = null;
+		public string headerType;
+		public string headerName;
 
-		private bool dontDump = false;
+		private bool dontDump;
 
 		protected List<LineImplTask[]> firstStageImplementations = new List<LineImplTask[]>();
 		protected List<LineImplTask[]> secondStageImplementations = new List<LineImplTask[]>();
@@ -98,7 +98,7 @@ namespace SteamEngine.Converter {
 					for (int a = 0; (line != null); a++) {
 						deleg(this, line);
 
-						key = origKey + a.ToString();
+						key = origKey + a;
 						line = this.origData.TryPopPropsLine(key);
 					}
 				}

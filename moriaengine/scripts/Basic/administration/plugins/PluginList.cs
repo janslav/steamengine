@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 
@@ -49,7 +50,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech plugin na " + ph.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + pluginList.Count + ")").Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech plugin na " + ph + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + pluginList.Count + ")").Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
@@ -117,11 +118,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, pluginList.Count, 1)) {//kliknuto na paging?
-				return;
 			} else {
 				//zjistime si radek
-				int row = ((int) gr.PressedButton - 10) / 2;
-				int buttNo = ((int) gr.PressedButton - 10) % 2;
+				int row = (gr.PressedButton - 10) / 2;
+				int buttNo = (gr.PressedButton - 10) % 2;
 				PluginHolder pluginOwner = (PluginHolder) args.GetTag(holderTK); //z koho budeme pluginu brat?
 				KeyValuePair<PluginKey, Plugin> de = pluginList[row];
 				switch (buttNo) {

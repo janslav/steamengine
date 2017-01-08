@@ -16,7 +16,9 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
 	public sealed class TimerKey : AbstractKey<TimerKey> {
@@ -29,7 +31,7 @@ namespace SteamEngine.Timers {
 		}
 	}
 
-	public sealed class TimerKeySaveImplementor : Persistence.ISimpleSaveImplementor {
+	public sealed class TimerKeySaveImplementor : ISimpleSaveImplementor {
 		public Type HandledType {
 			get {
 				return typeof(TimerKey);
@@ -43,12 +45,12 @@ namespace SteamEngine.Timers {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public string Save(object objToSave) {
 			return "%" + ((TimerKey) objToSave).Name;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
 			return TimerKey.Acquire(match.Groups["value"].Value);
 		}

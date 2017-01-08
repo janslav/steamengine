@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -51,7 +53,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public StaticRegion()
-			: base() {
+		{
 		}
 
 		public static int HighestHierarchyIndex {
@@ -82,7 +84,7 @@ namespace SteamEngine.Regions {
 			this.inactivated = false;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+		[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 		internal sealed class StaticRegionSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex regionNameRE = new Regex(@"^\(\s*(?<value>\w*)\s*\)\s*$",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -109,7 +111,7 @@ namespace SteamEngine.Regions {
 				Logger.WriteDebug("Saved " + byDefname.Count + " static regions.");
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+			[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 			public void LoadingFinished() {
 				if (highestHierarchyIndex != -1) {
 					return;
@@ -148,7 +150,7 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public string GetReferenceLine(object value) {
 				return "(" + ((Region) value).Defname + ")";
 			}
@@ -159,13 +161,13 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
 				return GetByDefname(m.Groups["value"].Value);
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			if (!string.IsNullOrEmpty(this.name)) {
 				output.WriteValue("name", this.name);
@@ -184,27 +186,28 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		private int SetHierarchyIndex(ICollection<StaticRegion> tempList) {
-			if (this.Parent == null) {
+		private int SetHierarchyIndex(ICollection<StaticRegion> tempList)
+		{
+			if (this.Parent == null)
+			{
 				if (this.IsWorldRegion) {
 					this.HierarchyIndex = 0;
 					tempList.Remove(this);
 					return 0;
-				} else {
-					throw new SEException("Region " + this + " has no parent region set");
 				}
-			} else if (!this.HasSameMapplane(this.Parent)) {
-				throw new SEException("Region " + this + " has as parent set " + this.Parent + ", which is on another mapplane.");
-			} else {
-				int parentIndex = ((StaticRegion) this.Parent).SetHierarchyIndex(tempList);
-				this.HierarchyIndex = parentIndex + 1;
-				highestHierarchyIndex = Math.Max(highestHierarchyIndex, this.HierarchyIndex);
-				tempList.Remove(this);
-				return this.HierarchyIndex;
+				throw new SEException("Region " + this + " has no parent region set");
 			}
+			if (!this.HasSameMapplane(this.Parent)) {
+				throw new SEException("Region " + this + " has as parent set " + this.Parent + ", which is on another mapplane.");
+			}
+			int parentIndex = ((StaticRegion) this.Parent).SetHierarchyIndex(tempList);
+			this.HierarchyIndex = parentIndex + 1;
+			highestHierarchyIndex = Math.Max(highestHierarchyIndex, this.HierarchyIndex);
+			tempList.Remove(this);
+			return this.HierarchyIndex;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public void SaveWithHeader(SaveStream output) {
 			this.ThrowIfDeleted();
 			output.WriteSection(this.GetType().Name, this.Defname);
@@ -227,7 +230,7 @@ namespace SteamEngine.Regions {
 		/// called after manipulation is successfully done. 
 		/// Activates only activable regions
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ActivateAll() {
 			List<StaticRegion> activeRegs = new List<StaticRegion>();
 			foreach (StaticRegion reg in AllRegions) {
@@ -353,14 +356,14 @@ namespace SteamEngine.Regions {
 		/// Searches through all regions and returns the list of StaticRegions the name of which contains the 
 		/// criteria string
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+		[SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
 		public static List<StaticRegion> FindByString(string criteria) {
 			List<StaticRegion> regList = new List<StaticRegion>();
 			foreach (StaticRegion reg in AllRegions) {
 				if (string.IsNullOrEmpty(criteria)) {
 					regList.Add(reg);//bereme vse
-				} else if (reg.Name.ToUpper(System.Globalization.CultureInfo.InvariantCulture).Contains(
-					criteria.ToUpper(System.Globalization.CultureInfo.InvariantCulture))) {
+				} else if (reg.Name.ToUpper(CultureInfo.InvariantCulture).Contains(
+					criteria.ToUpper(CultureInfo.InvariantCulture))) {
 					regList.Add(reg);//jinak jen v pripade ze kriterium se vyskytuje v nazvu regionu
 				}
 			}
@@ -372,9 +375,11 @@ namespace SteamEngine.Regions {
 		private bool HasSameMapplane(Region reg) {
 			if (this.Mapplane == reg.Mapplane) {
 				return true;
-			} else if (this.IsWorldRegion) {
+			}
+			if (this.IsWorldRegion) {
 				return true;
-			} else if (reg.IsWorldRegion) {
+			}
+			if (reg.IsWorldRegion) {
 				return true;
 			}
 			return false;
@@ -455,7 +460,7 @@ namespace SteamEngine.Regions {
 		/// <summary>
 		/// Returns a list of regions for which the specified one is parent
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
+		[SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
 		public static List<StaticRegion> FindRegionsChildren(StaticRegion parent) {
 			List<StaticRegion> retList = new List<StaticRegion>();
 			foreach (StaticRegion stReg in AllRegions) {
@@ -470,7 +475,7 @@ namespace SteamEngine.Regions {
 		/// <summary>
 		/// Set the specified rectangles as belonging to this region
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool SetRectangles<T>(IList<T> list) where T : AbstractRectangle {
 			bool result = true;
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
@@ -498,7 +503,7 @@ namespace SteamEngine.Regions {
 		/// <summary>
 		/// Initializes a newly created region - set the name, home position and list of rectangles
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool InitializeNewRegion<T>(string name, Point4D home, IList<T> rects) where T : AbstractRectangle {
 			bool retval;
 			this.Name = name; //nove jmeno, a zaroven ho to ulozi do prislusneho seznamu
@@ -553,7 +558,8 @@ namespace SteamEngine.Regions {
 		public override void Delete() {
 			if (this == worldRegion) { //world region nesmime smazat
 				throw new SEException("Attempted to delete the 'world region'");
-			} else if (this == voidRegion) { //a void taky ne...
+			}
+			if (this == voidRegion) { //a void taky ne...
 				throw new SEException("Attempted to delete the 'void region'");
 			}
 			//najdeme deti a prepojime je na parenta
@@ -564,7 +570,7 @@ namespace SteamEngine.Regions {
 					child.Parent = this.Parent; //reset parents!
 					if (child is StaticRegion) {
 						//if child is StaticRegion), make it activable - we dont care for DynamicRegions etc				
-						((StaticRegion) child).canBeActivated = true;
+						child.canBeActivated = true;
 					}
 				}
 				byName.Remove(this.name); //remove it from the byNames dict

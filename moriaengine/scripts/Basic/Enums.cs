@@ -14,12 +14,14 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 
 namespace SteamEngine.CompiledScripts {
 
 	/// <summary>Numbers of important hues</summary>
-	public enum Hues : int {
+	public enum Hues
+	{
 		Red = 33,
 		Blue = 99,
 		Green = 68,
@@ -46,7 +48,8 @@ namespace SteamEngine.CompiledScripts {
 
 	#region Dialog enums
 	/// <summary>Various sorting criteria used in various dialogs</summary>
-	public enum SortingCriteria : int {
+	public enum SortingCriteria
+	{
 		NameAsc,
 		NameDesc,
 		DefnameAsc,
@@ -75,7 +78,8 @@ namespace SteamEngine.CompiledScripts {
 		IssuerDesc
 	}
 
-	public enum DialogAlignment : int {
+	public enum DialogAlignment
+	{
 		Align_Left,
 		Align_Right,
 		Align_Center,
@@ -86,7 +90,8 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	/// <summary>Various types of GUTA Leaf Components</summary>
-	public enum LeafComponentTypes : int {
+	public enum LeafComponentTypes
+	{
 		//Buttons
 		/// <summary>Button with the big X inside</summary>
 		ButtonCross,
@@ -122,7 +127,8 @@ namespace SteamEngine.CompiledScripts {
 		InputNumber
 	}
 
-	public enum SettingsEnums : int {
+	public enum SettingsEnums
+	{
 		All, //Zobrazit vsechny kategorie v jednom dialogu
 		Single, //Zobrazit jen jednu vybranou kategorii
 
@@ -135,7 +141,8 @@ namespace SteamEngine.CompiledScripts {
 
 	/// <summary>specification of various localities where to look for resources</summary>
 	[Flags]
-	public enum ResourcesLocality : int {
+	public enum ResourcesLocality
+	{
 		NonSpecified = 0x000, //not specified where to look for resources (used for resources of type: abilities,skills,triggergroups etc)
 
 		//following usages are usually for resource of type "itemdef" - where should we search for the items
@@ -148,14 +155,16 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	//specificy how many items should we try to find at the specified location
-	public enum ItemFindQuantity : int {
+	public enum ItemFindQuantity
+	{
 		FindAll = 1, //searches the whole location and returns the list of all items that correspond to the desired one
 		FindFirst = 2 //searches until the first corresponding item is found
 	}
 
 	/// <summary>Urcuje, jakej rezist se ma aplikovat na dotycny damage.</summary>
 	[Flags]
-	public enum DamageType : int {
+	public enum DamageType
+	{
 		/// <summary>Damage neredukovano</summary>
 		Irresistable = 0x000000,
 		/// <summary>Damage redukovano magickym rezistem (neplest s obranou mysli), i kdyz mozna nic takovyho neexistuje ;)</summary>
@@ -450,7 +459,7 @@ namespace SteamEngine.CompiledScripts {
 		FromAbility = 0x10,
 
 		BeneficialEffect = 0x4000,
-		HarmfulEffect = 0x8000,
+		HarmfulEffect = 0x8000
 	}
 
 	//kind of stolen from RunUO :)

@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SteamEngine {
 	public interface IMovementSettings {
@@ -104,7 +105,8 @@ namespace SteamEngine.Regions {
 
 			if (((landFlags & TileFlag.Impassable) != 0) && (avgZ > z) && ((z + height) > lowZ)) {
 				return false;
-			} else if ((landFlags & TileFlag.Impassable) == 0 && z == avgZ && !TileData.IsIgnoredId(tileId)) {
+			}
+			if ((landFlags & TileFlag.Impassable) == 0 && z == avgZ && !TileData.IsIgnoredId(tileId)) {
 				hasSurface = true;
 			}
 
@@ -119,7 +121,7 @@ namespace SteamEngine.Regions {
 
 				if ((surface || impassable) && (staticZ + dispidInfo.CalcHeight) > z && (z + height) > staticZ)
 					return false;
-				else if (surface && !impassable && z == (staticZ + dispidInfo.CalcHeight))
+				if (surface && !impassable && z == (staticZ + dispidInfo.CalcHeight))
 					hasSurface = true;
 			}
 
@@ -140,7 +142,8 @@ namespace SteamEngine.Regions {
 
 						if ((surface || impassable || (checkBlocksFit && item.BlocksFit)) && (itemZ + itemHeight) > z && (z + height) > itemZ) {
 							return false;
-						} else if (surface && !impassable && /*!item.Flag_Disconnected &&*/ z == (itemZ + itemHeight)) {
+						}
+						if (surface && !impassable && /*!item.Flag_Disconnected &&*/ z == (itemZ + itemHeight)) {
 							hasSurface = true;
 						}
 					}
@@ -162,7 +165,7 @@ namespace SteamEngine.Regions {
 
 		#region CheckMovement
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "5#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "4#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "6#")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "5#"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "4#"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "6#")]
 		public bool CheckMovement(IPoint3D point, IMovementSettings settings, Direction d, bool hackMove, out int xForward, out int yForward, out int newZ) {
 			int xStart = point.X;
 			int yStart = point.Y;
@@ -391,7 +394,7 @@ namespace SteamEngine.Regions {
 		private static List<Sector> sectorsPool = new List<Sector>();
 		private static List<AbstractInternalItem> staticsPool = new List<AbstractInternalItem>();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
 			newZ = 0;
 
@@ -572,7 +575,7 @@ namespace SteamEngine.Regions {
 			return moveIsOk;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private void GetStartZ(IMovementSettings settings, IPoint3D point, List<AbstractItem> itemList, out int zLow, out int zTop) {
 			int xCheck = point.X, yCheck = point.Y;
 
@@ -745,7 +748,7 @@ namespace SteamEngine.Regions {
 		}
 
 		//TODO needs work
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters"), SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public int GetFixedZ(IPoint3D point) {
 			//int oldZ = point.Z;
 			int x = point.X;

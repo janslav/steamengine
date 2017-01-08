@@ -15,6 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 
@@ -51,7 +52,7 @@ namespace SteamEngine.Regions {
 		internal sbyte z;
 		internal byte m;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static bool Equals(MutablePoint4D a, MutablePoint4D b) {
 			return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.m == b.m));
 		}

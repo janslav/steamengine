@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System.Collections.Generic;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
@@ -140,25 +141,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					Gump newGi = D_Display_Text.ShowError("Name i defname musi byt zadano");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
-				} else if (!newRect.Contains(home)) {
+				}
+				if (!newRect.Contains(home)) {
 					//homepos by nesedla
 					//stackneme a zobrazime chybu
 					Gump newGi = D_Display_Text.ShowError("Home pozice (" + gr.GetTextResponse(23) + ") musi lezet v zadanem rectanglu (" + args[0] + "," + args[1] + ")-(" + args[2] + "," + args[3] + ")");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
-				} else if (StaticRegion.GetByName(name) != null) {
+				}
+				if (StaticRegion.GetByName(name) != null) {
 					//jmeno uz existuje
 					//stackneme a zobrazime chybu
 					Gump newGi = D_Display_Text.ShowError("Region se jmenem " + name + " uz existuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
-				} else if (StaticRegion.GetByDefname(defname) != null) {
+				}
+				if (StaticRegion.GetByDefname(defname) != null) {
 					//defname uz existuje
 					//stackneme a zobrazime chybu
 					Gump newGi = D_Display_Text.ShowError("Region s defnamem " + defname + " uz existuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
-				} else if (parent == null) {
+				}
+				if (parent == null) {
 					//parent je povinnost!
 					Gump newGi = D_Display_Text.ShowError("Rodièovský region " + gr.GetTextResponse(24) + " neexistuje");
 					DialogStacking.EnstackDialog(gi, newGi);
@@ -174,7 +179,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					D_Display_Text.ShowError("Pøi vytávøení regionu došlo k problémùm - viz konzole");
 				}
-				return; //konec at uz se stackem nebo ne, dalsi navigace bude z infotextu
 				//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 2) {//vyber regionu parenta                         dialog,vyhledavani,prvni index, seznam regionu, trideni
 				//zkusime precist vsechyn parametry abychom je kdyztak meli

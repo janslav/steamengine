@@ -26,11 +26,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Player self = ach as Player;
 			if (self != null) {
 				Party p = Party.GetParty(self);
-				if (p != null) {
+				if (p != null)
+				{
 					if (!p.IsLeader(self)) {
 						self.ClilocSysMessage(1005453); // You may only add members to the party if you are the leader.
 						return;
-					} else if ((p.Members.Count + p.Candidates.Count) >= Party.Capacity) {
+					}
+					if ((p.Members.Count + p.Candidates.Count) >= Party.Capacity) {
 						self.ClilocSysMessage(1008095); // You may only have 10 in your party (this includes candidates).
 						return;
 					}

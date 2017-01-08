@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -103,13 +104,13 @@ namespace SteamEngine {
 			Logger.WriteError(e);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-		public string GetDecoratedName() {
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		public string GetDecoratedName()
+		{
 			if (this.contTriggerGroup == null) {
 				return this.name;
-			} else {
-				return this.contTriggerGroup.Defname + ": @" + this.name;
 			}
+			return this.contTriggerGroup.Defname + ": @" + this.name;
 		}
 
 		public virtual bool IsUnloaded {

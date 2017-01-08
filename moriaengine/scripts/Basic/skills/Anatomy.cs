@@ -1,9 +1,9 @@
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 
-
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class AnatomySkillDef : SkillDef {
 		public AnatomySkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -26,9 +26,8 @@ namespace SteamEngine.CompiledScripts {
 			if (self.CanInteractWithMessage(skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 				return TriggerResult.Continue;
-			} else {
-				return TriggerResult.Cancel;
 			}
+			return TriggerResult.Cancel;
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
@@ -70,10 +69,9 @@ namespace SteamEngine.CompiledScripts {
 				skillSeq.Target1 = targetted;
 				skillSeq.PhaseStart();
 				return TargetResult.Done;
-			} else {
-				self.WriteLine(Loc<AnatomyLoc>.Get(self.Language).TargetOnlyHuman);
-				return TargetResult.RestartTargetting;
 			}
+			self.WriteLine(Loc<AnatomyLoc>.Get(self.Language).TargetOnlyHuman);
+			return TargetResult.RestartTargetting;
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {

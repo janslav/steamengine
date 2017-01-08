@@ -189,12 +189,12 @@ namespace SteamEngine {
 			}
 		}
 
-		public static ItemDispidInfo GetByModel(int num) {
+		public static ItemDispidInfo GetByModel(int num)
+		{
 			if (num >= 0 && num < array.Count) {
 				return array[num];
-			} else {
-				return null;
 			}
+			return null;
 		}
 
 		internal static bool ParseName(string name, out string singular, out string plural) {

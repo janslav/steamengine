@@ -17,17 +17,18 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections.Generic;
-using SteamEngine.Networking;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class CorpseDef : ContainerDef {
 
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Corpse : Container {
 		uint hairFakeUid = GetFakeItemUid();
 		uint beardFakeUid = GetFakeItemUid();

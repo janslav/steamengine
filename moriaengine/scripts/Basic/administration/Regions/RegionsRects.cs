@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Regions;
@@ -131,21 +132,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							}
 							//zobrazime info a zmizime (z infa bude navrat k predchozimu dlg neb tento nestackneme)
 							break;
-						} else { //nekde to neproslo
-							Gump infoGi = D_Display_Text.ShowError("Ukládání rectanglù skonèilo s chybami - viz konzole!");
-							DialogStacking.EnstackDialog(gi, infoGi); //vlozime dialog do stacku pro navrat						
-							break;
-						}
+						} //nekde to neproslo
+						Gump infoGi = D_Display_Text.ShowError("Ukládání rectanglù skonèilo s chybami - viz konzole!");
+						DialogStacking.EnstackDialog(gi, infoGi); //vlozime dialog do stacku pro navrat						
+						break;
 					//pokud to nekde spadne, tak to uvidime v konzoli - to uz je zavazny problem a nesmi to jen tak projit! (=nechytam vyjimku)
 					//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 					//break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, rectsList.Count, 1)) {//kliknuto na paging?
-				return;
 			} else {
 				//zjistime si radek a cudlik v nem
-				int row = ((int) gr.PressedButton - 10) / 2;
-				int buttNo = ((int) gr.PressedButton - 10) % 2;
+				int row = (gr.PressedButton - 10) / 2;
+				int buttNo = (gr.PressedButton - 10) % 2;
 				MutableRectangle rect = rectsList[row];
 				Gump newGi;
 				switch (buttNo) {

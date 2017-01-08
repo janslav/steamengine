@@ -15,10 +15,11 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_EvalExpression : OpNode, IOpNodeHolder {
 		//accepts EvalExpression, StrongEvalExpression
 		private OpNode arg;
@@ -48,12 +49,12 @@ namespace SteamEngine.LScript {
 			: base(parent, filename, line, column, origNode) {
 		}
 
-		public void Replace(OpNode oldNode, OpNode newNode) {
+		public void Replace(OpNode oldNode, OpNode newNode)
+		{
 			if (this.arg != oldNode) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.arg = newNode;
 			}
+			this.arg = newNode;
 		}
 
 		internal override object Run(ScriptVars vars) {

@@ -15,10 +15,10 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
-
 
 namespace SteamEngine {
 	public abstract partial class AbstractCharacter {
@@ -35,9 +35,8 @@ namespace SteamEngine {
 				GameState state = this.GameState;
 				if (state != null) {
 					return state.UpdateRange;
-				} else {
-					return Globals.MaxUpdateRange;
 				}
+				return Globals.MaxUpdateRange;
 			}
 		}
 
@@ -46,9 +45,8 @@ namespace SteamEngine {
 				GameState state = this.GameState;
 				if (state != null) {
 					return state.RequestedUpdateRange;
-				} else {
-					return Globals.MaxUpdateRange;
 				}
+				return Globals.MaxUpdateRange;
 			}
 		}
 
@@ -65,9 +63,8 @@ namespace SteamEngine {
 				object value = this.GetTag(visionRangeTK);
 				if (value == null) {
 					return Globals.MaxUpdateRange;
-				} else {
-					return ConvertTools.ToInt32(value);
 				}
+				return ConvertTools.ToInt32(value);
 			}
 			set {
 				if (value != Globals.MaxUpdateRange) {
@@ -87,7 +84,7 @@ namespace SteamEngine {
 		/// Returns true if this character can see that target "for update" i.e. if it should and will be sent to the client. 
 		/// This works on items in containers, etc, as well.
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual DenyResult CanSeeForUpdate(Thing target) {
 			return this.CanSeeForUpdateImpl(this, target.TopPoint, target);
 		}
@@ -171,7 +168,7 @@ namespace SteamEngine {
 		/// </summary>
 		/// <param name="target">The target.</param>
 		/// <returns></returns>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public DenyResult CanReach(Thing target) {
 			if (target == null || target.IsDeleted) {
 				return DenyResultMessages.Deny_ThatDoesntExist;
@@ -205,18 +202,18 @@ namespace SteamEngine {
 			} //else we already checked it
 
 			AbstractItem container = target.Cont as AbstractItem;
-			if (container != null) {
+			if (container != null)
+			{
 				if (this.IsOnline) {
 					return OpenedContainers.HasContainerOpenFromAt(this, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
-				} else {
-					return DenyResultMessages.Deny_NoMessage; //only logged-in players can reach stuff in containers
 				}
+				return DenyResultMessages.Deny_NoMessage; //only logged-in players can reach stuff in containers
 			}
 
 			return DenyResultMessages.Allow;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public DenyResult CanReachCoordinates(IPoint4D target) {
 			target = target.TopPoint;
 			if (!this.CanReachMapRangeFrom(this, target)) {
@@ -237,32 +234,31 @@ namespace SteamEngine {
 
 			if ((targetAs4D != null) && (targetAs4D.M != thisM)) { //different M
 				return DenyResultMessages.Deny_ThatIsTooFarAway;
-			} else {
-				Map map = Map.GetMap(thisM);
-				Thing targetAsThing = target as Thing;
-				if (targetAsThing != null) {
-					if ((targetAsThing.IsDeleted) || (targetAsThing.Flag_Disconnected)) {
-						return DenyResultMessages.Deny_ThatDoesntExist;
-					}
-					DenyResult canSee = this.CanSeeForUpdate(targetAsThing);
-					if (!canSee.Allow) {
-						return canSee;
-					}
-					if (!map.CanSeeLosFromTo(this, targetTop)) {
-						return DenyResultMessages.Deny_ThatIsOutOfLOS;
-					}
-				} else if (target != null) {
-					if (Point2D.GetSimpleDistance(this, targetTop) > this.VisionRange) {
-						return DenyResultMessages.Deny_ThatIsTooFarAway;
-					}
-					if (map.CanSeeLosFromTo(this, targetTop)) {
-						//if it's really an IPoint3D, we assume it exists on all mapplanes. 
-						//TODO? Could be wrong with statics on multiple facets, but we'll get there when we get there
-						return DenyResultMessages.Deny_ThatIsOutOfLOS;
-					}
-				} else { //target == null
+			}
+			Map map = Map.GetMap(thisM);
+			Thing targetAsThing = target as Thing;
+			if (targetAsThing != null) {
+				if ((targetAsThing.IsDeleted) || (targetAsThing.Flag_Disconnected)) {
 					return DenyResultMessages.Deny_ThatDoesntExist;
 				}
+				DenyResult canSee = this.CanSeeForUpdate(targetAsThing);
+				if (!canSee.Allow) {
+					return canSee;
+				}
+				if (!map.CanSeeLosFromTo(this, targetTop)) {
+					return DenyResultMessages.Deny_ThatIsOutOfLOS;
+				}
+			} else if (target != null) {
+				if (Point2D.GetSimpleDistance(this, targetTop) > this.VisionRange) {
+					return DenyResultMessages.Deny_ThatIsTooFarAway;
+				}
+				if (map.CanSeeLosFromTo(this, targetTop)) {
+					//if it's really an IPoint3D, we assume it exists on all mapplanes. 
+					//TODO? Could be wrong with statics on multiple facets, but we'll get there when we get there
+					return DenyResultMessages.Deny_ThatIsOutOfLOS;
+				}
+			} else { //target == null
+				return DenyResultMessages.Deny_ThatDoesntExist;
 			}
 
 			return DenyResultMessages.Allow;

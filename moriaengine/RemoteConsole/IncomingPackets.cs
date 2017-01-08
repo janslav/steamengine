@@ -1,5 +1,5 @@
-using System.Net;
 using System.Collections.Generic;
+using System.Net;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
@@ -194,12 +194,12 @@ namespace SteamEngine.RemoteConsole {
 			}
 
 			public string DisplayText {
-				get {
+				get
+				{
 					if (this.running) {
 						return this.name + " (on)";
-					} else {
-						return this.name + " (off)";
 					}
+					return this.name + " (off)";
 				}
 			}
 

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
 #if MSWIN
@@ -10,12 +12,12 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 #else
 	public class SEGameServerProtocol : IProtocol<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, System.Net.IPEndPoint> {
 #endif
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly SEGameServerProtocol instance = new SEGameServerProtocol();
 
 #if MSWIN
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> GetPacketImplementation(byte id, NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state, out bool discardAfterReading) {
 #else
 		public IncomingPacket<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, System.Net.IPEndPoint> GetPacketImplementation(byte id, NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state, out bool discardAfterReading) {
@@ -65,7 +67,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 			GameServersManager.AddGameServer(state);
 
 			if (ConsoleServer.ConsoleServer.AllConsolesCount > 0) {
-				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					console.OpenCmdWindow(state.Setup.Name, state.ServerUid);
 					console.TryLoginToGameServer(state);
 				}
@@ -88,7 +90,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+	[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 	internal class ConsoleLoginReplyPacket : SEGameServerIncomingPacket {
 		int consoleId;
 		string accName;
@@ -104,8 +106,8 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
 			state.SetStartupFinished(true);
 
-			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(
-				(ConsoleServer.ConsoleId) this.consoleId);
+			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(
+				(ConsoleId) this.consoleId);
 			if (console != null) {
 				if (this.loginSuccessful) {
 					console.SetLoggedInTo(state);
@@ -133,7 +135,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+	[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 	internal class ConsoleWriteLinePacket : SEGameServerIncomingPacket {
 		int consoleId;
 		string line;
@@ -145,7 +147,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
-			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid((ConsoleServer.ConsoleId) this.consoleId);
+			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid((ConsoleId) this.consoleId);
 			if (console != null) {
 				console.WriteLine(state.ServerUid, this.line);
 			}

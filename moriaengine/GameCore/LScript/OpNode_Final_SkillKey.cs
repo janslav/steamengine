@@ -16,11 +16,12 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_SkillKey_Set : OpNode, IOpNodeHolder, ITriable {
 		private OpNode arg;
 		private readonly int skillId;
@@ -74,7 +75,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_SkillKey_Get : OpNode, ITriable {
 		private readonly int skillId;
 

@@ -16,9 +16,10 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using SteamEngine.Persistence;
 
 //will be alternative to Timer which runs triggers...
@@ -28,10 +29,10 @@ namespace SteamEngine.Timers {
 	[SaveableClass, DeepCopyableClass]
 	public class MethodTimer : BoundTimer {
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		public MethodInfo method;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData, CopyableData]
 		public object[] args;
 
@@ -53,7 +54,7 @@ namespace SteamEngine.Timers {
 			this.args = args;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public override void Save(SaveStream output) {
 			StringBuilder sb = new StringBuilder(this.method.DeclaringType.ToString());
 			sb.Append(".").Append(this.method.Name);
@@ -61,7 +62,7 @@ namespace SteamEngine.Timers {
 			ParameterInfo[] pars = this.method.GetParameters();
 			if (pars.Length > 0) {
 				foreach (ParameterInfo pi in pars) {
-					sb.Append(pi.ParameterType.ToString());
+					sb.Append(pi.ParameterType);
 					sb.Append(", ");
 				}
 				sb.Length -= 2;
@@ -74,7 +75,7 @@ namespace SteamEngine.Timers {
 		private static Regex methodSignRE = new Regex(@"^\s*(?<type>[a-zA-Z0-9\.]+)\.(?<method>[a-zA-Z0-9]+)\((([a-zA-Z0-9\.]+)(\,\s*)?)*\)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), LoadLine]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), LoadLine]
 		public override void LoadLine(string filename, int line, string name, string value) {
 			if (name.Equals("method")) {
 				//Console.WriteLine("loading method with string: "+value);

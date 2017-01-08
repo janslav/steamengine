@@ -17,7 +17,6 @@
 
 using System.IO.Pipes;
 using System.Threading;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication.NamedPipes {

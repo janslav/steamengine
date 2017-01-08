@@ -16,8 +16,8 @@
 */
 
 using System;
-using SteamEngine.Timers;
 using SteamEngine.Common;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -219,9 +219,8 @@ namespace SteamEngine.CompiledScripts {
 				SkillSequenceArgs skillSeq = SkillSequenceArgs.Acquire(self, skill, targetted, null, (Item) parameter, null, null); //tool = parameter = bandage
 				skillSeq.PhaseSelect();
 				return TargetResult.Done;
-			} else {
-				self.WriteLine(Loc<BandageSkillLoc>.Get(self.Language).CantHealItems);
 			}
+			self.WriteLine(Loc<BandageSkillLoc>.Get(self.Language).CantHealItems);
 			return TargetResult.RestartTargetting;
 		}
 	}

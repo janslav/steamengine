@@ -15,18 +15,19 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
-using System.Net;
 
 namespace SteamEngine.Networking {
 	public class GameServerProtocol : IProtocol<TcpConnection<GameState>, GameState, IPEndPoint> {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly GameServerProtocol instance = new GameServerProtocol();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		public IncomingPacket<TcpConnection<GameState>, GameState, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<GameState> conn, GameState state, out bool discardAfterReading) {
 			bool isLoggedIn = state.IsLoggedIn;
 			bool hasChar = state.Character != null;

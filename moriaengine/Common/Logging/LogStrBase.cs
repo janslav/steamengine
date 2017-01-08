@@ -16,11 +16,13 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Text;
 
 namespace SteamEngine.Common {
-	public enum LogStyles : int {
+	public enum LogStyles
+	{
 		Default = 0,
 		Warning, Error, Fatal, Critical, Debug,
 		Highlight, Ident, FileLine, FilePos, File, Number
@@ -101,7 +103,7 @@ namespace SteamEngine.Common {
 		internal const string separatorString = "\u001B";
 		internal const string titleString = "t";
 		internal const string styleString = "s";
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+		[SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
 		internal const string eosString = "e";
 
 		internal const float defaultSize = 8.25f;
@@ -109,7 +111,7 @@ namespace SteamEngine.Common {
 		internal static readonly FontFamily defaultFamily = new FontFamily(GenericFontFamilies.SansSerif);
 		internal static readonly Color defaultColor = Color.Black;
 
-		private static readonly LogStyleInfo[] logStyles = new LogStyleInfo[] {
+		private static readonly LogStyleInfo[] logStyles = {
 			new LogStyleInfo(defaultColor, defaultFontStyle, defaultFamily, defaultSize, false), //LogStyles.Default
 			new LogStyleInfo(Color.Red, defaultFontStyle), //LogStyles.Warning
 			new LogStyleInfo(Color.Red, defaultFontStyle), //LogStyles.Error
@@ -121,7 +123,7 @@ namespace SteamEngine.Common {
 			new LogStyleInfo(Color.Blue, defaultFontStyle, defaultFamily, defaultSize, true), //LogStyles.FileLine			
 			new LogStyleInfo(defaultColor, FontStyle.Italic, defaultFamily, defaultSize, true), //LogStyles.FilePos
 			new LogStyleInfo(Color.Purple, defaultFontStyle, defaultFamily, defaultSize, true), //LogStyles.File
-			new LogStyleInfo(Color.Blue, defaultFontStyle), //LogStyles.Number			
+			new LogStyleInfo(Color.Blue, defaultFontStyle) //LogStyles.Number			
 		};
 
 		public static LogStyleInfo DefaultLogStyleInfo {

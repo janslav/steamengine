@@ -17,7 +17,7 @@
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(MutableRectangle), "Rectangle",
-	 new string[] { "MinX", "MinY", "MaxX", "MaxY" }
+	 new[] { "MinX", "MinY", "MaxX", "MaxY" }
 		)]
 	public static class MutableRectangleDescriptor {
 		//nic nezobrazovat, jen zakazat gettery z parenta

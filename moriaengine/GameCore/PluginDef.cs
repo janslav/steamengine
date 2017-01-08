@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -45,7 +46,7 @@ namespace SteamEngine {
 		internal TriggerGroup scriptedTriggers;
 		internal PluginTriggerGroup compiledTriggers;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+		[SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class PluginTriggerGroup {
 			public abstract object Run(Plugin self, TriggerKey tk, ScriptArgs sa);
 		}

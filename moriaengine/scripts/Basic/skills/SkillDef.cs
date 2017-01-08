@@ -18,9 +18,12 @@
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Persistence;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public abstract class SkillDef : AbstractSkillDef {
 
 		#region Accessors
@@ -133,13 +136,13 @@ namespace SteamEngine.CompiledScripts {
 			return ScriptUtil.EvalRangePermille(skillValue, this.Delay);
 		}
 
-		public double GetDelayForChar(Character ch) {
+		public double GetDelayForChar(Character ch)
+		{
 			//GM is always immediate
 			if (ch.IsGM) {
 				return 0;
-			} else {
-				return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Delay);
 			}
+			return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Delay);
 		}
 
 		public double[] Effect {
@@ -155,13 +158,13 @@ namespace SteamEngine.CompiledScripts {
 			return ScriptUtil.EvalRangePermille(skillValue, this.Effect);
 		}
 
-		public double GetEffectForChar(Character ch) {
+		public double GetEffectForChar(Character ch)
+		{
 			//GM is treated as having the maximal skill
 			if (ch.IsGM) {
 				return ScriptUtil.EvalRangePermille(1000.0, this.Effect);
-			} else {
-				return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Effect);
 			}
+			return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Effect);
 		}
 		#endregion Accessors
 
@@ -169,13 +172,13 @@ namespace SteamEngine.CompiledScripts {
 			return SkillUtils.CheckSuccess(skillValue, difficulty);
 		}
 
-		public bool CheckSuccess(Character ch, int difficulty) {
+		public bool CheckSuccess(Character ch, int difficulty)
+		{
 			//GM is always successfull
 			if (ch.IsGM) {
 				return true;
-			} else {
-				return SkillUtils.CheckSuccess(this.SkillValueOfChar(ch), difficulty);
 			}
+			return SkillUtils.CheckSuccess(this.SkillValueOfChar(ch), difficulty);
 		}
 
 		#region Triggers
@@ -337,7 +340,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Triggers
 	}
 
-	[Persistence.SaveableClass]
+	[SaveableClass]
 	public class SkillSequenceArgs {
 		private Character self; //set when calling @Select
 		private SkillDef skillDef; //set when calling @Select
@@ -349,7 +352,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public readonly ScriptArgs scriptArgs;
 
-		[Persistence.LoadingInitializer]
+		[LoadingInitializer]
 		public SkillSequenceArgs() {
 			this.scriptArgs = new ScriptArgs(this);
 		}
@@ -364,7 +367,7 @@ namespace SteamEngine.CompiledScripts {
 			args.param2 = null;
 			args.tool = null;
 			args.success = false;
-			args.delay = Timers.Timer.negativeOneSecond;
+			args.delay = Timer.negativeOneSecond;
 			return args;
 		}
 
@@ -378,7 +381,7 @@ namespace SteamEngine.CompiledScripts {
 			args.param2 = param2;
 			args.tool = tool;
 			args.success = false;
-			args.delay = Timers.Timer.negativeOneSecond;
+			args.delay = Timer.negativeOneSecond;
 			return args;
 		}
 
@@ -414,8 +417,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.Save]
-		public void Save(Persistence.SaveStream output) {
+		[Save]
+		public void Save(SaveStream output) {
 			if (this.self != null) {
 				output.WriteValue("self", this.self);
 			}
@@ -424,21 +427,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.LoadLine]
+		[LoadLine]
 		public void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
 				case "self":
-					Persistence.ObjectSaver.Load(valueString, delegate(object loaded, string f, int l) {
+					ObjectSaver.Load(valueString, delegate(object loaded, string f, int l) {
 						this.self = (Character) loaded;
 					}, filename, line);
 					break;
 				case "skilldef":
-					this.skillDef = (SkillDef) Persistence.ObjectSaver.OptimizedLoad_Script(valueName);
+					this.skillDef = (SkillDef) ObjectSaver.OptimizedLoad_Script(valueName);
 					break;
 			}
 		}
 
-		[Persistence.SaveableData]
+		[SaveableData]
 		public IPoint3D Target1 {
 			get {
 				return this.target1;
@@ -448,7 +451,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.SaveableData]
+		[SaveableData]
 		public IPoint3D Target2 {
 			get {
 				return this.target2;
@@ -458,7 +461,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.SaveableData]
+		[SaveableData]
 		public object Param1 {
 			get {
 				return this.param1;
@@ -468,7 +471,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.SaveableData]
+		[SaveableData]
 		public object Param2 {
 			get {
 				return this.param2;
@@ -478,7 +481,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.SaveableData]
+		[SaveableData]
 		public Item Tool {
 			get {
 				return this.tool;
@@ -488,7 +491,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.SaveableData]
+		[SaveableData]
 		public TimeSpan DelaySpan {
 			get {
 				return this.delay;
@@ -507,7 +510,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[Persistence.SaveableData]
+		[SaveableData]
 		public bool Success {
 			get {
 				return this.success;
@@ -598,17 +601,17 @@ namespace SteamEngine.CompiledScripts {
 			return (SkillStrokeTimer) self.GetTimer(skillTimerKey);
 		}
 
-		private static Timers.TimerKey skillTimerKey = Timers.TimerKey.Acquire("_skillTimer_");
+		private static TimerKey skillTimerKey = TimerKey.Acquire("_skillTimer_");
 
-		[Persistence.SaveableClass]
+		[SaveableClass]
 		[DeepCopyableClass]
-		public class SkillStrokeTimer : Timers.BoundTimer {
+		public class SkillStrokeTimer : BoundTimer {
 
 			[CopyableData]
-			[Persistence.SaveableData]
+			[SaveableData]
 			public SkillSequenceArgs skillSeqArgs;
 
-			[Persistence.LoadingInitializer]
+			[LoadingInitializer]
 			[DeepCopyImplementation]
 			public SkillStrokeTimer() {
 			}

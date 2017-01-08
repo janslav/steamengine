@@ -16,8 +16,8 @@
 */
 
 using System;
-using SteamEngine.Networking;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 
 //using MySql.Data.MySqlClient;
 
@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 
-			private static string[] colNames = new string[] {
+			private static string[] colNames = {
 				"account", "ip", "charname", "charuid", "inorout", "time", "servertime", "gameorconsole", "clientuid" };
 
 			public override string[] ColumnNames {

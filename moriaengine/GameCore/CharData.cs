@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using SteamEngine.Common;
 
@@ -65,21 +66,20 @@ namespace SteamEngine {
 						if (args.Length != 4) {
 							Logger.WriteWarning("Bodyconv.def contains a line in an unexpected format. That line is '" + line + "'");
 							break;
-						} else {
-							int model = ConvertTools.ParseInt32(args[0]);
-							if (!Exists(model)) {
-								AddDispid(model);
-								AbstractCharacterDef def = ThingDef.FindCharDef(model);
-								if (def == null) {
-									if (numWritten == 0) {
-										scr.WriteLine("\n\n\n//-------------- Written " + DateTime.Now.ToString() + " --------------//\n");
-									}
-									numWritten++;
-									scr.WriteLine("");
-									scr.WriteLine("[Character 0x" + model.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
-									scr.WriteLine("model=0x" + model.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
-									scr.WriteLine("name=Unknown");
+						}
+						int model = ConvertTools.ParseInt32(args[0]);
+						if (!Exists(model)) {
+							AddDispid(model);
+							AbstractCharacterDef def = ThingDef.FindCharDef(model);
+							if (def == null) {
+								if (numWritten == 0) {
+									scr.WriteLine("\n\n\n//-------------- Written " + DateTime.Now + " --------------//\n");
 								}
+								numWritten++;
+								scr.WriteLine("");
+								scr.WriteLine("[Character 0x" + model.ToString("x", CultureInfo.InvariantCulture) + "]");
+								scr.WriteLine("model=0x" + model.ToString("x", CultureInfo.InvariantCulture));
+								scr.WriteLine("name=Unknown");
 							}
 						}
 					}

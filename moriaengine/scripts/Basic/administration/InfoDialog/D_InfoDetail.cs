@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Persistence;
@@ -32,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			//the viewCls could be null ! - e.g. DataView does not exist
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Detail of " + target.ToString() + ":" + view.GetName(target)).Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Detail of " + target + ":" + view.GetName(target)).Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 

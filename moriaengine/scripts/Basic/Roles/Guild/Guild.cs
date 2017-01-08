@@ -16,10 +16,11 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System.Collections.Generic;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	[SaveableClass]
 
 	//TODO!

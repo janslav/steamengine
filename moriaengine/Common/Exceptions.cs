@@ -16,17 +16,18 @@
 */
 
 using System;
-using SteamEngine.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using SteamEngine.Common;
 
 namespace SteamEngine {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"),
-	System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"),
+	SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class SEException : Exception {
 		private LogStr niceMessage;
 
 		public SEException()
-			: base() {
+		{
 			this.niceMessage = LogStr.Raw(this.Message);
 		}
 
@@ -40,7 +41,7 @@ namespace SteamEngine {
 			this.niceMessage = (LogStr) s;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public SEException(LogStr s, Exception e)
 			: base(s.RawString, e) {
 			this.niceMessage = s;
@@ -58,7 +59,7 @@ namespace SteamEngine {
 			: this(LogStr.FileLine(filename, line) + ": " + str) {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public SEException(LogStr s)
 			: base(s.RawString) {
 			this.niceMessage = s;
@@ -88,10 +89,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class ScriptException : SEException {
 		public ScriptException()
-			: base() {
+		{
 		}
 		public ScriptException(string s)
 			: base(s) {
@@ -107,10 +108,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class CallFuncException : SEException {
 		public CallFuncException()
-			: base() {
+		{
 		}
 		public CallFuncException(string s)
 			: base(s) {
@@ -126,10 +127,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class TagMathException : SEException {
 		public TagMathException()
-			: base() {
+		{
 		}
 		public TagMathException(string s)
 			: base(s) {
@@ -145,10 +146,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class UnloadedException : SEException {
 		public UnloadedException()
-			: base() {
+		{
 		}
 		public UnloadedException(string s)
 			: base(s) {
@@ -164,10 +165,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class DeletedException : SEException {
 		public DeletedException()
-			: base() {
+		{
 		}
 		public DeletedException(string s)
 			: base(s) {
@@ -183,10 +184,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class ServerException : SEException {
 		public ServerException()
-			: base() {
+		{
 		}
 		public ServerException(string s)
 			: base(s) {
@@ -202,10 +203,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class UnrecognizedValueException : SEException {
 		public UnrecognizedValueException()
-			: base() {
+		{
 		}
 		public UnrecognizedValueException(string s)
 			: base(s) {
@@ -221,10 +222,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class InsufficientDataException : SEException {
 		public InsufficientDataException()
-			: base() {
+		{
 		}
 		public InsufficientDataException(string s)
 			: base(s) {
@@ -240,10 +241,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class UnsaveableTypeException : SEException {
 		public UnsaveableTypeException()
-			: base() {
+		{
 		}
 		public UnsaveableTypeException(string s)
 			: base(s) {
@@ -259,10 +260,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class NonExistingObjectException : SEException {
 		public NonExistingObjectException()
-			: base() {
+		{
 		}
 		public NonExistingObjectException(string s)
 			: base(s) {
@@ -278,10 +279,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class OverrideNotAllowedException : SEException {
 		public OverrideNotAllowedException()
-			: base() {
+		{
 		}
 		public OverrideNotAllowedException(string s)
 			: base(s) {
@@ -297,10 +298,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class SanityCheckException : SEException {
 		public SanityCheckException()
-			: base() {
+		{
 		}
 		public SanityCheckException(string s)
 			: base(s) {
@@ -316,7 +317,7 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class NotSupportedSEException : SEException {
 		public NotSupportedSEException()
 			: base("Not supported") {
@@ -345,10 +346,10 @@ namespace SteamEngine {
 		I think thats wrong :) you can just write "throw;" and it rethrows the exception correctly including the
 		previons stack info. -tar
 	*/
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class FatalException : SEException {
 		public FatalException()
-			: base() {
+		{
 		}
 		public FatalException(string s)
 			: base(s) {
@@ -368,10 +369,10 @@ namespace SteamEngine {
 		Class: SEBugException
 		Thrown when a bug in SE is detected by sanity-checking code.
 	*/
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class SEBugException : FatalException {
 		public SEBugException()
-			: base() {
+		{
 		}
 		public SEBugException(string s)
 			: base(s) {
@@ -391,13 +392,13 @@ namespace SteamEngine {
 		Class: ShowMessageAndExitException
 		Used to display a message in a popup message box, and then exit.
 	*/
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class ShowMessageAndExitException : FatalException {
 		private string msg;
 		private string title;
 
 		public ShowMessageAndExitException()
-			: base() {
+		{
 		}
 		public ShowMessageAndExitException(string s, string t)
 			: base(s) {
@@ -405,14 +406,14 @@ namespace SteamEngine {
 			this.title = t;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public ShowMessageAndExitException(LogStr s, string t)
 			: base(s) {
 			this.msg = s.RawString;
 			this.title = t;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
+		[SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
 		public void Show() {
 			IWin32Window window = Form.ActiveForm;
 			if (window != null) {
@@ -423,10 +424,10 @@ namespace SteamEngine {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+	[SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
 	public class InvalidFilenameException : SEException {
 		public InvalidFilenameException()
-			: base() {
+		{
 		}
 		public InvalidFilenameException(string s)
 			: base(s) {

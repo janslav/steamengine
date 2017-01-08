@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
-
+using SteamEngine.AuxiliaryServer.ConsoleServer;
+using SteamEngine.AuxiliaryServer.SphereServers;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
@@ -31,15 +33,15 @@ namespace SteamEngine.AuxiliaryServer {
 		//}
 
 		internal SphereServerSetup(IniFileSection section) {
-			this.iniID = section.GetValue<int>("number", 0, "Number to order the servers in shard list. Should be unique, starting with 0.");
-			this.hardDiscIniPath = Path.GetFullPath(section.GetValue<string>("hardDiscIniPath", Path.GetFullPath("."), "path to sphere.ini of this instance"));
-			this.ramdiscIniPath = Path.GetFullPath(section.GetValue<string>("ramdiscIniPath", this.hardDiscIniPath, "path to sphere.ini of this instance on ramdisc. Optional."));
+			this.iniID = section.GetValue("number", 0, "Number to order the servers in shard list. Should be unique, starting with 0.");
+			this.hardDiscIniPath = Path.GetFullPath(section.GetValue("hardDiscIniPath", Path.GetFullPath("."), "path to sphere.ini of this instance"));
+			this.ramdiscIniPath = Path.GetFullPath(section.GetValue("ramdiscIniPath", this.hardDiscIniPath, "path to sphere.ini of this instance on ramdisc. Optional."));
 
-			this.exitLaterParam = section.GetValue<int>("exitLaterParam", -1, "param of the automatic daily exitlater - if negative, disable the function.");
-			this.exitLaterDailySchedule = section.GetValue<DateTime>("exitLaterDailySchedule", DateTime.MinValue.AddHours(4), "time to daily exitlater sphereserver.");
+			this.exitLaterParam = section.GetValue("exitLaterParam", -1, "param of the automatic daily exitlater - if negative, disable the function.");
+			this.exitLaterDailySchedule = section.GetValue("exitLaterDailySchedule", DateTime.MinValue.AddHours(4), "time to daily exitlater sphereserver.");
 
-			this.adminAccount = section.GetValue<string>("adminAccount", "administrator", "Sphere account to login to via it's telnet capability.");
-			this.adminPassword = section.GetValue<string>("adminPassword", "123456", "Sphere account password.");
+			this.adminAccount = section.GetValue("adminAccount", "administrator", "Sphere account to login to via it's telnet capability.");
+			this.adminPassword = section.GetValue("adminPassword", "123456", "Sphere account password.");
 
 			ReadSphereIni(this.hardDiscIniPath, out this.name, out this.port);
 
@@ -47,14 +49,14 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal void WriteToIniSection(IniFileSection section) {
-			section.SetValue<int>("number", this.iniID, "Number to order the servers in shard list. Should be unique, starting with 0.");
-			section.SetValue<string>("hardDiscIniPath", this.hardDiscIniPath, "path to sphere.ini of this instance");
+			section.SetValue("number", this.iniID, "Number to order the servers in shard list. Should be unique, starting with 0.");
+			section.SetValue("hardDiscIniPath", this.hardDiscIniPath, "path to sphere.ini of this instance");
 
-			section.SetValue<int>("exitLaterParam", this.exitLaterParam, "param of the automatic daily exitlater - if negative, disable the function");
-			section.SetValue<DateTime>("exitLaterDailySchedule", this.exitLaterDailySchedule, "time to daily exitlater sphereserver");
+			section.SetValue("exitLaterParam", this.exitLaterParam, "param of the automatic daily exitlater - if negative, disable the function");
+			section.SetValue("exitLaterDailySchedule", this.exitLaterDailySchedule, "time to daily exitlater sphereserver");
 
-			section.GetValue<string>("adminAccount", this.adminAccount, "Sphere account to login to via it's telnet capability.");
-			section.GetValue<string>("adminPassword", this.adminPassword, "Sphere account password.");
+			section.GetValue("adminAccount", this.adminAccount, "Sphere account to login to via it's telnet capability.");
+			section.GetValue("adminPassword", this.adminPassword, "Sphere account password.");
 		}
 
 		private static void ReadSphereIni(string iniPath, out string name, out int port) {
@@ -79,9 +81,8 @@ namespace SteamEngine.AuxiliaryServer {
 
 			if (Path.IsPathRooted(scriptsPath)) {
 				return scriptsPath;
-			} else {
-				return Path.Combine(iniPath, scriptsPath);
 			}
+			return Path.Combine(iniPath, scriptsPath);
 		}
 
 		public int IniID {
@@ -179,10 +180,10 @@ namespace SteamEngine.AuxiliaryServer {
 		public void StartGameServerProcess(BuildType build) {
 			string path = Path.Combine(this.ramdiscIniPath, sphereExeName);
 			Console.WriteLine("Starting Sphereserver: " + this.IniPath);
-			System.Diagnostics.Process.Start(path);
+			Process.Start(path);
 		}
 
-		public void SvnUpdate(ConsoleServer.ConsoleClient console) {
+		public void SvnUpdate(ConsoleClient console) {
 			GameServer sphere = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (sphere != null) {
 				sphere.SendCommand(console, "r");
@@ -198,7 +199,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 		}
 
-		public void SvnCleanup(ConsoleServer.ConsoleClient console) {
+		public void SvnCleanup(ConsoleClient console) {
 			VersionControl.SvnCleanUpProject(this.HardDiscScriptsPath);
 			if (!StringComparer.OrdinalIgnoreCase.Equals(this.HardDiscIniPath, this.RamdiscIniPath)) {
 				VersionControl.SvnCleanUpProject(this.RamdiscScriptsPath);
@@ -217,7 +218,7 @@ namespace SteamEngine.AuxiliaryServer {
 				Console.WriteLine(string.Concat(
 					"Automatic exitlater scheduled for sphereserver at ", this.HardDiscIniPath, " for ",
 					this.exitLaterDailySchedule.ToShortTimeString(),
-					" which is in "+span.ToString()));
+					" which is in "+span));
 
 				new Timer(this.ScheduledExitLater, "", 1000, //(int) (span.TotalMilliseconds + 1), //+1 ms so it should't need to reschedule, just a failsafe
 					Timeout.Infinite
@@ -235,7 +236,7 @@ namespace SteamEngine.AuxiliaryServer {
 					Console.WriteLine(string.Concat(
 						"Invoking exitlater ", this.exitLaterParam.ToString(), " for sphereserver at ", this.HardDiscIniPath));
 
-					SphereServers.SphereServerClient sphere = GameServersManager.GetInstanceByIniID(this.iniID) as SphereServers.SphereServerClient;
+					SphereServerClient sphere = GameServersManager.GetInstanceByIniID(this.iniID) as SphereServerClient;
 					if (sphere != null) {
 						sphere.ExitLater(null, TimeSpan.FromMinutes(this.exitLaterParam));
 					} else {

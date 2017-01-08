@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Text.RegularExpressions;
-
+using System.Threading;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.SphereServers {
@@ -90,7 +90,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				case LoginResult.Success:
 					Console.WriteLine(this + " logged in.");
 					this.loggedIn = true;
-					foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+					foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 						console.OpenCmdWindow(this.Setup.Name, this.ServerUid);
 						console.TryLoginToGameServer(this);
 					}
@@ -112,7 +112,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		#region authentising console
-		public override void SendConsoleLogin(ConsoleServer.ConsoleId consoleId, string accName, string accPassword) {
+		public override void SendConsoleLogin(ConsoleId consoleId, string accName, string accPassword) {
 			ConsoleCredentials state = new ConsoleCredentials(consoleId, accName, accPassword);
 
 			if (accPassword.Length == 0) {
@@ -139,10 +139,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private class ConsoleCredentials {
-			internal ConsoleServer.ConsoleId consoleUid;
+			internal ConsoleId consoleUid;
 			internal string accName, accPassword;
 
-			internal ConsoleCredentials(ConsoleServer.ConsoleId consoleUid, string accName, string accPassword) {
+			internal ConsoleCredentials(ConsoleId consoleUid, string accName, string accPassword) {
 				this.consoleUid = consoleUid;
 				this.accName = accName;
 				this.accPassword = accPassword;
@@ -213,7 +213,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 						if (plevel < 4) {
 							this.DenyConsole(state, "- low plevel.");
 						} else {
-							ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
+							ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
 							if (console != null) {
 								console.SetLoggedInTo(this);
 							}
@@ -230,7 +230,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void DenyConsole(ConsoleCredentials state, string reason) {
-			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
+			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
 			if (console != null) {
 				console.CloseCmdWindow(this.ServerUid);
 
@@ -257,7 +257,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			line = line.Trim();
 			if (!string.IsNullOrEmpty(line)) {
 				if (this.loggedIn) {
-					foreach (ConsoleServer.ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
+					foreach (ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
 						if (!console.filteredGameServers.Contains(this.ServerUid)) {
 							console.WriteLine(this.ServerUid, line);
 						}
@@ -266,21 +266,21 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			}
 		}
 
-		public override void SendCommand(ConsoleServer.ConsoleClient console, string cmd) {
+		public override void SendCommand(ConsoleClient console, string cmd) {
 			if (cmd.StartsWith("[")) {
 				SphereCommands.HandleCommand(console, this, cmd.Substring(1));
 			} else {
-				ConsoleServer.ConsoleId consoleId = ConsoleServer.ConsoleId.FakeConsole;
+				ConsoleId consoleId = ConsoleId.FakeConsole;
 				if (console != null) {
 					consoleId = console.ConsoleId;
 				}
-				this.conn.SendCommand(cmd, new CallbackCommandResponse<ConsoleServer.ConsoleId>(
+				this.conn.SendCommand(cmd, new CallbackCommandResponse<ConsoleId>(
 					this.OnCommandReply, consoleId));
 			}
 		}
 
-		private void OnCommandReply(IList<string> lines, ConsoleServer.ConsoleId consoleId) {
-			ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(consoleId);
+		private void OnCommandReply(IList<string> lines, ConsoleId consoleId) {
+			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(consoleId);
 			if (console != null) {
 				foreach (string line in lines) {
 					string l = line.Trim();
@@ -295,14 +295,14 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			Console.WriteLine("PrivateSendCommand in");
 			try {
 				object[] arr = (object[]) o;
-				this.SendCommand((ConsoleServer.ConsoleClient) arr[0], (string) arr[1]);
+				this.SendCommand((ConsoleClient) arr[0], (string) arr[1]);
 			} catch (Exception e) {
 				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("PrivateSendCommand out");
 		}
 
-		public void ExitLater(ConsoleServer.ConsoleClient console, TimeSpan timeSpan) {
+		public void ExitLater(ConsoleClient console, TimeSpan timeSpan) {
 			this.PrivateExitLater(new object[] { console, timeSpan } );
 		}
 
@@ -310,7 +310,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			Console.WriteLine("PrivateExitLater in");
 			try {
 				object[] arr = (object[]) o;
-				ConsoleServer.ConsoleClient console = (ConsoleServer.ConsoleClient) arr[0];
+				ConsoleClient console = (ConsoleClient) arr[0];
 				TimeSpan timeSpan = (TimeSpan) arr[1];
 
 				if (timeSpan == TimeSpan.Zero) {
@@ -335,13 +335,13 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			Console.WriteLine("PrivateExitLater out");
 		}
 
-		public void ExitSave(ConsoleServer.ConsoleClient console) {
+		public void ExitSave(ConsoleClient console) {
 			this.Save(console);
 			new Timer(this.PrivateSendCommand, new object[] { console, "S"}, 1000, Timeout.Infinite);
 			new Timer(this.PrivateSendCommand, new object[] { console, "X" }, 2000, Timeout.Infinite);
 		}
 
-		public void Save(ConsoleServer.ConsoleClient console) {
+		public void Save(ConsoleClient console) {
 			this.SendCommand(console, "b Save imminent!");
 			this.SendCommand(console, "var.wassave=1");
 			this.SendCommand(console, "save 1");

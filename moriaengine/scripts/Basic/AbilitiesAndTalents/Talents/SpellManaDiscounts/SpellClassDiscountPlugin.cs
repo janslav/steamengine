@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellClassDiscountPlugin {
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
@@ -29,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellClassDiscountPluginDef {
 	}
 }

@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Exception thrown when trying to add child to the InExtensible GUTAComponents</summary>
 	public class GUTAComponentCannotBeExtendedException : SEException {
 		public GUTAComponentCannotBeExtendedException()
-			: base() {
+		{
 		}
 		public GUTAComponentCannotBeExtendedException(string s)
 			: base(s) {
@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// </summary>
 	public class IllegalGUTAComponentExtensionException : SEException {
 		public IllegalGUTAComponentExtensionException()
-			: base() {
+		{
 		}
 		public IllegalGUTAComponentExtensionException(string s)
 			: base(s) {
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		protected Gump gump;
 		protected GUTAComponent parent;
 		protected int level;
-		private bool noWrite = false;
+		private bool noWrite;
 
 		/// <summary>Level of the item in the dialog - for inner purposes</summary>
 		public int Level {
@@ -270,7 +270,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override string ToString() {
 			StringBuilder retStr = new StringBuilder("Dialog");
 			foreach (GUTAComponent child in this.components) {
-				retStr.Append(child.ToString());
+				retStr.Append(child);
 			}
 			return retStr.ToString();
 		}
@@ -378,10 +378,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						}
 					}
 					return this.height;
-				} else {
-					//the height has been computed, use it instead of computing it again...
-					return this.height;
 				}
+				//the height has been computed, use it instead of computing it again...
+				return this.height;
 			}
 		}
 
@@ -505,7 +504,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			StringBuilder retStr = new StringBuilder(offset + "->Table");
 			foreach (GUTAComponent child in this.components) {
-				retStr.Append(child.ToString());
+				retStr.Append(child);
 			}
 			return retStr.ToString();
 		}
@@ -522,7 +521,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private int rowHeight = ButtonMetrics.D_BUTTON_HEIGHT;
 
 		/// <summary>Should the inner rows of every column in this virtual row be delimited by thin line?</summary>
-		private bool innerRowsDelimited = false;
+		private bool innerRowsDelimited;
 		/// <summary>Should this GUTARow be separated in the GUTATable from the following GUTARow by a thin line?</summary>
 		private bool inTableSeparated = true;
 
@@ -585,7 +584,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//get the column we are adding the component to
 				GUTAColumn columnToAccess = (GUTAColumn) this.Components[col];
 				//now check what is the component:
-				GUTAComponent addedObj = value as GUTAComponent;//the component will be added directly	
+				GUTAComponent addedObj = value;//the component will be added directly	
 				if (addedObj == null) {
 					string strVal;
 					if (ConvertTools.TryConvertToString(value, out strVal)) {
@@ -644,10 +643,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							(this.InnerRowsDelimited ? (this.RowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
 
 					return this.height;
-				} else {
-					//the height has been computed, use it instead of computing it again...
-					return this.height;
 				}
+				//the height has been computed, use it instead of computing it again...
+				return this.height;
 			}
 		}
 
@@ -727,7 +725,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			StringBuilder retStr = new StringBuilder(offset + "->Row");
 			foreach (GUTAComponent child in this.components) {
-				retStr.Append(child.ToString());
+				retStr.Append(child);
 			}
 			return retStr.ToString();
 		}
@@ -761,14 +759,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public int RowCount {
-			get {
+			get
+			{
 				if (this.rowCount == 0) {
 					//row count is not yet set - get it from the parent
 					this.rowCount = ((GUTARow) this.parent).RowCount;
 					return this.rowCount;
-				} else {
-					return this.rowCount;
 				}
+				return this.rowCount;
 			}
 			set {
 				this.rowCount = value;
@@ -781,16 +779,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// is expected to be properly added to some column
 		/// </summary>
 		public override int Height {
-			get {
+			get
+			{
 				if (this.height == 0) {
 					//height is not yet set
 					this.height = this.RowCount * ((GUTARow) this.parent).RowHeight +
 						//in case of delimiting the rows, add the delimiting spaces
 						(this.delimitRows ? (this.rowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
 					return this.height;
-				} else {
-					return this.height;
 				}
+				return this.height;
 			}
 		}
 
@@ -899,7 +897,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			StringBuilder retStr = new StringBuilder(offset + "->Column");
 			foreach (GUTAComponent child in this.components) {
-				retStr.Append(child.ToString());
+				retStr.Append(child);
 			}
 			return retStr.ToString();
 		}

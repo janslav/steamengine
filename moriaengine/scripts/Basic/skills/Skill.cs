@@ -17,10 +17,11 @@
 
 using System;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class Skill : ISkill {
 		private ushort realValue;
 		private short modification;
@@ -146,28 +147,27 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Load / Save
 		internal string GetSaveString() {
-			if (this.lockType == SkillLockType.Up) {
+			if (this.lockType == SkillLockType.Up)
+			{
 				if (this.modification == 0) {
 					return this.realValue.ToString();
-				} else {
-					return String.Concat(this.realValue.ToString(), ", ", this.modification.ToString());
 				}
-			} else {
-				string lockStr;
-				switch (this.lockType) {
-					case SkillLockType.Down:
-						lockStr = "Down";
-						break;
-					case SkillLockType.Locked:
-						lockStr = "Locked";
-						break;
-					default:
-						throw new SEException("this.lockType != Up | Down | Locked");
-				}
-				return String.Concat(this.realValue.ToString(), ", ",
-					this.modification.ToString(), ", ",
-					lockStr);
+				return String.Concat(this.realValue.ToString(), ", ", this.modification.ToString());
 			}
+			string lockStr;
+			switch (this.lockType) {
+				case SkillLockType.Down:
+					lockStr = "Down";
+					break;
+				case SkillLockType.Locked:
+					lockStr = "Locked";
+					break;
+				default:
+					throw new SEException("this.lockType != Up | Down | Locked");
+			}
+			return String.Concat(this.realValue.ToString(), ", ",
+				this.modification.ToString(), ", ",
+				lockStr);
 		}
 
 		internal bool LoadSavedString(string p) {

@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System.Collections.Generic;
 using SteamEngine.Common;
 
@@ -200,7 +201,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		protected ButtonGump gumps;
-		private int page = 0;
+		private int page;
 		private bool active = true;
 
 		/// <summary>Button vertical alignment</summary>
@@ -215,12 +216,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class ButtonBuilder : Builder<GUTAButton> {
 			//prepare the default values
-			internal int xPos = 0;
-			internal int yPos = 0;
-			internal int id = 0;
+			internal int xPos;
+			internal int yPos;
+			internal int id;
 			internal DialogAlignment valign = DialogAlignment.Valign_Top;
 			internal bool active = true;
-			internal int page = 0;
+			internal int page;
 			internal LeafComponentTypes type = LeafComponentTypes.ButtonTick;
 
 			internal ButtonBuilder() {
@@ -265,7 +266,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the button's vertical algiment</summary>
 			public ButtonBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
-					throw new SEException(LogStr.Error("Wrong valign used for GUTAButton field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAButton field: " + val));
 				}
 				this.valign = val;
 				return this;
@@ -354,12 +355,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Builder class for the Checkbox LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class CheckBoxBuilder : Builder<GUTACheckBox> {
 			//prepare the default values
-			internal int xPos = 0;
-			internal int yPos = 0;
-			internal int id = 0;
+			internal int xPos;
+			internal int yPos;
+			internal int id;
 			internal DialogAlignment valign = DialogAlignment.Valign_Center;
 			internal DialogAlignment align = DialogAlignment.Align_Center;
-			internal bool isChecked = false;
+			internal bool isChecked;
 			internal LeafComponentTypes type = LeafComponentTypes.CheckBox;
 
 			internal CheckBoxBuilder() {
@@ -398,7 +399,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the checkbox's vertical algiment</summary>
 			public CheckBoxBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
-					throw new SEException(LogStr.Error("Wrong valign used for GUTACheckBox field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong valign used for GUTACheckBox field: " + val));
 				}
 				this.valign = val;
 				return this;
@@ -407,7 +408,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the checkbox's horizontal algiment</summary>
 			public CheckBoxBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
-					throw new SEException(LogStr.Error("Wrong align used for GUTACheckBox field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong align used for GUTACheckBox field: " + val));
 				}
 				this.align = val;
 				return this;
@@ -492,12 +493,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Builder class for the Radiobutton LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class RadioBuilder : Builder<GUTARadioButton> {
 			//prepare the default values
-			internal int xPos = 0;
-			internal int yPos = 0;
-			internal int id = 0;
+			internal int xPos;
+			internal int yPos;
+			internal int id;
 			internal DialogAlignment valign = DialogAlignment.Valign_Center;
 			internal DialogAlignment align = DialogAlignment.Align_Center;
-			internal bool isChecked = false;
+			internal bool isChecked;
 			internal LeafComponentTypes type = LeafComponentTypes.RadioButton;
 
 			internal RadioBuilder() {
@@ -536,7 +537,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the radiobutton's vertical algiment</summary>
 			public RadioBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
-					throw new SEException(LogStr.Error("Wrong valign used for GUTARadioButton field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong valign used for GUTARadioButton field: " + val));
 				}
 				this.valign = val;
 				return this;
@@ -545,7 +546,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the radiobutton's horizontal algiment</summary>
 			public RadioBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
-					throw new SEException(LogStr.Error("Wrong align used for GUTARadioButton field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong align used for GUTARadioButton field: " + val));
 				}
 				this.align = val;
 				return this;
@@ -637,16 +638,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public class InputBuilder : Builder<GUTAInput> {
 			//prepare the default values
 			internal LeafComponentTypes type = LeafComponentTypes.InputText;
-			internal int xPos = 0;
-			internal int yPos = 0;
-			internal int width = 0;
+			internal int xPos;
+			internal int yPos;
+			internal int width;
 			internal int id = 100; //some default ID (it will be usually specified as it is necessary for Response implementation...)
 			internal int height = ButtonMetrics.D_BUTTON_HEIGHT; //default height is to fit to the rows with buttons (majority of rows use this)
 			internal int hue = (int) Hues.WriteColor;
 			internal DialogAlignment align = DialogAlignment.Align_Left;
 			internal DialogAlignment valign = DialogAlignment.Valign_Bottom;
 			internal string text = "";
-			internal int textId = 0;
+			internal int textId;
 
 			internal InputBuilder() {
 			}
@@ -714,7 +715,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the input field's text's horizontal algiment</summary>
 			public InputBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
-					throw new SEException(LogStr.Error("Wrong align used for GUTAInput field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong align used for GUTAInput field: " + val));
 				}
 				this.align = val;
 				return this;
@@ -723,7 +724,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the input field's text's vertical algiment</summary>
 			public InputBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
-					throw new SEException(LogStr.Error("Wrong valign used for GUTAInput field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAInput field: " + val));
 				}
 				this.valign = val;
 				return this;
@@ -864,13 +865,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class TextBuilder : Builder<GUTAText> {
 			//prepare the default values
-			internal int xPos = 0;
-			internal int yPos = 0;
+			internal int xPos;
+			internal int yPos;
 			internal int hue = (int) Hues.WriteColor;
 			internal DialogAlignment align = DialogAlignment.Align_Left;
 			internal DialogAlignment valign = DialogAlignment.Valign_Top;
 			internal string text = "";
-			internal int textId = 0;
+			internal int textId;
 
 			internal TextBuilder() {
 			}
@@ -928,7 +929,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the text's horizontal algiment</summary>
 			public TextBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
-					throw new SEException(LogStr.Error("Wrong align used for GUTAText field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong align used for GUTAText field: " + val));
 				}
 				this.align = val;
 				return this;
@@ -937,7 +938,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the text's vertical algiment</summary>
 			public TextBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
-					throw new SEException(LogStr.Error("Wrong valign used for GUTAText field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAText field: " + val));
 				}
 				this.valign = val;
 				return this;
@@ -1039,12 +1040,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Builder class for the Text LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class HTMLTextBuilder : Builder<GUTAHTMLText> {
 			//prepare the default values
-			internal int xPos = 0;
-			internal int yPos = 0;
-			internal bool isScrollable = false;
-			internal bool hasBoundBox = false;
+			internal int xPos;
+			internal int yPos;
+			internal bool isScrollable;
+			internal bool hasBoundBox;
 			internal string text = "";
-			internal int textId = 0;
+			internal int textId;
 
 			internal HTMLTextBuilder() {
 			}
@@ -1173,12 +1174,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Builder class for the GUTAImage LeafGUTAComponent. Allows to set some or all necessary parameters via methods</summary>
 		public class ImageBuilder : Builder<GUTAImage> {
 			//prepare the default values
-			internal int xPos = 0;
-			internal int yPos = 0;
+			internal int xPos;
+			internal int yPos;
 			internal DialogAlignment align = DialogAlignment.Align_Center;
 			internal DialogAlignment valign = DialogAlignment.Valign_Center;
-			internal int gumpId = 0;
-			internal int color = 0;
+			internal int gumpId;
+			internal int color;
 
 			internal ImageBuilder() {
 			}
@@ -1198,7 +1199,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the image's horizontal alignment</summary>
 			public ImageBuilder Align(DialogAlignment val) {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
-					throw new SEException(LogStr.Error("Wrong align used for GUTAImage field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong align used for GUTAImage field: " + val));
 				}
 				this.align = val;
 				return this;
@@ -1207,7 +1208,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Set the image's vertical alignment</summary>
 			public ImageBuilder Valign(DialogAlignment val) {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
-					throw new SEException(LogStr.Error("Wrong valign used for GUTAImage field: " + val.ToString()));
+					throw new SEException(LogStr.Error("Wrong valign used for GUTAImage field: " + val));
 				}
 				this.valign = val;
 				return this;
@@ -1227,13 +1228,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the image's hue (color)</summary>
 			public ImageBuilder Hue(int val) {
-				this.color = (int) val;
+				this.color = val;
 				return this;
 			}
 
 			/// <summary>Set the image's hue (color)</summary>
 			public ImageBuilder Color(int val) {
-				this.color = (int) val;
+				this.color = val;
 				return this;
 			}
 

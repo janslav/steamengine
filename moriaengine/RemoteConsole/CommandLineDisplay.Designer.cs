@@ -1,9 +1,12 @@
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace SteamEngine.RemoteConsole {
 	partial class CommandLineDisplay {
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private IContainer components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -71,8 +74,8 @@ namespace SteamEngine.RemoteConsole {
 
 		#endregion
 
-		private System.Windows.Forms.ComboBox txtCommandLine;
+		private ComboBox txtCommandLine;
 		public LogStrDisplay txtDisplay;
-		private System.Windows.Forms.FlowLayoutPanel pnlGameServerButtons;
+		private FlowLayoutPanel pnlGameServerButtons;
 	}
 }

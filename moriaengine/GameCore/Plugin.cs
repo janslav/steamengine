@@ -16,8 +16,9 @@
 */
 
 using System;
-using SteamEngine.Persistence;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 
 namespace SteamEngine {
 	public abstract class Plugin : TagHolder {
@@ -73,7 +74,7 @@ namespace SteamEngine {
 		}
 
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void TryRun(TriggerKey tk, ScriptArgs sa, out object scriptedRetVal, out object compiledRetVal) {
 			scriptedRetVal = null;
 			compiledRetVal = null;
@@ -112,7 +113,7 @@ namespace SteamEngine {
 		}
 
 		#region save/load
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public override void Save(SaveStream output) {
 			output.WriteValue("def", this.def);
 			base.Save(output);

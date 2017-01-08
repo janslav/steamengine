@@ -51,10 +51,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			var asItem = c.thing as Item;
 			if (asItem != null) {
 				return asItem.Count;
-			} else {
-				var asChar = ((Character) c.thing);
-				return asChar.VisibleCount + asChar.InvisibleCount;
 			}
+			var asChar = ((Character) c.thing);
+			return asChar.VisibleCount + asChar.InvisibleCount;
 		}
 
 		IEnumerable<IDataFieldView> IDataView.GetDataFieldsPage(int firstLineIndex, object target) {
@@ -66,7 +65,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					continue;
 				}
 
-				yield return new ItemInContainerFieldView() {
+				yield return new ItemInContainerFieldView
+				{
 					realTarget = item,
 					index = i
 				};
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			var c = ((ThingAsContainer) target);
 			foreach (var a in c.infoView.GetActionButtonsPage(firstLineIndex, c.thing)) {
-				yield return new ButtonAdapter() { wrappedButton = a };
+				yield return new ButtonAdapter { wrappedButton = a };
 			}
 		}
 

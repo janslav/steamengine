@@ -42,18 +42,15 @@ namespace SteamEngine.CompiledScripts {
 					if (statValue < minStat) { //the stat is already under the boundary, we leave it as is
 						resultDiff = 0;
 						return statValue;
-					} else {
-						resultDiff = (short) (minStat - statValue);
-						return minStat;
 					}
-				} else {
-					resultDiff = statDiff;
-					return retVal;
+					resultDiff = (short) (minStat - statValue);
+					return minStat;
 				}
-			} else { //positive change has no boundary
 				resultDiff = statDiff;
-				return (short) (statValue + statDiff);
-			}
+				return retVal;
+			} //positive change has no boundary
+			resultDiff = statDiff;
+			return (short) (statValue + statDiff);
 		}
 	}
 

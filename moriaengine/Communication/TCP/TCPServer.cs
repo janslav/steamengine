@@ -19,7 +19,6 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication.TCP {
@@ -104,7 +103,6 @@ namespace SteamEngine.Communication.TCP {
 			try {
 				listener.BeginAccept(CreateSocket(this.listener.AddressFamily), 0, this.onAccept, listener);
 			} catch (ObjectDisposedException) {
-				return;
 			} catch (Exception e) {
 				Logger.WriteError(e);
 			}

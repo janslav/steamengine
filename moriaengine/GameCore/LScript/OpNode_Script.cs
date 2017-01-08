@@ -3,12 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Script : OpNode, IOpNodeHolder {
 		private OpNode[] blocks;
 
@@ -44,9 +45,8 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.blocks, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.blocks[index] = newNode;
 			}
+			this.blocks[index] = newNode;
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -69,7 +69,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Object : OpNode, IKnownRetType {
 		internal object obj;
 
@@ -102,26 +102,26 @@ namespace SteamEngine.LScript {
 			return this.obj;
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			if (this.obj != null) {
 				return "'" + this.obj + "'(" + this.obj.GetType() + ")";
-			} else {
-				return "null";
 			}
+			return "null";
 		}
 
 		public Type ReturnType {
-			get {
+			get
+			{
 				if (this.obj == null) {
 					return typeof(void);
-				} else {
-					return this.obj.GetType();
 				}
+				return this.obj.GetType();
 			}
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_ToString : OpNode, IOpNodeHolder, IKnownRetType {
 		private OpNode node;
 
@@ -158,7 +158,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return this.node.ToString() + ".TOSTRING()";
+			return this.node + ".TOSTRING()";
 		}
 
 		public Type ReturnType {
@@ -168,7 +168,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_This : OpNode {
 		internal OpNode_This(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
@@ -184,7 +184,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Constant : OpNode {
 		private Constant con;
 		internal OpNode_Constant(IOpNodeHolder parent, string filename, int line, int column, Node origNode, Constant con)

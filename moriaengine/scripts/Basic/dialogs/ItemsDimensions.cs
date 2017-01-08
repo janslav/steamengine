@@ -1,4 +1,5 @@
 using System.IO;
+using SteamEngine.Common;
 /*
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,7 +16,6 @@ using System.IO;
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	public class GumpDimensions {

@@ -1,17 +1,18 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginServerProtocol : IProtocol<TcpConnection<LoginClient>, LoginClient, IPEndPoint> {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly LoginServerProtocol instance = new LoginServerProtocol();
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<TcpConnection<LoginClient>, LoginClient, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<LoginClient> conn, LoginClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 			switch (id) {

@@ -1,8 +1,9 @@
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class LockpickSkillDef : SkillDef {
 		public LockpickSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {

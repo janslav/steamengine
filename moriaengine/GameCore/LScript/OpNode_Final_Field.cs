@@ -16,13 +16,14 @@
 */
 
 using System;
-using System.Text;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_SetField : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode arg;
@@ -82,7 +83,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_GetField : OpNode, ITriable, IKnownRetType {
 		private readonly FieldInfo field;
 
@@ -123,7 +124,7 @@ namespace SteamEngine.LScript {
 	}
 
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_InitField_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly FieldInfo field;
 		private OpNode[] args;
@@ -183,7 +184,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("({0} {1}.{2} = (", this.field.FieldType, this.field.DeclaringType, this.field.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}

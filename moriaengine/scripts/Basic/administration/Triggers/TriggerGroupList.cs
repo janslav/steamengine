@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 
@@ -48,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech trigger group na " + ph.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tgList.Count + ")").Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech trigger group na " + ph + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tgList.Count + ")").Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
 
@@ -120,11 +121,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, tgList.Count, 1)) {//kliknuto na paging?
-				return;
 			} else {
 				//zjistime si radek
-				int row = (int) gr.PressedButton - 10;
-				int buttNo = ((int) gr.PressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
+				int row = gr.PressedButton - 10;
+				int buttNo = (gr.PressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
 				TriggerGroup tg = tgList[row];
 				switch (buttNo) {
 					case 0: //smazat						

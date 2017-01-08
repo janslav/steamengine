@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
@@ -90,7 +91,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, lastColor, columnsCnt)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[1] viz výše)
 				//zde je sloupecku vice (columnsCnt, viz nahore)
-				return;
 			}
 		}
 

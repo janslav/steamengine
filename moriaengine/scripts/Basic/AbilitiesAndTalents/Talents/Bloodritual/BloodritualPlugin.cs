@@ -16,9 +16,10 @@
    */
 
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class BloodritualPlugin {
 
 		private static ActivableAbilityDef a_bloodritual;
@@ -44,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class BloodritualPluginDef {
 	}
 

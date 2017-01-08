@@ -15,8 +15,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PoisonPotion {
 
 		public override void On_DClick(AbstractCharacter dclicker) {
@@ -35,19 +38,18 @@ namespace SteamEngine.CompiledScripts {
 				int[] arr = this.TypeDef.PoisonPower;
 				if (arr == null) {
 					return 0;
-				} else {
-					switch (arr.Length) {
-						case 0:
-							return 0;
-						case 1:
-							return arr[0];
-						case 2:
-							return Globals.dice.Next(arr[0], arr[1]);
-						default:
-							Common.Logger.WriteWarning("Poison potion " + this.TypeDef.PrettyDefname +
-								" has > 2 numbers set as PoisonPower. Only 2 are supported, for randomization");
-							goto case 2;
-					}
+				}
+				switch (arr.Length) {
+					case 0:
+						return 0;
+					case 1:
+						return arr[0];
+					case 2:
+						return Globals.dice.Next(arr[0], arr[1]);
+					default:
+						Logger.WriteWarning("Poison potion " + this.TypeDef.PrettyDefname +
+						                           " has > 2 numbers set as PoisonPower. Only 2 are supported, for randomization");
+						goto case 2;
 				}
 			}
 		}
@@ -57,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PoisonPotionDef {
 
 	}

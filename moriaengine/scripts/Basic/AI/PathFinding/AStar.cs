@@ -17,10 +17,10 @@
 
 using System;
 using System.Collections.Generic;
-using SteamEngine.Persistence;
-using SteamEngine.Timers;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 	public static class AStar {

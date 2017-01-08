@@ -16,10 +16,12 @@
  */
 
 using System;
+using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	//the similarity to DamagingPoison is not random :)
 	public partial class BleedingEffectPlugin {
 
@@ -30,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 			self.RedMessage(Loc<BleedingLoc>.Get(self.Language).YoureBleeding);
 
 			Character attacker = this.SourceThing as Character;
-			self.GreenMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+			self.GreenMessage(String.Format(CultureInfo.InvariantCulture,
 				Loc<BleedingLoc>.Get(self.Language).YourTargetIsBleeding, self.Name));
 
 
@@ -46,11 +48,9 @@ namespace SteamEngine.CompiledScripts {
 
 				if (damage < 1) { //once there's no damage (like when target is immune), remove
 					this.Delete();
-					return;
 				}
 			} else {
 				this.Delete();
-				return;
 			}
 
 			//0-4 are valid messages
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 		//}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class BleedingEffectPluginDef {
 		private static PassiveAbilityDef a_bleeding_maxpower_bonus;
 		private static PassiveAbilityDef BleedingMaxPowerBonusDef {

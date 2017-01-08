@@ -17,13 +17,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using SteamEngine.Common;
 
 namespace SteamEngine {
 	public abstract class GumpDef : AbstractScript {
 		internal GumpDef()
-			: base() {
+		{
 		}
 
 		internal GumpDef(string name)
@@ -158,7 +160,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+			return String.Format(CultureInfo.InvariantCulture,
 				"{0} {1} (uid {2})",
 				Tools.TypeToString(this.GetType()), this.def.Defname, this.uid);
 		}
@@ -167,7 +169,7 @@ namespace SteamEngine {
 			this.layout.Append("{").Append(String.Join(" ", arr)).Append("}");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "focus"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cont")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "focus"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cont")]
 		internal void FinishCompilingPacketData(Thing focus, AbstractCharacter cont) {
 			if (!this.movable) {
 				this.layout.Insert(0, "{nomove}");
@@ -188,106 +190,106 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"button", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				downGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				upGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				downGumpId.ToString(CultureInfo.InvariantCulture), 
+				upGumpId.ToString(CultureInfo.InvariantCulture), 
 				(isTrigger?"1": "0"), 
-				pageId.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				triggerId.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				pageId.ToString(CultureInfo.InvariantCulture),
+				triggerId.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemId, int hue, int width, int height) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"buttontileart", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				downGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				upGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				downGumpId.ToString(CultureInfo.InvariantCulture), 
+				upGumpId.ToString(CultureInfo.InvariantCulture), 
 				(isTrigger? "1": "0"), 
-				pageId.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				triggerId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				pageId.ToString(CultureInfo.InvariantCulture),
+				triggerId.ToString(CultureInfo.InvariantCulture),
 
-				itemId.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				hue.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				width.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				itemId.ToString(CultureInfo.InvariantCulture),
+				hue.ToString(CultureInfo.InvariantCulture),
+				width.ToString(CultureInfo.InvariantCulture),
+				height.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddCheckBox(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"checkbox", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				uncheckedGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				checkedGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				uncheckedGumpId.ToString(CultureInfo.InvariantCulture), 
+				checkedGumpId.ToString(CultureInfo.InvariantCulture), 
 				(isChecked?"1": "0"), 
-				id.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				id.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddRadio(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"radio", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				uncheckedGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				checkedGumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				uncheckedGumpId.ToString(CultureInfo.InvariantCulture), 
+				checkedGumpId.ToString(CultureInfo.InvariantCulture), 
 				(isChecked?"1": "0"), 
-				id.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				id.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddCheckerTrans(int x, int y, int width, int height) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"checkertrans", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				width.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				width.ToString(CultureInfo.InvariantCulture), 
+				height.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
 		//is it possible without args? sphere tables say it is...
 		public void AddCheckerTrans() {
-			string[] arr = new string[] { "checkertrans" };
+			string[] arr = { "checkertrans" };
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddText(int x, int y, int hue, int textId) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"text", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				hue.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				textId.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				hue.ToString(CultureInfo.InvariantCulture), 
+				textId.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public int AddText(int x, int y, int hue, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			this.CreateTexts();
@@ -298,23 +300,23 @@ namespace SteamEngine {
 			return textId;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddCroppedText(int x, int y, int width, int height, int hue, int textId) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"croppedtext", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				width.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				hue.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				textId.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				width.ToString(CultureInfo.InvariantCulture), 
+				height.ToString(CultureInfo.InvariantCulture), 
+				hue.ToString(CultureInfo.InvariantCulture), 
+				textId.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public int AddCroppedText(int x, int y, int width, int height, int hue, string text) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			this.CreateTexts();
@@ -326,74 +328,74 @@ namespace SteamEngine {
 		}
 
 		public void AddGroup(int groupId) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"group", 
-				groupId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				groupId.ToString(CultureInfo.InvariantCulture) 
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddGumpPic(int x, int y, int gumpId) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"gumppic", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				gumpId.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				gumpId.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddGumpPic(int x, int y, int gumpId, int hue) {
 			if (hue == 0) {
 				this.AddGumpPic(x, y, gumpId);
 			} else {
-				string[] arr = new string[] {
+				string[] arr = {
 					"gumppic", 
-					x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					gumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					"hue="+hue.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+					x.ToString(CultureInfo.InvariantCulture), 
+					y.ToString(CultureInfo.InvariantCulture),
+					gumpId.ToString(CultureInfo.InvariantCulture), 
+					"hue="+hue.ToString(CultureInfo.InvariantCulture) 
 				};
 				this.AddElement(arr);
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddGumpPicTiled(int x, int y, int width, int height, int gumpId) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"gumppictiled", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				width.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				gumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				width.ToString(CultureInfo.InvariantCulture), 
+				height.ToString(CultureInfo.InvariantCulture),
+				gumpId.ToString(CultureInfo.InvariantCulture) 
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddHtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"htmlgump", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				width.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				textId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				width.ToString(CultureInfo.InvariantCulture), 
+				height.ToString(CultureInfo.InvariantCulture), 
+				textId.ToString(CultureInfo.InvariantCulture), 
 				(hasBoundBox? "1": "0"), 
 				(isScrollable? "1": "0")
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"),
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public int AddHtmlGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
 			Sanity.IfTrueThrow(text == null, "The text string can't be null");
 			this.CreateTexts();
@@ -405,22 +407,22 @@ namespace SteamEngine {
 		}
 
 		public void AddPage(int pageId) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"page",
-				pageId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+				pageId.ToString(CultureInfo.InvariantCulture) 
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddResizePic(int x, int y, int gumpId, int width, int height) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"resizepic", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				gumpId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				width.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				gumpId.ToString(CultureInfo.InvariantCulture), 
+				width.ToString(CultureInfo.InvariantCulture), 
+				height.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
@@ -443,15 +445,15 @@ namespace SteamEngine {
 			if (id < short.MinValue || id > short.MaxValue) {
 				throw new SEException(LogStr.Error("Nepovolena hodnota ID textoveho vstupu - zadano :" + id + " povoleny rozsah: " + short.MinValue + "-" + short.MaxValue));
 			}
-			string[] arr = new string[] {
+			string[] arr = {
 				"textentry", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				widthPix.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				hue.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				id.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				textId.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				widthPix.ToString(CultureInfo.InvariantCulture), 
+				height.ToString(CultureInfo.InvariantCulture), 
+				hue.ToString(CultureInfo.InvariantCulture), 
+				id.ToString(CultureInfo.InvariantCulture),
+				textId.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 			if (this.entryTextIds == null) {
@@ -474,15 +476,15 @@ namespace SteamEngine {
 			if (id < short.MinValue || id > short.MaxValue) {
 				throw new SEException(LogStr.Error("Nepovolena hodnota ID ciselneho vstupu - zadano :" + id + " povoleny rozsah: " + short.MinValue + "-" + short.MaxValue));
 			}
-			string[] arr = new string[] {
+			string[] arr = {
 				"textentry", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				widthPix.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				height.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				hue.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				id.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				textId.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				widthPix.ToString(CultureInfo.InvariantCulture), 
+				height.ToString(CultureInfo.InvariantCulture), 
+				hue.ToString(CultureInfo.InvariantCulture), 
+				id.ToString(CultureInfo.InvariantCulture),
+				textId.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 			if (this.numEntryIDs == null) {
@@ -498,7 +500,7 @@ namespace SteamEngine {
 
 		public int AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, decimal text) {
 			this.CreateTexts();
-			string textStr = text.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			string textStr = text.ToString(CultureInfo.InvariantCulture);
 			this.textsList.Add(textStr);
 			//textsLengthsSum += textStr.Length;
 			int textId = this.textsList.Count - 1;
@@ -506,63 +508,63 @@ namespace SteamEngine {
 			return textId;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddTilePic(int x, int y, int model) {
-			string[] arr = new string[] {
+			string[] arr = {
 				"tilepic", 
-				x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-				y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-				model.ToString(System.Globalization.CultureInfo.InvariantCulture)
+				x.ToString(CultureInfo.InvariantCulture), 
+				y.ToString(CultureInfo.InvariantCulture),
+				model.ToString(CultureInfo.InvariantCulture)
 			};
 			this.AddElement(arr);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y")]
 		public void AddTilePicHue(int x, int y, int model, int hue) {
 			if (hue == 0) {
 				this.AddTilePic(x, y, model);
 			} else {
-				string[] arr = new string[] {
+				string[] arr = {
 					"tilepichue", 
-					x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					model.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					hue.ToString(System.Globalization.CultureInfo.InvariantCulture)
+					x.ToString(CultureInfo.InvariantCulture), 
+					y.ToString(CultureInfo.InvariantCulture),
+					model.ToString(CultureInfo.InvariantCulture),
+					hue.ToString(CultureInfo.InvariantCulture)
 				};
 				this.AddElement(arr);
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddXmfhtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
 			this.AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, 0);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "y"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "x")]
 		public void AddXmfhtmlGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
 			string[] arr;
 			if (hue == 0) {
-				arr = new string[] {
+				arr = new[] {
 					"xmfhtmlgump", 
-					x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					width.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					height.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					textId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+					x.ToString(CultureInfo.InvariantCulture), 
+					y.ToString(CultureInfo.InvariantCulture),
+					width.ToString(CultureInfo.InvariantCulture), 
+					height.ToString(CultureInfo.InvariantCulture), 
+					textId.ToString(CultureInfo.InvariantCulture), 
 					(hasBoundBox? "1": "0"), 
 					(isScrollable? "1": "0")
 				};
 			} else {
-				arr = new string[] {
+				arr = new[] {
 					"xmfhtmlgumpcolor", 
-					x.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					y.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					width.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					height.ToString(System.Globalization.CultureInfo.InvariantCulture), 
-					textId.ToString(System.Globalization.CultureInfo.InvariantCulture), 
+					x.ToString(CultureInfo.InvariantCulture), 
+					y.ToString(CultureInfo.InvariantCulture),
+					width.ToString(CultureInfo.InvariantCulture), 
+					height.ToString(CultureInfo.InvariantCulture), 
+					textId.ToString(CultureInfo.InvariantCulture), 
 					(hasBoundBox? "1": "0"), 
 					(isScrollable? "1": "0"),
-					hue.ToString(System.Globalization.CultureInfo.InvariantCulture)
+					hue.ToString(CultureInfo.InvariantCulture)
 				};
 			}
 			this.AddElement(arr);

@@ -16,11 +16,12 @@
 */
 
 using System;
-using SteamEngine.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using SteamEngine.Common;
 
 namespace SteamEngine.Networking {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+	[SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable"), SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public abstract class SyncQueue {
 		private Thread thread;
 		internal AutoResetEvent autoResetEvent = new AutoResetEvent(false);
@@ -33,7 +34,7 @@ namespace SteamEngine.Networking {
 			this.thread.Start();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Cycle() {
 			while (this.autoResetEvent.WaitOne()) {
 				lock (MainClass.globalLock) {

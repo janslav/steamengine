@@ -16,6 +16,9 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {
@@ -23,7 +26,7 @@ namespace SteamEngine.Common {
 		private ILogStrDisplay display;
 		private Stack<LogStyles> styleStack = new Stack<LogStyles>();
 
-		private static char[] separatorArray = new char[] { LogStrBase.separatorChar };
+		private static char[] separatorArray = { LogStrBase.separatorChar };
 
 		public LogStrParser(ILogStrDisplay display) {
 			this.display = display;
@@ -68,7 +71,7 @@ namespace SteamEngine.Common {
 								}
 								continue;
 							case LogStrBase.styleChar:
-								int num = int.Parse(token.Substring(1), System.Globalization.CultureInfo.InvariantCulture);
+								int num = int.Parse(token.Substring(1), CultureInfo.InvariantCulture);
 								this.styleStack.Push((LogStyles) num);
 								continue;
 						}
@@ -83,25 +86,24 @@ namespace SteamEngine.Common {
 			//private static Regex compileErrorRE = new Regex(@"^\[csc\](?<filename>.+)$",                   
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
+		[SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
 		public static bool TryParseFileLine(string p, out string filename, out int line) {
 			Match m = fileLineRE.Match(p);
 			filename = m.Groups["filename"].Value;
 			if (m.Success) {
 				line = ConvertTools.ParseInt32(m.Groups["linenumber"].Value);
 				return true;
-			} else {
-				line = 0;
-				return false;
 			}
+			line = 0;
+			return false;
 		}
 
 		//uses the /./ in LogStr paths to rebuild it from the local . dir
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string TranslateToLocalPath(string path) {
 			int indexOfDot = path.IndexOf(LogStr.separatorAndDot);
 			if (indexOfDot > -1) {
-				return System.IO.Path.GetFullPath(path.Substring(indexOfDot+1));
+				return Path.GetFullPath(path.Substring(indexOfDot+1));
 			}
 			return path;
 		}

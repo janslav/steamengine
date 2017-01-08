@@ -16,12 +16,13 @@
 */
 
 using System;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Return : OpNode, IOpNodeHolder {
 		private OpNode arg;
 
@@ -35,10 +36,9 @@ namespace SteamEngine.LScript {
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
 			if (this.arg != oldNode) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.arg = newNode;
-				//ParentScriptHolder.nodeToReturn = newNode;
 			}
+			this.arg = newNode;
+			//ParentScriptHolder.nodeToReturn = newNode;
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -59,7 +59,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Return_String : OpNode, IOpNodeHolder {
 		private readonly OpNode[] args;
 		private readonly string formatString;
@@ -95,7 +95,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("return((");
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}

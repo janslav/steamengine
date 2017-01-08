@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
@@ -54,7 +56,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
 		public void On_Init(NamedPipeConnection<SEGameServerClient> conn) {
 			this.uid = uids++;
 			Console.WriteLine(this + " connected.");
@@ -73,18 +75,18 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 			return "SEGame 0x" + ((int) this.ServerUid).ToString("X");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "settings")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "settings")]
 		internal void SetIdentificationData(SEGameServerSetup settings) {
 			this.settings = settings;
 		}
 
 		internal void WriteToMyConsoles(string str) {
 			if (this.startupFinished) {
-				foreach (ConsoleServer.ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
+				foreach (ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
 					console.Write(this.ServerUid, str);
 				}
 			} else {
-				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					console.Write(this.ServerUid, str);
 				}
 			}
@@ -102,13 +104,13 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 			}
 		}
 
-		public override void SendCommand(ConsoleServer.ConsoleClient console, string cmd) {
+		public override void SendCommand(ConsoleClient console, string cmd) {
 			ConsoleCommandLinePacket p = Pool<ConsoleCommandLinePacket>.Acquire();
 			p.Prepare(console.ConsoleId, console.AccountName, console.AccountPassword, cmd);
 			this.Conn.SendSinglePacket(p);
 		}
 
-		public override void SendConsoleLogin(ConsoleServer.ConsoleId consoleId, string accName, string accPassword) {
+		public override void SendConsoleLogin(ConsoleId consoleId, string accName, string accPassword) {
 			ConsoleLoginRequestPacket loginRequest = Pool<ConsoleLoginRequestPacket>.Acquire();
 			loginRequest.Prepare(consoleId, accName, accPassword);
 			this.Conn.SendSinglePacket(loginRequest);

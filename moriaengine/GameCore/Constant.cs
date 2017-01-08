@@ -125,14 +125,13 @@ namespace SteamEngine {
 			Constant def;
 			if (allConstantsByName.TryGetValue(name, out def)) {
 				return def.Value;
-			} else {
-				throw new SEException("There is no constant called " + name + ".");
 			}
+			throw new SEException("There is no constant called " + name + ".");
 		}
 
 		public static Constant Set(string name, object newValue) {
 			return allConstantsByName.AddOrUpdate(name,
-				(n) => new Constant(n, newValue),
+				n => new Constant(n, newValue),
 				(n, existing) => {
 					existing.Set(newValue);
 					return existing;
@@ -179,15 +178,14 @@ namespace SteamEngine {
 				Constant d;
 				try {
 					d = allConstantsByName.AddOrUpdate(name,
-						(n) => new Constant(n, null),
-						(n, prev) => {
+						n => new Constant(n, null),
+						(n, prev) =>
+						{
 							if (prev.unloaded) {
 								prev.unloaded = false;
 								return prev;
-							} else {
-								throw new SEException(input.Filename, linenum, "Constant " + LogStr.Ident(name) + " defined multiple times. Ignoring");
 							}
-
+							throw new SEException(input.Filename, linenum, "Constant " + LogStr.Ident(name) + " defined multiple times. Ignoring");
 						});
 				} catch (SEException e) {
 					Logger.WriteError(e);
@@ -314,7 +312,7 @@ namespace SteamEngine {
 				}
 			}
 
-			internal sealed override object Value {
+			internal override object Value {
 				get {
 					return this.value;
 				}
@@ -333,7 +331,7 @@ namespace SteamEngine {
 				this.sh = sh;
 			}
 
-			internal sealed override object Value {
+			internal override object Value {
 				get {
 					return this.sh.Run(Globals.Instance, (ScriptArgs) null);
 				}
@@ -353,7 +351,7 @@ namespace SteamEngine {
 				this.str = str;
 			}
 
-			internal sealed override object Value {
+			internal override object Value {
 				get {
 					this.holder.ResolveValueFromScript(this.str);
 					return this.holder.Value;

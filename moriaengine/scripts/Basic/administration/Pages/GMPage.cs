@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using SteamEngine.Networking;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
@@ -78,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Find all available GMs that are online and notify them of the new page.</summary>
 		private static void NotifyOnlineGMs(AbstractCharacter sender) {
 			bool isGMOnline = false;
-			foreach (Character plr in Networking.GameServer.GetAllPlayers()) {
+			foreach (Character plr in GameServer.GetAllPlayers()) {
 				if (plr.IsGM) {
 					plr.SysMessage("Prisla nova page. Pocet nevyrizenych pagi: " + CountUnresolved());
 					isGMOnline = true;

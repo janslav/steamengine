@@ -16,17 +16,16 @@
 */
 
 using System;
-//using System.Windows.Forms;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+//using System.Windows.Forms;
 #if !MONO
 #endif
-using System.Collections;
 
 namespace SteamEngine.Common {
-	[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 	public sealed class RegisterWithRunTestsAttribute : Attribute {
-		public RegisterWithRunTestsAttribute() {
-		}
 	}
 
 	//[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
@@ -41,7 +40,7 @@ namespace SteamEngine.Common {
 		private MethodInfo mi;
 		//Type exceptionType = null;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal MethodInfo Method {
 			get {
 				return this.mi;
@@ -58,7 +57,7 @@ namespace SteamEngine.Common {
 			//}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool Invoke() {
 			Console.WriteLine("TestSuite : Running test '" + this.mi + "'.");
 			try {

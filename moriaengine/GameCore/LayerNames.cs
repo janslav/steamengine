@@ -50,6 +50,6 @@ namespace SteamEngine {
 		VendorBuys = 28,	//Examples of items that we will buy. (Price, max amount we want to have?)
 		Bankbox = 29,
 		Special = 30,		//Used in sphere for memory items, timer items, etc.
-		Dragging = 31,		//Used when dragging stuff around.
+		Dragging = 31		//Used when dragging stuff around.
 	}
 }

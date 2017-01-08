@@ -17,7 +17,7 @@
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(AbstractAccount), "Account",
-		new string[] { "blocked", "Characters" }
+		new[] { "blocked", "Characters" }
 		)]
 	public static class AbstractAccountDescriptor {
 		[Button("Block")]

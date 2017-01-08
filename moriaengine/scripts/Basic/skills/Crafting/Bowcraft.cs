@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class BowcraftSkillDef : CraftingSkillDef {
 
 		public BowcraftSkillDef(string defname, string filename, int headerLine)

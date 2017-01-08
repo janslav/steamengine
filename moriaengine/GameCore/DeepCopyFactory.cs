@@ -17,7 +17,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
@@ -47,7 +49,7 @@ namespace SteamEngine {
 		private static Dictionary<Type, IDeepCopyImplementor> implementors = new Dictionary<Type, IDeepCopyImplementor>();
 
 		public static void Bootstrap() {
-			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<IDeepCopyImplementor>(RegisterImplementor, true, true);
+			ClassManager.RegisterSupplySubclassInstances<IDeepCopyImplementor>(RegisterImplementor, true, true);
 		}
 
 		//called by ClassManager
@@ -59,7 +61,7 @@ namespace SteamEngine {
 			implementors[type] = implementor;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static bool IsNotCopied(Type type) {
 			return (type.IsEnum
 				|| ObjectSaver.IsSimpleSaveableType(type) //numbers, datetime, timespan, etc.
@@ -129,7 +131,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static object CopyImplementation(object copyFrom) {
 			recursionLevel++;
 
@@ -188,9 +190,9 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+		[SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 		public class CopyImplementor_UseICloneable : IDeepCopyImplementor {
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object DeepCopy(object copyFrom) {
 				return ((ICloneable) copyFrom).Clone();
 			}

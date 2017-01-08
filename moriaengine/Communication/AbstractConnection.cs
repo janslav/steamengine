@@ -227,14 +227,14 @@ namespace SteamEngine.Communication {
 						EncryptionInitResult result = encryption.Init(bytes, offset, length, out read);
 						switch (result) {
 							case EncryptionInitResult.SuccessUseEncryption:
-								Logger.WriteDebug(this.State.ToString() + " using " + encryption.ToString());
+								Logger.WriteDebug(this.State + " using " + encryption);
 								offset += read;
 								length -= read;
 								this.receivedDataLength = 0;
 								this.encryptionInitialised = true;
 								break;
 							case EncryptionInitResult.SuccessNoEncryption:
-								Logger.WriteDebug(this.State.ToString() + " using no encryption");
+								Logger.WriteDebug(this.State + " using no encryption");
 								offset += read;
 								length -= read;
 								this.receivedDataLength = 0;

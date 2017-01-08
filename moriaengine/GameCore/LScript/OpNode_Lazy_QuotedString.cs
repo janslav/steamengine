@@ -17,11 +17,13 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_QuotedString : OpNode, IOpNodeHolder, IKnownRetType {
 		private OpNode[] evals;
 		//or OpNode_Lazy_EvalExpression (<...>) - these get later replaced, of course.
@@ -69,7 +71,7 @@ namespace SteamEngine.LScript {
 				if (nodesList[i] is OpNode_Lazy_EvalExpression) {
 					isConstant = false;
 					int curEval = evalsList.Add(nodesList[i]);
-					formatBuf.Append("{").Append(curEval.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append("}"); //creates {x} in the formatstring
+					formatBuf.Append("{").Append(curEval.ToString(CultureInfo.InvariantCulture)).Append("}"); //creates {x} in the formatstring
 					i++;
 				} else {
 					while ((i < n) && (!(nodesList[i] is OpNode_Lazy_EvalExpression))) {
@@ -100,9 +102,8 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.evals, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.evals[index] = newNode;
 			}
+			this.evals[index] = newNode;
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -115,7 +116,7 @@ namespace SteamEngine.LScript {
 			} finally {
 				vars.self = oSelf;
 			}
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, this.formatString, this.results);
+			return string.Format(CultureInfo.InvariantCulture, this.formatString, this.results);
 		}
 
 		public override string ToString() {
@@ -123,7 +124,7 @@ namespace SteamEngine.LScript {
 			for (int i = 0, n = this.evals.Length; i < n; i++) {
 				strings[i] = this.evals[i].ToString();
 			}
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+			return string.Format(CultureInfo.InvariantCulture, 
 				"\"" + this.formatString + "\"", strings);
 		}
 

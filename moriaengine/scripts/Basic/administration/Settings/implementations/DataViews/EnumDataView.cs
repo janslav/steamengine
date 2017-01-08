@@ -146,9 +146,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (this.index < n) {
 					//get the value for to the current Name in the sorted Names array
 					return Enum.Parse(this.targetEnumType, this.names[this.index]);
-				} else {
-					return null;
 				}
+				return null;
 			}
 
 			public override string GetStringValue(object target) {
@@ -157,9 +156,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					//return the value casted to basic type (so e.g. number is displayed and not "red" text...)
 					object value = Enum.Parse(this.targetEnumType, this.names[this.index]);
 					return Convert.ToString(Convert.ChangeType(value, this.underlyingType));
-				} else {
-					return "";
 				}
+				return "";
 			}
 		}
 	}

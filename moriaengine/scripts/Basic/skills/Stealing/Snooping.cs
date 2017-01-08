@@ -17,9 +17,10 @@
 
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class SnoopingSkillDef : SkillDef {
 
 		public SnoopingSkillDef(string defname, string filename, int headerLine)
@@ -65,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 			Character victim = (Character) (((Container) skillSeqArgs.Target1).TopObj());
 			self.ClilocSysMessage(500210); // You failed to peek into the container. 
-			int ran = (int) Globals.dice.Next(4);
+			int ran = Globals.dice.Next(4);
 			switch (ran) {
 				case 3: //fatal failure
 					victim.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
@@ -85,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SnoopingPlugin {
 
 		public static readonly SnoopingPluginDef defInstance = new SnoopingPluginDef("p_snoopedBackpacks", "C#scripts", -1);
@@ -122,12 +123,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public bool Contains(Container cont) {
+		public bool Contains(Container cont)
+		{
 			if (this.snoopedBackpacks == null) {
 				return false;
-			} else {
-				return this.snoopedBackpacks.Contains(cont);
 			}
+			return this.snoopedBackpacks.Contains(cont);
 		}
 
 		public void On_Timer() {
@@ -141,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SnoopingPluginDef {
 	}
 }

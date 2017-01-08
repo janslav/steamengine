@@ -16,10 +16,12 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
+using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Converter {
@@ -34,48 +36,48 @@ namespace SteamEngine.Converter {
 		private int hierarchyIndex = -1;
 		private ConvertedRegion[] parents;
 
-		private bool mapplaneSet = false;
+		private bool mapplaneSet;
 		private PropsLine mapplaneLine;
 
 
 
-		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
+		private static LineImplTask[] firstStageImpl = {
 //				new LineImplTask("event", new LineImpl(WriteAsTG)), 
 //				new LineImplTask("events", new LineImpl(WriteAsTG)), 
 //				new LineImplTask("tevent", new LineImpl(WriteAsTG)), 
 //				new LineImplTask("tevents", new LineImpl(WriteAsTG)), 
 //				new LineImplTask("resources", new LineImpl(WriteAsTG)), 
 
-				new LineImplTask("p", new LineImpl(ParseP)), 
-				new LineImplTask("rect", new LineImpl(ParseRect)), 
-				new LineImplTask("m", new LineImpl(ParseMapplane)), 
-				new LineImplTask("mapplane", new LineImpl(ParseMapplane)), 
+				new LineImplTask("p", ParseP), 
+				new LineImplTask("rect", ParseRect), 
+				new LineImplTask("m", ParseMapplane), 
+				new LineImplTask("mapplane", ParseMapplane), 
 
-				new LineImplTask("flags", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_announce", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_antimagic_all", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_antimagic_damage", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_antimagic_gate", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_antimagic_recallin", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_antimagic_recallout", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_antimagic_teleport", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_arena", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_guarded", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_instalogout", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_nobuilding", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_nobuilding", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_nodecay", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_nopvp", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_roof", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_safe", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_ship", new LineImpl(ParseFlags)), 
-				new LineImplTask("flag_underground", new LineImpl(ParseFlags)), 
-				new LineImplTask("flagsafe", new LineImpl(ParseFlags)), 
-				new LineImplTask("guarded", new LineImpl(ParseFlags)), 
-				new LineImplTask("nopvp", new LineImpl(ParseFlags)), 
-				new LineImplTask("nodecay", new LineImpl(ParseFlags)), 
-				new LineImplTask("nobuild", new LineImpl(ParseFlags)), 
-				new LineImplTask("underground", new LineImpl(ParseFlags)), 
+				new LineImplTask("flags", ParseFlags), 
+				new LineImplTask("flag_announce", ParseFlags), 
+				new LineImplTask("flag_antimagic_all", ParseFlags), 
+				new LineImplTask("flag_antimagic_damage", ParseFlags), 
+				new LineImplTask("flag_antimagic_gate", ParseFlags), 
+				new LineImplTask("flag_antimagic_recallin", ParseFlags), 
+				new LineImplTask("flag_antimagic_recallout", ParseFlags), 
+				new LineImplTask("flag_antimagic_teleport", ParseFlags), 
+				new LineImplTask("flag_arena", ParseFlags), 
+				new LineImplTask("flag_guarded", ParseFlags), 
+				new LineImplTask("flag_instalogout", ParseFlags), 
+				new LineImplTask("flag_nobuilding", ParseFlags), 
+				new LineImplTask("flag_nobuilding", ParseFlags), 
+				new LineImplTask("flag_nodecay", ParseFlags), 
+				new LineImplTask("flag_nopvp", ParseFlags), 
+				new LineImplTask("flag_roof", ParseFlags), 
+				new LineImplTask("flag_safe", ParseFlags), 
+				new LineImplTask("flag_ship", ParseFlags), 
+				new LineImplTask("flag_underground", ParseFlags), 
+				new LineImplTask("flagsafe", ParseFlags), 
+				new LineImplTask("guarded", ParseFlags), 
+				new LineImplTask("nopvp", ParseFlags), 
+				new LineImplTask("nodecay", ParseFlags), 
+				new LineImplTask("nobuild", ParseFlags), 
+				new LineImplTask("underground", ParseFlags) 
 		};
 
 
@@ -85,7 +87,7 @@ namespace SteamEngine.Converter {
 			: base(input, convertedFile) {
 			this.firstStageImplementations.Add(firstStageImpl);
 
-			this.Set("createdat", Persistence.ObjectSaver.Save(DateTime.Now), "");
+			this.Set("createdat", ObjectSaver.Save(DateTime.Now), "");
 
 			string name = input.HeaderName;
 			this.Set("Name", "\"" + name + "\"", "");
@@ -169,7 +171,7 @@ namespace SteamEngine.Converter {
 			//return "";
 		}
 
-		private static CompiledScripts.Point4DSaveImplementor pImplementor = new CompiledScripts.Point4DSaveImplementor();
+		private static Point4DSaveImplementor pImplementor = new Point4DSaveImplementor();
 
 		private static void ParseP(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
@@ -222,7 +224,7 @@ namespace SteamEngine.Converter {
 			int rectanglesCount = this.rectangles.Count;
 			this.points = new Point2D[rectanglesCount * 4];
 			for (int i = 0; i < rectanglesCount; i++) {
-				ImmutableRectangle rect = (ImmutableRectangle) this.rectangles[i];
+				ImmutableRectangle rect = this.rectangles[i];
 				this.points[(i * 4) + 0] = new Point2D(rect.MinX, rect.MinY);//left lower
 				this.points[(i * 4) + 1] = new Point2D(rect.MinX, rect.MaxY);//left upper
 				this.points[(i * 4) + 2] = new Point2D(rect.MaxX, rect.MaxY);//right upper
@@ -240,7 +242,7 @@ namespace SteamEngine.Converter {
 			int highestResult = 0;
 			int occurences = 0;
 			for (int i = 0; i < tempCount; i++) {
-				DictionaryEntry entry = (DictionaryEntry) temp[i];
+				DictionaryEntry entry = temp[i];
 				int result = (int) entry.Key;
 				ConvertedRegion p = (ConvertedRegion) entry.Value;
 				if ((this != p) && this.HasSameMapplane(p)) {
@@ -259,7 +261,7 @@ namespace SteamEngine.Converter {
 			this.parents = new ConvertedRegion[occurences];
 			int index = 0;
 			for (int i = 0; i < tempCount; i++) {
-				DictionaryEntry entry = (DictionaryEntry) temp[i];
+				DictionaryEntry entry = temp[i];
 				int result = (int) entry.Key;
 				ConvertedRegion p = (ConvertedRegion) entry.Value;
 				if ((result == highestResult) && (p != this) && this.HasSameMapplane(p)) {
@@ -282,9 +284,11 @@ namespace SteamEngine.Converter {
 		private bool HasSameMapplane(ConvertedRegion reg) {
 			if (this.mapplane == reg.mapplane) {
 				return true;
-			} else if (this.hierarchyIndex == 0) {
+			}
+			if (this.hierarchyIndex == 0) {
 				return true;
-			} else if (reg.hierarchyIndex == 0) {
+			}
+			if (reg.hierarchyIndex == 0) {
 				return true;
 			}
 			return false;
@@ -297,7 +301,6 @@ namespace SteamEngine.Converter {
 				foreach (ImmutableRectangle rect in this.rectangles) {
 					if (rect.Contains(p)) {
 						counter++;
-						continue;
 					}
 				}
 			}
@@ -314,13 +317,14 @@ namespace SteamEngine.Converter {
 				ConvertedRegion reg = this.parents[i];
 				if (reg.hierarchyIndex == -1) {
 					return false;
-				} else if (reg.hierarchyIndex > highestHierarchyIndex) {
+				}
+				if (reg.hierarchyIndex > highestHierarchyIndex) {
 					highestHierarchyIndex = reg.hierarchyIndex;
 					highestHierarchyIndexAt = i;
 				}
 			}
 			ConvertedRegion definitiveParent = this.parents[highestHierarchyIndexAt];
-			this.parents = new ConvertedRegion[] { definitiveParent };
+			this.parents = new[] { definitiveParent };
 			this.hierarchyIndex = definitiveParent.hierarchyIndex + 1;
 			this.Set("Parent", "(" + definitiveParent.headerName + ")", "calculated by Converter");
 			//Console.WriteLine("Parent for "+this.headerName+"set to "+definitiveParent.headerName);
@@ -347,7 +351,7 @@ namespace SteamEngine.Converter {
 				}
 				lastCount = temp.Count;
 				for (int i = 0; i < temp.Count; ) {
-					ConvertedRegion r = (ConvertedRegion) temp[i];
+					ConvertedRegion r = temp[i];
 					if (r.TryDefinitiveParent()) {
 						temp.RemoveAt(i);
 					} else {

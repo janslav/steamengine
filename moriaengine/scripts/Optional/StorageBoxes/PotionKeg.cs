@@ -18,11 +18,11 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 
-
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PotionKeg {
 
 		public override void On_DClick(AbstractCharacter ac) {
@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				if (keg.potionDef == potion.TypeDef) {
-					ThingDef.GetByDefname("i_bottle_empty").Create(((Player) self).Backpack);
+					ThingDef.GetByDefname("i_bottle_empty").Create(self.Backpack);
 					if ((keg.TypeDef.Capacity - keg.potionsCount) < targetted.Amount) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
 						int potionsToTake = keg.TypeDef.Capacity - keg.potionsCount;
 						targetted.Amount -= potionsToTake;
@@ -78,12 +78,12 @@ namespace SteamEngine.CompiledScripts {
 			} else if (targetted.Type.Defname == "t_bottle_empty") {
 				if (keg.potionDef != null) {
 					if (targetted.Amount < keg.potionsCount) {
-						keg.potionDef.Create(((Player) self).Backpack);
+						keg.potionDef.Create(self.Backpack);
 						Globals.LastNewItem.Amount = targetted.Amount;
 						keg.potionsCount -= targetted.Amount;
 						targetted.Delete();
 					} else {
-						keg.potionDef.Create(((Player) self).Backpack);
+						keg.potionDef.Create(self.Backpack);
 						Globals.LastNewItem.Amount = keg.potionsCount;
 
 						if (targetted.Amount == keg.potionsCount) {

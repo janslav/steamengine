@@ -16,12 +16,13 @@
 */
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_ExpressionChain : OpNode, IOpNodeHolder {
 		//accepts DottedExpressionChain
 		private OpNode[] chain; //expression1.expression2.exp....
@@ -96,9 +97,8 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.chain, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.chain[index] = newNode;
 			}
+			this.chain[index] = newNode;
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -125,7 +125,7 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder();
 			for (int i = 0, n = this.chain.Length; i < n; i++) {
-				str.Append(this.chain[i].ToString()).Append(".");
+				str.Append(this.chain[i]).Append(".");
 			}
 			return str.ToString();
 		}

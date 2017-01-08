@@ -27,8 +27,6 @@ namespace SteamEngine.CompiledScripts {
 		public static PoisoningSettings instance = new PoisoningSettings();
 
 		//[LoadingInitializer]
-		public PoisoningSettings() {
-		}
 
 		public AllFadingEffectsMassSetting poisonTypes = new AllFadingEffectsMassSetting();
 

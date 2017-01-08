@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using SteamEngine.Timers;
 
@@ -35,7 +36,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Úprava timeru " + tm + " na " + th.ToString()).Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Úprava timeru " + tm + " na " + th).Build();
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
@@ -61,7 +62,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-				return;
 			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));

@@ -51,14 +51,13 @@ namespace SteamEngine.CompiledScripts {
 					ReflectionEyeCandy(origTarget);
 
 					return TriggerResult.Cancel; //cancel the harmful spelleffect
-				} else {
-					//caster has reflection too. We optimize here and let the spell go on, just weaker
-					effectArgs.SpellPower = (int) (effectArgs.SpellPower * this.EffectPower * this.EffectPower);
-					castersReflection.Delete();
-
-					ReflectionEyeCandy(origTarget);
-					ReflectionEyeCandy(origCaster);
 				}
+				//caster has reflection too. We optimize here and let the spell go on, just weaker
+				effectArgs.SpellPower = (int) (effectArgs.SpellPower * this.EffectPower * this.EffectPower);
+				castersReflection.Delete();
+
+				ReflectionEyeCandy(origTarget);
+				ReflectionEyeCandy(origCaster);
 			}
 
 			return TriggerResult.Continue; //nonharmful spell - do nothing			

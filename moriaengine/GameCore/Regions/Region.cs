@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -46,10 +47,6 @@ namespace SteamEngine.Regions {
 
 
 		//private readonly static Type[] constructorTypes = new Type[] {typeof(string), typeof(string), typeof(int)};
-		public Region()
-			: base() {
-
-		}
 
 		public Region Parent {
 			get {
@@ -106,15 +103,15 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual Point4D P {
 			get {
 				return this.p;
 			}
 			set {
 				this.ThrowIfDeleted();
-				if (!this.ContainsPoint((Point2D) value)) {
-					throw new SEException("Spawnpoint " + value.ToString() + " is not contained in the region " + this.ToString());
+				if (!this.ContainsPoint(value)) {
+					throw new SEException("Spawnpoint " + value + " is not contained in the region " + this);
 				}
 				this.p = value;
 			}
@@ -128,21 +125,22 @@ namespace SteamEngine.Regions {
 			this.ThrowIfDeleted();
 			if (this.parent == null) {
 				return false;
-			} else if (tested == this.parent) {
-				return true;
-			} else {
-				return this.parent.IsChildOf(tested);
 			}
+			if (tested == this.parent) {
+				return true;
+			}
+			return this.parent.IsChildOf(tested);
 		}
 
-		private static Region FindCommonParent(Region a, Region b) {
+		private static Region FindCommonParent(Region a, Region b)
+		{
 			if (b.IsChildOf(a)) {
 				return a;
-			} else if (a.parent == b) {
-				return b;
-			} else {
-				return FindCommonParent(a.parent, b);
 			}
+			if (a.parent == b) {
+				return b;
+			}
+			return FindCommonParent(a.parent, b);
 		}
 
 		public static bool TryExitAndEnter(Region oldRegion, Region newRegion, AbstractCharacter ch) {
@@ -186,7 +184,7 @@ namespace SteamEngine.Regions {
 			child.Enter(ch);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void Trigger_ItemEnter(ItemOnGroundArgs args) {
 			Region region = args.Region;
 			Point4D point = args.Point;
@@ -204,7 +202,7 @@ namespace SteamEngine.Regions {
 			} while (region != null);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void Trigger_ItemLeave(ItemOnGroundArgs args) {
 			Region region = args.Region;
 			Point4D point = args.Point;
@@ -222,7 +220,7 @@ namespace SteamEngine.Regions {
 			} while (region != null);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void Trigger_DenyPickupItemFrom(DenyPickupArgs args) {
 			Region region = this;
 
@@ -240,13 +238,13 @@ namespace SteamEngine.Regions {
 			} while (region != null);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPickupItemFrom(DenyPickupArgs args) {
 			this.ThrowIfDeleted();
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
 			this.ThrowIfDeleted();
 			Region region = this;
@@ -268,7 +266,7 @@ namespace SteamEngine.Regions {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPutItemOn(DenyPutOnGroundArgs args) {
 			this.ThrowIfDeleted();
 			return TriggerResult.Continue;
@@ -282,12 +280,12 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemLeave(ItemOnGroundArgs args) {
 			this.ThrowIfDeleted();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
 			this.ThrowIfDeleted();
 		}
@@ -315,12 +313,12 @@ namespace SteamEngine.Regions {
 		}
 
 		public string HierarchyName {
-			get {
+			get
+			{
 				if (this.parent == null) {
 					return this.Name;
-				} else {
-					return this.Name + " in " + this.parent.HierarchyName;
 				}
+				return this.Name + " in " + this.parent.HierarchyName;
 			}
 		}
 
@@ -356,14 +354,14 @@ namespace SteamEngine.Regions {
 			this.On_Exit(ch, true);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual TriggerResult On_Enter(AbstractCharacter ch, bool forced) {//if forced is true, the return value is irrelevant
 			Logger.WriteDebug(ch + " entered " + this);
 			ch.SysMessage("You have just entered " + this);
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual TriggerResult On_Exit(AbstractCharacter ch, bool forced) {
 			Logger.WriteDebug(ch + " left " + this);
 			ch.SysMessage("You have just left " + this);

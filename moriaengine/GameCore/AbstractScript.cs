@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
 	public abstract class AbstractScript : IUnloadable {
@@ -28,10 +29,10 @@ namespace SteamEngine {
 		private static readonly ConcurrentDictionary<string, AbstractScript> byDefname = new ConcurrentDictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
 
 		private string defname;
-		private bool unloaded = false;
+		private bool unloaded;
 
 		public static void Bootstrap() {
-			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
+			ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
 		}
 
 		public static AbstractScript GetByDefname(string defname) {
@@ -89,7 +90,7 @@ namespace SteamEngine {
 		}
 
 		protected AbstractScript()
-			: base() {
+		{
 			this.defname = this.InternalFirstGetDefname();
 			if (byDefname.ContainsKey(this.defname)) {
 				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname) + " already exists!");
@@ -97,7 +98,7 @@ namespace SteamEngine {
 		}
 
 		protected AbstractScript(string defname)
-			: base() {
+		{
 			if (String.IsNullOrEmpty(defname)) {
 				this.defname = this.InternalFirstGetDefname();
 			} else {

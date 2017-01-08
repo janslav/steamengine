@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
@@ -29,7 +30,7 @@ using SteamEngine.Regions;
 
 namespace SteamEngine {
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+	[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	public abstract partial class Thing : PluginHolder, IPoint4D, IEnumerable<AbstractItem> {
 		private TimeSpan createdAt = Globals.TimeAsSpan;//Server time of creation
 		private ushort color;
@@ -60,7 +61,7 @@ namespace SteamEngine {
 		private static UIDArray things = new UIDArray();
 		private static int uidBeingLoaded = -1;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+		[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 		internal sealed class ThingSaveCoordinator : IBaseClassSaveCoordinator {
 			public static readonly Regex thingUidRE = new Regex(@"^\s*#(?<value>(0x)?[\da-f]+)\s*$",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -91,7 +92,7 @@ namespace SteamEngine {
 				alreadySaved = null;
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+			[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 			public void LoadingFinished() {
 				//this means real end of file(s)
 				uidBeingLoaded = -1;
@@ -118,15 +119,14 @@ namespace SteamEngine {
 				get { return thingUidRE; }
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
 				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
 				Thing thing = UidGetThing(uid);
 				if (thing != null) {
 					return thing;
-				} else {
-					throw new NonExistingObjectException("There is no thing with uid " + LogStr.Number(uid) + " to load.");
 				}
+				throw new NonExistingObjectException("There is no thing with uid " + LogStr.Number(uid) + " to load.");
 			}
 		}
 
@@ -330,7 +330,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual bool Flag_Disconnected {
 			get {
 				return false;
@@ -341,12 +341,12 @@ namespace SteamEngine {
 			this.SetPosImpl(x, y, this.Z, this.M);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(Point2D point) {
 			this.SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(IPoint2D point) {
 			this.SetPosImpl(point.X, point.Y, this.Z, this.M);
 		}
@@ -355,12 +355,12 @@ namespace SteamEngine {
 			this.SetPosImpl(x, y, z, this.M);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(Point3D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(IPoint3D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, this.M);
 		}
@@ -369,12 +369,12 @@ namespace SteamEngine {
 			this.SetPosImpl(x, y, z, m);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(Point4D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public void P(IPoint4D point) {
 			this.SetPosImpl(point.X, point.Y, point.Z, point.M);
 		}
@@ -526,9 +526,8 @@ namespace SteamEngine {
 			}
 			if (TriggerResult.Cancel == this.CancellableTrigger(tk, sa)) {
 				return TriggerResult.Cancel;
-			} else {
-				return this.def.CancellableTrigger(this, tk, sa);
 			}
+			return this.def.CancellableTrigger(this, tk, sa);
 		}
 
 		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
@@ -541,9 +540,8 @@ namespace SteamEngine {
 			}
 			if (TriggerResult.Cancel == base.TryCancellableTrigger(tk, sa)) {
 				return TriggerResult.Cancel;
-			} else {
-				return this.def.TryCancellableTrigger(this, tk, sa);
 			}
+			return this.def.TryCancellableTrigger(this, tk, sa);
 		}
 
 		//------------------------
@@ -588,7 +586,7 @@ namespace SteamEngine {
 		//------------------------
 		//Private & internal stuff
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), LoadSection]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), LoadSection]
 		public static Thing Load(PropsSection input) {
 			//an Exception propagated away from this method is usually considered critical - load failed
 
@@ -599,7 +597,7 @@ namespace SteamEngine {
 
 			//we need defname and p(x,y, z, m)  to construct the thing.
 
-			ThingDef thingDef = ThingDef.GetByDefname(input.HeaderName) as ThingDef;
+			ThingDef thingDef = ThingDef.GetByDefname(input.HeaderName);
 
 			if (thingDef == null) {
 				Logger.WriteError(input.Filename, input.HeaderLine, "Defname '" + LogStr.Ident(input.HeaderName) + "' not found. Thing loading interrupted.");
@@ -643,7 +641,7 @@ namespace SteamEngine {
 		/// <summary>
 		/// Called after this object was loaded.
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_AfterLoad() {
 		}
 
@@ -653,7 +651,7 @@ namespace SteamEngine {
 		/// With this, it's possible to implement custom save code...
 		/// </summary>
 		/// <param name="output">The output.</param>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Load(PropsSection output) {
 		}
 
@@ -692,12 +690,12 @@ namespace SteamEngine {
 			things.ReIndexAll();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), CLSCompliant(false)]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), CLSCompliant(false)]
 		public static uint GetFakeUid() {
 			return (uint) things.GetFakeUid();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), CLSCompliant(false)]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), CLSCompliant(false)]
 		public static uint GetFakeItemUid() {
 			return (uint) things.GetFakeUid() | 0x40000000;
 		}
@@ -744,7 +742,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public override void Save(SaveStream output) {
 			this.ThrowIfDeleted();
 			output.WriteValue("uid", this.uid);
@@ -772,7 +770,7 @@ namespace SteamEngine {
 		/// With this, it's possible to implement custom save code...
 		/// </summary>
 		/// <param name="output">The output.</param>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Save(SaveStream output) {
 
 		}
@@ -878,7 +876,7 @@ namespace SteamEngine {
 		}
 
 		//fires the @destroy trigger on this Thing, after that removes the item from world. 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal virtual void Trigger_Destroy() {
 			this.TryTrigger(TriggerKey.destroy, null);
 			try {
@@ -889,7 +887,7 @@ namespace SteamEngine {
 		//method:On_Destroy
 		//Thing`s implementation of trigger @Destroy,
 		//does actually nothing, because finalizing of core Thing subclasses is done elsewhere
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Destroy() {
 			//this does nothing by default, because core classes use BeingDeleted (for safety against evil scripts)
 		}
@@ -900,7 +898,7 @@ namespace SteamEngine {
 
 		//method: Trigger_Click
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Trigger_AosClick(AbstractCharacter clicker) {
 			this.ThrowIfDeleted();
 			if (clicker == null)
@@ -925,7 +923,7 @@ namespace SteamEngine {
 
 		//method: Trigger_Click
 		//fires the @itemClick / @charclick and @click triggers where this is the Thing being clicked on.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Trigger_Click(AbstractCharacter clicker) {
 			this.ThrowIfDeleted();
 			if (clicker == null)
@@ -958,13 +956,13 @@ namespace SteamEngine {
 		//method: On_Click
 		//Thing`s implementation of trigger @Click,
 		//sends the name (DecoratedName) of this Thing as plain overheadmessage
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				this.Name, 0);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
 			AosToolTips toolTips = this.GetAosToolTips(clicker.Language);
@@ -982,7 +980,7 @@ namespace SteamEngine {
 
 		//method: Trigger_DClick
 		//fires the @itemDClick / @charDClick and @dclick triggers where this is the Thing being doubleclicked.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Trigger_DClick(AbstractCharacter dclicker) {
 			this.ThrowIfDeleted();
 			if (dclicker == null)
@@ -1051,28 +1049,28 @@ namespace SteamEngine {
 		//method:On_DClick
 		//Thing`s implementation of trigger @DClick,
 		//does nothing.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_DClick(AbstractCharacter dclicker) {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_DenyDClick(DenyClickArgs args) {
 		}
 
 		//method:On_Create
 		//Thing`s implementation of trigger @create,
 		//does nothing.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Create() {
 
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			if (this.def != null) {
 				return this.Name + " (0x" + this.uid.ToString("x", CultureInfo.InvariantCulture) + ")";
-			} else {
-				return "incomplete Thing (0x" + this.uid.ToString("x", CultureInfo.InvariantCulture) + ")";
 			}
+			return "incomplete Thing (0x" + this.uid.ToString("x", CultureInfo.InvariantCulture) + ")";
 		}
 
 		public override int GetHashCode() {
@@ -1151,7 +1149,7 @@ namespace SteamEngine {
 
 		public abstract void Resend();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public AosToolTips GetAosToolTips(Language language) {
 			AosToolTips toolTips = AosToolTips.GetFromCache(this, language);
 			if (toolTips != null) {
@@ -1176,7 +1174,7 @@ namespace SteamEngine {
 			return toolTips;//new or changed
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+		[SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
 		public virtual void GetNameCliloc(out int id, out string argument) {
 			id = 1042971;
 			argument = this.Name;

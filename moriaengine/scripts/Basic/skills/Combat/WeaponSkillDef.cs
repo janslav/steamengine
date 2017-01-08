@@ -17,10 +17,12 @@
 
 using System;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Persistence;
 using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class WeaponSkillDef : SkillDef {
 		//param1 = WeaponSkillPhase
 		//param2 = duein TimeSpan
@@ -52,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = (Character) skillSeqArgs.Self;
+			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 			self.AbortSkill(); //abort previous skill
 
@@ -146,11 +148,11 @@ namespace SteamEngine.CompiledScripts {
 			return TriggerResult.Cancel;
 		}
 
-		[Dialogs.ViewableClass]
-		[Persistence.SaveableClass]
+		[ViewableClass]
+		[SaveableClass]
 		[DeepCopyableClass]
 		public class WeaponAnimTimer : BoundTimer {
-			[Persistence.LoadingInitializer]
+			[LoadingInitializer]
 			[DeepCopyImplementation]
 			public WeaponAnimTimer() {
 			}
@@ -161,14 +163,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = (Character) skillSeqArgs.Self;
+			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 
 			DamageManager.ProcessSwing(self, target);
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = (Character) skillSeqArgs.Self;
+			Character self = skillSeqArgs.Self;
 			Character target = (Character) skillSeqArgs.Target1;
 
 			target.Trigger_HostileAction(self);
@@ -179,7 +181,7 @@ namespace SteamEngine.CompiledScripts {
 			//skillSeqArgs.Self.SysMessage("Aborting skill:" + skillSeqArgs.SkillDef.Key);
 			Character target = (Character) skillSeqArgs.Target1;
 			if (target != null) {
-				Character self = (Character) skillSeqArgs.Self;
+				Character self = skillSeqArgs.Self;
 				//WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 				WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
 			}

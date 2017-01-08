@@ -16,8 +16,8 @@
 */
 
 using System;
-//using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
+//using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	internal class InterpreterException : SEException {

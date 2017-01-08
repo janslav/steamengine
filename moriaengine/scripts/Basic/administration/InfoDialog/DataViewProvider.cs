@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,12 +33,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			IDataView view = (IDataView) dataViewsForTypes[handledType];
 			if (view != null) {
 				return view;
-			} else {
-				foreach (KeyValuePair<Type, IDataView> pair in dataViewsForbaseClasses) {
-					if (pair.Key.IsAssignableFrom(handledType)) {
-						dataViewsForTypes[handledType] = pair.Value;
-						return pair.Value;
-					}
+			}
+			foreach (KeyValuePair<Type, IDataView> pair in dataViewsForbaseClasses) {
+				if (pair.Key.IsAssignableFrom(handledType)) {
+					dataViewsForTypes[handledType] = pair.Value;
+					return pair.Value;
 				}
 			}
 			return null;

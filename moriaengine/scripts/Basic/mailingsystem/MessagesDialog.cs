@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -84,7 +85,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for (int i = firstiVal; i < imax; i++) {
-				DelayedMsg msg = (DelayedMsg) messagesList[i];
+				DelayedMsg msg = messagesList[i];
 				Hues msgColor = msg.color;
 				dialogHandler.LastTable[rowCntr, 0] = GUTAText.Builder.Text(msg.time.ToString()).Hue(msgColor).Build();//cas odeslani
 				dialogHandler.LastTable[rowCntr, 1] = GUTAText.Builder.Text(msg.sender == null ? MsgsBoard.NO_SENDER : msg.sender.Name).Hue(msgColor).Build(); //odesilatel
@@ -142,11 +143,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, messagesList.Count, 1)) {//kliknuto na paging?
-				return;
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.PressedButton - 10) / 2;
-				int buttNum = (int) (gr.PressedButton - 10) % 2;
+				int row = (gr.PressedButton - 10) / 2;
+				int buttNum = (gr.PressedButton - 10) % 2;
 				DelayedMsg msg = (DelayedMsg) messagesList[row];
 				switch (buttNum) {
 					case 0: //èíst

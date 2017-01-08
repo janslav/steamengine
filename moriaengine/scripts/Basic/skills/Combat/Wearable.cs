@@ -15,8 +15,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class WearableDef : DestroyableDef {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			switch (param) {
@@ -30,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Wearable : Destroyable {
 
 		public int ArmorVsP {

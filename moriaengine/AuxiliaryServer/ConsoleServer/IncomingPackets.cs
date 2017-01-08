@@ -1,16 +1,17 @@
-using System.Net;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class ConsoleServerProtocol : IProtocol<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly ConsoleServerProtocol instance = new ConsoleServerProtocol();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<TcpConnection<ConsoleClient>, ConsoleClient, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<ConsoleClient> conn, ConsoleClient state, out bool discardAfterReading) {
 			discardAfterReading = false;
 

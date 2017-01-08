@@ -17,10 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public static class OpNode_Lazy_VarExpression {
 		private const int TAG = 0;
 		private const int ARG = 1;
@@ -68,11 +69,11 @@ namespace SteamEngine.LScript {
 							return new OpNode_RemoveArg(parent, filename, line, column, origNode, name);
 					}
 					throw new FatalException("this will never happen");
-				} else {
-					throw new InterpreterException("Invalid/missing token specifying the name of the value to remove",
-						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 				}
-			} else if (StringComparer.OrdinalIgnoreCase.Equals(name, "exists")) {
+				throw new InterpreterException("Invalid/missing token specifying the name of the value to remove",
+					line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
+			}
+			if (StringComparer.OrdinalIgnoreCase.Equals(name, "exists")) {
 				if (indicesList.Count != 0) {
 					throw new InterpreterException("Exists in this context means finding out if given value exists, thus indexing is invalid.",
 						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
@@ -88,48 +89,45 @@ namespace SteamEngine.LScript {
 							return new OpNode_ArgExists(parent, filename, line, column, origNode, name);
 					}
 					throw new FatalException("this will never happen");
-				} else {
-					throw new InterpreterException("Invalid/missing token specifying the name of the value to examine",
-						line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 				}
-			} else {
-				if (indicesList.Count == 0) {
-					if (argNode == null) {
-						return ConstructGetNode(type, parent, line, column, origNode, name);
-					} else {
-						OpNode arg = LScriptMain.CompileNode(parent, argNode);
-						switch (type) {
-							case TAG:
-								OpNode_SetTag setTagNode = new OpNode_SetTag(parent, filename, line, column, origNode, name, arg);
-								arg.parent = setTagNode;
-								return setTagNode;
-							case VAR:
-								OpNode_SetVar setVarNode = new OpNode_SetVar(parent, filename, line, column, origNode, name, arg);
-								arg.parent = setVarNode;
-								return setVarNode;
-							case ARG:
-								OpNode_SetArg setArgNode = new OpNode_SetArg(parent, filename, line, column, origNode, name, arg);
-								arg.parent = setArgNode;
-								return setArgNode;
-						}
-						throw new FatalException("this will never happen");
-					}
-				} else {
-					indicesList.Insert(0, ConstructGetNode(type, parent, line, column, origNode, name));
-                    OpNode[] chain = indicesList.ToArray();
-					return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, origNode, chain);
-				}
+				throw new InterpreterException("Invalid/missing token specifying the name of the value to examine",
+					line, column, filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 			}
+			if (indicesList.Count == 0) {
+				if (argNode == null) {
+					return ConstructGetNode(type, parent, line, column, origNode, name);
+				}
+				OpNode arg = LScriptMain.CompileNode(parent, argNode);
+				switch (type) {
+					case TAG:
+						OpNode_SetTag setTagNode = new OpNode_SetTag(parent, filename, line, column, origNode, name, arg);
+						arg.parent = setTagNode;
+						return setTagNode;
+					case VAR:
+						OpNode_SetVar setVarNode = new OpNode_SetVar(parent, filename, line, column, origNode, name, arg);
+						arg.parent = setVarNode;
+						return setVarNode;
+					case ARG:
+						OpNode_SetArg setArgNode = new OpNode_SetArg(parent, filename, line, column, origNode, name, arg);
+						arg.parent = setArgNode;
+						return setArgNode;
+				}
+				throw new FatalException("this will never happen");
+			}
+			indicesList.Insert(0, ConstructGetNode(type, parent, line, column, origNode, name));
+			OpNode[] chain = indicesList.ToArray();
+			return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, origNode, chain);
 		}
 
-		private static int ResolveTokenType(Node token) {
+		private static int ResolveTokenType(Node token)
+		{
 			if (OpNode.IsType(token, StrictConstants.TAG)) {
 				return TAG;
-			} else if (OpNode.IsType(token, StrictConstants.VAR)) {
-				return VAR;
-			} else { //LOCAL or ARG token
-				return ARG;
 			}
+			if (OpNode.IsType(token, StrictConstants.VAR)) {
+				return VAR;
+			} //LOCAL or ARG token
+			return ARG;
 		}
 
 		private static OpNode ConstructGetNode(int type, IOpNodeHolder parent, int line, int column, Node origNode, string name) {

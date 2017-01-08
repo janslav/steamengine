@@ -18,8 +18,10 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
 
 	public class D_PlayerVendor_ListStock : CompiledGumpDef {
@@ -84,7 +86,8 @@ namespace SteamEngine.CompiledScripts {
 
 				if (index < firstIndex) {
 					continue;
-				} else if (index >= iMax) {
+				}
+				if (index >= iMax) {
 					break;
 				}
 
@@ -104,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 
 				var asEntry = item as PlayerVendorStockEntry;
 				if (asEntry != null) {
-					t.AddToCell(row, 3, GUTAText.Builder.Text(asEntry.price.ToString(System.Globalization.CultureInfo.InvariantCulture)).Build());
+					t.AddToCell(row, 3, GUTAText.Builder.Text(asEntry.price.ToString(CultureInfo.InvariantCulture)).Build());
 				}
 
 				row++;
@@ -138,8 +141,6 @@ namespace SteamEngine.CompiledScripts {
 
 				t.Transparent = true;
 
-			} else {
-				// argo.texta(<argo.dialog_textpos(3,0)>,2301,Vase konto: <eval src.findlayer(21).rescount(t_gold)+src.bankbalance> gp)
 			}
 
 

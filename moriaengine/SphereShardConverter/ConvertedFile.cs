@@ -26,7 +26,7 @@ namespace SteamEngine.Converter {
 		public readonly List<ConvertedDef> defs = new List<ConvertedDef>();
 
 		public ConvertedFile(string path)
-			: base() {
+		{
 			this.origPath = Path.GetFullPath(path);
 			this.convertedPath = GetNewFilename(path);
 		}

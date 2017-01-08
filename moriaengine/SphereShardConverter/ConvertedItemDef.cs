@@ -16,9 +16,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
@@ -30,44 +30,44 @@ namespace SteamEngine.Converter {
 		string type;
 
 		string layer = "-1";
-		bool layerSet = false;
-		bool isEquippable = false;
+		bool layerSet;
+		bool isEquippable;
 
-		bool isWeapon = false;
-		bool isWearable = false;
-		bool armorOrDamHandled = false;
-		bool isTwoHanded = false;
-		bool twoHandedSet = false;
-		bool wearableTypeSet = false;
+		bool isWeapon;
+		bool isWearable;
+		bool armorOrDamHandled;
+		bool isTwoHanded;
+		bool twoHandedSet;
+		bool wearableTypeSet;
 
-		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
-				new LineImplTask("type", new LineImpl(HandleType)), 
-				new LineImplTask("dupelist", new LineImpl(WriteAsComment)), 
-				new LineImplTask("weight", new LineImpl(MayBeInt_IgnorePoint)), 
-				new LineImplTask("resources", new LineImpl(HandleResourcesList)),
-				new LineImplTask("resources2", new LineImpl(HandleResourcesList)),
-				new LineImplTask("skillmake", new LineImpl(HandleResourcesList)),
-				new LineImplTask("skillmake2", new LineImpl(HandleResourcesList)),
+		private static LineImplTask[] firstStageImpl = {
+				new LineImplTask("type", HandleType), 
+				new LineImplTask("dupelist", WriteAsComment), 
+				new LineImplTask("weight", MayBeInt_IgnorePoint), 
+				new LineImplTask("resources", HandleResourcesList),
+				new LineImplTask("resources2", HandleResourcesList),
+				new LineImplTask("skillmake", HandleResourcesList),
+				new LineImplTask("skillmake2", HandleResourcesList),
 //TODO
-				new LineImplTask("flip", new LineImpl(WriteAsComment)),
-				new LineImplTask("reqstr", new LineImpl(WriteAsComment)),
-				new LineImplTask("dye", new LineImpl(WriteAsComment)),
-				new LineImplTask("skill", new LineImpl(WriteAsComment)),
-				new LineImplTask("speed", new LineImpl(WriteAsComment))
+				new LineImplTask("flip", WriteAsComment),
+				new LineImplTask("reqstr", WriteAsComment),
+				new LineImplTask("dye", WriteAsComment),
+				new LineImplTask("skill", WriteAsComment),
+				new LineImplTask("speed", WriteAsComment)
 			};
 
-		private static LineImplTask[] secondStageImpl = new LineImplTask[] {
-				new LineImplTask("layer", new LineImpl(HandleLayer)), 
-				new LineImplTask("twohanded", new LineImpl(HandleTwohanded)),
-				new LineImplTask("twohands", new LineImpl(HandleTwohanded)),
-				new LineImplTask("tdata1", new LineImpl(HandleTData1)),
-				new LineImplTask("tdata2", new LineImpl(HandleTData2)),
-				new LineImplTask("tdata3", new LineImpl(HandleTData3)),
+		private static LineImplTask[] secondStageImpl = {
+				new LineImplTask("layer", HandleLayer), 
+				new LineImplTask("twohanded", HandleTwohanded),
+				new LineImplTask("twohands", HandleTwohanded),
+				new LineImplTask("tdata1", HandleTData1),
+				new LineImplTask("tdata2", HandleTData2),
+				new LineImplTask("tdata3", HandleTData3)
 			};
 
-		private static LineImplTask[] thirdStageImpl = new LineImplTask[] {
-				new LineImplTask("armor", new LineImpl(HandleArmorOrDam)),
-				new LineImplTask("dam", new LineImpl(HandleArmorOrDam)),
+		private static LineImplTask[] thirdStageImpl = {
+				new LineImplTask("armor", HandleArmorOrDam),
+				new LineImplTask("dam", HandleArmorOrDam)
 			};
 
 
@@ -89,7 +89,7 @@ namespace SteamEngine.Converter {
 			StringBuilder corrected = new StringBuilder(args.Length);
 			string commentary = "";
 
-			string[] singleResources = args.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries); //split to single resources
+			string[] singleResources = args.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries); //split to single resources
 			foreach(string s in singleResources) {
 				string singleRes = s.Replace(".", ""); //sphere scripts weirdly have skill numbers with a dot sometimes. Hope this won't break something else than skills
 				string[] split = singleRes.Split(Tools.whitespaceChars, StringSplitOptions.RemoveEmptyEntries);

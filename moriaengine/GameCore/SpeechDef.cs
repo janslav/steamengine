@@ -20,7 +20,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public abstract class AbstractSpeech : TriggerGroup {
 		protected AbstractSpeech()
-			: base() {
+		{
 		}
 
 		protected AbstractSpeech(string name)

@@ -16,6 +16,7 @@
 */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -32,7 +33,7 @@ namespace SteamEngine {
 		private FieldValue dropSound;
 
 		private List<AbstractItemDef> dupeList;
-		private System.Collections.ObjectModel.ReadOnlyCollection<AbstractItemDef> dupeListReadOnly;
+		private ReadOnlyCollection<AbstractItemDef> dupeListReadOnly;
 
 		private ItemDispidInfo dispidInfo;
 
@@ -70,7 +71,7 @@ namespace SteamEngine {
 		public void AddToDupeList(AbstractItemDef idef) {
 			if (this.dupeList == null) {
 				this.dupeList = new List<AbstractItemDef>();
-				this.dupeListReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractItemDef>(this.dupeList);
+				this.dupeListReadOnly = new ReadOnlyCollection<AbstractItemDef>(this.dupeList);
 			}
 			if (!this.dupeList.Contains(idef)) {
 				this.dupeList.Add(idef);
@@ -86,7 +87,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public System.Collections.ObjectModel.ReadOnlyCollection<AbstractItemDef> DupeList {
+		public ReadOnlyCollection<AbstractItemDef> DupeList {
 			get {
 				return this.dupeListReadOnly;
 			}
@@ -293,7 +294,8 @@ namespace SteamEngine {
 		}
 
 		public override int Height {
-			get {
+			get
+			{
 				if (this.height.IsDefaultCodedValue) {
 					//if (this.IsContainer) {
 					//    return 4;
@@ -303,9 +305,8 @@ namespace SteamEngine {
 						return 1;
 					}
 					return idi.CalcHeight;
-				} else {
-					return (int) this.height.CurrentValue;
 				}
+				return (int) this.height.CurrentValue;
 			}
 		}
 	}

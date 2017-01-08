@@ -16,8 +16,8 @@
 */
 
 using System;
-using SteamEngine.Common;
 using SteamEngine.AuxServerPipe;
+using SteamEngine.Common;
 
 namespace SteamEngine {
 	public class ConsoleDummy : ISrc {

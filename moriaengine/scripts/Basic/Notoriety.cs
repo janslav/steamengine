@@ -26,10 +26,13 @@ namespace SteamEngine.CompiledScripts {
 				Guild myGuild = Guild.GetGuild(self);
 				if (myGuild == viewerGuild) {
 					return HighlightColor.Allied;
-				} else if (myGuild != null) {
+				}
+				if (myGuild != null)
+				{
 					if (Guild.AreAllied(myGuild, viewerGuild)) {
 						return HighlightColor.Allied;
-					} else if (Guild.AreInWar(myGuild, viewerGuild)) {
+					}
+					if (Guild.AreInWar(myGuild, viewerGuild)) {
 						return HighlightColor.Attackable;
 					}
 				}

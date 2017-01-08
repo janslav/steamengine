@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using SteamEngine.Common;
 
@@ -21,7 +23,7 @@ namespace SteamEngine.RemoteConsole {
 			this.InitializeComponent();
 			this.internalWriteDeleg = this.InternalWriteInUIThread;
 			this.parser = new LogStrParser(this);
-			this.txtBox.LinkClicked += new LinkClickedEventHandler(this.txtBox_LinkClicked);
+			this.txtBox.LinkClicked += this.txtBox_LinkClicked;
 		}
 
 		void txtBox_LinkClicked(object sender, LinkClickedEventArgs e) {
@@ -34,16 +36,16 @@ namespace SteamEngine.RemoteConsole {
 			if (!LogStrParser.TryParseFileLine(e.LinkText, out filename, out line)) {
 				filename = e.LinkText;
 			}
-			string ext = System.IO.Path.GetExtension(filename);
+			string ext = Path.GetExtension(filename);
 
 			filename = LogStrParser.TranslateToLocalPath(filename);
 
 			string exe, args;
 			if (Settings.GetCommandLineForExt(ext, out exe, out args)) {
 				args = String.Format(args, filename, line);
-				System.Diagnostics.Process.Start(exe, args);
+				Process.Start(exe, args);
 			} else {
-				System.Diagnostics.Process.Start(filename);
+				Process.Start(filename);
 			}
 		}
 

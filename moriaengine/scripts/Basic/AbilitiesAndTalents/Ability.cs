@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
@@ -165,12 +166,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Load / Save
-		internal string GetSaveString() {
+		internal string GetSaveString()
+		{
 			if (this.modification == 0) {
 				return this.realPoints.ToString();
-			} else {
-				return String.Concat(this.RealPoints.ToString(), ", ", this.modification.ToString());
 			}
+			return String.Concat(this.RealPoints.ToString(), ", ", this.modification.ToString());
 		}
 
 		internal bool LoadSavedString(string p) {

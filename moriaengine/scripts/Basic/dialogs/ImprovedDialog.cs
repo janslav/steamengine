@@ -237,7 +237,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.lastTable[0, 0] = GUTAText.Builder.TextLabel("Stránka").Build();
 			//type if input,x,y,ID, width, height, prescribed text
 			this.lastTable[0, 0] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).XPos(65).Id(ID_PAGE_NO_INPUT).Width(30).Text(actualPage.ToString()).Build();
-			this.lastTable[0, 0] = GUTAText.Builder.TextLabel("/" + pagesCount.ToString()).XPos(95).Build();
+			this.lastTable[0, 0] = GUTAText.Builder.TextLabel("/" + pagesCount).XPos(95).Build();
 			this.lastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).XPos(135).Id(ID_JUMP_PAGE_BUTTON).Build();
 			this.MakeLastTableTransparent(); //newly created row
 			//restore the last components

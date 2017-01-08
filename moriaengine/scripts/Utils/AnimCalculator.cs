@@ -813,9 +813,8 @@ namespace SteamEngine.CompiledScripts {
 				int random = Globals.dice.Next(count);
 
 				return tempMonsterAnimArray[random];
-			} else {
-				return MonsterAnim.Walk;
 			}
+			return MonsterAnim.Walk;
 		}
 
 

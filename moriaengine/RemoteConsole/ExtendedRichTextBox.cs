@@ -19,8 +19,8 @@ namespace SteamEngine.RemoteConsole {
 #else
 	{
 		#region Private fields and constructors
-		private int _Updating = 0;
-		private int _OldEventMask = 0;
+		private int _Updating;
+		private int _OldEventMask;
 		private ToolTip myToolTip;
 
 		private int currentMouseCharIndex;
@@ -137,7 +137,7 @@ namespace SteamEngine.RemoteConsole {
 
 			// Don't simulate clipping by using the XOR operator.
 			EmfToWmfBitsFlagsNoXORClip = 0x00000004
-		};
+		}
 
 		#endregion
 		#region Windows API
@@ -372,10 +372,9 @@ namespace SteamEngine.RemoteConsole {
 				SendMessage(new HandleRef(this, this.Handle), EM_GETCHARFORMAT, SCF_SELECTION, ref fmt);
 				if ((fmt.dwMask & CFM_UNDERLINETYPE) == 0) {
 					return UnderlineStyle.None;
-				} else {
-					byte style = (byte) (fmt.bUnderlineType & 0x0F);
-					return (UnderlineStyle) style;
 				}
+				byte style = (byte) (fmt.bUnderlineType & 0x0F);
+				return (UnderlineStyle) style;
 			}
 			set {
 				// Ensure we don't alter the color
@@ -412,10 +411,9 @@ namespace SteamEngine.RemoteConsole {
 				SendMessage(new HandleRef(this, this.Handle), EM_GETCHARFORMAT, SCF_SELECTION, ref fmt);
 				if ((fmt.dwMask & CFM_UNDERLINETYPE) == 0) {
 					return UnderlineColor.None;
-				} else {
-					byte style = (byte) (fmt.bUnderlineType & 0xF0);
-					return (UnderlineColor) style;
 				}
+				byte style = (byte) (fmt.bUnderlineType & 0xF0);
+				return (UnderlineColor) style;
 			}
 			set {
 				// If the an underline color of "None" is specified, remove underline effect
@@ -982,7 +980,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="_flags">
 		/// Flags used to specify the format of the Windows Metafile returned
 		/// </param>
-		[DllImportAttribute("gdiplus.dll")]
+		[DllImport("gdiplus.dll")]
 		private static extern uint GdipEmfToWmfBits(IntPtr _hEmf, uint _bufferSize,
 		 byte[] _buffer, int _mappingMode, EmfToWmfBitsFlags _flags);
 
@@ -1425,11 +1423,11 @@ namespace SteamEngine.RemoteConsole {
 	/// This class contains all the scroll bar information.
 	/// </summary>
 	public class ScrollBarInformation {
-		int nMin = 0;
-		int nMax = 0;
-		int nPage = 0;
-		int nPos = 0;
-		int nTrackPos = 0;
+		int nMin;
+		int nMax;
+		int nPage;
+		int nPos;
+		int nTrackPos;
 
 		/// <summary>
 		/// Sets up an empty scroll bar information class.

@@ -15,11 +15,12 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
-using SteamEngine.Networking;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class HidingSkillDef : SkillDef {
 
 		public HidingSkillDef(string defname, string filename, int headerLine)
@@ -87,11 +88,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class HiddenHelperPlugin {
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class HiddenHelperPluginDef {
 	}
 

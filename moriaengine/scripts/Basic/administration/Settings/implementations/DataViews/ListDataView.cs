@@ -108,9 +108,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int n = list.Count;
 				if (this.index < n) {
 					return list[this.index];
-				} else {
-					return null;
 				}
+				return null;
 			}
 
 			public override string GetStringValue(object target) {
@@ -118,9 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int n = list.Count;
 				if (this.index < n) {
 					return ObjectSaver.Save(list[this.index]);
-				} else {
-					return "";
 				}
+				return "";
 			}
 
 			public override void SetValue(object target, object value) {

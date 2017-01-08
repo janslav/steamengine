@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using SteamEngine.Common;
@@ -33,9 +34,9 @@ namespace SteamEngine.LScript {
 			: base(name) {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static ScriptedGumpDef Load(PropsSection input) {
-			string[] headers = input.HeaderName.Split(new char[] { ' ', '\t' }, 2);
+			string[] headers = input.HeaderName.Split(new[] { ' ', '\t' }, 2);
 			string name = headers[0];//d_something
 			GumpDef gump = GetByDefname(name);
 			ScriptedGumpDef sgd;
@@ -60,7 +61,8 @@ namespace SteamEngine.LScript {
 				sgd.layoutScript = sc;
 				sgd.UnUnload();
 				return sgd;
-			} else if (headers.Length == 2) {//buttons or texts section
+			}
+			if (headers.Length == 2) {//buttons or texts section
 				string type = headers[1].ToLowerInvariant();
 				switch (type) {
 					case "text":
@@ -111,21 +113,20 @@ namespace SteamEngine.LScript {
 							if (StringComparer.OrdinalIgnoreCase.Equals(triggerName, "anybutton")) {
 								responsesList.Add(new ResponseTrigger(0, int.MaxValue, trigger));
 								continue;
-							} else {
-								try {
-									int index = ConvertTools.ParseInt32(triggerName);
-									responsesList.Add(new ResponseTrigger(index, index, trigger));
-									continue;
-								} catch {
-									string[] boundStrings = triggerName.Split(' ', '\t', ',');
-									if (boundStrings.Length == 2) {
-										try {
-											int lowerBound = ConvertTools.ParseInt32(boundStrings[0].Trim());
-											int upperBound = ConvertTools.ParseInt32(boundStrings[1].Trim());
-											responsesList.Add(new ResponseTrigger(lowerBound, upperBound, trigger));
-											continue;
-										} catch { }
-									}
+							}
+							try {
+								int index = ConvertTools.ParseInt32(triggerName);
+								responsesList.Add(new ResponseTrigger(index, index, trigger));
+								continue;
+							} catch {
+								string[] boundStrings = triggerName.Split(' ', '\t', ',');
+								if (boundStrings.Length == 2) {
+									try {
+										int lowerBound = ConvertTools.ParseInt32(boundStrings[0].Trim());
+										int upperBound = ConvertTools.ParseInt32(boundStrings[1].Trim());
+										responsesList.Add(new ResponseTrigger(lowerBound, upperBound, trigger));
+										continue;
+									} catch { }
 								}
 							}
 							Logger.WriteError("String '" + LogStr.Ident(triggerName) + "' is not valid as gump/dialog response trigger header");
@@ -154,11 +155,10 @@ namespace SteamEngine.LScript {
 			}
 			if (this.IsUnloaded && (this.layoutScript != null)) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(this.Defname) + " resynced incompletely?");
-				return;
 			}
 		}
 
-		public sealed override void Unload() {
+		public override void Unload() {
 			this.layoutScript = null;
 			this.responseTriggers = null;
 			this.textsScript = null;
@@ -166,7 +166,7 @@ namespace SteamEngine.LScript {
 			base.Unload();
 		}
 
-		internal sealed override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			this.ThrowIfUnloaded();
 			ScriptedGump instance = new ScriptedGump(this);
 			ScriptArgs sa = new ScriptArgs(instance, sendTo); //instance and recipient are stored everytime
@@ -231,7 +231,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		public sealed override string ToString() {
+		public override string ToString() {
 			return "ScriptedGumpDef " + this.Defname;
 		}
 	}
@@ -457,7 +457,7 @@ namespace SteamEngine.LScript {
 			this.disposable = false;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal static bool IsMethodName(string name) {//used in OpNode_Lazy_Expresion for a little hack
 			switch (name.ToLowerInvariant()) {
 				case "checkertrans":

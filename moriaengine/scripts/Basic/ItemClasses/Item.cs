@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Communication.TCP;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
@@ -51,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 	//    Invisible = 0x80,
 	//}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Item : AbstractItem {
 		/// <summary>
 		/// Consume desired amount of this item, amount cannot go below zero. If resulting amount is 0 
@@ -70,10 +71,9 @@ namespace SteamEngine.CompiledScripts {
 			if (resultAmount < 1) {
 				this.Delete();
 				return prevAmount;//consumed all of the item (not necesarilly the whole "howMuch")
-			} else {
-				this.Amount = (int) resultAmount;
-				return howMany; //consumed the desired amount
 			}
+			this.Amount = (int) resultAmount;
+			return howMany; //consumed the desired amount
 		}
 
 		public override byte FlagsToSend {
@@ -376,7 +376,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ItemDef {
 
 		public bool IsWearableDef {

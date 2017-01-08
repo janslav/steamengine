@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using SteamEngine.Persistence;
 
@@ -112,7 +113,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
-			int btnNo = (int) gr.PressedButton;
+			int btnNo = gr.PressedButton;
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
 
@@ -163,10 +164,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, cat.Contents.Count, 1)) {
-				return;
 			} else {
 				int btnNumber = (btnNo - 10) % 5; //on one line we have numbers 10,11,12,13,14 next line is 15,16,17,18 etc.
-				int line = (int) ((btnNo - (10 + btnNumber)) / 5);
+				int line = (btnNo - (10 + btnNumber)) / 5;
 				ICraftmenuElement elem = cat.Contents[line];
 				Gump newGi = null;
 				switch (btnNumber) {

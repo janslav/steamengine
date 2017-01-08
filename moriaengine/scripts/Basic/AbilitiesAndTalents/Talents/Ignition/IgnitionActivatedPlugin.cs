@@ -16,9 +16,10 @@
  */
 
 using System;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	//represents the activated ignition ability
 	public partial class IgnitionActivatedPlugin {
 		private static ActivableAbilityDef a_ignition;
@@ -91,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class IgnitionActivatedPluginDef {
 	}
 }

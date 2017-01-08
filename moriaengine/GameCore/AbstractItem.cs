@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Networking;
@@ -33,7 +34,7 @@ namespace SteamEngine {
 		int Model { get; }
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+	[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	public abstract partial class AbstractItem : Thing, ICorpseEquipInfo {
 
 		private static int instances;
@@ -281,7 +282,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public abstract bool Flag_NonMovable {
 			get;
 			set;
@@ -324,9 +325,8 @@ namespace SteamEngine {
 			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				return null;
-			} else {
-				return (AbstractItem) tll[index];
 			}
+			return (AbstractItem) tll[index];
 		}
 
 		public void OpenTo(AbstractCharacter viewer) {
@@ -353,7 +353,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 			ScriptArgs sa = new ScriptArgs(viewer, viewerState, viewerConn);
 			this.TryTrigger(TriggerKey.containerOpen, sa);
@@ -362,7 +362,7 @@ namespace SteamEngine {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 		}
 
@@ -371,7 +371,7 @@ namespace SteamEngine {
 
 		//}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual ItemOnGroundUpdater GetOnGroundUpdater() {
 			ItemOnGroundUpdater iogu = ItemOnGroundUpdater.GetFromCache(this);
 			if (iogu == null) {
@@ -398,12 +398,12 @@ namespace SteamEngine {
 		}
 
 		public override string Name {
-			get {
+			get
+			{
 				if (this.name == null) {
 					return this.Amount > 1 ? this.TypeDef.PluralName : this.TypeDef.Name;
-				} else {
-					return this.name;
 				}
+				return this.name;
 			}
 			set {
 				this.InvalidateAosToolTips();
@@ -510,7 +510,7 @@ namespace SteamEngine {
 			return result;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		internal void Trigger_Step(AbstractCharacter steppingChar, bool repeated, MovementType movementType) {
 			this.ThrowIfDeleted();
 			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated, movementType);
@@ -521,11 +521,11 @@ namespace SteamEngine {
 			this.On_Step(steppingChar, repeated, movementType);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_Step(AbstractCharacter stepping, bool repeated, MovementType movementType) {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			base.Save(output);
 			AbstractItemDef def = this.TypeDef;
@@ -550,7 +550,7 @@ namespace SteamEngine {
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
 				case "cont":
-					ObjectSaver.Load(valueString, new LoadObject(this.LoadCont_Delayed), filename, line);
+					ObjectSaver.Load(valueString, this.LoadCont_Delayed, filename, line);
 					break;
 				case "p":
 					base.LoadLine(filename, line, valueName, valueString);//loads the position
@@ -607,9 +607,8 @@ namespace SteamEngine {
 			Thing c = this.Cont;
 			if (c != null) {
 				return c.TopObj();
-			} else {
-				return this;
 			}
+			return this;
 		}
 
 		//returns true if this is in given container or its subcontainers
@@ -617,7 +616,8 @@ namespace SteamEngine {
 			Thing myCont = this.Cont;
 			if (myCont == container) {
 				return true;
-			} else if (myCont != null) {
+			}
+			if (myCont != null) {
 				if (myCont.IsItem) {
 					return ((AbstractItem) myCont).IsWithinCont(container);
 				}
@@ -630,9 +630,8 @@ namespace SteamEngine {
 			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
-			} else {
-				return tll.GetItemEnumerator();
 			}
+			return tll.GetItemEnumerator();
 		}
 
 		public sealed override void InvalidateAosToolTips() {

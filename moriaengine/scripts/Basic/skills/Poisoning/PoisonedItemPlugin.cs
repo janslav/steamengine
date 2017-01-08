@@ -16,13 +16,15 @@
  */
 
 using System;
+using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PoisonedItemPlugin {
 		public static PluginKey poisonPK = PluginKey.Acquire("_poison_");
 
@@ -83,8 +85,8 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 			PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(language);
-			opc.AddNameColonValue(loc.DosesLeft, this.poisonDoses.ToString(System.Globalization.CultureInfo.InvariantCulture));
-			opc.AddNameColonValue(loc.Power, this.poisonPower.ToString(System.Globalization.CultureInfo.InvariantCulture));
+			opc.AddNameColonValue(loc.DosesLeft, this.poisonDoses.ToString(CultureInfo.InvariantCulture));
+			opc.AddNameColonValue(loc.Power, this.poisonPower.ToString(CultureInfo.InvariantCulture));
 		}
 
 		public void On_Click(Character clicker) {
@@ -95,9 +97,9 @@ namespace SteamEngine.CompiledScripts {
 			GameState state = clicker.GameState;
 			if (state != null) {
 				PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(clicker.Language);
-				string msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(System.Globalization.CultureInfo.InvariantCulture) + 
+				string msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(CultureInfo.InvariantCulture) + 
 					Environment.NewLine +
-					loc.Power + ": " + this.poisonPower.ToString(System.Globalization.CultureInfo.InvariantCulture);
+					loc.Power + ": " + this.poisonPower.ToString(CultureInfo.InvariantCulture);
 				PacketSequences.SendOverheadMessageFrom(state.Conn, (Thing) this.Cont, msg, -1);
 			}
 		}
@@ -277,7 +279,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PoisonedItemPluginDef {
 		public static readonly PoisonedItemPluginDef instance = (PoisonedItemPluginDef)
 			new PoisonedItemPluginDef("p_poisoned_item", "C# scripts", -1).Register();

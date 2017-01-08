@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
@@ -57,7 +58,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonMetrics.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech tagù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tagList.Count + ")").Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech tagù na " + th + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + tagList.Count + ")").Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build();//cudlik na info o hodnotach
 			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
@@ -169,11 +170,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, tagList.Count, 1)) {//kliknuto na paging?
-				return;
 			} else {
 				//zjistime si radek
-				int row = ((int) gr.PressedButton - 10) / 3;
-				int buttNo = ((int) gr.PressedButton - 10) % 3;
+				int row = (gr.PressedButton - 10) / 3;
+				int buttNo = (gr.PressedButton - 10) % 3;
 				TagHolder tagOwner = (TagHolder) args.GetTag(holderTK); //z koho budeme tagy brat?
 				KeyValuePair<TagKey, Object> de = tagList[row];
 				switch (buttNo) {

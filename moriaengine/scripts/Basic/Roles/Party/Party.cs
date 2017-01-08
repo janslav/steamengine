@@ -15,13 +15,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using SteamEngine.Networking;
+using System.Collections.ObjectModel;
+using SteamEngine.Common;
 using SteamEngine.Communication;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class Party : Role {
 		private readonly List<Character> candidates;
 		private readonly ReadOnlyCollection<Character> candidatesReadonly;
@@ -135,10 +137,9 @@ namespace SteamEngine.CompiledScripts {
 					this.candidates.Add(newCandidate);
 				}
 				return true;
-			} else {
-				leader.SysMessage("Hráè není pøipojen");
-				return false;
 			}
+			leader.SysMessage("Hráè není pøipojen");
+			return false;
 		}
 
 		public void MembershipDeclined(Character decliningCandidate) {
@@ -166,7 +167,7 @@ namespace SteamEngine.CompiledScripts {
 		public void SendPrivateMessage(AbstractCharacter self, AbstractCharacter target, string text) {
 			GameState state = target.GameState;
 			if (state != null) {
-				TellPartyMemberAMessageOutPacket p = Common.Pool<TellPartyMemberAMessageOutPacket>.Acquire();
+				TellPartyMemberAMessageOutPacket p = Pool<TellPartyMemberAMessageOutPacket>.Acquire();
 				p.Prepare(self.FlaggedUid, text);
 				state.Conn.SendSinglePacket(p);
 			}
@@ -189,7 +190,7 @@ namespace SteamEngine.CompiledScripts {
 			this.candidates.Remove(newMember);
 
 			using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {
-				pg.AcquirePacket<AddPartyMembersOutPacket>().Prepare((IEnumerable<AbstractCharacter>) members);
+				pg.AcquirePacket<AddPartyMembersOutPacket>().Prepare(members);
 				foreach (Character ch in members) {
 					GameState state = ch.GameState;
 					if (state != null) {
@@ -211,7 +212,7 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState exState = exMember.GameState;
 			if (exState != null) {
-				RemoveAPartyMemberOutPacket empty = Common.Pool<RemoveAPartyMemberOutPacket>.Acquire();
+				RemoveAPartyMemberOutPacket empty = Pool<RemoveAPartyMemberOutPacket>.Acquire();
 				empty.Prepare(exMember, null);
 				exState.Conn.SendSinglePacket(empty);
 			}
@@ -224,7 +225,7 @@ namespace SteamEngine.CompiledScripts {
 				ICollection<Character> members = this.Members;
 				if (members.Count > 0) {
 					using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {
-						pg.AcquirePacket<RemoveAPartyMemberOutPacket>().Prepare(exMember, (IEnumerable<AbstractCharacter>) members);
+						pg.AcquirePacket<RemoveAPartyMemberOutPacket>().Prepare(exMember, members);
 						pg.AcquirePacket<ClilocMessageOutPacket>().Prepare(null, 1005452, "System", SpeechType.Speech, ClientFont.Unified, -1, ""); // 1005452 = A player has been removed from your party.
 						foreach (Character ch in members) {
 							GameState state = ch.GameState;

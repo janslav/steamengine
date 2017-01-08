@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
 					ArrayLoadHelper alip = new ArrayLoadHelper(arr, i, elemType);
-					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(this.DelayedLoad_Index), input.Filename, valueLine.Line, alip);
+					ObjectSaver.Load(valueLine.Value, this.DelayedLoad_Index, input.Filename, valueLine.Line, alip);
 				}
 				return arr;
 			} catch (FatalException) {

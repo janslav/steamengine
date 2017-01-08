@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	//represents the activated bleeding strike ability
 	public partial class BleedingStrikePlugin {
 		private static ActivableAbilityDef a_bleeding_strike;
@@ -56,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class BleedingStrikePluginDef {
 	}
 }

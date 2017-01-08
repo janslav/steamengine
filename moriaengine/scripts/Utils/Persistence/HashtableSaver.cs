@@ -53,9 +53,9 @@ namespace SteamEngine.CompiledScripts {
 					PropsLine valueLine = input.PopPropsLine(i+".V");
 					HashtableLoadHelper helper = new HashtableLoadHelper(table);
 					currentLineNumber = keyLine.Line;
-					ObjectSaver.Load(keyLine.Value, new LoadObject(helper.DelayedLoad_Key), input.Filename, keyLine.Line);
+					ObjectSaver.Load(keyLine.Value, helper.DelayedLoad_Key, input.Filename, keyLine.Line);
 					currentLineNumber = valueLine.Line;
-					ObjectSaver.Load(valueLine.Value, new LoadObject(helper.DelayedLoad_Value), input.Filename, valueLine.Line);
+					ObjectSaver.Load(valueLine.Value, helper.DelayedLoad_Value, input.Filename, valueLine.Line);
 				}
 				return table;
 			} catch (FatalException) {
@@ -70,10 +70,10 @@ namespace SteamEngine.CompiledScripts {
 		
 		private class HashtableLoadHelper {
 			internal Hashtable table;
-			private object key = null;
-			private object value = null;
-			private bool valueSet = false;
-			private bool keySet = false;
+			private object key;
+			private object value;
+			private bool valueSet;
+			private bool keySet;
 
 
 			internal HashtableLoadHelper(Hashtable table) {

@@ -16,8 +16,8 @@
 */
 
 using SteamEngine.Common;
-using SteamEngine.Regions;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	public partial class RecallRune {

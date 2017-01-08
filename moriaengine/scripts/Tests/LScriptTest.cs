@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using SteamEngine.Common;
 using SteamEngine.Regions;
+using SteamEngine.Timers;
 
 namespace SteamEngine.LScript {
 	public class LScriptTest {
@@ -87,12 +88,12 @@ namespace SteamEngine.LScript {
 
 			//returning value
 			Sanity.IfTrueThrow(5 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return 5")), "Error while return integer");
-			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return \"some test string 7hgf456\""), "some test string 7hgf456"),
+			Sanity.IfTrueThrow(!Equals(LScriptMain.RunSnippet(testObj, "return \"some test string 7hgf456\""), "some test string 7hgf456"),
 				"Error while returning quoted string");
-			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return \" \\\" \""), " \" "),
+			Sanity.IfTrueThrow(!Equals(LScriptMain.RunSnippet(testObj, "return \" \\\" \""), " \" "),
 				"Error while returning quoted string with escaped character");
 
-			Sanity.IfTrueThrow(!string.Equals(LScriptMain.RunSnippet(testObj, "return some test string 7hgf456"), "some test string 7hgf456"),
+			Sanity.IfTrueThrow(!Equals(LScriptMain.RunSnippet(testObj, "return some test string 7hgf456"), "some test string 7hgf456"),
 				"Error while returning nonquoted string");
 
 			Sanity.IfTrueThrow(564 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return GetInteger")),
@@ -144,11 +145,11 @@ namespace SteamEngine.LScript {
 
 
 			TestSnippet(Globals.Port, "return Globals.port", "dotted expression");
-			Sanity.IfTrueThrow(!string.Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())"), "[]"),
+			Sanity.IfTrueThrow(!Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())"), "[]"),
 				"dotted expression: method and constructor witn no params"); //this could outcome false if someone changed the ObjToString method...
-			Sanity.IfTrueThrow(!string.Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))"), "[]"),
+			Sanity.IfTrueThrow(!Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))"), "[]"),
 				"dotted expression: method and constructor witn one param with parens"); //this could outcome false if someone changed the ObjToString method...
-			Sanity.IfTrueThrow(!string.Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList=0)"), "[]"),
+			Sanity.IfTrueThrow(!Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList=0)"), "[]"),
 				"dotted expression: method and constructor witn one param with with ="); //this could outcome false if someone changed the ObjToString method...	
 			//this doesn't work (it should never have I think...)
 			//Sanity.IfTrueThrow(!string.Equals(LScript.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList 0)"), "[]"), 
@@ -193,7 +194,7 @@ namespace SteamEngine.LScript {
 			TestSnippet(5, "TestMethod_IPointParam(LScriptTesterIPoint4D())", "ambiguity test 7");
 			TestSnippet(5, "TestMethod_PointAndIpointParam(LScriptTesterIPoint4D())", "ambiguity test 8");
 
-			Sanity.IfTrueThrow(!Timers.TimerKey.Acquire("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
+			Sanity.IfTrueThrow(!TimerKey.Acquire("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
 			Sanity.IfTrueThrow(!TriggerKey.Acquire("testtriggerkey").Equals(LScriptMain.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
 
 			LScriptMain.RunSnippet(testObj, "return {0 1}");
@@ -304,8 +305,8 @@ namespace SteamEngine.LScript {
 
 
 	public class LScriptTesterObject : PluginHolder {
-		public double currentCounter = 0;
-		public double lastCounter = 0;
+		public double currentCounter;
+		public double lastCounter;
 
 		private void Incr() {
 			this.currentCounter++;

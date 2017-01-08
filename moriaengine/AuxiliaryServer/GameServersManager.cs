@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
 
 	public static class GameServersManager {
-		static Dictionary<GameServer, LinkedList<ConsoleServer.ConsoleClient>> consoles =
-			new Dictionary<GameServer, LinkedList<ConsoleServer.ConsoleClient>>();
-		static Dictionary<ConsoleServer.ConsoleClient, LinkedList<GameServer>> gameServers =
-			new Dictionary<ConsoleServer.ConsoleClient, LinkedList<GameServer>>();
+		static Dictionary<GameServer, LinkedList<ConsoleClient>> consoles =
+			new Dictionary<GameServer, LinkedList<ConsoleClient>>();
+		static Dictionary<ConsoleClient, LinkedList<GameServer>> gameServers =
+			new Dictionary<ConsoleClient, LinkedList<GameServer>>();
 
 
 
@@ -47,10 +48,10 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		#region logged in state tracking
-		internal static void AddLoggedIn(ConsoleServer.ConsoleClient console, GameServer gameServer) {
-			LinkedList<ConsoleServer.ConsoleClient> consoleList;
+		internal static void AddLoggedIn(ConsoleClient console, GameServer gameServer) {
+			LinkedList<ConsoleClient> consoleList;
 			if (!consoles.TryGetValue(gameServer, out consoleList)) {
-				consoleList = new LinkedList<ConsoleServer.ConsoleClient>();
+				consoleList = new LinkedList<ConsoleClient>();
 				consoles.Add(gameServer, consoleList);
 			}
 			if (!consoleList.Contains(console)) {
@@ -67,7 +68,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 		}
 
-		internal static void RemoveConsole(ConsoleServer.ConsoleClient console) {
+		internal static void RemoveConsole(ConsoleClient console) {
 			LinkedList<GameServer> gameServerList;
 			if (gameServers.TryGetValue(console, out gameServerList)) {
 				foreach (GameServer gameServer in gameServerList) {
@@ -79,9 +80,9 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal static void RemoveGameServer(GameServer gameServer) {
-			LinkedList<ConsoleServer.ConsoleClient> consoleList;
+			LinkedList<ConsoleClient> consoleList;
 			if (consoles.TryGetValue(gameServer, out consoleList)) {
-				foreach (ConsoleServer.ConsoleClient console in consoleList) {
+				foreach (ConsoleClient console in consoleList) {
 					gameServers[console].Remove(gameServer);
 				}
 
@@ -89,7 +90,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			//not just logged in ones, because all consoles see gameservers at startup
-			foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+			foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 				console.CloseCmdWindow(gameServer.ServerUid);
 			}
 
@@ -100,35 +101,35 @@ namespace SteamEngine.AuxiliaryServer {
 
 
 			if (AllIdentifiedGameServers.Count == 0) { //it was the last server, we kick nonlogged consoles
-				List<ConsoleServer.ConsoleClient> toKick = new List<ConsoleServer.ConsoleClient>();
-				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				List<ConsoleClient> toKick = new List<ConsoleClient>();
+				foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					if (!console.IsLoggedInAux) {
 						toKick.Add(console);
 					}
 				}
-				foreach (ConsoleServer.ConsoleClient console in toKick) {
+				foreach (ConsoleClient console in toKick) {
 					console.Conn.Close("Failed to identify");
 				}
 			}
 		}
 
-		public static bool IsLoggedIn(ConsoleServer.ConsoleClient console, GameServer gameServer) {
-			LinkedList<ConsoleServer.ConsoleClient> consoleList;
+		public static bool IsLoggedIn(ConsoleClient console, GameServer gameServer) {
+			LinkedList<ConsoleClient> consoleList;
 			if (consoles.TryGetValue(gameServer, out consoleList)) {
 				return consoleList.Contains(console);
 			}
 			return false;
 		}
 
-		public static IEnumerable<ConsoleServer.ConsoleClient> AllConsolesIn(GameServer gameServer) {
-			LinkedList<ConsoleServer.ConsoleClient> consoleList;
+		public static IEnumerable<ConsoleClient> AllConsolesIn(GameServer gameServer) {
+			LinkedList<ConsoleClient> consoleList;
 			if (consoles.TryGetValue(gameServer, out consoleList)) {
 				return consoleList;
 			}
-			return EmptyReadOnlyGenericCollection<ConsoleServer.ConsoleClient>.instance;
+			return EmptyReadOnlyGenericCollection<ConsoleClient>.instance;
 		}
 
-		public static ICollection<GameServer> AllServersWhereLoggedIn(ConsoleServer.ConsoleClient console) {
+		public static ICollection<GameServer> AllServersWhereLoggedIn(ConsoleClient console) {
 			LinkedList<GameServer> serversList;
 			if (gameServers.TryGetValue(console, out serversList)) {
 				return serversList;

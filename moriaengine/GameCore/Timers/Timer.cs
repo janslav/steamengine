@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -80,7 +81,7 @@ namespace SteamEngine.Timers {
 			get { return currentTimer; }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ProcessTimingOut() {
 			TimeSpan now = Globals.TimeAsSpan;
 			while (priorityQueue.Count > 0) {
@@ -122,9 +123,6 @@ namespace SteamEngine.Timers {
 			changes.Clear();
 		}
 
-		protected Timer() {
-		}
-
 		protected abstract void OnTimeout();
 
 		/// <summary>The time interval between invocations, using TimeSpan values to measure time intervals.</summary>
@@ -134,9 +132,8 @@ namespace SteamEngine.Timers {
 				TimeSpan p = this.period;
 				if (p < TimeSpan.Zero) {
 					return negativeOneSecond;
-				} else {
-					return p;
 				}
+				return p;
 			}
 			set {
 				if (value < TimeSpan.Zero) {
@@ -157,9 +154,8 @@ namespace SteamEngine.Timers {
 				TimeSpan p = this.period;
 				if (p < TimeSpan.Zero) {
 					return -1;
-				} else {
-					return p.TotalSeconds;
 				}
+				return p.TotalSeconds;
 			}
 			set {
 				if (value < 0) {
@@ -191,12 +187,12 @@ namespace SteamEngine.Timers {
 		/// <summary>The amount of time to delay before the first invoking, using TimeSpan values to measure time intervals.</summary>
 		/// <remarks>Specify negative one (-1) second (or any other negative TimeSpan) to prevent the timer from starting (i.e. to pause it). Specify TimeSpan.Zero to start the timer immediately.</remarks>
 		public TimeSpan DueInSpan {
-			get {
+			get
+			{
 				if (this.fireAt == negativeOneSecond) {
 					return negativeOneSecond;
-				} else {
-					return this.fireAt - Globals.TimeAsSpan;
 				}
+				return this.fireAt - Globals.TimeAsSpan;
 			}
 			set {
 				if (value < TimeSpan.Zero) {
@@ -242,14 +238,14 @@ namespace SteamEngine.Timers {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly TimeSpan negativeOneSecond = TimeSpan.FromSeconds(-1);
 
 		#region save/load
 		internal static void StartingLoading() {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public virtual void Save(SaveStream output) {
 			if (this.fireAt != negativeOneSecond) {
 				output.WriteValue("fireAt", this.fireAt.Ticks);

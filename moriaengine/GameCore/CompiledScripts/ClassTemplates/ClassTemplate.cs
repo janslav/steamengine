@@ -16,6 +16,7 @@
 */
 
 using System.CodeDom;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 
@@ -41,7 +42,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			this.generatedType.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(DeepCopyableClassAttribute))));
 			this.generatedType.CustomAttributes.Add(new CodeAttributeDeclaration(
-				new CodeTypeReference(typeof(Persistence.SaveableClassAttribute))));
+				new CodeTypeReference(typeof(SaveableClassAttribute))));
 
 			this.generatedType.IsClass = true;
 			this.generatedType.IsPartial = true;
@@ -111,13 +112,12 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						new CodeThisReferenceExpression(),
 						delayedCopyMethod.Name)
 				));
-			} else {
-				return new CodeAssignStatement(
-					new CodeFieldReferenceExpression(
-						new CodeThisReferenceExpression(),
-						field.uncapName),
-					copyFrom);
 			}
+			return new CodeAssignStatement(
+				new CodeFieldReferenceExpression(
+					new CodeThisReferenceExpression(),
+					field.uncapName),
+				copyFrom);
 		}
 
 		private CodeMemberMethod DelayedCopyMethod(ClassTemplateInstanceField field) {
@@ -227,7 +227,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		private CodeStatement LoadFieldStatement(ClassTemplateInstanceField field) {
 			if ((field.type != null) &&
-					Persistence.ObjectSaver.IsSimpleSaveableType(field.type)) {
+					ObjectSaver.IsSimpleSaveableType(field.type)) {
 
 				return new CodeAssignStatement(
 					new CodeFieldReferenceExpression(
@@ -237,47 +237,46 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						field.type,
 						new CodeArgumentReferenceExpression("valueString")));
 
-			} else {
-				CodeMemberMethod delayedLoadMethod = new CodeMemberMethod();
-				delayedLoadMethod.Name = "DelayedLoad_" + field.capName;
-				delayedLoadMethod.Attributes = MemberAttributes.Private;
-				delayedLoadMethod.Parameters.Add(
-					new CodeParameterDeclarationExpression(typeof(object), "resolvedObject"));
-				delayedLoadMethod.Parameters.Add(
-					new CodeParameterDeclarationExpression(typeof(string), "filename"));
-				delayedLoadMethod.Parameters.Add(
-					new CodeParameterDeclarationExpression(typeof(int), "line"));
-
-				CodeExpression rightSide;
-				if (field.type != null) {
-					rightSide = GeneratedCodeUtil.GenerateDelayedLoadExpression(
-						field.type,
-						new CodeArgumentReferenceExpression("resolvedObject"));
-				} else {
-					rightSide = new CodeCastExpression(
-						new CodeTypeReference(field.typeString),
-						new CodeArgumentReferenceExpression("resolvedObject"));
-				}
-				delayedLoadMethod.Statements.Add(new CodeAssignStatement(
-					new CodeFieldReferenceExpression(
-						new CodeThisReferenceExpression(),
-						field.uncapName),
-					rightSide));
-
-				this.generatedType.Members.Add(delayedLoadMethod);
-
-				return new CodeExpressionStatement(new CodeMethodInvokeExpression(
-					//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
-					new CodeMethodReferenceExpression(
-						new CodeTypeReferenceExpression(typeof(Persistence.ObjectSaver)), "Load"),
-						new CodeArgumentReferenceExpression("valueString"),
-						new CodeDelegateCreateExpression(
-							new CodeTypeReference(typeof(Persistence.LoadObject)),
-							new CodeThisReferenceExpression(),
-							delayedLoadMethod.Name),
-						new CodeArgumentReferenceExpression("filename"),
-						new CodeArgumentReferenceExpression("line")));
 			}
+			CodeMemberMethod delayedLoadMethod = new CodeMemberMethod();
+			delayedLoadMethod.Name = "DelayedLoad_" + field.capName;
+			delayedLoadMethod.Attributes = MemberAttributes.Private;
+			delayedLoadMethod.Parameters.Add(
+				new CodeParameterDeclarationExpression(typeof(object), "resolvedObject"));
+			delayedLoadMethod.Parameters.Add(
+				new CodeParameterDeclarationExpression(typeof(string), "filename"));
+			delayedLoadMethod.Parameters.Add(
+				new CodeParameterDeclarationExpression(typeof(int), "line"));
+
+			CodeExpression rightSide;
+			if (field.type != null) {
+				rightSide = GeneratedCodeUtil.GenerateDelayedLoadExpression(
+					field.type,
+					new CodeArgumentReferenceExpression("resolvedObject"));
+			} else {
+				rightSide = new CodeCastExpression(
+					new CodeTypeReference(field.typeString),
+					new CodeArgumentReferenceExpression("resolvedObject"));
+			}
+			delayedLoadMethod.Statements.Add(new CodeAssignStatement(
+				new CodeFieldReferenceExpression(
+					new CodeThisReferenceExpression(),
+					field.uncapName),
+				rightSide));
+
+			this.generatedType.Members.Add(delayedLoadMethod);
+
+			return new CodeExpressionStatement(new CodeMethodInvokeExpression(
+				//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
+				new CodeMethodReferenceExpression(
+					new CodeTypeReferenceExpression(typeof(ObjectSaver)), "Load"),
+				new CodeArgumentReferenceExpression("valueString"),
+				new CodeDelegateCreateExpression(
+					new CodeTypeReference(typeof(LoadObject)),
+					new CodeThisReferenceExpression(),
+					delayedLoadMethod.Name),
+				new CodeArgumentReferenceExpression("filename"),
+				new CodeArgumentReferenceExpression("line")));
 		}
 	}
 }

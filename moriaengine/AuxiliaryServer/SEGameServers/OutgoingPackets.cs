@@ -1,10 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
 using SteamEngine.Communication;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
 	public class RequestSendingLogStringsPacket : OutgoingPacket {
 		bool sendLogStrings;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sendLogStrings")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "sendLogStrings")]
 		public void Prepare(bool sendLogStrings) {
 			this.sendLogStrings = sendLogStrings;
 		}
@@ -24,8 +26,8 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		int consoleId;
 		string accName, password;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId")]
-		public void Prepare(ConsoleServer.ConsoleId consoleId, string accName, string password) {
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId")]
+		public void Prepare(ConsoleId consoleId, string accName, string password) {
 			this.consoleId = (int) consoleId;
 			this.accName = accName;
 			this.password = password;
@@ -49,8 +51,8 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		string accName, password;
 		private string command;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "command"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName")]
-		public void Prepare(ConsoleServer.ConsoleId consoleId, string accName, string password, string command) {
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "command"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName")]
+		public void Prepare(ConsoleId consoleId, string accName, string password, string command) {
 			this.consoleId = (int) consoleId;
 			this.accName = accName;
 			this.password = password;

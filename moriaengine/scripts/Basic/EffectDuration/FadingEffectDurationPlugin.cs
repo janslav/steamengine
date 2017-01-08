@@ -16,13 +16,14 @@
  */
 
 using System;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class FadingEffectDurationPlugin {
 		public const double minimumEffectPower = 0.1;
 
@@ -58,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class FadingEffectDurationPluginDef {
 
 		public void Apply(Thing source, Character target, EffectFlag sourceType, double effectPower, int tickCount) {

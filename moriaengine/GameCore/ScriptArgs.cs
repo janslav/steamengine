@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 
 namespace SteamEngine {
@@ -70,7 +72,7 @@ namespace SteamEngine {
 						}
 					}
 					//Console.WriteLine("format string: '{0}', with {1} args", formatArgs, argv.Length);
-					this.args = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+					this.args = string.Format(CultureInfo.InvariantCulture,
 						this.formatArgs, this.argv);
 				}
 				return this.args;
@@ -78,7 +80,7 @@ namespace SteamEngine {
 		}
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+		[SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
 		public object[] Argv {
 			get { 
 				return this.argv; 

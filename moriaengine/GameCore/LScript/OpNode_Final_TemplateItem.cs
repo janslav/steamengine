@@ -16,11 +16,12 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_TemplateItem : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		private OpNode defNode;
 		private OpNode amountNode;
@@ -46,7 +47,7 @@ namespace SteamEngine.LScript {
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			Thing t = (Thing) vars.defaultObject;
 			vars.self = t;
@@ -75,7 +76,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			Thing t = (Thing) vars.defaultObject;
 			vars.self = t;

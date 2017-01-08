@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			this.maxCharsToTrack = this.InitTypedField("maxCharsToTrack", 20, typeof(int));
 			this.minSafeSteps = this.InitTypedField("minSafeSteps", 1, typeof(int));
 			this.maxSafeSteps = this.InitTypedField("maxSafeSteps", 10, typeof(int));
-			this.pvmEffect = this.InitTypedField("pvmEffect", new double[] { 16.0, 64, 0 }, typeof(double[]));
+			this.pvmEffect = this.InitTypedField("pvmEffect", new[] { 16.0, 64, 0 }, typeof(double[]));
 		}
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
@@ -126,25 +126,25 @@ namespace SteamEngine.CompiledScripts {
 						switch (charType) {
 							case CharacterTypes.Animals:
 								trackables = new List<AbstractCharacter>();
-								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect)) {
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle(npcRect)) {
 									if (chr.IsAnimal) trackables.Add(chr);
 								}
 								break;
 							case CharacterTypes.Monsters:
 								trackables = new List<AbstractCharacter>();
-								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect)) {
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle(npcRect)) {
 									if (chr.IsMonster) trackables.Add(chr);
 								}
 								break;
 							case CharacterTypes.NPCs:
 								trackables = new List<AbstractCharacter>();
-								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect)) {
+								foreach (Character chr in Map.GetMap(self.M).GetNPCsInRectangle(npcRect)) {
 									if (chr.IsHuman) trackables.Add(chr);
 								}
 								break;
 							case CharacterTypes.All:
 								//monsters, animals and human NPCs
-								trackables = new List<AbstractCharacter>(Map.GetMap(self.M).GetNPCsInRectangle((ImmutableRectangle) npcRect));
+								trackables = new List<AbstractCharacter>(Map.GetMap(self.M).GetNPCsInRectangle(npcRect));
 								break;
 						}
 
@@ -250,13 +250,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//get the Tracking range  - either for computing the scanned Rectangle or determining the maximal tracking distance
-		public int GetNPCMaxRange(Character self) {
+		public int GetNPCMaxRange(Character self)
+		{
 			//tracking other types of characters (animals, monsters, NPCs) - use the PVMEffect field
 			if (self.IsGM) {
 				return (int) ScriptUtil.EvalRangePermille(1000.0, this.PVMEffect);
-			} else {
-				return (int) ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), this.PVMEffect);
 			}
+			return (int) ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), this.PVMEffect);
 		}
 
 		//get the maximum age of the footsteps to be found

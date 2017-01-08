@@ -36,21 +36,21 @@ namespace SteamEngine.Converter {
 		//by model and by defnames
 
 
-		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
-				new LineImplTask("anim", new LineImpl(MayBeHex_IgnorePoint)), 
+		private static LineImplTask[] firstStageImpl = {
+				new LineImplTask("anim", MayBeHex_IgnorePoint), 
 //TODO:
-				new LineImplTask("npc", new LineImpl(WriteAsComment)),
-				new LineImplTask("brain", new LineImpl(WriteAsComment)),
+				new LineImplTask("npc", WriteAsComment),
+				new LineImplTask("brain", WriteAsComment)
 				
 
 
 			};
 
-		private static LineImplTask[] thirdStageImpl = new LineImplTask[] {
-			new LineImplTask("sound", new LineImpl(HandleSound)),
-			new LineImplTask("mountid", new LineImpl(HandleMountId)),
-			new LineImplTask("mountitem", new LineImpl(HandleMountId)),
-			new LineImplTask("tag.mountid", new LineImpl(HandleMountId)),
+		private static LineImplTask[] thirdStageImpl = {
+			new LineImplTask("sound", HandleSound),
+			new LineImplTask("mountid", HandleMountId),
+			new LineImplTask("mountitem", HandleMountId),
+			new LineImplTask("tag.mountid", HandleMountId)
 																			  
 		};
 

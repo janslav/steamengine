@@ -15,17 +15,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using SteamEngine.Networking;
-using SteamEngine.Communication;
 using SteamEngine.Common;
+using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellBookDef {
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellBook {
 
 		public int FirstSpellId {
@@ -53,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		public void DisplayTo(Character viewer) {
 			GameState state = viewer.GameState;
 			if (state != null) {
-				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
+				TcpConnection<GameState> conn = state.Conn;
 
 				//this is probably not necessary. We'll see if it breaks :)
 				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();

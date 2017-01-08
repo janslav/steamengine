@@ -20,6 +20,7 @@ using System.Data;
 using System.Net;
 using MySql.Data.MySqlClient;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
@@ -76,8 +77,8 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[SaveableClass]
-	[Dialogs.ViewableClass("Database Settings")]
-	public class DbConfig : Dialogs.SettingsMetaCategory {
+	[ViewableClass("Database Settings")]
+	public class DbConfig : SettingsMetaCategory {
 		[LoadingInitializer]
 		public DbConfig() {
 		}

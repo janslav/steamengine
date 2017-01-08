@@ -16,7 +16,9 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using SteamEngine.Persistence;
 
 namespace SteamEngine {
 
@@ -136,7 +138,7 @@ namespace SteamEngine {
 	}
 
 
-	public sealed class TriggerKeySaveImplementor : Persistence.ISimpleSaveImplementor {
+	public sealed class TriggerKeySaveImplementor : ISimpleSaveImplementor {
 		private static Regex re = new Regex(@"^\@(?<value>.+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -152,12 +154,12 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public string Save(object objToSave) {
 			return "@" + ((TriggerKey) objToSave).Name;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
 			return TriggerKey.Acquire(match.Groups["value"].Value);
 		}

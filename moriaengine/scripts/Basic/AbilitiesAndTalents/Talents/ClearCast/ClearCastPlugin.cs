@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ClearCastPlugin {
 
 		private static ActivableAbilityDef a_clearcast;
@@ -44,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ClearCastPluginDef {
 	}
 }

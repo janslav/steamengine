@@ -117,9 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				IDictionary dict = (IDictionary) target;
 				if (dict[this.key] != null) {
 					return ObjectSaver.Save(dict[this.key]);
-				} else {
-					return "";
 				}
+				return "";
 			}
 
 			public override void SetValue(object target, object value) {

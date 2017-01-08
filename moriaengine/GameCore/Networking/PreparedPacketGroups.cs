@@ -15,9 +15,11 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
+using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
 
@@ -35,7 +37,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendLoginDenied(TcpConnection<GameState> conn, LoginDeniedReason why) {
 			PacketGroup pg = loginDeniedPGs[(int) why];
 			conn.SendPacketGroup(pg);
@@ -66,7 +68,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendTargettingCursor(TcpConnection<GameState> conn, bool ground) {
 			if (ground) {
 				conn.SendPacketGroup(targetGround);
@@ -75,7 +77,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendCancelTargettingCursor(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(targetCancelled);
 		}
@@ -85,7 +87,7 @@ namespace SteamEngine.Networking {
 		private static PacketGroup[] facetChange = InitFacetChange();
 
 		private static PacketGroup[] InitFacetChange() {
-			PacketGroup[] retVal = new PacketGroup[Regions.Map.FacetCount];
+			PacketGroup[] retVal = new PacketGroup[Map.FacetCount];
 			for (int i = 0, n = retVal.Length; i < n; i++) {
 				retVal[i] = PacketGroup.CreateFreePG();
 				retVal[i].AcquirePacket<SetFacetOutPacket>().Prepare(i);
@@ -93,7 +95,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendFacetChange(TcpConnection<GameState> conn, int facet) {
 			conn.SendPacketGroup(facetChange[facet]);
 		}
@@ -129,7 +131,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendRejectMoveItemRequest(TcpConnection<GameState> conn, PickupItemResult msg) {
 			conn.SendPacketGroup(pickUpFailed[(int) msg]);
 		}
@@ -147,7 +149,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendRejectDeleteCharacter(TcpConnection<GameState> conn, DeleteCharacterResult msg) {
 			conn.SendPacketGroup(rejectDeleteCharacter[(int) msg]);
 		}
@@ -169,12 +171,12 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendResurrectMessage(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(deathMessage);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendYouAreDeathMessage(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(resurrectMessage);
 		}
@@ -189,7 +191,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendEnableMapDiffFiles(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(enableMapDiffFiles);
 		}
@@ -204,7 +206,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendClientVersionQuery(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(clientVersion);
 		}
@@ -219,7 +221,7 @@ namespace SteamEngine.Networking {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendClientFeatures(TcpConnection<GameState> conn) {
 			conn.SendPacketGroup(clientFeatures);
 		}
@@ -228,7 +230,7 @@ namespace SteamEngine.Networking {
 		#region OverallLightLevel
 		private static PacketGroup[] overallLightLevel = new PacketGroup[0x100];
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void SendOverallLightLevel(TcpConnection<GameState> conn, int lightLevel) {
 			PacketGroup pg = overallLightLevel[lightLevel];
 			if (pg == null) {

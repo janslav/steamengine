@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -24,7 +25,7 @@ namespace SteamEngine.Common {
 			return langs;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void RegisterLoc(LocStringCollection newLoc) {
 			string className = newLoc.Defname;
 			Language lan = newLoc.Language;
@@ -35,7 +36,7 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void UnregisterLoc(LocStringCollection newLoc) {
 			string className = newLoc.Defname;
 			Language lan = newLoc.Language;

@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -37,7 +39,7 @@ namespace SteamEngine {
 		
 			Spaces, tabs, and commas inside ""s are disregarded.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string[] SplitSphereString(string input, bool spaceSplits) {
 			List<string> results = new List<string>();
 			char lastChar = 'a';	//nothing meaningful
@@ -79,9 +81,9 @@ namespace SteamEngine {
 		public static string Capitalize(string s) {
 			if (s == null) throw new SanityCheckException("Capitalize was called on a null string.");
 			if (s.Length > 1) {
-				s = Char.ToUpper(s[0], System.Globalization.CultureInfo.InvariantCulture) + s.Substring(1);
+				s = Char.ToUpper(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
 			} else if (s.Length == 1) {
-				s = s.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
+				s = s.ToUpper(CultureInfo.InvariantCulture);
 			}
 			return s;
 		}
@@ -93,7 +95,7 @@ namespace SteamEngine {
 		public static string Uncapitalize(string s) {
 			if (s == null) throw new SanityCheckException("Uncapitalize was called on a null string.");
 			if (s.Length > 1) {
-				s = Char.ToLower(s[0], System.Globalization.CultureInfo.InvariantCulture) + s.Substring(1);
+				s = Char.ToLower(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
 			} else if (s.Length == 1) {
 				s = s.ToLowerInvariant();
 			}
@@ -104,7 +106,7 @@ namespace SteamEngine {
 			Get null terminated ascii string from binary reader stream and return encoded string.
 			The value count means number of bytes to get from binary reader which will be converted to string.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string GetCAsciiString(BinaryReader br, int count) {
 			byte[] buffer = br.ReadBytes(count);
 			int len;
@@ -116,7 +118,7 @@ namespace SteamEngine {
 		private static Regex uncommentRE = new Regex(@"^\s*(?<value>.*?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string Uncomment(string input) {
 			Match m = uncommentRE.Match(input);
 			if (m.Success) {
@@ -125,20 +127,20 @@ namespace SteamEngine {
 			return input.Trim();
 		}
 
-		public static int NormalizeDyedColor(int color, int defaultColor) {
+		public static int NormalizeDyedColor(int color, int defaultColor)
+		{
 			if ((color < 2) || (color > 1001)) {
 				return defaultColor;
-			} else {
-				return color;
 			}
+			return color;
 		}
 
-		public static ClientFont NormalizeClientFont(ClientFont font) {
+		public static ClientFont NormalizeClientFont(ClientFont font)
+		{
 			if ((font < ClientFont.Server) || (font > ClientFont.BorderLess)) {
 				return ClientFont.Unified;
-			} else {
-				return font;
 			}
+			return font;
 		}
 
 		/// <summary>Count the arithmetic mean of the given values</summary>

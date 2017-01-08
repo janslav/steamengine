@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
 
@@ -172,7 +173,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool Contains(int x, int y, out int z) {
-			MutablePoint3D p = new MutablePoint3D() { x = (ushort) x, y = (ushort) y};
+			MutablePoint3D p = new MutablePoint3D { x = (ushort) x, y = (ushort) y};
 
 #if DEBUG
 			//debug check using normal foreach. Could be normally in some kind of unittest but meh...
@@ -198,7 +199,7 @@ namespace SteamEngine.Regions {
 				}
 			}
 #endif
-			int index = Array.BinarySearch<MutablePoint3D>(this.array, this.firstIndex, (this.lastIndex - this.firstIndex) + 1,
+			int index = Array.BinarySearch(this.array, this.firstIndex, (this.lastIndex - this.firstIndex) + 1,
 				p, this.comparer);			
 
 			if (index >= 0) {
@@ -240,7 +241,7 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+		IEnumerator IEnumerable.GetEnumerator() {
 			for (int i = this.firstIndex; i <= this.lastIndex; i++) {
 				MutablePoint3D p = this.array[i];
 				yield return new Point3D(p.x, p.y, p.z);

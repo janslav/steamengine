@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using SteamEngine.Communication;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
@@ -12,7 +14,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get { return 0xA8; }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip")]
 		public void Prepare(byte[] ip) {
 			this.names.Clear();
 			foreach (GameServer server in GameServersManager.AllIdentifiedGameServers) {
@@ -50,9 +52,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get { return 0x8c; }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "port")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "port")]
 		public void Prepare(byte[] ip, int port) {
-			Common.Logger.WriteDebug("Sending shard IP: " + new System.Net.IPEndPoint(new System.Net.IPAddress(ip), port));
+			Common.Logger.WriteDebug("Sending shard IP: " + new IPEndPoint(new IPAddress(ip), port));
 			this.ip = ip;
 			this.port = (ushort) port;
 		}

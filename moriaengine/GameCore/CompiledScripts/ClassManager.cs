@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using SteamEngine.Common;
 
@@ -31,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 	public delegate void SupplyInstance<T>(T instance);
 
 	public static class ClassManager {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		private static readonly Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
 		private static readonly Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
@@ -137,17 +138,17 @@ namespace SteamEngine.CompiledScripts {
 			return mi;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public static void RegisterSupplyDecoratedClasses<T>(SupplyDecoratedType<T> deleg, bool inherited) where T : Attribute {
 			supplyDecoratedTypesDelegs.Add(new SupplyDecoratedTypeBaseTuple<T>(deleg, inherited));
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public static void RegisterSupplySubclasses<T>(SupplyType deleg) {
 			supplySubclassDelegs.Add(new TypeDelegPair(typeof(T), deleg));
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public static void RegisterSupplySubclassInstances<T>(SupplyInstance<T> deleg, bool sealedOnly, bool throwIfNoCtor) {
 			supplySubclassInstanceDelegs.Add(new SupplySubclassInstanceTuple<T>(deleg, sealedOnly, throwIfNoCtor));
 		}
@@ -194,12 +195,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal override Type TargetClass {
-				get {
+				get
+				{
 					if (this.deleg == null) {
 						return typeof(void);
-					} else {
-						return this.deleg.Method.DeclaringType;
 					}
+					return this.deleg.Method.DeclaringType;
 				}
 			}
 		}
@@ -285,7 +286,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (type.IsSubclassOf(typeof(TagHolder))) {
 				MethodInfo rtgmi = type.GetMethod("RegisterTriggerGroup",
-					BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(TriggerGroup) }, null);
+					BindingFlags.Public | BindingFlags.Static, null, new[] { typeof(TriggerGroup) }, null);
 				if (rtgmi != null) {
 					RegisterTGDeleg rtgd = (RegisterTGDeleg) Delegate.CreateDelegate(typeof(RegisterTGDeleg), rtgmi);
 					registerTGmethods[type.Name] = rtgd;
@@ -359,7 +360,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//called by Main on the end of startup/recompile process
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void InitScripts() {
 			Type[] types = commonAssembly.GetTypes();
 			if (!InitClasses(types, commonAssembly.GetName().Name)) {

@@ -16,16 +16,17 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.CodeDom;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	internal sealed class PluginTriggerGroupGenerator : ISteamCSCodeGenerator {
 		static List<Type> pluginTGs = new List<Type>();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclasses<Plugin>(AddPluginTGType);
 		}
@@ -37,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 			return false;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();

@@ -16,13 +16,14 @@
 */
 
 using System;
+using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class e_test_all_generic : CompiledTriggerGroup {
 		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
 			if (sa != null) {
 				Console.WriteLine("@" + tk.Name + " on " + self + " - parameters:\t" + 
-				Common.Tools.ObjToString(sa.Argv));
+				Tools.ObjToString(sa.Argv));
 			} else {
 				Console.WriteLine("@" + tk.Name + " on " + self);
 			}

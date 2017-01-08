@@ -18,7 +18,8 @@
 namespace SteamEngine.CompiledScripts {
 
 	/// <summary>IDs of important and used Gumps</summary>
-	public enum GumpIDs : int {
+	public enum GumpIDs
+	{
 		Figurine_Orc = 0x20e0,
 		Figurine_Ogre = 0x20df,
 		Figurine_Llama = 0x20f6,

@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -64,7 +65,7 @@ namespace SteamEngine {
 			this.extensions.Add(extension);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal void AddAvoided(string folder) {
 			this.avoided.Add(folder);
 		}
@@ -80,12 +81,12 @@ namespace SteamEngine {
 			return sf;
 		}
 
-		internal bool HasFile(FileInfo file) {
+		internal bool HasFile(FileInfo file)
+		{
 			if (this.scriptFiles != null) {
 				return this.scriptFiles.ContainsKey(file.FullName);
-			} else {
-				return false;
 			}
+			return false;
 		}
 
 		//internal DateTime NewestDateTime {
@@ -107,14 +108,13 @@ namespace SteamEngine {
 		internal ICollection<ScriptFile> GetChangedFiles() {
 			if (this.scriptFiles == null) {
 				return this.GetAllFiles();
-			} else {
-				List<ScriptFile> list = new List<ScriptFile>();
-				//if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
-				this.FindNewFiles(this.mainDir, list);
-				//}
-				this.FindChangedFiles(list);
-				return list;
 			}
+			List<ScriptFile> list = new List<ScriptFile>();
+			//if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
+			this.FindNewFiles(this.mainDir, list);
+			//}
+			this.FindChangedFiles(list);
+			return list;
 		}
 
 		internal string[] GetAllFileNames() {

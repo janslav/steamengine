@@ -16,9 +16,10 @@
  */
 
 using System;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class StealingSkillDef : SkillDef {
 
 		public StealingSkillDef(string defname, string filename, int headerLine)

@@ -18,6 +18,7 @@
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
@@ -63,12 +64,12 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplyDecoratedClasses<DeepCopyableClassAttribute>(AddDecoratedClass, false);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
@@ -125,28 +126,27 @@ namespace SteamEngine {
 				if (mi.IsDefined(typeof(DeepCopyImplementationAttribute), false)) {
 					if (this.initializer != null) {
 						throw new SEException("Can not use the " + LogStr.Ident("DeepCopyImplementationAttribute") + " on two class members.");
-					} else {
-						if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
-							this.initializer = (MethodBase) mi;
-						} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
-							MethodInfo meth = (MethodInfo) mi;
-							if (!meth.ReturnType.IsAssignableFrom(this.decoratedClass)) {
-								throw new SEException("Incompatible return type of method " + meth);
-							}
-							if (meth.IsStatic) {
-								this.initializer = meth;
-							}
+					}
+					if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
+						this.initializer = (MethodBase) mi;
+					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
+						MethodInfo meth = (MethodInfo) mi;
+						if (!meth.ReturnType.IsAssignableFrom(this.decoratedClass)) {
+							throw new SEException("Incompatible return type of method " + meth);
 						}
-						if (this.initializer != null) {
-							ParameterInfo[] pars = this.initializer.GetParameters();
-							if (pars.Length == 0) {
-							} else if ((pars.Length == 1) && (pars[0].ParameterType == this.decoratedClass)) {
-							} else {
-								throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute") + " can only be placed on a callable member with one parameter of the same type as is the declaring class, or with zero parameters.");
-							}
+						if (meth.IsStatic) {
+							this.initializer = meth;
+						}
+					}
+					if (this.initializer != null) {
+						ParameterInfo[] pars = this.initializer.GetParameters();
+						if (pars.Length == 0) {
+						} else if ((pars.Length == 1) && (pars[0].ParameterType == this.decoratedClass)) {
 						} else {
-							throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute") + " can only be placed on a constructor or static method.");
+							throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute") + " can only be placed on a callable member with one parameter of the same type as is the declaring class, or with zero parameters.");
 						}
+					} else {
+						throw new SEException(LogStr.Ident("DeepCopyImplementationAttribute") + " can only be placed on a constructor or static method.");
 					}
 				}
 			}

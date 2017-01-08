@@ -18,7 +18,7 @@
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(AbilityDef), "Ability",
 		//remove unnecessary entries
-		new string[] { "filename", "headerLine", "altdefname", "Filepos" }
+		new[] { "filename", "headerLine", "altdefname", "Filepos" }
 		)]
 	public static class AbilityDefDescriptor {
 

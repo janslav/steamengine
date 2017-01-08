@@ -16,14 +16,15 @@
 */
 
 using System;
-using System.Text;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_MethodWrapper : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly MethodInfo method;
 		private readonly OpNode[] args;
@@ -39,12 +40,11 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.args[index] = newNode;
 			}
+			this.args[index] = newNode;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -70,7 +70,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			//Console.WriteLine("OpNode_MethodWrapper results: "+Tools.ObjToString(results));
 			try {
@@ -91,7 +91,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("{0} {1}.{2}(", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append("))").ToString();
 		}
@@ -103,7 +103,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_MethodWrapper_Params : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly MethodInfo method;
 		private readonly OpNode[] normalArgs;
@@ -133,7 +133,7 @@ namespace SteamEngine.LScript {
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -165,7 +165,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {//the dont have the normalargs and paramsargs separated...
 			int normalArgsLength = this.normalArgs.Length;
 			object[] modifiedResults = new object[normalArgsLength + 1];
@@ -194,7 +194,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("{0} {1}.{2}(", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
 			for (int i = 0, n = this.normalArgs.Length; i < n; i++) {
-				str.Append(this.normalArgs[i].ToString()).Append(", ");
+				str.Append(this.normalArgs[i]).Append(", ");
 			}
 			str.Append(Tools.ObjToString(this.paramArgs));
 			return str.Append("))").ToString();
@@ -213,7 +213,7 @@ namespace SteamEngine.LScript {
 	//but doesnt have separated their arguments results... I dont think anyone understands that anyway (maybe except me :) -tar
 	//it would also remove the GOTOs that are inside the resolveas* methods
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_MethodWrapper_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly MethodInfo method;
 		private readonly OpNode[] args;
@@ -280,7 +280,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("{0} {1}.{2}((", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append(")).TOSTRING())").ToString();
 		}
@@ -293,7 +293,7 @@ namespace SteamEngine.LScript {
 	}
 
 	//a specialized opnode. not really necesarry to exist...
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_RunOnArgo : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		OpNode_MethodWrapper toRun;
 		internal OpNode_RunOnArgo(IOpNodeHolder parent, string filename, int line, int column, Node origNode, OpNode_MethodWrapper toRun)
@@ -311,13 +311,13 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters", MessageId = "System.Exception.#ctor(System.String)")]
-		public void Replace(OpNode oldNode, OpNode newNode) {
+		[SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters", MessageId = "System.Exception.#ctor(System.String)")]
+		public void Replace(OpNode oldNode, OpNode newNode)
+		{
 			if (this.toRun != oldNode) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.toRun = (OpNode_MethodWrapper) newNode;
 			}
+			this.toRun = (OpNode_MethodWrapper) newNode;
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {

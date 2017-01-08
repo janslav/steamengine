@@ -16,11 +16,12 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_Function : OpNode, IOpNodeHolder, ITriable {
 		private readonly ScriptHolder function;
 		private readonly OpNode[] args;
@@ -40,12 +41,11 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.args[index] = newNode;
 			}
+			this.args[index] = newNode;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -78,7 +78,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("function {0}(", this.function.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append("))").ToString();
 		}

@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
@@ -90,7 +91,7 @@ namespace SteamEngine.RemoteConsole {
 
 				bool compatibleAddressPresent = false;
 				foreach (IPAddress ip in ips) {
-					if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+					if (ip.AddressFamily == AddressFamily.InterNetwork) {
 						compatibleAddressPresent = true;
 						TcpConnection<ConsoleClient> createdConn = factory.Connect(new IPEndPoint(ip, eps.Port));
 

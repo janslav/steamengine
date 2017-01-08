@@ -41,11 +41,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Dictionary<int, Stack<Gump>> dlgStack;
 			if (globalDialogStacksCache.TryGetValue(forWho, out dlgStack)) {
 				return dlgStack;
-			} else {
-				dlgStack = new Dictionary<int, Stack<Gump>>();
-				globalDialogStacksCache[forWho] = dlgStack;
-				return dlgStack;
 			}
+			dlgStack = new Dictionary<int, Stack<Gump>>();
+			globalDialogStacksCache[forWho] = dlgStack;
+			return dlgStack;
 		}
 
 		/// <summary>

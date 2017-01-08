@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using SteamEngine.Common;
 using SteamEngine.Communication;
@@ -48,7 +49,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			get { return null; }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
 		public void On_Init(TcpConnection<ConsoleClient> conn) {
 			this.conn = conn;
 			Console.WriteLine(this + " connected.");
@@ -67,7 +68,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			return "ConsoleClient " + this.uid;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password")]
 		internal void SetLoginData(string accName, string accPass) {
 			this.accName = accName;
 			this.accPass = accPass;

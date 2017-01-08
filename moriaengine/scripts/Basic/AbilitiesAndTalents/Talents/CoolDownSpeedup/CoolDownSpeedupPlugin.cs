@@ -16,9 +16,10 @@
  */
 
 using System;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class CoolDownSpeedupPlugin {
 		public void On_ActivateAbility(AbilityDef ad, Ability a) {
 			if (ad == this.TypeDef.Ability) {
@@ -28,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class CoolDownSpeedupPluginDef {
 	}
 }

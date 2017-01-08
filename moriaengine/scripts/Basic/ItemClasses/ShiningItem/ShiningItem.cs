@@ -1,5 +1,7 @@
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ShiningItem {
 		public override void On_DClick(AbstractCharacter dclicker) {
             this.Say("Shine");
@@ -14,7 +16,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
-	public partial class ShiningItemdef {
+	[ViewableClass]
+	public class ShiningItemdef {
 	}
 }

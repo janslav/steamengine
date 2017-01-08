@@ -17,10 +17,10 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections.Generic;
-
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class GemBox : Item {
 
 		public void EnsureDictionary() {
@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public override void On_DClick(AbstractCharacter ac) {
-			this.Dialog(ac, SingletonScript<Dialogs.D_GemBox>.Instance);
+			this.Dialog(ac, SingletonScript<D_GemBox>.Instance);
 		}
 
 		public override void On_Create() {
@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class GemBoxDef {
 	}
 }
@@ -111,7 +111,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			}
 			if (gr.PressedButton == 0) {			// cancel
-				return;
 			} else if (gr.PressedButton == 1) {		// Add gems
 				((Player) gi.Cont).Target(SingletonScript<Targ_GemBox>.Instance, gi.Focus);
 			} else if (gr.PressedButton == 2) {		// OK -> give selected gems
@@ -140,7 +139,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					i++;
 				}
 			} else if (gr.PressedButton >= 1000) {
-				int thisButtonValue = (int) gr.PressedButton - 1000;
+				int thisButtonValue = gr.PressedButton - 1000;
 				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForGemsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
 				Globals.LastNewItem.Amount = box.inBoxGems[buttonShowItemDef[thisButtonValue]];

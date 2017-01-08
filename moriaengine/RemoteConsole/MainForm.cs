@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 using SteamEngine.Common;
 
@@ -13,7 +14,7 @@ namespace SteamEngine.RemoteConsole {
 
 		public MainForm() {
 			this.InitializeComponent();
-			this.txtDisplay_TitleChanged = new EventHandler(this.TxtDisplay_TitleChanged);
+			this.txtDisplay_TitleChanged = this.TxtDisplay_TitleChanged;
 		}
 
 		private void menuExit_Click(object sender, EventArgs e) {
@@ -185,7 +186,7 @@ namespace SteamEngine.RemoteConsole {
 
 			Console.WriteLine(String.Concat("Reconnecting to ", 
 				this.epsBeingReconnected.UserName,  "@", this.epsBeingReconnected.Address, ":" ,
-				this.epsBeingReconnected.Port.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+				this.epsBeingReconnected.Port.ToString(CultureInfo.InvariantCulture)));
 			ConsoleClient.Connect(this.epsBeingReconnected);
 		}
 

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using SteamEngine.AuxiliaryServer.SEGameServers;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
+	[SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 	public class ConsoleServer : TcpServer<ConsoleClient> {
 		public ConsoleServer()
 			: base(ConsoleServerProtocol.instance, MainClass.GlobalLock, MainClass.ExitSignalToken) {
@@ -27,7 +29,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			consoles.Add(client.ConsoleId, client);
 
 			if (consoles.Count == 1) {
-				SEGameServers.SEGameServerServer.StartSendingLogStr();
+				SEGameServerServer.StartSendingLogStr();
 			}
 		}
 
@@ -35,7 +37,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			consoles.Remove(client.ConsoleId);
 
 			if (consoles.Count == 0) {
-				SEGameServers.SEGameServerServer.StopSendingLogStr();
+				SEGameServerServer.StopSendingLogStr();
 
 				//memory cleanup
 				//PoolBase.ClearAll();

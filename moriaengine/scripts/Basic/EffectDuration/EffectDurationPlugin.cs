@@ -16,11 +16,13 @@
  */
 
 using System;
+using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class EffectDurationPlugin {
 
 		//sourcething = spell caster / ability user / trap item / etc
@@ -89,14 +91,15 @@ namespace SteamEngine.CompiledScripts {
 		
 		public virtual string EffectName {
 			get {
-				if (this.sourceDef != null) {
+				if (this.sourceDef != null)
+				{
 					if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
 						return ((AbilityDef) this.sourceDef).Name;
-					} else if ((this.flags & (EffectFlag.FromSpellBook | EffectFlag.FromSpellScroll)) != EffectFlag.None) {
-						return ((SpellDef) this.sourceDef).Name;
-					} else {
-						return this.sourceDef.PrettyDefname;
 					}
+					if ((this.flags & (EffectFlag.FromSpellBook | EffectFlag.FromSpellScroll)) != EffectFlag.None) {
+						return ((SpellDef) this.sourceDef).Name;
+					}
+					return this.sourceDef.PrettyDefname;
 				}
 				return this.ToString();
 			}
@@ -114,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void EffectEndedMessage(Character cont) {
 			if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
 				if (cont == this.sourceThing) { //my own ability
-					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
 						Loc<EffectDurationLoc>.Get(cont.Language).AbilityDeactivated,
 						this.EffectName));
 				} else {
@@ -126,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 					} else {
 						msg = Loc<EffectDurationLoc>.Get(cont.Language).AbilityEffectEnded;
 					}
-					cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
 						msg, this.EffectName));
 				}
 			} else if ((this.flags & (EffectFlag.FromSpellBook | EffectFlag.FromSpellScroll)) != EffectFlag.None) {
@@ -138,17 +141,17 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					msg = Loc<EffectDurationLoc>.Get(cont.Language).SpellEffecEnded;
 				}
-				cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
 						msg, this.EffectName));
 			} else {
-				cont.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
 						Loc<EffectDurationLoc>.Get(cont.Language).UnspecifiedEffectEnded,
 						this.EffectName));
 			}
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class EffectDurationPluginDef {
 	}
 

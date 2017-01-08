@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using SteamEngine.LScript;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Utils {
 
@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts.Utils {
 				return comparers[(int) sortDirection];
 			}
 
-			comparers = new LScriptComparer<T>[] {
+			comparers = new[] {
 				new LScriptComparer<T>(sortByExpression, 1), 
 				new LScriptComparer<T>(sortByExpression, -1)};
 

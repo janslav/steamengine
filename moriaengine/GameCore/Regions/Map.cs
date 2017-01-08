@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
@@ -44,7 +45,7 @@ namespace SteamEngine.Regions {
 		private readonly int sizeX;
 		private readonly int sizeY;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
 		private Sector[,] sectors;
 		private StaticRegion[] regions;
 		private readonly byte m;
@@ -102,12 +103,12 @@ namespace SteamEngine.Regions {
 			This determines if the specified x/y coordinates are within the specified mapplane.
 			It does not check if the tile is walkable, or anything else (including z).
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static bool IsValidPos(Point4D point) {
 			return point.GetMap().IsValidPos(point.X, point.Y);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static bool IsValidPos(IPoint4D point) {
 			return point.GetMap().IsValidPos(point.X, point.Y);
 		}
@@ -132,7 +133,7 @@ namespace SteamEngine.Regions {
 			This determines if the specified x/y coordinates are within this mapplane.
 			It does not check if the tile is walkable, or anything else.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool IsValidPos(IPoint2D point) {
 			int x = point.X;
 			int y = point.Y;
@@ -180,7 +181,7 @@ namespace SteamEngine.Regions {
 		/**
 			Returns the number of X tiles in the specified mapplane.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
+		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetMapSizeX(int facet) {
 			//if (mapplane >= 0 && mapplane < mapSizeX.Length) {
 			//    return mapSizeX[mapplane];
@@ -193,7 +194,7 @@ namespace SteamEngine.Regions {
 		/**
 			Returns the number of Y tiles in the specified mapplane.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
+		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetMapSizeY(int facet) {
 			//if (mapplane >= 0 && mapplane < mapSizeY.Length) {
 			//    return mapSizeY[mapplane];
@@ -218,12 +219,12 @@ namespace SteamEngine.Regions {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
+		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetFacetPatchesMapCount(int facet) {
 			return 0; //we have no support for map patches (yet?) so we ignore them
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
+		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "facet")]
 		public static int GetFacetPatchesStaticsCount(int facet) {
 			return 0; //we have no support for map patches (yet?) so we ignore them
 		}
@@ -426,7 +427,7 @@ namespace SteamEngine.Regions {
 		/**
 			This removes a character from their sector's list of players.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal void MadeIntoNonPlayer(AbstractCharacter t) {
 			Sanity.IfTrueThrow(t == null, "You can't tell us a NULL character is now a non-player!");
 			Logger.WriteInfo(Globals.MapTracingOn, this + ".MadeIntoNonPlayer " + t);
@@ -719,7 +720,7 @@ namespace SteamEngine.Regions {
 		//    }
 		//}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsInRectangle(ImmutableRectangle rectangle) {
 			int xSectorStart, ySectorStart, xSectorEnd, ySectorEnd;
 			this.GetSectorCoordsInRectangle(rectangle, out xSectorStart, out ySectorStart, out xSectorEnd, out ySectorEnd);
@@ -956,7 +957,7 @@ namespace SteamEngine.Regions {
 #endif
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<TcpConnection<GameState>> GetConnectionsWhoCanSee(Thing thing) {
 			Thing top = thing.TopObj();
 			ImmutableRectangle rectangle = new ImmutableRectangle(top.X, top.Y, Globals.MaxUpdateRange);
@@ -1123,7 +1124,7 @@ namespace SteamEngine.Regions {
 			throw new SEException("Invalid x/y position " + x + "," + y + " on mapplane " + this.m + ".");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
+		[SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
 		public void GetTile(int x, int y, out int z, out int id) {
 			if (this.IsValidPos(x, y)) {
 				int sx = x >> sectorFactor;
@@ -1139,10 +1140,9 @@ namespace SteamEngine.Regions {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).GetStatic(x, y, z, staticId);
-			} else {
-				Logger.WriteInfo(Globals.MapTracingOn, "GetStatic(" + x + "," + y + "): Invalid pos.");
-				return null;
 			}
+			Logger.WriteInfo(Globals.MapTracingOn, "GetStatic(" + x + "," + y + "): Invalid pos.");
+			return null;
 		}
 
 		public MultiItemComponent GetMultiComponent(int x, int y, int z, int staticId) {
@@ -1150,10 +1150,9 @@ namespace SteamEngine.Regions {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).GetMultiComponent(x, y, z, staticId);
-			} else {
-				Logger.WriteInfo(Globals.MapTracingOn, "GetMultiComponent(" + x + "," + y + "): Invalid pos.");
-				return null;
 			}
+			Logger.WriteInfo(Globals.MapTracingOn, "GetMultiComponent(" + x + "," + y + "): Invalid pos.");
+			return null;
 		}
 
 		/**
@@ -1164,10 +1163,9 @@ namespace SteamEngine.Regions {
 				int sx = x >> sectorFactor;
 				int sy = y >> sectorFactor;
 				return this.GetSector(sx, sy).HasStaticId(x, y, staticId);
-			} else {
-				Logger.WriteInfo(Globals.MapTracingOn, "HasStaticId(" + x + "," + y + "): Invalid pos.");
-				return false;
 			}
+			Logger.WriteInfo(Globals.MapTracingOn, "HasStaticId(" + x + "," + y + "): Invalid pos.");
+			return false;
 		}
 
 		#region Regions
@@ -1175,14 +1173,14 @@ namespace SteamEngine.Regions {
 			return this.GetSector(point.x >> sectorFactor, point.y >> sectorFactor).GetRegionFor(point.x, point.y);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Region GetRegionFor(IPoint2D point) {
 			int x = point.X;
 			int y = point.Y;
 			return this.GetSector(x >> sectorFactor, y >> sectorFactor).GetRegionFor(x, y);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Region GetRegionFor(Point2D point) {
 			int x = point.X;
 			int y = point.Y;
@@ -1193,7 +1191,7 @@ namespace SteamEngine.Regions {
 			return this.GetSector(x >> sectorFactor, y >> sectorFactor).GetRegionFor(x, y);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		internal void ActivateRegions(List<StaticRegion> list) {
 			//we dont add the rectangles directly to sectors, we first create a "matrix" of arraylists which are then "Staticed" to arrays and assigned to sectors
 			this.regions = list.ToArray();
@@ -1310,7 +1308,7 @@ namespace SteamEngine.Regions {
 			return true; //OK
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void RemoveDynamicRegion(DynamicRegion region) {
 			foreach (RegionRectangle rect in region.Rectangles) {
 				foreach (Sector sector in this.GetSectorsInRectangle(rect)) {

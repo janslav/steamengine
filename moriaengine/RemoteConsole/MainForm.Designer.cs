@@ -1,9 +1,12 @@
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace SteamEngine.RemoteConsole {
 	partial class MainForm {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private IContainer components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -163,20 +166,20 @@ namespace SteamEngine.RemoteConsole {
 
 		#endregion
 
-		private System.Windows.Forms.MainMenu mainMenu;
-		private System.Windows.Forms.MenuItem menuConsole;
-		private System.Windows.Forms.MenuItem menuExit;
-		private System.Windows.Forms.TabControl tabControl;
-		private System.Windows.Forms.TabPage systemTab;
+		private MainMenu mainMenu;
+		private MenuItem menuConsole;
+		private MenuItem menuExit;
+		private TabControl tabControl;
+		private TabPage systemTab;
 		private LogStrDisplay systemTabPage;
-		private System.Windows.Forms.MenuItem menuItem2;
-		private System.Windows.Forms.MenuItem menuDisconnect;
-		private System.Windows.Forms.MenuItem menuConnect;
-		private System.Windows.Forms.MenuItem menuRemoteServer;
-		private System.Windows.Forms.MenuItem menuStartGameServer;
-		private System.Windows.Forms.MenuItem menuRestartAuxServer;
-		private System.Windows.Forms.Timer reconnectingTimer;
-		private System.Windows.Forms.Timer packetHandlingTimer;
+		private MenuItem menuItem2;
+		private MenuItem menuDisconnect;
+		private MenuItem menuConnect;
+		private MenuItem menuRemoteServer;
+		private MenuItem menuStartGameServer;
+		private MenuItem menuRestartAuxServer;
+		private Timer reconnectingTimer;
+		private Timer packetHandlingTimer;
 	}
 }
 

@@ -17,8 +17,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using EQATEC.Profiler;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
+using SteamEngine.LScript;
 
 namespace SteamEngine {
 	enum FieldValueType : byte {
@@ -27,7 +31,7 @@ namespace SteamEngine {
 
 	public interface IFieldValueParser {
 		Type HandledType { get; }
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate")]
 		bool TryParse(string input, out object retVal);
 	}
 
@@ -61,7 +65,7 @@ namespace SteamEngine {
 		}
 
 		public static void Bootstrap() {
-			CompiledScripts.ClassManager.RegisterSupplySubclassInstances<IFieldValueParser>(RegisterParser, false, false);
+			ClassManager.RegisterSupplySubclassInstances<IFieldValueParser>(RegisterParser, false, false);
 		}
 
 		public static void RegisterParser(IFieldValueParser parser) {
@@ -161,7 +165,6 @@ namespace SteamEngine {
 					}
 
 					success = true;
-					return;
 				} finally {
 					if (!success) {
 						this.currentValue = wasCurrent;
@@ -174,7 +177,7 @@ namespace SteamEngine {
 		private object ResolveSingleValue(TemporaryValueImpl tempVI, string value, object retVal) {
 			if (!this.ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
 				string statement = string.Concat("return(", value, ")");
-				retVal = LScript.LScriptMain.RunSnippet(
+				retVal = LScriptMain.RunSnippet(
 					tempVI.filename, tempVI.line, Globals.Instance, statement);
 			}
 			return retVal;
@@ -183,17 +186,20 @@ namespace SteamEngine {
 		private static readonly Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private bool ResolveStringWithoutLScript(string value, ref object retVal) {
 			switch (this.fvType) {
 				case FieldValueType.Typeless:
 					if (TryResolveAsString(value, ref retVal)) {
 						return true;
-					} else if (TryResolveAsScript(value, ref retVal)) {
+					}
+					if (TryResolveAsScript(value, ref retVal)) {
 						return true;
-					} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
+					}
+					if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
 						return true;
-					} else if (TryResolveWithExternalParser(null, value, ref retVal)) {
+					}
+					if (TryResolveWithExternalParser(null, value, ref retVal)) {
 						return true;
 					}
 					break;
@@ -316,7 +322,7 @@ namespace SteamEngine {
 			return false;
 		}
 
-		[EQATEC.Profiler.SkipInstrumentation]
+		[SkipInstrumentation]
 		private FieldValueImpl GetFittingValueImpl() {
 			switch (this.fvType) {
 				case FieldValueType.Typeless:
@@ -421,7 +427,7 @@ namespace SteamEngine {
 			//}
 		}
 
-		[EQATEC.Profiler.SkipInstrumentation]
+		[SkipInstrumentation]
 		private abstract class FieldValueImpl {
 			internal abstract object Value { get; set; }
 			internal abstract FieldValueImpl Clone();
@@ -449,9 +455,8 @@ namespace SteamEngine {
 					this.holder.ResolveTemporaryState();
 					if (this.holder.currentValue == this) {
 						return this.holder.CurrentValue;
-					} else {
-						return this.holder.DefaultValue;
 					}
+					return this.holder.DefaultValue;
 				}
 				set {
 					if (this.holder.currentValue == this) {
@@ -469,28 +474,28 @@ namespace SteamEngine {
 			int model;
 
 			//resolving constructor
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal ModelValueImpl() {
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			private ModelValueImpl(ModelValueImpl copyFrom) {
 				this.thingDef = copyFrom.thingDef;
 				this.model = copyFrom.model;
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new ModelValueImpl(this);
 			}
 
 			internal override object Value {
-				get {
+				get
+				{
 					if (this.thingDef == null) {
 						return this.model;
-					} else {
-						return this.thingDef.Model;
 					}
+					return this.thingDef.Model;
 				}
 				set {
 					this.thingDef = value as ThingDef;
@@ -513,18 +518,18 @@ namespace SteamEngine {
 			object val;
 
 			//resolving constructor
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal TypedValueImpl(Type type) {
 				this.type = type;
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			protected TypedValueImpl(TypedValueImpl copyFrom) {
 				this.type = copyFrom.type;
 				this.val = copyFrom.val;
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new TypedValueImpl(this);
 			}
@@ -569,7 +574,7 @@ namespace SteamEngine {
 							} else if (value is String) {
 								sourceArray = Utility.SplitSphereString((string) value, false); //
 							} else {
-								sourceArray = new object[] { value }; //just wrap it in a 1-element array, gets converted in the next step
+								sourceArray = new[] { value }; //just wrap it in a 1-element array, gets converted in the next step
 							}
 
 							int n = sourceArray.Length;
@@ -592,16 +597,16 @@ namespace SteamEngine {
 			object obj;
 
 			//resolving constructor
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal TypelessValueImpl() {
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			private TypelessValueImpl(TypelessValueImpl copyFrom) {
 				this.obj = copyFrom.obj;
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new TypelessValueImpl(this);
 			}
@@ -623,17 +628,17 @@ namespace SteamEngine {
 
 		private class ThingDefValueImpl : TypedValueImpl {
 			//resolving constructor
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal ThingDefValueImpl(Type type)
 				: base(type) {
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			protected ThingDefValueImpl(ThingDefValueImpl copyFrom)
 				: base(copyFrom) {
 			}
 
-			[EQATEC.Profiler.SkipInstrumentation]
+			[SkipInstrumentation]
 			internal override FieldValueImpl Clone() {
 				return new ThingDefValueImpl(this);
 			}

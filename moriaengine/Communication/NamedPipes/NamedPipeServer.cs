@@ -18,7 +18,6 @@
 using System;
 using System.IO.Pipes;
 using System.Threading;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication.NamedPipes {
@@ -202,7 +201,6 @@ namespace SteamEngine.Communication.NamedPipes {
 			try {
 				this.NewBeginWaitForConnection();
 			} catch (ObjectDisposedException) {
-				return;
 			} catch (Exception e) {
 				Logger.WriteError(e);
 			}

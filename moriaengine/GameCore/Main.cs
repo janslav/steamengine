@@ -16,15 +16,19 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using System.Threading;
 using SteamEngine.AuxServerPipe;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.ClassTemplates;
+using SteamEngine.LScript;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using Timer = SteamEngine.Timers.Timer;
 
 namespace SteamEngine {
 	public static class MainClass {
@@ -80,10 +84,10 @@ namespace SteamEngine {
 			SteamMain();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void SteamMain() {
 			//name the console window for better recognizability
-			Console.Title = "SE Game Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+			Console.Title = "SE Game Server - " + Assembly.GetExecutingAssembly().Location;
 
 			try {
 				HighPerformanceTimer.Init();
@@ -184,7 +188,7 @@ namespace SteamEngine {
 				Globals.Resync();
 				//}
 
-				Timers.Timer.StartTimerThread();
+				Timer.StartTimerThread();
 
 				return true;
 			}
@@ -294,9 +298,9 @@ namespace SteamEngine {
 			RunLevelManager.SetShutdown();
 
 			ClearWorld();
-			Timers.Timer.Clear();
+			Timer.Clear();
 			LocManager.ForgetInstancesFromAssembly(ClassManager.ScriptsAssembly);
-			LocManager.ForgetInstancesOfType(typeof(LScript.ScriptedLocStringCollection));
+			LocManager.ForgetInstancesOfType(typeof(ScriptedLocStringCollection));
 			//CompilerInvoker.UnLoadScripts();//bye-bye to all stored assemblies and such that are not core-related
 			ClassManager.ForgetScripts();//bye-bye to all storec types
 			GeneratedCodeUtil.ForgetScripts();//bye-bye to scripted code generators
@@ -398,7 +402,7 @@ namespace SteamEngine {
 				Logger.WriteDebug("triggering @shutdown");
 				Globals.Instance.TryTrigger(TriggerKey.shutdown, new ScriptArgs(true));
 			}
-			Timers.Timer.Clear();
+			Timer.Clear();
 			RunLevelManager.SetDead();
 		}
 	}
