@@ -103,7 +103,7 @@ namespace SteamEngine {
 			It will return null if the defnumber doesn't correspond to a chardef or itemdef.
 			This calls FindCharDef and FindItemDef to do the real work.
 			
-			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
+			@param defnumber The ID# of the def, which must be bigger or equal to 0 and smaller than MaxItemModels.
 		*/
 		public static ThingDef GetByModel(int defnumber) {
 			ThingDef tdone = null;
@@ -358,7 +358,7 @@ namespace SteamEngine {
 			If there is no AbstractItemDef for that model #, this returns null.
 			Passing a defnumber which is too high is an error.
 			
-			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
+			@param defnumber The ID# of the def, which must be bigger or equal to 0 and smaller than MaxItemModels.
 		*/
 		public static AbstractItemDef FindItemDef(int defnumber) {
 			AbstractItemDef def;
@@ -373,7 +373,7 @@ namespace SteamEngine {
 			If there is no AbstractItemDef for that model #, this returns null.
 			Passing a defnumber which is too high is an error.
 			
-			@param defnumber The ID# of the def, which must be >=0 and <MaxItemModels.
+			@param defnumber The ID# of the def, which must be bigger or equal to 0 and smaller than MaxItemModels.
 		*/
 		public static AbstractCharacterDef FindCharDef(int defnumber) {
 			AbstractCharacterDef def;

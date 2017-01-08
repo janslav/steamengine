@@ -20,11 +20,11 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[ViewableClass]
 	/// <summary>
 	/// This class holds information about one ability the user has - the number of ability points 
 	/// and any additional info (such as timers connected with the ability running etc.)
 	/// </summary>
+	[ViewableClass]
 	public sealed class Ability {
 		private byte realPoints;
 		private sbyte modification;

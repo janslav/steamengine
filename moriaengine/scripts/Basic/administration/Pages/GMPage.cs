@@ -102,8 +102,8 @@ namespace SteamEngine.CompiledScripts {
 			return counter;
 		}
 
-		[SteamFunction]
 		/// <summary>Create a new gmpage, store it in the gm pages table and notify the sender about the state</summary>
+		[SteamFunction]
 		public static void Page(AbstractCharacter sender, ScriptArgs text) {
 			if (text == null || text.Args.Equals("")) {
 				sender.SysMessage("Odmitnuta prazdna page");

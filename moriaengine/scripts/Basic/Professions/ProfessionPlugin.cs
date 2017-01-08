@@ -20,11 +20,11 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[ViewableClass]
 	/// <summary>
 	/// This class holds the profession assigned to one character (cont field). 
 	/// it holds a reference to the ProfessionDef, dispatches all trigger calls etc.
 	/// </summary>
+	[ViewableClass]
 	public partial class ProfessionPlugin {
 		internal static PluginKey professionKey = PluginKey.Acquire("_profession_");
 

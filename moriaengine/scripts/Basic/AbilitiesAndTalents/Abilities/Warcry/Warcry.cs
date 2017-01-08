@@ -57,8 +57,10 @@ namespace SteamEngine.CompiledScripts {
 			return chr.GetAbility(this);
 		}
 
+		/// <summary>
+		/// Running the warcry (if the player has the ability)
+		/// </summary>
 		[SteamFunction("Warcry")]
-		/// <summary>Running the warcry (if the player has the ability)</summary>
 		public static void WarcryFunction(Character chr, ScriptArgs args) {
 			WarcryDef wcrDef = SingletonScript<WarcryDef>.Instance;
 			wcrDef.Activate(chr);

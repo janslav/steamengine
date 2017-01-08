@@ -326,7 +326,6 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		/// <summary>
 		/// Writes out the object(s) previously cached by the Save method.
 		/// </summary>
@@ -337,6 +336,7 @@ namespace SteamEngine.Persistence {
 		/// Now they will be written to the supplied SaveStream, each in it's own proper section, etc. 
 		/// Note that objects that are supposed to be written by other mechanisms, such as Things, will not be written out here.
 		/// </remarks>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void FlushCache(SaveStream writer) {
 			while (SaverListIsNotEmpty) {
 				try {
@@ -596,13 +596,13 @@ namespace SteamEngine.Persistence {
 			throw new UnrecognizedValueException("We really do not know what could the loaded string '" + LogStr.Ident(input) + "' refer to.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		/// <summary>
 		/// Use this if you know that the loaded value is supposed to be a string.
 		/// If it's not, this method will try to load it anyway, by calling the standard Load(string) method.
 		/// </summary>
 		/// <param name="input">The input.</param>
 		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static object OptimizedLoad_String(string input) {
 			object retVal = null;
 			if (TryLoadString(input, ref retVal)) {

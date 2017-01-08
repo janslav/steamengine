@@ -229,7 +229,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.gump = gump;
 			this.xPos = xPos;
 			this.yPos = yPos;
-			this.height = height;
 			this.width = width;
 			this.level = 0; //basically it is the 0th level item in the dialog
 		}

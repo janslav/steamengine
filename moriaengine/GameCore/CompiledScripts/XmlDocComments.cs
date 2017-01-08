@@ -49,11 +49,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		/// <summary>
-		/// Retrieves the xml doc comments for a given <see cref="System.Refection.EventInfo"/>.
+		/// Retrieves the xml doc comments for a given <see cref="System.Reflection.EventInfo"/>.
 		/// </summary>
 		/// 
 		/// <param name="eventInfo">
-		/// The <see cref="System.Refection.EventInfo"/> for which the doc comments are retrieved.
+		/// The <see cref="System.Reflection.EventInfo"/> for which the doc comments are retrieved.
 		/// </param>
 		/// 
 		/// <returns>

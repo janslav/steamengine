@@ -40,8 +40,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return retVal;
 		}
 
-		[SteamFunction]
 		/// <summary>Returns a collection of basic itemdefs for all colored weapons</summary>
+		[SteamFunction]
 		public static ICollection<WeaponDef> GetBasicWeapons() {
 			if (basicWeapons == null) {
 				basicWeapons = InitBasicItems<WeaponDef, ColoredWeaponDef>();
@@ -50,8 +50,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return basicWeapons;
 		}
 
-		[SteamFunction]
 		/// <summary>Returns a collection of basic itemdefs for all colored armors</summary>
+		[SteamFunction]
 		public static ICollection<ProjectileDef> GetBasicProjectiles() {
 			if (basicProjectiles == null) {
 				basicProjectiles = InitBasicItems<ProjectileDef, ColoredProjectileDef>();

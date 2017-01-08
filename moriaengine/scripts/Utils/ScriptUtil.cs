@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 		/// returns a number based on the bounds and ratio
 		/// </summary>
 		/// <remarks>
-		/// When ratio == 0, returns min; when ratio == 1.0, returns max.<br>
+		/// When ratio == 0, returns min; when ratio == 1.0, returns max.
 		/// Otherwise, returns a number based on simple linear interpolation. 
 		/// Note that ratio can also be negative or greater than 1
 		/// </remarks>

@@ -68,11 +68,11 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		/// <summary>
 		/// Try to obtain a int32 (int) tag value. Return 0 if no tag is found. Not using (int) cast 
 		/// so we are able to accept a non 'int' numbers such as uints, shorts etc.
 		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static int IGetTag(TagHolder from, TagKey which) {
 			return ConvertTools.ToInt32(from.GetTag(which));
 		}

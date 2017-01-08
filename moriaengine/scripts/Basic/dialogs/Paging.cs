@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		new IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage);
 	}
 
-	/// <summary>Wrapper class for List<T> which allows us to use the paging</summary>
+	/// <summary>Wrapper class for List{T} which allows us to use the paging</summary>
 	public class PageableList<T> : IPageableCollection<T> {
 		private List<T> wrappedList;
 

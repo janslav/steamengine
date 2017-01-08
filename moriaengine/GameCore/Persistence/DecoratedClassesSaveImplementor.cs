@@ -72,7 +72,6 @@ namespace SteamEngine.Persistence {
 	/// <summary>
 	/// Use to mark the simple initializer of loaded instances
 	/// </summary>
-	/// <remarks>
 	/// Use this attribute to decorate the method of your class which should
 	/// be called after all other loading methods. This method should be public and have no parameters.
 	/// <seealso cref="SaveableDataAttribute"/>

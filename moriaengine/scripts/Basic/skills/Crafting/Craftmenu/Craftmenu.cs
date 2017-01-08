@@ -20,11 +20,11 @@ using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	[HasSavedMembers]
 	/// <summary>
 	/// Class containing all main crafting categories (according to the crafting skills).
 	/// Each skill has one main category for its items and possible subcategories
-	/// </
+	/// </summary>
+	[HasSavedMembers]
 	public static class CraftmenuContents {
 		[SavedMember]
 		private static readonly Dictionary<SkillName, CraftmenuCategory> mainCategories = new Dictionary<SkillName, CraftmenuCategory>();
@@ -89,12 +89,13 @@ namespace SteamEngine.CompiledScripts {
 		void Bounce(AbstractItem whereto);
 	}
 
-	[ViewableClass]
-	[SaveableClass]
+
 	/// <summary>
 	/// Craftmenu category class. This is the entity where all Items from the menu are stored as well 
 	/// as it is a container for another subcategories
 	/// </summary>
+	[ViewableClass]
+	[SaveableClass]
 	public class CraftmenuCategory : ICraftmenuElement, IDeletable {
 		internal bool isLoaded = false;
 
@@ -239,9 +240,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
+	/// <summary>Craftmenu item class. This is the entity representing a single Item in the craftmenu</summary>
 	[SaveableClass]
 	[ViewableClass]
-	/// <summary>Craftmenu item class. This is the entity representing a single Item in the craftmenu</summary>
 	public class CraftmenuItem : ICraftmenuElement {
 		[SaveableData]
 		public ItemDef itemDef;

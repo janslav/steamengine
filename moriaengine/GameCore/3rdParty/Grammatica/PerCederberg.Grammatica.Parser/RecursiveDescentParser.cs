@@ -48,7 +48,7 @@ namespace PerCederberg.Grammatica.Parser {
 	[EQATEC.Profiler.SkipInstrumentation]
 	public class RecursiveDescentParser : Parser {
 
-		/**
+		/*
 		 * The map of pattern look-ahead sets. The map is indexed by
 		 * the production pattern object.
 		 */
