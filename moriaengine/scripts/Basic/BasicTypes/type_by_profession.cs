@@ -15,11 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using SteamEngine;
-using SteamEngine.CompiledScripts;
-using SteamEngine.CompiledScripts.Dialogs;
-
 namespace SteamEngine.CompiledScripts {
 
 	public class t_bee_hive : CompiledTriggerGroup {

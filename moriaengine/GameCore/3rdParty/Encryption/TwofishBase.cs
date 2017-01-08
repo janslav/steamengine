@@ -1,7 +1,5 @@
 //#define		FEISTEL	 
 
-using System;
-using System.Diagnostics;
 using System.Security.Cryptography;
 
 /*

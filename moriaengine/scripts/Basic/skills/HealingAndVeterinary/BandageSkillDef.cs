@@ -16,11 +16,8 @@
 */
 
 using System;
-using SteamEngine;
 using SteamEngine.Timers;
-using SteamEngine.Persistence;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 

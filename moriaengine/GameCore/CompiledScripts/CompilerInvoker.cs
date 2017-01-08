@@ -16,18 +16,7 @@
 */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Reflection;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using Microsoft.CSharp;
-using Microsoft.VisualBasic;
-using System.Text;
-using System.Globalization;
-using SteamEngine.Timers;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {

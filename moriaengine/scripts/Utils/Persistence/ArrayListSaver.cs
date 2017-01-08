@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections;
-using SteamEngine;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {

@@ -16,11 +16,7 @@
 */
 
 using System;
-using System.Collections;
 using SteamEngine.Common;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using SteamEngine;
 using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;

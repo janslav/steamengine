@@ -16,7 +16,6 @@
 */
 
 using System;
-using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class e_test_all_generic : CompiledTriggerGroup {

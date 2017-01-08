@@ -29,8 +29,6 @@
 //the original file still most probably lies in the 3dParty directory
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace SteamEngine.Timers {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]

@@ -15,12 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using SteamEngine;
 using SteamEngine.Networking;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public static class PlayerCreation {

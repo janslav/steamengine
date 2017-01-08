@@ -15,13 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Net;
-using SteamEngine;
-using System.Collections;
-using SteamEngine.CompiledScripts;
-using SteamEngine.LScript;
-
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	public class D_Firewall_BlockIPRange : CompiledGumpDef {

@@ -1,9 +1,3 @@
-using System;
-using System.Reflection;
-using System.Collections;
-using SteamEngine;
-using SteamEngine.Common;
-
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class ArmsLoreSkillDef : SkillDef {

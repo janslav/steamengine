@@ -16,7 +16,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using SteamEngine.Common;
 
 namespace SteamEngine {

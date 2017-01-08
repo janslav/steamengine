@@ -16,11 +16,7 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
-using SteamEngine;
 using SteamEngine.Persistence;
 using SteamEngine.Timers;
 using SteamEngine.Common;

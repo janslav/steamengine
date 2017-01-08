@@ -15,9 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Text;
-using System.Collections;
 
 namespace SteamEngine {
 	public class ScriptArgs {

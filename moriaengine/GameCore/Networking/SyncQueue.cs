@@ -16,15 +16,8 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
-using System.IO;
-using System.Net;
 using System.Threading;
-using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]

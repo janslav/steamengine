@@ -16,12 +16,8 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Timers;
 using SteamEngine.Persistence;
-using SteamEngine.Common;
 
 
 namespace SteamEngine.CompiledScripts {

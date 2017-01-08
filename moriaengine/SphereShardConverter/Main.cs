@@ -19,10 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
-using System.Globalization;
 using SteamEngine.Common;
-using System.Configuration;
-using SteamEngine;
 
 namespace SteamEngine.Converter {
 

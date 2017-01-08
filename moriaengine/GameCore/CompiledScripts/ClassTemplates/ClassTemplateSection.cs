@@ -17,15 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
-using System.Globalization;
-using SteamEngine.Common;
-using System.Configuration;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 	internal class ClassTemplateSection {

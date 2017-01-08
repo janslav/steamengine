@@ -15,9 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using SteamEngine;
-
 namespace SteamEngine.CompiledScripts {
 
 	public class t_deed : CompiledTriggerGroup {

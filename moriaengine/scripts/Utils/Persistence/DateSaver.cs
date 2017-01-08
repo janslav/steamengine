@@ -19,7 +19,6 @@ using System;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using SteamEngine.Persistence;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class DateTimeImplementor : ISimpleSaveImplementor {

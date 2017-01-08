@@ -18,13 +18,6 @@
 //will be alternative to Timer that runs triggers...
 //this runs scripted methods - functional ScriptHolders
 
-using System;
-using System.IO;
-using System.Timers;
-using System.Collections;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {

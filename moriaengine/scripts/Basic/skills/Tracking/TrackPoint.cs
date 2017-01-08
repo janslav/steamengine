@@ -16,13 +16,8 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 

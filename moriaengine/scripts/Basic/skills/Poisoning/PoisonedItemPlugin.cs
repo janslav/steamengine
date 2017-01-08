@@ -16,14 +16,7 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.Regions;
-using SteamEngine.Timers;
-using SteamEngine.Persistence;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {

@@ -16,12 +16,7 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]

@@ -30,16 +30,10 @@ In this way, we counterintuitively gain performance by pinning these objects.
 -SL
 */
 
-using System;
-using System.Net.Sockets;
-using System.Threading;
-using System.Diagnostics;
 #if USEFASTDLL
 using System.Runtime.InteropServices;
 //Test fix. #warning FastDLL isn't working right now, you should probably run without it until I get it fixed (You should delete the fastdll files in bin and then run distrib/compile.bat to rebuild everything (it won't rebuild fastdll, don't worry)).
 #endif
-using SteamEngine;
-using SteamEngine.Common;
 
 namespace SteamEngine {
 	internal static class FastDLL {

@@ -15,11 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
-
-using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.Regions {

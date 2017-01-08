@@ -18,9 +18,6 @@
 using System;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace SteamEngine.Common {
 	public enum LogStyles : int {

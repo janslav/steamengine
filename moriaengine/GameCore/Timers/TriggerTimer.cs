@@ -15,12 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.IO;
-using System.Collections;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Text;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {

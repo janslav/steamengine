@@ -16,8 +16,6 @@
 */
 
 using System;
-using SteamEngine;
-using System.Collections;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Test : CompiledGumpDef {

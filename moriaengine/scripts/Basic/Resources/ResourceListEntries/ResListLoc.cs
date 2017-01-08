@@ -15,8 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections.Generic;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {

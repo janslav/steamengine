@@ -19,9 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.CodeDom;
-using System.CodeDom.Compiler;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.CompiledScripts {
 

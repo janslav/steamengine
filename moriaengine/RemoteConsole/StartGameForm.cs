@@ -1,12 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 using SteamEngine.Common;
-using SteamEngine.Communication;
 
 namespace SteamEngine.RemoteConsole {
 	public partial class StartGameForm : Form {

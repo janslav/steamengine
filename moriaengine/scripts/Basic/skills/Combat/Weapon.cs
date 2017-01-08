@@ -16,7 +16,6 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]

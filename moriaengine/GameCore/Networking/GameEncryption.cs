@@ -15,14 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
-using System.IO;
-using System.Net;
 using System.Security.Cryptography;
 
 namespace SteamEngine.Networking {

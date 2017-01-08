@@ -16,21 +16,7 @@
 */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Text;
-using System.Globalization;
-using System.Threading;
 using SteamEngine.Common;
-using SteamEngine.Timers;
-using SteamEngine.CompiledScripts;
-using SteamEngine.CompiledScripts.ClassTemplates;
-using SteamEngine.Persistence;
-using SteamEngine.Regions;
-using SteamEngine.AuxServerPipe;
 
 namespace SteamEngine {
 

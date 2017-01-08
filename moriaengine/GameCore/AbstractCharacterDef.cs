@@ -15,12 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
-using SteamEngine.Common;
-
 namespace SteamEngine {
 
 	public abstract class AbstractCharacterDef : ThingDef {

@@ -17,16 +17,10 @@
 
 using System;
 //using System.Windows.Forms;
-using System.Text;
 using System.Reflection;
-using System.Runtime.InteropServices;
 #if !MONO
-using System.Drawing;
 #endif
-using System.Globalization;
-using System.IO;
 using System.Collections;
-using SteamEngine.Common;
 
 namespace SteamEngine.Common {
 	[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
