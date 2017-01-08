@@ -1,19 +1,19 @@
-///*
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
+/*
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//    Or visit http://www.gnu.org/copyleft/gpl.html
-//*/
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Or visit http://www.gnu.org/copyleft/gpl.html
+*/
 
 //using System;
 //using System.Net;
@@ -28,22 +28,22 @@
 //using SteamEngine.Common;
 //using SteamEngine;
 
-///**
+/*
 
-//Once again, I made something and then I generalized it. Why? Because the performance counter stuff in
-//.NET simply doesn't want to do what I want it to do. And it's a PITA to use, too. This, on the other hand,
-//should be easy, if I do this well.
+Once again, I made something and then I generalized it. Why? Because the performance counter stuff in
+.NET simply doesn't want to do what I want it to do. And it's a PITA to use, too. This, on the other hand,
+should be easy, if I do this well.
 
-//This expects inputs to be of type 'long' - You can measure amounts, or you can measure ticks. If you specify
-//a typeclass of M the ticks will be converted to milliseconds. Stick a number after the M and it rounds to
-//that precision. Example:
-//statsSyncIn.Value("M5","Time taken to receive");
+This expects inputs to be of type 'long' - You can measure amounts, or you can measure ticks. If you specify
+a typeclass of M the ticks will be converted to milliseconds. Stick a number after the M and it rounds to
+that precision. Example:
+statsSyncIn.Value("M5","Time taken to receive");
 
-//As for rates:
-//statsSyncOut.Rate("Time blocked","bytes","Milliseconds that we were blocked per byte sent. (less is better)");
-//That's Rate(var1's name, var2's name, description)
+As for rates:
+statsSyncOut.Rate("Time blocked","bytes","Milliseconds that we were blocked per byte sent. (less is better)");
+That's Rate(var1's name, var2's name, description)
 
-//*/
+*/
 //namespace SteamEngine {
 //    public class Statistics {
 //        public static bool StatisticsTracingOn = TagMath.ParseBoolean(ConfigurationManager.AppSettings["Statistics Trace Messages"]);

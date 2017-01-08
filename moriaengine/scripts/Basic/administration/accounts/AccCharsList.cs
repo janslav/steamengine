@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					continue;
 				}
 				Player castChar = (Player) oneChar;
-				///TODO poresit barvy podle prislusnosti ke strane!
+				// TODO poresit barvy podle prislusnosti ke strane!
 				Hues color = Hues.WriteColor;
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(rowCntr + 10).Build(); //char info
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(castChar.Name).Hue(color).Build(); //plr name

@@ -21,12 +21,12 @@ using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
-	[SaveableClass]
 	/// <summary>
 	/// Rectangle class for dialogs - the mutable one. It will be used for operating with " 
 	/// "rectangles when editing region. After setting to the region it will be transformed to normal RegionRectangle
-	/// </summary>	
+	/// </summary>
+	[Dialogs.ViewableClass]
+	[SaveableClass]
 	public class MutableRectangle : AbstractRectangle {
 		public int minX, minY, maxX, maxY;
 

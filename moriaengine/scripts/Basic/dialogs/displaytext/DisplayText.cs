@@ -74,8 +74,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[SteamFunction]
 		/// <summary>Zobrazí dialog s volitelným labelem a textem v nìm</summary>
+		[SteamFunction]
 		public static void DisplayText(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 2) {
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs(args.Args[0], args.Args[1]));
@@ -84,8 +84,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		[SteamFunction]
 		/// <summary>Zobrazí dialog s nadpisem CHYBA a textovým popisem chyby</summary>
+		[SteamFunction]
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
 				DialogArgs newArgs = new DialogArgs("CHYBA", args.Argv[0]);

@@ -132,11 +132,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[NoShow]
 		/// <summary>
 		/// Field for holding the number of seconds between next activation try.
 		/// You can use 0 for no delay
 		/// </summary>
+		[NoShow]
 		public TimeSpan CooldownAsSpan {
 			get {
 				return TimeSpan.FromSeconds(this.Cooldown);

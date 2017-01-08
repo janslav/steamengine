@@ -20,8 +20,8 @@ using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 
-	[HasSavedMembers]
 	/// <summary>Testovaci trida pro dialog nastaveni, bude mit sadu saved memberu.</summary>
+	[HasSavedMembers]
 #pragma warning disable 0414 //disable the boring "private field never used warning"
 	public static class TESTSettClass {
 		[SavedMember("attr1", "Category1")]

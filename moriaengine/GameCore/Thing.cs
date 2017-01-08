@@ -687,7 +687,7 @@ namespace SteamEngine {
 			}
 		}
 
-		/// <summary>Sets all uids to lowest possible value. Always save & restart after doing this.</summary>
+		/// <summary>Sets all uids to lowest possible value. Always save and restart after doing this.</summary>
 		public static void ResetAllUids() {
 			things.ReIndexAll();
 		}
@@ -1698,22 +1698,22 @@ namespace SteamEngine {
 		}
 
 
-		///*
-		//    Method: CheckForInvalidCoords
-		//        This function only exists in the debug build, and is not run in non-debug builds.
+		/*
+		   Method: CheckForInvalidCoords
+		       This function only exists in the debug build, and is not run in non-debug builds.
 
-		//        Checks the coords to see if they are outside the map. Since maps start at 0,0 and coordinates
-		//        are unsigned, X and Y are only checked against the max X and Y for the map, and not against 0,0.
+		       Checks the coords to see if they are outside the map. Since maps start at 0,0 and coordinates
+		       are unsigned, X and Y are only checked against the max X and Y for the map, and not against 0,0.
 
-		//        This will definitely trip (Throw a SanityCheckException) if the item never got real coordinates
-		//        after BeingDroppedFromContainer was called, so this is called as a sanity check by methods which
-		//        call BeingDroppedFromContainer but rely on other methods to give it a real location
-		//        (after the other methods have been called).
+		       This will definitely trip (Throw a SanityCheckException) if the item never got real coordinates
+		       after BeingDroppedFromContainer was called, so this is called as a sanity check by methods which
+		       call BeingDroppedFromContainer but rely on other methods to give it a real location
+		       (after the other methods have been called).
 
-		//        This will not trip if the item is in a container (or equipped), since invalid coordinates ARE
-		//        used for equipped items (Specifically, X=7000).
+		       This will not trip if the item is in a container (or equipped), since invalid coordinates ARE
+		       used for equipped items (Specifically, X=7000).
 
-		//        This does not check Z.
+		       This does not check Z.
 		// */
 		//[Conditional("DEBUG")]
 		//internal void CheckForInvalidCoords() {

@@ -20,11 +20,11 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[ViewableClass]
 	/// <summary>
 	/// Plugin managing all characters regenerations, on timer periodically checks all regens 
 	/// and adds correct number of points to be regenerated
 	/// </summary>
+	[ViewableClass]
 	public partial class RegenerationPlugin {
 		//this is to initialize (create the instance) of the Regen.Plug.Def. it must be here as bellow or 
 		//somewhere in the LScript as simple [RegenerationPluginDef p_regenerations]

@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts {
 		public CombatSettings() {
 		}
 
-		[SaveableData]
 		/// <summary>How long should a character remember it's combat targets?</summary>
+		[SaveableData]
 		public double secondsToRememberTargets = 300;
 
 		[SaveableData]
@@ -85,12 +85,12 @@ namespace SteamEngine.CompiledScripts {
 		[SaveableData]
 		public double armorClassMvP = 200; //nastaveni_global_MvP_armorfactor
 
-		[SaveableData]
 		/// <summary>Every case other than (M is attacker, P is defender)</summary>
+		[SaveableData]
 		public double armorRandEffectMin = 0.945; //skill_parrying.effect
 
-		[SaveableData]
 		/// <summary>Every case other than (M is attacker, P is defender)</summary>
+		[SaveableData]
 		public double armorRandEffectMax = 1.050; //skill_parrying.effect
 
 		[SaveableData]

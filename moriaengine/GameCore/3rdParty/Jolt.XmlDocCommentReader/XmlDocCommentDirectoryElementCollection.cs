@@ -47,25 +47,16 @@ namespace Jolt
 
         #region ConfigurationElementCollection members --------------------------------------------
 
-        /// <summary>
-        /// <see cref="ConfigurationElement.CreateNewElement()"/>
-        /// </summary>
         protected override ConfigurationElement CreateNewElement()
         {
             return new XmlDocCommentDirectoryElement();
         }
 
-        /// <summary>
-        /// <see cref="ConfigurationElement.CreateNewElement(string)"/>
-        /// </summary>
         protected override ConfigurationElement CreateNewElement(string elementName)
         {
             return new XmlDocCommentDirectoryElement(elementName);
         }
 
-        /// <summary>
-        /// <see cref="ConfigurationElement.GetElementKey(ConfigurationElement)"/>
-        /// </summary>
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((XmlDocCommentDirectoryElement)element).Name;

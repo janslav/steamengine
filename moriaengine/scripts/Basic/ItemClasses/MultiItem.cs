@@ -243,7 +243,7 @@ namespace SteamEngine.CompiledScripts {
 					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
 				region = new MultiRegion(this, newRectangles);
-				///TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!
+				// TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!
 			}
 		}
 	}

@@ -133,8 +133,8 @@ namespace SteamEngine.CompiledScripts {
 	}
 	#endregion Dialog enums
 
-	[Flags]
 	/// <summary>specification of various localities where to look for resources</summary>
+	[Flags]
 	public enum ResourcesLocality : int {
 		NonSpecified = 0x000, //not specified where to look for resources (used for resources of type: abilities,skills,triggergroups etc)
 
@@ -153,8 +153,8 @@ namespace SteamEngine.CompiledScripts {
 		FindFirst = 2 //searches until the first corresponding item is found
 	}
 
-	[Flags]
 	/// <summary>Urcuje, jakej rezist se ma aplikovat na dotycny damage.</summary>
+	[Flags]
 	public enum DamageType : int {
 		/// <summary>Damage neredukovano</summary>
 		Irresistable = 0x000000,

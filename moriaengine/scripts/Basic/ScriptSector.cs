@@ -24,8 +24,8 @@ using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
 	/// <summary>Sector-defining class used in various scripts</summary>
+	[Dialogs.ViewableClass]
 	public class ScriptSector {
 		/// <summary>
 		/// Dictionary mapping the computed SectorKey to the ScriptSector 

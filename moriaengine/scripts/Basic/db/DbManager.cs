@@ -25,11 +25,11 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	[HasSavedMembers]
 	public static class DbManager {
-		[SavedMember("DBConfig", "Database configuration")]
 		/// <summary>
 		/// This will appear as a subdialog in the settings dialog, allowing us to set 
 		/// database parametes online.
 		/// </summary>
+		[SavedMember("DBConfig", "Database configuration")]
 		private static DbConfig config = new DbConfig();
 
 		public static DbConfig Config {

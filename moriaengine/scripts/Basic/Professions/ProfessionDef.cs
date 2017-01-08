@@ -21,8 +21,8 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[ViewableClass]
 	/// <summary>Def listing fields necessary for all professions. Actual profession-related active code is in ProfessionPlugin class</summary>
+	[ViewableClass]
 	public class ProfessionDef : AbstractIndexedDef<ProfessionDef, string> {
 		#region Accessors
 		public static new ProfessionDef GetByDefname(string defname) {
