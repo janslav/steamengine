@@ -38,16 +38,15 @@ namespace SteamEngine.CompiledScripts {
 				if (rolesByKey.TryGetValue(key, out prevRole)) {
 					if (role == prevRole) {
 						return DenyResultMessages.Allow; // we're already in place, all is ok
-					} else {
-						DenyResult result = role.Trigger_DenyAddMember(chr); //check if we can enter this role
-						if (result.Allow) {
-							result = TryUnAssign(chr, prevRole); //check if we can leave the previous role
-							if (!result.Allow) {
-								return result; //can't leave previous one => can't enter new one
-							}
-						}
-						return result;
 					}
+					DenyResult result = role.Trigger_DenyAddMember(chr); //check if we can enter this role
+					if (result.Allow) {
+						result = TryUnAssign(chr, prevRole); //check if we can leave the previous role
+						if (!result.Allow) {
+							return result; //can't leave previous one => can't enter new one
+						}
+					}
+					return result;
 				}
 			} else {
 				DenyResult result = role.Trigger_DenyAddMember(chr);
@@ -75,12 +74,12 @@ namespace SteamEngine.CompiledScripts {
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 				Role prevRole;
-				if (rolesByKey.TryGetValue(key, out prevRole)) {
+				if (rolesByKey.TryGetValue(key, out prevRole))
+				{
 					if (role == prevRole) {
 						return; // we're already in place, all is ok
-					} else {
-						UnAssign(chr, role);
 					}
+					UnAssign(chr, role);
 				}
 			} else {
 				rolesByKey = new Dictionary<RoleKey, Role>();

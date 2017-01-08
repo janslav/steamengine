@@ -16,8 +16,10 @@
  */
 
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class MeditationSkillDef : SkillDef {
 
 		public MeditationSkillDef(string defname, string filename, int headerLine)
@@ -107,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class MeditationPlugin {
 		public static readonly MeditationPluginDef defInstance = new MeditationPluginDef("p_meditation", "C#scripts", -1);
 		internal static PluginKey meditationPluginKey = PluginKey.Acquire("_meditation_");
@@ -137,7 +139,7 @@ namespace SteamEngine.CompiledScripts {
 		//TODO - other triggers such as ItemPickup, Speak, DClick, use another skill or ability etc...
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class MeditationPluginDef {
 	}
 }

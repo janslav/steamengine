@@ -17,13 +17,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_UnOperator : OpNode, IOpNodeHolder {
 		//accepts SimpleCodeBody, CodeBody
 		internal OpNode obj;
@@ -75,9 +76,8 @@ namespace SteamEngine.LScript {
 						//+ does nothing to numbers
 						this.ReplaceSelf(this.obj);
 						return this.result;
-					} else {
-						newNode = this.FindOperatorMethod("op_UnaryPlus");
 					}
+					newNode = this.FindOperatorMethod("op_UnaryPlus");
 					break;
 				case ("-"):
 					if (ConvertTools.IsNumberType(this.result.GetType())) {
@@ -112,7 +112,7 @@ namespace SteamEngine.LScript {
 				}
 				OpNode newNodeAsOpNode = (OpNode) newNode;
 				this.ReplaceSelf(newNodeAsOpNode);
-				retVal = newNode.TryRun(vars, new object[] {this.result });
+				retVal = newNode.TryRun(vars, new[] {this.result });
 				if (this.obj is OpNode_Object) {
 					//operand is constant -> result is also constant
 					OpNode constNode = OpNode_Object.Construct(this.parent, retVal);
@@ -124,7 +124,8 @@ namespace SteamEngine.LScript {
 				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
-		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
+		private OpNode_MethodWrapper FindOperatorMethod(string methodName)
+		{
 			if (this.result != null) {
                 List<MethodInfo> matches = new List<MethodInfo>();
 
@@ -142,9 +143,10 @@ namespace SteamEngine.LScript {
 				}
 				if (matches.Count == 1) {
 					MethodInfo method = MemberWrapper.GetWrapperFor(matches[0]);
-					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode, method, new OpNode[] {this.obj });
+					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode, method, this.obj);
 					return newNode;
-				} else if (matches.Count > 1) {
+				}
+				if (matches.Count > 1) {
 					//List<MethodInfo> resolvedAmbiguities;
 					//if (TryResolveAmbiguity(ambiguities, results, out resolvedAmbiguities)) {
 
@@ -159,17 +161,16 @@ namespace SteamEngine.LScript {
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
 				return null;
-			} else {
-				throw new InterpreterException("The operand is a null reference.",
-					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
+			throw new InterpreterException("The operand is a null reference.",
+				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("( ");
 			str.Append(LScriptMain.GetString(this.operatorNode).Trim()).Append(" ");
-			str.Append(this.obj.ToString()).Append(")");
+			str.Append(this.obj).Append(")");
 			return str.ToString();
 		}
 	}

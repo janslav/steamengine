@@ -15,8 +15,8 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System.Collections.Generic;
 using System.CodeDom;
+using System.Collections.Generic;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 	internal abstract class ClassTemplateBase {

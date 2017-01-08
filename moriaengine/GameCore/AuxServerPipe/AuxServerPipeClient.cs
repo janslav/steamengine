@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using SteamEngine.Common;
 using SteamEngine.Communication;
@@ -51,7 +52,8 @@ namespace SteamEngine.AuxServerPipe {
 			}
 		}
 
-		static Timer connectingTimer = new Timer(new TimerCallback(delegate(object ignored) {
+		static Timer connectingTimer = new Timer(delegate
+		{
 			NamedPipeConnection<AuxServerPipeClient> c = null;
 			try {
 
@@ -67,13 +69,13 @@ namespace SteamEngine.AuxServerPipe {
 			if (c == null) {
 				StartTryingToConnect();
 			}
-		}));
+		});
 
 		private static void StartTryingToConnect() {
 			connectingTimer.Change(TimeSpan.FromSeconds(1), TimeSpan.Zero);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxServerPipe.AuxServerPipeClient+AnnounceStartupFinishedTimer")]
+		[SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxServerPipe.AuxServerPipeClient+AnnounceStartupFinishedTimer")]
 		public void On_Init(NamedPipeConnection<AuxServerPipeClient> conn) {
 			connectedInstance = this;
 			this.pipe = conn;

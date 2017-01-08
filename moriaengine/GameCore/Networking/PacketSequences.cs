@@ -16,14 +16,17 @@
 */
 
 using System;
+using System.Globalization;
+using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Common;
+using SteamEngine.Regions;
+using SteamEngine.Timers;
 
 namespace SteamEngine.Networking {
 	public static class PacketSequences {
 
-		internal class DelayedLoginTimer : Timers.Timer {
+		internal class DelayedLoginTimer : Timer {
 			AbstractCharacter ch;
 
 			internal DelayedLoginTimer(AbstractCharacter ch) {
@@ -53,7 +56,7 @@ namespace SteamEngine.Networking {
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
-			Regions.Map map = ch.GetMap();
+			Map map = ch.GetMap();
 			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.SizeX, map.SizeY); //0x1B
 
 			//pg.AcquirePacket<SetFacetOutPacket>().Prepare(map.Facet);//0xBF 0x08
@@ -84,7 +87,7 @@ namespace SteamEngine.Networking {
 			new DelayedResyncTimer(ch).DueInSeconds = 1;
 		}
 
-		internal class DelayedResyncTimer : Timers.Timer {
+		internal class DelayedResyncTimer : Timer {
 			AbstractCharacter ch;
 
 			internal DelayedResyncTimer(AbstractCharacter ch) {
@@ -101,7 +104,7 @@ namespace SteamEngine.Networking {
 					this.ch.Resync();
 
 
-					state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					state.WriteLine(String.Format(CultureInfo.InvariantCulture,
 						Loc<PacketSequencesLoc>.Get(state.Language).WelcomeToShard,
 						Globals.ServerName));
 				}

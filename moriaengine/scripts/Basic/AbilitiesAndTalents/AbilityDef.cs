@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
@@ -228,7 +230,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>C# based @activate trigger method</summary>
 		protected virtual void On_Activate(Character chr, Ability ab) {
-			chr.SysMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+			chr.SysMessage(String.Format(CultureInfo.InvariantCulture,
 				Loc<AbilityDefLoc>.Get(chr.Language).AbilityActivated,
 				ab.Def.Name));
 		}
@@ -339,13 +341,13 @@ namespace SteamEngine.CompiledScripts {
 				if (newValue > 0) {
 					this.Trigger_Assign(chr, ab, sa);
 				} else {
-					Logger.WriteWarning("previousValue == 0 && newValue == " + newValue, new System.Diagnostics.StackTrace());
+					Logger.WriteWarning("previousValue == 0 && newValue == " + newValue, new StackTrace());
 				}
 			} else if (newValue == 0) { //should mean that the previous value was positive
 				if (previousValue > 0) {
 					this.Trigger_UnAssign(chr, ab, sa);
 				} else {
-					Logger.WriteWarning("newValue == 0 && previousValue == " + previousValue, new System.Diagnostics.StackTrace());
+					Logger.WriteWarning("newValue == 0 && previousValue == " + previousValue, new StackTrace());
 				}
 			}
 		}

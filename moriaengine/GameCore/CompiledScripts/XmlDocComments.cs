@@ -21,6 +21,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Xml.Linq;
 using Jolt;
+
 namespace SteamEngine.CompiledScripts {
 
 	public static class XmlDocComments {
@@ -29,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static XmlDocCommentReader AcquireReaderForAssembly(Assembly assembly) {
 			return readers.GetOrAdd(assembly,
-				(a) => new XmlDocCommentReader(a));
+				a => new XmlDocCommentReader(a));
 		}
 
 		/// <summary>

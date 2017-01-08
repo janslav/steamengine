@@ -16,8 +16,10 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
+
 namespace SteamEngine.Common {
 
 	//I renamed the methods and stuff, and reimplemented only those which are needed now, cos I'm too lazy :)
@@ -28,19 +30,19 @@ namespace SteamEngine.Common {
 
 		private static readonly CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly Regex stringRE = new Regex(@"^""(?<value>.*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly Regex floatRE = new Regex(@"^(?<value>-?\d*\.\d*)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly Regex intRE = new Regex(@"^(?<value>-?\d+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -67,9 +69,8 @@ namespace SteamEngine.Common {
 			Match ma = stringRE.Match(input);
 			if (ma.Success) {
 				return Tools.UnescapeNewlines(ma.Groups["value"].Value);
-			} else {
-				return input.Trim();
 			}
+			return input.Trim();
 		}
 
 		/// <summary>
@@ -86,7 +87,8 @@ namespace SteamEngine.Common {
 				if (c == '\n' || c == '\r' || c == '\0') {
 					s = s.Substring(0, a);
 					break;
-				} else if (c == '\t') {
+				}
+				if (c == '\t') {
 					if (a < s.Length - 1) {
 						s = s.Substring(0, a) + " " + s.Substring(a + 1);
 					} else {
@@ -97,7 +99,7 @@ namespace SteamEngine.Common {
 			return s;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public static T ConvertTo<T>(object obj) {
 			//TODO some optimisation? at least for valuetypes maybe?
 			return (T) ConvertTo(typeof(T), obj);
@@ -109,7 +111,7 @@ namespace SteamEngine.Common {
 		/// <param name="type">The type.</param>
 		/// <param name="obj">The obj.</param>
 		/// <returns></returns>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static object ConvertTo(Type type, object obj) {
 			//Console.WriteLine("Converting from {0} {1} to {2}", obj.GetType(), obj, type);
 			if (obj == null) return obj;
@@ -120,11 +122,14 @@ namespace SteamEngine.Common {
 			}
 			if ((objectType == type) || (type.IsAssignableFrom(objectType))) {
 				return obj;
-			} else if (type.Equals(typeof(String))) {
+			}
+			if (type.Equals(typeof(String))) {
 				return ToString(obj);
-			} else if (type.Equals(typeof(Boolean))) {
+			}
+			if (type.Equals(typeof(Boolean))) {
 				return ToBoolean(obj);
-			} else if (type.IsEnum) {
+			}
+			if (type.IsEnum) {
 				if (obj != null) {
 					//The first thing to try is converting it to whatever the underlying type is,
 					//since Enum.Parse fails on things like "0x4c" or "04c", etc.
@@ -144,7 +149,7 @@ namespace SteamEngine.Common {
 			return Convert.ChangeType(obj, type, invariantCulture);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		/// <summary>
 		/// The most generic method to convert types. Returns false when convert impossible.
 		/// </summary>
@@ -190,17 +195,16 @@ namespace SteamEngine.Common {
 			IFormattable asFormattable = (IFormattable) obj; //throws exception if impossible
 			if (asFormattable != null) {
 				return asFormattable.ToString(null, invariantCulture);
-			} else {
-				return "";
 			}
+			return "";
 		}
 
-		public static bool IsNumber(object o) {
+		public static bool IsNumber(object o)
+		{
 			if (o == null) {
 				return false;
-			} else {
-				return IsNumberType(o.GetType());
 			}
+			return IsNumberType(o.GetType());
 		}
 
 		public static bool IsNumberType(Type t) {
@@ -277,7 +281,7 @@ namespace SteamEngine.Common {
 				If s is "false" "0" or "off" (case does not matter), false is returned.
 				If s is any other value, a FormatException is thrown.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
+		[SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
 		public static bool ParseBoolean(string s) {
 			if (s == null)
 				return false;
@@ -294,7 +298,7 @@ namespace SteamEngine.Common {
 			throw new SEException("'" + s + "' is not a valid boolean string (true/1/on/false/0/off).");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
+		[SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
 		public static bool TryParseBoolean(string s, out bool retVal) {
 			if (s == null) {
 				retVal = false;
@@ -323,19 +327,19 @@ namespace SteamEngine.Common {
 			return instance.ToBoolImpl(arg);
 		}
 
-		protected virtual bool ToBoolImpl(object arg) {
+		protected virtual bool ToBoolImpl(object arg)
+		{
 			if (arg is bool) {
 				return (bool) arg;
-			} else if (IsNumber(arg)) {
-				return (Convert.ToInt32(arg, invariantCulture) != 0);
-			} else {
-				string asString = arg as string;
-				if (asString != null) {
-					return ParseBoolean(asString);
-				} else {
-					return (arg != null);
-				}
 			}
+			if (IsNumber(arg)) {
+				return (Convert.ToInt32(arg, invariantCulture) != 0);
+			}
+			string asString = arg as string;
+			if (asString != null) {
+				return ParseBoolean(asString);
+			}
+			return (arg != null);
 		}
 
 		/**
@@ -371,7 +375,7 @@ namespace SteamEngine.Common {
 			throw new SEException("'" + input + "' does not appear to be any kind of number.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryParseAnyNumber(string input, out object retVal) {
 			if (string.IsNullOrEmpty(input)) {
 				retVal = null;
@@ -409,7 +413,7 @@ namespace SteamEngine.Common {
 		}
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static object ParseSpecificNumber(TypeCode typeCode, string input) {
 			if (input.StartsWith("0")) {
 				Match m = hexRE.Match(input);
@@ -469,7 +473,7 @@ namespace SteamEngine.Common {
 			throw new SEException("typeCode out of range");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryParseSpecificNumber(TypeCode typeCode, string input, out object retVal) {
 			try {
 				retVal = ParseSpecificNumber(typeCode, input);
@@ -744,7 +748,7 @@ namespace SteamEngine.Common {
 		}
 
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryConvertToInt32(object input, out int retVal) {
 			try {
 				retVal = ToInt32(input);

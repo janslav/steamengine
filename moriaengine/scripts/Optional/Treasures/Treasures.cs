@@ -18,9 +18,8 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections.Generic;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
-
-
 
 /* TO DO !:
  * ? Exceptions in getters of TreasureChest's private fields ? // dunno whether it should be there or not
@@ -34,10 +33,10 @@ using SteamEngine.Persistence;
 
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class TreasureChest : Container {
-		private static CharacterDef defaultTreasureSpawn = null;
-		private static ItemDef defaultTreasureItem = null;
+		private static CharacterDef defaultTreasureSpawn;
+		private static ItemDef defaultTreasureItem;
 
 		public CharacterDef DefaultTreasureSpawn {
 			get {
@@ -60,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_DClick(AbstractCharacter ac) {
 			Player p = ac as Player;
 			if (p.IsGM) {
-				this.Dialog(ac, SingletonScript<Dialogs.D_TreasureChest>.Instance);
+				this.Dialog(ac, SingletonScript<D_TreasureChest>.Instance);
 			} else {
 				p.SysMessage("otvirame poklad");
 				this.EnsureListItemEntry();
@@ -78,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
 					foreach (TreasureItemEntry tie in this.treasureItems) {
 						if (tie.periodic > 0) {
 							per = (int) (this.GetLastopenTimeDifference() /this.cycleTime) * tie.periodic;
-							p.SysMessage("Periode is counted as: " + per.ToString());
+							p.SysMessage("Periode is counted as: " + per);
 
 						} else {
 							per = 1;
@@ -121,7 +120,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		/// <summary>Returns a string containing easy to read info on how long it is from the last treasure opening.</summary>
-		public string GetLastopenTimeDifference(bool isTimeString) {
+		public string GetLastopenTimeDifference(bool isTimeString)
+		{
 			if (isTimeString) {
 				long d, h, m, s;
 				s = this.GetLastopenTimeDifference();
@@ -131,10 +131,9 @@ namespace SteamEngine.CompiledScripts {
 				s -= h * 3600;
 				m = s / 60;
 				s -= m * 60;
-				return d.ToString() + "d " + h.ToString() + "h " + m.ToString() + "min " + s.ToString() + "s";
-			} else {
-				return Convert.ToString(Globals.TimeInSeconds - this.lastOpen);
+				return d + "d " + h + "h " + m + "min " + s + "s";
 			}
+			return Convert.ToString(Globals.TimeInSeconds - this.lastOpen);
 		}
 
 		public List<TreasureItemEntry> TreasureItems {
@@ -158,8 +157,6 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value > 0) {
 					this.moneyCoefficient = value;
-				} else {
-					// exception
 				}
 			}
 		}
@@ -171,8 +168,6 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value > 0) {
 					this.check = value;
-				} else {
-					// exception
 				}
 			}
 		}
@@ -183,8 +178,6 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				if (value > 0) {
-				} else {
-					//exception
 				}
 			}
 		}
@@ -196,8 +189,6 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value > 0) {
 					this.lockpick = value;
-				} else {
-					// exception
 				}
 			}
 		}
@@ -275,13 +266,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class TreasureChestDef {
 
 	}
 
 	[SaveableClass, DeepCopyableClass]
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public sealed class TreasureItemEntry {
 		[SaveableData, CopyableData]
 		public ItemDef itemID;
@@ -301,7 +292,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[SaveableClass, DeepCopyableClass]
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public sealed class TreasureSpawnEntry {
 
 		[SaveableData, CopyableData]

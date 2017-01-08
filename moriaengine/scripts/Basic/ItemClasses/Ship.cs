@@ -16,10 +16,11 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System.Collections.Generic;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ShipDef : MultiItemDef {
 
 
@@ -27,10 +28,10 @@ namespace SteamEngine.CompiledScripts {
 		DynamicMultiItemComponentDescription[] shipComponentsDescs;
 
 		//N/E/S/W
-		private static readonly short[] tillerModels = new short[] { 0x3e4e, 0x3e55, 0x3e4b, 0x3e50 };
-		private static readonly short[] leftPlankModels = new short[] { 0x3eb2, 0x3e85, 0x3eb2, 0x3e85 };
-		private static readonly short[] rightPlankModels = new short[] { 0x3eb1, 0x3e8a, 0x3eb1, 0x3e8a };
-		private static readonly short[] trunkModels = new short[] { 0x3eae, 0x3e65, 0x3eb9, 0x3e93 };
+		private static readonly short[] tillerModels = { 0x3e4e, 0x3e55, 0x3e4b, 0x3e50 };
+		private static readonly short[] leftPlankModels = { 0x3eb2, 0x3e85, 0x3eb2, 0x3e85 };
+		private static readonly short[] rightPlankModels = { 0x3eb1, 0x3e8a, 0x3eb1, 0x3e8a };
+		private static readonly short[] trunkModels = { 0x3eae, 0x3e65, 0x3eb9, 0x3e93 };
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			switch (param) {
@@ -91,7 +92,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public enum ShipFacing : int {
+	public enum ShipFacing
+	{
 		North = 0,
 		East = 1,
 		South = 2,
@@ -111,7 +113,7 @@ namespace SteamEngine.CompiledScripts {
 		Starboard = Right
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Ship : MultiItem {
 
 		internal override void InitMultiRegion() {
@@ -313,7 +315,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class ShipRegion : MultiRegion {
 		public ShipRegion() {
 			throw new SEException("The constructor without paramaters is not supported");

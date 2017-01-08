@@ -16,7 +16,9 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using SteamEngine.Persistence;
 
 namespace SteamEngine {
 	public sealed class PluginKey : AbstractKey<PluginKey> {
@@ -30,7 +32,7 @@ namespace SteamEngine {
 	}
 
 
-	public sealed class PluginKeySaveImplementor : Persistence.ISimpleSaveImplementor {
+	public sealed class PluginKeySaveImplementor : ISimpleSaveImplementor {
 		private static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -46,12 +48,12 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public string Save(object objToSave) {
 			return "@@" + ((PluginKey) objToSave).Name;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public object Load(Match match) {
 			return PluginKey.Acquire(match.Groups["value"].Value);
 		}

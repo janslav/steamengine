@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SkillDelaySpeedupPlugin {
 		public TriggerResult On_SkillStart(SkillSequenceArgs ssa) {
 			if (ssa.SkillDef == this.TypeDef.Skill) {
@@ -33,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		//}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SkillDelaySpeedupPluginDef {
 	}
 }

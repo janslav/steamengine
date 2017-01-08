@@ -17,8 +17,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 using SteamEngine.Common;
 
 namespace SteamEngine.Converter {
@@ -26,8 +26,8 @@ namespace SteamEngine.Converter {
 	public static class ConverterMain {
 		public static bool AdditionalConverterMessages = true; //AdditionalConverterMessages = TagMath.ToBoolean(ConfigurationSettings.AppSettings["Additional converter Messages"]);
 		//private static ArrayList convertedDefs = new ArrayList();
-		public static string convertToPath = null;
-		public static string convertPath = null;
+		public static string convertToPath;
+		public static string convertPath;
 
 		private static StringToSendEventHandler consoleDelegate;
 
@@ -57,8 +57,8 @@ namespace SteamEngine.Converter {
 			try {
 				//SteamEngine.MainClass.winConsole=new ConsConn(consSend);
 				consoleDelegate = consSend;
-				Logger.OnConsoleWriteLine += new StringToSendEventHandler(ConsoleWriteLine);
-				Logger.OnConsoleWrite += new StringToSendEventHandler(ConsoleWrite);
+				Logger.OnConsoleWriteLine += ConsoleWriteLine;
+				Logger.OnConsoleWrite += ConsoleWrite;
 			} catch (Exception e) {
 				Console.WriteLine(e.Message);
 				return;
@@ -208,7 +208,6 @@ namespace SteamEngine.Converter {
 					}
 					convertedFile.AddDef(cd);
 					//convertedDefs.Add(cd);
-					continue;
 
 					//							if (sectionName=="itemdef") {
 					//								string id=SphereNumberCheck(param, false);

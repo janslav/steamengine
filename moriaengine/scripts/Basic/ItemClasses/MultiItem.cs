@@ -16,13 +16,14 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class MultiItemDef : ItemDef {
 		private DynamicMultiItemComponentDescription[] components;
 
@@ -185,7 +186,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class MultiItem : Item {
 		protected MultiRegion region;
 
@@ -247,7 +248,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class MultiRegion : DynamicRegion {
 		public readonly MultiItem multiItem;
 

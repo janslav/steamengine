@@ -16,10 +16,11 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
-//using System.IO;
 using SteamEngine.Regions;
+//using System.IO;
 
 namespace SteamEngine {
 	public interface IPoint2D {
@@ -37,7 +38,7 @@ namespace SteamEngine {
 		byte M { get; } //Mapplane (0 is default, 255 can see and be seen by all planes (theoretically -tar))
 
 		new IPoint4D TopPoint { get; }
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		Map GetMap();
 	}
 
@@ -59,7 +60,7 @@ namespace SteamEngine {
 			return Math.Max(Math.Abs(a.X - b.X), Math.Abs(a.Y - b.Y));
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static Direction GetDirFromTo(IPoint2D start, IPoint2D target) {
 			// Get the 2D direction between points.
 			start = start.TopPoint;
@@ -148,7 +149,8 @@ namespace SteamEngine {
 					return true;
 				}
 				return false;
-			} else if (ReferenceEquals(second, null)) {
+			}
+			if (ReferenceEquals(second, null)) {
 				return false;
 			}
 			return ((first.x == second.x) && (first.y == second.y));
@@ -228,7 +230,8 @@ namespace SteamEngine {
 					return true;
 				}
 				return false;
-			} else if (ReferenceEquals(second, null)) {
+			}
+			if (ReferenceEquals(second, null)) {
 				return false;
 			}
 			return ((first.X == second.X) && (first.Y == second.Y) && (first.z == second.z));
@@ -331,9 +334,8 @@ namespace SteamEngine {
 					m = 0;
 				}
 				return new Point4D(x, y, z, m);
-			} else {
-				throw new SEException("Invalid input string for Point4D parse: '" + value + "'");
 			}
+			throw new SEException("Invalid input string for Point4D parse: '" + value + "'");
 		}
 
 		internal static Regex positionRE = new Regex(@"\s*(?<x>\d+)\s*(,|\s)\s*(?<y>\d+)\s*((,|\s)\s*(?<z>-?\d+))?\s*((,|\s)\s*(?<m>\d+))?\s*",
@@ -353,7 +355,8 @@ namespace SteamEngine {
 					return true;
 				}
 				return false;
-			} else if (ReferenceEquals(second, null)) {
+			}
+			if (ReferenceEquals(second, null)) {
 				return false;
 			}
 			return ((first.X == second.X) && (first.Y == second.Y) && (first.Z == second.Z) && (first.m == second.m));

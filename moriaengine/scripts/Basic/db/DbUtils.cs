@@ -15,10 +15,10 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System.Text;
 using System.Collections.Generic;
-using SteamEngine.Common;
+using System.Text;
 using MySql.Data.MySqlClient;
+using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public static class DbUtils {

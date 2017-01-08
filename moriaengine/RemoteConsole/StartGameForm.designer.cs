@@ -1,9 +1,12 @@
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace SteamEngine.RemoteConsole {
 	partial class StartGameForm {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private IContainer components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -171,11 +174,11 @@ namespace SteamEngine.RemoteConsole {
 
 		#endregion
 
-		private System.Windows.Forms.ComboBox ddServer;
-		private System.Windows.Forms.ComboBox ddBuild;
-		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.TextBox textBox2;
-		private System.Windows.Forms.Button btnStart;
-		private System.Windows.Forms.BindingSource gameServerEntryBindingSource;
+		private ComboBox ddServer;
+		private ComboBox ddBuild;
+		private TextBox textBox1;
+		private TextBox textBox2;
+		private Button btnStart;
+		private BindingSource gameServerEntryBindingSource;
 	}
 }

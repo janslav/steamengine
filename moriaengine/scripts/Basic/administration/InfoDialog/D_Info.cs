@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 
@@ -135,20 +136,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (InfoDialogHandler.PagingHandled(gi, gr)) {
 				//kliknuto na paging? 
-				return;
 			} else { //info dialog buttons
 				int pressedButtonNo = gr.PressedButton;
 
 				if (pressedButtonNo >= 1000) { //display detail of too long fields
 					Dictionary<int, IDataFieldView> detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(detailIndexPairingTK);
-					IDataFieldView idfv = (IDataFieldView) detailsPairing[pressedButtonNo];
+					IDataFieldView idfv = detailsPairing[pressedButtonNo];
 
 					//display the detail on the selected field
 					Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info_Detail>.Instance, new DialogArgs(idfv, target));
 					DialogStacking.EnstackDialog(gi, newGi); //store
 				} else {//normal field button
 					Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(btnsIndexPairingTK);
-					IDataFieldView idfv = (IDataFieldView) btnsPairing[pressedButtonNo];
+					IDataFieldView idfv = btnsPairing[pressedButtonNo];
 
 					if (idfv.IsButtonEnabled) {
 						DialogStacking.ResendAndRestackDialog(gi);

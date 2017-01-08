@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
@@ -36,7 +37,7 @@ namespace SteamEngine.Networking {
 			cache.Remove(item);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
+		[SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
 		public sealed override void Dispose() {
 			base.Dispose();
 		}

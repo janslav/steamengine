@@ -71,9 +71,9 @@ namespace SteamEngine.CompiledScripts {
 					PropsLine valueLine = input.PopPropsLine(i + ".V");
 					DictionaryLoadHelper helper = new DictionaryLoadHelper(dict, genericTypes[0], genericTypes[1]);
 					currentLineNumber = keyLine.Line;
-					ObjectSaver.Load(keyLine.Value, new LoadObject(helper.DelayedLoad_Key), input.Filename, keyLine.Line);
+					ObjectSaver.Load(keyLine.Value, helper.DelayedLoad_Key, input.Filename, keyLine.Line);
 					currentLineNumber = valueLine.Line;
-					ObjectSaver.Load(valueLine.Value, new LoadObject(helper.DelayedLoad_Value), input.Filename, valueLine.Line);
+					ObjectSaver.Load(valueLine.Value, helper.DelayedLoad_Value, input.Filename, valueLine.Line);
 				}
 				return dict;
 			} catch (FatalException) {
@@ -92,8 +92,8 @@ namespace SteamEngine.CompiledScripts {
 			private object key;
 			private Type valueType;
 			private object value;
-			private bool valueSet = false;
-			private bool keySet = false;
+			private bool valueSet;
+			private bool keySet;
 
 
 			internal DictionaryLoadHelper(IDictionary dict, Type keyType, Type valueType) {

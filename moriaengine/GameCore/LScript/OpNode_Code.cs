@@ -16,11 +16,12 @@
 */
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
 	//this is actually just a static class, for convenience using the same constructing signature as the other, _real_ , OpNodes
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public static class OpNode_Code {
 		//accepts Code, SimpleCode
 
@@ -42,12 +43,11 @@ namespace SteamEngine.LScript {
 				if (IsComparing(op)) {
 					opIndex = i;
 					break;
-				} else {
-					int priority = OperatorPriority(op);
-					if (priority >= highestPriority) {
-						opIndex = i;
-						highestPriority = priority;
-					}
+				}
+				int priority = OperatorPriority(op);
+				if (priority >= highestPriority) {
+					opIndex = i;
+					highestPriority = priority;
 				}
 			}
 			if (opIndex == -1) {

@@ -19,9 +19,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {
@@ -53,10 +56,9 @@ namespace SteamEngine {
 			if (string.IsNullOrEmpty(this.altdefname) || string.IsNullOrEmpty(this.Defname)) {
 				return string.Concat("[", this.PrettyDefname, " : ", Tools.TypeToString(this.GetType()), "]");
 				//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.PrettyDefname, "]");
-			} else {
-				return string.Concat("[", this.Defname, "/", this.altdefname, " : ", Tools.TypeToString(this.GetType()), "]");
-				//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.altdefname, "]");
 			}
+			return string.Concat("[", this.Defname, "/", this.altdefname, " : ", Tools.TypeToString(this.GetType()), "]");
+			//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.altdefname, "]");
 		}
 
 		public string Filepos {
@@ -124,12 +126,12 @@ namespace SteamEngine {
 
 		public virtual void LoadFromSaves(PropsSection input) {
 			foreach (PropsLine pl in input.PropsLines) {
-				ObjectSaver.Load(pl.Value, new LoadObjectParam(this.LoadField_Delayed), this.filename, pl.Line,
+				ObjectSaver.Load(pl.Value, this.LoadField_Delayed, this.filename, pl.Line,
 					pl.Name);
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void LoadField_Delayed(object resolvedObject, string filename, int line, object args) {
 			string fieldName = (string) args;
 			FieldValue fv = (FieldValue) this.fieldValues[fieldName];
@@ -144,7 +146,7 @@ namespace SteamEngine {
 					this.fieldValues[tk] = fv;
 					this.fieldValues[tagName] = fv;
 				} else {
-					Logger.WriteWarning("Unknown saved FieldValue line: " + fieldName + " = '" + resolvedObject.ToString() + "'");
+					Logger.WriteWarning("Unknown saved FieldValue line: " + fieldName + " = '" + resolvedObject + "'");
 					return;
 				}
 			}
@@ -270,7 +272,7 @@ namespace SteamEngine {
 			ObjectSaver.FlushCache(output);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Save(SaveStream output) {
 			bool headerWritten = false;
 			foreach (DictionaryEntry entry in this.fieldValues) {
@@ -300,7 +302,7 @@ namespace SteamEngine {
 		#endregion Saving
 
 		#region Loading from scripts
-		private static readonly Type[] ConstructorParamTypes = new Type[] { typeof(string), typeof(string), typeof(int) };
+		private static readonly Type[] ConstructorParamTypes = { typeof(string), typeof(string), typeof(int) };
 
 		private static Dictionary<string, ConstructorInfo> constructorsByTypeName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 
@@ -348,7 +350,7 @@ namespace SteamEngine {
 
 		public new static void Bootstrap() {
 			//all AbstractDef descendants will be registered so that they get loaded by our LoadFromScripts method
-			CompiledScripts.ClassManager.RegisterSupplySubclasses<AbstractDef>(RegisterSubtype);
+			ClassManager.RegisterSupplySubclasses<AbstractDef>(RegisterSubtype);
 		}
 
 		public static bool RegisterSubtype(Type defType) {
@@ -399,24 +401,26 @@ namespace SteamEngine {
 						defByAltdefname = null;
 					} else if (defByAltdefname != def) {
 						throw new OverrideNotAllowedException("Header defname '" + defname + "' and alternate defname '" + altdefname + "' identify two different objects: "
-							+ "'" + def.ToString() + "' and '" + defByAltdefname.ToString() + "'. Ignoring.");
+							+ "'" + def + "' and '" + defByAltdefname + "'. Ignoring.");
 					}
 				}
 			}
 
 			//check if it isn't another type or duplicity			
-			if (def != null) {
+			if (def != null)
+			{
 				if (def.GetType() != type) {
 					throw new OverrideNotAllowedException("You can not change the class of a Def while resync. You have to recompile or restart to achieve that. Ignoring.");
-				} else if (!def.IsUnloaded) {
-					throw new OverrideNotAllowedException(def.ToString() + " defined multiple times.");
+				}
+				if (!def.IsUnloaded) {
+					throw new OverrideNotAllowedException(def + " defined multiple times.");
 				}
 			}
 
 			//construct new or resync
 			AbstractDef constructed = (AbstractDef) def;
 			if (def == null) {
-				object[] cargs = new object[] { defname, input.Filename, input.HeaderLine };
+				object[] cargs = { defname, input.Filename, input.HeaderLine };
 				constructed = (AbstractDef) constructor.Invoke(cargs);
 			} else {
 				//?call some kind of "OnResync" virtual method?
@@ -466,7 +470,7 @@ namespace SteamEngine {
 			int defnum;
 			isNumeric = false;
 			if (ConvertTools.TryParseInt32(defname, out defnum)) {
-				defname = defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+				defname = defnum.ToString("x", CultureInfo.InvariantCulture);
 				defname = string.Concat("_", typeName, "_0x", defname, "_");
 				isNumeric = true;
 			}
@@ -511,7 +515,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public virtual void LoadScriptLines(PropsSection ps) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
@@ -533,7 +537,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename")]
 		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
 			Match m = TagHolder.tagRE.Match(param);
 			FieldValue fieldValue;
@@ -619,7 +623,7 @@ namespace SteamEngine {
 		/// <remarks>
 		/// This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True
 		/// </remarks>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void ResolveAll() {
 			int count = AllScripts.Count;
 			Logger.WriteDebug("Resolving " + count + " defs");
@@ -673,7 +677,7 @@ namespace SteamEngine {
 			defnameParsersByType_Inferred.Clear();
 
 			foreach (Type t in new List<Type>(defnameParsersByType_Registered.Keys)) {
-				if (t.Assembly != CompiledScripts.ClassManager.CoreAssembly) { //not in core
+				if (t.Assembly != ClassManager.CoreAssembly) { //not in core
 					defnameParsersByType_Registered.Remove(t);
 				}
 			}
@@ -685,9 +689,8 @@ namespace SteamEngine {
 			FieldValue fv = (FieldValue) this.fieldValues[tk];
 			if (fv != null) {
 				return fv.CurrentValue;
-			} else {
-				return null;
 			}
+			return null;
 		}
 
 		public void SetTag(TagKey tk, object value) {

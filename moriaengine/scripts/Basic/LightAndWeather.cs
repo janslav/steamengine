@@ -15,6 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.Networking;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
@@ -22,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 	[HasSavedMembers]
 	public static class LightAndWeather {
 		[SavedMember]
-		private static int dayLight = 0;
+		private static int dayLight;
 		[SavedMember]
 		private static int nightLight = 12; //unused for now...?
 		[SavedMember]
@@ -37,12 +38,12 @@ namespace SteamEngine.CompiledScripts {
 			return dayLight;
 		}
 
-		public static int GetLightIn(FlaggedRegion region) {
+		public static int GetLightIn(FlaggedRegion region)
+		{
 			if (region.Flag_Underground) {
 				return undergroundLight;
-			} else {
-				return dayLight;
 			}
+			return dayLight;
 		}
 
 		public static int DayLight {
@@ -76,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void RefreshAllPlayers() {
-			foreach (Player p in Networking.GameServer.GetAllPlayers()) {
+			foreach (Player p in GameServer.GetAllPlayers()) {
 				p.SendGlobalLightLevel(GetLightAt(p));
 			}
 		}

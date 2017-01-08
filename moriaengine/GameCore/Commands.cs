@@ -16,6 +16,8 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
@@ -31,7 +33,7 @@ namespace SteamEngine {
 
 		internal static bool commandRunning;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void PlayerCommand(GameState state, string command) {
 			string lower = command.ToLowerInvariant();
 			string noprefix;
@@ -106,7 +108,7 @@ namespace SteamEngine {
 
 		//method: ConsoleCommand
 		//this is invoked directly by consoles
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void ConsoleCommand(ConsoleDummy consoleDummy, string command) {
 			Globals.SetSrc(consoleDummy);
 #if DEBUG
@@ -130,7 +132,7 @@ namespace SteamEngine {
 					errText = string.Concat(err);
 				}
 				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. ERR: " + errText);
-				commandSrc.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				commandSrc.WriteLine(String.Format(CultureInfo.InvariantCulture,
 					Loc<CommandLoc>.Get(commandSrc.Language).CommandFailed,
 					command, errText));
 			}
@@ -162,7 +164,7 @@ namespace SteamEngine {
 			gmCommandsCache.Clear();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void InvokeCommand(ISrc commandSrc, TagHolder self, string code) {
 			Sanity.IfTrueThrow(commandSrc == null, "commandSrc cannot be null in Commands.InvokeCommand");
 
@@ -247,7 +249,7 @@ namespace SteamEngine {
 		/// Runs a method or function of the object self, given by name, and possible 
 		/// one argument of numeric or string type, separated by space from the name
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryRunSnippet(ISrc commandSrc, TagHolder self, string code, out string errText) {
 			Match m = commandRE.Match(code);
 			if (m.Success) {
@@ -289,7 +291,7 @@ namespace SteamEngine {
 					try {
 						if (haveArg) {
 							if (argIsNumber) {
-								mi.Invoke(self, new object[] { Convert.ChangeType(argAsNumber, argType, System.Globalization.CultureInfo.InvariantCulture) });
+								mi.Invoke(self, new[] { Convert.ChangeType(argAsNumber, argType, CultureInfo.InvariantCulture) });
 							} else {
 								mi.Invoke(self, new object[] { arg });
 							}
@@ -307,7 +309,7 @@ namespace SteamEngine {
 				} else if (nameMatched) {
 					errText = Loc<CommandLoc>.Get(commandSrc.Language).WrongCommandArgument;
 				} else {
-					errText = String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					errText = String.Format(CultureInfo.InvariantCulture,
 						Loc<CommandLoc>.Get(commandSrc.Language).UnknownCommand,
 						name);
 				}

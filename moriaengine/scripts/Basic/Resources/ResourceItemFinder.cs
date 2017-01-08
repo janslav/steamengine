@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 						//e.g. 5 i_apple, 3 t_fruit e.t.c
 						//this will not occur for 5 i_apple, 3 i_apple because this situation is handled during
 						//reslist parsing
-						throw new SEException(LogStr.Error("Item " + itm.ToString() + " corresponds to more than one resource from the list"));
+						throw new SEException(LogStr.Error("Item " + itm + " corresponds to more than one resource from the list"));
 					}
 					counterAlreadyFound = true;
 					resCntr.IncludeItem(itm);

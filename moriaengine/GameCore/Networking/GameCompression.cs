@@ -15,17 +15,19 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Communication;
+using Buffer = System.Buffer;
 
 namespace SteamEngine.Networking {
 	public class GameCompression : ICompression {
 		private static int[] flatBitTable;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
 		private static int[,] bitTable;
 		private static uint[] bitAmtTable;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public static readonly GameCompression instance = new GameCompression();
 
 		static GameCompression() {
@@ -85,14 +87,14 @@ namespace SteamEngine.Networking {
 		}
 
 		public int Decompress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length) {
-			System.Buffer.BlockCopy(bytesIn, offsetIn, bytesOut, offsetOut, length);
+			Buffer.BlockCopy(bytesIn, offsetIn, bytesOut, offsetOut, length);
 			return length;
 		}
 
 		//This builds our compression-tables. bitAmtTable is used by some of the compression methods,
 		//but not the fastest ones.
 		//flatBitTable is faster to access than bitTable.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static void ConstructBitTables() {
 			bitAmtTable = new uint[32];
 			for (int a = 0; a < 31; a++) {

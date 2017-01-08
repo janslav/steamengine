@@ -1,19 +1,19 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using System.IO;
-using System.Collections.Generic;
-using System.Threading;
 using System.Text.RegularExpressions;
-
+using System.Threading;
 using SteamEngine.Common;
+using Buffer = SteamEngine.Communication.Buffer;
 
 namespace SteamEngine.AuxiliaryServer.SphereServers {
 	public class SphereServerConnection : Disposable {
 		readonly Socket socket;
 		readonly SphereServerClient state;
 
-		Communication.Buffer receivingBuffer = Pool<Communication.Buffer>.Acquire();
+		Buffer receivingBuffer = Pool<Buffer>.Acquire();
 
 		private AsyncCallback beginSendCallback;
 		private AsyncCallback beginReceiveCallback;
@@ -29,7 +29,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private ReceievingMode receivingMode;
 
-		private string closingReason = null;
+		private string closingReason;
 
 		internal SphereServerConnection(Socket socket, SphereServerSetup setup) {
 			this.beginSendCallback = this.BeginSendCallback;
@@ -196,7 +196,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		public void BeginSend(string message) {
 			try {
 				if (this.IsConnected) {
-					Communication.Buffer buffer = Pool<Communication.Buffer>.Acquire();
+					Buffer buffer = Pool<Buffer>.Acquire();
 
 					message = message + "\n";
 					int len = Encoding.Default.GetBytes(message, 0, message.Length, buffer.bytes, 0);
@@ -214,7 +214,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void BeginSendCallback(IAsyncResult asyncResult) {
-			Communication.Buffer toDispose = (Communication.Buffer) asyncResult.AsyncState;
+			Buffer toDispose = (Buffer) asyncResult.AsyncState;
 
 			try {
 				SocketError err;

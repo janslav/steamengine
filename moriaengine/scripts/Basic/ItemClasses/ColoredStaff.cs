@@ -17,15 +17,16 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
+using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ColoredStaffDef {
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ColoredStaff {
 
 		//this ability raises the maximum of mana that can be deposited in a staff
@@ -117,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				ushort newValue = (ushort) value;
 				if (this.mana != newValue) {
-					this.mana = (ushort) newValue;
+					this.mana = newValue;
 					this.InvalidateAosToolTips();
 				}
 			}

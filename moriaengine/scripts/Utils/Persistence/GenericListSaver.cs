@@ -60,14 +60,14 @@ namespace SteamEngine.CompiledScripts {
 				Type elemType = ParseType(pl);
 
 				Type typeOfList = typeof(List<>).MakeGenericType(elemType);
-				IList list = (IList) Activator.CreateInstance(typeOfList, new object[] { count });
+				IList list = (IList) Activator.CreateInstance(typeOfList, count);
 
 				for (int i = 0; i < count; i++) {
 					list.Add(null);
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
 					GenericListLoadHelper alip = new GenericListLoadHelper(list, i, elemType);
-					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(this.DelayedLoad_Index), input.Filename, valueLine.Line, alip);
+					ObjectSaver.Load(valueLine.Value, this.DelayedLoad_Index, input.Filename, valueLine.Line, alip);
 				}
 				return list;
 			} catch (FatalException) {
@@ -91,12 +91,12 @@ namespace SteamEngine.CompiledScripts {
 			return elemType;
 		}
 
-		public static string GetTypeName(Type type) {
+		public static string GetTypeName(Type type)
+		{
 			if (ClassManager.GetType(type.Name) == type) {//steamengine class
 				return type.Name;
-			} else {
-				return type.FullName;
 			}
+			return type.FullName;
 		}
 
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
@@ -127,7 +127,7 @@ namespace SteamEngine.CompiledScripts {
 
 			Type elemType = copyFrom.GetType().GetGenericArguments()[0];
 			Type typeOfList = typeof(List<>).MakeGenericType(elemType);
-			IList newList = (IList) Activator.CreateInstance(typeOfList, new object[] { n });
+			IList newList = (IList) Activator.CreateInstance(typeOfList, n);
 
 			for (int i = 0; i < n; i++) {
 				newList.Add(null);

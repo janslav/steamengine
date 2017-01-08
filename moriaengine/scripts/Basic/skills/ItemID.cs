@@ -1,8 +1,9 @@
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class ItemIDSkillDef : SkillDef {
 		public ItemIDSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -26,9 +27,8 @@ namespace SteamEngine.CompiledScripts {
 			if (self.CanReachWithMessage((Item) skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 				return TriggerResult.Continue;
-			} else {
-				return TriggerResult.Cancel;
 			}
+			return TriggerResult.Cancel;
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 			GameState stateSelf = self.GameState;
 			Item targetted = (Item) skillSeqArgs.Target1;
-			self.SysMessage(targetted.ToString() + "," + targetted.IsDeleted);// kontrolni hlaska, pozdeji odstranit!
+			self.SysMessage(targetted + "," + targetted.IsDeleted);// kontrolni hlaska, pozdeji odstranit!
 
 			//if (stateSelf != null) {
 			//    stateSelf.WriteLine(Loc<ItemIdLoc>.Get(stateSelf.Language).ISuccess);

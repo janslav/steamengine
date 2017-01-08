@@ -1,4 +1,6 @@
 using System;
+using SteamEngine.Common;
+using SteamEngine.LScript;
 /*
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,8 +17,6 @@ using System;
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine.Common;
-using SteamEngine.LScript;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		protected static readonly TagKey inputParamsTK = TagKey.Acquire("_input_params_");
 
 		public AbstractInputDef()
-			: base() {
+		{
 		}
 
 		public AbstractInputDef(string defname)
@@ -90,7 +90,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				case 1: //OK
 					//pass the call with the input value
 					string inputVal = gr.GetTextResponse(1);
-					this.Response((Character) gi.Cont, (TagHolder) gi.Focus, inputVal);
+					this.Response((Character) gi.Cont, gi.Focus, inputVal);
 					//a zavolat predchozi dialog
 					DialogStacking.ShowPreviousDialog(gi);
 					break;
@@ -120,12 +120,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			AbstractScript def = AbstractScript.GetByDefname(defname);
 
 			ScriptedInputDialogDef id = def as ScriptedInputDialogDef;
-			if (id == null) {
+			if (id == null)
+			{
 				if (def != null) {//it isnt ScriptedInputDialogDef
 					throw new OverrideNotAllowedException("ScriptedInputDialogDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
-				} else {
-					id = new ScriptedInputDialogDef(defname);
 				}
+				id = new ScriptedInputDialogDef(defname);
 			} else if (id.IsUnloaded) {
 				id.UnUnload();
 			} else {
@@ -181,7 +181,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 
 		public new static void Bootstrap() {
-			ScriptLoader.RegisterScriptType(new string[] { "InputDef" },
+			ScriptLoader.RegisterScriptType(new[] { "InputDef" },
 				Load, false);
 		}
 

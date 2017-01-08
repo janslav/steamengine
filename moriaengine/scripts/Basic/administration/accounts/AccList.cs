@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 
@@ -110,10 +111,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, accList.Count, 1)) {//kliknuto na paging?
 				//1 sloupecek
-				return;
 			} else { //skutecna talcitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
-				int row = (int) (gr.PressedButton - 10);
+				int row = gr.PressedButton - 10;
 				int listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ga));

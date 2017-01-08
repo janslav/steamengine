@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
@@ -73,7 +75,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static int StrLen(string str) {
 			return str.Length;
 		}
@@ -111,10 +113,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public static object CreateList(Type type) {
-			return Activator.CreateInstance(typeof(System.Collections.Generic.List<>).MakeGenericType(type));
+			return Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static object CreateGenericObject(Type type, params Type[] genericParams) {
 			return Activator.CreateInstance(type.MakeGenericType(genericParams));
 		}

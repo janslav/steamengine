@@ -18,6 +18,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using SteamEngine.Common;
 
 namespace SteamEngine.Regions {
@@ -74,21 +76,21 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+			[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			public int Sx {
 				get {
 					return this.sx;
 				}
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+			[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			public int Sy {
 				get {
 					return this.sy;
 				}
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+			[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			public byte M {
 				get {
 					return this.m;
@@ -96,11 +98,11 @@ namespace SteamEngine.Regions {
 			}
 
 			public override string ToString() {
-				return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				return string.Format(CultureInfo.InvariantCulture,
 					"sector with coords {0}, {1}, mapplane {2}",
-					this.sx.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					this.sy.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					this.m.ToString(System.Globalization.CultureInfo.InvariantCulture));
+					this.sx.ToString(CultureInfo.InvariantCulture),
+					this.sy.ToString(CultureInfo.InvariantCulture),
+					this.m.ToString(CultureInfo.InvariantCulture));
 			}
 
 			#region dynamic stuff
@@ -155,7 +157,7 @@ namespace SteamEngine.Regions {
 				this.AddThing(thing);
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+			[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			internal void MadeIntoNonPlayer(AbstractCharacter cre) {
 				Sanity.IfTrueThrow(cre == null, "You can't tell us a NULL character is now a non-player!");
 				Sanity.IfTrueThrow(cre.IsPlayer, "MadeIntoNonPlayer(" + cre + ") was called, but that character is actually still a player!");
@@ -333,17 +335,16 @@ namespace SteamEngine.Regions {
 					RegionRectangle b = (RegionRectangle) y;
 					if (a.region.HierarchyIndex < b.region.HierarchyIndex) {
 						return -1;
-					} else if (a.region.HierarchyIndex > b.region.HierarchyIndex) {
-						return 1;
-					} else {
-						if (Globals.FastStartUp) {
-							return 0;
-						} else {
-							ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(this.sectorRectangle, a);
-							ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(this.sectorRectangle, b);
-							return intersectA.TilesNumber.CompareTo(intersectB.TilesNumber);
-						}
 					}
+					if (a.region.HierarchyIndex > b.region.HierarchyIndex) {
+						return 1;
+					}
+					if (Globals.FastStartUp) {
+						return 0;
+					}
+					ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(this.sectorRectangle, a);
+					ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(this.sectorRectangle, b);
+					return intersectA.TilesNumber.CompareTo(intersectB.TilesNumber);
 				}
 			}
 
@@ -391,10 +392,9 @@ namespace SteamEngine.Regions {
 					}
 					this.dynamicRegionRects.AddFirst(rect);
 					return true;
-				} else {
-					this.dynamicRegionRects.AddFirst(rect);
-					return true; //always OK
 				}
+				this.dynamicRegionRects.AddFirst(rect);
+				return true; //always OK
 			}
 
 			internal void RemoveDynamicRegionRect(RegionRectangle rect) {

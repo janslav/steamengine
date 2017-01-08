@@ -18,9 +18,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
-
 
 namespace SteamEngine {
 	public sealed class ClientVersion {
@@ -29,7 +30,7 @@ namespace SteamEngine {
 
 		private static Dictionary<string, ClientVersion> byVersionString = new Dictionary<string, ClientVersion>(StringComparer.OrdinalIgnoreCase);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+		[SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
 		public static ClientVersion Acquire(string versionString) {
 			ClientVersion cliver;
 			if (!byVersionString.TryGetValue(versionString, out cliver)) {
@@ -62,9 +63,9 @@ namespace SteamEngine {
 			try {
 				Match m = osi2dCliVerRE.Match(versionString);
 				if (m.Success) {
-					byte major = byte.Parse(m.Groups["major"].Value, System.Globalization.CultureInfo.InvariantCulture);
-					byte minor = byte.Parse(m.Groups["minor"].Value, System.Globalization.CultureInfo.InvariantCulture);
-					byte revision = byte.Parse(m.Groups["revision"].Value, System.Globalization.CultureInfo.InvariantCulture);
+					byte major = byte.Parse(m.Groups["major"].Value, CultureInfo.InvariantCulture);
+					byte minor = byte.Parse(m.Groups["minor"].Value, CultureInfo.InvariantCulture);
+					byte revision = byte.Parse(m.Groups["revision"].Value, CultureInfo.InvariantCulture);
 					char letter = m.Groups["letter"].Value[0];
 					this.type = ClientType.Osi2D;
 					this.osi2dVerNum = new OSI2DVersionNumber(major, minor, revision, letter);
@@ -192,17 +193,17 @@ namespace SteamEngine {
 			this.major = major;
 			this.minor = minor;
 			this.revision = revision;
-			this.letter = char.ToLower(letter, System.Globalization.CultureInfo.InvariantCulture);
+			this.letter = char.ToLower(letter, CultureInfo.InvariantCulture);
 
 			checked {
 				this.comparableNumber = major * 1000000;
 				this.comparableNumber += minor * 10000;
 				this.comparableNumber += revision * 100;
-				this.comparableNumber += ((int) this.letter) - valueOfA;
+				this.comparableNumber += this.letter - valueOfA;
 			}
 		}
 
-		const int valueOfA = (int) 'a';
+		const int valueOfA = 'a';
 
 		public override string ToString() {
 			return string.Concat(this.major, ".", this.minor, ".", this.revision, this.letter);

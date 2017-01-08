@@ -16,10 +16,13 @@
 */
 
 using System;
-using System.Reflection;
-using System.IO;
-using System.Text;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Security;
+using System.Text;
 
 namespace SteamEngine.Common {
 	public delegate void StringToSendEventHandler(string data);
@@ -32,19 +35,19 @@ namespace SteamEngine.Common {
 		static bool fileopen;
 		static Logger instance;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible")]
+		[SuppressMessage("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible")]
 		public static string indentation = "";
 
 		private const string timeFormat = "HH:mm:ss";
 
 		private static readonly object lockObject = new object();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
+		[SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
 		public static event StringToSendEventHandler OnConsoleWriteLine;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
+		[SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
 		public static event StringToSendEventHandler OnConsoleWrite;
 
-		protected Logger() : base(System.Globalization.CultureInfo.InvariantCulture) {
+		protected Logger() : base(CultureInfo.InvariantCulture) {
 			if (instance == null) {
 				console = Console.Out;
 				origError = Console.Error;
@@ -489,25 +492,25 @@ namespace SteamEngine.Common {
 			return LogStr.Raw(data);
 		}
 
-		private static LogStr ErrText(Exception e) {
+		private static LogStr ErrText(Exception e)
+		{
 			if (e != null) {
 				LogStrBuilder builder = new LogStrBuilder();
 				string str = "\t";
 				RenderException(ref str, builder, e);
 				return builder.ToLogStr();
-			} else {
-				return LogStr.Raw("");
 			}
+			return LogStr.Raw("");
 		}
 
-		public static LogStr ErrText(StackTrace stackTrace) {
+		public static LogStr ErrText(StackTrace stackTrace)
+		{
 			if (stackTrace != null) {
 				LogStrBuilder builder = new LogStrBuilder();
 				RenderStackTrace("\t", builder, stackTrace);
 				return builder.ToLogStr();
-			} else {
-				return LogStr.Raw("");
 			}
+			return LogStr.Raw("");
 		}
 
 		internal static void RenderException(ref string leftPad, LogStrBuilder builder, Exception e) {
@@ -587,7 +590,7 @@ namespace SteamEngine.Common {
 						string fileName = null;
 						try {
 							fileName = frame.GetFileName();
-						} catch (System.Security.SecurityException) {
+						} catch (SecurityException) {
 						}
 						if (fileName != null) {
 							builder.Append(' ');
@@ -598,10 +601,10 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static LogStr LogStrFileLine(string file, object line) {
 			try {
-				int lineInt = Convert.ToInt32(line, System.Globalization.CultureInfo.InvariantCulture);
+				int lineInt = Convert.ToInt32(line, CultureInfo.InvariantCulture);
 				return LogStr.FileLine(file, lineInt);
 			} catch {
 			}
@@ -639,7 +642,7 @@ namespace SteamEngine.Common {
 			//log - without file names...
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		protected override void Dispose(bool disposing) {
 			try {
 				if (fileopen) {
@@ -665,7 +668,7 @@ namespace SteamEngine.Common {
 			Console.SetOut(instance);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		protected abstract string GetFilepath();
 
 		static void Rotate() {
@@ -683,7 +686,7 @@ namespace SteamEngine.Common {
 		public static void Log(string data) {
 			lock (lockObject) {
 				if (fileopen) {
-					file.WriteLine(DateTime.Now.ToString(timeFormat, System.Globalization.CultureInfo.InvariantCulture) + ": " + data);
+					file.WriteLine(DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture) + ": " + data);
 					Rotate();
 				}
 			}
@@ -695,7 +698,7 @@ namespace SteamEngine.Common {
 
 		public override void WriteLine(string value) {
 			lock (lockObject) {
-				string printline = String.Concat(DateTime.Now.ToString(timeFormat, System.Globalization.CultureInfo.InvariantCulture), ": ", indentation, value);
+				string printline = String.Concat(DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), ": ", indentation, value);
 				console.WriteLine(printline);
 				if (OnConsoleWriteLine != null) {
 					OnConsoleWriteLine(printline);
@@ -713,7 +716,7 @@ namespace SteamEngine.Common {
 
 		public static void WriteLine(LogStr value) {
 			lock (lockObject) {
-				LogStr printline = LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat, System.Globalization.CultureInfo.InvariantCulture), (LogStr) ": ", (LogStr) indentation, value);
+				LogStr printline = LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), (LogStr) ": ", (LogStr) indentation, value);
 				if (console != null) {
 					console.WriteLine(printline.RawString);
 					if (OnConsoleWriteLine != null) {
@@ -746,7 +749,7 @@ namespace SteamEngine.Common {
 			Write(ErrText(value));
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void Write(LogStr value) {
 			lock (lockObject) {
 				console.Write(value.RawString);

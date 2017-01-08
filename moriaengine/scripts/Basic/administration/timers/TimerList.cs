@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Timers;
@@ -58,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//nadpis
 			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonMetrics.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonMetrics.D_BUTTON_WIDTH));
 			//dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech timerù na " + th.ToString() + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + timerList.Count + ")").Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Seznam všech timerù na " + th + " (zobrazeno " + (firstiVal + 1) + "-" + imax + " z " + timerList.Count + ")").Build();
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonSend).Id(3).Build();//cudlik na refresh dialogu
 			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();//cudlik na zavreni dialogu
 			dlg.MakeLastTableTransparent();
@@ -132,11 +133,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, timerList.Count, 1)) {//kliknuto na paging?
-				return;
 			} else {
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.PressedButton - 10) / 2;
-				int buttNum = (int) (gr.PressedButton - 10) % 2;
+				int row = (gr.PressedButton - 10) / 2;
+				int buttNum = (gr.PressedButton - 10) % 2;
 				KeyValuePair<TimerKey, BoundTimer> de = timerList[row];
 				switch (buttNum) {
 					case 0: //smazat timer

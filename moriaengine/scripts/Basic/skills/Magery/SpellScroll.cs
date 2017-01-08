@@ -16,10 +16,11 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System.Collections.Generic;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellScrollDef {
 		private SpellDef spellDef;
 
@@ -57,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellScroll {
 		public SpellDef SpellDef {
 			get {

@@ -17,6 +17,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SteamEngine.Persistence;
 
@@ -32,7 +33,7 @@ namespace SteamEngine {
 		TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa);
 		TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		IEnumerable<TriggerGroup> GetAllTriggerGroups();
 	}
 
@@ -47,9 +48,9 @@ namespace SteamEngine {
 		Plugin RemovePlugin(PluginKey pk);
 		void DeletePlugin(PluginKey pk);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		IEnumerable<Plugin> GetAllPlugins();
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		IEnumerable<Plugin> GetNonSimplePlugins();
 	}
 
@@ -305,7 +306,7 @@ namespace SteamEngine {
 		#endregion Trigger() methods
 
 		#region save/load
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
@@ -319,9 +320,9 @@ namespace SteamEngine {
 						Plugin value = (Plugin) entry.Value;
 						if (!value.IsDeleted) {
 							if ((value == this.firstPlugin) || (value.prevInList != null) || (value.nextInList != null)) {
-								output.WriteValue("@@" + key.ToString(), value);
+								output.WriteValue("@@" + key, value);
 							} else {
-								output.WriteValue("@@" + key.ToString() + "*", value);
+								output.WriteValue("@@" + key + "*", value);
 							}
 						}
 					}
@@ -384,12 +385,12 @@ namespace SteamEngine {
 
 		#endregion save/load
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Plugin AddNewPlugin(PluginKey key, PluginDef def) {
 			return this.AddPlugin(key, def.Create());
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Plugin AddNewPluginAsSimple(PluginKey key, PluginDef def) {
 			return this.AddPluginAsSimple(key, def.Create());
 		}
@@ -539,7 +540,7 @@ namespace SteamEngine {
 		/// <summary>
 		/// Enumerate all plugins with their keys
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public IEnumerable<KeyValuePair<PluginKey, Plugin>> GetAllPluginsWithKeys() {
 			if (this.tags != null) {
 				foreach (DictionaryEntry entry in this.tags) {

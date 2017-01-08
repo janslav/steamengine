@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Globalization;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -144,7 +145,7 @@ namespace SteamEngine {
 			if (!ConvertTools.TryParseUInt16(section.HeaderName, out skillId)) {
 				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
 			}
-			defname = "skill_" + skillId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			defname = "skill_" + skillId.ToString(CultureInfo.InvariantCulture);
 
 			PropsLine defnameLine = section.TryPopPropsLine("defname");
 			if (defnameLine != null) {

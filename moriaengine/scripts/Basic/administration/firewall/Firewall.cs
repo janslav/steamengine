@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Net;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
 
@@ -48,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void AddBlockedIP(IPAddress ip, String reason, AbstractAccount blockedBy) {
-			if (IsBlockedIP(ip) == true) {
+			if (IsBlockedIP(ip)) {
 				Globals.SrcWriteLine("The IP " + ip + " is already blocked.");
 				return;
 			}
@@ -140,7 +141,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	[SaveableClass]
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class FirewallEntry {
 
 		public FirewallEntry(IPAddress ip, string reason, AbstractAccount blockedBy) {

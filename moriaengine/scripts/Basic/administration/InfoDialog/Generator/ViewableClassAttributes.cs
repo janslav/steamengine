@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 
@@ -47,8 +48,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class NoShowAttribute : Attribute {
 		//no params constructor
-		public NoShowAttribute() {
-		}
 	}
 
 	/// <summary>
@@ -200,14 +199,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private TypeHierarchyComparer() {
 		}
 
-		public int Compare(Type x, Type y) {
+		public int Compare(Type x, Type y)
+		{
 			if (x.IsSubclassOf(y)) {
 				return 1;
-			} else if (x == y) {
-				return 0;
-			} else {
-				return -1;
 			}
+			if (x == y) {
+				return 0;
+			}
+			return -1;
 		}
 	}
 }

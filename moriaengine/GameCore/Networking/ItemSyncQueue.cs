@@ -17,13 +17,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+	[SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public sealed class ItemSyncQueue : SyncQueue {
 		internal static ItemSyncQueue instance = new ItemSyncQueue();
 
@@ -131,7 +132,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		private static void UpdateItemAndProperties(AbstractItem item) {
 			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItem " + item);
 

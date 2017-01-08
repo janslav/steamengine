@@ -18,10 +18,11 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	[SaveableClass]
 	public partial class Role : Disposable {
 		private RoleDef def;

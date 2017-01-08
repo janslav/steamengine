@@ -17,11 +17,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SteamEngine {
 
 	//a very simple queue class, which uses sort of "circular" algorhitm, 
-	[System.Diagnostics.DebuggerDisplay("Count = {Count}")]
+	[DebuggerDisplay("Count = {Count}")]
 	public class SimpleQueue<T> {
 		private T[] array;
 		private int headindex;

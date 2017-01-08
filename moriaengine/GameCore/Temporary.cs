@@ -15,6 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -54,7 +55,7 @@ namespace SteamEngine {
 					You need to check for invalid spellNumber values. The code in InPackets
 					doesn't know how many spells there are, and so does not validate the spell number.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UseSpellNumberRequest(AbstractCharacter cre, int spellNumber) {
 			Sanity.IfTrueThrow(cre == null, "Character is null in UseSpellNumberRequest.");
 			Logger.WriteWarning("Unimplemented: UseSpellNumberRequest called on " + cre + " for spell " + spellNumber);
@@ -67,7 +68,7 @@ namespace SteamEngine {
 			Parameters:
 				cre - The character making the request.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UseLastSpellRequest(AbstractCharacter cre) {
 			Sanity.IfTrueThrow(cre == null, "Character is null in UseLastSpellRequest.");
 			Logger.WriteWarning("Unimplemented: UseLastSpellRequest called on " + cre + ".");
@@ -116,7 +117,7 @@ namespace SteamEngine {
 			Parameters:
 				cre - The character making the request.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UsePrimaryAbilityRequest(AbstractCharacter cre) {
 			Sanity.IfTrueThrow(cre == null, "Character is null in UsePrimaryAbilityRequest.");
 			Logger.WriteWarning("Unimplemented: UsePrimaryAbilityRequset for " + cre + ".");
@@ -131,7 +132,7 @@ namespace SteamEngine {
 			Parameters:
 				cre - The character making the request.
 		*/
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UseSecondaryAbilityRequest(AbstractCharacter cre) {
 			Sanity.IfTrueThrow(cre == null, "Character is null in UseSecondaryAbilityRequest.");
 			Logger.WriteWarning("Unimplemented: UseSecondaryAbilityRequest for " + cre + ".");

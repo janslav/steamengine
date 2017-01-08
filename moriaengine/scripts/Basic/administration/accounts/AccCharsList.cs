@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
@@ -50,7 +51,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 5] = GUTAText.Builder.TextLabel("Pozice").Build();
 			dlg.MakeLastTableTransparent();
 
-			dlg.AddTable(new GUTATable((int) AbstractAccount.maxCharactersPerGameAccount));
+			dlg.AddTable(new GUTATable(AbstractAccount.maxCharactersPerGameAccount));
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
@@ -87,7 +88,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
-				int row = (int) (gr.PressedButton - 10);
+				int row = gr.PressedButton - 10;
 				Character oneChar = (Character) acc.Characters[row];
 				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
 				//ulozime dialog pro navrat

@@ -16,9 +16,9 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using SteamEngine.Common;
 
 //
@@ -33,7 +33,7 @@ namespace SteamEngine.Converter {
 	public class ConvertedThingDef : ConvertedDef {
 		PropsLine idLine, defname1, defname2, dupeItemLine;
 		//bool ownModel = false;
-		bool hasNumericalHeader = false;
+		bool hasNumericalHeader;
 		int modelNum = -1;
 		protected ConvertedThingDef modelDef;
 		//bool isDupeItem = false;
@@ -55,12 +55,12 @@ namespace SteamEngine.Converter {
 			}
 		}
 
-		private static LineImplTask[] firstStageImpl = new LineImplTask[] {
+		private static LineImplTask[] firstStageImpl = {
 //				new LineImplTask("event", new LineImpl(WriteAsTG)), 
 //				new LineImplTask("events", new LineImpl(WriteAsTG)), 
 //				new LineImplTask("tevent", new LineImpl(WriteAsTG)), 
 //				new LineImplTask("tevents", new LineImpl(WriteAsTG)), 
-				new LineImplTask("name", new LineImpl(WriteInQuotes))
+				new LineImplTask("name", WriteInQuotes)
 			};
 
 		public ConvertedThingDef(PropsSection input, ConvertedFile convertedFile)

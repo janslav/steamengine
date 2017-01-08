@@ -1,6 +1,7 @@
-using SteamEngine.Networking;
-using SteamEngine.Communication.TCP;
 using SteamEngine.Communication;
+using SteamEngine.Communication.TCP;
+using SteamEngine.Networking;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	public static class SomeScript {
@@ -9,7 +10,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void S0x1B() {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
-			Regions.Map map = ch.GetMap();
+			Map map = ch.GetMap();
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.SizeX, map.SizeY); //0x1B
@@ -20,7 +21,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void S0xBF0x08() {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
-			Regions.Map map = ch.GetMap();
+			Map map = ch.GetMap();
 
 			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<SetFacetOutPacket>().Prepare(map.Facet);//0xBF 0x08

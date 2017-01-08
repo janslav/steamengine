@@ -41,9 +41,8 @@ namespace SteamEngine.CompiledScripts {
 			//if the list is empty, return it now, else make a copy of the messages list
 			if (list.Count == 0) {
 				return list;
-			} else {
-				return new List<DelayedMsg>(list);
 			}
+			return new List<DelayedMsg>(list);
 		}
 
 		/// <summary>Simple 'add' method.</summary>

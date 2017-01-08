@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -68,7 +69,7 @@ namespace SteamEngine {
 					if (displayPercentage) {
 						long currentPercentage = (stream.BaseStream.Position * 100) / streamLen;
 						if (currentPercentage > lastSentPercentage) {
-							Logger.SetTitle(String.Concat("Loading ", fileNameToDisplay, ": ", currentPercentage.ToString(System.Globalization.CultureInfo.InvariantCulture), "%"));
+							Logger.SetTitle(String.Concat("Loading ", fileNameToDisplay, ": ", currentPercentage.ToString(CultureInfo.InvariantCulture), "%"));
 							lastSentPercentage = currentPercentage;
 						}
 					}
@@ -235,7 +236,7 @@ namespace SteamEngine {
 			string origKey = name;
 			string key = origKey;
 			for (int a = 0; this.props.ContainsKey(key); a++) {
-				key = origKey + a.ToString(System.Globalization.CultureInfo.InvariantCulture);
+				key = origKey + a.ToString(CultureInfo.InvariantCulture);
 				//duplicite properties get a counted name
 				//like if there is more "events=..." lines, they are in the hashtable with keys
 				//events, events0, events1, etc. 
@@ -269,7 +270,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+			return string.Format(CultureInfo.InvariantCulture, 
 				"[{0} {1}]", this.headerType, this.headerName);
 		}
 	}

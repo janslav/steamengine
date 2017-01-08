@@ -16,8 +16,8 @@
 */
 
 using System;
-using SteamEngine.Regions;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 

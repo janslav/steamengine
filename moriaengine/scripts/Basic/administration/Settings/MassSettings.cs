@@ -245,7 +245,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				FieldType value = this.GetValue(defs[0]);
 
 				foreach (DefType def in defs) {
-					this.SetValue(def, (FieldType) value);
+					this.SetValue(def, value);
 				}
 
 				return value;
@@ -279,7 +279,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public Material material;
 
 		internal override bool CheckIfApplies(DefType def) {
-			return ((IObjectWithMaterial) def).Material == this.material;
+			return def.Material == this.material;
 		}
 	}
 
@@ -419,7 +419,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				FieldType value = this.GetValue(defs[0]);
 
 				foreach (DefType def in defs) {
-					this.SetValue(def, (FieldType) value);
+					this.SetValue(def, value);
 				}
 
 				return value;

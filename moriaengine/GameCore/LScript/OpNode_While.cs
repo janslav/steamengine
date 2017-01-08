@@ -16,12 +16,13 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_While : OpNode, IOpNodeHolder {
 		//accepts
 		private OpNode condition;
@@ -77,9 +78,9 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("While (");
-			str.Append(this.condition.ToString()).Append(")").Append(Environment.NewLine);
+			str.Append(this.condition).Append(")").Append(Environment.NewLine);
 			if (this.code != null) {
-				str.Append(this.code.ToString());
+				str.Append(this.code);
 			}
 			str.Append("Endwhile");
 			return str.ToString();

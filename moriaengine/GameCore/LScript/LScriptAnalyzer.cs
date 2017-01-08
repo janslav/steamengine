@@ -16,6 +16,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
@@ -53,7 +54,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override Node Exit(Node node) {
 			if (this.flag == 0) {
 				if (node.GetId() != (int) StrictConstants.ARGS_LIST) {

@@ -17,11 +17,12 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Door : Item {
-		private static ushort[] baseModels = new ushort[] {
+		private static ushort[] baseModels = {
             0xE8,     //secret stone door		
             0x314,    //secret stone door
             0x324,    //secret stone door
@@ -40,11 +41,11 @@ namespace SteamEngine.CompiledScripts {
             0x839,    //light wooden short door
             0x84c,    //iron bar gate external
             0x866,    //dark wooden short door
-            0x1fed,   //barred metal door
+            0x1fed   //barred metal door
             //0x190e    //bar door - irregular doors, only 2 models.
         };
 
-		private ushort baseModel = 0;
+		private ushort baseModel;
 
 		public override void On_DClick(AbstractCharacter user) {
 			if (!this.IsOpen) {
@@ -234,9 +235,8 @@ namespace SteamEngine.CompiledScripts {
 				this.SetBaseDoorModelOrThrow();
 				if ((this.RD % 2) == 0) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}
 		}
 
@@ -245,9 +245,8 @@ namespace SteamEngine.CompiledScripts {
 				this.SetBaseDoorModelOrThrow();
 				if (((this.RD / 2) % 2) == 0) {
 					return DoorRotation.Left;
-				} else {
-					return DoorRotation.Right;
 				}
+				return DoorRotation.Right;
 			}
 		}
 

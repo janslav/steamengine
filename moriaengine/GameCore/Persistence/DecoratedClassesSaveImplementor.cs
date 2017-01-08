@@ -18,6 +18,7 @@
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
@@ -202,7 +203,7 @@ namespace SteamEngine.Persistence {
 		public abstract object LoadSection(PropsSection input);
 		public abstract void Save(object objToSave, SaveStream writer);
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
 		protected void LoadSectionLines(PropsSection ps, object loadedObject) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
@@ -215,7 +216,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
+		[SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
 		protected virtual void LoadLineImpl(object loadedObject, string filename, int line, string name, string value) {
 			throw new SEException("This should not happen.");
 		}
@@ -229,7 +230,7 @@ namespace SteamEngine.Persistence {
 			return false;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplyDecoratedClasses<SaveableClassAttribute>(AddDecoratedClass, false);
 		}
@@ -240,7 +241,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
@@ -318,7 +319,8 @@ namespace SteamEngine.Persistence {
 				if (mi.IsDefined(typeof(SaveAttribute), false)) {
 					if (this.saveMethod != null) {
 						throw new SEException("Can not use the " + LogStr.Ident("SaveAttribute") + " on two class members.");
-					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
+					}
+					if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
 						if (!meth.IsStatic) {
 							ParameterInfo[] pars = meth.GetParameters();
@@ -337,7 +339,8 @@ namespace SteamEngine.Persistence {
 				if (mi.IsDefined(typeof(LoadSectionAttribute), false)) {
 					if (this.loadSection != null) {
 						throw new SEException("Can not use the " + LogStr.Ident("LoadSectionAttribute") + " on two class members.");
-					} else if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
+					}
+					if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 						this.loadSection = (MethodBase) mi;
 					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
@@ -387,12 +390,13 @@ namespace SteamEngine.Persistence {
 				if (mi.IsDefined(typeof(LoadLineAttribute), false)) {
 					if (this.loadLine != null) {
 						throw new SEException("Can not use the " + LogStr.Ident("LoadLineAttribute") + " on two class members.");
-					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
+					}
+					if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
 						if (!meth.IsStatic) {
 							ParameterInfo[] pars = meth.GetParameters();
 							if ((pars.Length == 4) && (pars[0].ParameterType == typeof(string)) && (pars[1].ParameterType == typeof(int))
-										&& (pars[2].ParameterType == typeof(string)) && (pars[3].ParameterType == typeof(string))) {
+							    && (pars[2].ParameterType == typeof(string)) && (pars[3].ParameterType == typeof(string))) {
 								this.loadLine = meth;
 							}
 						}
@@ -407,7 +411,8 @@ namespace SteamEngine.Persistence {
 				if (mi.IsDefined(typeof(LoadingInitializerAttribute), false)) {
 					if (this.loadingInitializer != null) {
 						throw new SEException("Can not use the " + LogStr.Ident("LoadingInitializerAttribute") + " on two class members.");
-					} else if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
+					}
+					if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 						this.loadingInitializer = (MethodBase) mi;
 					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
@@ -429,7 +434,8 @@ namespace SteamEngine.Persistence {
 				if (mi.IsDefined(typeof(LoadingFinalizerAttribute), false)) {
 					if (this.loadingFinalizer != null) {
 						throw new SEException("Can not use the " + LogStr.Ident("LoadingFinalizerAttribute") + " on two class members.");
-					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
+					}
+					if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
 						MethodInfo meth = (MethodInfo) mi;
 						if ((!meth.IsStatic) && (meth.GetParameters().Length == 0)) {
 							this.loadingFinalizer = meth;

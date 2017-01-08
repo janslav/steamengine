@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine {
@@ -262,7 +263,7 @@ namespace SteamEngine {
 				}
 			}
 
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+			IEnumerator IEnumerable.GetEnumerator() {
 				this.cache.Purge();
 				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					yield return pair.Key.weakKey.Target;
@@ -320,7 +321,7 @@ namespace SteamEngine {
 				}
 			}
 
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+			IEnumerator IEnumerable.GetEnumerator() {
 				this.cache.Purge();
 				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					yield return pair.Value.Target;
@@ -388,7 +389,7 @@ namespace SteamEngine {
 
 		#region IEnumerable Members
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+		IEnumerator IEnumerable.GetEnumerator() {
 			this.Purge();
 			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
 				yield return new KeyValuePair<TKey, TValue>(

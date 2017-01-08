@@ -16,6 +16,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using SteamEngine.Common;
@@ -67,7 +68,7 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static IEnumerable<AbstractCharacter> GetAllPlayers() {
 #if NOLINQ
 			foreach (GameState state in clients) {
@@ -153,14 +154,13 @@ namespace SteamEngine.Networking {
 					}
 				}
 				return;
-			} else {
-				foreach (TcpConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
-					if (pg == null) {
-						pg = PacketGroup.AcquireMultiUsePG();
-						pg.AddPacket(outPacket);
-					}
-					conn.SendPacketGroup(pg);
+			}
+			foreach (TcpConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
+				if (pg == null) {
+					pg = PacketGroup.AcquireMultiUsePG();
+					pg.AddPacket(outPacket);
 				}
+				conn.SendPacketGroup(pg);
 			}
 
 			if (pg == null) {//wasn't sent

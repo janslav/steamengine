@@ -16,10 +16,11 @@
 */
 
 using System.Collections.Generic;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	partial class WeaponSkillTargetQueuePlugin {
 		LinkedList<Character> targetQueue = new LinkedList<Character>();
 
@@ -198,7 +199,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	partial class WeaponSkillTargetQueuePluginDef {
 		public static WeaponSkillTargetQueuePluginDef instance = (WeaponSkillTargetQueuePluginDef)
 			new WeaponSkillTargetQueuePluginDef("p_weaponSkillTargetQueue", "C# scripts", -1).Register();

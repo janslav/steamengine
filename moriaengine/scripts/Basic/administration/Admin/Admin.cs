@@ -14,9 +14,11 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
@@ -29,7 +31,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//seznam lidi z parametru (if any)
 			ArrayList playersList = (ArrayList) args.GetTag(playersListTK);
 			if (playersList == null) {
-				playersList = ScriptUtil.ArrayListFromEnumerable(Networking.GameServer.GetAllPlayers());
+				playersList = ScriptUtil.ArrayListFromEnumerable(GameServer.GetAllPlayers());
 				args.SetTag(playersListTK, playersList);//ulozime do parametru dialogu
 			}
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -168,11 +170,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, playersList.Count, 1)) {//posledni 1 - pocet sloupecku v dialogu				
-				return;
 			} else { //skutecna adminovaci tlacitka z radku
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.PressedButton - 10) / 4;
-				int buttNum = (int) (gr.PressedButton - 10) % 4;
+				int row = (gr.PressedButton - 10) / 4;
+				int buttNum = (gr.PressedButton - 10) % 4;
 				Player plr = (Player) playersList[row];
 				Gump newGi;
 				switch (buttNum) {

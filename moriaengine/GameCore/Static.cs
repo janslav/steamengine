@@ -15,6 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Globalization;
 using SteamEngine.Networking;
 
 namespace SteamEngine {
@@ -28,7 +29,7 @@ namespace SteamEngine {
 		internal AbstractInternalItem(int id, int facet) {
 			this.dispidInfo = ItemDispidInfo.GetByModel(id);
 			if (this.dispidInfo == null) {
-				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ". Something's wrong.");
+				throw new SEException("No ItemDispidInfo for id 0x" + id.ToString("x", CultureInfo.InvariantCulture) + ". Something's wrong.");
 			}
 			this.facet = (byte) facet;
 		}

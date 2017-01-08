@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Globalization;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -62,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string GetResourceMissingMessage(Language language) {
-			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+			return String.Format(CultureInfo.InvariantCulture,
 				Loc<ResListLoc>.Get(language).NotEnoughItemsOfType, ItemTypeNames.GetPrettyName(this.triggerGroup));
 		}
 

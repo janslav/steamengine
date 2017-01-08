@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 		//generated instances associated with their real Types - used for hierarchic generating
 		static Dictionary<Type, GeneratedInstance> generatedClasses = new Dictionary<Type, GeneratedInstance>();
 
-		internal static int classCounter = 0;
+		internal static int classCounter;
 
 		public CodeCompileUnit WriteSources() {
 			try {
@@ -1140,11 +1140,7 @@ namespace SteamEngine.CompiledScripts {
 				onButtonMeth.Statements.Add(new CodeMethodInvokeExpression(
 					//call the static method from the Descriptor referenced by MethodInfo
 												new CodeTypeReferenceExpression(this.descriptorType),
-												minf.Name,
-												new CodeExpression[] {
-													new CodeVariableReferenceExpression("target")
-												}
-											));
+												minf.Name, new CodeVariableReferenceExpression("target")));
 				retVal.Members.Add(onButtonMeth);
 				return retVal;
 			}
@@ -1209,10 +1205,7 @@ namespace SteamEngine.CompiledScripts {
 					//call the static method from the Descriptor referenced by PropMethods
 												new CodeMethodInvokeExpression(
 													new CodeTypeReferenceExpression(this.descriptorType),
-														propMeth.GetMethod.Name,
-														new CodeExpression[] {
-															new CodeVariableReferenceExpression("target") }
-											)));
+														propMeth.GetMethod.Name, new CodeVariableReferenceExpression("target"))));
 				retVal.Members.Add(getValueMeth);
 
 				//GetStringValue method
@@ -1228,10 +1221,7 @@ namespace SteamEngine.CompiledScripts {
 														"Save",
 														new CodeMethodInvokeExpression(
 																new CodeTypeReferenceExpression(this.descriptorType),
-																propMeth.GetMethod.Name,
-																new CodeExpression[] {
-																	new CodeVariableReferenceExpression("target") }
-												 ))));
+																propMeth.GetMethod.Name, new CodeVariableReferenceExpression("target")))));
 				retVal.Members.Add(getStringValueMeth);
 
 				if (!isReadOnly) {
@@ -1245,11 +1235,7 @@ namespace SteamEngine.CompiledScripts {
 					//add something like this: DescriptorClass.SetSomeField(target,value);
 					setValueMeth.Statements.Add(new CodeMethodInvokeExpression(
 														new CodeTypeReferenceExpression(this.descriptorType),
-														propMeth.SetMethod.Name,
-														new CodeExpression[] {
-															new CodeVariableReferenceExpression("target"),
-															new CodeVariableReferenceExpression("value") }
-												));
+														propMeth.SetMethod.Name, new CodeVariableReferenceExpression("target"), new CodeVariableReferenceExpression("value")));
 					retVal.Members.Add(setValueMeth);
 
 					//SetStringValue method
@@ -1262,13 +1248,7 @@ namespace SteamEngine.CompiledScripts {
 					//add something like this: DescriptorClass.SetSomeFiel(target,<stringified_value>)
 					setStringValueMeth.Statements.Add(new CodeMethodInvokeExpression(
 														new CodeTypeReferenceExpression(this.descriptorType),
-														propMeth.SetMethod.Name,
-														new CodeExpression[] {
-															new CodeVariableReferenceExpression("target"),
-															//value parameter will be stringified
-															GeneratedCodeUtil.GenerateSimpleLoadExpression(propMeth.FieldType, new CodeVariableReferenceExpression("value"))
-														}
-													));
+														propMeth.SetMethod.Name, new CodeVariableReferenceExpression("target"), GeneratedCodeUtil.GenerateSimpleLoadExpression(propMeth.FieldType, new CodeVariableReferenceExpression("value"))));
 					retVal.Members.Add(setStringValueMeth);
 				}
 

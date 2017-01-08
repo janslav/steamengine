@@ -16,8 +16,10 @@
 */
 
 using System;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace SteamEngine.Common {
 	public class LogStr {
@@ -32,7 +34,7 @@ namespace SteamEngine.Common {
 
 		static LogStr() {
 			for (int i = 0, n = prefixStrings.Length; i < n; i++) {
-				prefixStrings[i] = String.Concat(LogStrBase.separatorString, LogStrBase.styleString, i.ToString(System.Globalization.CultureInfo.InvariantCulture), LogStrBase.separatorString);
+				prefixStrings[i] = String.Concat(LogStrBase.separatorString, LogStrBase.styleString, i.ToString(CultureInfo.InvariantCulture), LogStrBase.separatorString);
 			}
 		}
 
@@ -86,10 +88,10 @@ namespace SteamEngine.Common {
 			this.niceString += str.niceString;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), 
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#"), 
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), 
+		SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), 
+		SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#"), 
+		SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
 		public static bool ParseFileLine(string fileline, out string file, out int line) {
 			file = "";
 			line = 0;
@@ -99,7 +101,7 @@ namespace SteamEngine.Common {
 			file = fileline.Substring(0, idx).Trim();
 			string line_str = fileline.Substring(idx + 1, fileline.Length - idx - 1).Trim();
 			try {
-				line = int.Parse(line_str, System.Globalization.CultureInfo.InvariantCulture);
+				line = int.Parse(line_str, CultureInfo.InvariantCulture);
 			} catch {
 				return false;
 			}
@@ -182,7 +184,7 @@ namespace SteamEngine.Common {
 			return new LogStr(str, GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr FileLine(string file, int line) {
-			string str = TranslatePath(file) + ", " + line.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			string str = TranslatePath(file) + ", " + line.ToString(CultureInfo.InvariantCulture);
 			return new LogStr("(" + str + ") ", "(" + GetStyleMessage(LogStyles.FileLine, str) + ") ");
 		}
 		public static LogStr Highlight(string str) {
@@ -257,7 +259,7 @@ namespace SteamEngine.Common {
 		internal static readonly string separatorAndDot = string.Concat(Path.DirectorySeparatorChar, ".");
 
 		//adds /./ to the position of process default dir
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static string TranslatePath(string path) {
 			try {
 				if (Path.IsPathRooted(path)) {
@@ -275,9 +277,6 @@ namespace SteamEngine.Common {
 	public class LogStrBuilder {
 		StringBuilder nice = new StringBuilder();
 		StringBuilder raw = new StringBuilder();
-
-		public LogStrBuilder() {
-		}
 
 		public LogStrBuilder Append(LogStr arg) {
 			this.nice.Append(arg.niceString);

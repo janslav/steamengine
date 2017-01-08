@@ -18,9 +18,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using SteamEngine.Networking;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 using SteamEngine.Persistence;
 
 namespace SteamEngine {
@@ -45,12 +47,12 @@ namespace SteamEngine {
 		//Variables and Properties
 
 		//- Constants
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const int maxCharactersPerGameAccount = 5;
 
 		//- Public
 		private AbstractCharacter[] characters = new AbstractCharacter[maxCharactersPerGameAccount];
-		private System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter> charactersReadOnly;
+		private ReadOnlyCollection<AbstractCharacter> charactersReadOnly;
 
 		private bool deleted;
 		private bool blocked;
@@ -64,7 +66,7 @@ namespace SteamEngine {
 		protected AbstractAccount(PropsSection input)
 			: this(input.HeaderName) {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
-			this.charactersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter>(this.characters);
+			this.charactersReadOnly = new ReadOnlyCollection<AbstractCharacter>(this.characters);
 			this.LoadSectionLines(input);
 		}
 
@@ -91,7 +93,7 @@ namespace SteamEngine {
 		}
 
 		#region persistence
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+		[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
 		internal sealed class AccountSaveCoordinator : IBaseClassSaveCoordinator {
 			private static readonly Regex accountNameRE = new Regex(@"^\$(?<value>\w*)\s*$",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -131,7 +133,7 @@ namespace SteamEngine {
 				get { return accountNameRE; }
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
 				string name = m.Groups["value"].Value;
 				return GetByName(name);
@@ -197,14 +199,14 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public void SaveWithHeader(SaveStream output) {
 			output.WriteLine("[" + Tools.TypeToString(this.GetType()) + " " + this.name + "]");
 			this.Save(output);
 			output.WriteLine();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			//output.WriteValue("uid",uid);
 			if (this.passwordHash != null) {
@@ -269,7 +271,7 @@ namespace SteamEngine {
 			return null;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public AbstractCharacter GetLingeringCharacter() {
 			foreach (AbstractCharacter ch in this.characters) {
 				if ((ch != null) && (ch.IsLingering)) {
@@ -302,10 +304,11 @@ namespace SteamEngine {
 			return acc;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
+		[SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
 		public static LoginAttemptResult HandleLoginAttempt(string username, string password, GameState gs, out AbstractAccount acc) {
 			acc = GetByName(username);
-			if (acc == null) {
+			if (acc == null)
+			{
 				if ((Globals.AutoAccountCreation) || (accounts.Count == 0)) {
 					acc = CreateAccount(username, password);
 					if (accounts.Count == 1) {
@@ -315,22 +318,21 @@ namespace SteamEngine {
 					gs.SetLoggedIn(acc);
 					acc.SetLoggedIn(gs);
 					return LoginAttemptResult.Success;
-				} else {
-					return LoginAttemptResult.Failed_NoSuchAccount;
 				}
-			} else {
-				if (!acc.TestPassword(password)) {
-					return LoginAttemptResult.Failed_BadPassword;
-				} else if (acc.blocked) {
-					return LoginAttemptResult.Failed_Blocked;
-				} else if (acc.IsOnline) {
-					return LoginAttemptResult.Failed_AlreadyOnline;
-				} else {
-					gs.SetLoggedIn(acc);
-					acc.SetLoggedIn(gs);
-					return LoginAttemptResult.Success;
-				}
+				return LoginAttemptResult.Failed_NoSuchAccount;
 			}
+			if (!acc.TestPassword(password)) {
+				return LoginAttemptResult.Failed_BadPassword;
+			}
+			if (acc.blocked) {
+				return LoginAttemptResult.Failed_Blocked;
+			}
+			if (acc.IsOnline) {
+				return LoginAttemptResult.Failed_AlreadyOnline;
+			}
+			gs.SetLoggedIn(acc);
+			acc.SetLoggedIn(gs);
+			return LoginAttemptResult.Success;
 		}
 
 		internal void SetLoggedIn(GameState gs) {
@@ -352,11 +354,11 @@ namespace SteamEngine {
 			}
 			if (acc == null) {
 				return null;
-			} else if (acc.TestPassword(password) == false || (acc.maxPlevel < 4) || (acc.blocked)) {
-				return null;
-			} else {
-				return acc;
 			}
+			if (acc.TestPassword(password) == false || (acc.maxPlevel < 4) || (acc.blocked)) {
+				return null;
+			}
+			return acc;
 		}
 
 		public override string Name {
@@ -380,7 +382,7 @@ namespace SteamEngine {
 		}
 
 		//readonly property for info dialogs...
-		public System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter> Characters {
+		public ReadOnlyCollection<AbstractCharacter> Characters {
 			get {
 				return this.charactersReadOnly;
 			}
@@ -524,9 +526,8 @@ namespace SteamEngine {
 			//Sanity.IfTrueThrow(conn==null, "Call was made to LoginCharacter when account was null!"); //wtf?? why could it not be null? -tar
 			if (this.characters[index] == null) {
 				return null;
-			} else {
-				return this.characters[index];
 			}
+			return this.characters[index];
 		}
 
 		internal DeleteCharacterResult RequestDeleteCharacter(int index) {
@@ -583,7 +584,8 @@ namespace SteamEngine {
 			Sanity.IfTrueThrow((this.passwordHash != null && this.password != null), "GameAccount [" + this.name + "]: Has both a password and hashed password.");
 			Sanity.IfTrueThrow((this.passwordHash == null && this.password == null), "GameAccount [" + this.name + "]: Has neither a password nor hashed password.");
 
-			if (this.passwordHash != null) {
+			if (this.passwordHash != null)
+			{
 				if (TestHash(this.passwordHash, Tools.HashPassword(pass))) {
 					if (!Globals.HashPasswords) {
 						//record the password string and get rid of the hash now that we know what the password is again
@@ -591,29 +593,26 @@ namespace SteamEngine {
 						this.passwordHash = null;
 					}
 					return true;
-				} else {
+				}
+				return false;
+			}
+			//We should only get here if we're not using hashed passwords, but let's check anyways.
+			if (!Globals.HashPasswords) {
+				if (this.password != null)
+				{
+					if (this.password == pass) {
+						return true;
+					}
 					return false;
 				}
-			} else {
-				//We should only get here if we're not using hashed passwords, but let's check anyways.
-				if (!Globals.HashPasswords) {
-					if (this.password != null) {
-						if (this.password == pass) {
-							return true;
-						} else {
-							return false;
-						}
-					}
-				} else {	//Eh, convert the account's password to a hash and THEN compare.
-					this.passwordHash = Tools.HashPassword(this.password);
-					this.password = null;
+			} else {	//Eh, convert the account's password to a hash and THEN compare.
+				this.passwordHash = Tools.HashPassword(this.password);
+				this.password = null;
 
-					if (TestHash(this.passwordHash, Tools.HashPassword(pass))) {
-						return true;
-					} else {
-						return false;
-					}
+				if (TestHash(this.passwordHash, Tools.HashPassword(pass))) {
+					return true;
 				}
+				return false;
 			}
 			return false;
 		}

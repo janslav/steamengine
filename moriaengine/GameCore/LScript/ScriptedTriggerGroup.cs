@@ -16,8 +16,9 @@
 */
 
 using System.Collections.Generic;
-using SteamEngine.LScript;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
+using SteamEngine.LScript;
 
 namespace SteamEngine {
 	public sealed class ScriptedTriggerGroup : TriggerGroup {
@@ -28,25 +29,23 @@ namespace SteamEngine {
 		}
 
 		//the first trigger that throws an exceptions terminates the other ones that way
-		public sealed override object Run(object self, TriggerKey tk, ScriptArgs sa) {
+		public override object Run(object self, TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfUnloaded();
 			ScriptHolder sd;
 			if (this.triggers.TryGetValue(tk, out sd)) {
 				return sd.Run(self, sa);
-			} else {
-				return null;	//This triggerGroup does not contain that trigger
 			}
+			return null;	//This triggerGroup does not contain that trigger
 		}
 
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
-		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
+		public override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfUnloaded();
 			ScriptHolder sd;
 			if (this.triggers.TryGetValue(tk, out sd)) {
 				return sd.TryRun(self, sa);
-			} else {
-				return null;	//This triggerGroup does not contain that trigger
 			}
+			return null;	//This triggerGroup does not contain that trigger
 		}
 
 		private void AddTrigger(ScriptHolder sd) {
@@ -75,7 +74,8 @@ namespace SteamEngine {
 				ScriptedTriggerGroup stg = new ScriptedTriggerGroup(defname);
 				stg.Register();
 				return stg;
-			} else if (tg.IsUnloaded) {
+			}
+			if (tg.IsUnloaded) {
 				return (ScriptedTriggerGroup) tg;
 			}
 			throw new OverrideNotAllowedException("TriggerGroup " + LogStr.Ident(defname) + " defined multiple times.");
@@ -84,7 +84,7 @@ namespace SteamEngine {
 		internal static void StartingLoading() {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static TriggerGroup Load(PropsSection input) {
 			ScriptedTriggerGroup group = GetNewOrCleared(input.HeaderName);
 			for (int i = 0, n = input.TriggerCount; i < n; i++) {

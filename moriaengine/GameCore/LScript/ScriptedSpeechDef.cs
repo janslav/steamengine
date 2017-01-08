@@ -126,10 +126,9 @@ namespace SteamEngine.CompiledScripts {
 			triggername = triggername.Trim();
 			if (triggername.StartsWith("<<") && triggername.EndsWith(">>")) {
 				return triggername.Substring(2, triggername.Length - 4);
-			} else {
-				triggername = Regex.Escape(triggername);
-				return triggername.Replace(@"\*", ".*");
 			}
+			triggername = Regex.Escape(triggername);
+			return triggername.Replace(@"\*", ".*");
 		}
 
 		private static bool IsEmptyCode(string code) {
@@ -145,7 +144,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public new static void Bootstrap() {
-			ScriptLoader.RegisterScriptType(new string[] { "Speech", "SpeechDef" }, LoadFromScripts, false);
+			ScriptLoader.RegisterScriptType(new[] { "Speech", "SpeechDef" }, LoadFromScripts, false);
 		}
 	}
 

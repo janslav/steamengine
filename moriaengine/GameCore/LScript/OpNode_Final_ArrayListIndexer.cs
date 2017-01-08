@@ -17,10 +17,12 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_ArrayListIndex : OpNode, IOpNodeHolder {
 		private OpNode arg;
 		private OpNode index;
@@ -55,7 +57,7 @@ namespace SteamEngine.LScript {
 			}
 			try {
 				ArrayList list = (ArrayList) oSelf;
-				int resIndex = Convert.ToInt32(indexVal, System.Globalization.CultureInfo.InvariantCulture);
+				int resIndex = Convert.ToInt32(indexVal, CultureInfo.InvariantCulture);
 				if (resIndex == list.Count) {
 					list.Add(argVal);
 				} else {
@@ -84,14 +86,14 @@ namespace SteamEngine.LScript {
 		//	return null;
 		//}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			if (this.arg == null) {
-				return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				return String.Format(CultureInfo.InvariantCulture, 
 					"(ArrayList)[{0}]", this.index);
-			} else {
-				return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				"(ArrayList)[{0}] = {1}", this.index, this.arg);
 			}
+			return String.Format(CultureInfo.InvariantCulture, 
+				"(ArrayList)[{0}] = {1}", this.index, this.arg);
 		}
 	}
 }

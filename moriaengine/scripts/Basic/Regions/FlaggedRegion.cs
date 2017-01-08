@@ -18,8 +18,8 @@
 using System;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
-using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {
 
@@ -37,7 +37,7 @@ namespace SteamEngine.Regions {
 		NoEnemyTeleportingIn = 0x0100,
 		NoEnemyTeleportingOut = 0x0200,
 
-		Underground = 0x0800, Dungeon = Underground,
+		Underground = 0x0800, Dungeon = Underground
 	}
 
 	//todo: make some members virtual?
@@ -52,11 +52,11 @@ namespace SteamEngine.Regions {
 		}
 
 		public FlaggedRegion()
-			: base() {
+		{
 		}
 
 		public FlaggedRegion(string defname, Region parent)
-			: base() {
+		{
 			this.Defname = defname;
 			this.Parent = parent;
 		}
@@ -74,11 +74,10 @@ namespace SteamEngine.Regions {
 			get {//positive value isinherited from parent - underground stays underground
 				if ((this.flags & RegionFlags.Underground) == RegionFlags.Underground) {
 					return true;
-				} else {
-					FlaggedRegion parentAsFlagged = this.Parent as FlaggedRegion;
-					if (parentAsFlagged != null) {
-						return parentAsFlagged.Flag_Underground;
-					}
+				}
+				FlaggedRegion parentAsFlagged = this.Parent as FlaggedRegion;
+				if (parentAsFlagged != null) {
+					return parentAsFlagged.Flag_Underground;
 				}
 				return false;
 			}

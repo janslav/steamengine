@@ -17,10 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using SteamEngine.Timers;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Timers;
 
 namespace SteamEngine.Persistence {
 	public delegate IUnloadable LoadSection(PropsSection data);
@@ -39,14 +40,13 @@ namespace SteamEngine.Persistence {
 					PacketSequences.BroadCast("Saving failed!");//we do not throw an exception to kill the server, 
 					//the admin should do that, after he tries to fix the problem somehow...
 					return false;
-				} else {
-					PacketSequences.BroadCast("Saving finished.");
-					return true;
 				}
+				PacketSequences.BroadCast("Saving finished.");
+				return true;
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		static bool TrySave() {
 			string path = Globals.SavePath;
 
@@ -125,7 +125,7 @@ namespace SteamEngine.Persistence {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static bool TryLoad() {
 			Timer.StartingLoading();
 			ObjectSaver.StartingLoading();
@@ -156,9 +156,8 @@ namespace SteamEngine.Persistence {
 					if (nameSet.Contains(name.ToLowerInvariant())) {
 						//we already loaded this file.
 						continue;
-					} else {
-						nameSet.Add(name.ToLowerInvariant());
 					}
+					nameSet.Add(name.ToLowerInvariant());
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
 					loadStream = GetLoadStream(path, sa.Argv[1]);
@@ -198,7 +197,7 @@ namespace SteamEngine.Persistence {
 		private static void InvokeLoad(StreamReader stream, string filename) {
 			EOFMarked = false;
 			foreach (PropsSection section in PropsFileParser.Load(
-					filename, stream, new CanStartAsScript(StartsAsScript), true)) {
+					filename, stream, StartsAsScript, true)) {
 
 				string type = section.HeaderType.ToLowerInvariant();
 				string name = section.HeaderName;
@@ -218,10 +217,12 @@ namespace SteamEngine.Persistence {
 				if (type == "globals") {
 					Globals.LoadGlobals(section);
 					continue;
-				} else if (ObjectSaver.IsKnownSectionName(type)) {
+				}
+				if (ObjectSaver.IsKnownSectionName(type)) {
 					ObjectSaver.LoadSection(section);
 					continue;
-				} else if (AbstractDef.ExistsDefType(type)) {
+				}
+				if (AbstractDef.ExistsDefType(type)) {
 					AbstractDef.LoadSectionFromSaves(section);
 					continue;
 				}

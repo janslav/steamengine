@@ -18,7 +18,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
 namespace SteamEngine.Common {
 	public sealed class ReadOnlyCollectionWrapper<T> : ICollection<T> /*, ICollection */ {
 		ICollection<T> genericCollection;
@@ -26,7 +25,7 @@ namespace SteamEngine.Common {
 
 		public ReadOnlyCollectionWrapper(ICollection<T> collection) {
 			this.genericCollection = collection;
-			this.nonGenericEnumerable = (IEnumerable) collection;
+			this.nonGenericEnumerable = collection;
 		}
 
 		public bool Contains(T item) {

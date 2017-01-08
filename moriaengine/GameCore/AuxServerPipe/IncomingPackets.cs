@@ -1,7 +1,9 @@
 
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
+using SteamEngine.Timers;
 
 namespace SteamEngine.AuxServerPipe {
 #if MSWIN
@@ -10,13 +12,13 @@ namespace SteamEngine.AuxServerPipe {
 	public class AuxServerPipeProtocol : IProtocol<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, System.Net.IPEndPoint> {
 #endif
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly AuxServerPipeProtocol instance = new AuxServerPipeProtocol();
 
 
 #if MSWIN
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, string> GetPacketImplementation(byte id, NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state, out bool discardAfterReading) {
 #else
 		public IncomingPacket<NamedPipeConnection<AuxServerPipeClient>, AuxServerPipeClient, System.Net.IPEndPoint> GetPacketImplementation(byte id, NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state, out bool discardAfterReading) {
@@ -69,14 +71,14 @@ namespace SteamEngine.AuxServerPipe {
 			return ReadPacketResult.Success;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxServerPipe.RequestAccountLoginPacket+AccountLoginDelayTimer")]
+		[SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxServerPipe.RequestAccountLoginPacket+AccountLoginDelayTimer")]
 		protected override void Handle(NamedPipeConnection<AuxServerPipeClient> conn, AuxServerPipeClient state) {
 			//instead of replting right away, we use a timer. That way we ensure the reply is sent no sooner than when the server is started properly, 
 			//i.e. including loading of account list.
 			new AccountLoginDelayTimer(conn, this.consoleId, this.accName, this.password);
 		}
 
-		private class AccountLoginDelayTimer : Timers.Timer {
+		private class AccountLoginDelayTimer : Timer {
 			int consoleId;
 			string accName, password;
 			NamedPipeConnection<AuxServerPipeClient> conn;
@@ -132,8 +134,6 @@ namespace SteamEngine.AuxServerPipe {
 				ConsoleDummy dummy = new ConsoleDummy(acc, this.consoleId);
 
 				Commands.ConsoleCommand(dummy, this.command);
-			} else {
-				//ignore? I think so.
 			}
 		}
 	}

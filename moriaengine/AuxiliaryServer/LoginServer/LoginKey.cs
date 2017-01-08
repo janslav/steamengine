@@ -3,7 +3,7 @@ using System;
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 	public class LoginKey {
-		internal static readonly LoginKey[] loginKeys = new LoginKey[] {
+		internal static readonly LoginKey[] loginKeys = {
 			new LoginKey("5.0.1", 0x2eaba7ec, 0xa2417e7f),
 			new LoginKey("5.0.0", 0x2E93A5FC, 0xA25D527F),
 			new LoginKey("4.0.11", 0x2C7B574C, 0xA32D9E7F),
@@ -32,7 +32,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			new LoginKey("2.0.7", 0x2c9bc78c, 0xa35bfe7f),
 			new LoginKey("2.0.6", 0x2c43ed9c, 0xa334227f),
 			new LoginKey("2.0.5", 0x2c0b97ac, 0xa310de7f),
-			new LoginKey("2.0.4", 0x2df385bc, 0xa3ed127f),
+			new LoginKey("2.0.4", 0x2df385bc, 0xa3ed127f)
 		};
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -32,7 +33,7 @@ namespace SteamEngine {
 
 			string msg = msgSelector(loc);
 
-			msg = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+			msg = string.Format(CultureInfo.InvariantCulture,
 				msg,
 				formatArgs);
 

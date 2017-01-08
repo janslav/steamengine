@@ -1,6 +1,6 @@
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using SteamEngine.Common;
 
 namespace SteamEngine.RemoteConsole {
@@ -20,7 +20,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 		
 			IniFileSection generalSec = ini.GetNewOrParsedSection(generalSectionName);
-			saveEndpointPasswords = generalSec.GetValue<bool>("saveEndpointPasswords", true, "true: Save passwords, false: Don't.");
+			saveEndpointPasswords = generalSec.GetValue("saveEndpointPasswords", true, "true: Save passwords, false: Don't.");
 
 			ini.WriteToFile();
 		}
@@ -61,7 +61,7 @@ namespace SteamEngine.RemoteConsole {
 				}
 
 				IniFileSection generalSec = ini.GetNewOrParsedSection(generalSectionName);
-				generalSec.SetValue<bool>("saveEndpointPasswords", saveEndpointPasswords, "true: Save passwords, false: Don't.");
+				generalSec.SetValue("saveEndpointPasswords", saveEndpointPasswords, "true: Save passwords, false: Don't.");
 
 				ini.WriteToFile();
 			} catch (Exception e) {
@@ -70,29 +70,29 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private static void SaveEPSToIni(EndPointSetting eps, IniFileSection section) {
-			section.SetValue<string>("Name", eps.Name, null);
-			section.SetValue<string>("Address", eps.Address, null);
-			section.SetValue<string>("UserName", eps.UserName, null);
+			section.SetValue("Name", eps.Name, null);
+			section.SetValue("Address", eps.Address, null);
+			section.SetValue("UserName", eps.UserName, null);
 			if (saveEndpointPasswords) {
-				section.SetValue<string>("Password", eps.Password, null);
+				section.SetValue("Password", eps.Password, null);
 			} else {
 				section.RemoveValue("Password");
 			}
-			section.SetValue<int>("Port", eps.Port, null);
-			section.SetValue<bool>("KeepReconnecting", eps.KeepReconnecting, null);
+			section.SetValue("Port", eps.Port, null);
+			section.SetValue("KeepReconnecting", eps.KeepReconnecting, null);
 		}
 
 		private static EndPointSetting LoadEPSFromIni(IniFileSection section) {
 			EndPointSetting eps = new EndPointSetting();
-			eps.Name = section.GetValue<string>("Name", eps.Name, null);
-			eps.Address = section.GetValue<string>("Address", eps.Address, null);
-			eps.UserName = section.GetValue<string>("UserName", eps.UserName, null);
-			eps.Password = section.GetValue<string>("Password", eps.Password, null);
+			eps.Name = section.GetValue("Name", eps.Name, null);
+			eps.Address = section.GetValue("Address", eps.Address, null);
+			eps.UserName = section.GetValue("UserName", eps.UserName, null);
+			eps.Password = section.GetValue("Password", eps.Password, null);
 			if (!saveEndpointPasswords) {
 				section.RemoveValue("Password");
 			}
-			eps.Port = section.GetValue<int>("Port", eps.Port, null);
-			eps.KeepReconnecting = section.GetValue<bool>("KeepReconnecting", eps.KeepReconnecting, null);
+			eps.Port = section.GetValue("Port", eps.Port, null);
+			eps.KeepReconnecting = section.GetValue("KeepReconnecting", eps.KeepReconnecting, null);
 			return eps;
 		}
 

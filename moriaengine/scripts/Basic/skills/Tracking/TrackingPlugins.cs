@@ -18,9 +18,10 @@
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.Regions;
-using SteamEngine.Networking;
+using SteamEngine.Communication.TCP;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Networking;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
@@ -30,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public const int refreshTimeout = 5; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
 
-		private ImmutableRectangle trackingRectangle = null;
+		private ImmutableRectangle trackingRectangle;
 		private TimeSpan lastRefreshAt;
 
 		internal static void InstallOnChar(Character trackingChar, Character trackedChar, ImmutableRectangle playerRect, TimeSpan maxAge, int safeSteps) {
@@ -115,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 			Character tracker = (Character) this.Cont;
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
+				TcpConnection<GameState> conn = state.Conn;
 				this.lastRefreshAt = Globals.TimeAsSpan;
 				this.trackingRectangle = new ImmutableRectangle(tracker, (ushort) (this.rectWidth / 2));
 				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, this.lastRefreshAt, this.maxFootstepAge, tracker.M)) {
@@ -133,7 +134,7 @@ namespace SteamEngine.CompiledScripts {
 			Character tracker = (Character) this.Cont;
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
+				TcpConnection<GameState> conn = state.Conn;
 				TimeSpan now = Globals.TimeAsSpan;
 				TimeSpan sinceLastRefresh = now - this.lastRefreshAt;
 				TimeSpan totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
@@ -152,7 +153,7 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
+				TcpConnection<GameState> conn = state.Conn;
 
 				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, Globals.TimeAsSpan, this.maxFootstepAge, tracker.M)) {
 					SendDeletePacket(conn, tp);
@@ -195,13 +196,14 @@ namespace SteamEngine.CompiledScripts {
 			Player tracker = (Player) this.Cont;
 			//check the steps counter
 			this.stepsCntr--;
-			if (this.stepsCntr == 0) {//force another check of tracking success
+			if (this.stepsCntr == 0)
+			{
+//force another check of tracking success
 				if (!SkillDef.GetBySkillName(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
 					this.Delete();
 					return;
-				} else {
-					this.stepsCntr = this.safeSteps; //reset the counter
 				}
+				this.stepsCntr = this.safeSteps; //reset the counter
 			}
 
 			ImmutableRectangle oldRect = this.trackingRectangle;
@@ -212,7 +214,7 @@ namespace SteamEngine.CompiledScripts {
 
 			GameState state = tracker.GameState;
 			if (state != null) {
-				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
+				TcpConnection<GameState> conn = state.Conn;
 				if (dist > this.rectWidth) {//old and new have no intersection. We treat them separately, and only send delete packets in the area still visible to client
 					ImmutableRectangle updateRect = new ImmutableRectangle(tracker, state.UpdateRange);
 					ImmutableRectangle oldRectVisible = ImmutableRectangle.GetIntersection(oldRect, updateRect);
@@ -254,14 +256,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private void SendObjectPacket(TimeSpan now, Communication.TCP.TcpConnection<GameState> conn, TrackPoint tp) {
+		private void SendObjectPacket(TimeSpan now, TcpConnection<GameState> conn, TrackPoint tp) {
 			int color = tp.GetColor(now, this.maxFootstepAge);
 			ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
 			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, color);
 			conn.SendSinglePacket(oiop);
 		}
 
-		private void SendRefreshObject(TimeSpan now, Communication.TCP.TcpConnection<GameState> conn, TrackPoint tp) {
+		private void SendRefreshObject(TimeSpan now, TcpConnection<GameState> conn, TrackPoint tp) {
 			TimeSpan minTimeToShow = now - this.maxFootstepAge;
 			TimeSpan tpCreatedAt = tp.CreatedAt;
 			if (tpCreatedAt >= minTimeToShow) {
@@ -277,7 +279,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private static void SendDeletePacket(Communication.TCP.TcpConnection<GameState> conn, TrackPoint tp) {
+		private static void SendDeletePacket(TcpConnection<GameState> conn, TrackPoint tp) {
 			DeleteObjectOutPacket doop = Pool<DeleteObjectOutPacket>.Acquire();
 			doop.Prepare(tp.FakeUID);
 			conn.SendSinglePacket(doop);
@@ -319,13 +321,14 @@ namespace SteamEngine.CompiledScripts {
 			Player tracker = (Player) this.Cont;
 			//check the steps counter
 			this.stepsCntr--;
-			if (this.stepsCntr == 0) {//force another check of tracking success
+			if (this.stepsCntr == 0)
+			{
+//force another check of tracking success
 				if (!SkillDef.GetBySkillName(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
 					this.Delete();
 					return;
-				} else {
-					this.stepsCntr = this.safeSteps; //reset the counter
 				}
+				this.stepsCntr = this.safeSteps; //reset the counter
 			}
 
 			//now check the arrow

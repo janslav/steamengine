@@ -16,13 +16,14 @@
 */
 
 using System;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_Lazy_RandomExpression : OpNode, IOpNodeHolder {
 		bool isSimple;//if true, this is just a random number from a range, i.e. {a b}
 		//otherwise, it is a set of odds-value pairs {ao av bo bv ... }
@@ -110,31 +111,30 @@ namespace SteamEngine.LScript {
 						this.ReplaceSelf(newNode);
 						return Globals.dice.Next(min, max + 1);
 					}
+				}
+				int pairCount = this.odds.Length;
+				ValueOddsPair[] pairs = new ValueOddsPair[pairCount];
+				bool areConstant = true;
+				int totalOdds = 0;
+				for (int i = 0; i < pairCount; i++) {
+					int o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
+					totalOdds += o;
+					pairs[i] = new ValueOddsPair(this.values[i], totalOdds);
+					if (!(this.odds[i] is OpNode_Object)) {
+						areConstant = false;
+					}
+				}
+				if (areConstant) {
+					OpNode newNode = new OpNode_Final_RandomExpression_Constant(this.parent, this.filename,
+						this.line, this.column, this.OrigNode, pairs, totalOdds);
+					this.ReplaceSelf(newNode);
+					return newNode.Run(vars);
 				} else {
-					int pairCount = this.odds.Length;
-					ValueOddsPair[] pairs = new ValueOddsPair[pairCount];
-					bool areConstant = true;
-					int totalOdds = 0;
-					for (int i = 0; i < pairCount; i++) {
-						int o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
-						totalOdds += o;
-						pairs[i] = new ValueOddsPair(this.values[i], totalOdds);
-						if (!(this.odds[i] is OpNode_Object)) {
-							areConstant = false;
-						}
-					}
-					if (areConstant) {
-						OpNode newNode = new OpNode_Final_RandomExpression_Constant(this.parent, this.filename,
-							this.line, this.column, this.OrigNode, pairs, totalOdds);
-						this.ReplaceSelf(newNode);
-						return newNode.Run(vars);
-					} else {
-						OpNode newNode = new OpNode_Final_RandomExpression_Variable(this.parent, this.filename,
-							this.line, this.column, this.OrigNode, pairs, this.odds);
-						this.ReplaceSelf(newNode);
-						return ((OpNode) GetRandomValue(pairs, totalOdds)).Run(vars);
-						//no TryRun or such... too lazy I am :)
-					}
+					OpNode newNode = new OpNode_Final_RandomExpression_Variable(this.parent, this.filename,
+						this.line, this.column, this.OrigNode, pairs, this.odds);
+					this.ReplaceSelf(newNode);
+					return ((OpNode) GetRandomValue(pairs, totalOdds)).Run(vars);
+					//no TryRun or such... too lazy I am :)
 				}
 			} catch (InterpreterException) {
 				throw;
@@ -149,14 +149,13 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			if (this.odds == null) {
 				return "{ " + this.values[0] + " " + this.values[1] + " }";
-			} else {
-				StringBuilder str = new StringBuilder("{");
-				for (int i = 0, n = this.odds.Length; i < n; i++) {
-					str.Append(this.values[i].ToString()).Append(", ").Append(this.odds[i].ToString()).Append(", ");
-				}
-				str.Length -= 2;
-				return str.Append("}").ToString();
 			}
+			StringBuilder str = new StringBuilder("{");
+			for (int i = 0, n = this.odds.Length; i < n; i++) {
+				str.Append(this.values[i]).Append(", ").Append(this.odds[i]).Append(", ");
+			}
+			str.Length -= 2;
+			return str.Append("}").ToString();
 		}
 
 		public static object GetRandomValue(ValueOddsPair[] pairs, int totalOdds) {
@@ -206,19 +205,19 @@ namespace SteamEngine.LScript {
 			return oddsToCompare < this.odds;
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			if (this.val != null) {
 				return (this.val + " " + this.odds);
-			} else {
-				return "null";
 			}
+			return "null";
 		}
-		public LogStr ToLogStr() {
+		public LogStr ToLogStr()
+		{
 			if (this.val != null) {
 				return LogStr.Raw(this.val) + " " + LogStr.Number(this.odds);
-			} else {
-				return (LogStr) "null";
 			}
+			return (LogStr) "null";
 		}
 	}
 }

@@ -1,16 +1,18 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 
-
 namespace SteamEngine.AuxiliaryServer {
 	public static class Commands {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "conn"),
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "cmd")]
-		public static void HandleCommand(TcpConnection<ConsoleServer.ConsoleClient> conn, ConsoleServer.ConsoleClient state, string cmd) {
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"),
+		SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "conn"),
+		SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "cmd")]
+		public static void HandleCommand(TcpConnection<ConsoleClient> conn, ConsoleClient state, string cmd) {
 			cmd = cmd.ToLowerInvariant();
 			switch (cmd) {
 				case "restart":
@@ -39,7 +41,7 @@ namespace SteamEngine.AuxiliaryServer {
 			state.WriteLine(GameUid.AuxServer, "Unknown command '" + cmd + "'.");
 		}
 
-		private static void DisplayHelp(ConsoleServer.ConsoleClient state) {
+		private static void DisplayHelp(ConsoleClient state) {
 			state.WriteLine(GameUid.AuxServer, "Available commands:"
 				+ "restart" + Environment.NewLine
 				+ "svnupdate" + Environment.NewLine
@@ -48,7 +50,7 @@ namespace SteamEngine.AuxiliaryServer {
 				+ "help");
 		}
 
-		private static void DisplayProcesses(ConsoleServer.ConsoleClient state) {
+		private static void DisplayProcesses(ConsoleClient state) {
 			StringBuilder message = new StringBuilder("Relevant running processes on ").AppendLine(Environment.MachineName);
 			foreach (Process prc in Process.GetProcesses()) {
 				try {
@@ -58,8 +60,8 @@ namespace SteamEngine.AuxiliaryServer {
 							file.ToLowerInvariant().Contains("steamengine")) {
 
 						message.Append(file)
-							.Append(" - running since ").Append(prc.StartTime.ToString(System.Globalization.CultureInfo.InvariantCulture))
-							.Append(", PID ").AppendLine(prc.Id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+							.Append(" - running since ").Append(prc.StartTime.ToString(CultureInfo.InvariantCulture))
+							.Append(", PID ").AppendLine(prc.Id.ToString(CultureInfo.InvariantCulture));
 					}
 				} catch { }
 			}

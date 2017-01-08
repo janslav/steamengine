@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using SteamEngine.Communication;
 
 namespace SteamEngine.AuxServerPipe {
@@ -6,7 +8,7 @@ namespace SteamEngine.AuxServerPipe {
 		string steamengineIniPath;
 
 		public void Prepare() {
-			this.steamengineIniPath = System.IO.Path.GetFullPath(".");
+			this.steamengineIniPath = Path.GetFullPath(".");
 		}
 
 		public override byte Id {
@@ -24,7 +26,7 @@ namespace SteamEngine.AuxServerPipe {
 	public class LogStringPacket : OutgoingPacket {
 		string str;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str")]
 		public void Prepare(string str) {
 			this.str = str;
 		}
@@ -45,7 +47,7 @@ namespace SteamEngine.AuxServerPipe {
 		string accName;
 		bool loginSuccessful;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "loginSuccessful"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "loginSuccessful"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId")]
 		public void Prepare(int consoleId, string accName, bool loginSuccessful) {
 			this.consoleId = consoleId;
 			this.accName = accName;
@@ -88,7 +90,7 @@ namespace SteamEngine.AuxServerPipe {
 		int consoleId;
 		string line;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "line")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "consoleId"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "line")]
 		public void Prepare(int consoleId, string line) {
 			this.consoleId = consoleId;
 			this.line = line;

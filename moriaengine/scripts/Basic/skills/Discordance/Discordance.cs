@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class DiscordanceSkillDef : SkillDef {
 
 		public DiscordanceSkillDef(string defname, string filename, int headerLine)
@@ -47,9 +49,8 @@ namespace SteamEngine.CompiledScripts {
 				if (selfAsPlayer != null) {
 					selfAsPlayer.Target(SingletonScript<Targ_Discordance>.Instance, skillSeqArgs);
 					return TriggerResult.Cancel;
-				} else {
-					throw new SEException("Discordance target not set for nonplayer");
 				}
+				throw new SEException("Discordance target not set for nonplayer");
 			}
 
 			return TriggerResult.Continue;
@@ -65,10 +66,9 @@ namespace SteamEngine.CompiledScripts {
 
 				self.SysMessage("Pokousis se oslabit " + ((Character) skillSeqArgs.Target1).Name + ".");
 				return TriggerResult.Continue;
-			} else {
-				//skillSeqArgs.Dispose();
-				return TriggerResult.Cancel; //we lost the instrument or something
 			}
+			//skillSeqArgs.Dispose();
+			return TriggerResult.Cancel; //we lost the instrument or something
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
@@ -143,7 +143,8 @@ namespace SteamEngine.CompiledScripts {
 			if (targetted.IsPlayer) {
 				self.SysMessage("Zamìøuj jenom monstra!");
 				return TargetResult.RestartTargetting;
-			} else if (targetted.HasPlugin(DiscordanceSkillDef.effectPluginKey)) {
+			}
+			if (targetted.HasPlugin(DiscordanceSkillDef.effectPluginKey)) {
 				self.SysMessage("Cíl je již oslaben.");
 				return TargetResult.Done;
 			}
@@ -155,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class DiscordanceEffectPlugin {
 
 		public static readonly DiscordanceEffectPluginDef defInstance = new DiscordanceEffectPluginDef("p_discordanceEffect_", "C#scripts", -1);
@@ -240,7 +241,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class DiscordanceEffectPluginDef {
 	}
 }

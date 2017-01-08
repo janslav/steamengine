@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Networking;
@@ -21,18 +22,17 @@ namespace SteamEngine.CompiledScripts {
 		public static string GetLogString(GameState state, string message) {
 			AbstractAccount acc = state.Account;
 			AbstractCharacter ch = state.Character;
-			if (acc != null) {
+			if (acc != null)
+			{
 				if (ch != null) {
 					return string.Concat(
 						"Acc '", acc.Name, "', char '", ch.Name, "' (#", ch.Uid.ToString("x"), "): " + message);
-				} else {
-					return string.Concat(
-						"Acc '", acc.Name, "': " + message);
 				}
-			} else {
 				return string.Concat(
-					"Client ", state.Uid, ": " + message);
+					"Acc '", acc.Name, "': " + message);
 			}
+			return string.Concat(
+				"Client ", state.Uid, ": " + message);
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void Information() {
-			Globals.Src.WriteLine(string.Format(System.Globalization.CultureInfo.InvariantCulture,
+			Globals.Src.WriteLine(string.Format(CultureInfo.InvariantCulture,
 				@"Steamengine - {0}, Name = ""{1}"", Clients = {2}{6}Items = {3}, Chars = {4}, Mem = {5} kB",
 				Globals.Version, Globals.ServerName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false) / 1024, Environment.NewLine));

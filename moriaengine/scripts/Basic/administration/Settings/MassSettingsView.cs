@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 
@@ -45,14 +46,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			return ((IMassSettings) instance).Count;
 		}
 
-		public System.Collections.Generic.IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
+		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
 			IMassSettings holder = (IMassSettings) target;
 			for (int i = firstLineIndex, n = holder.Count; i < n; i++) {
 				yield return holder.GetFieldView(i);
 			}
 		}
 
-		public System.Collections.Generic.IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target) {
+		public IEnumerable<ButtonDataFieldView> GetActionButtonsPage(int firstLineIndex, object target) {
 			yield break;
 		}
 

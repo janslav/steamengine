@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.RemoteConsole {

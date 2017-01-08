@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected sealed override bool AllowGround {
+		protected override bool AllowGround {
 			get {
 				return ((this.targon_ground != null) || (this.targon_point != null));
 			}
@@ -120,7 +120,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected sealed override void On_Start(Player ch, object parameter) {
+		protected override void On_Start(Player ch, object parameter) {
 			this.ThrowIfUnloaded();
 			if (this.on_start != null) {
 				if (this.TryRunTrigger(this.on_start, ch, parameter)) {
@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Start(ch, parameter);
 		}
 
-		protected sealed override void On_Targon(GameState state, IPoint3D getback, object parameter) {
+		protected override void On_Targon(GameState state, IPoint3D getback, object parameter) {
 			Player player = state.Character as Player;
 			if (player != null) {
 				if (this.targon_point != null) {
@@ -143,44 +143,38 @@ namespace SteamEngine.CompiledScripts {
 						this.On_Start(player, parameter);
 					}
 					return;
+				}
+				Thing targettedThing = getback as Thing;
+				if (targettedThing != null) {
+					if (this.targon_thing != null) {
+						if (this.TryRunTrigger(this.targon_thing, player, getback, parameter)) {
+							this.On_Start(player, parameter);
+						}
+						return;
+					}
+					Character targettedChar = getback as Character;
+					if ((targettedChar != null) && (this.targon_char != null)) {
+						if (this.TryRunTrigger(this.targon_char, player, getback, parameter)) {
+							this.On_Start(player, parameter);
+						}
+						return;
+					}
+					Item targettedItem = getback as Item;
+					if ((targettedItem != null) && (this.targon_item != null)) {
+						if (this.TryRunTrigger(this.targon_item, player, getback, parameter)) {
+							this.On_Start(player, parameter);
+						}
+						return;
+					}
 				} else {
-					Thing targettedThing = getback as Thing;
-					if (targettedThing != null) {
-						if (this.targon_thing != null) {
-							if (this.TryRunTrigger(this.targon_thing, player, getback, parameter)) {
+					AbstractInternalItem targettedStatic = getback as AbstractInternalItem;
+					if (targettedStatic != null)
+					{
+						if (this.targon_static != null) {
+							if (this.TryRunTrigger(this.targon_static, player, getback, parameter)) {
 								this.On_Start(player, parameter);
 							}
 							return;
-						} else {
-							Character targettedChar = getback as Character;
-							if ((targettedChar != null) && (this.targon_char != null)) {
-								if (this.TryRunTrigger(this.targon_char, player, getback, parameter)) {
-									this.On_Start(player, parameter);
-								}
-								return;
-							}
-							Item targettedItem = getback as Item;
-							if ((targettedItem != null) && (this.targon_item != null)) {
-								if (this.TryRunTrigger(this.targon_item, player, getback, parameter)) {
-									this.On_Start(player, parameter);
-								}
-								return;
-							}
-						}
-					} else {
-						AbstractInternalItem targettedStatic = getback as AbstractInternalItem;
-						if (targettedStatic != null) {
-							if (this.targon_static != null) {
-								if (this.TryRunTrigger(this.targon_static, player, getback, parameter)) {
-									this.On_Start(player, parameter);
-								}
-								return;
-							} else if (this.targon_ground != null) {
-								if (this.TryRunTrigger(this.targon_ground, player, getback, parameter)) {
-									this.On_Start(player, parameter);
-								}
-								return;
-							}
 						}
 						if (this.targon_ground != null) {
 							if (this.TryRunTrigger(this.targon_ground, player, getback, parameter)) {
@@ -189,13 +183,19 @@ namespace SteamEngine.CompiledScripts {
 							return;
 						}
 					}
+					if (this.targon_ground != null) {
+						if (this.TryRunTrigger(this.targon_ground, player, getback, parameter)) {
+							this.On_Start(player, parameter);
+						}
+						return;
+					}
 				}
 			}
 			PacketSequences.SendClilocSysMessage(state.Conn, 1046439, 0);//That is not a valid target.
 			this.On_Start(player, parameter);
 		}
 
-		protected sealed override void On_TargonCancel(GameState state, object parameter) {
+		protected override void On_TargonCancel(GameState state, object parameter) {
 			AbstractCharacter ch = state.Character;
 			if ((ch != null) && (this.targon_cancel != null)) {
 				this.targon_cancel.TryRun(ch, parameter);

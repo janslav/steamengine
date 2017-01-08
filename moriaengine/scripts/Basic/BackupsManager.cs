@@ -19,8 +19,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Management;
 using System.Runtime.InteropServices;
+using ICSharpCode.SharpZipLib.Zip;
+using OrganicBit.Zip;
 using SteamEngine.Common;
+using ZipEntry = ICSharpCode.SharpZipLib.Zip.ZipEntry;
+
 //using ICSharpCode.SharpZipLib.Zip;
 //using OrganicBit.Zip;
 
@@ -52,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private ISaveFileManager fileManager;
 		private ISavePathManager pathManager;
-		private int loadAttempts = 0;
+		private int loadAttempts;
 		private bool isLastLoadPossibility = true;
 
 
@@ -115,12 +120,12 @@ namespace SteamEngine.CompiledScripts {
 			if (this.fileManager != null) {
 				try {
 					sa.Argv[1] = this.fileManager.GetLoadStream(string.Concat(sa.Argv[1]));
-				} catch (FileNotFoundException e) {
+				} catch (FileNotFoundException e)
+				{
 					if (this.isLastLoadPossibility) {
 						throw;//this finishes the loading
-					} else {
-						throw new SEException("Proper file missing in given folder. Let's try an older one...", e);//keeps on loading
 					}
+					throw new SEException("Proper file missing in given folder. Let's try an older one...", e);//keeps on loading
 				}
 			}
 		}
@@ -168,7 +173,7 @@ namespace SteamEngine.CompiledScripts {
 			DateTime firstTime;
 			DateTime lastTime;
 
-			bool sizeValid = false;
+			bool sizeValid;
 			long size;
 
 			private List<Backup> sortedByTime;
@@ -207,8 +212,8 @@ namespace SteamEngine.CompiledScripts {
 				Backup nowList = new Backup(path, DateTime.Now);//a bit unexact, because the folder was founded before the save etc, but who cares now...
 				if (this.sortedByTime.Count > 1) {
 					int index = this.sortedByTime.Count - 1;
-					Backup wasLast = (Backup) this.sortedByTime[index];
-					wasLast.SetSpan((Backup) this.sortedByTime[index - 1], nowList);
+					Backup wasLast = this.sortedByTime[index];
+					wasLast.SetSpan(this.sortedByTime[index - 1], nowList);
 					this.sortedBySpan.Add(wasLast);
 				}
 
@@ -227,7 +232,7 @@ namespace SteamEngine.CompiledScripts {
 
 			private void ReduceByOne() {
 				if (this.sortedByTime.Count == 2) {
-					this.RemoveBackup((Backup) this.sortedByTime[0]);
+					this.RemoveBackup(this.sortedByTime[0]);
 					return;
 				}
 
@@ -236,7 +241,7 @@ namespace SteamEngine.CompiledScripts {
 
 				TimeSpan firstToLast = this.lastTime - this.firstTime;
 				for (int i = 0, n = this.sortedBySpan.Count; i < n; i++) {
-					Backup b = (Backup) this.sortedBySpan[i];
+					Backup b = this.sortedBySpan[i];
 					TimeSpan fromFirst = b.time - this.firstTime;
 					double priority;
 					checked {
@@ -261,16 +266,16 @@ namespace SteamEngine.CompiledScripts {
 				this.sortedBySpan.Sort(Backup.spanComparerInstance);
 				this.sortedByTime.Remove(toRemove);
 
-				this.firstTime = ((Backup) this.sortedByTime[0]).time;
-				this.lastTime = ((Backup) this.sortedByTime[this.sortedByTime.Count - 1]).time;
+				this.firstTime = this.sortedByTime[0].time;
+				this.lastTime = this.sortedByTime[this.sortedByTime.Count - 1].time;
 				toRemove.Delete();//remove from disk
 				this.sizeValid = false;
 			}
 
 			private void ResetSpanAtIndex(int i) {
-				Backup prev = (Backup) this.sortedByTime[i - 1];
-				Backup next = (Backup) this.sortedByTime[i + 1];
-				Backup cur = (Backup) this.sortedByTime[i];
+				Backup prev = this.sortedByTime[i - 1];
+				Backup next = this.sortedByTime[i + 1];
+				Backup cur = this.sortedByTime[i];
 				cur.SetSpan(prev, next);
 			}
 
@@ -287,7 +292,7 @@ namespace SteamEngine.CompiledScripts {
 				} else if (index < 0) {
 					throw new FatalException("No older backup folders to look for.");
 				}
-				return ((Backup) this.sortedByTime[index]).FullDirPath;
+				return this.sortedByTime[index].FullDirPath;
 			}
 
 			public void LoadingFinished(string path) {
@@ -298,20 +303,21 @@ namespace SteamEngine.CompiledScripts {
 				if (!this.sizeValid) {
 					this.size = 0;
 					for (int i = 0, n = this.sortedByTime.Count; i < n; i++) {
-						Backup b = (Backup) this.sortedByTime[i];
+						Backup b = this.sortedByTime[i];
 						this.size += b.Size;
 					}
 					this.sizeValid = true;
 				}
 			}
 
-			private bool SizeIsOverLimit(string path) {
+			private bool SizeIsOverLimit(string path)
+			{
 				if (this.maxSavesSize < 0) {//disk free space limit
 #if MSWIN
 					string deviceName = Path.GetPathRoot(Path.GetFullPath(path));
 					deviceName = deviceName.Substring(0, deviceName.Length - 1);
 					//System.Management.
-					System.Management.ManagementObject disk = new System.Management.ManagementObject(
+					ManagementObject disk = new ManagementObject(
 						"win32_logicaldisk.deviceid=\"" + deviceName + "\"");
 					disk.Get();
 					long bytesFree = Convert.ToInt64(disk["FreeSpace"]);
@@ -327,12 +333,12 @@ namespace SteamEngine.CompiledScripts {
 					}
 					throw new SEException("Can't decide about free space. Disable counting backups size, or something.");
 #endif
-				} else if (this.maxSavesSize > 0) {
+				}
+				if (this.maxSavesSize > 0) {
 					this.RefreshSize();
 					return (this.size > this.maxSavesSize);
-				} else {
-					return false;
 				}
+				return false;
 			}
 
 			private bool CountIsOverLimit() {
@@ -363,15 +369,15 @@ namespace SteamEngine.CompiledScripts {
 
 					this.sortedByTime.Sort(Backup.timeComparerInstance);
 					for (int i = 1, n = this.sortedByTime.Count - 1; i < n; i++) {//without the first and last one
-						Backup prev = (Backup) this.sortedByTime[i - 1];
-						Backup next = (Backup) this.sortedByTime[i + 1];
-						Backup cur = (Backup) this.sortedByTime[i];
+						Backup prev = this.sortedByTime[i - 1];
+						Backup next = this.sortedByTime[i + 1];
+						Backup cur = this.sortedByTime[i];
 						cur.SetSpan(prev, next);
 						this.sortedBySpan.Add(cur);
 					}
 					if (this.sortedByTime.Count > 0) {
-						this.firstTime = ((Backup) this.sortedByTime[0]).time;
-						this.lastTime = ((Backup) this.sortedByTime[this.sortedByTime.Count - 1]).time;
+						this.firstTime = this.sortedByTime[0].time;
+						this.lastTime = this.sortedByTime[this.sortedByTime.Count - 1].time;
 					}
 
 					this.sortedBySpan.Sort(Backup.spanComparerInstance);
@@ -491,8 +497,8 @@ namespace SteamEngine.CompiledScripts {
 
 		private class SharpZipFileManager : ISaveFileManager {
 			private int compression;
-			private ICSharpCode.SharpZipLib.Zip.ZipOutputStream zipWriter;
-			private ICSharpCode.SharpZipLib.Zip.ZipInputStream zipReader;
+			private ZipOutputStream zipWriter;
+			private ZipInputStream zipReader;
 			private bool openEntry;
 
 			public SharpZipFileManager(int compression) {
@@ -502,7 +508,7 @@ namespace SteamEngine.CompiledScripts {
 			public void StartSaving(string path) {
 				string zipFileName = Path.Combine(path, "backup.zip");
 				Console.WriteLine("Saving to " + LogStr.File(zipFileName));
-				this.zipWriter = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(File.Create(zipFileName));
+				this.zipWriter = new ZipOutputStream(File.Create(zipFileName));
 				this.zipWriter.SetLevel(this.compression);
 				this.openEntry = false;
 			}
@@ -512,7 +518,7 @@ namespace SteamEngine.CompiledScripts {
 					this.zipWriter.CloseEntry();
 				}
 
-				ICSharpCode.SharpZipLib.Zip.ZipEntry entry = new ICSharpCode.SharpZipLib.Zip.ZipEntry(name + ".sav");
+				ZipEntry entry = new ZipEntry(name + ".sav");
 				entry.DateTime = DateTime.Now;
 				this.zipWriter.PutNextEntry(entry);
 				this.openEntry = true;
@@ -532,7 +538,7 @@ namespace SteamEngine.CompiledScripts {
 			public void StartLoading(string path) {
 				string zipFileName = Path.Combine(path, "backup.zip");
 				Console.WriteLine("Loading " + LogStr.File(zipFileName));
-				this.zipReader = new ICSharpCode.SharpZipLib.Zip.ZipInputStream(File.OpenRead(zipFileName));
+				this.zipReader = new ZipInputStream(File.OpenRead(zipFileName));
 			}
 
 			public StreamReader GetLoadStream(string name) {
@@ -549,16 +555,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private class OrganicBitZipFileManager : ISaveFileManager {
-			private OrganicBit.Zip.ZipWriter zipWriter;
-			private OrganicBit.Zip.ZipReader zipReader;
-
-			public OrganicBitZipFileManager() {
-			}
+			private ZipWriter zipWriter;
+			private ZipReader zipReader;
 
 			public void StartSaving(string path) {
 				string zipFileName = Path.Combine(path, "backup.zip");
 				Console.WriteLine("Saving to " + LogStr.File(zipFileName));
-				this.zipWriter = new OrganicBit.Zip.ZipWriter(zipFileName);
+				this.zipWriter = new ZipWriter(zipFileName);
 			}
 
 			public TextWriter GetSaveStream(string name) {
@@ -580,7 +583,7 @@ namespace SteamEngine.CompiledScripts {
 				string zipFileName = Path.Combine(path, "backup.zip");
 				Console.WriteLine("Loading " + LogStr.File(zipFileName));
 				try {
-					this.zipReader = new OrganicBit.Zip.ZipReader(zipFileName);
+					this.zipReader = new ZipReader(zipFileName);
 				} catch (Exception e) {
 					throw new SEException(e.Message);
 				}
@@ -599,14 +602,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private class OBStream : Stream {
-				internal OrganicBit.Zip.ZipWriter zipWriter;
-				internal OrganicBit.Zip.ZipReader zipReader;
+				internal ZipWriter zipWriter;
+				internal ZipReader zipReader;
 
-				protected internal OBStream(OrganicBit.Zip.ZipWriter zipWriter) {
+				protected internal OBStream(ZipWriter zipWriter) {
 					this.zipWriter = zipWriter;
 				}
 
-				protected internal OBStream(OrganicBit.Zip.ZipReader zipReader) {
+				protected internal OBStream(ZipReader zipReader) {
 					this.zipReader = zipReader;
 				}
 

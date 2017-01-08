@@ -19,10 +19,11 @@
 */
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 
 namespace SteamEngine.Common {
 	public interface IEnumItem {
@@ -65,9 +66,8 @@ namespace SteamEngine.Common {
 
 			if (attributes != null && attributes.Length > 0) {
 				return attributes[0].Description;
-			} else {
-				return value.ToString();
 			}
+			return value.ToString();
 		}
 
 		public static IList<EnumItem<T>> GetAllItemsAsList() {
@@ -82,7 +82,7 @@ namespace SteamEngine.Common {
 
 		public long Value {
 			get {
-				return Convert.ToInt64(this.value, System.Globalization.CultureInfo.InvariantCulture);
+				return Convert.ToInt64(this.value, CultureInfo.InvariantCulture);
 			}
 		}
 

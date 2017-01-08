@@ -75,11 +75,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			List<SettingResult> setResults = (List<SettingResult>) args.GetTag(resultsListTK);
 			if (gr.PressedButton == 0) { //end				
-				return;
 				//dont redirect to any dialog - former info/settings dialog is already open
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, setResults.Count, 1)) {//kliknuto na paging?
 				//1 sloupecek
-				return;
 			}
 		}
 	}

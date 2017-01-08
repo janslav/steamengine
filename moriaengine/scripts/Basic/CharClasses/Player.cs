@@ -263,9 +263,8 @@ namespace SteamEngine.CompiledScripts {
 				short outVal = 0;
 				if (this.maxSkillModifier.TryGetValue(name, out outVal)) {
 					return outVal;//skill is modified somehow
-				} else {
-					return 0; //skill is not modified
 				}
+				return 0; //skill is not modified
 			}
 			return 0;
 		}

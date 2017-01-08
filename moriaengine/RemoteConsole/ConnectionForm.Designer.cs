@@ -1,9 +1,12 @@
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace SteamEngine.RemoteConsole {
 	partial class ConnectionForm {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private IContainer components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -303,28 +306,28 @@ namespace SteamEngine.RemoteConsole {
 
 		#endregion
 
-		private System.Windows.Forms.CheckBox chkSavePassword;
-		private System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox txtAddress;
-		private System.Windows.Forms.TextBox txtPort;
-		private System.Windows.Forms.TextBox txtUserName;
-		private System.Windows.Forms.TextBox txtPassword;
-		private System.Windows.Forms.ComboBox ddName;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Button btnConnect;
-		private System.Windows.Forms.Button btnNew;
-		private System.Windows.Forms.Button btnRemove;
-		private System.Windows.Forms.TextBox txtName;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Button btnClear;
-		private System.Windows.Forms.BindingSource endPointSettingBindingSource;
-		private System.Windows.Forms.Button btnSave;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.CheckBox chkKeepReconnecting;
+		private CheckBox chkSavePassword;
+		private Button btnCancel;
+		private Label label2;
+		private Label label1;
+		private TextBox txtAddress;
+		private TextBox txtPort;
+		private TextBox txtUserName;
+		private TextBox txtPassword;
+		private ComboBox ddName;
+		private Label label3;
+		private Label label4;
+		private Label label5;
+		private Button btnConnect;
+		private Button btnNew;
+		private Button btnRemove;
+		private TextBox txtName;
+		private Label label6;
+		private Label label7;
+		private Button btnClear;
+		private BindingSource endPointSettingBindingSource;
+		private Button btnSave;
+		private Label label8;
+		private CheckBox chkKeepReconnecting;
 	}
 }

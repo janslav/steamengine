@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 
@@ -120,9 +121,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, fList.Count, 1)) {//posledni 1 - pocet sloupecku v dialogu				
-				return;
 			} else {
-				int row = ((int) gr.PressedButton - 10);//zjistime si radek
+				int row = (gr.PressedButton - 10);//zjistime si radek
 				ScriptHolder sh = fList[row];
 				//a zobrazime info dialog
 				Gump newGi = D_Display_Text.ShowInfo(sh.Description + ""); //nezobrazovat "null", jen prazdno evt...

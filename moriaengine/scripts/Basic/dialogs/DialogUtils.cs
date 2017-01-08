@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using SteamEngine.CompiledScripts.Utils;
 /*
 	This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,7 +17,6 @@ using System.ComponentModel;
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
-using SteamEngine.CompiledScripts.Utils;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Utility functions connected with dialogs</summary>

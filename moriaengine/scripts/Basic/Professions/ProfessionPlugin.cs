@@ -14,7 +14,9 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
+using System.Globalization;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
@@ -60,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 			if ((!player.IsGM) && skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 				if (!this.profession.AllowedSpells.Contains(spell)) {
-					player.RedMessage(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					player.RedMessage(String.Format(CultureInfo.InvariantCulture,
 						Loc<ProfessionPluginLoc>.Get(player.Language).YouCantCastThis,
 						this.profession.Name));
 

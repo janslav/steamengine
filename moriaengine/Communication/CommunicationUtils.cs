@@ -15,18 +15,19 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics;
 using System.Text;
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
 	public static class CommunicationUtils {
 
-		[System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("DEBUG")]
 		public static void OutputPacketLog(byte[] array, int len) {
 			OutputPacketLog(array, 0, len);
 		}
 
-		[System.Diagnostics.Conditional("DEBUG")]
+		[Conditional("DEBUG")]
 		public static void OutputPacketLog(byte[] array, int start, int len) {
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("Packet Contents: (" + len + " bytes)");

@@ -19,9 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public sealed class CharModelInfo {
 		private static Dictionary<int, CharModelInfo> animsByModel = new Dictionary<int, CharModelInfo>();
 		private static CharAnimType[] bodyTable;

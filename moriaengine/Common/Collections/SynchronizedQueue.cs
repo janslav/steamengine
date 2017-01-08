@@ -16,11 +16,12 @@
 */
 
 using System;
+using System.Diagnostics;
 
 namespace SteamEngine {
 
 	//a thread-safe queue class, which uses sort of "circular" algorhitm, 
-	[System.Diagnostics.DebuggerDisplay("Count = {Count}")]
+	[DebuggerDisplay("Count = {Count}")]
 	public class SynchronizedQueue<T> {
 		private T[] array;
 		private int headindex;

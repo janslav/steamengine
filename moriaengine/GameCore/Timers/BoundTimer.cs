@@ -22,9 +22,6 @@ namespace SteamEngine.Timers {
 	public abstract class BoundTimer : Timer {
 		internal WeakReference contRef = new WeakReference(null);
 
-		protected BoundTimer() {
-		}
-
 		protected sealed override void OnTimeout() {
 			TagHolder cont = this.Cont;
 			if (cont != null) {

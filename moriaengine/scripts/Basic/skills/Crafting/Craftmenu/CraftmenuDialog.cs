@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
@@ -131,7 +132,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							ItemResource itmRes = rlItm as ItemResource;
 							if (itmRes != null) {//add count + item picture
 								string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2spaces
-								textToShow += itmRes.DesiredCount.ToString() + " ";
+								textToShow += itmRes.DesiredCount + " ";
 								dlg.LastTable[rowCntr, resourcesColumn] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 								int countLength = ImprovedDialog.TextLength(textToShow); //length of the text with number (count of items needed) plus the separating space
 								dlg.LastTable[rowCntr, resourcesColumn] = GUTAImage.Builder.Gump(itmRes.ItemDef.Model).Color(itmRes.ItemDef.Color).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build();
@@ -142,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 								TriggerGroupResource tgrRes = rlItm as TriggerGroupResource;
 								if (tgrRes != null) {
 									string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2 spaces
-									textToShow += tgrRes.DesiredCount.ToString() + " " + ItemTypeNames.GetPrettyName(tgrRes.triggerGroup);
+									textToShow += tgrRes.DesiredCount + " " + ItemTypeNames.GetPrettyName(tgrRes.triggerGroup);
 									dlg.LastTable[rowCntr, resourcesColumn] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 									//prepare next offset:
 									lastColPos += spaceLength + ImprovedDialog.TextLength(textToShow);
@@ -188,7 +189,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
-			int btnNo = (int) gr.PressedButton;
+			int btnNo = gr.PressedButton;
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
 				Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict;
@@ -234,7 +235,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						foreach (int id in inputIds) {
 							int requestedCount = (int) gr.GetNumberResponse(id);//always integer number
 							if (requestedCount > 0) {//non zero request for making, parse the line number
-								int line = (int) ((id - 15) / 6); //input fields have IDs as 6*i + 15
+								int line = (id - 15) / 6; //input fields have IDs as 6*i + 15
 								CraftmenuItem cmItm = (CraftmenuItem) cat.Contents[line];
 								selectionQueue.Enqueue(new CraftingSelection(cmItm.itemDef, requestedCount));
 							}
@@ -270,10 +271,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, cat.Contents.Count, 1)) {
-				return;
 			} else {
 				int btnNumber = (btnNo - 10) % 6; //on one line we have numbers 10,11,12,13,14,15 next line is 16,17,18,19,20,21 etc.
-				int line = (int) ((btnNo - (10 + btnNumber)) / 6); //e.g. 12 - (10+2) / 6 = 0; 21 - (10+3) / 6 = 8/6 = 1; 15 - (10 + 1) / 6 = 0 etc...
+				int line = (btnNo - (10 + btnNumber)) / 6; //e.g. 12 - (10+2) / 6 = 0; 21 - (10+3) / 6 = 8/6 = 1; 15 - (10 + 1) / 6 = 0 etc...
 				ICraftmenuElement elem = cat.Contents[line];
 				Gump newGi = null;
 				switch (btnNumber) {

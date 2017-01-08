@@ -18,6 +18,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -215,7 +217,7 @@ namespace SteamEngine.Persistence {
 	/// to scripted objects (like TriggerGroups) or simple wrappers (TriggerKey, TimerKey, ...).
 	/// ISimpleSaveImplementor will mostly be used for very simple classes that can be saved on one line, like valuetypes.
 	/// </remarks>
-	public static partial class ObjectSaver {
+	public static class ObjectSaver {
 		internal static readonly Regex abstractScriptRE = new Regex(@"^\s*#(?<value>[a-z_][a-z0-9_]+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 		private static readonly Regex genericUidRE = new Regex(@"^\s*\((?<name>.*)\s*\)\s*(?<uid>\d+)\s*$",
@@ -281,49 +283,51 @@ namespace SteamEngine.Persistence {
 			Type t = value.GetType();
 
 			if (t.IsEnum) {
-				return Convert.ToUInt64(value, System.Globalization.CultureInfo.InvariantCulture).ToString(System.Globalization.CultureInfo.InvariantCulture);
-			} else if (ConvertTools.IsNumberType(t)) {
-				return ((IConvertible) value).ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-			} else if (t.Equals(typeof(String))) {
+				return Convert.ToUInt64(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
+			}
+			if (ConvertTools.IsNumberType(t)) {
+				return ((IConvertible) value).ToString(CultureInfo.InvariantCulture.NumberFormat);
+			}
+			if (t.Equals(typeof(String))) {
 				string stringAsSingleLine = Tools.EscapeNewlines((string) value);
 				return "\"" + stringAsSingleLine + "\""; //returns the string in ""
-			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
-				return "#" + ((AbstractScript) value).PrettyDefname; //things have #1234, abstractScripts have #name
-			} else if (value == Globals.Instance) {
-				return "#globals";
-			} else {
-				ISimpleSaveImplementor iss;
-				if (simpleImplementorsByType.TryGetValue(t, out iss)) {
-					return iss.Save(value);
-				}
-
-				if (t.IsArray) {
-					t = typeof(Array);
-				} else if (t.IsGenericType) {
-					t = t.GetGenericTypeDefinition();
-				}
-
-				ISaveImplementor isi;
-				if (implementorsByType.TryGetValue(t, out isi)) {
-					IBaseClassSaveCoordinator coordinator;
-					if (coordinatorsByImplementor.TryGetValue(isi, out coordinator)) {
-						//PushDelayedSaver(new DelayedSaver(value, isi));
-						return coordinator.GetReferenceLine(value);
-					} else {
-						uint uid;
-						if (savedUidsByObjects.TryGetValue(value, out uid)) {
-							uid = savedUidsByObjects[value];
-						} else {
-							uid = uids++;
-							savedUidsByObjects[value] = uid;
-							PushDelayedSaver(new GenericDelayedSaver(value, isi, uid));
-						}
-						return string.Concat("(", isi.HeaderName, ")", uid);
-					}
-				}
-
-				throw new UnsaveableTypeException("The object is of an unsaveable type " + t);
 			}
+			if (typeof(AbstractScript).IsAssignableFrom(t)) {
+				return "#" + ((AbstractScript) value).PrettyDefname; //things have #1234, abstractScripts have #name
+			}
+			if (value == Globals.Instance) {
+				return "#globals";
+			}
+			ISimpleSaveImplementor iss;
+			if (simpleImplementorsByType.TryGetValue(t, out iss)) {
+				return iss.Save(value);
+			}
+
+			if (t.IsArray) {
+				t = typeof(Array);
+			} else if (t.IsGenericType) {
+				t = t.GetGenericTypeDefinition();
+			}
+
+			ISaveImplementor isi;
+			if (implementorsByType.TryGetValue(t, out isi)) {
+				IBaseClassSaveCoordinator coordinator;
+				if (coordinatorsByImplementor.TryGetValue(isi, out coordinator)) {
+					//PushDelayedSaver(new DelayedSaver(value, isi));
+					return coordinator.GetReferenceLine(value);
+				}
+				uint uid;
+				if (savedUidsByObjects.TryGetValue(value, out uid)) {
+					uid = savedUidsByObjects[value];
+				} else {
+					uid = uids++;
+					savedUidsByObjects[value] = uid;
+					PushDelayedSaver(new GenericDelayedSaver(value, isi, uid));
+				}
+				return string.Concat("(", isi.HeaderName, ")", uid);
+			}
+
+			throw new UnsaveableTypeException("The object is of an unsaveable type " + t);
 		}
 
 		/// <summary>
@@ -336,7 +340,7 @@ namespace SteamEngine.Persistence {
 		/// Now they will be written to the supplied SaveStream, each in it's own proper section, etc. 
 		/// Note that objects that are supposed to be written by other mechanisms, such as Things, will not be written out here.
 		/// </remarks>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void FlushCache(SaveStream writer) {
 			while (SaverListIsNotEmpty) {
 				try {
@@ -497,9 +501,8 @@ namespace SteamEngine.Persistence {
 				if (script != null) {
 					retVal = script;
 					return true;
-				} else {
-					throw new InsufficientDataException("The AbstractScript '" + LogStr.Ident(defname) + "' is not known.");
 				}
+				throw new InsufficientDataException("The AbstractScript '" + LogStr.Ident(defname) + "' is not known.");
 			}
 			return false;
 		}
@@ -550,7 +553,6 @@ namespace SteamEngine.Persistence {
 			if (m.Success) {
 				int uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
 				PushDelayedLoader(new GenericDelayedLoader_NoParam(deleg, filename, line, uid));
-				return;
 			}
 		}
 
@@ -589,7 +591,7 @@ namespace SteamEngine.Persistence {
 
 			m = genericUidRE.Match(input);
 			if (m.Success) {
-				uint uid = uint.Parse(m.Groups["uid"].Value, System.Globalization.CultureInfo.InvariantCulture);//should we also check something using the "name" part?
+				uint uid = uint.Parse(m.Groups["uid"].Value, CultureInfo.InvariantCulture);//should we also check something using the "name" part?
 				PushDelayedLoader(new GenericDelayedLoader_Param(deleg, filename, line, additionalParameter, uid));
 				return;
 			}
@@ -602,7 +604,7 @@ namespace SteamEngine.Persistence {
 		/// </summary>
 		/// <param name="input">The input.</param>
 		/// <returns></returns>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static object OptimizedLoad_String(string input) {
 			object retVal = null;
 			if (TryLoadString(input, ref retVal)) {
@@ -617,7 +619,7 @@ namespace SteamEngine.Persistence {
 		/// </summary>
 		/// <param name="input">The input.</param>
 		/// <returns></returns>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static object OptimizedLoad_Script(string input) {
 			object retVal = null;
 			if (TryLoadScriptReference(input, ref retVal)) {
@@ -633,7 +635,7 @@ namespace SteamEngine.Persistence {
 		/// <param name="input">The input.</param>
 		/// <param name="suggestedType">Type of the suggested.</param>
 		/// <returns></returns>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public static object OptimizedLoad_SimpleType(string input, Type suggestedType) {
 			ISimpleSaveImplementor issi;
 			if (simpleImplementorsByType.TryGetValue(suggestedType, out issi)) {
@@ -651,7 +653,7 @@ namespace SteamEngine.Persistence {
 		//or should this all not be public at all? :)
 		//in other words: do scripters need enabling saving/loading other than normal core worldsaving&loading?
 		//I am not sure what all would be needed to do that...
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadSection(PropsSection input) {
 			string name = input.HeaderType;
 
@@ -662,7 +664,7 @@ namespace SteamEngine.Persistence {
 					if (coordinatorsByImplementor.TryGetValue(isi, out coordinator)) {
 						isi.LoadSection(input);
 					} else {
-						uint uid = uint.Parse(input.HeaderName, System.Globalization.CultureInfo.InvariantCulture);
+						uint uid = uint.Parse(input.HeaderName, CultureInfo.InvariantCulture);
 						//[name uid]
 						object loaded = isi.LoadSection(input);
 						while (loadedObjectsByUid.Count <= uid) {
@@ -699,12 +701,12 @@ namespace SteamEngine.Persistence {
 			foreach (KeyValuePair<Type, ISaveImplementor> pair in implementorsByType) {
 				if (type.IsAssignableFrom(pair.Key)) {//one of our implementors
 					IBaseClassSaveCoordinator ibcsc;
-					if (coordinatorsByImplementor.TryGetValue(pair.Value, out ibcsc)) {
+					if (coordinatorsByImplementor.TryGetValue(pair.Value, out ibcsc))
+					{
 						if (ibcsc != coordinator) {
 							throw new SEException("ISaveImplementor " + pair.Value + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + coordinator + "'. This should not happen.");
-						} else {
-							continue;
 						}
+						continue;
 					}
 					coordinatorsByImplementor[pair.Value] = coordinator;
 				}
@@ -731,12 +733,12 @@ namespace SteamEngine.Persistence {
 			foreach (KeyValuePair<Type, IBaseClassSaveCoordinator> pair in coordinatorsByType) {
 				if (pair.Key.IsAssignableFrom(type)) {
 					IBaseClassSaveCoordinator ibcsc;
-					if (coordinatorsByImplementor.TryGetValue(implementor, out ibcsc)) {
+					if (coordinatorsByImplementor.TryGetValue(implementor, out ibcsc))
+					{
 						if (ibcsc != pair.Value) {
 							throw new SEException("ISaveImplementor " + implementor + " is supposedly handled by two IBaseClassSaveCoordinators: '" + ibcsc + "' and '" + pair.Value + "'. This should not happen.");
-						} else {
-							continue;
 						}
+						continue;
 					}
 					coordinatorsByImplementor[implementor] = pair.Value;
 				}
@@ -764,7 +766,7 @@ namespace SteamEngine.Persistence {
 		/// <summary>
 		/// Call this after you finish loading using this class.
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadingFinished() {
 			while (LoaderListIsNotEmpty) {
 				DelayedLoader loader = null;
@@ -922,7 +924,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run(SaveStream writer) {
-				writer.WriteSection(this.implementor.HeaderName, this.uid.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				writer.WriteSection(this.implementor.HeaderName, this.uid.ToString(CultureInfo.InvariantCulture));
 				base.Run(writer);
 			}
 		}
@@ -1059,14 +1061,14 @@ namespace SteamEngine.Persistence {
 				return ReferenceEquals(x, y);
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public int GetHashCode(object obj) {
 				return obj.GetHashCode();
 			}
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+	[SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public class SaveStream {
 		TextWriter writer;
 
@@ -1082,7 +1084,7 @@ namespace SteamEngine.Persistence {
 			this.writer.WriteLine();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Close() {
 			try {
 				this.writer.Flush();

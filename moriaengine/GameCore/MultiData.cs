@@ -16,10 +16,11 @@
 */
 
 using System;
-using System.IO;
-using SteamEngine.Common;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine {
@@ -172,7 +173,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void Init() {
 			if (Globals.UseMultiItems) {
 				Console.WriteLine("Loading " + LogStr.File("Multi.mul") + " - multi items info.");
@@ -264,9 +265,6 @@ namespace SteamEngine {
 	internal class MultiComponentLinkedList : IEnumerable<MultiItemComponent> {
 		internal MultiItemComponent firstMultiComponent;
 		internal ushort count;
-
-		internal MultiComponentLinkedList() {
-		}
 
 		internal void Add(MultiItemComponent multiComponent) {
 			Sanity.IfTrueThrow((multiComponent.prevInList != null || multiComponent.nextInList != null),

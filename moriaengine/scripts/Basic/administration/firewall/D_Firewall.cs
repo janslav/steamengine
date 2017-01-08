@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<FirewallEntry> entries = args.GetDataList<FirewallEntry>();
 			if (entries == null) {
 				entries = Firewall.GetAllEntries();
-				args.SetDataList<FirewallEntry>(entries);
+				args.SetDataList(entries);
 				args.SortDataList<FirewallEntry>();
 			}
 
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			int rowCntr = 0;
 			for (int i = firstiVal; i < imax; i++, rowCntr++) {
-				FirewallEntry entry = (FirewallEntry) entries[i];
+				FirewallEntry entry = entries[i];
 				dialogHandler.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(i + 10).Build();
 				dialogHandler.LastTable[rowCntr, 1] = GUTAText.Builder.Text(entry.LowerBound.ToString()).Build();
 				dialogHandler.LastTable[rowCntr, 2] = GUTAText.Builder.Text(entry.UpperBound.ToString()).Build();
@@ -141,11 +141,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						return;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, entries.Count, 1)) {//kliknuto na paging?
-				return;
 			} else {
 				//porad jsme zde - klikalo se na tlacitko primo u bloknute IP
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (int) (gr.PressedButton - 10);
+				int row = gr.PressedButton - 10;
 				FirewallEntry entry = entries[row];
 				if (entry.IsSingleIPEntry) {
 					Firewall.RemoveBlockedIP(entry.LowerBound);
@@ -156,7 +155,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					//znovuzavolat dialog
 					DialogStacking.ResendAndRestackDialog(gi);
 				}
-				return;
 			}
 		}
 

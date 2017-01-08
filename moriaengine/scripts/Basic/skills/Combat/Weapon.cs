@@ -16,9 +16,10 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class WeaponDef {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			if (param.Equals("range", StringComparison.OrdinalIgnoreCase)) {
@@ -30,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class Weapon : IPoisonableItem {
 
 		//at durability 0, attacknumber is halved
@@ -64,13 +65,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private double CalculateMPDurabilty(double defValue, double bareHands) {
+		private double CalculateMPDurabilty(double defValue, double bareHands)
+		{
 			if (defValue >= 0) {
 				double halved = (defValue - bareHands) / 2;
 				return bareHands + halved + (((halved * this.Durability) / this.MaxDurability));
-			} else {
-				return bareHands;
 			}
+			return bareHands;
 		}
 
 		public double Piercing {

@@ -17,6 +17,7 @@
 
 using System;
 using System.CodeDom;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 
@@ -129,7 +130,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
+		[SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
 		private static MemberAttributes ParseAccess(string s) {
 			MemberAttributes ret = MemberAttributes.Final;
 			switch (s.ToLowerInvariant()) {

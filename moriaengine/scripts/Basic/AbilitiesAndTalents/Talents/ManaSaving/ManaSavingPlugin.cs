@@ -16,10 +16,11 @@
  */
 
 using System;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ManaSavingPlugin {
 
 		private static ActivableAbilityDef a_mana_saving;
@@ -65,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ManaSavingPluginDef {
 	}
 }

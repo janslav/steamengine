@@ -15,8 +15,10 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class WhirlWindPlugin {
 		private static ActivableAbilityDef a_whirlwind;
 		public static ActivableAbilityDef WhirlWindDef {
@@ -53,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class WhirlWindPluginDef {
 	}
 }

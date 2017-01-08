@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using SteamEngine.Common;
+
 //using SteamEngine.PScript;
 
 namespace SteamEngine {
@@ -92,7 +93,8 @@ namespace SteamEngine {
 				while (true) {
 					if (curNode.storedTG == tg) {
 						return;// false;//we already have it
-					} else if (curNode.nextNode == null) {
+					}
+					if (curNode.nextNode == null) {
 						curNode.nextNode = new PluginHolder.TGListNode(tg);
 						return;
 					}
@@ -227,12 +229,12 @@ namespace SteamEngine {
 			}
 		}
 
-		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
+		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments)
+		{
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				return this.CancellableTrigger(tk, new ScriptArgs(scriptArguments));
-			} else {
-				return this.CancellableTrigger(tk, (ScriptArgs) null);
 			}
+			return this.CancellableTrigger(tk, (ScriptArgs) null);
 		}
 	}
 }

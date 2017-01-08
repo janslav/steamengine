@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace SteamEngine.Common {
 	public class Poolable : Disposable {
 		internal PoolBase myPool;
@@ -36,7 +38,7 @@ namespace SteamEngine.Common {
 			this.On_Reset();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		protected virtual void On_Reset() {
 		}
 

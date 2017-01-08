@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
@@ -33,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, innerWidth - 2 * ButtonMetrics.D_BUTTON_WIDTH - ImprovedDialog.D_COL_SPACE, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Vložení nového tagu na " + th.ToString()).Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Vložení nového tagu na " + th).Build();
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(2).Build();//cudlik na info o hodnotach			
 			dlg.LastTable[0, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
@@ -60,7 +61,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-				return;
 			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
 				string tagName = gr.GetTextResponse(10);

@@ -8,7 +8,7 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
 		[SteamFunction]
 		public static void SetEquip(Player self, int n) {
 			if (n <= 10) {
-				self.Target(SingletonScript<Targ_TargetMemory>.Instance, (object) n);
+				self.Target(SingletonScript<Targ_TargetMemory>.Instance, n);
 			} else {
 				self.SysMessage("Moc velky index!");
 			}
@@ -196,7 +196,7 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
 	}
 
 	public class Targ_TargetMemory : CompiledTargetDef {
-		private int n = 0;
+		private int n;
 		protected override void On_Start(Player self, object parameter) {
 			Globals.SrcWriteLine("Vyber target.");
 			this.n = (int) parameter;

@@ -16,13 +16,13 @@
 */
 
 using System.IO;
-using SteamEngine.Common;
 using System.Text.RegularExpressions;
+using SteamEngine.Common;
 
 namespace SteamEngine.Converter {
 	public class ConvertedTemplateDef : ConvertedDef {
 
-		bool hasNumericDefname = false;
+		bool hasNumericDefname;
 
 		public ConvertedTemplateDef(PropsSection input, ConvertedFile convertedFile)
 			: base(input, convertedFile) {

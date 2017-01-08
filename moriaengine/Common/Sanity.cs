@@ -18,9 +18,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-namespace SteamEngine.Common {
-	using System.Diagnostics;
+using System.Diagnostics;
 
+namespace SteamEngine.Common {
 	public static class Sanity {
 		//Sanity.IfTrueThrow sounds better than Debug.Assert, methinks. This throws a SanityCheckException, which should
 		//be caught by what runs scripts, and marked as a probable script error, but elsewhere it should be marked

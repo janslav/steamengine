@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using SteamEngine.Communication;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
+using SteamEngine.Communication;
 
 namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
@@ -8,7 +9,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		string name;
 		int cmdWinUid;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cmdWinUid")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "name"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cmdWinUid")]
 		public void Prepare(string name, GameUid cmdWinUid) {
 			this.name = name;
 			this.cmdWinUid = (int) cmdWinUid;
@@ -27,7 +28,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class RequestEnableCommandLinePacket : OutgoingPacket {
 		int uid;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
 		public void Prepare(GameUid uid) {
 			this.uid = (int) uid;
 		}
@@ -44,7 +45,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class RequestCloseCommandWindowPacket : OutgoingPacket {
 		int uid;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
 		public void Prepare(GameUid uid) {
 			this.uid = (int) uid;
 		}
@@ -62,7 +63,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		string str;
 		int uid;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid")]
 		public void Prepare(GameUid uid, string str) {
 			this.uid = (int) uid;
 			this.str = str;
@@ -82,8 +83,8 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		string str;
 		int uid;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid"), 
-		System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "uid"), 
+		SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "str")]
 		public void Prepare(GameUid uid, string str) {
 			this.uid = (int) uid;
 			this.str = str;
@@ -143,7 +144,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 	public class LoginFailedPacket : OutgoingPacket {
 		string reason;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "reason")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "reason")]
 		public void Prepare(string reason) {
 			this.reason = reason;
 		}

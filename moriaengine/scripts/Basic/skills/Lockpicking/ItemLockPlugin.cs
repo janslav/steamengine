@@ -15,8 +15,10 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ItemLockPlugin {
 
 		public static PluginKey pkItemLock = PluginKey.Acquire("_itemLock_");
@@ -33,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class ItemLockPluginDef {
 	}
 }

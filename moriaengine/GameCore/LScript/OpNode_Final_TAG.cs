@@ -15,10 +15,11 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_SetTag : OpNode, IOpNodeHolder, ITriable {
 		private readonly TagKey name;
 		private OpNode arg;
@@ -71,7 +72,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_GetTag : OpNode, ITriable {
 		private readonly TagKey name;
 
@@ -85,20 +86,18 @@ namespace SteamEngine.LScript {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
 				return th.GetTag(this.name);
-			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
-					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
+			throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
+				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
 				return th.GetTag(this.name);
-			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
-					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
+			throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
+				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
 		public override string ToString() {
@@ -106,7 +105,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_RemoveTag : OpNode, ITriable {
 		private readonly TagKey name;
 
@@ -143,7 +142,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_TagExists : OpNode, ITriable {
 		private readonly TagKey name;
 
@@ -157,20 +156,18 @@ namespace SteamEngine.LScript {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
 				return th.HasTag(this.name);
-			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
-					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
+			throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
+				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
 				return th.HasTag(this.name);
-			} else {
-				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
-					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
+			throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
+				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
 		public override string ToString() {

@@ -1,9 +1,12 @@
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace SteamEngine.RemoteConsole {
 	public partial class LogStrDisplay {
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		private IContainer components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -95,9 +98,9 @@ namespace SteamEngine.RemoteConsole {
 		#endregion
 
 		private ExtendedRichTextBox txtBox;
-		private System.Windows.Forms.CheckBox chckAutoScroll;
-		private System.Windows.Forms.CheckBox chkCompress;
-		private System.Windows.Forms.Button btnClear;
+		private CheckBox chckAutoScroll;
+		private CheckBox chkCompress;
+		private Button btnClear;
 
 	}
 }

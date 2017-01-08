@@ -107,7 +107,8 @@ namespace SteamEngine.CompiledScripts {
 			if (mi.MemberType == MemberTypes.Property) {
 				returnType = ((PropertyInfo) mi).PropertyType;
 				return true;
-			} else if (mi.MemberType == MemberTypes.Field) {
+			}
+			if (mi.MemberType == MemberTypes.Field) {
 				returnType = ((FieldInfo) mi).FieldType;
 				return true;
 			}

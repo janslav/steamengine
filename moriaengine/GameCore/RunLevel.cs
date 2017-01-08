@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 
 namespace SteamEngine {
@@ -128,7 +129,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UnsetAwaitingRetry() {
 			Sanity.IfTrueThrow((currentLevel & RunLevel.AwaitingRetry) != RunLevel.AwaitingRetry,
 				"currentLevel == " + currentLevel + " when UnsetAwaitingRetry called");
@@ -152,7 +153,7 @@ namespace SteamEngine {
 			Globals.PauseServerTime();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static void UnsetRecompiling() {
 			Sanity.IfTrueThrow((currentLevel & RunLevel.Recompiling) != RunLevel.Recompiling,
 				"currentLevel == " + currentLevel + " when UnsetRecompiling called");

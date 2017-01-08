@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace SteamEngine.Common {
 
@@ -40,7 +41,7 @@ namespace SteamEngine.Common {
 		private static IEnumerable<KeyValuePair<string, string>> GetEntriesFromList(IList<string> strings) {
 			for (int i = 0, n = strings.Count; i < n; i++) {
 				yield return new KeyValuePair<string, string>(
-					i.ToString(System.Globalization.CultureInfo.InvariantCulture),
+					i.ToString(CultureInfo.InvariantCulture),
 					strings[i]);
 			}
 		}

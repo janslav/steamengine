@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
@@ -36,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			List<SettingResult> resList = new List<SettingResult>();
 			SettingResult oneRes = null;
 			foreach (int key in editFields.Keys) {
-				IDataFieldView field = (IDataFieldView) editFields[key];
+				IDataFieldView field = editFields[key];
 				oneRes = new SettingResult(field, target); //prepare the result
 				string newStringValue = resp.GetTextResponse(key); //get the value from the edit field
 				if (!typeof(Enum).IsAssignableFrom(field.FieldType) && !newStringValue.Equals(field.GetStringValue(target))) {
@@ -152,40 +153,46 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// If the value has no prefix (it is of some special type, find out what
 		/// type it is and return some description of it
 		/// </summary>
-		public static string GetTypePrefix(Type t) {
+		public static string GetTypePrefix(Type t)
+		{
 			if (t.Equals(typeof(object))) {
 				//object is also possible ! - the member can be set to any value
 				return "(Obj)";
-			} else if (t.IsEnum) {
-				return "(Enum)";
-			} else if (ConvertTools.IsNumberType(t)) {
-				return "(Num)";
-			} else if (t.Equals(typeof(String))) {
-				return "(Str)";
-			} else if (typeof(Region).IsAssignableFrom(t)) {
-				return "(Reg)";
-			} else if (typeof(Thing).IsAssignableFrom(t)) {
-				return "(Thg)";
-			} else if (typeof(AbstractAccount).IsAssignableFrom(t)) {
-				return "(Acc)";
-			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
-				return "(Scp)";
-			} else if (t.Equals(typeof(Globals))) {
-				return "(Glob)";
-			} else {
-				//nothing special, try the simpleimplementors
-				ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
-				if (iss != null) {
-					string pref = iss.Prefix;
-					if (pref.Contains("(")) {
-						return pref; //it already contains the brackets
-					} else { //add the surrounding brackets
-						return "(" + pref + ")";
-					}
-				} else {
-					return "(" + t.Name + ")"; //this is the final desperate possibility
-				}
 			}
+			if (t.IsEnum) {
+				return "(Enum)";
+			}
+			if (ConvertTools.IsNumberType(t)) {
+				return "(Num)";
+			}
+			if (t.Equals(typeof(String))) {
+				return "(Str)";
+			}
+			if (typeof(Region).IsAssignableFrom(t)) {
+				return "(Reg)";
+			}
+			if (typeof(Thing).IsAssignableFrom(t)) {
+				return "(Thg)";
+			}
+			if (typeof(AbstractAccount).IsAssignableFrom(t)) {
+				return "(Acc)";
+			}
+			if (typeof(AbstractScript).IsAssignableFrom(t)) {
+				return "(Scp)";
+			}
+			if (t.Equals(typeof(Globals))) {
+				return "(Glob)";
+			}
+			//nothing special, try the simpleimplementors
+			ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
+			if (iss != null) {
+				string pref = iss.Prefix;
+				if (pref.Contains("(")) {
+					return pref; //it already contains the brackets
+				} //add the surrounding brackets
+				return "(" + pref + ")";
+			}
+			return "(" + t.Name + ")"; //this is the final desperate possibility
 		}
 	}
 
@@ -242,13 +249,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Get the former value of the edited field - for comparation with the result</summary>
 		public string FormerValue {
-			get {
+			get
+			{
 				//Handle the Enums differently (show the name, not the value...)
 				if (typeof(Enum).IsAssignableFrom(this.field.FieldType)) {
 					return Enum.GetName(this.field.FieldType, this.formerValue);
-				} else {
-					return ObjectSaver.Save(this.formerValue);
 				}
+				return ObjectSaver.Save(this.formerValue);
 			}
 			set {
 				this.formerValue = value;
@@ -257,13 +264,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>The actual value of the field - after the setting is made</summary>
 		public string CurrentValue {
-			get {
+			get
+			{
 				//Handle the Enums differently (show the name, not the value...)				
 				if (typeof(Enum).IsAssignableFrom(this.field.FieldType)) {
 					return Enum.GetName(this.field.FieldType, this.field.GetValue(this.target));
-				} else {
-					return this.field.GetStringValue(this.target);
 				}
+				return this.field.GetStringValue(this.target);
 			}
 		}
 	}

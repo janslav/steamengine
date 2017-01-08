@@ -16,6 +16,8 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using SteamEngine.Common;
 
@@ -61,7 +63,7 @@ namespace SteamEngine {
 	}
 
 	public static class TileData {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const int numLandTiles = 16384;
 		private static TileFlag[] landFlags;
 
@@ -92,7 +94,7 @@ namespace SteamEngine {
 			return (id == 2 || id == 0x1DB || (id >= 0x1AE && id <= 0x1B5));
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.ItemDispidInfo")]
+		[SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.ItemDispidInfo")]
 		public static void Init() {
 			string mulFileP = Path.Combine(Globals.MulPath, "tiledata.mul");
 			Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - terrain tile info.");
@@ -118,7 +120,7 @@ namespace SteamEngine {
 								tileNameS = Utility.GetCAsciiString(mulbr, 20);
 								if (Globals.WriteMulDocsFiles) {
 									if (tileNameS.Length > 0 || texId != 0) {
-										mtfi.WriteLine("TileID: 0x" + tileId.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + " (" +
+										mtfi.WriteLine("TileID: 0x" + tileId.ToString("x", CultureInfo.InvariantCulture) + " (" +
 											tileId + ")\tName: " + tileNameS + "\tFlags: " + landFlags[tileId] + "\ttexId: " + texId);
 									}
 								}
@@ -231,11 +233,11 @@ namespace SteamEngine {
 						if (idi.IsEmpty) {
 							numNonexistant++;
 							if (Globals.WriteMulDocsFiles) {
-								nonexistant.WriteLine("0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
+								nonexistant.WriteLine("0x" + a.ToString("x", CultureInfo.InvariantCulture));
 							}
 						} else {
 							if (numWritten == 0) {
-								scr.WriteLine("\n\n\n//-------------- Written " + DateTime.Now.ToString() + " --------------//\n");
+								scr.WriteLine("\n\n\n//-------------- Written " + DateTime.Now + " --------------//\n");
 							}
 							numWritten++;
 							if (lastItem == null || !lastItem.Equals(idi)) {
@@ -254,8 +256,8 @@ namespace SteamEngine {
 								if (HasFlag(idi.Flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
-								scr.WriteLine("[" + type + " 0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
-								scr.WriteLine("Model=0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
+								scr.WriteLine("[" + type + " 0x" + a.ToString("x", CultureInfo.InvariantCulture) + "]");
+								scr.WriteLine("Model=0x" + a.ToString("x", CultureInfo.InvariantCulture));
 								scr.WriteLine("Name=\"" + name + "\"");
 								if (HasFlag(idi.Flags, TileFlag.Wearable)) {
 									scr.WriteLine("Layer=" + idi.Quality);
@@ -270,7 +272,7 @@ namespace SteamEngine {
 								scr.WriteLine("//Weight=" + idi.Weight);
 								scr.WriteLine("//Unknown=" + idi.Unknown1);
 								scr.WriteLine("//Min Items to display this art=" + idi.MinItemsToDisplayThisArt);
-								scr.WriteLine("//AnimID=0x" + idi.AnimId.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
+								scr.WriteLine("//AnimID=0x" + idi.AnimId.ToString("x", CultureInfo.InvariantCulture));
 								scr.WriteLine("//Quantity (Wpn/armor type)=" + idi.Quantity);
 								scr.WriteLine("//Unknown2=" + idi.Unknown2);
 								scr.WriteLine("//Hue=" + idi.Hue);
@@ -296,9 +298,9 @@ namespace SteamEngine {
 								if (HasFlag(idi.Flags, TileFlag.Container)) {
 									type = "ContainerDef";
 								}
-								scr.WriteLine("[" + type + " 0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
-								scr.WriteLine("Model=0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
-								scr.WriteLine("DupeItem=0x" + lastItemNum.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
+								scr.WriteLine("[" + type + " 0x" + a.ToString("x", CultureInfo.InvariantCulture) + "]");
+								scr.WriteLine("Model=0x" + a.ToString("x", CultureInfo.InvariantCulture));
+								scr.WriteLine("DupeItem=0x" + lastItemNum.ToString("x", CultureInfo.InvariantCulture));
 							}
 
 						}
@@ -336,7 +338,7 @@ namespace SteamEngine {
 			for (int a = 0; a < ItemDispidInfo.Count; a++) {
 				ItemDispidInfo idi = ItemDispidInfo.GetByModel(a);
 				scr.WriteLine("");
-				scr.WriteLine("[Dispid 0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + "]");
+				scr.WriteLine("[Dispid 0x" + a.ToString("x", CultureInfo.InvariantCulture) + "]");
 				string name = "Unnamed";
 				if (idi.SingularName.Length > 0) {
 					name = idi.SingularName;
@@ -358,7 +360,7 @@ namespace SteamEngine {
 				}
 				scr.WriteLine("Unknown=" + idi.Unknown1);
 				scr.WriteLine("Min Items to display this art (Probably used by the client with stackables)=" + idi.MinItemsToDisplayThisArt);
-				scr.WriteLine("AnimID=0x" + idi.AnimId.ToString("x", System.Globalization.CultureInfo.InvariantCulture));
+				scr.WriteLine("AnimID=0x" + idi.AnimId.ToString("x", CultureInfo.InvariantCulture));
 				scr.WriteLine("Quantity (Wpn/armor type)=" + idi.Quantity);
 				scr.WriteLine("Unknown2=" + idi.Unknown2);
 				scr.WriteLine("Hue=" + idi.Hue);
@@ -367,7 +369,7 @@ namespace SteamEngine {
 
 				for (int flagNum = 0; flagNum < 32; flagNum++) {
 					if (HasFlagNum(idi.Flags, flagNum)) {
-						sw[flagNum].WriteLine("0x" + a.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ") " + name);
+						sw[flagNum].WriteLine("0x" + a.ToString("x", CultureInfo.InvariantCulture) + ") " + name);
 
 					}
 				}

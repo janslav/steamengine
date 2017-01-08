@@ -17,12 +17,14 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PlayerVendor {
 
 		public override void On_Create() {
@@ -127,7 +129,8 @@ namespace SteamEngine.CompiledScripts {
 				if (asItem.Type is t_gold) {
 					player.WriteLineLoc<PlayerVendorLoc>(l => l.YouCantStockMoney);
 					return false;
-				} else if (asItem.RecursiveCount > 500) {
+				}
+				if (asItem.RecursiveCount > 500) {
 					player.WriteLineLoc<PlayerVendorLoc>(l => l.StockedContainerTooFull);
 					return false;
 				}
@@ -135,23 +138,22 @@ namespace SteamEngine.CompiledScripts {
 				//most important check - whether the item is in players reach/possession
 				return player.CanPickUpWithMessage(asItem);
 
-			} else {
-				//pet being sold - check ownership
-				var pet = (Character) thingBeingStocked;
-
-				if (!pet.IsPetOf(player)) {
-					player.WriteLineLoc<PlayerVendorLoc>(l => l.ThisNpcIsntYours);
-					return false;
-				}
-
-				if (!pet.IsAnimal) {
-					player.WriteLineLoc<PlayerVendorLoc>(l => l.CanOnlySellAnimals);
-					return false;
-				}
-
-				//is the pet close enough
-				return player.CanReachWithMessage(pet);
 			}
+			//pet being sold - check ownership
+			var pet = (Character) thingBeingStocked;
+
+			if (!pet.IsPetOf(player)) {
+				player.WriteLineLoc<PlayerVendorLoc>(l => l.ThisNpcIsntYours);
+				return false;
+			}
+
+			if (!pet.IsAnimal) {
+				player.WriteLineLoc<PlayerVendorLoc>(l => l.CanOnlySellAnimals);
+				return false;
+			}
+
+			//is the pet close enough
+			return player.CanReachWithMessage(pet);
 		}
 
 		/// <summary>
@@ -285,7 +287,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static string SoldByUnitEntryName(int counter, string description) {
 			return string.Concat(
-				counter.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				counter.ToString(CultureInfo.InvariantCulture),
 				"x ", description);
 		}
 		#endregion
@@ -345,14 +347,13 @@ namespace SteamEngine.CompiledScripts {
 					asChar.Reconnect();
 					entry.Delete();
 					return true;
-				} else {
-					var item = entry.FindCont(0);
-
-					player.PickupItem(item, item.Amount);
-					int x, y;
-					entry.GetRandomXYInside(out x, out y);
-					player.PutItemInItem(player.Backpack, x, y, true);
 				}
+				var item = entry.FindCont(0);
+
+				player.PickupItem(item, item.Amount);
+				int x, y;
+				entry.GetRandomXYInside(out x, out y);
+				player.PutItemInItem(player.Backpack, x, y, true);
 			}
 
 
@@ -363,7 +364,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PlayerVendorDef {
 
 		private static ContainerDef i_playervendor_stock_container;

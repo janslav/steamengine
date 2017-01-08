@@ -17,15 +17,14 @@
 
 using System;
 using System.Collections.Generic;
-using SteamEngine.Common;
 using System.Net;
 using System.Net.NetworkInformation;
-
+using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public static class ServerUtils {
 
-		static byte[] fullMask = new byte[] { 255, 255, 255, 255 };
+		static byte[] fullMask = { 255, 255, 255, 255 };
 
 		static InterfaceEntry[] interfaces = InitInterfaces();
 

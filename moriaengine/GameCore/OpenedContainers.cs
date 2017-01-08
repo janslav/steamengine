@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.Networking;
 
 namespace SteamEngine {
 	public static class OpenedContainers {
@@ -168,17 +169,17 @@ namespace SteamEngine {
 
 		//info about opened containers is cleared, clients should know.
 		internal static void SendRemoveAllOpenedContainersFromView() {
-			foreach (Networking.GameState state in Networking.GameServer.AllClients) {
+			foreach (GameState state in GameServer.AllClients) {
 				AbstractCharacter onlineChar = state.Character;
 				if (onlineChar != null) {
 					HashSet<AbstractItem> conts;
 					if (containersByChar.TryGetValue(onlineChar, out conts)) {
 						foreach (AbstractItem cont in conts) {
-							Networking.PacketSequences.SendRemoveFromView(state.Conn, cont.FlaggedUid);
+							PacketSequences.SendRemoveFromView(state.Conn, cont.FlaggedUid);
 							if (cont.IsOnGround) {
 								cont.GetOnGroundUpdater().SendTo(onlineChar, state, state.Conn);
 							} else if (cont.IsEquipped) {
-								Networking.WornItemOutPacket packet = Pool<Networking.WornItemOutPacket>.Acquire();
+								WornItemOutPacket packet = Pool<WornItemOutPacket>.Acquire();
 								packet.PrepareItem(onlineChar.FlaggedUid, cont);
 								state.Conn.SendSinglePacket(packet);
 							} //else it's in some other container, which gets closed too so we don't want it automatically visible

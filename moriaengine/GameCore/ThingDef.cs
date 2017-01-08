@@ -18,9 +18,12 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using SteamEngine.Common;
 using SteamEngine.Regions;
+
 //using SteamEngine.PScript;
 
 namespace SteamEngine {
@@ -74,11 +77,11 @@ namespace SteamEngine {
 			this.height = this.InitTypedField("height", 0, typeof(int));
 			int modelNum;
 			if (ConvertTools.TryParseInt32(defname.Substring(2), out modelNum)) {
-				this.model.SetFromScripts(filename, headerLine, modelNum.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				this.model.SetFromScripts(filename, headerLine, modelNum.ToString(CultureInfo.InvariantCulture));
 			} else if (this is AbstractItemDef) {
-				this.model.SetFromScripts(filename, headerLine, Globals.DefaultItemModel.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				this.model.SetFromScripts(filename, headerLine, Globals.DefaultItemModel.ToString(CultureInfo.InvariantCulture));
 			} else if (this is AbstractCharacterDef) {
-				this.model.SetFromScripts(filename, headerLine, Globals.DefaultCharModel.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				this.model.SetFromScripts(filename, headerLine, Globals.DefaultCharModel.ToString(CultureInfo.InvariantCulture));
 			} else {
 				throw new ScriptException("Char or item? This should NOT happen!");
 			}
@@ -110,9 +113,8 @@ namespace SteamEngine {
 			tdone = FindCharDef(defnumber);
 			if (tdone == null) {
 				return FindItemDef(defnumber);
-			} else {
-				return tdone;
 			}
+			return tdone;
 		}
 
 		public virtual string Name {
@@ -152,24 +154,24 @@ namespace SteamEngine {
 		}
 
 		public virtual int Height {
-			get {
+			get
+			{
 				if (this.height.IsDefaultCodedValue) {
 					return Map.PersonHeight;
-				} else {
-					return (int) this.height.CurrentValue;
 				}
+				return (int) this.height.CurrentValue;
 			}
 			set {
 				this.height.CurrentValue = value;
 			}
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			if (this.model.CurrentValue == null) {
 				return this.Name + ": " + this.Defname + "//" + this.Altdefname + " (null model!)";
-			} else {
-				return this.Name + ": " + this.Defname + "//" + this.Altdefname + " (" + this.model.CurrentValue + ")";
 			}
+			return this.Name + ": " + this.Defname + "//" + this.Altdefname + " (" + this.model.CurrentValue + ")";
 		}
 
 		public abstract bool IsItemDef { get; }
@@ -191,13 +193,13 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Thing Create(IPoint4D point) {
 			point = point.TopPoint;
 			return this.Create(point.X, point.Y, point.Z, point.M);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Thing Create(Thing cont) {
 			this.ThrowIfUnloaded();
 			Thing retVal = this.CreateImpl();
@@ -254,7 +256,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void Trigger_Create(Thing createdThing) {
 			this.On_Create(createdThing);
 			createdThing.TryTrigger(TriggerKey.create, null);
@@ -263,7 +265,7 @@ namespace SteamEngine {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		protected virtual void On_Create(Thing t) {
 
 		}
@@ -292,7 +294,7 @@ namespace SteamEngine {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (this.firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = this.firstTGListNode;
@@ -307,7 +309,7 @@ namespace SteamEngine {
 			return TriggerResult.Continue;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
 			if (this.firstTGListNode != null) {
 				PluginHolder.TGListNode curNode = this.firstTGListNode;
@@ -402,9 +404,9 @@ namespace SteamEngine {
 			defname = section.HeaderName.ToLowerInvariant();
 			if (ConvertTools.TryParseInt32(defname, out defnum)) {
 				if (thingDefType.IsSubclassOf(typeof(AbstractItemDef))) {
-					defname = "i_0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+					defname = "i_0x" + defnum.ToString("x", CultureInfo.InvariantCulture);
 				} else if (thingDefType.IsSubclassOf(typeof(AbstractCharacterDef))) {
-					defname = "c_0x" + defnum.ToString("x", System.Globalization.CultureInfo.InvariantCulture);
+					defname = "c_0x" + defnum.ToString("x", CultureInfo.InvariantCulture);
 				} else {//this probably can not happen, but one is never too sure :)
 					throw new SEException("The ThingDef Type " + LogStr.Ident(thingDefType) + " is neither AbstractCharacterDef nor AbstractItemDef subclass. Ignoring.");
 				}
@@ -461,11 +463,11 @@ namespace SteamEngine {
 			base.Unload();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal new static void LoadingFinished() {
 			//dump number of loaded instances?
-			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")");
-			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")");
+			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x", CultureInfo.InvariantCulture) + ")");
+			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x", CultureInfo.InvariantCulture) + ")");
 
 			int count = AllScriptsByDefname.Count;
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {

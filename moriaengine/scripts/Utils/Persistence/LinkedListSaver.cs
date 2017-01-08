@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 				Type typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);
 				object linkedList = Activator.CreateInstance(typeOfList);
 				Type typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
-				IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, new object[] { linkedList, count });
+				IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, linkedList, count);
 
 				for (int i = 0; i < count; i++) {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
@@ -132,10 +132,10 @@ namespace SteamEngine.CompiledScripts {
 
 			Type elemType = copyFrom.GetType().GetGenericArguments()[0];
 			Type typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);
-			ICollection newList = (ICollection) Activator.CreateInstance(typeOfList, new object[] { n });
+			ICollection newList = (ICollection) Activator.CreateInstance(typeOfList, n);
 
 			Type typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
-			IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, new object[] { newList });
+			IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, newList);
 
 			int i = 0;
 			foreach (object o in copyFromList) {

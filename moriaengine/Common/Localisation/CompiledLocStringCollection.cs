@@ -9,9 +9,6 @@ namespace SteamEngine.Common {
 
 	//the system will then make sure it's available in all languages and corresponding txt files are created and maintained in the \Language\ subdir
 	public abstract class CompiledLocStringCollection : LocStringCollection {
-		protected CompiledLocStringCollection() {
-		}
-
 		protected override void ProtectedSetEntry(string entryName, string entry) {
 			base.ProtectedSetEntry(entryName, entry);
 			FieldInfo field = this.GetType().GetField(entryName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.IgnoreCase);

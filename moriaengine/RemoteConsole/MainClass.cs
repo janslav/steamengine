@@ -1,7 +1,7 @@
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.RemoteConsole {
@@ -19,7 +19,7 @@ namespace SteamEngine.RemoteConsole {
 		static void Main() {
 			//name the console window for better recognizability
 			try {
-				Console.Title = "SE Remote Console - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+				Console.Title = "SE Remote Console - " + Assembly.GetExecutingAssembly().Location;
 			} catch { }
 
 			Tools.ExitBinDirectory();
@@ -31,7 +31,7 @@ namespace SteamEngine.RemoteConsole {
 
 			Logger.Init(mainForm.SystemDisplay);
 
-			Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+			Application.ThreadException += Application_ThreadException;
 
 			Application.Run(mainForm);
 

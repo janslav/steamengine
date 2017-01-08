@@ -16,13 +16,12 @@
 */
 
 using System;
-using SteamEngine.Timers;
 using SteamEngine.Persistence;
-
+using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 
-	public partial class TimerPluginDef : PluginDef {
+	public class TimerPluginDef : PluginDef {
 
 		public TimerPluginDef(String defname, String filename, Int32 headerLine)
 			:
@@ -38,22 +37,22 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[DeepCopyableClassAttribute]
-	[SaveableClassAttribute]
-	public partial class TimerPlugin : Plugin {
-		[DeepCopyImplementationAttribute]
+	[DeepCopyableClass]
+	[SaveableClass]
+	public class TimerPlugin : Plugin {
+		[DeepCopyImplementation]
 		public TimerPlugin(TimerPlugin copyFrom)
 			:
 				base(copyFrom) {
 		}
 
-		[LoadingInitializerAttribute]
+		[LoadingInitializer]
 		public TimerPlugin() {
 		}
 
 		private new TimerPlugin Def {
 			get {
-				return ((TimerPlugin) (this.Def));
+				return this.Def;
 			}
 		}
 

@@ -15,8 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using SteamEngine.Persistence;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {
 	[SaveableClass]

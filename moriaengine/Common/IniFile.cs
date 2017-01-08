@@ -16,10 +16,11 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
-using System.Collections.Generic;
 
 namespace SteamEngine.Common {
 
@@ -137,13 +138,16 @@ namespace SteamEngine.Common {
 					if (curLine.Length == 0) {
 						comments.AppendLine();
 						continue;
-					} else if (curLine.StartsWith("//") || curLine.StartsWith("# ")) {
+					}
+					if (curLine.StartsWith("//") || curLine.StartsWith("# ")) {
 						comments.AppendLine(curLine.Substring(2));
 						continue;
-					} else if (curLine.StartsWith("#")) {
+					}
+					if (curLine.StartsWith("#")) {
 						comments.AppendLine(curLine.Substring(1));
 						continue;
-					} else if (curLine.Trim('-').Length == 0) {
+					}
+					if (curLine.Trim('-').Length == 0) {
 						comments.AppendLine(verticalLine);
 						continue;
 					}
@@ -246,13 +250,12 @@ namespace SteamEngine.Common {
 			IniFileValueLine value;
 			if (this.props.TryGetValue(valueName, out value)) {
 				return value.GetValue<T>();
-			} else {
-				comment = string.Concat(Environment.NewLine, "( ", valueName, ": ", comment, " )", Environment.NewLine);
-				value = new IniFileValueLine(valueName, string.Concat(defaultValue), comment, true, null);
-				this.props[valueName] = value;
-				this.parts.Add(value);
-				return defaultValue;
 			}
+			comment = string.Concat(Environment.NewLine, "( ", valueName, ": ", comment, " )", Environment.NewLine);
+			value = new IniFileValueLine(valueName, string.Concat(defaultValue), comment, true, null);
+			this.props[valueName] = value;
+			this.parts.Add(value);
+			return defaultValue;
 		}
 
 		public void SetValue<T>(string valueName, T value, string comment) {
@@ -267,14 +270,13 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public T GetValue<T>(string valueName) {
 			IniFileValueLine value;
 			if (this.props.TryGetValue(valueName, out value)) {
 				return value.GetValue<T>();
-			} else {
-				throw new SEException("Missing value " + valueName + " from the ini file.");
 			}
+			throw new SEException("Missing value " + valueName + " from the ini file.");
 		}
 
 		public bool TryGetValue<T>(string valueName, out T retVal) {
@@ -282,10 +284,9 @@ namespace SteamEngine.Common {
 			if (this.props.TryGetValue(valueName, out value)) {
 				retVal = value.GetValue<T>();
 				return true;
-			} else {
-				retVal = default(T);
-				return false;
 			}
+			retVal = default(T);
+			return false;
 		}
 
 		public bool HasValue(string valueName) {
@@ -335,7 +336,7 @@ namespace SteamEngine.Common {
 			get { return this.name; }
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "valueString")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "valueString")]
 		public void SetValue(string valueString) {
 			this.valueString = valueString;
 			this.valueSet = false;

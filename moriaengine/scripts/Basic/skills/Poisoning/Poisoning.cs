@@ -16,6 +16,7 @@
  */
 
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -27,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 	//tool = poison potion
 	//target1 = item being poisoned (weapon, projectile, etc.)
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class PoisoningSkillDef : SkillDef {
 
 		public PoisoningSkillDef(string defname, string filename, int headerLine)
@@ -131,38 +132,37 @@ namespace SteamEngine.CompiledScripts {
 		internal static bool CanPoisonWithMessage(Character self, PoisonPotion potion, Item target) {
 			if (!self.CanPickUpWithMessage(target)) {
 				return false;
-			} else {
-				Weapon asWeapon = target as Weapon;
-				if (asWeapon != null) {
-					if (asWeapon.PoisoningDifficulty < 1) {
-						self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThisWeapon);
+			}
+			Weapon asWeapon = target as Weapon;
+			if (asWeapon != null) {
+				if (asWeapon.PoisoningDifficulty < 1) {
+					self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThisWeapon);
+					return false;
+				} //check for existing poison?
+				return true;
+			}
+			Projectile asProjectile = target as Projectile;
+			if (asProjectile != null) {
+				if (asProjectile.PoisoningDifficulty < 1) {
+					self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThisProjectile);
+					return false;
+				}
+				PoisonedItemPlugin poison = PoisonedItemPlugin.GetPoisonPlugin(asProjectile);
+				if (poison != null)
+				{
+					if (poison.PoisonType != potion.PoisonType) {
+						self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).ProjectilesHaveDifferentPoisond);
 						return false;
-					} //check for existing poison?
-					return true;
-				} else {
-					Projectile asProjectile = target as Projectile;
-					if (asProjectile != null) {
-						if (asProjectile.PoisoningDifficulty < 1) {
-							self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThisProjectile);
-							return false;
-						} else {
-							PoisonedItemPlugin poison = PoisonedItemPlugin.GetPoisonPlugin(asProjectile);
-							if (poison != null) {
-								if (poison.PoisonType != potion.PoisonType) {
-									self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).ProjectilesHaveDifferentPoisond);
-									return false;
-								} else if (poison.PoisonDoses >= asProjectile.Amount) {
-									self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).AllProjectilesPoisoned);
-									return false;
-								}
-							}
-						}
-						return true;
+					}
+					if (poison.PoisonDoses >= asProjectile.Amount) {
+						self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).AllProjectilesPoisoned);
+						return false;
 					}
 				}
-				self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThat);
-				return false;
+				return true;
 			}
+			self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThat);
+			return false;
 		}
 	}
 
@@ -180,10 +180,9 @@ namespace SteamEngine.CompiledScripts {
 				skillSeq.Tool = targetted;
 				skillSeq.PhaseSelect();
 				return TargetResult.Done;
-			} else {
-				self.ClilocSysMessage(502139); //That is not a poison potion.
-				return TargetResult.RestartTargetting;
 			}
+			self.ClilocSysMessage(502139); //That is not a poison potion.
+			return TargetResult.RestartTargetting;
 		}
 	}
 

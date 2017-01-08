@@ -15,6 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
@@ -22,15 +23,15 @@ namespace SteamEngine.Timers {
 	[SaveableClass, DeepCopyableClass]
 	public sealed class TriggerTimer : BoundTimer {
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData, CopyableData]
 		public TriggerKey trigger;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData, CopyableData]
 		public string formatString;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+		[SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 		[SaveableData, CopyableData]
 		public object[] args;
 
@@ -44,7 +45,7 @@ namespace SteamEngine.Timers {
 			this.args = args;
 		}
 
-		protected sealed override void OnTimeout(TagHolder cont) {
+		protected override void OnTimeout(TagHolder cont) {
 			ScriptArgs sa = new ScriptArgs(this.args);
 			sa.FormatString = this.formatString;
 			Globals.SetSrc(null);

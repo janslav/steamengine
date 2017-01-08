@@ -47,9 +47,8 @@ namespace SteamEngine.CompiledScripts {
 			ResourcesList retVal;
 			if (ResourcesListParser.InternalProcessMatch(match, out retVal)) {
 				return retVal;
-			} else {
-				throw new SEException("Unable to load: " + match.Value);
 			}
+			throw new SEException("Unable to load: " + match.Value);
 		}
 
 		public string Prefix {

@@ -1,6 +1,9 @@
 using System;
+using System.Reflection;
 using System.Threading;
-
+using SteamEngine.AuxiliaryServer.LoginServer;
+using SteamEngine.AuxiliaryServer.SEGameServers;
+using SteamEngine.AuxiliaryServer.SphereServers;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
@@ -21,7 +24,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 		static void Main() {
 			//name the console window for better recognizability
-			Console.Title = "SE Auxiliary Server - " + System.Reflection.Assembly.GetExecutingAssembly().Location;
+			Console.Title = "SE Auxiliary Server - " + Assembly.GetExecutingAssembly().Location;
 
 			Tools.ExitBinDirectory();
 
@@ -47,18 +50,18 @@ namespace SteamEngine.AuxiliaryServer {
 		private static void Init() {
 			Logger.Init();
 			Settings.Init();
-			LoginServer.ServerUtils.Init();
+			ServerUtils.Init();
 
 			LoginServer.LoginServer.Init();
 			ConsoleServer.ConsoleServer.Init();
-			SEGameServers.SEGameServerServer.Init();
-			SphereServers.SphereServerClientFactory.Init();
+			SEGameServerServer.Init();
+			SphereServerClientFactory.Init();
 		}
 
 		private static void Exit() {
 			LoginServer.LoginServer.Exit();
 			ConsoleServer.ConsoleServer.Exit();
-			SEGameServers.SEGameServerServer.Exit();
+			SEGameServerServer.Exit();
 		}
 
 		internal static void CommandExit() {

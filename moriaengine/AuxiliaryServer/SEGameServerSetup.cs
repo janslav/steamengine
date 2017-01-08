@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
@@ -18,15 +19,15 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		internal SEGameServerSetup(IniFileSection section) {
-			this.iniID = section.GetValue<int>("number", 0, "Number to order the servers in shard list. Should be unique, starting with 0.");
-			this.iniPath = Path.GetFullPath(section.GetValue<string>("iniPath", Path.GetFullPath("."), "path to steamengine.ini of this instance"));
+			this.iniID = section.GetValue("number", 0, "Number to order the servers in shard list. Should be unique, starting with 0.");
+			this.iniPath = Path.GetFullPath(section.GetValue("iniPath", Path.GetFullPath("."), "path to steamengine.ini of this instance"));
 
 			ReadGameIni(this.iniPath, out this.name, out this.port);
 		}
 
 		internal void WriteToIniSection(IniFileSection section) {
-			section.SetValue<int>("number", this.iniID, "Number to order the servers in shard list. Should be unique, starting with 0.");
-			section.SetValue<string>("iniPath", this.iniPath, "path to steamengine.ini of this instance");
+			section.SetValue("number", this.iniID, "Number to order the servers in shard list. Should be unique, starting with 0.");
+			section.SetValue("iniPath", this.iniPath, "path to steamengine.ini of this instance");
 		}
 
 		private static void ReadGameIni(string iniPath, out string name, out int port) {
@@ -92,11 +93,11 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 
-		public void SvnUpdate(ConsoleServer.ConsoleClient console) {
+		public void SvnUpdate(ConsoleClient console) {
 			VersionControl.SvnUpdateProject(this.IniPath);
 		}
 
-		public void SvnCleanup(ConsoleServer.ConsoleClient console) {
+		public void SvnCleanup(ConsoleClient console) {
 			VersionControl.SvnCleanUpProject(this.IniPath);
 		}
 	}

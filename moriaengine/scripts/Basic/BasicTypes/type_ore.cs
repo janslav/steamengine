@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.CompiledScripts.Dialogs;
+
 namespace SteamEngine.CompiledScripts {
 
 	public class t_ore : CompiledTriggerGroup {
@@ -29,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//ingot is for blacksmithing too...
 		public TriggerResult On_Dclick(Item self, Character dclicker) {
-			Dialogs.D_Craftmenu.Craftmenu(dclicker, SkillName.Blacksmith);
+			D_Craftmenu.Craftmenu(dclicker, SkillName.Blacksmith);
 			return TriggerResult.Continue;
 		}
 	}

@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//nadpis
 			dlg.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Vložení nové trigger groupy na " + ph.ToString()).Build();
+			dlg.LastTable[0, 0] = GUTAText.Builder.TextHeadline("Vložení nové trigger groupy na " + ph).Build();
 			//cudlik na zavreni dialogu
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
@@ -60,7 +60,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
-				return;
 			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
 				string tgDefname = gr.GetTextResponse(10);
@@ -74,11 +73,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
-				} else {
-					//ulozit a vubec
-					PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
-					ph.AddTriggerGroup(tg);
 				}
+				//ulozit a vubec
+				PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
+				ph.AddTriggerGroup(tg);
 				//vzit jeste predchozi dialog, musime smazat tglist aby se pregeneroval
 				//a obsahoval tu nove pridanou trigger groupu
 				Gump prevStacked = DialogStacking.PopStackedDialog(gi);

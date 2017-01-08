@@ -37,15 +37,6 @@ using System.Runtime.InteropServices;
 
 namespace SteamEngine {
 	internal static class FastDLL {
-
-		static FastDLL() {
-#if USEFASTDLL
-				SetupTables();
-				PrepareToInitBuffers();
-				InitBuffers(inBufferHandle.AddrOfPinnedObject(), outBufferHandle.AddrOfPinnedObject());
-#endif
-		}
-
 		internal static void ShutDownFastDLL() {
 #if USEFASTDLL
 			inBufferHandle.Free();

@@ -16,19 +16,20 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SteamEngine {
 	//Microsoft says to make enums names' singular, but to make bit-flag enums names' plural. So I've changed all
 	//these plural ones to singular (I had added half of them myself anyways). -SL
 
 	public enum LoginAttemptResult {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Failed_NoSuchAccount,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Failed_BadPassword,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Failed_Blocked,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Failed_AlreadyOnline,
 		Success
 	}
@@ -36,7 +37,7 @@ namespace SteamEngine {
 	//This is actually used now, for Character's direction, and you pass this instead of a byte
 	//to WalkRunOrFly and to the methods in OutPackets which take a direction as a parameter.
 	//-SL
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
+	[SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
 	public enum Direction : byte {
 		North = 0, Default = North,
 		NorthEast = 1,
@@ -54,7 +55,7 @@ namespace SteamEngine {
 		Locked = 2
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
+	[SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
 	public enum SkillLockType : byte {
 		Up = 0,
 		Down = 1,
@@ -67,40 +68,40 @@ namespace SteamEngine {
 	//the client prints, but with spaces. (We send a number, but the client knows what it means)
 	//-SL
 	public enum DeleteCharacterResult {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_InvalidCharacterPassword = 0,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_NonexistantCharacter = 1,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CharacterIsBeingPlayedRightNow = 2,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CharacterIsNotOldEnoughToDelete = 3,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CharacterIsCurrentlyQueuedForBackup = 4,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_CouldntCarryOutRequest = 5,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_NoMessage = 6,
 		Allow = 7
 	}
 
 	public enum PickupItemResult {
 		//item manipulation denials
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_YouCannotPickThatUp = 0,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ThatIsTooFarAway = 1,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ThatIsOutOfSight = 2,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_ThatDoesNotBelongToYou = 3,	//you will have to steal it
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_YouAreAlreadyHoldingAnItem = 4,
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_RemoveFromView = 5,	//remove from view
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		Deny_NoMessage = 6,
-		Allow = 7,
+		Allow = 7
 		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		//Deny_ThatIsLocked = 8,
 		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
@@ -137,12 +138,12 @@ namespace SteamEngine {
 		Encoded = 0xc0,
 		Guild = 13,
 		Alliance = 14,
-		Command = 15,
+		Command = 15
 	}
 
 	public enum SpeechResult {
 		IgnoredOrActedUpon = 0,
-		ActedUponExclusively = 1,
+		ActedUponExclusively = 1
 	}
 
 	//only 0 and 3 normally used
@@ -186,7 +187,7 @@ namespace SteamEngine {
 		Walking = 1,
 		Running = 2,
 		RequestedStep = 4,
-		Teleporting = 8,
+		Teleporting = 8
 	}
 
 	public enum Season {
@@ -229,7 +230,7 @@ namespace SteamEngine {
 		Murderer = 6,		//Red by default.					("Murderer highlight color")
 
 		Invulnerable = 7, Yellow = 7, //You can't change this color in the client.
-		Transparent = 8,	//Makes their status bar look really bizarre, and makes them turn transparent-black when highlighted.
+		Transparent = 8	//Makes their status bar look really bizarre, and makes them turn transparent-black when highlighted.
 	}
 
 	public enum ClientType {

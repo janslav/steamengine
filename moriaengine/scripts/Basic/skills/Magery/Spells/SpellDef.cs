@@ -16,17 +16,19 @@ t
 */
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
-using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[Flags]
-	public enum SpellFlag : int {
+	public enum SpellFlag
+	{
 		None = 0,
 		CanTargetStatic = 0x000001,
 		CanTargetGround = 0x000002,
@@ -45,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 		TargetCanMove = 0x001000,
 		UseMindPower = 0x002000, //otherwise, magery value is used
 		IsHarmful = 0x004000,
-		IsBeneficial = 0x008000,
+		IsBeneficial = 0x008000
 	}
 
 	[ViewableClass]
@@ -313,7 +315,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!ConvertTools.TryParseUInt16(section.HeaderName, out spellId)) {
 				throw new ScriptException("Unrecognized format of the id number in the spelldef script header.");
 			}
-			defname = "spell_" + spellId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			defname = "spell_" + spellId.ToString(CultureInfo.InvariantCulture);
 
 			PropsLine defnameLine = section.TryPopPropsLine("defname");
 			if (defnameLine != null) {
@@ -394,20 +396,19 @@ namespace SteamEngine.CompiledScripts {
 				mageryArgs.Target1 = caster;
 				mageryArgs.PhaseStart();
 				return;
-			} else if ((flags & SpellFlag.CanTargetAnything) != SpellFlag.None) {
+			}
+			if ((flags & SpellFlag.CanTargetAnything) != SpellFlag.None) {
 				if (mageryArgs.Target1 == null) {//if not null, it already has a target
 					Player self = caster as Player;
 					if (self != null) {
 						self.Target(SingletonScript<SpellTargetDef>.Instance, mageryArgs);
 						return;
-					} else {
-						caster.AnnounceBug();
-						throw new SEException("Only Players can target spells");
 					}
-				} else {
-					mageryArgs.PhaseStart();
-					return;
+					caster.AnnounceBug();
+					throw new SEException("Only Players can target spells");
 				}
+				mageryArgs.PhaseStart();
+				return;
 			}
 
 			throw new SEException("SpellDef.Trigger_Select - unfinished");
@@ -823,13 +824,13 @@ namespace SteamEngine.CompiledScripts {
 		private SpellDef spellDef;
 		private int spellPower;
 		private CharRelation relation;
-		private bool relationFoundOut = false;
+		private bool relationFoundOut;
 		private EffectFlag effectFlag = EffectFlag.FromSpellBook;
 
 		public readonly ScriptArgs scriptArgs;
 
 		public SpellEffectArgs()
-			: base() {
+		{
 			this.scriptArgs = new ScriptArgs(this);
 		}
 

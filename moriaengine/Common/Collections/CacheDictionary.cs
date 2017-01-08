@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SteamEngine {
@@ -57,11 +58,10 @@ namespace SteamEngine {
 		public void Add(TKey key, TValue value) {
 			if (this.dict.ContainsKey(key)) {
 				throw new SEException("Adding duplicate");
-			} else {
-				this.linkedList.AddFirst(key);
-				this.dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
-				this.PurgeLastIfNeeded();
 			}
+			this.linkedList.AddFirst(key);
+			this.dict.Add(key, new CacheDictionaryKeyEntry(value, this.linkedList.First));
+			this.PurgeLastIfNeeded();
 		}
 
 		private void PurgeLastIfNeeded() {
@@ -195,7 +195,7 @@ namespace SteamEngine {
 
 		#region IEnumerable Members
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+		IEnumerator IEnumerable.GetEnumerator() {
 			throw new SEException("The method or operation is not implemented.");
 		}
 

@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 using SteamEngine.Common;
@@ -67,9 +68,8 @@ namespace SteamEngine.LScript {
 				if (field != null) {
 					this.parameterTypes = new Type[1] { field.FieldType };
 					return this.parameterTypes;
-				} else {
-					throw new SEException(this.info + " of type " + this.info.GetType() + " and MemberType " + this.info.MemberType + " is not a field, nor method, nor constructor... wtf? This should not happen!");
 				}
+				throw new SEException(this.info + " of type " + this.info.GetType() + " and MemberType " + this.info.MemberType + " is not a field, nor method, nor constructor... wtf? This should not happen!");
 			}
 			return this.parameterTypes;
 		}
@@ -162,7 +162,7 @@ namespace SteamEngine.LScript {
 		private MemberResolver() {
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal OpNode[] Args {
 			get {
 				return this.args;
@@ -186,7 +186,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal bool Resolve(Type type, BindingFlags flags,
 				MemberTypes memberTypes, out MemberDescriptor desc) {
 			//resolve as any member (method or property(as getter/setter method) or constructor or field)
@@ -361,7 +361,7 @@ namespace SteamEngine.LScript {
 
 				StringBuilder sb = new StringBuilder("Ambiguity detected when resolving expression as object method/property. There were following possibilities:");
 				foreach (MemberDescriptor md in resolvedAmbiguities) {
-					sb.Append(Environment.NewLine).Append(md.ToString());
+					sb.Append(Environment.NewLine).Append(md);
 				}
 				throw new InterpreterException(sb.ToString(),
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -429,7 +429,8 @@ namespace SteamEngine.LScript {
 			//Console.WriteLine("is {0} subtype of {1}?", from.GetType(), toType);
 			if (toType.IsInstanceOfType(from)) {
 				return true;
-			} else if ((ConvertTools.IsNumberType(toType)) && (ConvertTools.IsNumberType(from.GetType()))) {
+			}
+			if ((ConvertTools.IsNumberType(toType)) && (ConvertTools.IsNumberType(from.GetType()))) {
 				return true;
 			}
 			//Console.WriteLine("MemberResolver.IsCompatibleType false: from {0}({1}) to type {2}", from, from.GetType(), toType);
@@ -444,7 +445,7 @@ namespace SteamEngine.LScript {
 			return (memberType & MemberTypes.Method) == MemberTypes.Method;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal static bool IsProperty(MemberInfo info) {
 			return IsProperty(info.MemberType);
 		}
@@ -524,7 +525,7 @@ namespace SteamEngine.LScript {
 					equalityGroups.Add(newGroup);
 				}
 			}
-			equalityGroups.Sort(new Comparison<List<AmbiguityResolver>>(CompareEqalityGroups));
+			equalityGroups.Sort(CompareEqalityGroups);
 			List<AmbiguityResolver> bestGroup = equalityGroups[equalityGroups.Count - 1];
 			equalityGroups.RemoveAt(equalityGroups.Count - 1);
 

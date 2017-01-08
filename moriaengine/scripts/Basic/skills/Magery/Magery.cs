@@ -16,10 +16,11 @@
  */
 
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class MagerySkillDef : SkillDef {
 		//skillTarget1: spell target
 		//skillTarget2: scroll or spellbook item
@@ -149,9 +150,8 @@ namespace SteamEngine.CompiledScripts {
 					}
 
 					return TriggerResult.Cancel; ; //default = set delay by magery skilldef, which we don't want
-				} else {
-					self.ClilocSysMessage(502625); // Insufficient mana for this spell.
 				}
+				self.ClilocSysMessage(502625); // Insufficient mana for this spell.
 			}
 
 			return TriggerResult.Cancel;
@@ -170,7 +170,8 @@ namespace SteamEngine.CompiledScripts {
 					if (book.IsDeleted || (book.TopObj() != self)) {
 						self.ClilocSysMessage(501608);	//You don't have a spellbook.
 						return TriggerResult.Cancel;
-					} else if (!book.HasSpell(spell)) {
+					}
+					if (!book.HasSpell(spell)) {
 						self.ClilocSysMessage(501902);	//You don't know that spell.
 						return TriggerResult.Cancel;
 					}

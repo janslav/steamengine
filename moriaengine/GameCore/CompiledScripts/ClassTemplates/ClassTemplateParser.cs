@@ -16,12 +16,14 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using SteamEngine.Common;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.CSharp;
+using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 	internal static class ClassTemplateParser {
@@ -77,7 +79,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ProcessFile(ScriptFile scriptFile) {
 
 			CodeCompileUnit ccu = CreateCompileUnit();
@@ -97,7 +99,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			string outFileName = Path.Combine(dirName, fileName);
 
 			using (StreamWriter outFile = new StreamWriter(outFileName)) {
-				CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider();
+				CodeDomProvider provider = new CSharpCodeProvider();
 				provider.GenerateCodeFromCompileUnit(ccu, outFile, options);
 			}
 

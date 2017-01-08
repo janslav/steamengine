@@ -70,12 +70,12 @@ namespace SteamEngine.CompiledScripts {
 		public int on_Command(Globals globals, ISrc commandSrc, string cmd) {
 			int plevel = commandSrc.MaxPlevel;
 			int cmdPlevel;
-			if (this.commands.TryGetValue(cmd, out cmdPlevel)) {
+			if (this.commands.TryGetValue(cmd, out cmdPlevel))
+			{
 				if (plevel >= cmdPlevel) {
 					return 0;
-				} else {
-					return 1;
 				}
+				return 1;
 			}
 			if (plevel < plevelToAllCommands) {
 				return 1;

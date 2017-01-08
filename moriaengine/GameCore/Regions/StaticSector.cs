@@ -16,16 +16,17 @@
  */
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using SteamEngine.Common;
 
 namespace SteamEngine.Regions {
 
 	internal class StaticSector {
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
 		private ushort[,] tileMatrix;
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Member")]
 		private sbyte[,] zMatrix;
 		internal StaticItem[] statics;
 
@@ -45,7 +46,7 @@ namespace SteamEngine.Regions {
 		//    return GetStaticSector((x >> Map.sectorFactor), (y >> Map.sectorFactor), m);
 		//}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static StaticSector GetStaticSector(int sx, int sy, int m) {
 			int facet = Map.GetMap(m).Facet;
 
@@ -100,7 +101,7 @@ namespace SteamEngine.Regions {
 		}
 
 		//(TODO): Loading other map MULs.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static void LoadMapSector(int sx, int sy, int numMulSectors, int facet, out ushort[,] tile, out sbyte[,] z) {
 			string mulFileP = Path.Combine(Globals.MulPath, "map0.mul");
 
@@ -135,7 +136,7 @@ namespace SteamEngine.Regions {
 		}
 
 		//(TODO): Loading other static MULs.
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
+		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static StaticItem[] LoadStaticsSector(int mulsX, int mulsY, int sx, int sy, int numMulSectors, int facet, out uint[,] versions) {
 			versions = new uint[numMulSectors, numMulSectors];
 			string mulFilePI = Path.Combine(Globals.MulPath, "staidx0.mul");
@@ -183,9 +184,8 @@ namespace SteamEngine.Regions {
 				}
 
 				return statics.ToArray();
-			} else {
-				throw new SEException("Unable to locate statics0.mul or staidx0.mul. Using map disabled.");
 			}
+			throw new SEException("Unable to locate statics0.mul or staidx0.mul. Using map disabled.");
 		}
 
 		internal bool HasStaticId(int x, int y, int staticId) {
@@ -233,20 +233,20 @@ namespace SteamEngine.Regions {
 		//    rmsy = diffbasey >> 3;
 		//}
 
-		internal int GetTileId(int relX, int relY) {
+		internal int GetTileId(int relX, int relY)
+		{
 			if (Globals.useMap) {
 				return this.tileMatrix[relX, relY];
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 
-		internal int GetTileZ(int relX, int relY) {
+		internal int GetTileZ(int relX, int relY)
+		{
 			if (Globals.useMap) {
 				return this.zMatrix[relX, relY];
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 
 		//static ArrayList numStaticsPerSector = new ArrayList();

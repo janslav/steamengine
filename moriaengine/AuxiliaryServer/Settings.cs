@@ -1,7 +1,10 @@
 using System;
-using System.Net;
-using System.IO;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Net;
+using SteamEngine.AuxiliaryServer.ConsoleServer;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {
@@ -23,9 +26,9 @@ namespace SteamEngine.AuxiliaryServer {
 
 		void StartGameServerProcess(BuildType build);
 
-		void SvnUpdate(ConsoleServer.ConsoleClient console);
+		void SvnUpdate(ConsoleClient console);
 
-		void SvnCleanup(ConsoleServer.ConsoleClient console);
+		void SvnCleanup(ConsoleClient console);
 	}
 
 	public static class Settings {
@@ -36,9 +39,9 @@ namespace SteamEngine.AuxiliaryServer {
 
 		private static readonly HashSet<IGameServerSetup> knownGameServersSet;
 		private static readonly List<IGameServerSetup> knownGameServersList;
-		private static readonly System.Collections.ObjectModel.ReadOnlyCollection<IGameServerSetup> knownGameServersListWrapper;
+		private static readonly ReadOnlyCollection<IGameServerSetup> knownGameServersListWrapper;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
+		[SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
 		public const string iniFileName = "steamaux.ini";
 
 		public static int TimeZone {
@@ -49,7 +52,7 @@ namespace SteamEngine.AuxiliaryServer {
 			get { return logPath; }
 		}
 
-		public static System.Collections.ObjectModel.ReadOnlyCollection<IGameServerSetup> KnownGameServersList {
+		public static ReadOnlyCollection<IGameServerSetup> KnownGameServersList {
 			get {
 				return knownGameServersListWrapper;
 			}
@@ -66,13 +69,13 @@ namespace SteamEngine.AuxiliaryServer {
 		static Settings() {
 			knownGameServersSet = new HashSet<IGameServerSetup>();
 			knownGameServersList = new List<IGameServerSetup>();
-			knownGameServersListWrapper = new System.Collections.ObjectModel.ReadOnlyCollection<IGameServerSetup>(knownGameServersList);
+			knownGameServersListWrapper = new ReadOnlyCollection<IGameServerSetup>(knownGameServersList);
 
 			IniFile ini = new IniFile(iniFileName);
 
 			IniFileSection files = ini.GetNewOrParsedSection("Files");
 
-			logPath = Path.GetFullPath(files.GetValue<string>("logPath", "logs", "Path to the log files"));
+			logPath = Path.GetFullPath(files.GetValue("logPath", "logs", "Path to the log files"));
 
 
 			IniFileSection loginServer = ini.GetNewOrParsedSection("LoginServer");
@@ -80,13 +83,13 @@ namespace SteamEngine.AuxiliaryServer {
 			timeZone = loginServer.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
 
 			loginServerEndpoint = new IPEndPoint(IPAddress.Any,
-				loginServer.GetValue<int>("port", 2593, "The port to listen on for game client connections"));
+				loginServer.GetValue("port", 2593, "The port to listen on for game client connections"));
 
 
 			IniFileSection consoleServer = ini.GetNewOrParsedSection("ConsoleServer");
 
 			consoleServerEndpoint = new IPEndPoint(IPAddress.Any,
-				consoleServer.GetValue<int>("port", 2594, "The port to listen on for remote console connections"));
+				consoleServer.GetValue("port", 2594, "The port to listen on for remote console connections"));
 
 
 			//SE gameservers
@@ -158,7 +161,7 @@ namespace SteamEngine.AuxiliaryServer {
 		public static void RememberUser(string user, string password) {
 			IniFile ini = new IniFile(iniFileName);
 			IniFileSection usersSection = ini.GetNewOrParsedSection("Users");
-			usersSection.SetValue<string>(user, password, null);
+			usersSection.SetValue(user, password, null);
 			ini.WriteToFile();
 		}
 
@@ -166,7 +169,7 @@ namespace SteamEngine.AuxiliaryServer {
 			IniFile ini = new IniFile(iniFileName);
 			IniFileSection usersSection = ini.GetNewOrParsedSection("Users");
 			string passToCompare;
-			if (usersSection.TryGetValue<string>(user, out passToCompare)) {
+			if (usersSection.TryGetValue(user, out passToCompare)) {
 				if (string.Equals(password, passToCompare, StringComparison.Ordinal)) {
 					return true;
 				}

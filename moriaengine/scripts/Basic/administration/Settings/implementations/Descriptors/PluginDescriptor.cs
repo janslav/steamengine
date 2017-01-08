@@ -17,7 +17,7 @@
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Plugin), "Plugin",
-	   new string[] { "TypeDef", "Cont" }
+	   new[] { "TypeDef", "Cont" }
 		)]
 	public static class PluginDescriptor {
 

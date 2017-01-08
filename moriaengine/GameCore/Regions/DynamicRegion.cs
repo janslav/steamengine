@@ -16,6 +16,8 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {
 	public class DynamicRegion : Region {
@@ -24,7 +26,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public DynamicRegion(ImmutableRectangle[] newRects)
-			: base() {
+		{
 
 			int n = newRects.Length;
 			this.rectangles = new RegionRectangle[n];
@@ -42,7 +44,7 @@ namespace SteamEngine.Regions {
 		/// <summary>
 		/// Serves to place the region to the map for the first time (after creation)
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Place(Point4D p) {
 			this.ThrowIfDeleted();
 			if (p != null) { //already placed!
@@ -150,7 +152,7 @@ namespace SteamEngine.Regions {
 		/// The purpose is the same as for StaticRegion but the checks are different.
 		/// The map parameter allows us to specifiy the map where the region should be
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool SetRectangles<T>(IList<T> list, Map map) where T : ImmutableRectangle {
 			RegionRectangle[] newArr = new RegionRectangle[list.Count];
 			for (int i = 0; i < list.Count; i++) {
@@ -176,7 +178,7 @@ namespace SteamEngine.Regions {
 			base.Delete();
 		}
 
-		public sealed override void Save(Persistence.SaveStream output) {
+		public sealed override void Save(SaveStream output) {
 			throw new SEException("Dynamic regions are not supposed to be saved");
 		}
 

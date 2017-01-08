@@ -22,7 +22,7 @@ using SteamEngine.CompiledScripts;
 namespace SteamEngine {
 	public abstract class TriggerGroup : AbstractScript {
 		protected TriggerGroup()
-			: base() {
+		{
 			this.Init(this.Defname);
 		}
 

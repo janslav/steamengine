@@ -14,6 +14,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
+
 using System;
 using System.Collections.Generic;
 using SteamEngine.Regions;
@@ -135,10 +136,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, regionsList.Count, 1)) {//kliknuto na paging? (1 = index parametru nesoucim info o pagingu (zde dsi.Args[2] viz výše)
 				//1 sloupecek
-				return;
 			} else {
 				//zjistime si radek
-				int row = (int) gr.PressedButton - 10;
+				int row = gr.PressedButton - 10;
 				StaticRegion region = regionsList[row];
 				//vezmem z vybraneho regionu jeho defname a predame do predchoziho dialogu
 				Gump previousGi = DialogStacking.PopStackedDialog(gi);

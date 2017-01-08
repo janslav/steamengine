@@ -17,11 +17,12 @@
 
 using System;
 using System.Collections;
-using SteamEngine.Common;
+using System.Diagnostics.CodeAnalysis;
 using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_Foreach : OpNode, IOpNodeHolder {
 		private int localIndex;
 		private string localName;//just for the ToString()
@@ -52,19 +53,19 @@ namespace SteamEngine.LScript {
 			Token asToken = node as Token;
 			if (asToken != null) {
 				return asToken.GetImage().Trim();
-			} else {
-				return ((Token) node.GetChildAt(2)).GetImage().Trim();
 			}
+			return ((Token) node.GetChildAt(2)).GetImage().Trim();
 		}
 
-		private static Production GetHeaderCode(Node node) {
+		private static Production GetHeaderCode(Node node)
+		{
 			if (IsType(node, StrictConstants.FOREACH_HEADER_CODE)) {
 				return (Production) node;
-			} else if (IsType(node, StrictConstants.FOREACH_HEADER_IN_PARENS)) {
-				return GetHeaderCode(node.GetChildAt(1));
-			} else {
-				throw new SEException("Unexpected node. This should not happen.");
 			}
+			if (IsType(node, StrictConstants.FOREACH_HEADER_IN_PARENS)) {
+				return GetHeaderCode(node.GetChildAt(1));
+			}
+			throw new SEException("Unexpected node. This should not happen.");
 		}
 
 		private OpNode_Foreach(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
@@ -84,7 +85,8 @@ namespace SteamEngine.LScript {
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
-		internal override object Run(ScriptVars vars) {
+		internal override object Run(ScriptVars vars)
+		{
 			if (this.blockNode != null) {
 				object retVal = null;
 				IEnumerable enumerable = this.enumerableNode.Run(vars) as IEnumerable;
@@ -99,9 +101,8 @@ namespace SteamEngine.LScript {
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
 				return retVal;
-			} else {
-				return null;//if there is no code to run, we dont do anything.
 			}
+			return null;//if there is no code to run, we dont do anything.
 		}
 
 		public override string ToString() {

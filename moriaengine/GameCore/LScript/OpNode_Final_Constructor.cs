@@ -16,14 +16,15 @@
 */
 
 using System;
-using System.Text;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using SteamEngine.Common;
+using System.Reflection;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_ConstructorWrapper : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly OpNode[] args;
@@ -39,12 +40,11 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.args[index] = newNode;
 			}
+			this.args[index] = newNode;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -70,7 +70,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				return this.ctor.Invoke(results);
@@ -89,7 +89,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.Append(this.ctor.DeclaringType).Append(".ctor(");
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append("))").ToString();
 		}
@@ -101,7 +101,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_ConstructorWrapper_Params : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly OpNode[] normalArgs;
@@ -131,7 +131,7 @@ namespace SteamEngine.LScript {
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -163,7 +163,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			int normalArgsLength = this.normalArgs.Length;
 			object[] modifiedResults = new object[normalArgsLength + 1];
@@ -191,7 +191,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.Append(this.ctor.DeclaringType).Append(".ctor(");
 			for (int i = 0, n = this.normalArgs.Length; i < n; i++) {
-				str.Append(this.normalArgs[i].ToString()).Append(", ");
+				str.Append(this.normalArgs[i]).Append(", ");
 			}
 			str.Append(Tools.ObjToString(this.paramArgs));
 			return str.Append("))").ToString();
@@ -204,7 +204,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
+	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_ConstructorWrapper_String : OpNode, IOpNodeHolder, ITriable, IKnownRetType {
 		internal readonly ConstructorInfo ctor;
 		private readonly string formatString;
@@ -222,12 +222,11 @@ namespace SteamEngine.LScript {
 			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
-			} else {
-				this.args[index] = newNode;
 			}
+			this.args[index] = newNode;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
@@ -254,7 +253,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
 				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
@@ -274,7 +273,7 @@ namespace SteamEngine.LScript {
 			StringBuilder str = new StringBuilder("(");
 			str.Append(this.ctor.DeclaringType).Append(".ctor(");
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				str.Append(this.args[i].ToString()).Append(", ");
+				str.Append(this.args[i]).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}

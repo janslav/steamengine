@@ -19,12 +19,11 @@ namespace SteamEngine.CompiledScripts {
 					self.AbortSkill();
 				}
 				return 0;
-			} else {
-				if (self.CurrentSkill == null) {
-					return -1;
-				}
-				return (int) self.CurrentSkillName;
 			}
+			if (self.CurrentSkill == null) {
+				return -1;
+			}
+			return (int) self.CurrentSkillName;
 		}
 
 		[SteamFunction]
@@ -73,10 +72,9 @@ namespace SteamEngine.CompiledScripts {
 					default: {
 							if (args.Length > 4) {
 								throw new SanityCheckException("Too many args (" + args.Length + ") to Go(\"" + s + "\"), expected no more than 4.");
-							} else { //if (args.Length<2) {
-								throw new SanityCheckException("Too few args (" + args.Length + ") to Go(\"" + s + "\"), expected at least 2.");
-							}
-						}
+							} //if (args.Length<2) {
+						throw new SanityCheckException("Too few args (" + args.Length + ") to Go(\"" + s + "\"), expected at least 2.");
+					}
 				}
 			}
 			//Update();
@@ -133,17 +131,15 @@ namespace SteamEngine.CompiledScripts {
 					if (tg != null) {
 						Events(self, tg);
 						return;
-					} else {
-						TGRemover tgr = firstArg as TGRemover;
-						if (tgr != null) {
-							Events(self, tgr);
-							return;
-						} else {
-							int i = Convert.ToInt32(firstArg);
-							Events(self, i);
-							return;
-						}
 					}
+					TGRemover tgr = firstArg as TGRemover;
+					if (tgr != null) {
+						Events(self, tgr);
+						return;
+					}
+					int i = Convert.ToInt32(firstArg);
+					Events(self, i);
+					return;
 				}
 			}
 			Events(self);
@@ -167,7 +163,7 @@ namespace SteamEngine.CompiledScripts {
 		public static string Events(ITriggerGroupHolder self) {
 			StringBuilder toreturn = new StringBuilder();
 			foreach (TriggerGroup tg in self.GetAllTriggerGroups()) {
-				toreturn.Append(tg.ToString()).Append(", ");
+				toreturn.Append(tg).Append(", ");
 
 			}
 			if (toreturn.Length > 2) {

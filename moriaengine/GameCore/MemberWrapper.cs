@@ -16,12 +16,13 @@
 */
 
 using System;
-using System.Text;
-using System.Threading;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections.Generic;
-using System.Globalization;
+using System.Text;
+using System.Threading;
 
 namespace SteamEngine {
 
@@ -38,7 +39,7 @@ namespace SteamEngine {
 		private static Dictionary<FieldInfo, FieldWrapper> fieldWrappers = new Dictionary<FieldInfo, FieldWrapper>();
 		//private static Hashtable propertyWrappers;
 
-		private static Type[] singleObjTypeArr = new Type[] { typeof(object) };
+		private static Type[] singleObjTypeArr = { typeof(object) };
 		private static Dictionary<Type, MethodInfo> convertMethods = new Dictionary<Type, MethodInfo>();
 		private static int count;
 
@@ -74,7 +75,7 @@ namespace SteamEngine {
 			Type[] ifaces = declaringType.GetInterfaces();
 			foreach (Type iface in ifaces) {
 				InterfaceMapping mapping = declaringType.GetInterfaceMap(iface);
-				int i = Array.IndexOf<MethodInfo>(mapping.TargetMethods, mi);
+				int i = Array.IndexOf(mapping.TargetMethods, mi);
 				if (i >= 0) {
 					return mapping.InterfaceMethods[i].GetBaseDefinition();
 				}
@@ -267,7 +268,7 @@ namespace SteamEngine {
 		//	
 		//	//class: ConstructorWrapper
 		//	//can instantiate new objects
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+		[SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class ConstructorWrapper : ConstructorInfo {
 			private ConstructorInfo constructorInfo;
 
@@ -328,13 +329,13 @@ namespace SteamEngine {
 			//Invoke(System.Reflection.BindingFlags ingored1, System.Reflection.Binder ignored2, 
 			//	object[] parameters, System.Globalization.CultureInfo ignored3)'
 
-			private static Type[] invokeParamTypes1 = new Type[] {
+			private static Type[] invokeParamTypes1 = {
 				typeof(BindingFlags), typeof(Binder), typeof(Object[]), typeof(CultureInfo)};
 
 			//Invoke(object ignored1, System.Reflection.BindingFlags ignored2, System.Reflection.Binder ignored3, 
 			//	object[] parameters, System.Globalization.CultureInfo ignored4)'
 
-			private static Type[] invokeParamTypes2 = new Type[] {
+			private static Type[] invokeParamTypes2 = {
 				typeof(Object), typeof(BindingFlags), typeof(Binder), typeof(Object[]), typeof(CultureInfo)};
 
 			private static void EmitInvokeMethod(ConstructorInfo constructor, TypeBuilder tb,
@@ -367,7 +368,7 @@ namespace SteamEngine {
 
 		//class: FieldWrapper
 		//can get or set a field value
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+		[SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class FieldWrapper : FieldInfo {
 			private FieldInfo fieldInfo;
 
@@ -419,16 +420,16 @@ namespace SteamEngine {
 				throw new SEException("You can not set a readonly field.");
 			}
 
-			private static Type[] setParamTypes = new Type[] {
+			private static Type[] setParamTypes = {
 				typeof(Object), typeof(Object), typeof(BindingFlags), typeof(Binder), typeof(CultureInfo)};
 
 			//method: GetValue
 			//returns value of a field of an instance. 
 			//For static fields, the instance parameter is ignored (should be null). 
 			//public abstract object GetValue(object obj);
-			private static Type[] getParamTypes = new Type[] { typeof(Object) };
+			private static Type[] getParamTypes = { typeof(Object) };
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int32.ToString")]
+			[SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int32.ToString")]
 			private static string GetWrapperClassNameFor(FieldInfo fi) {
 				return EscapeTypeName(String.Concat(
 					fi.DeclaringType.Name, "_", fi.Name, "_", (count++).ToString()));
@@ -506,7 +507,7 @@ namespace SteamEngine {
 
 		//class: MethodWrapper 
 		//can invoke a method and return it`s return value
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+		[SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class MethodWrapper : MethodInfo {
 			private MethodInfo methodInfo;
 
@@ -580,7 +581,7 @@ namespace SteamEngine {
 			//object abstract Invoke(object self, System.Reflection.BindingFlags ignored1, System.Reflection.Binder ignored2, 
 			//		object[] pars, System.Globalization.CultureInfo ignored3);
 
-			private static Type[] invokeParamTypes = new Type[] {
+			private static Type[] invokeParamTypes = {
 				typeof(Object), typeof(BindingFlags), typeof(Binder), typeof(Object[]), typeof(CultureInfo)};
 
 			internal static MethodWrapper SpitAndInstantiateWrapperFor(MethodInfo method) {

@@ -16,6 +16,8 @@
 */
 
 using System.CodeDom;
+using System.Diagnostics.CodeAnalysis;
+using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts.ClassTemplates {
 	internal class PluginTemplate : ClassTemplate {
@@ -29,7 +31,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			this.DefaultConstructor();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0")]
+		[SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0")]
 		private void LoadSaveAttributes() {
 			foreach (CodeTypeMember member in this.generatedType.Members) {
 				CodeMemberMethod method = member as CodeMemberMethod;
@@ -37,11 +39,11 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 					switch (method.Name.ToLowerInvariant()) {
 						case "save":
 							method.CustomAttributes.Add(new CodeAttributeDeclaration(
-								new CodeTypeReference(typeof(Persistence.SaveAttribute))));
+								new CodeTypeReference(typeof(SaveAttribute))));
 							break;
 						case "loadline":
 							method.CustomAttributes.Add(new CodeAttributeDeclaration(
-								new CodeTypeReference(typeof(Persistence.LoadLineAttribute))));
+								new CodeTypeReference(typeof(LoadLineAttribute))));
 							break;
 					}
 				}
@@ -51,7 +53,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 		private void DefaultConstructor() {
 			CodeConstructor constructor = new CodeConstructor();
 			constructor.CustomAttributes.Add(new CodeAttributeDeclaration(
-				new CodeTypeReference(typeof(Persistence.LoadingInitializerAttribute))));
+				new CodeTypeReference(typeof(LoadingInitializerAttribute))));
 			constructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			this.generatedType.Members.Add(constructor);
 		}

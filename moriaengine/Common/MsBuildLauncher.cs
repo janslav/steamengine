@@ -31,23 +31,22 @@ namespace SteamEngine.Common {
 		public static string Compile(string seRootPath, BuildType build, string targetTask, int? scriptAssemblyNumber = null) {
 			var slnPath = Path.Combine(seRootPath, slnName);
 			var globalProperties = new Dictionary<string, string>();
-			var buildRequest = new BuildRequestData(slnPath, globalProperties, null, new string[] { targetTask }, null);
+			var buildRequest = new BuildRequestData(slnPath, globalProperties, null, new[] { targetTask }, null);
 			var pc = new ProjectCollection();
 			pc.SetGlobalProperty("Configuration", build.ToString());
 			if (scriptAssemblyNumber.HasValue) {
 				pc.SetGlobalProperty("ScriptsAssemblyNumber", scriptAssemblyNumber.ToString());
 			}
 
-			var buildParameters = new BuildParameters(pc) { Loggers = new[] { new MsBuildLogger(),  } };
+			var buildParameters = new BuildParameters(pc) { Loggers = new[] { new MsBuildLogger()  } };
 			var result = BuildManager.DefaultBuildManager.Build(buildParameters, buildRequest);
 
 			if (result.OverallResult == BuildResultCode.Success) {
 				var compiledFilePath = result.ResultsByTarget[targetTask].Items[0].ItemSpec;
 				if (File.Exists(compiledFilePath)) {
 					return compiledFilePath;
-				} else {
-					throw new Exception($"The compiled file \'{compiledFilePath}\' doesn\'t exist.");
 				}
+				throw new Exception($"The compiled file \'{compiledFilePath}\' doesn\'t exist.");
 			}
 
 			throw new Exception("Compilation failed.", result.Exception);

@@ -84,9 +84,8 @@ namespace SteamEngine.CompiledScripts {
 			Point3D p = (Point3D) objToSave;
 			if (p.Z == 0) {
 				return "(3D)" + p.X + "," + p.Y;
-			} else {
-				return "(3D)" + p.X + "," + p.Y + "," + p.Z;
 			}
+			return "(3D)" + p.X + "," + p.Y + "," + p.Z;
 		}
 
 		public object Load(Match match) {

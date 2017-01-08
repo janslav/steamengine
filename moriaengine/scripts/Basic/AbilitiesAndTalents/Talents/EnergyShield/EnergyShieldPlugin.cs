@@ -17,9 +17,10 @@
 
 using System;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	//represents the activated ignition ability
 	public partial class EnergyShieldPlugin {
 		private static ActivableAbilityDef a_energy_shield;
@@ -93,7 +94,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class EnergyShieldPluginDef {
 	}
 

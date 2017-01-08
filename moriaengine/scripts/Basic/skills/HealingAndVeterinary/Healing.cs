@@ -1,9 +1,11 @@
 using System;
+using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class HealingSkillDef : BandageSkillDef {
 
 		public HealingSkillDef(string defname, string filename, int line)
@@ -23,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 					if (target == self) {
 						self.WriteLine(Loc<HealingLoc>.Get(self.Language).YoureAtMaxHitpoints);
 					} else {
-						self.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+						self.WriteLine(String.Format(CultureInfo.InvariantCulture,
 							Loc<HealingLoc>.Get(self.Language).TargetIsAtMaxHitpoints, target.Name));
 					}
 					return TriggerResult.Cancel;
@@ -52,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 				if (targetChar == self) {
 					self.WriteLine(Loc<HealingLoc>.Get(self.Language).YoureStartingToHealYourself);
 				} else {
-					self.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					self.WriteLine(String.Format(CultureInfo.InvariantCulture,
 						Loc<HealingLoc>.Get(self.Language).YoureStartingToHealTarget, targetChar.Name));
 				}
 				skillSeqArgs.Tool.Consume(1);
@@ -115,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 				self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingFailed);
 
 				if (targetChar != self) {
-					targetChar.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
+					targetChar.WriteLine(String.Format(CultureInfo.InvariantCulture,
 						Loc<HealingLoc>.Get(targetChar.Language).HealerFailedToHealYou, self.Name));
 				}
 			} else {

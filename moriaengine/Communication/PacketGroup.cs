@@ -15,10 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System.Threading;
-using System.Text;
 using System.Collections.Generic;
-
+using System.Text;
+using System.Threading;
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication {
@@ -92,9 +91,8 @@ namespace SteamEngine.Communication {
 					this.uncompressedLen += packet.Write(this.uncompressed.bytes, this.uncompressedLen);
 				}
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
 
 		private void WritePackets() {
@@ -226,7 +224,7 @@ namespace SteamEngine.Communication {
 			StringBuilder sb = new StringBuilder("PacketGroup (");
 			sb.Append(this.packets.Count).Append(" packets - ");
 			foreach (OutgoingPacket p in this.packets) {
-				sb.Append(p.ToString()).Append(", ");
+				sb.Append(p).Append(", ");
 			}
 			sb.Length -= 2;
 			sb.Append(")");

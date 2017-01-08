@@ -15,9 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using SteamEngine.Common;
 using System;
 using System.IO;
+using SteamEngine.Common;
 
 namespace SteamEngine.Converter {
 	public class ConverterLogger : Logger {

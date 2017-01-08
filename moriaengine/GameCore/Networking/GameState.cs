@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 using SteamEngine.Common;
@@ -111,14 +112,14 @@ namespace SteamEngine.Networking {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "conn")]
 		public void On_Init(TcpConnection<GameState> conn) {
 			GameServer.On_ClientInit(this);
 
 			this.conn = conn;
 			this.ip = conn.EndPoint;
 
-			Console.WriteLine(LogStr.Ident(this.ToString()) + (" connected from " + conn.EndPoint.ToString()));
+			Console.WriteLine(LogStr.Ident(this.ToString()) + (" connected from " + conn.EndPoint));
 
 			Globals.Instance.TryTrigger(TriggerKey.clientAttach, new ScriptArgs(this, this.conn)); // 
 		}
@@ -185,7 +186,6 @@ namespace SteamEngine.Networking {
 
 				PreparedPacketGroups.SendLoginDenied(this.conn, LoginDeniedReason.CommunicationsProblem);
 				this.conn.Close("Login denied by scripts or no character in that slot.");
-				return;
 			}
 		}
 
@@ -198,7 +198,7 @@ namespace SteamEngine.Networking {
 		public AbstractCharacter CharacterNotNull {
 			get {
 				if (this.character == null) {
-					throw new SEException("There is no character set for this " + this.ToString());
+					throw new SEException("There is no character set for this " + this);
 				}
 				return this.character;
 			}
@@ -286,7 +286,7 @@ namespace SteamEngine.Networking {
 		private OnTargonCancel targonCancelDeleg;
 		private object targonParameters;
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
 		public void Target(bool ground, OnTargon targonDeleg, OnTargonCancel targonCancelDeleg, object targonParameters) {
 			this.targonDeleg = targonDeleg;
 			this.targonCancelDeleg = targonCancelDeleg;
@@ -294,7 +294,7 @@ namespace SteamEngine.Networking {
 			PreparedPacketGroups.SendTargettingCursor(this.conn, ground);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
+		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonParameters"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonDeleg"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "targonCancelDeleg")]
 		public void TargetForMultis(int model, OnTargon targonDeleg, OnTargonCancel targonCancelDeleg, object targonParameters) {
 			this.targonDeleg = targonDeleg;
 			this.targonCancelDeleg = targonCancelDeleg;
@@ -321,36 +321,35 @@ namespace SteamEngine.Networking {
 					targonCancel(this, parameter);
 				}
 				return;
-			} else {
-				if (targ != null) {
-					if (!targGround) {
-						Thing thing = Thing.UidGetThing(targetUid);
-						if (thing != null) {
-							if (self.CanSeeForUpdate(thing).Allow) {
-								targ(this, thing, parameter);
-								return;
-							}
+			}
+			if (targ != null) {
+				if (!targGround) {
+					Thing thing = Thing.UidGetThing(targetUid);
+					if (thing != null) {
+						if (self.CanSeeForUpdate(thing).Allow) {
+							targ(this, thing, parameter);
+							return;
+						}
+					}
+				} else {
+					if (model == 0) {
+						Point4D point = new Point4D(x, y, z, self.M);
+						if (self.CanSeeCoordinates(point)) {
+							targ(this, point, parameter);
+							return;
 						}
 					} else {
-						if (model == 0) {
-							Point4D point = new Point4D(x, y, z, self.M);
-							if (self.CanSeeCoordinates(point)) {
-								targ(this, point, parameter);
+						if (self.CanSeeCoordinates(x, y, self.M)) {
+							Map map = self.GetMap();
+							StaticItem sta = map.GetStatic(x, y, z, model);
+							if (sta != null) {
+								targ(this, sta, parameter);
 								return;
 							}
-						} else {
-							if (self.CanSeeCoordinates(x, y, self.M)) {
-								Map map = self.GetMap();
-								StaticItem sta = map.GetStatic(x, y, z, model);
-								if (sta != null) {
-									targ(this, sta, parameter);
-									return;
-								}
-								MultiItemComponent mic = map.GetMultiComponent(x, y, z, model);
-								if (mic != null) {
-									targ(this, mic, parameter);
-									return;
-								}
+							MultiItemComponent mic = map.GetMultiComponent(x, y, z, model);
+							if (mic != null) {
+								targ(this, mic, parameter);
+								return;
 							}
 						}
 					}
@@ -391,7 +390,8 @@ namespace SteamEngine.Networking {
 				menuUid = Globals.dice.Next();
 			} while (this.menuEntries.ContainsKey(menuUid));
 
-			this.menuEntries[menuUid] = new MenuResponseEntry() {
+			this.menuEntries[menuUid] = new MenuResponseEntry
+			{
 				response = response,
 				cancel = cancel,
 				parameter = parameter
@@ -582,7 +582,7 @@ namespace SteamEngine.Networking {
 				sb.Append(", acc='").Append(this.account.Name).Append("'");
 			}
 			if (this.ip != null) {
-				sb.Append(", IP=").Append(this.ip.ToString());
+				sb.Append(", IP=").Append(this.ip);
 			}
 			return sb.Append(")").ToString();
 		}

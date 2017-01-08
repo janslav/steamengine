@@ -15,11 +15,13 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using SteamEngine.Communication;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
+using SteamEngine.Communication;
+using Buffer = System.Buffer;
 
 namespace SteamEngine.Networking {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
+	[SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
 	public class GameEncryption : IEncryption {
 
 		private TwofishEncryption engine;
@@ -39,7 +41,7 @@ namespace SteamEngine.Networking {
 			bytesUsed = 4;
 
 			if ((bytesIn[checked(offsetIn + 4)] == 0x91) && //0x91 packet and matching seed in the packet = no encryption
-				(bytesIn[checked(offsetIn + 5)] == bytesIn[checked(offsetIn)]) &&
+				(bytesIn[checked(offsetIn + 5)] == bytesIn[offsetIn]) &&
 				(bytesIn[checked(offsetIn + 6)] == bytesIn[checked(offsetIn + 1)]) &&
 				(bytesIn[checked(offsetIn + 7)] == bytesIn[checked(offsetIn + 2)]) &&
 				(bytesIn[checked(offsetIn + 8)] == bytesIn[checked(offsetIn + 3)])) {
@@ -51,7 +53,7 @@ namespace SteamEngine.Networking {
 
 			// Set up the crypt key
 			byte[] key = new byte[16];
-			key[0] = key[4] = key[8] = key[12] = bytesIn[checked(offsetIn)]; // (byte) ((seed >> 24) & 0xff);
+			key[0] = key[4] = key[8] = key[12] = bytesIn[offsetIn]; // (byte) ((seed >> 24) & 0xff);
 			key[1] = key[5] = key[9] = key[13] = bytesIn[checked(offsetIn + 1)]; // (byte) ((seed >> 16) & 0xff);
 			key[2] = key[6] = key[10] = key[14] = bytesIn[checked(offsetIn + 2)]; // (byte) ((seed >> 8) & 0xff);
 			key[3] = key[7] = key[11] = key[15] = bytesIn[checked(offsetIn + 3)]; // (byte) (seed & 0xff);
@@ -81,9 +83,9 @@ namespace SteamEngine.Networking {
 			uint[] block = new uint[4];
 
 			for (int i = 0; i < 256; i += 16) {
-				System.Buffer.BlockCopy(this.cipherTable, i, block, 0, 16);
+				Buffer.BlockCopy(this.cipherTable, i, block, 0, 16);
 				this.engine.blockEncrypt(ref block);
-				System.Buffer.BlockCopy(block, 0, this.cipherTable, i, 16);
+				Buffer.BlockCopy(block, 0, this.cipherTable, i, 16);
 			}
 
 			this.recvPos = 0;

@@ -16,12 +16,13 @@
 */
 
 using System;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text;
 using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.LScript {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_Final_RandomExpression_Simple_Constant : OpNode {
 		int min, max;
 
@@ -41,7 +42,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_Final_RandomExpression_Simple_Variable : OpNode, IOpNodeHolder {
 		OpNode leftNode, rightNode;
 
@@ -59,7 +60,8 @@ namespace SteamEngine.LScript {
 			if (this.leftNode == oldNode) {
 				this.leftNode = newNode;
 				return;
-			} else if (this.rightNode == oldNode) {
+			}
+			if (this.rightNode == oldNode) {
 				this.rightNode = newNode;
 				return;
 			}
@@ -72,11 +74,11 @@ namespace SteamEngine.LScript {
 				int rVal = Convert.ToInt32(this.rightNode.Run(vars), CultureInfo.InvariantCulture);
 				if (lVal < rVal) {
 					return Globals.dice.Next(lVal, rVal + 1);
-				} else if (lVal > rVal) {
-					return Globals.dice.Next(rVal, lVal + 1);
-				} else { //lVal == rVal
-					return lVal;
 				}
+				if (lVal > rVal) {
+					return Globals.dice.Next(rVal, lVal + 1);
+				} //lVal == rVal
+				return lVal;
 			} catch (InterpreterException) {
 				throw;
 			} catch (FatalException) {
@@ -92,7 +94,7 @@ namespace SteamEngine.LScript {
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_Final_RandomExpression_Constant : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		int totalOdds;
@@ -128,13 +130,13 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("{");
 			foreach (ValueOddsPair pair in this.pairs) {
-				str.Append(pair.Value.ToString()).Append(" ").Append(pair.Odds.ToString(CultureInfo.InvariantCulture)).Append(" ");
+				str.Append(pair.Value).Append(" ").Append(pair.Odds.ToString(CultureInfo.InvariantCulture)).Append(" ");
 			}
 			return str.Append("}").ToString();
 		}
 	}
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	internal class OpNode_Final_RandomExpression_Variable : OpNode, IOpNodeHolder {
 		ValueOddsPair[] pairs;
 		OpNode[] odds;
@@ -195,7 +197,7 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("{");
 			for (int i = 0, n = this.pairs.Length; i < n; i++) {
-				str.Append(this.pairs[i].Value.ToString()).Append(" ").Append(this.odds[i].ToString()).Append(" ");
+				str.Append(this.pairs[i].Value).Append(" ").Append(this.odds[i]).Append(" ");
 			}
 			return str.Append("}").ToString();
 		}

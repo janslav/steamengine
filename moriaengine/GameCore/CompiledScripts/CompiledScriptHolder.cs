@@ -18,6 +18,7 @@
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using SteamEngine.Common;
 
@@ -74,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 			compiledSHs.Add(mi);
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
@@ -176,22 +177,22 @@ namespace SteamEngine.CompiledScripts {
 
 		private static CodeExpression CastParameter(ParameterInfo pi, CodeExpression input) {
 			Type paramType = pi.ParameterType;
-			if (ConvertTools.IsNumberType(paramType) || paramType == typeof(DateTime)) {
+			if (ConvertTools.IsNumberType(paramType) || paramType == typeof(DateTime))
+			{
 				if (paramType.IsEnum) {//Enum.ToObject(type, ConvertTo(Enum.GetUnderlyingType(type), obj));
 					Type enumUnderlyingType = Enum.GetUnderlyingType(paramType);
 					return new CodeCastExpression(
 						paramType,
 						GetConvertMethod(enumUnderlyingType, input));
-				} else {
-					return GetConvertMethod(paramType, input);
 				}
-			} else if (paramType != typeof(object)) {
+				return GetConvertMethod(paramType, input);
+			}
+			if (paramType != typeof(object)) {
 				return new CodeCastExpression(
 					paramType,
 					input);
-			} else {
-				return input;
 			}
+			return input;
 		}
 
 		private static CodeMethodInvokeExpression GetConvertMethod(Type convertTo, CodeExpression input) {

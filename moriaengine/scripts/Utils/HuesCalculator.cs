@@ -10,7 +10,7 @@ namespace SteamEngine.CompiledScripts {
 		static Dictionary<Material, Constant> oreHues = new Dictionary<Material, Constant>();
 
 
-		private static bool defsWithMaterialColored = false;
+		private static bool defsWithMaterialColored;
 		[SavedMember]
 		public static bool DefsWithMaterialColored {
 			get {

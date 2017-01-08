@@ -19,8 +19,10 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using Microsoft.CSharp;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -44,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static Dictionary<string, ISteamCSCodeGenerator> generators = new Dictionary<string, ISteamCSCodeGenerator>(StringComparer.OrdinalIgnoreCase);
 
-		private static CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider();
+		private static CodeDomProvider provider = new CSharpCodeProvider();
 		private static CodeGeneratorOptions options = CreateOptions();
 
 		static CodeGeneratorOptions CreateOptions() {
@@ -74,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
+		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		internal static bool WriteOutAndCompile(int compilationNumber) {
 			foreach (ISteamCSCodeGenerator generator in generators.Values) {
 				CodeCompileUnit codeCompileUnit = generator.WriteSources();
@@ -142,8 +144,9 @@ namespace SteamEngine.CompiledScripts {
 		//            }
 		//        }
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public static CodeExpression GenerateSimpleLoadExpression(Type dataType, CodeExpression inputStringExpression) {
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		public static CodeExpression GenerateSimpleLoadExpression(Type dataType, CodeExpression inputStringExpression)
+		{
 			if (dataType == typeof(string)) {
 				return new CodeCastExpression(
 					typeof(string),
@@ -151,7 +154,8 @@ namespace SteamEngine.CompiledScripts {
 						new CodeTypeReferenceExpression(typeof(ObjectSaver)),
 						"OptimizedLoad_String",
 						inputStringExpression));
-			} else if (ConvertTools.IsNumberType(dataType)) {
+			}
+			if (ConvertTools.IsNumberType(dataType)) {
 				Type enumType = null;
 				if (dataType.IsEnum) {
 					enumType = dataType;
@@ -170,12 +174,10 @@ namespace SteamEngine.CompiledScripts {
 						return new CodeCastExpression(
 							enumType,
 							parseExp);
-					} else {
-						return parseExp;
 					}
-				} else {
-					throw new SEException("ConvertTools class missing a method for parsing number type " + dataType + ". This shoud not happen.");
+					return parseExp;
 				}
+				throw new SEException("ConvertTools class missing a method for parsing number type " + dataType + ". This shoud not happen.");
 			} else {
 				CodeMethodInvokeExpression loadMethod = new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(typeof(ObjectSaver)),
@@ -184,7 +186,7 @@ namespace SteamEngine.CompiledScripts {
 					new CodeTypeOfExpression(dataType));
 
 				MethodInfo parseMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
-					new Type[] { typeof(object) }, null);
+					new[] { typeof(object) }, null);
 
 				//this will probably be true for datetime only
 				if (parseMethod != null) {
@@ -192,24 +194,26 @@ namespace SteamEngine.CompiledScripts {
 						new CodeTypeReferenceExpression(typeof(Convert)),
 						parseMethod.Name,
 						loadMethod);
-				} else if (dataType == typeof(object)) {//unprobable, because Object is not simple
+				}
+				if (dataType == typeof(object)) {//unprobable, because Object is not simple
 					return new CodeMethodInvokeExpression(
 						new CodeTypeReferenceExpression(typeof(ObjectSaver)),
 						"Load",
 						inputStringExpression);
-				} else {
-					return new CodeCastExpression(
-						dataType,
-						loadMethod);
 				}
+				return new CodeCastExpression(
+					dataType,
+					loadMethod);
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public static CodeExpression GenerateDelayedLoadExpression(Type dataType, CodeExpression inputObjectExpression) {
+		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+		public static CodeExpression GenerateDelayedLoadExpression(Type dataType, CodeExpression inputObjectExpression)
+		{
 			if (dataType == typeof(object)) {
 				return inputObjectExpression;
-			} else if (ConvertTools.IsNumberType(dataType)) {
+			}
+			if (ConvertTools.IsNumberType(dataType)) {
 				CodeMethodInvokeExpression toNumberExp = new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(typeof(Convert)),
 					"To" + dataType.Name,
@@ -218,25 +222,22 @@ namespace SteamEngine.CompiledScripts {
 					return new CodeCastExpression(
 						dataType,
 						toNumberExp);
-				} else {
-					return toNumberExp;
 				}
-			} else {
-				MethodInfo convertMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
-					new Type[] { typeof(object) }, null);
-
-				//this will probably be true for datetime only
-				if (convertMethod != null) {
-					return new CodeMethodInvokeExpression(
-						new CodeTypeReferenceExpression(typeof(Convert)),
-						convertMethod.Name,
-						inputObjectExpression);
-				} else {
-					return new CodeCastExpression(
-						dataType,
-						inputObjectExpression);
-				}
+				return toNumberExp;
 			}
+			MethodInfo convertMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
+				new[] { typeof(object) }, null);
+
+			//this will probably be true for datetime only
+			if (convertMethod != null) {
+				return new CodeMethodInvokeExpression(
+					new CodeTypeReferenceExpression(typeof(Convert)),
+					convertMethod.Name,
+					inputObjectExpression);
+			}
+			return new CodeCastExpression(
+				dataType,
+				inputObjectExpression);
 		}
 	}
 }

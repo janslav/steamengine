@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using SteamEngine.Common;
 
@@ -19,7 +21,7 @@ namespace SteamEngine.AuxiliaryServer {
 			t.Start();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public virtual void CompileAndStart() {
 			try {
 				var file = MsBuildLauncher.Compile(this.seRootPath, this.build, this.targetTask);
@@ -32,10 +34,10 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public virtual void StartProcess(string file) {
-			System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(file) {
-				WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized
+			ProcessStartInfo psi = new ProcessStartInfo(file) {
+				WindowStyle = ProcessWindowStyle.Minimized
 			};
-			System.Diagnostics.Process.Start(psi);
+			Process.Start(psi);
 		}
 	}
 }

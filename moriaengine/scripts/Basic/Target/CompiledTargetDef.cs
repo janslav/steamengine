@@ -116,6 +116,6 @@ namespace SteamEngine.CompiledScripts {
 
 	public enum TargetResult {
 		RestartTargetting = 1,
-		Done = 0,
+		Done = 0
 	}
 }
