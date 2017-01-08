@@ -15,9 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using SteamEngine;
-
 namespace SteamEngine.CompiledScripts {
 
 	public class Brain_Dummy : CompiledTriggerGroup {	//Our script must extend 'Script'

@@ -19,12 +19,7 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
-using System.Globalization;
 using SteamEngine.Common;
-using System.Configuration;
-using SteamEngine;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine.Converter {

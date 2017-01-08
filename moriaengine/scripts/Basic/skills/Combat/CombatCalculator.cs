@@ -16,7 +16,6 @@
 */
 using System;
 using SteamEngine.Common;
-using SteamEngine;
 
 namespace SteamEngine.CompiledScripts {
 

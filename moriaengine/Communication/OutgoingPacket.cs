@@ -16,14 +16,7 @@
 */
 
 using System;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-
 using SteamEngine.Common;
 
 namespace SteamEngine.Communication {

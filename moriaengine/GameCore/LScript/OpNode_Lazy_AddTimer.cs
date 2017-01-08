@@ -17,9 +17,7 @@
 
 using System;
 using System.Text;
-using System.Collections;
 using System.Reflection;
-using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Timers;
 using SteamEngine.Common;

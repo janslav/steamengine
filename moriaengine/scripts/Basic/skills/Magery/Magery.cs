@@ -15,13 +15,7 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using SteamEngine;
-using SteamEngine.Persistence;
 using SteamEngine.Common;
-using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 

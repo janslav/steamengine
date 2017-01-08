@@ -15,11 +15,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Networking;
 using SteamEngine.Communication;
 

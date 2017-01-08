@@ -16,14 +16,10 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Regions;
 using SteamEngine.Networking;
-using SteamEngine.Communication;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {

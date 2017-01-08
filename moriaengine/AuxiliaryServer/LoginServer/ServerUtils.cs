@@ -17,13 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
-using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
-using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 

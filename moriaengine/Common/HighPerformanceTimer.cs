@@ -21,7 +21,6 @@
 namespace SteamEngine.Common {
 	using System;
 	using System.Runtime.InteropServices;
-	using System.Diagnostics;
 
 
 	public static class HighPerformanceTimer {

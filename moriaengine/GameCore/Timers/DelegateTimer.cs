@@ -15,15 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.IO;
-using System.Timers;
-using System.Collections;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using System.Text;
-using SteamEngine.Common;
-
 //will be alternative to Timer which runs triggers...
 //this runs "hardcoded" methods via TimerDelegate
 

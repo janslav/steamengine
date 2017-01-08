@@ -16,12 +16,7 @@
 */
 
 using System;
-using System.Net;
-using SteamEngine;
 using System.Collections.Generic;
-using SteamEngine.CompiledScripts;
-using SteamEngine.LScript;
-using SteamEngine.CompiledScripts.Utils;
 using System.ComponentModel;
 
 namespace SteamEngine.CompiledScripts.Dialogs {

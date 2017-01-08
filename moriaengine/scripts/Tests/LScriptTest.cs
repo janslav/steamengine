@@ -17,12 +17,7 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Diagnostics;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.Regions;
 
 namespace SteamEngine.LScript {

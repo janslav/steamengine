@@ -15,13 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Timers;
-using SteamEngine.CompiledScripts.Dialogs;
-
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(AbilityDef), "Ability",
 		//remove unnecessary entries

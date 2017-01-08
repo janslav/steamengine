@@ -16,16 +16,6 @@
 */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Text;
-using System.Reflection;
-using System.Threading;
-using SteamEngine.Common;
-using SteamEngine.Persistence;
 
 namespace SteamEngine.Timers {
 

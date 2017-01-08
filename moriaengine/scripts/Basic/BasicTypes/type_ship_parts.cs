@@ -15,10 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using SteamEngine;
-using SteamEngine.Common;
-
 namespace SteamEngine.CompiledScripts {
 
 	public class t_ship_other : CompiledTriggerGroup {

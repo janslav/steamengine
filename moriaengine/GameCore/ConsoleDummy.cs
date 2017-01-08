@@ -16,12 +16,8 @@
 */
 
 using System;
-using System.Net.Sockets;
-using System.Text;
-using System.Reflection;
 using SteamEngine.Common;
 using SteamEngine.AuxServerPipe;
-using SteamEngine.Communication;
 
 namespace SteamEngine {
 	public class ConsoleDummy : ISrc {

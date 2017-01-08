@@ -1,4 +1,4 @@
-/*
+﻿/*
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -14,12 +14,6 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]

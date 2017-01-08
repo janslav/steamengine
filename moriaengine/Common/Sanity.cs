@@ -19,9 +19,7 @@
 */
 
 namespace SteamEngine.Common {
-	using System;
 	using System.Diagnostics;
-	using System.Reflection;
 
 	public static class Sanity {
 		//Sanity.IfTrueThrow sounds better than Debug.Assert, methinks. This throws a SanityCheckException, which should

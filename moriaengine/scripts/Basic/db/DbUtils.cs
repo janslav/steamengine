@@ -15,19 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Text;
-using System.Threading;
-using System.Data;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using SteamEngine;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
 using MySql.Data.MySqlClient;
 
 namespace SteamEngine.CompiledScripts {

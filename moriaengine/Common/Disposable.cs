@@ -16,10 +16,6 @@
 */
 
 using System;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace SteamEngine.Common {
 	//taken from http://www.geocities.com/Jeff_Louie/OOP/oop28.htm

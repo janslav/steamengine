@@ -1,11 +1,6 @@
-using System;
-using System.Collections;
-using System.Reflection;
-using SteamEngine;
 using SteamEngine.Networking;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Communication;
-using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {
 	public static class SomeScript {

@@ -15,13 +15,6 @@
     Or visit http://www.gnu.org/copyleft/gpl.html
  */
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public class CookingSkillDef : CraftingSkillDef {

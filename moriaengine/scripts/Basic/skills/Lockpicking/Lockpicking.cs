@@ -1,7 +1,3 @@
-using System;
-using SteamEngine;
-using SteamEngine.Timers;
-using SteamEngine.Persistence;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {

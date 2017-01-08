@@ -15,18 +15,9 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Globalization;
 using SteamEngine.LScript;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
 	public sealed class ScriptedTriggerGroup : TriggerGroup {

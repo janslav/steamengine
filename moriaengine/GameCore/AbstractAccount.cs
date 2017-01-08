@@ -17,13 +17,8 @@
 
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Security.Cryptography;
 using SteamEngine.Networking;
 using SteamEngine.Common;
 using SteamEngine.Persistence;

@@ -16,13 +16,6 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.Globalization;
 using PerCederberg.Grammatica.Parser;
 using SteamEngine.Common;
 

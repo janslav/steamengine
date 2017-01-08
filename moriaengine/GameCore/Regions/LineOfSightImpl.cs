@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-
-using SteamEngine;
 using SteamEngine.Common;
 
 namespace SteamEngine.Regions {

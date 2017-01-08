@@ -1,4 +1,4 @@
-/*
+ï»¿/*
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -16,9 +16,6 @@
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
-using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Timers;
 
@@ -190,6 +187,6 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	public class WeaponSkillDefLoc : CompiledLocStringCollection {
-		internal string YouHaveNoAmmo = "Nemáš støelivo.";
+		internal string YouHaveNoAmmo = "Nemï¿½ stï¿½elivo.";
 	}
 }

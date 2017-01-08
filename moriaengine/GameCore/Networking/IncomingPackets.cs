@@ -17,11 +17,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
-using System.IO;
 using System.Net;
 
 namespace SteamEngine.Networking {

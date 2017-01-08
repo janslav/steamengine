@@ -16,8 +16,6 @@
 */
 
 using System;
-using System.Collections;
-using SteamEngine;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 

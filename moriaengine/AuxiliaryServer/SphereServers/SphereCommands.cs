@@ -1,13 +1,5 @@
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Diagnostics;
-using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
 using SteamEngine.Common;
-using NAnt.Core;
 
 
 namespace SteamEngine.AuxiliaryServer.SphereServers {

@@ -1,8 +1,5 @@
 using System;
-using System.ComponentModel;
 using System.Threading;
-using Microsoft.Build.Logging;
-using NAnt.Core;
 using SteamEngine.Common;
 
 namespace SteamEngine.AuxiliaryServer {

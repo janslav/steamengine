@@ -15,9 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Collections;
-using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 	public static class SaveLoadTests {

@@ -15,12 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {

@@ -15,8 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-
 namespace SteamEngine {
 
 	//Anything tabbed over in the enum is a name from sound.mul - generally those are shortened and made confusing (most are 8 character filenames, plus a ".wav" extension), but I wrote what the abbreviations meant for most of them. :P

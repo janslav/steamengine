@@ -15,14 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using SteamEngine;
-using SteamEngine.Timers;
-using SteamEngine.Persistence;
-using SteamEngine.Common;
-
-
-
 namespace SteamEngine.CompiledScripts {
 	[Dialogs.ViewableClass]
 	public partial class ItemLockPlugin {

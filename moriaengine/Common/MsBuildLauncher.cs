@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
-using Microsoft.Build.Framework;
 
 namespace SteamEngine.Common {
 

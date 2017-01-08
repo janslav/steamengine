@@ -15,11 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Globalization;
 using SteamEngine.Common;
 
 namespace SteamEngine {

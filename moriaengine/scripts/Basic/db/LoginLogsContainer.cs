@@ -16,16 +16,9 @@
 */
 
 using System;
-using System.Data;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using SteamEngine.Networking;
 using SteamEngine.Common;
-using SteamEngine.Persistence;
+
 //using MySql.Data.MySqlClient;
 
 namespace SteamEngine.CompiledScripts {

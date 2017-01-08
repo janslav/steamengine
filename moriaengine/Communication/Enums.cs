@@ -15,16 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-
-using SteamEngine.Common;
-
 namespace SteamEngine.Communication {
 
 	public enum EncryptionInitResult {

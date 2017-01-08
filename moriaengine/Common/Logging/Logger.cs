@@ -20,7 +20,6 @@ using System.Reflection;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
-using SteamEngine.Common;
 
 namespace SteamEngine.Common {
 	public delegate void StringToSendEventHandler(string data);

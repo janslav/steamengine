@@ -16,9 +16,6 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 

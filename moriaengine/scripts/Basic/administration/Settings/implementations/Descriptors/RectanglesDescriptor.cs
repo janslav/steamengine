@@ -15,15 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using SteamEngine;
-using SteamEngine.Common;
-using SteamEngine.Regions;
-using SteamEngine.Persistence;
-using SteamEngine.CompiledScripts.Dialogs;
-
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(MutableRectangle), "Rectangle",
 	 new string[] { "MinX", "MinY", "MaxX", "MaxY" }

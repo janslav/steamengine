@@ -16,13 +16,7 @@
 */
 
 using System;
-using System.IO;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
-using SteamEngine.Common;
-using SteamEngine.Regions;
-using System.Diagnostics;
 
 namespace SteamEngine {
 	public interface IMovementSettings {

@@ -16,16 +16,8 @@
 */
 
 using System;
-using System.Text;
-using System.IO;
 using System.IO.Pipes;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using System.Runtime.InteropServices;
-
 using SteamEngine.Common;
-using SteamEngine.Communication;
 
 namespace SteamEngine.Communication.NamedPipes {
 	public sealed class NamedPipeConnection<TState> :

@@ -16,10 +16,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Globalization;
 using SteamEngine.Persistence;
 using SteamEngine.Common;
 

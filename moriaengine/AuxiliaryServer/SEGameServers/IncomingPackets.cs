@@ -1,8 +1,5 @@
 using System;
-using System.Net;
 using System.Collections.Generic;
-using System.Text;
-
 using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
 using SteamEngine.Common;
