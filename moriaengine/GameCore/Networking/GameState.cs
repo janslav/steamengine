@@ -95,7 +95,7 @@ namespace SteamEngine.Networking {
 
 		public IEncryption Encryption {
 			get {
-				return encryption;
+				return this.encryption;
 			}
 		}
 
@@ -216,7 +216,7 @@ namespace SteamEngine.Networking {
 
 		public ClientVersion Version {
 			get {
-				return clientVersion;
+				return this.clientVersion;
 			}
 		}
 
@@ -500,8 +500,8 @@ namespace SteamEngine.Networking {
 				}
 			}
 
-			gumpInstancesByUid.Clear();
-			gumpInstancesByGump.Clear();
+			this.gumpInstancesByUid.Clear();
+			this.gumpInstancesByGump.Clear();
 		}
 
 		internal void RemoveBackupLinks() {
@@ -567,7 +567,7 @@ namespace SteamEngine.Networking {
 			base.Delete();
 		}
 
-		public override sealed bool IsDeleted {
+		public sealed override bool IsDeleted {
 			get {
 				return this.isDeleted;
 			}
@@ -600,7 +600,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public override bool Equals(object obj) {
-			return Object.ReferenceEquals(this, obj);
+			return ReferenceEquals(this, obj);
 		}
 
 		public void WriteLine(string msg) {

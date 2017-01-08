@@ -43,28 +43,28 @@ namespace SteamEngine {
 		protected AbstractItemDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.type = InitTypedField("type", null, typeof(TriggerGroup));
-			this.pluralName = InitTypedField("pluralName", "", typeof(string));
+			this.type = this.InitTypedField("type", null, typeof(TriggerGroup));
+			this.pluralName = this.InitTypedField("pluralName", "", typeof(string));
 
-			this.dupeItem = InitThingDefField("dupeItem", null, typeof(AbstractItemDef));
+			this.dupeItem = this.InitThingDefField("dupeItem", null, typeof(AbstractItemDef));
 			//clilocName = InitField_Typed("clilocName", "0", typeof(uint));
-			this.mountChar = InitThingDefField("mountChar", null, typeof(AbstractCharacterDef));
-			this.flippable = InitTypedField("flippable", false, typeof(bool));
-			this.stackable = InitTypedField("stackable", false, typeof(bool));
+			this.mountChar = this.InitThingDefField("mountChar", null, typeof(AbstractCharacterDef));
+			this.flippable = this.InitTypedField("flippable", false, typeof(bool));
+			this.stackable = this.InitTypedField("stackable", false, typeof(bool));
 
-			this.dropSound = InitTypedField("dropSound", 87, typeof(int));
+			this.dropSound = this.InitTypedField("dropSound", 87, typeof(int));
 		}
 
 		public AbstractItemDef DupeItem {
 			get {
-				return (AbstractItemDef) dupeItem.CurrentValue;
+				return (AbstractItemDef) this.dupeItem.CurrentValue;
 			}
 			set {
-				AbstractItemDef di = (AbstractItemDef) dupeItem.CurrentValue;
+				AbstractItemDef di = (AbstractItemDef) this.dupeItem.CurrentValue;
 				if (di != null) {
 					di.RemoveFromDupeList(this);
 				}
-				dupeItem.CurrentValue = value;
+				this.dupeItem.CurrentValue = value;
 				if (value != null) {
 					value.AddToDupeList(this);
 				}
@@ -82,11 +82,11 @@ namespace SteamEngine {
 		}
 
 		public void RemoveFromDupeList(AbstractItemDef idef) {
-			Sanity.IfTrueThrow(dupeList == null, "RemoveFromDupeList called on an itemdef without a dupelist (" + this + ").");
-			Sanity.IfTrueThrow(!dupeList.Contains(idef), "In RemoveFromDupeList, Itemdef " + idef + " is not in " + this + "'s dupeList!");
-			dupeList.Remove(idef);
-			if (dupeList.Count == 0) {
-				dupeList = null;
+			Sanity.IfTrueThrow(this.dupeList == null, "RemoveFromDupeList called on an itemdef without a dupelist (" + this + ").");
+			Sanity.IfTrueThrow(!this.dupeList.Contains(idef), "In RemoveFromDupeList, Itemdef " + idef + " is not in " + this + "'s dupeList!");
+			this.dupeList.Remove(idef);
+			if (this.dupeList.Count == 0) {
+				this.dupeList = null;
 			}
 		}
 
@@ -97,36 +97,36 @@ namespace SteamEngine {
 		}
 
 		public int GetNextFlipModel(int curModel) {
-			if (curModel == Model) {
-				if (dupeList != null) {
-					AbstractItemDef dup = dupeList[0];
+			if (curModel == this.Model) {
+				if (this.dupeList != null) {
+					AbstractItemDef dup = this.dupeList[0];
 					return dup.Model;
 				}
 			} else {
-				if (dupeList != null) {
+				if (this.dupeList != null) {
 					int cur = -1;
-					for (int a = 0; a < dupeList.Count; a++) {
-						AbstractItemDef dup = dupeList[0];
+					for (int a = 0; a < this.dupeList.Count; a++) {
+						AbstractItemDef dup = this.dupeList[0];
 						if (dup.Model == curModel) {
 							cur = a;
 							break;
 						}
 					}
-					if (cur + 1 < dupeList.Count) {
-						AbstractItemDef dup = dupeList[cur + 1];
+					if (cur + 1 < this.dupeList.Count) {
+						AbstractItemDef dup = this.dupeList[cur + 1];
 						return dup.Model;
 					}
 				}
 			}
-			return Model;
+			return this.Model;
 		}
 
 		public AbstractCharacterDef MountChar {
 			get {
-				return (AbstractCharacterDef) mountChar.CurrentValue;
+				return (AbstractCharacterDef) this.mountChar.CurrentValue;
 			}
 			set {
-				mountChar.CurrentValue = value;
+				this.mountChar.CurrentValue = value;
 			}
 		}
 
@@ -143,41 +143,41 @@ namespace SteamEngine {
 
 		public TriggerGroup Type {
 			get {
-				TriggerGroup tg = (TriggerGroup) type.CurrentValue;
+				TriggerGroup tg = (TriggerGroup) this.type.CurrentValue;
 				if (tg == null) {
 					return T_Normal;
 				}
-				return (TriggerGroup) type.CurrentValue;
+				return (TriggerGroup) this.type.CurrentValue;
 			}
 			set {
-				type.CurrentValue = value;
+				this.type.CurrentValue = value;
 			}
 		}
 
 		public bool IsStackable {
 			get {
-				return (bool) stackable.CurrentValue;
+				return (bool) this.stackable.CurrentValue;
 			}
 			set {
-				stackable.CurrentValue = value;
+				this.stackable.CurrentValue = value;
 			}
 		}
 
 		public bool IsFlippable {
 			get {
-				return (bool) flippable.CurrentValue;
+				return (bool) this.flippable.CurrentValue;
 			}
 			set {
-				flippable.CurrentValue = value;
+				this.flippable.CurrentValue = value;
 			}
 		}
 
 		public int DropSound {
 			get {
-				return (int) dropSound.CurrentValue;
+				return (int) this.dropSound.CurrentValue;
 			}
 			set {
-				dropSound.CurrentValue = value;
+				this.dropSound.CurrentValue = value;
 			}
 		}
 
@@ -206,7 +206,7 @@ namespace SteamEngine {
 		public string PluralName {
 			get {
 				if (!this.pluralName.IsDefaultCodedValue) {
-					return (string) pluralName.CurrentValue;
+					return (string) this.pluralName.CurrentValue;
 				}
 				if (this.name.IsDefaultCodedValue) {
 					ItemDispidInfo idi = this.DispidInfo;
@@ -218,17 +218,17 @@ namespace SteamEngine {
 				return this.Name;
 			}
 			set {
-				pluralName.CurrentValue = value;
+				this.pluralName.CurrentValue = value;
 			}
 		}
 
-		public override sealed bool IsItemDef {
+		public sealed override bool IsItemDef {
 			get {
 				return true;
 			}
 		}
 
-		public override sealed bool IsCharDef {
+		public sealed override bool IsCharDef {
 			get {
 				return false;
 			}
@@ -236,7 +236,7 @@ namespace SteamEngine {
 
 		public MultiData MultiData {
 			get {
-				return multiData;
+				return this.multiData;
 			}
 		}
 
@@ -275,7 +275,7 @@ namespace SteamEngine {
 
 					string singular, plural;
 					if (ItemDispidInfo.ParseName(args, out singular, out plural)) {
-						pluralName.SetFromScripts(filename, line, "\"" + plural + "\"");
+						this.pluralName.SetFromScripts(filename, line, "\"" + plural + "\"");
 						base.LoadScriptLine(filename, line, param, "\"" + singular + "\"");//will normally load name
 					} else {
 						base.LoadScriptLine(filename, line, param, "\"" + args + "\"");//will normally load name
@@ -288,8 +288,8 @@ namespace SteamEngine {
 		}
 
 		public override void Unload() {
-			if (dupeList != null) {
-				dupeList.Clear();
+			if (this.dupeList != null) {
+				this.dupeList.Clear();
 			}
 			base.Unload();
 			//other various properties...

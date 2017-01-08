@@ -39,11 +39,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return Globals.dice.Next(min, max);
+			return Globals.dice.Next(this.min, this.max);
 		}
 
 		public override string ToString() {
-			return "{" + min + " " + max + "}";
+			return "{" + this.min + " " + this.max + "}";
 		}
 	}
 
@@ -62,11 +62,11 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (leftNode == oldNode) {
-				leftNode = newNode;
+			if (this.leftNode == oldNode) {
+				this.leftNode = newNode;
 				return;
-			} else if (rightNode == oldNode) {
-				rightNode = newNode;
+			} else if (this.rightNode == oldNode) {
+				this.rightNode = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -74,8 +74,8 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				int lVal = Convert.ToInt32(leftNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
-				int rVal = Convert.ToInt32(rightNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+				int lVal = Convert.ToInt32(this.leftNode.Run(vars), CultureInfo.InvariantCulture);
+				int rVal = Convert.ToInt32(this.rightNode.Run(vars), CultureInfo.InvariantCulture);
 				if (lVal < rVal) {
 					return Globals.dice.Next(lVal, rVal + 1);
 				} else if (lVal > rVal) {
@@ -94,7 +94,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return "{ " + leftNode + " " + rightNode + " }";
+			return "{ " + this.leftNode + " " + this.rightNode + " }";
 		}
 	}
 
@@ -116,12 +116,12 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			OpNode chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(pairs, totalOdds);
+			OpNode chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(this.pairs, this.totalOdds);
 			return chosenNode.Run(vars);
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			foreach (ValueOddsPair pair in pairs) {
+			foreach (ValueOddsPair pair in this.pairs) {
 				OpNode node = (OpNode) pair.Value;
 				if (node == oldNode) {
 					pair.Value = newNode;
@@ -133,8 +133,8 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("{");
-			foreach (ValueOddsPair pair in pairs) {
-				str.Append(pair.Value.ToString()).Append(" ").Append(pair.Odds.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(" ");
+			foreach (ValueOddsPair pair in this.pairs) {
+				str.Append(pair.Value.ToString()).Append(" ").Append(pair.Odds.ToString(CultureInfo.InvariantCulture)).Append(" ");
 			}
 			return str.Append("}").ToString();
 		}
@@ -163,12 +163,12 @@ namespace SteamEngine.LScript {
 			try {
 				vars.self = vars.defaultObject;
 				int totalOdds = 0;
-				for (int i = 0, n = pairs.Length; i < n; i++) {
-					int o = Convert.ToInt32(odds[i].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+				for (int i = 0, n = this.pairs.Length; i < n; i++) {
+					int o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
 					totalOdds += o;
-					pairs[i].Odds = totalOdds;
+					this.pairs[i].Odds = totalOdds;
 				}
-				OpNode chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(pairs, totalOdds);
+				OpNode chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(this.pairs, totalOdds);
 				return chosenNode.Run(vars);
 			} catch (InterpreterException) {
 				throw;
@@ -183,16 +183,16 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			foreach (ValueOddsPair pair in pairs) {
+			foreach (ValueOddsPair pair in this.pairs) {
 				OpNode node = (OpNode) pair.Value;
 				if (node == oldNode) {
 					pair.Value = newNode;
 					return;
 				}
 			}
-			int index = Array.IndexOf(odds, oldNode);
+			int index = Array.IndexOf(this.odds, oldNode);
 			if (index >= 0) {
-				odds[index] = newNode;
+				this.odds[index] = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -200,8 +200,8 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("{");
-			for (int i = 0, n = pairs.Length; i < n; i++) {
-				str.Append(pairs[i].Value.ToString()).Append(" ").Append(odds[i].ToString()).Append(" ");
+			for (int i = 0, n = this.pairs.Length; i < n; i++) {
+				str.Append(this.pairs[i].Value.ToString()).Append(" ").Append(this.odds[i].ToString()).Append(" ");
 			}
 			return str.Append("}").ToString();
 		}

@@ -33,12 +33,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 450;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			Region reg = (Region) args.GetTag(D_Region_Rectangles.regionTK);
-			List<MutableRectangle> rectList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
+			Region reg = (Region) args.GetTag(regionTK);
+			List<MutableRectangle> rectList = (List<MutableRectangle>) args.GetTag(rectsListTK);
 			if (rectList == null) {
 				//vezmeme je z regionu
 				rectList = MutableRectangle.TakeRectsFromRegion(reg);
-				args.SetTag(D_Region_Rectangles.rectsListTK, rectList); //ulozime to do argumentu dialogu
+				args.SetTag(rectsListTK, rectList); //ulozime to do argumentu dialogu
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -106,8 +106,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
-			StaticRegion reg = (StaticRegion) args.GetTag(D_Region_Rectangles.regionTK);
-			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
+			StaticRegion reg = (StaticRegion) args.GetTag(regionTK);
+			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(rectsListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 				switch (gr.PressedButton) {
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //zalozit novy rectangle
 						//nemazat rectangly - budeme do nich ukladat novy						
 						DialogArgs newArgs = new DialogArgs(0, 0, 0, 0);//zakladni souradnice rectanglu
-						newArgs.SetTag(D_Region_Rectangles.rectsListTK, rectsList); //seznam budeme potrebovat
+						newArgs.SetTag(rectsListTK, rectsList); //seznam budeme potrebovat
 						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;

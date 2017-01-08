@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 			Type memberType = listType.GetGenericArguments()[0];
 			int count = list.Count;
 			writer.WriteValue("count", count);
-			writer.WriteLine("type=" + GenericListSaver.GetTypeName(memberType));
+			writer.WriteLine("type=" + GetTypeName(memberType));
 			for (int i = 0; i < count; i++) {
 				writer.WriteValue(i.ToString(), list[i]);
 			}
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
 					GenericListLoadHelper alip = new GenericListLoadHelper(list, i, elemType);
-					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(DelayedLoad_Index), input.Filename, valueLine.Line, alip);
+					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(this.DelayedLoad_Index), input.Filename, valueLine.Line, alip);
 				}
 				return list;
 			} catch (FatalException) {
@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts {
 			for (int i = 0; i < n; i++) {
 				newList.Add(null);
 				GenericListLoadHelper alip = new GenericListLoadHelper(newList, i, elemType);
-				DeepCopyFactory.GetCopyDelayed(copyFromList[i], DelayedCopy_Index, alip);
+				DeepCopyFactory.GetCopyDelayed(copyFromList[i], this.DelayedCopy_Index, alip);
 			}
 			return newList;
 		}

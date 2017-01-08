@@ -16,7 +16,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		public IEncryption Encryption {
 			get {
-				return encryption;
+				return this.encryption;
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		public override string ToString() {
-			return "LoginClient " + uid;
+			return "LoginClient " + this.uid;
 		}
 
 		//public override void Handle(IncomingPacket packet) {

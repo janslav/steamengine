@@ -70,21 +70,21 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (oldNode == opNode) {
-				opNode = newNode;
+			if (oldNode == this.opNode) {
+				this.opNode = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object obj = opNode.Run(vars);
+			object obj = this.opNode.Run(vars);
 
-			return type.IsInstanceOfType(obj);
+			return this.type.IsInstanceOfType(obj);
 		}
 
 		public override string ToString() {
-			return string.Concat(opNode.ToString(), " IS ", type.Name);
+			return string.Concat(this.opNode.ToString(), " IS ", this.type.Name);
 		}
 	}
 

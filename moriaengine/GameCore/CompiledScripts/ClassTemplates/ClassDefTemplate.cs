@@ -35,27 +35,27 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		protected override void Process() {
 			base.Process();
-			GenerateTypeDeclaration();
+			this.GenerateTypeDeclaration();
 
-			Fields();
-			DefConstructor();
+			this.Fields();
+			this.DefConstructor();
 
 		}
 
 		private void GenerateTypeDeclaration() {
-			generatedType = new CodeTypeDeclaration(section.defClassName);
-			generatedType.BaseTypes.Add(section.baseDefClassName);
+			this.generatedType = new CodeTypeDeclaration(this.section.defClassName);
+			this.generatedType.BaseTypes.Add(this.section.baseDefClassName);
 
-			generatedType.IsClass = true;
-			generatedType.IsPartial = true;
+			this.generatedType.IsClass = true;
+			this.generatedType.IsPartial = true;
 		}
 
 
 		private void Fields() {
 			if (this.subSection != null) {
 				foreach (ClassTemplateInstanceField ctfi in this.subSection.fields) {
-					generatedType.Members.Add(CodeField(ctfi));
-					generatedType.Members.Add(CodeProperty(ctfi));
+					this.generatedType.Members.Add(CodeField(ctfi));
+					this.generatedType.Members.Add(CodeProperty(ctfi));
 				}
 			}
 		}
@@ -138,7 +138,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 							new CodeTypeOfExpression(ctfi.typeString))));
 				}
 			}
-			generatedType.Members.Add(defConstructor);
+			this.generatedType.Members.Add(defConstructor);
 		}
 	}
 }

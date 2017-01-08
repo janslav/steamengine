@@ -29,7 +29,7 @@ namespace SteamEngine {
 		}
 
 		public Thing Dupe() {
-			if (IsPlayer) {
+			if (this.IsPlayer) {
 				throw new SEException("You can not dupe a PC!");
 			}
 			Thing copy = (Thing) DeepCopyFactory.GetCopy(this);
@@ -93,7 +93,7 @@ namespace SteamEngine {
 			MarkAsLimbo(this);
 		}
 
-		static internal void MarkAsLimbo(Thing t) {
+		internal static void MarkAsLimbo(Thing t) {
 			t.point4d.SetXY(0xffff, 0xffff);
 		}
 
@@ -111,7 +111,7 @@ namespace SteamEngine {
 
 		public override Thing Cont {
 			get {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				ThingLinkedList list = this.contOrTLL as ThingLinkedList;
 				if ((list != null) && (list.ContAsThing != null)) {
 					return list.ContAsThing;
@@ -119,7 +119,7 @@ namespace SteamEngine {
 				return this.contOrTLL as Thing;
 			}
 			set {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				if (value == null) {
 					throw new SEException("value is null");
 				}
@@ -130,7 +130,7 @@ namespace SteamEngine {
 						int layer = this.Layer;
 						if (layer > 0) {
 							this.MakeLimbo();
-							Trigger_EnterChar((AbstractCharacter) value, layer);
+							this.Trigger_EnterChar((AbstractCharacter) value, layer);
 						} else {
 							throw new SEException("Item '" + this + "' is equippable, but has Layer not set.");
 						}
@@ -179,17 +179,17 @@ namespace SteamEngine {
 			ushort x = this.point4d.x;
 			ushort y = this.point4d.y;
 			this.TryTrigger(TriggerKey.leaveItem, args);
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 			try {
 				this.On_LeaveItem(args);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 			cont.TryTrigger(TriggerKey.itemLeave, args);
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 			try {
 				cont.On_ItemLeave(args);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 
 			cont.ItemMakeLimbo(this);
 		}
@@ -211,30 +211,30 @@ namespace SteamEngine {
 
 			if (this.IsEquippable && this.Layer == layer) {
 				this.TryTrigger(TriggerKey.unEquip, args);
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 				try {
 					this.On_Unequip(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 				cont.TryTrigger(TriggerKey.itemUnEquip, args);
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 				try {
 					cont.On_ItemUnequip(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 			} else {
 				this.TryTrigger(TriggerKey.leaveChar, args);
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 				try {
 					this.On_LeaveChar(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 				cont.TryTrigger(TriggerKey.itemLeave, args);
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 				try {
 					cont.On_ItemLeave(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 			}
 
 			cont.ItemMakeLimbo(this);
@@ -263,11 +263,11 @@ namespace SteamEngine {
 				ItemOnGroundArgs args = new ItemOnGroundArgs(this, region, point);
 
 				this.TryTrigger(TriggerKey.leaveRegion, args);
-				ReturnOnGroundIfNeeded(point);
+				this.ReturnOnGroundIfNeeded(point);
 				try {
 					this.On_LeaveRegion(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnOnGroundIfNeeded(point);
+				this.ReturnOnGroundIfNeeded(point);
 				Region.Trigger_ItemLeave(args);
 
 				map.Remove(this);
@@ -303,17 +303,17 @@ namespace SteamEngine {
 
 			ItemInItemArgs args = new ItemInItemArgs(this, cont);
 			this.TryTrigger(TriggerKey.enterItem, args);
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 			try {
 				this.On_EnterItem(args);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 			cont.TryTrigger(TriggerKey.itemEnter, args);
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 			try {
 				cont.On_ItemEnter(args);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-			ReturnIntoItemIfNeeded(cont, x, y);
+			this.ReturnIntoItemIfNeeded(cont, x, y);
 		}
 
 		internal void InternalItemEnter(AbstractItem i) {
@@ -474,7 +474,7 @@ namespace SteamEngine {
 				try {
 					cont.On_ItemEquip(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 			} else {
 				this.TryTrigger(TriggerKey.enterChar, args);
 				this.ReturnIntoCharIfNeeded(cont, layer);
@@ -487,7 +487,7 @@ namespace SteamEngine {
 				try {
 					cont.On_ItemEnter(args);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
-				ReturnIntoCharIfNeeded(cont, layer);
+				this.ReturnIntoCharIfNeeded(cont, layer);
 			}
 
 		}
@@ -518,10 +518,10 @@ namespace SteamEngine {
 			Region.Trigger_ItemEnter(args);
 		}
 
-		internal override sealed void SetPosImpl(int x, int y, int z, byte m) {
+		internal sealed override void SetPosImpl(int x, int y, int z, byte m) {
 			if (Map.IsValidPos(x, y, m)) {
-				MakeLimbo();
-				Trigger_EnterRegion(x, y, z, m);
+				this.MakeLimbo();
+				this.Trigger_EnterRegion(x, y, z, m);
 			} else {
 				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
 			}
@@ -576,7 +576,7 @@ namespace SteamEngine {
 		public void GetRandomXYInside(out int x, out int y) {
 			//todo?: nonconstant bounds for this? or virtual?
 			int minX, minY, maxX, maxY;
-			GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
+			this.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
 			x = Globals.dice.Next(minX, maxX);
 			y = Globals.dice.Next(minY, maxY);
 		}
@@ -600,7 +600,7 @@ namespace SteamEngine {
 		}
 
 		//is not public because it leaves the item in "illegal" state...
-		internal override sealed void ItemMakeLimbo(AbstractItem i) {
+		internal sealed override void ItemMakeLimbo(AbstractItem i) {
 			Sanity.IfTrueThrow(this != i.Cont, "i not in this.");
 
 			ThingLinkedList tll = (ThingLinkedList) i.contOrTLL;
@@ -665,7 +665,7 @@ namespace SteamEngine {
 				//I was probably cleared because of failed load. Let me get deleted by garbage collector.
 				return;
 			}
-			if (Cont == null) {
+			if (this.Cont == null) {
 				Thing t = resolvedObj as Thing;
 				if (t != null) {
 					if ((t.IsChar) && (this.IsEquippable)) {
@@ -777,7 +777,7 @@ namespace SteamEngine {
 
 	public partial class AbstractCharacter {
 
-		internal override sealed void ItemMakeLimbo(AbstractItem i) {
+		internal sealed override void ItemMakeLimbo(AbstractItem i) {
 			Sanity.IfTrueThrow(this != i.Cont, "i not in this.");
 
 			if (this.draggingLayer == i) {
@@ -852,8 +852,8 @@ namespace SteamEngine {
 
 		internal void AddLoadedItem(AbstractItem item) {
 			int layer = item.Z;
-			Thing.MarkAsLimbo(item);
-			InternalItemEnter(item, layer);
+			MarkAsLimbo(item);
+			this.InternalItemEnter(item, layer);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
@@ -862,7 +862,7 @@ namespace SteamEngine {
 		}
 
 		public bool HasPickedUp(AbstractItem itm) {
-			return draggingLayer == itm;
+			return this.draggingLayer == itm;
 		}
 
 		public bool HasPickedUp(int uid) {
@@ -939,7 +939,7 @@ namespace SteamEngine {
 				DenyResult result = this.TryPutItemOnItem(this.GetBackpack());
 				if (!result.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
 					GameState state = this.GameState;
-					SteamEngine.Communication.TCP.TcpConnection<GameState> conn = null;
+					Communication.TCP.TcpConnection<GameState> conn = null;
 					if (state != null) {
 						conn = state.Conn;
 						result.SendDenyMessage(this, state, conn);
@@ -1198,7 +1198,7 @@ namespace SteamEngine {
 		//typically called from InPackets. (I am the src)
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnItem(AbstractItem target) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem item = this.draggingLayer;
 			if (item == null) {
@@ -1265,7 +1265,7 @@ namespace SteamEngine {
 		//typically called from InPackets. (I am the src)
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnGround(int x, int y, int z) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			AbstractItem item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on ground");
@@ -1316,7 +1316,7 @@ namespace SteamEngine {
 		//typically called from InPackets. drops the held item on target (I am the src)
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnChar(AbstractCharacter target) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem item = this.draggingLayer;
 			if (item == null) {
@@ -1364,7 +1364,7 @@ namespace SteamEngine {
 		//dropping on ones own paperdoll
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryEquipItemOnChar(AbstractCharacter target) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			target.ThrowIfDeleted();
 			AbstractItem item = this.draggingLayer;
 			if (item == null) {
@@ -1528,13 +1528,13 @@ namespace SteamEngine {
 
 		public AbstractItem ManipulatedItem {
 			get {
-				return manipulatedItem;
+				return this.manipulatedItem;
 			}
 		}
 
 		public AbstractItem WaitingStack {
 			get {
-				return waitingStack;
+				return this.waitingStack;
 			}
 		}
 	}

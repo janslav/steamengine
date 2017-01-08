@@ -12,11 +12,11 @@ namespace SteamEngine.AuxiliaryServer {
 		private static readonly CancellationTokenSource exitTokenSource = new CancellationTokenSource();
 
 		public static object GlobalLock {
-			get { return MainClass.globalLock; }
+			get { return globalLock; }
 		}
 
 		public static CancellationToken ExitSignalToken {
-			get { return MainClass.exitTokenSource.Token; }
+			get { return exitTokenSource.Token; }
 		}
 
 		static void Main() {
@@ -38,7 +38,7 @@ namespace SteamEngine.AuxiliaryServer {
 				exitTokenSource.Token.WaitHandle.WaitOne();
 
 			} catch (Exception e) {
-				Logger.WriteFatal(e);
+				Common.Logger.WriteFatal(e);
 			} finally {
 				Exit();
 			}

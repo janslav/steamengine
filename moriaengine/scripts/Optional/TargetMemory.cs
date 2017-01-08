@@ -201,7 +201,7 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
 		private int n = 0;
 		protected override void On_Start(Player self, object parameter) {
 			Globals.SrcWriteLine("Vyber target.");
-			n = (int) parameter;
+			this.n = (int) parameter;
 			base.On_Start(self, parameter);
 		}
 
@@ -209,13 +209,13 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
 			if (self.targMem == null) {
 				self.targMem = new List<Thing>();
 			}
-			if (n < self.targMem.Count) {
-				self.targMem[n - 1] = targetted;
+			if (this.n < self.targMem.Count) {
+				self.targMem[this.n - 1] = targetted;
 			} else {
-				while (n > self.targMem.Count) {
+				while (this.n > self.targMem.Count) {
 					self.targMem.Add(null);
 				}
-				self.targMem[n - 1] = targetted;
+				self.targMem[this.n - 1] = targetted;
 			}
 			Globals.SrcWriteLine("Target pridan.");
 			return TargetResult.Done;

@@ -20,13 +20,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public string Description {
 			get {
-				return description;
+				return this.description;
 			}
 		}
 
 		public string Category {
 			get {
-				return category;
+				return this.category;
 			}
 		}
 		//no params constructor as default

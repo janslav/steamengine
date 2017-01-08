@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 		//    base.Save(output);
 		//}
 
-		protected override Role.IRoleMembership CreateMembershipObject(Character member) {
+		protected override IRoleMembership CreateMembershipObject(Character member) {
 			return new GuildMembership(member, this);
 		}
 

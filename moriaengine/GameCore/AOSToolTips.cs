@@ -61,7 +61,7 @@ namespace SteamEngine {
 			}
 		}
 
-		protected override sealed void On_Reset() {
+		protected sealed override void On_Reset() {
 			base.On_Reset();
 
 			this.uid = uids++;
@@ -75,7 +75,7 @@ namespace SteamEngine {
 			this.nameValueClilocsUsed = 0;
 		}
 
-		public override sealed void Dispose() {
+		public sealed override void Dispose() {
 			try {
 				if (this.initDone) {
 					cachesByLanguage[(int) this.language].Remove(this.thing);
@@ -117,8 +117,8 @@ namespace SteamEngine {
 
 		public void AddLine(int clilocId) {
 			Sanity.IfTrueThrow(this.initDone, "Trying to modify ObjectPropertiesContainer after InitDone");
-			ids.Add(clilocId);
-			arguments.Add(null);
+			this.ids.Add(clilocId);
+			this.arguments.Add(null);
 		}
 
 		public void AddLine(int clilocId, string arg) {
@@ -161,13 +161,13 @@ namespace SteamEngine {
 			if (state.Version.OldAosToolTips) {
 				if (this.oldIdNGroup == null) {
 					this.oldIdNGroup = PacketGroup.CreateFreePG();
-					this.oldIdNGroup.AcquirePacket<OldPropertiesRefreshOutPacket>().Prepare(thing.FlaggedUid, this.uid);
+					this.oldIdNGroup.AcquirePacket<OldPropertiesRefreshOutPacket>().Prepare(this.thing.FlaggedUid, this.uid);
 				}
 				conn.SendPacketGroup(this.oldIdNGroup);
 			} else {
 				if (this.newIdNGroup == null) {
 					this.newIdNGroup = PacketGroup.CreateFreePG();
-					this.newIdNGroup.AcquirePacket<PropertiesRefreshOutPacket>().Prepare(thing.FlaggedUid, this.uid);
+					this.newIdNGroup.AcquirePacket<PropertiesRefreshOutPacket>().Prepare(this.thing.FlaggedUid, this.uid);
 				}
 				conn.SendPacketGroup(this.newIdNGroup);
 			}
@@ -181,14 +181,14 @@ namespace SteamEngine {
 
 		public string FirstArgument {
 			get {
-				return arguments[0];
+				return this.arguments[0];
 			}
 		}
 
 		internal void SendDataPacket(TcpConnection<GameState> conn) {
 			if (this.dataNGroup == null) {
 				this.dataNGroup = PacketGroup.CreateFreePG();
-				this.dataNGroup.AcquirePacket<MegaClilocOutPacket>().Prepare(thing.FlaggedUid, uid, ids, arguments);
+				this.dataNGroup.AcquirePacket<MegaClilocOutPacket>().Prepare(this.thing.FlaggedUid, this.uid, this.ids, this.arguments);
 			}
 			conn.SendPacketGroup(this.dataNGroup);
 		}

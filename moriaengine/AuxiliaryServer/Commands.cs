@@ -49,7 +49,7 @@ namespace SteamEngine.AuxiliaryServer {
 				+ "help");
 		}
 
-		private static void DisplayProcesses(SteamEngine.AuxiliaryServer.ConsoleServer.ConsoleClient state) {
+		private static void DisplayProcesses(ConsoleServer.ConsoleClient state) {
 			StringBuilder message = new StringBuilder("Relevant running processes on ").AppendLine(Environment.MachineName);
 			foreach (Process prc in Process.GetProcesses()) {
 				try {
@@ -78,7 +78,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			public override void StartProcess(string file) {
-				System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(file);
+				ProcessStartInfo psi = new ProcessStartInfo(file);
 #if DEBUG
 				psi.Arguments = string.Concat("\"", Process.GetCurrentProcess().MainModule.FileName, "\" \"", "Debug_AuxiliaryServer.bat", "\"");
 #elif SANE
@@ -86,7 +86,7 @@ namespace SteamEngine.AuxiliaryServer {
 #else
 #error Optimized_AuxiliaryServer.bat not defined (?)
 #endif
-				System.Diagnostics.Process.Start(psi);
+				Process.Start(psi);
 
 				MainClass.CommandExit();
 			}

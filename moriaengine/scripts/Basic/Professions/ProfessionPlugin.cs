@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public ProfessionDef ProfessionDef {
 			get {
-				return profession;
+				return this.profession;
 			}
 		}
 

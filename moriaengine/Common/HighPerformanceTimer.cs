@@ -163,7 +163,7 @@ namespace SteamEngine.Common {
 		public void Dispose() {
 			if (!this.disposed) {
 				long ticksOnEnd = HighPerformanceTimer.TickCount;
-				long diff = ticksOnEnd - ticksOnStart;
+				long diff = ticksOnEnd - this.ticksOnStart;
 				Logger.indentation = Logger.indentation.Substring(0, Logger.indentation.Length - 1);
 				Logger.StaticWriteLine("...took " + HighPerformanceTimer.TicksToTimeSpan(diff).ToString());
 				this.disposed = true;

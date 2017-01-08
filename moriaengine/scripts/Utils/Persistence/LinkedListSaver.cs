@@ -110,19 +110,19 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void DelayedLoad_Value(object o, string filename, int line, object index) {
-				DelayedCopy_Value(o, index);
+				this.DelayedCopy_Value(o, index);
 			}
 
 			public void DelayedCopy_Value(object o, object index) {
 				int i = (int) index;
-				if (!loaded[i]) {
-					loadedCount++;
-					loaded[i] = true;
+				if (!this.loaded[i]) {
+					this.loadedCount++;
+					this.loaded[i] = true;
 				}
-				loadedValues[i] = ConvertTools.ConvertTo<T>(o);
-				if (loadedCount == countToLoad) {
-					foreach (T value in loadedValues) {
-						linkedList.AddLast(value);
+				this.loadedValues[i] = ConvertTools.ConvertTo<T>(o);
+				if (this.loadedCount == this.countToLoad) {
+					foreach (T value in this.loadedValues) {
+						this.linkedList.AddLast(value);
 					}
 				}
 			}

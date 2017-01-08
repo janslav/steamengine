@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void RefreshAllPlayers() {
-			foreach (Player p in SteamEngine.Networking.GameServer.GetAllPlayers()) {
+			foreach (Player p in Networking.GameServer.GetAllPlayers()) {
 				p.SendGlobalLightLevel(GetLightAt(p));
 			}
 		}

@@ -71,10 +71,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (index == oldNode) {
-				index = newNode;
-			} else if (arg == oldNode) {
-				arg = newNode;
+			if (this.index == oldNode) {
+				this.index = newNode;
+			} else if (this.arg == oldNode) {
+				this.arg = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -88,12 +88,12 @@ namespace SteamEngine.LScript {
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
 			if (vars.self is ArrayList) {//arraylist is special :)
-				if (arg != null) {
+				if (this.arg != null) {
 					newNode = new OpNode_ArrayListIndex(this.parent, this.filename, this.line, this.column,
-						this.OrigNode, arg, index);
+						this.OrigNode, this.arg, this.index);
 					IOpNodeHolder newNodeAsHolder = (IOpNodeHolder) newNode;
-					arg.parent = newNodeAsHolder;
-					index.parent = newNodeAsHolder;
+					this.arg.parent = newNodeAsHolder;
+					this.index.parent = newNodeAsHolder;
 					this.ReplaceSelf(newNode);
 					newNode.Run(vars);
 					return null;
@@ -104,7 +104,7 @@ namespace SteamEngine.LScript {
 			MethodInfo[] methods = vars.self.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
 			foreach (MethodInfo mi in methods) {
 				if (mi.IsSpecialName && (mi.IsPublic || (mi.IsVirtual && mi.IsFinal))) { //public or implementing interface (typically IList or some such)
-					if (arg == null) {//getting indexed item
+					if (this.arg == null) {//getting indexed item
 						if (mi.Name.EndsWith("get_Item")) {
 							ParameterInfo[] pars = mi.GetParameters();
 							if (pars.Length == 1) {
@@ -125,12 +125,12 @@ namespace SteamEngine.LScript {
 				throw new InterpreterException("The type " + vars.self.GetType() + " is not indexable",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			} else {
-				if (arg == null) {//getter
+				if (this.arg == null) {//getter
 					object indexResult;
 					object oSelf = vars.self;
 					vars.self = vars.defaultObject;
 					try {
-						indexResult = index.Run(vars);
+						indexResult = this.index.Run(vars);
 					} finally {
 						vars.self = oSelf;
 					}
@@ -147,17 +147,17 @@ namespace SteamEngine.LScript {
 					if (exactMatches.Count == 1) {
 						MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) exactMatches[0]);
 						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-							method, new OpNode[] { index });
-						index.parent = (IOpNodeHolder) newNode;
+							method, new OpNode[] {this.index });
+						this.index.parent = (IOpNodeHolder) newNode;
 						this.ReplaceSelf(newNode);
 						return ((ITriable) newNode).TryRun(vars, new object[] { indexResult });
 					} else if (exactMatches.Count == 0) {
 						if (stringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, index);
-							index.parent = toStringNode;
+							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+							this.index.parent = toStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) stringMatches[0]);
 							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-								method, new OpNode[] { index });
+								method, new OpNode[] {this.index });
 							this.ReplaceSelf(newNode);
 							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult) });
 						} else {
@@ -178,8 +178,8 @@ namespace SteamEngine.LScript {
 					object oSelf = vars.self;
 					vars.self = vars.defaultObject;
 					try {
-						indexResult = index.Run(vars);
-						argResult = arg.Run(vars);
+						indexResult = this.index.Run(vars);
+						argResult = this.arg.Run(vars);
 					} finally {
 						vars.self = oSelf;
 					}
@@ -210,37 +210,37 @@ namespace SteamEngine.LScript {
 					if (exactMatches.Count == 1) {
 						MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) exactMatches[0]);
 						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-							method, new OpNode[] { index, arg });
-						index.parent = (IOpNodeHolder) newNode;
-						arg.parent = (IOpNodeHolder) newNode;
+							method, new OpNode[] {this.index, this.arg });
+						this.index.parent = (IOpNodeHolder) newNode;
+						this.arg.parent = (IOpNodeHolder) newNode;
 						this.ReplaceSelf(newNode);
 						return ((ITriable) newNode).TryRun(vars, new object[] { indexResult, argResult }); ;
 					} else if (exactMatches.Count == 0) {
 						if (argStringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, arg);
-							arg.parent = toStringNode;
+							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
+							this.arg.parent = toStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) argStringMatches[0]);
 							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-								method, new OpNode[] { index, toStringNode });
-							index.parent = (IOpNodeHolder) newNode;
+								method, new OpNode[] {this.index, toStringNode });
+							this.index.parent = (IOpNodeHolder) newNode;
 							toStringNode.parent = (IOpNodeHolder) newNode;
 							this.ReplaceSelf(newNode);
 							return ((ITriable) newNode).TryRun(vars, new object[] { indexResult, string.Concat(argResult) }); ;
 						} else if (indexStringMatches.Count == 1) {
-							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, index);
-							index.parent = toStringNode;
+							OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+							this.index.parent = toStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) indexStringMatches[0]);
 							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
-								method, new OpNode[] { toStringNode, arg });
+								method, new OpNode[] { toStringNode, this.arg });
 							toStringNode.parent = (IOpNodeHolder) newNode;
-							arg.parent = (IOpNodeHolder) newNode;
+							this.arg.parent = (IOpNodeHolder) newNode;
 							this.ReplaceSelf(newNode);
 							return ((ITriable) newNode).TryRun(vars, new object[] { string.Concat(indexResult), argResult }); ;
 						} else if (bothStringMatches.Count == 1) {
-							OpNode_ToString indexToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, index);
-							index.parent = indexToStringNode;
-							OpNode_ToString argToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, arg);
-							arg.parent = argToStringNode;
+							OpNode_ToString indexToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+							this.index.parent = indexToStringNode;
+							OpNode_ToString argToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
+							this.arg.parent = argToStringNode;
 							MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) indexStringMatches[0]);
 							newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								method, new OpNode[] { indexToStringNode, argToStringNode });
@@ -271,10 +271,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			if (arg != null) {
-				return string.Concat("INDEX(", index, ") = ", arg);
+			if (this.arg != null) {
+				return string.Concat("INDEX(", this.index, ") = ", this.arg);
 			} else {
-				return ("INDEX(" + index + ")");
+				return ("INDEX(" + this.index + ")");
 			}
 		}
 	}

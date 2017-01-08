@@ -17,8 +17,8 @@ namespace SteamEngine.RemoteConsole {
 		EventHandler txtDisplay_TitleChanged;
 
 		public MainForm() {
-			InitializeComponent();
-			txtDisplay_TitleChanged = new EventHandler(TxtDisplay_TitleChanged);
+			this.InitializeComponent();
+			this.txtDisplay_TitleChanged = new EventHandler(this.TxtDisplay_TitleChanged);
 		}
 
 		private void menuExit_Click(object sender, EventArgs e) {
@@ -36,12 +36,12 @@ namespace SteamEngine.RemoteConsole {
 				TabPage tab = new TabPage(name);
 				CommandLineDisplay cld = new CommandLineDisplay(name, id);
 				
-				cld.txtDisplay.TitleChanged += txtDisplay_TitleChanged;
+				cld.txtDisplay.TitleChanged += this.txtDisplay_TitleChanged;
 				tab.Controls.Add(cld);
 				cld.Dock = DockStyle.Fill;
 				this.tabControl.Controls.Add(tab);
 
-				RemoveCmdLineDisplay(id);
+				this.RemoveCmdLineDisplay(id);
 				this.displays.Add(id, cld);
 			}
 		}
@@ -93,7 +93,7 @@ namespace SteamEngine.RemoteConsole {
 				foreach (Control pageControl in page.Controls) {
 					CommandLineDisplay cld = pageControl as CommandLineDisplay;
 					if (cld != null) {
-						cld.txtDisplay.TitleChanged -= txtDisplay_TitleChanged;
+						cld.txtDisplay.TitleChanged -= this.txtDisplay_TitleChanged;
 					}
 				}
 			}
@@ -116,11 +116,11 @@ namespace SteamEngine.RemoteConsole {
 		//}
 
 		internal void SetConnectedTrue() {
-			SetConnected(true);
+			this.SetConnected(true);
 		}
 
 		internal void SetConnectedFalse() {
-			SetConnected(false);
+			this.SetConnected(false);
 		}
 
 		internal void SetConnected(bool connected) {
@@ -141,7 +141,7 @@ namespace SteamEngine.RemoteConsole {
 					cld.txtDisplay.WriteLine(str);
 				}
 			} else {
-				systemTabPage.WriteLine(str);
+				this.systemTabPage.WriteLine(str);
 			}
 		}
 
@@ -152,7 +152,7 @@ namespace SteamEngine.RemoteConsole {
 					cld.txtDisplay.Write(str);
 				}
 			} else {
-				systemTabPage.Write(str);
+				this.systemTabPage.Write(str);
 			}
 		}
 

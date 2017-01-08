@@ -29,7 +29,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellEffectItem {
 		public static bool CheckPositionForItem(int x, int y, ref int z, Map map, int height, bool checkCharacters) {
 			for (int offset = 0; offset < 10; offset++) {
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class SpellEffectItemDef {
 
 		public SpellEffectItem Conjure(IPoint4D target, bool checkCharacters, int spellPower, TimeSpan duration, bool dispellable) {

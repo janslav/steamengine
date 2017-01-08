@@ -33,17 +33,17 @@ namespace SteamEngine.CompiledScripts {
 		private static ItemDef defaultContainer;
 
 		#region Accessors
-		public static new TemplateDef GetByDefname(string defname) {
+		public new static TemplateDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as TemplateDef;
 		}
 
 
 		public ItemDef Container {
 			get {
-				return (ItemDef) container.CurrentValue;
+				return (ItemDef) this.container.CurrentValue;
 			}
 			set {
-				container.CurrentValue = value;
+				this.container.CurrentValue = value;
 			}
 		}
 
@@ -64,17 +64,17 @@ namespace SteamEngine.CompiledScripts {
 		public TemplateDef(string defname, string filename, int headerLine)
 			:
 				base(defname, filename, headerLine) {
-			container = InitThingDefField("container", null, typeof(ItemDef));
+			this.container = this.InitThingDefField("container", null, typeof(ItemDef));
 		}
 
-		public static new void Bootstrap() {
+		public new static void Bootstrap() {
 			ScriptLoader.RegisterScriptType("TemplateDef",
-				AbstractDef.LoadFromScripts, true);
+				LoadFromScripts, true);
 		}
 		public override void LoadScriptLines(PropsSection ps) {
 			ParseText(ps, this); //is static because it was that way before a little overhaul, and there's no reason for rewriting really
 
-			base.LoadFromSaves(ps); //would try to load the lines as fieldvalues... we already did that
+			this.LoadFromSaves(ps); //would try to load the lines as fieldvalues... we already did that
 		}
 
 		private static void ParseText(PropsSection input, TemplateDef td) {
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 						continue;
 					}
 
-					Match m = CompiledLocStringCollection.valueRE.Match(line);
+					Match m = LocStringCollection.valueRE.Match(line);
 					if (m.Success) {
 						GroupCollection gc = m.Groups;
 						string name = gc["name"].Value;
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 								Logger.WriteWarning(input.Filename, linenumber, "Alternative defname already defined, ignoring.");
 							} else {
 								string altdefname = gc["value"].Value;
-								Match ma = TagMath.stringRE.Match(altdefname);
+								Match ma = ConvertTools.stringRE.Match(altdefname);
 								altdefname = String.Intern(ConvertTools.LoadSimpleQuotedString(altdefname));
 								AbstractScript def = GetByDefname(altdefname);
 								TemplateDef t = def as TemplateDef;
@@ -162,22 +162,22 @@ namespace SteamEngine.CompiledScripts {
 
 		#region factory methods
 		public Thing Create(IPoint4D p) {
-			return Create(p.X, p.Y, p.Z, p.M);
+			return this.Create(p.X, p.Y, p.Z, p.M);
 		}
 
 		public Thing Create(int x, int y, int z, byte m) {
-			ThrowIfUnloaded();
+			this.ThrowIfUnloaded();
 			ItemDef contDef = this.Container;
 			if (contDef == null) {
-				contDef = DefaultContainer;
+				contDef = this.DefaultContainer;
 			}
 			Thing cont = contDef.Create(x, y, z, m);
-			holder.Run(cont, (ScriptArgs) null);
+			this.holder.Run(cont, (ScriptArgs) null);
 			return cont;
 		}
 
 		public Thing Create(Thing cont) {
-			ThrowIfUnloaded();
+			this.ThrowIfUnloaded();
 			ItemDef contDef = this.Container;
 			if (cont.IsChar) {
 				cont = ((Character) cont).Backpack;
@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts {
 			if (contDef != null) {
 				cont = contDef.Create(cont);
 			} //else we put the item(s) in the given container
-			holder.Run(cont, (ScriptArgs) null);
+			this.holder.Run(cont, (ScriptArgs) null);
 			return cont;//we return the container even in case we didn't create it
 		}
 		#endregion factory methods

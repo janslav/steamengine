@@ -282,7 +282,7 @@ namespace SteamEngine.Persistence {
 
 			if (t.IsEnum) {
 				return Convert.ToUInt64(value, System.Globalization.CultureInfo.InvariantCulture).ToString(System.Globalization.CultureInfo.InvariantCulture);
-			} else if (TagMath.IsNumberType(t)) {
+			} else if (ConvertTools.IsNumberType(t)) {
 				return ((IConvertible) value).ToString(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 			} else if (t.Equals(typeof(String))) {
 				string stringAsSingleLine = Tools.EscapeNewlines((string) value);
@@ -353,7 +353,7 @@ namespace SteamEngine.Persistence {
 
 		/// <summary>Find out if the specified type is known to be saveable by the ObjectSaver class.</summary>
 		public static bool IsSaveableType(Type t) {
-			if (TagMath.IsNumberType(t)) {
+			if (ConvertTools.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
@@ -367,7 +367,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		public static bool IsSimpleSaveableType(Type t) {
-			if (TagMath.IsNumberType(t)) {
+			if (ConvertTools.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {
@@ -379,7 +379,7 @@ namespace SteamEngine.Persistence {
 
 		/// <summary>Types that are either simple or have their coordinator for saving</summary>
 		public static bool IsSimpleSaveableOrCoordinated(Type t) {
-			if (TagMath.IsNumberType(t)) {
+			if (ConvertTools.IsNumberType(t)) {
 			} else if (t.Equals(typeof(String))) {
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
@@ -909,7 +909,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal virtual void Run(SaveStream writer) {
-				implementor.Save(objToSave, writer);
+				this.implementor.Save(this.objToSave, writer);
 			}
 		}
 
@@ -922,7 +922,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run(SaveStream writer) {
-				writer.WriteSection(implementor.HeaderName, uid.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				writer.WriteSection(this.implementor.HeaderName, this.uid.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				base.Run(writer);
 			}
 		}
@@ -973,8 +973,8 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run() {
-				object o = coordinator.Load(m);
-				deleg(o, filename, line);
+				object o = this.coordinator.Load(this.m);
+				this.deleg(o, this.filename, this.line);
 			}
 		}
 
@@ -989,8 +989,8 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run() {
-				object o = coordinator.Load(m);
-				deleg(o, filename, line, param);
+				object o = this.coordinator.Load(this.m);
+				this.deleg(o, this.filename, this.line, this.param);
 			}
 		}
 
@@ -1003,14 +1003,14 @@ namespace SteamEngine.Persistence {
 
 			internal override void Run() {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
-				if (objectUid < loadedObjectsCount) {
-					object o = loadedObjectsByUid[objectUid];
+				if (this.objectUid < loadedObjectsCount) {
+					object o = loadedObjectsByUid[this.objectUid];
 					if (o != voidObject) {
-						deleg(o, filename, line);
+						this.deleg(o, this.filename, this.line);
 						return;
 					}
 				}
-				throw new NonExistingObjectException("There is no object with uid " + LogStr.Number(objectUid) + " to load.");
+				throw new NonExistingObjectException("There is no object with uid " + LogStr.Number(this.objectUid) + " to load.");
 			}
 		}
 
@@ -1023,14 +1023,14 @@ namespace SteamEngine.Persistence {
 
 			internal override void Run() {
 				int loadedObjectsCount = loadedObjectsByUid.Count;
-				if (objectUid < loadedObjectsCount) {
-					object o = loadedObjectsByUid[(int) objectUid];
+				if (this.objectUid < loadedObjectsCount) {
+					object o = loadedObjectsByUid[(int) this.objectUid];
 					if (o != voidObject) {
-						deleg(o, filename, line, param);
+						this.deleg(o, this.filename, this.line, this.param);
 						return;
 					}
 				}
-				throw new NonExistingObjectException("There is no object with uid " + LogStr.Number(objectUid) + " to load.");
+				throw new NonExistingObjectException("There is no object with uid " + LogStr.Number(this.objectUid) + " to load.");
 			}
 		}
 
@@ -1056,7 +1056,7 @@ namespace SteamEngine.Persistence {
 
 		internal class ReferenceEqualityComparer : IEqualityComparer<object> {
 			public new bool Equals(object x, object y) {
-				return object.ReferenceEquals(x, y);
+				return ReferenceEquals(x, y);
 			}
 
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
@@ -1075,41 +1075,41 @@ namespace SteamEngine.Persistence {
 		}
 
 		public void WriteLine(string value) {
-			writer.WriteLine(value);
+			this.writer.WriteLine(value);
 		}
 
 		public void WriteLine() {
-			writer.WriteLine();
+			this.writer.WriteLine();
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Close() {
 			try {
-				writer.Flush();
+				this.writer.Flush();
 			} catch { }
 			try {
-				writer.Close();
+				this.writer.Close();
 			} catch { }
-			writer = null;
+			this.writer = null;
 		}
 
 		public void WriteValue(string name, object value) {
 			//TagMath.SaveValue(writer, name+"=", value, -1);
-			writer.Write(name);
-			writer.Write("=");
-			writer.WriteLine(ObjectSaver.Save(value));
+			this.writer.Write(name);
+			this.writer.Write("=");
+			this.writer.WriteLine(ObjectSaver.Save(value));
 		}
 
 		public void WriteSection(string type, string name) {
-			writer.Write("[");
-			writer.Write(type);
-			writer.Write(" ");
-			writer.Write(name);
-			writer.WriteLine("]");
+			this.writer.Write("[");
+			this.writer.Write(type);
+			this.writer.Write(" ");
+			this.writer.Write(name);
+			this.writer.WriteLine("]");
 		}
 
 		public void WriteComment(string line) {
-			writer.WriteLine("//" + line);
+			this.writer.WriteLine("//" + line);
 		}
 	}
 }

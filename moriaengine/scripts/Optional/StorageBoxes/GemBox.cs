@@ -24,8 +24,8 @@ namespace SteamEngine.CompiledScripts {
 	public partial class GemBox : Item {
 
 		public void EnsureDictionary() {
-			if (inBoxGems == null) {
-				inBoxGems = new Dictionary<ItemDef, int>();
+			if (this.inBoxGems == null) {
+				this.inBoxGems = new Dictionary<ItemDef, int>();
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Create() {
-			Color = 2448;
+			this.Color = 2448;
 		}
 
 	}
@@ -68,26 +68,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			int baseX = 20;
 			int baseY = 60;
-			SetLocation(70, 25);
-			ResizePic(0, 0, 5054, 660, 165 + radku * 80);
-			ResizePic(10, 10, 3000, 640, 145 + radku * 80);
-			Button(15, 25, 4005, 4007, true, 0, 1);		// add gems
-			Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
-			HtmlGumpA(255, 15, 200, 20, "Bedýnka na drahé kameny", false, false);
-			HtmlGumpA(55, 27, 100, 20, "Pøidat kameny", false, false);
+			this.SetLocation(70, 25);
+			this.ResizePic(0, 0, 5054, 660, 165 + radku * 80);
+			this.ResizePic(10, 10, 3000, 640, 145 + radku * 80);
+			this.Button(15, 25, 4005, 4007, true, 0, 1);		// add gems
+			this.Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
+			this.HtmlGumpA(255, 15, 200, 20, "Bedýnka na drahé kameny", false, false);
+			this.HtmlGumpA(55, 27, 100, 20, "Pøidat kameny", false, false);
 			if ((radku == 0) && (i == 0)) {
-				HtmlGumpA(baseX, 75, 200, 20, "Bedna na drahé kameny je prázdná", false, false);
+				this.HtmlGumpA(baseX, 75, 200, 20, "Bedna na drahé kameny je prázdná", false, false);
 			} else {
 				i = 0;
 				foreach (KeyValuePair<ItemDef, int> pair in box.inBoxGems) {
-					Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
-					HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
-					HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
-					HtmlGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
-					CheckBox(baseX, baseY + 38, 9903, 9904, false, buttonsCount);
-					HtmlGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
-					NumberEntryA(baseX + 80, baseY + 38, 65, 20, 0, buttonsCount, 0);
-					TilePic(baseX + 110, baseY, pair.Key.Model);
+					this.Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
+					this.HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
+					this.HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
+					this.HtmlGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
+					this.CheckBox(baseX, baseY + 38, 9903, 9904, false, buttonsCount);
+					this.HtmlGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
+					this.NumberEntryA(baseX + 80, baseY + 38, 65, 20, 0, buttonsCount, 0);
+					this.TilePic(baseX + 110, baseY, pair.Key.Model);
 					dictButtonForGems.Add(buttonsCount, pair.Key);
 					i++;
 					buttonsCount++;
@@ -100,9 +100,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 			}
-			args.SetTag(D_GemBox.buttonsCountTK, buttonsCount);
-			args.SetTag(D_GemBox.buttonsForGemsTK, dictButtonForGems);
-			Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
+			args.SetTag(buttonsCountTK, buttonsCount);
+			args.SetTag(buttonsForGemsTK, dictButtonForGems);
+			this.Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
@@ -115,8 +115,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.PressedButton == 1) {		// Add gems
 				((Player) gi.Cont).Target(SingletonScript<Targ_GemBox>.Instance, gi.Focus);
 			} else if (gr.PressedButton == 2) {		// OK -> give selected gems
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_GemBox.buttonsForGemsTK);
-				int buttonsCount = TagMath.IGetTag(args, D_GemBox.buttonsCountTK);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForGemsTK);
+				int buttonsCount = TagMath.IGetTag(args, buttonsCountTK);
 				int i = 0;
 				int gemsToGive = 0;
 				while (i < buttonsCount) {
@@ -141,11 +141,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (gr.PressedButton >= 1000) {
 				int thisButtonValue = (int) gr.PressedButton - 1000;
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_GemBox.buttonsForGemsTK);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForGemsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
 				Globals.LastNewItem.Amount = box.inBoxGems[buttonShowItemDef[thisButtonValue]];
 				box.inBoxGems.Remove(buttonShowItemDef[thisButtonValue]);
-				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_GemBox>.Instance);
+				box.Dialog(gi.Cont, SingletonScript<D_GemBox>.Instance);
 			}
 		}
 	}
@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		protected override void On_TargonCancel(Player self, object parameter) {
 			GemBox focus = parameter as GemBox;
-			focus.Dialog(self, SingletonScript<Dialogs.D_GemBox>.Instance);
+			focus.Dialog(self, SingletonScript<D_GemBox>.Instance);
 		}
 	}
 }

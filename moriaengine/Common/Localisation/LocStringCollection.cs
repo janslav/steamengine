@@ -63,7 +63,7 @@ namespace SteamEngine.Common {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "entriesByName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "language"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-		internal protected virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {
+		protected internal virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {
 			this.entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			Dictionary<string, string> helperList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			foreach (KeyValuePair<string, string> pair in entriesByName) {

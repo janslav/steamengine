@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		protected override void Process() {
 			base.Process();
-			Constructor();
+			this.Constructor();
 		}
 
 		private void Constructor() {
@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			ctdConstructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			ctdConstructor.Parameters.Add(new CodeParameterDeclarationExpression(this.section.defClassName, "myDef"));
 			ctdConstructor.BaseConstructorArgs.Add(new CodeArgumentReferenceExpression("myDef"));
-			generatedType.Members.Add(ctdConstructor);
+			this.generatedType.Members.Add(ctdConstructor);
 		}
 	}
 }

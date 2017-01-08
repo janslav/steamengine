@@ -39,7 +39,7 @@ namespace SteamEngine.LScript {
 		//used by TriggerGroup/GumpDef/templatedef/... loading, and LoadAsFunction here
 		public LScriptHolder(TriggerSection input)
 			: base(input.TriggerName) {
-			Compile(input);
+			this.Compile(input);
 		}
 
 		//a little hack for gump response triggers.
@@ -72,7 +72,7 @@ namespace SteamEngine.LScript {
 		internal int GetLocalVarIndex(string name) {
 			int index;
 			if (!this.localsNames.TryGetValue(name, out index)) {
-				index = localsNames.Count;
+				index = this.localsNames.Count;
 				this.localsNames[name] = index;
 			}
 			return index;
@@ -91,7 +91,7 @@ namespace SteamEngine.LScript {
 		internal bool containsRandom;
 		public bool ContainsRandomExpression {
 			get {
-				return containsRandom;
+				return this.containsRandom;
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace SteamEngine.LScript {
 
 		public sealed override object Run(object self, ScriptArgs sa) {
 			if (this.unloaded) {
-				throw new UnloadedException("Function/trigger " + LogStr.Ident(Name) + " is unloaded, can not be run.");
+				throw new UnloadedException("Function/trigger " + LogStr.Ident(this.Name) + " is unloaded, can not be run.");
 			}
 			this.lastRunSuccesful = false;
 			try {

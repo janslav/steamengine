@@ -33,8 +33,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first argument is the object being infoized - we will get its DataView first
 			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
-			int firstItemButt = TagMath.IGetTag(args, D_Info.pagingButtonsTK);//buttons paging 1st item index
-			int firstItemFld = TagMath.IGetTag(args, D_Info.pagingFieldsTK);//fields paging 1st item index
+			int firstItemButt = TagMath.IGetTag(args, pagingButtonsTK);//buttons paging 1st item index
+			int firstItemFld = TagMath.IGetTag(args, pagingFieldsTK);//fields paging 1st item index
 
 			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance);
 			dlg.CreateBackground(InfoDialogHandler.INFO_WIDTH);
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //store
-						Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.editFieldsIndexPairingTK);
+						Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(editFieldsIndexPairingTK);
 
 						List<SettingResult> reslist = SettingsProvider.AssertSettings(editFieldsPairing, gr, target);
 						DialogStacking.ResendAndRestackDialog(gi);
@@ -140,14 +140,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int pressedButtonNo = gr.PressedButton;
 
 				if (pressedButtonNo >= 1000) { //display detail of too long fields
-					Dictionary<int, IDataFieldView> detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.detailIndexPairingTK);
+					Dictionary<int, IDataFieldView> detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(detailIndexPairingTK);
 					IDataFieldView idfv = (IDataFieldView) detailsPairing[pressedButtonNo];
 
 					//display the detail on the selected field
 					Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info_Detail>.Instance, new DialogArgs(idfv, target));
 					DialogStacking.EnstackDialog(gi, newGi); //store
 				} else {//normal field button
-					Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(D_Info.btnsIndexPairingTK);
+					Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(btnsIndexPairingTK);
 					IDataFieldView idfv = (IDataFieldView) btnsPairing[pressedButtonNo];
 
 					if (idfv.IsButtonEnabled) {

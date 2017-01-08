@@ -59,15 +59,15 @@ namespace SteamEngine.CompiledScripts {
 							break;
 						}
 					case 2: {
-							self.Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]));
+							self.Go(ConvertTools.ParseUInt16(args[0]), ConvertTools.ParseUInt16(args[1]));
 							break;
 						}
 					case 3: {
-							self.Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]), TagMath.ParseSByte(args[3]), TagMath.ParseByte(args[4]));
+							self.Go(ConvertTools.ParseUInt16(args[0]), ConvertTools.ParseUInt16(args[1]), ConvertTools.ParseSByte(args[3]), ConvertTools.ParseByte(args[4]));
 							break;
 						}
 					case 4: {
-							self.Go(TagMath.ParseUInt16(args[0]), TagMath.ParseUInt16(args[1]), TagMath.ParseSByte(args[3]));
+							self.Go(ConvertTools.ParseUInt16(args[0]), ConvertTools.ParseUInt16(args[1]), ConvertTools.ParseSByte(args[3]));
 							return;
 						}
 					default: {

@@ -46,20 +46,20 @@ namespace SteamEngine.Communication.TCP {
 				throw new SEException("Already bound");
 			}
 
-			listener = CreateSocket(ipep.AddressFamily);
+			this.listener = CreateSocket(ipep.AddressFamily);
 
 			try {
-				listener.LingerState.Enabled = false;
+				this.listener.LingerState.Enabled = false;
 #if !MONO
-				listener.ExclusiveAddressUse = false;
+				this.listener.ExclusiveAddressUse = false;
 #endif
 
-				listener.Bind(ipep);
-				listener.Listen(8);
+				this.listener.Bind(ipep);
+				this.listener.Listen(8);
 
 				Console.WriteLine("Listening on port " + ipep.Port);
 
-				listener.BeginAccept(CreateSocket(ipep.AddressFamily), 0, onAccept, listener);
+				this.listener.BeginAccept(CreateSocket(ipep.AddressFamily), 0, this.onAccept, this.listener);
 			} catch (Exception e) {
 				throw new FatalException("Server socket bind failed.", e);
 			}
@@ -97,12 +97,12 @@ namespace SteamEngine.Communication.TCP {
 			if (accepted != null) {
 				TcpConnection<TState> newConn = Pool<TcpConnection<TState>>.Acquire();
 				newConn.socket = accepted;
-				InitNewConnection(newConn);
+				this.InitNewConnection(newConn);
 			}
 
 			//continue in accepting
 			try {
-				listener.BeginAccept(CreateSocket(this.listener.AddressFamily), 0, onAccept, listener);
+				listener.BeginAccept(CreateSocket(this.listener.AddressFamily), 0, this.onAccept, listener);
 			} catch (ObjectDisposedException) {
 				return;
 			} catch (Exception e) {
@@ -115,12 +115,12 @@ namespace SteamEngine.Communication.TCP {
 				Console.WriteLine("Stopped listening on port " + this.BoundTo.Port);
 			}
 			try {
-				listener.Close();
+				this.listener.Close();
 			} catch { }
 		}
 
 		protected override void On_DisposeUnmanagedResources() {
-			UnBind();
+			this.UnBind();
 
 			base.On_DisposeUnmanagedResources();
 		}

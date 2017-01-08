@@ -46,7 +46,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		static void Application_ThreadException(object sender, ThreadExceptionEventArgs e) {
-			Logger.WriteError("Untrapped exception", e.Exception);
+			Common.Logger.WriteError("Untrapped exception", e.Exception);
 		}
 	}
 }

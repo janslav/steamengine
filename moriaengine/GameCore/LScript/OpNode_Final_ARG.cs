@@ -34,8 +34,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (arg == oldNode) {
-				arg = newNode;
+			if (this.arg == oldNode) {
+				this.arg = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -45,7 +45,7 @@ namespace SteamEngine.LScript {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
-				vars.localVars[registerIndex] = arg.Run(vars);
+				vars.localVars[this.registerIndex] = this.arg.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
@@ -53,12 +53,12 @@ namespace SteamEngine.LScript {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			vars.localVars[registerIndex] = results[0];
+			vars.localVars[this.registerIndex] = results[0];
 			return null;
 		}
 
 		public override string ToString() {
-			return string.Concat("ARG ", name, " = ", arg);
+			return string.Concat("ARG ", this.name, " = ", this.arg);
 		}
 	}
 
@@ -75,15 +75,15 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return vars.localVars[registerIndex];
+			return vars.localVars[this.registerIndex];
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			return vars.localVars[registerIndex];
+			return vars.localVars[this.registerIndex];
 		}
 
 		public override string ToString() {
-			return string.Concat("ARG(", name, ")");
+			return string.Concat("ARG(", this.name, ")");
 		}
 	}
 
@@ -100,15 +100,15 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return vars.localVars[registerIndex] == null;
+			return vars.localVars[this.registerIndex] == null;
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			return vars.localVars[registerIndex] == null;
+			return vars.localVars[this.registerIndex] == null;
 		}
 
 		public override string ToString() {
-			return string.Concat("ARG.EXISTS(", name, ")");
+			return string.Concat("ARG.EXISTS(", this.name, ")");
 		}
 	}
 
@@ -125,17 +125,17 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			vars.localVars[registerIndex] = null;
+			vars.localVars[this.registerIndex] = null;
 			return null;
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			vars.localVars[registerIndex] = null;
+			vars.localVars[this.registerIndex] = null;
 			return null;
 		}
 
 		public override string ToString() {
-			return string.Concat("ARG.remove(", name, ")");
+			return string.Concat("ARG.remove(", this.name, ")");
 		}
 	}
 }

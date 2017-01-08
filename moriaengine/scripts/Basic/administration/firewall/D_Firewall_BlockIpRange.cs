@@ -29,8 +29,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey ipToRangeTK = TagKey.Acquire("_ip_to_range_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			string ipfrom = TagMath.SGetTagNotNull(args, D_Firewall_BlockIPRange.ipFromRangeTK);
-			string ipto = TagMath.SGetTagNotNull(args, D_Firewall_BlockIPRange.ipToRangeTK);
+			string ipfrom = TagMath.SGetTagNotNull(args, ipFromRangeTK);
+			string ipto = TagMath.SGetTagNotNull(args, ipToRangeTK);
 
 			int width = 500;
 			int labels = 150;
@@ -97,10 +97,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (sa != null) {
 				DialogArgs newArgs = new DialogArgs();
 				if (sa.Argv != null && sa.Argv.Length == 1) {
-					newArgs.SetTag(D_Firewall_BlockIPRange.ipFromRangeTK, sa.Argv[0]);
+					newArgs.SetTag(ipFromRangeTK, sa.Argv[0]);
 				} else if (sa.Argv != null && sa.Argv.Length == 2) {
-					newArgs.SetTag(D_Firewall_BlockIPRange.ipFromRangeTK, sa.Argv[0]);
-					newArgs.SetTag(D_Firewall_BlockIPRange.ipToRangeTK, sa.Argv[1]);
+					newArgs.SetTag(ipFromRangeTK, sa.Argv[0]);
+					newArgs.SetTag(ipToRangeTK, sa.Argv[1]);
 				} else {
 					D_Display_Text.ShowError("Oèekávány 2 parametry: od IP - do IP");
 					return;

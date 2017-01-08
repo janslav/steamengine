@@ -30,14 +30,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam plugin z pluginholdera (char nebo item) prisleho v parametru dialogu
-			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme pluginy brat?
-			List<KeyValuePair<PluginKey, Plugin>> pluginList = args.GetTag(D_PluginList.pluginListTK) as List<KeyValuePair<PluginKey, Plugin>>;
+			PluginHolder ph = (PluginHolder) args.GetTag(holderTK); //z koho budeme pluginy brat?
+			List<KeyValuePair<PluginKey, Plugin>> pluginList = args.GetTag(pluginListTK) as List<KeyValuePair<PluginKey, Plugin>>;
 			if (pluginList == null) {
 				//vzit seznam plugin dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				pluginList = ListifyPlugins(ph.GetAllPluginsWithKeys(), TagMath.SGetTag(args, D_PluginList.pluginCriteriumTK));
+				pluginList = this.ListifyPlugins(ph.GetAllPluginsWithKeys(), TagMath.SGetTag(args, pluginCriteriumTK));
 				pluginList.Sort(PluginsComparer.instance); //setridit podle abecedy
-				args.SetTag(D_PluginList.pluginListTK, pluginList); //ulozime to do argumentu dialogu				
+				args.SetTag(pluginListTK, pluginList); //ulozime to do argumentu dialogu				
 			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, pluginList.Count);
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<KeyValuePair<PluginKey, Plugin>> pluginList = (List<KeyValuePair<PluginKey, Plugin>>) args.GetTag(D_PluginList.pluginListTK);
+			List<KeyValuePair<PluginKey, Plugin>> pluginList = (List<KeyValuePair<PluginKey, Plugin>>) args.GetTag(pluginListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, pluginList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
@@ -107,8 +107,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
-						args.SetTag(D_PluginList.pluginCriteriumTK, nameCriteria);
-						args.RemoveTag(D_PluginList.pluginListTK);//vycistit soucasny odkaz na pluginlist aby se mohl prenacist
+						args.SetTag(pluginCriteriumTK, nameCriteria);
+						args.RemoveTag(pluginListTK);//vycistit soucasny odkaz na pluginlist aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //zobrazit info o vysvetlivkach
@@ -122,12 +122,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//zjistime si radek
 				int row = ((int) gr.PressedButton - 10) / 2;
 				int buttNo = ((int) gr.PressedButton - 10) % 2;
-				PluginHolder pluginOwner = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme pluginu brat?
+				PluginHolder pluginOwner = (PluginHolder) args.GetTag(holderTK); //z koho budeme pluginu brat?
 				KeyValuePair<PluginKey, Plugin> de = pluginList[row];
 				switch (buttNo) {
 					case 0: //smazat						
 						pluginOwner.RemovePlugin(de.Key);
-						args.RemoveTag(D_PluginList.pluginListTK);//na zaver smazat pluginlist (musi se reloadnout)
+						args.RemoveTag(pluginListTK);//na zaver smazat pluginlist (musi se reloadnout)
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 1: //info
@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//parametr self - thing jehoz tagy chceme zobrazit
 			//0 - zacneme od prvni pluginy co ma
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_PluginList.holderTK, self); //na sobe budeme zobrazovat tagy
+			newArgs.SetTag(holderTK, self); //na sobe budeme zobrazovat tagy
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_PluginList>.Instance, newArgs);
 			} else {
@@ -175,7 +175,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting tag dictionary entries by tags name asc</summary>
 	public class PluginsComparer : IComparer<KeyValuePair<PluginKey, Plugin>> {
-		public readonly static PluginsComparer instance = new PluginsComparer();
+		public static readonly PluginsComparer instance = new PluginsComparer();
 
 		private PluginsComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci

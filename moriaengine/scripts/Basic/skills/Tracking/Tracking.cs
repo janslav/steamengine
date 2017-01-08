@@ -46,18 +46,18 @@ namespace SteamEngine.CompiledScripts {
 
 		public TrackingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			minFootstepAge = InitTypedField("minFootstepAge", 15, typeof(double));
-			maxFootstepAge = InitTypedField("maxFootstepAge", 120, typeof(double));
-			minCharsToTrack = InitTypedField("minCharsToTrack", 3, typeof(int));
-			maxCharsToTrack = InitTypedField("maxCharsToTrack", 20, typeof(int));
-			minSafeSteps = InitTypedField("minSafeSteps", 1, typeof(int));
-			maxSafeSteps = InitTypedField("maxSafeSteps", 10, typeof(int));
-			pvmEffect = InitTypedField("pvmEffect", new double[] { 16.0, 64, 0 }, typeof(double[]));
+			this.minFootstepAge = this.InitTypedField("minFootstepAge", 15, typeof(double));
+			this.maxFootstepAge = this.InitTypedField("maxFootstepAge", 120, typeof(double));
+			this.minCharsToTrack = this.InitTypedField("minCharsToTrack", 3, typeof(int));
+			this.maxCharsToTrack = this.InitTypedField("maxCharsToTrack", 20, typeof(int));
+			this.minSafeSteps = this.InitTypedField("minSafeSteps", 1, typeof(int));
+			this.maxSafeSteps = this.InitTypedField("maxSafeSteps", 10, typeof(int));
+			this.pvmEffect = this.InitTypedField("pvmEffect", new double[] { 16.0, 64, 0 }, typeof(double[]));
 		}
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
-			if (!CheckPrerequisities(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs)) {
 				return TriggerResult.Cancel; //finish now
 			}
 			Character self = skillSeqArgs.Self;
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
-			if (!CheckPrerequisities(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs)) {
 				return TriggerResult.Cancel;
 			}
 			switch ((TrackingEnums) skillSeqArgs.Param2) {
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (charType == CharacterTypes.Players) {//tracking Players
 				ImmutableRectangle playerRect = this.GetPlayerTrackingArea(self);
-				TimeSpan maxAge = GetMaxFootstepsAge(self);
+				TimeSpan maxAge = this.GetMaxFootstepsAge(self);
 				switch ((TrackingEnums) skillSeqArgs.Param2) {
 					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
 						List<AbstractCharacter> charsAround = ScriptSector.GetCharactersInRectangle(playerRect, now, maxAge, self.M);
@@ -295,70 +295,70 @@ namespace SteamEngine.CompiledScripts {
 		[InfoField("Min age [sec.0-skill]")]
 		public double MinFootstepAge {
 			get {
-				return (double) minFootstepAge.CurrentValue;
+				return (double) this.minFootstepAge.CurrentValue;
 			}
 			set {
-				minFootstepAge.CurrentValue = value;
+				this.minFootstepAge.CurrentValue = value;
 			}
 		}
 
 		[InfoField("Max age[sec.100-skill]")]
 		public double MaxFootstepAge {
 			get {
-				return (double) maxFootstepAge.CurrentValue;
+				return (double) this.maxFootstepAge.CurrentValue;
 			}
 			set {
-				maxFootstepAge.CurrentValue = value;
+				this.maxFootstepAge.CurrentValue = value;
 			}
 		}
 
 		[InfoField("Trackables [char.0/skill]")]
 		public int MinCharsToTrack {
 			get {
-				return (int) minCharsToTrack.CurrentValue;
+				return (int) this.minCharsToTrack.CurrentValue;
 			}
 			set {
-				minCharsToTrack.CurrentValue = value;
+				this.minCharsToTrack.CurrentValue = value;
 			}
 		}
 
 		[InfoField("Trackables [char.100/skill]")]
 		public int MaxCharsToTrack {
 			get {
-				return (int) maxCharsToTrack.CurrentValue;
+				return (int) this.maxCharsToTrack.CurrentValue;
 			}
 			set {
-				maxCharsToTrack.CurrentValue = value;
+				this.maxCharsToTrack.CurrentValue = value;
 			}
 		}
 
 		[InfoField("SafeSteps [char.0/skill]")]
 		public int MinSafeSteps {
 			get {
-				return (int) minSafeSteps.CurrentValue;
+				return (int) this.minSafeSteps.CurrentValue;
 			}
 			set {
-				minSafeSteps.CurrentValue = value;
+				this.minSafeSteps.CurrentValue = value;
 			}
 		}
 
 		[InfoField("SafeSteps [char.100/skill]")]
 		public int MaxSafeSteps {
 			get {
-				return (int) maxSafeSteps.CurrentValue;
+				return (int) this.maxSafeSteps.CurrentValue;
 			}
 			set {
-				maxSafeSteps.CurrentValue = value;
+				this.maxSafeSteps.CurrentValue = value;
 			}
 		}
 
 		[InfoField("PVM Effect")]
 		public double[] PVMEffect {
 			get {
-				return (double[]) pvmEffect.CurrentValue;
+				return (double[]) this.pvmEffect.CurrentValue;
 			}
 			set {
-				pvmEffect.CurrentValue = value;
+				this.pvmEffect.CurrentValue = value;
 			}
 		}
 

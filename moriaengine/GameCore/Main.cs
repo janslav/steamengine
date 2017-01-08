@@ -124,13 +124,13 @@ namespace SteamEngine {
 
 		private static bool Init() {
 
-			System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			RunLevelManager.SetStartup();
 
 			using (StopWatch.StartAndDisplay("Server Initialisation")) {
 				AuxServerPipeClient.Init();
-				System.Threading.Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
+				Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
 
 				Console.WriteLine($"Starting SteamEngine ({Globals.Version}, {Build.Type} build)" + " - " + Globals.ServerName);
 				Console.WriteLine("https://sourceforge.net/projects/streamengine/");
@@ -165,7 +165,7 @@ namespace SteamEngine {
 				//}
 
 				//Server.Init();
-				Networking.GameServer.Init();
+				GameServer.Init();
 
 				//Region.ResolveLoadedRegions();
 				Map.Init();   //Sectors are created and items sorted on startup. 
@@ -210,7 +210,7 @@ namespace SteamEngine {
 			OpenedContainers.ClearAll();
 			Commands.ClearGMCommandsCache();
 			AosToolTips.ClearCache();
-			Networking.ItemOnGroundUpdater.ClearCache();
+			ItemOnGroundUpdater.ClearCache();
 
 			Console.WriteLine("World cleared");
 		}
@@ -391,7 +391,7 @@ namespace SteamEngine {
 		private static void Exit() {
 			RunLevelManager.SetShutdown();
 			GameServer.Exit();
-			AuxServerPipe.AuxServerPipeClient.Exit();
+			AuxServerPipeClient.Exit();
 			FastDLL.ShutDownFastDLL();
 			Console.WriteLine("Shutdown...");
 			if (Globals.Instance != null) { //is null when first run (and writing steamengine.ini)

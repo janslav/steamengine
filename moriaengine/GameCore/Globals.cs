@@ -46,12 +46,12 @@ namespace SteamEngine {
 
 		private static int port;
 		public static int Port {
-			get { return Globals.port; }
+			get { return port; }
 		}
 
 		private static string serverName;
 		public static string ServerName {
-			get { return Globals.serverName; }
+			get { return serverName; }
 		}
 
 		public override string Name {
@@ -66,100 +66,100 @@ namespace SteamEngine {
 
 		private static string adminEmail;
 		public static string AdminEmail {
-			get { return Globals.adminEmail; }
+			get { return adminEmail; }
 		}
 
 		private static string commandPrefix;
 		public static string CommandPrefix {
-			get { return Globals.commandPrefix; }
+			get { return commandPrefix; }
 		}
 
 		private static string alternateCommandPrefix;
 		public static string AlternateCommandPrefix {
-			get { return Globals.alternateCommandPrefix; }
+			get { return alternateCommandPrefix; }
 		}
 
 		private static string logPath;
 		public static string LogPath {
-			get { return Globals.logPath; }
+			get { return logPath; }
 		}
 
 		private static string savePath;
 		public static string SavePath {
-			get { return Globals.savePath; }
+			get { return savePath; }
 		}
 
 		private static string mulPath;
 		public static string MulPath {
-			get { return Globals.mulPath; }
+			get { return mulPath; }
 		}
 
-		private readonly static string scriptsPath = Path.GetFullPath("./scripts/");
+		private static readonly string scriptsPath = Path.GetFullPath("./scripts/");
 		public static string ScriptsPath {
-			get { return Globals.scriptsPath; }
+			get { return scriptsPath; }
 		}
 
 		private static string docsPath;
 		public static string DocsPath {
-			get { return Globals.docsPath; }
+			get { return docsPath; }
 		}
 
 #if MSWIN
 		private static string ndocExe;
 		public static string NdocExe {
-			get { return Globals.ndocExe; }
+			get { return ndocExe; }
 		}
 #endif
 
 		private static bool logToFiles;
 		public static bool LogToFiles {
-			get { return Globals.logToFiles; }
+			get { return logToFiles; }
 		}
 
 		private static bool logToConsole;
 		public static bool LogToConsole {
-			get { return Globals.logToConsole; }
-			set { Globals.logToConsole = value; }
+			get { return logToConsole; }
+			set { logToConsole = value; }
 		}
 
 		private static byte maximalPlevel;
 		public static byte MaximalPlevel {
-			get { return Globals.maximalPlevel; }
+			get { return maximalPlevel; }
 		}
 
 		private static int plevelOfGM;
 		public static int PlevelOfGM {
-			get { return Globals.plevelOfGM; }
+			get { return plevelOfGM; }
 		}
 
 		private static int plevelForLscriptCommands;
 		public static int PlevelForLscriptCommands {
-			get { return Globals.plevelForLscriptCommands; }
+			get { return plevelForLscriptCommands; }
 		}
 
 		private static bool allowUnencryptedClients;
 		public static bool AllowUnencryptedClients {
-			get { return Globals.allowUnencryptedClients; }
+			get { return allowUnencryptedClients; }
 		}
 
 		private static int reachRange;
 		public static int ReachRange {
-			get { return Globals.reachRange; }
+			get { return reachRange; }
 		}
 
 		private static int squaredReachRange;
 		public static int SquaredReachRange {
-			get { return Globals.squaredReachRange; }
+			get { return squaredReachRange; }
 		}
 
 		private static int defaultAsciiMessageColor;
 		public static int DefaultAsciiMessageColor {
-			get { return Globals.defaultAsciiMessageColor; }
+			get { return defaultAsciiMessageColor; }
 		}
 
 		private static int defaultUnicodeMessageColor;
 		public static int DefaultUnicodeMessageColor {
-			get { return Globals.defaultUnicodeMessageColor; }
+			get { return defaultUnicodeMessageColor; }
 		}
 
 		internal static bool useMap;
@@ -171,12 +171,12 @@ namespace SteamEngine {
 
 		private static bool generateMissingDefs;
 		public static bool GenerateMissingDefs {
-			get { return Globals.generateMissingDefs; }
+			get { return generateMissingDefs; }
 		}
 
 		private static bool useMultiItems;
 		public static bool UseMultiItems {
-			get { return Globals.useMultiItems; }
+			get { return useMultiItems; }
 		}
 
 		private static bool readBodyDefs;
@@ -191,132 +191,132 @@ namespace SteamEngine {
 
 		private static bool sendTileDataSpam;
 		public static bool SendTileDataSpam {
-			get { return Globals.sendTileDataSpam; }
+			get { return sendTileDataSpam; }
 		}
 
 		private static bool fastStartUp;
 		public static bool FastStartUp {
-			get { return Globals.fastStartUp; }
+			get { return fastStartUp; }
 		}
 
 		private static bool parallelStartUp;
 		public static bool ParallelStartUp {
-			get { return Globals.parallelStartUp; }
+			get { return parallelStartUp; }
 		}
 
 		private static bool netSyncingTracingOn;
 		public static bool NetSyncingTracingOn {
-			get { return Globals.netSyncingTracingOn; }
+			get { return netSyncingTracingOn; }
 		}
 
 		private static bool mapTracingOn;
 		public static bool MapTracingOn {
 			get {
-				return Globals.mapTracingOn;
+				return mapTracingOn;
 			}
 		}
 
 		private static bool writeMulDocsFiles;
 		public static bool WriteMulDocsFiles {
-			get { return Globals.writeMulDocsFiles; }
+			get { return writeMulDocsFiles; }
 		}
 
 
 		private static bool resolveEverythingAtStart;
 		public static bool ResolveEverythingAtStart {
-			get { return Globals.resolveEverythingAtStart; }
+			get { return resolveEverythingAtStart; }
 		}
 
 		private static bool autoAccountCreation;
 		public static bool AutoAccountCreation {
-			get { return Globals.autoAccountCreation; }
+			get { return autoAccountCreation; }
 		}
 
 		private static bool blockOSI3DClient;
 		public static bool BlockOSI3DClient {
-			get { return Globals.blockOSI3DClient; }
+			get { return blockOSI3DClient; }
 		}
 
 		private static int maxConnections;
 		public static int MaxConnections {
-			get { return Globals.maxConnections; }
+			get { return maxConnections; }
 		}
 
 		private static int speechDistance;
 		public static int SpeechDistance {
-			get { return Globals.speechDistance; }
+			get { return speechDistance; }
 		}
 
 		private static int emoteDistance;
 		public static int EmoteDistance {
-			get { return Globals.emoteDistance; }
+			get { return emoteDistance; }
 		}
 
 		private static int whisperDistance;
 		public static int WhisperDistance {
-			get { return Globals.whisperDistance; }
+			get { return whisperDistance; }
 		}
 
 		private static int yellDistance;
 		public static int YellDistance {
-			get { return Globals.yellDistance; }
+			get { return yellDistance; }
 		}
 
 		private static int loginFlags;
 		public static int LoginFlags {
-			get { return Globals.loginFlags; }
+			get { return loginFlags; }
 		}
 
 		private static int featuresFlags;
 		public static int FeaturesFlags {
-			get { return Globals.featuresFlags; }
+			get { return featuresFlags; }
 		}
 
 		private static int defaultItemModel;
 		public static int DefaultItemModel {
-			get { return Globals.defaultItemModel; }
+			get { return defaultItemModel; }
 		}
 
 		private static int defaultCharModel;
 		public static int DefaultCharModel {
-			get { return Globals.defaultCharModel; }
+			get { return defaultCharModel; }
 		}
 
 		private static bool hashPasswords;
 		public static bool HashPasswords {
-			get { return Globals.hashPasswords; }
+			get { return hashPasswords; }
 		}
 
 		private static bool scriptFloats;
 		public static bool ScriptFloats {
-			get { return Globals.scriptFloats; }
+			get { return scriptFloats; }
 		}
 
 
 		private static bool useAosToolTips;
 		public static bool UseAosToolTips {
-			get { return Globals.useAosToolTips; }
+			get { return useAosToolTips; }
 		}
 
 		private static TagHolder lastNew;
 		/// <summary>The last new item or character or memory or whatever created.</summary>
 		public static TagHolder LastNew {
-			get { return Globals.lastNew; }
-			internal set { Globals.lastNew = value; }
+			get { return lastNew; }
+			internal set { lastNew = value; }
 		}
 
 		private static AbstractCharacter lastNewChar;
 		/// <summary>The last new Character created.</summary>
 		public static AbstractCharacter LastNewChar {
-			get { return Globals.lastNewChar; }
-			internal set { Globals.lastNewChar = value; }
+			get { return lastNewChar; }
+			internal set { lastNewChar = value; }
 		}
 
 		private static AbstractItem lastNewItem;
 		/// <summary>The last new Item created.</summary>
 		public static AbstractItem LastNewItem {
-			get { return Globals.lastNewItem; }
-			internal set { Globals.lastNewItem = value; }
+			get { return lastNewItem; }
+			internal set { lastNewItem = value; }
 		}
 
 		/// <summary>The source of the current action.</summary>
@@ -718,9 +718,9 @@ namespace SteamEngine {
 			//Packets.NetState.ProcessAll();
 			SyncQueue.ProcessAll();
 
-			Globals.PauseServerTime();
+			PauseServerTime();
 			WorldSaver.Save();
-			Globals.UnPauseServerTime();
+			UnPauseServerTime();
 		}
 
 		public static void G() {
@@ -888,7 +888,7 @@ namespace SteamEngine {
 
 		public static void Load(string filename) {
 			ScriptLoader.LoadNewFile(filename);
-			Globals.Src.WriteLine("Script file loaded.");
+			Src.WriteLine("Script file loaded.");
 		}
 
 		//public static void NetStats() {
@@ -896,7 +896,7 @@ namespace SteamEngine {
 		//}
 
 		public static string GetMulDocPathFor(string filename) {
-			string docPath = Path.Combine(Globals.docsPath, "defaults");
+			string docPath = Path.Combine(docsPath, "defaults");
 			Tools.EnsureDirectory(docPath, true);
 
 			return Path.Combine(docPath, filename);

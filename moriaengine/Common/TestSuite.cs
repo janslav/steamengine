@@ -50,7 +50,7 @@ namespace SteamEngine.Common {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal MethodInfo Method {
 			get {
-				return mi;
+				return this.mi;
 			}
 		}
 
@@ -66,9 +66,9 @@ namespace SteamEngine.Common {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal bool Invoke() {
-			Console.WriteLine("TestSuite : Running test '" + mi + "'.");
+			Console.WriteLine("TestSuite : Running test '" + this.mi + "'.");
 			try {
-				mi.Invoke(null, null);
+				this.mi.Invoke(null, null);
 				Console.WriteLine("TestSuite : Test passed.");
 				return true;
 			} catch (Exception e) {

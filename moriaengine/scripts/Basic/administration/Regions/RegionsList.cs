@@ -27,17 +27,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 600;
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK);//regionlist si posilame v argumentu (napriklad pri pagingu)
+			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(regsListTK);//regionlist si posilame v argumentu (napriklad pri pagingu)
 			if (regionsList == null) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				regionsList = StaticRegion.FindByString(TagMath.SGetTag(args, D_Regions.regsSearchTK));
-				args.SetTag(D_Regions.regsListTK, regionsList); //ulozime to do argumentu dialogu
+				regionsList = StaticRegion.FindByString(TagMath.SGetTag(args, regsSearchTK));
+				args.SetTag(regsListTK, regionsList); //ulozime to do argumentu dialogu
 			}
 
-			object sorting = args.GetTag(D_Regions.regsSortingTK);
+			object sorting = args.GetTag(regsSortingTK);
 			if (sorting != null) {//mame cim tridit?
-				SortBy(regionsList, (SortingCriteria) Convert.ToInt32(sorting));
+				this.SortBy(regionsList, (SortingCriteria) Convert.ToInt32(sorting));
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam regionu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK);
+			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(regsListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 				switch (gr.PressedButton) {
@@ -119,29 +119,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //vyhledavat / zuzit vyber
 						string nameCriteria = gr.GetTextResponse(33);
-						args.SetTag(D_Regions.regsSearchTK, nameCriteria);//uloz info o vyhledavacim kriteriu
+						args.SetTag(regsSearchTK, nameCriteria);//uloz info o vyhledavacim kriteriu
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem												
-						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist
+						args.RemoveTag(regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //name asc						
-						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.NameAsc);
+						args.RemoveTag(regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(regsSortingTK, SortingCriteria.NameAsc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //name desc
-						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.NameDesc);
+						args.RemoveTag(regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(regsSortingTK, SortingCriteria.NameDesc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //defname asc
-						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.DefnameAsc);
+						args.RemoveTag(regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(regsSortingTK, SortingCriteria.DefnameAsc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //defname desc
-						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
-						args.SetTag(D_Regions.regsSortingTK, SortingCriteria.DefnameDesc);
+						args.RemoveTag(regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist a pretridit
+						args.SetTag(regsSortingTK, SortingCriteria.DefnameDesc);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
@@ -199,14 +199,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void RegionsList(Thing self, ScriptArgs text) {
 			//Parametry dialogu:
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_Regions.regsSortingTK, SortingCriteria.NameAsc);//zakladni trideni
+			newArgs.SetTag(regsSortingTK, SortingCriteria.NameAsc);//zakladni trideni
 			self.Dialog(SingletonScript<D_Regions>.Instance, newArgs);
 		}
 	}
 
 	/// <summary>Comparer for sorting regions by name asc</summary>
 	public class RegionComparerByName : IComparer<StaticRegion> {
-		public readonly static RegionComparerByName instance = new RegionComparerByName();
+		public static readonly RegionComparerByName instance = new RegionComparerByName();
 
 		public int Compare(StaticRegion x, StaticRegion y) {
 			return string.Compare(x.Name, y.Name);
@@ -215,7 +215,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting regions by defname name asc</summary>
 	public class RegionComparerByDefname : IComparer<StaticRegion> {
-		public readonly static RegionComparerByDefname instance = new RegionComparerByDefname();
+		public static readonly RegionComparerByDefname instance = new RegionComparerByDefname();
 
 		public int Compare(StaticRegion x, StaticRegion y) {
 			return string.Compare(x.Defname, y.Defname);

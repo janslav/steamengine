@@ -66,14 +66,14 @@ namespace SteamEngine {
 
 		internal ThingDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			this.name = InitTypedField("name", "", typeof(string));
-			this.color = InitTypedField("color", 0, typeof(int));
+			this.name = this.InitTypedField("name", "", typeof(string));
+			this.color = this.InitTypedField("color", 0, typeof(int));
 
-			this.model = InitModelField("model", 0);
-			this.weight = InitTypedField("weight", 0, typeof(float));
-			this.height = InitTypedField("height", 0, typeof(int));
+			this.model = this.InitModelField("model", 0);
+			this.weight = this.InitTypedField("weight", 0, typeof(float));
+			this.height = this.InitTypedField("height", 0, typeof(int));
 			int modelNum;
-			if (TagMath.TryParseInt32(defname.Substring(2), out modelNum)) {
+			if (ConvertTools.TryParseInt32(defname.Substring(2), out modelNum)) {
 				this.model.SetFromScripts(filename, headerLine, modelNum.ToString(System.Globalization.CultureInfo.InvariantCulture));
 			} else if (this is AbstractItemDef) {
 				this.model.SetFromScripts(filename, headerLine, Globals.DefaultItemModel.ToString(System.Globalization.CultureInfo.InvariantCulture));
@@ -88,7 +88,7 @@ namespace SteamEngine {
 		/**
 			This does NOT check Constants (and must not, or it would trigger infinite recursion from Constant.EvaluateToDef(string)).
 		*/
-		public static new ThingDef GetByDefname(string defname) {
+		public new static ThingDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as ThingDef;
 		}
 
@@ -166,9 +166,9 @@ namespace SteamEngine {
 
 		public override string ToString() {
 			if (this.model.CurrentValue == null) {
-				return Name + ": " + Defname + "//" + Altdefname + " (null model!)";
+				return this.Name + ": " + this.Defname + "//" + this.Altdefname + " (null model!)";
 			} else {
-				return Name + ": " + Defname + "//" + Altdefname + " (" + model.CurrentValue + ")";
+				return this.Name + ": " + this.Defname + "//" + this.Altdefname + " (" + this.model.CurrentValue + ")";
 			}
 		}
 
@@ -180,12 +180,12 @@ namespace SteamEngine {
 		#region Thing factory methods
 		internal Thing CreateWhenLoading() {
 			this.ThrowIfUnloaded();
-			return CreateImpl();
+			return this.CreateImpl();
 		}
 
 		public Thing Create(int x, int y, int z, byte m) {
 			this.ThrowIfUnloaded();
-			Thing retVal = CreateImpl();
+			Thing retVal = this.CreateImpl();
 			PutOnGround(retVal, x, y, z, m);
 			this.Trigger_Create(retVal);
 			return retVal;
@@ -194,7 +194,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Thing Create(IPoint4D point) {
 			point = point.TopPoint;
-			return Create(point.X, point.Y, point.Z, point.M);
+			return this.Create(point.X, point.Y, point.Z, point.M);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
@@ -221,7 +221,7 @@ namespace SteamEngine {
 				}
 			}
 
-			Trigger_Create(retVal);
+			this.Trigger_Create(retVal);
 			return retVal;
 		}
 
@@ -273,8 +273,8 @@ namespace SteamEngine {
 
 		#region TriggerGroupHolder helper methods
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					curNode.storedTG.Run(self, td, sa);
 					curNode = curNode.nextNode;
@@ -283,8 +283,8 @@ namespace SteamEngine {
 		}
 
 		internal void TryTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					curNode.storedTG.TryRun(self, td, sa);
 					curNode = curNode.nextNode;
@@ -294,8 +294,8 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.Run(self, td, sa);
 					if (TagMath.Is1(retVal)) {
@@ -309,8 +309,8 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					object retVal = curNode.storedTG.TryRun(self, td, sa);
 					if (TagMath.Is1(retVal)) {
@@ -385,15 +385,15 @@ namespace SteamEngine {
 
 		}
 
-		public static new void Bootstrap() {
+		public new static void Bootstrap() {
 			//ThingDef script sections are special in that they can have numeric header indicating model
-			AbstractDef.RegisterDefnameParser<ThingDef>(ParseDefnames);
+			RegisterDefnameParser<ThingDef>(ParseDefnames);
 		}
 
 
 		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
 			string typeName = section.HeaderType.ToLowerInvariant();
-			Type thingDefType = ThingDef.GetDefTypeByName(typeName);
+			Type thingDefType = GetDefTypeByName(typeName);
 			if (thingDefType == null) {
 				throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
 			}
@@ -471,7 +471,7 @@ namespace SteamEngine {
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
 				int a = 0;
 				int countPerCent = count / 200;
-				foreach (AbstractScript td in AbstractScript.AllScripts) {
+				foreach (AbstractScript td in AllScripts) {
 					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
 					}

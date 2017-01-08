@@ -36,7 +36,7 @@ namespace SteamEngine {
 		private TriggerGroup scriptedTriggers;
 
 		#region Accessors
-		public static new AbstractSkillDef GetByDefname(string defname) {
+		public new static AbstractSkillDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbstractSkillDef;
 		}
 
@@ -74,7 +74,7 @@ namespace SteamEngine {
 					}
 				}
 				this.Unregister();
-				key.CurrentValue = value;
+				this.key.CurrentValue = value;
 				this.Register();
 			}
 		}
@@ -95,7 +95,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return Tools.TypeToString(this.GetType()) + " " + Key;
+			return Tools.TypeToString(this.GetType()) + " " + this.Key;
 		}
 		#endregion Accessors
 
@@ -134,14 +134,14 @@ namespace SteamEngine {
 			}
 		}
 
-		public static new void Bootstrap() {
+		public new static void Bootstrap() {
 			//SkillDef script sections are special in that they have numeric header indicating skill id
-			AbstractDef.RegisterDefnameParser<AbstractSkillDef>(ParseDefnames);
+			RegisterDefnameParser<AbstractSkillDef>(ParseDefnames);
 		}
 
 		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
 			ushort skillId;
-			if (!TagMath.TryParseUInt16(section.HeaderName, out skillId)) {
+			if (!ConvertTools.TryParseUInt16(section.HeaderName, out skillId)) {
 				throw new ScriptException("Unrecognized format of the id number in the skilldef script header.");
 			}
 			defname = "skill_" + skillId.ToString(System.Globalization.CultureInfo.InvariantCulture);

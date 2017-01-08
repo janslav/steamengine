@@ -35,13 +35,13 @@ namespace SteamEngine.Common {
 		}
 
 		public void ProcessLogStr(LogStr logStr) {
-			ProcessLogStr(logStr.rawString);
+			this.ProcessLogStr(logStr.rawString);
 		}
 
 		private LogStyles CurrentStyle {
 			get {
-				if (styleStack.Count > 0) {
-					return styleStack.Peek();
+				if (this.styleStack.Count > 0) {
+					return this.styleStack.Peek();
 				}
 				return LogStyles.Default;
 			}
@@ -60,8 +60,8 @@ namespace SteamEngine.Common {
 					if (i % 2 == 1) {
 						switch (token[0]) {
 							case LogStrBase.eosChar:
-								if (styleStack.Count > 0) {
-									styleStack.Pop();
+								if (this.styleStack.Count > 0) {
+									this.styleStack.Pop();
 								}
 								continue;
 							case LogStrBase.titleChar:

@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 
             
 
-            int range = base.EffectRange;
+            int range = this.EffectRange;
             Character owner;
             Character caster = spellEffectArgs.Caster;
             Corpse corp = target as Corpse;

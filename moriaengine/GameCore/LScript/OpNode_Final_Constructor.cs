@@ -40,11 +40,11 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				args[index] = newNode;
+				this.args[index] = newNode;
 			}
 		}
 
@@ -52,24 +52,24 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = args.Length;
+			int argsCount = this.args.Length;
 			object[] results = new object[argsCount];
 			try {
 				for (int i = 0; i < argsCount; i++) {
-					results[i] = args[i].Run(vars);
+					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				return ctor.Invoke(results);
+				return this.ctor.Invoke(results);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(this.ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -77,30 +77,30 @@ namespace SteamEngine.LScript {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return ctor.Invoke(results);
+				return this.ctor.Invoke(results);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(this.ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.Append(ctor.DeclaringType).Append(".ctor(");
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			str.Append(this.ctor.DeclaringType).Append(".ctor(");
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append("))").ToString();
 		}
 
 		public Type ReturnType {
 			get {
-				return ctor.DeclaringType;
+				return this.ctor.DeclaringType;
 			}
 		}
 	}
@@ -155,14 +155,14 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				return ctor.Invoke(results);
+				return this.ctor.Invoke(results);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(this.ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -179,21 +179,21 @@ namespace SteamEngine.LScript {
 					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, results[i + normalArgsLength]), i);
 				}
 				modifiedResults[normalArgsLength] = paramArray;
-				return ctor.Invoke(modifiedResults);
+				return this.ctor.Invoke(modifiedResults);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(this.ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.Append(ctor.DeclaringType).Append(".ctor(");
+			str.Append(this.ctor.DeclaringType).Append(".ctor(");
 			for (int i = 0, n = this.normalArgs.Length; i < n; i++) {
 				str.Append(this.normalArgs[i].ToString()).Append(", ");
 			}
@@ -203,7 +203,7 @@ namespace SteamEngine.LScript {
 
 		public Type ReturnType {
 			get {
-				return ctor.DeclaringType;
+				return this.ctor.DeclaringType;
 			}
 		}
 	}
@@ -223,11 +223,11 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				args[index] = newNode;
+				this.args[index] = newNode;
 			}
 		}
 
@@ -235,26 +235,25 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = args.Length;
+			int argsCount = this.args.Length;
 			object[] results = new object[argsCount];
 			try {
 				for (int i = 0; i < argsCount; i++) {
-					results[i] = args[i].Run(vars);
+					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				formatString, results);
-				return ctor.Invoke(BindingFlags.Default, null, new object[] { resultString }, null);
+				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				return this.ctor.Invoke(BindingFlags.Default, null, new object[] { resultString }, null);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(this.ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -262,32 +261,31 @@ namespace SteamEngine.LScript {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				formatString, results);
-				return ctor.Invoke(new object[] { resultString });
+				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				return this.ctor.Invoke(new object[] { resultString });
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(ctor.DeclaringType) + "'",
+				throw new InterpreterException("Exception while calling constructor '" + Tools.TypeToString(this.ctor.DeclaringType) + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.Append(ctor.DeclaringType).Append(".ctor(");
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			str.Append(this.ctor.DeclaringType).Append(".ctor(");
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}
 
 		public Type ReturnType {
 			get {
-				return ctor.DeclaringType;
+				return this.ctor.DeclaringType;
 			}
 		}
 	}

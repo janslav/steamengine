@@ -58,11 +58,11 @@ namespace SteamEngine {
 				foreach (DictionaryEntry entry in copyFrom.tags) {
 					TagKey tagK = entry.Key as TagKey;
 					if (tagK != null) {
-						DeepCopyFactory.GetCopyDelayed(entry.Value, DelayedGetCopy_Tag, tagK);
+						DeepCopyFactory.GetCopyDelayed(entry.Value, this.DelayedGetCopy_Tag, tagK);
 					} else {
 						TimerKey timerK = entry.Key as TimerKey;
 						if (timerK != null) {
-							DeepCopyFactory.GetCopyDelayed(entry.Value, DelayedGetCopy_Timer);
+							DeepCopyFactory.GetCopyDelayed(entry.Value, this.DelayedGetCopy_Timer);
 						}
 					}
 				}
@@ -70,7 +70,7 @@ namespace SteamEngine {
 		}
 
 		private void DelayedGetCopy_Tag(object copy, object paramTagKey) {
-			SetTag((TagKey) paramTagKey, copy);
+			this.SetTag((TagKey) paramTagKey, copy);
 		}
 
 		private void DelayedGetCopy_Timer(object copy) {
@@ -91,31 +91,31 @@ namespace SteamEngine {
 		#region Timers
 		//called by Timer after load, do not use otherwise.
 		public BoundTimer AddTimer(TimerKey key, BoundTimer timer) {
-			if (tags != null) {
-				TimerKey prevKey = tags[timer] as TimerKey;
+			if (this.tags != null) {
+				TimerKey prevKey = this.tags[timer] as TimerKey;
 				if (prevKey != null && prevKey != key) {
 					throw new SEException("You can't assign one Timer to one TagHolder under 2 different TimerKeys");
 				}
 
-				BoundTimer prevTimer = tags[key] as BoundTimer;
+				BoundTimer prevTimer = this.tags[key] as BoundTimer;
 				if (prevTimer != null && prevTimer != timer) {
 					this.RemoveTimer(prevTimer);
 				}
 			} else {
-				tags = new Hashtable();
+				this.tags = new Hashtable();
 			}
-			tags[key] = timer;
-			tags[timer] = key;
+			this.tags[key] = timer;
+			this.tags[timer] = key;
 			timer.contRef.Target = this;
 			return timer;
 		}
 
 		public BoundTimer RemoveTimer(TimerKey key) {
-			if (tags != null) {
-				BoundTimer timer = tags[key] as BoundTimer;
+			if (this.tags != null) {
+				BoundTimer timer = this.tags[key] as BoundTimer;
 				if (timer != null) {
-					tags.Remove(key);
-					tags.Remove(timer);
+					this.tags.Remove(key);
+					this.tags.Remove(timer);
 					timer.contRef.Target = null;
 					return timer;
 				}
@@ -124,11 +124,11 @@ namespace SteamEngine {
 		}
 
 		public void RemoveTimer(BoundTimer timer) {
-			if (tags != null) {
-				TimerKey key = tags[timer] as TimerKey;
+			if (this.tags != null) {
+				TimerKey key = this.tags[timer] as TimerKey;
 				if (key != null) {
-					tags.Remove(key);
-					tags.Remove(timer);
+					this.tags.Remove(key);
+					this.tags.Remove(timer);
 					timer.contRef.Target = null;
 				}
 			}
@@ -142,11 +142,11 @@ namespace SteamEngine {
 		}
 
 		public void DeleteTimers() {
-			if (tags == null) {
+			if (this.tags == null) {
 				return;
 			}
 			List<TimerKey> toBeRemoved = new List<TimerKey>();
-			foreach (object keyObj in tags.Keys) {
+			foreach (object keyObj in this.tags.Keys) {
 				TimerKey key = keyObj as TimerKey;
 				if (key != null) {
 					toBeRemoved.Add(key);
@@ -154,14 +154,14 @@ namespace SteamEngine {
 			}
 
 			foreach (TimerKey key in toBeRemoved) {
-				RemoveTimer(key).Delete();
+				this.RemoveTimer(key).Delete();
 			}
-			ReleaseTagsTableIfEmpty();
+			this.ReleaseTagsTableIfEmpty();
 		}
 
 		public bool HasTimer(TimerKey key) {
-			if (tags != null) {
-				return (tags.ContainsKey(key));
+			if (this.tags != null) {
+				return (this.tags.ContainsKey(key));
 			}
 			return false;
 		}
@@ -171,16 +171,16 @@ namespace SteamEngine {
 		}
 
 		public BoundTimer GetTimer(TimerKey key) {
-			if (tags != null) {
-				return (BoundTimer) tags[key];
+			if (this.tags != null) {
+				return (BoundTimer) this.tags[key];
 			}
 			return null;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {
-			if (tags != null) {
-				foreach (DictionaryEntry entry in tags) {
+			if (this.tags != null) {
+				foreach (DictionaryEntry entry in this.tags) {
 					TimerKey tk = entry.Key as TimerKey;
 					if (tk != null) {
 						yield return new KeyValuePair<TimerKey, BoundTimer>(tk, (BoundTimer) entry.Value);
@@ -193,8 +193,8 @@ namespace SteamEngine {
 		#region Tags
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {
-			if (tags != null) {
-				foreach (DictionaryEntry entry in tags) {
+			if (this.tags != null) {
+				foreach (DictionaryEntry entry in this.tags) {
 					TagKey tk = entry.Key as TagKey;
 					if (tk != null) {
 						yield return new KeyValuePair<TagKey, Object>(tk, entry.Value);
@@ -204,67 +204,67 @@ namespace SteamEngine {
 		}
 
 		internal void EnsureTagsTable() {
-			if (tags == null) {
-				tags = new Hashtable();
+			if (this.tags == null) {
+				this.tags = new Hashtable();
 			}
 		}
 
 		internal void ReleaseTagsTableIfEmpty() {
-			if (tags != null) {
-				if (tags.Count == 0) {
-					tags = null;
+			if (this.tags != null) {
+				if (this.tags.Count == 0) {
+					this.tags = null;
 				}
 			}
 		}
 
 		public void SetTag(TagKey tk, object value) {
-			EnsureTagsTable();
+			this.EnsureTagsTable();
 			//Console.WriteLine("TagKey["+tk+"]="+value);
-			tags[tk] = value;
+			this.tags[tk] = value;
 		}
 
 		public object GetTag(TagKey tk) {
-			if (tags == null) {
+			if (this.tags == null) {
 				return null;
 			}
-			return tags[tk];
+			return this.tags[tk];
 		}
 
 		public bool HasTag(TagKey tk) {
-			if (tags == null) {
+			if (this.tags == null) {
 				return false;
 			}
-			return (tags.ContainsKey(tk));
+			return (this.tags.ContainsKey(tk));
 		}
 
 		public void RemoveTag(TagKey tk) {
-			if (tags == null) return;
-			tags.Remove(tk);
+			if (this.tags == null) return;
+			this.tags.Remove(tk);
 		}
 
 		public void ClearTags() {
-			if (tags == null) {
+			if (this.tags == null) {
 				return;
 			}
 			List<TagKey> toBeRemoved = new List<TagKey>();
-			foreach (object keyObj in tags.Keys) {
+			foreach (object keyObj in this.tags.Keys) {
 				TagKey key = keyObj as TagKey;
 				if (key != null) {
 					toBeRemoved.Add(key);
 				}
 			}
 			foreach (TagKey key in toBeRemoved) {
-				RemoveTag(key);
+				this.RemoveTag(key);
 			}
-			ReleaseTagsTableIfEmpty();
+			this.ReleaseTagsTableIfEmpty();
 		}
 
 		public string ListTags() {
 			int tagcount = 0;
 			StringBuilder sb = null;
-			if (tags != null) {
+			if (this.tags != null) {
 				sb = new StringBuilder("Tags of the object '").Append(this).Append("' :").Append(Environment.NewLine);
-				foreach (DictionaryEntry entry in tags) {
+				foreach (DictionaryEntry entry in this.tags) {
 					if (entry.Key is TagKey) {
 						sb.Append(entry.Key).Append(" = ").Append(entry.Value).Append(Environment.NewLine);
 						tagcount++;
@@ -328,8 +328,8 @@ namespace SteamEngine {
 		}
 
 		public void Help() {
-			Globals.Src.WriteLine("Properties: " + ListProperties(GetType()));
-			Globals.Src.WriteLine("Methods: " + ListMethods(GetType()));
+			Globals.Src.WriteLine("Properties: " + ListProperties(this.GetType()));
+			Globals.Src.WriteLine("Methods: " + ListMethods(this.GetType()));
 		}
 		#endregion HELP
 
@@ -338,9 +338,9 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual void Save(SaveStream output) {
-			if (tags != null) {
+			if (this.tags != null) {
 				ArrayList forDeleting = null;
-				foreach (DictionaryEntry entry in tags) {
+				foreach (DictionaryEntry entry in this.tags) {
 					object key = entry.Key;
 					object value = entry.Value;
 					if (key is TagKey) {
@@ -363,7 +363,7 @@ namespace SteamEngine {
 				}
 				if (forDeleting != null) {
 					foreach (object key in forDeleting) {
-						tags.Remove(key);
+						this.tags.Remove(key);
 					}
 				}
 			}
@@ -382,14 +382,14 @@ namespace SteamEngine {
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
 				TagKey tk = TagKey.Acquire(tagName);
-				ObjectSaver.Load(valueString, DelayedLoad_Tag, filename, line, tk);
+				ObjectSaver.Load(valueString, this.DelayedLoad_Tag, filename, line, tk);
 				return;
 			}
 			m = timerKeyRE.Match(valueName);
 			if (m.Success) {	//If the name begins with '%'
 				string timerName = m.Groups["name"].Value;
 				TimerKey tk = TimerKey.Acquire(timerName);
-				ObjectSaver.Load(valueString, DelayedLoad_Timer, filename, line, tk);
+				ObjectSaver.Load(valueString, this.DelayedLoad_Timer, filename, line, tk);
 				return;
 			}
 			throw new ScriptException("Invalid data '" + LogStr.Ident(valueName) + "' = '" + LogStr.Number(valueString) + "'.");
@@ -411,12 +411,12 @@ namespace SteamEngine {
 
 		private void DelayedLoad_Tag(object resolvedObject, string filename, int line, object tagKey) {
 			//throw new Exception("LoadTag_Delayed");
-			SetTag((TagKey) tagKey, resolvedObject);
+			this.SetTag((TagKey) tagKey, resolvedObject);
 		}
 
 		private void DelayedLoad_Timer(object resolvedObject, string filename, int line, object timerKey) {
 			//throw new Exception("LoadTag_Delayed");
-			AddTimer((TimerKey) timerKey, (BoundTimer) resolvedObject);
+			this.AddTimer((TimerKey) timerKey, (BoundTimer) resolvedObject);
 		}
 
 		#endregion save/load
@@ -445,7 +445,7 @@ namespace SteamEngine {
 		public virtual bool IsDeleted { get { return false; } }
 
 		public virtual void Delete() {
-			DeleteTimers();
+			this.DeleteTimers();
 		}
 		#endregion IDeletable
 	}

@@ -41,7 +41,7 @@ namespace SteamEngine.Communication.TCP {
 
 			TcpConnection<TState> newConn = Pool<TcpConnection<TState>>.Acquire();
 			newConn.socket = socket;
-			InitNewConnection(newConn);
+			this.InitNewConnection(newConn);
 
 			return newConn;
 		}

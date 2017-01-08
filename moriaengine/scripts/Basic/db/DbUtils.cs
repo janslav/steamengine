@@ -67,19 +67,19 @@ namespace SteamEngine.CompiledScripts {
 		public abstract string[] ColumnNames { get; }
 
 		public void AddLine(params string[] values) {
-			lines.Add(values);
+			this.lines.Add(values);
 		}
 
 		public void SendAll() {
-			if (lines.Count > 0) {
+			if (this.lines.Count > 0) {
 				StringBuilder sql = new StringBuilder("INSERT INTO ");
 				sql.Append(this.TableName);
 
 				sql.Append(" ( ");
-				sql.Append(string.Join(" , ", ColumnNames));
+				sql.Append(string.Join(" , ", this.ColumnNames));
 				sql.Append(" ) VALUES ");
 
-				foreach (string[] line in lines) {
+				foreach (string[] line in this.lines) {
 					sql.Append(" ( '");
 					sql.Append(string.Join("' , '", line));
 					sql.Append("' ) , ");
@@ -88,9 +88,9 @@ namespace SteamEngine.CompiledScripts {
 
 				DbUtils.ExecuteNonQuery(sql.ToString());
 
-				Logger.WriteDebug("Sent " + lines.Count + " rows into database table '" + this.TableName + "'");
+				Logger.WriteDebug("Sent " + this.lines.Count + " rows into database table '" + this.TableName + "'");
 
-				lines.Clear();
+				this.lines.Clear();
 			}
 		}
 	}

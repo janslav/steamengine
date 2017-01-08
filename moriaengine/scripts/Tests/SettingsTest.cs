@@ -52,10 +52,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public AbstractCharacter GetSetChar {
 			get {
-				return refChar;
+				return this.refChar;
 			}
 			set {
-				refChar = value;
+				this.refChar = value;
 			}
 		}
 
@@ -66,18 +66,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("List doublify")]
 		public void SomeMethod() {
-			for (int i = 0; i < (bar == 0 ? 1 : bar) * 2; i++) {
-				nejakejList.Add(nejakejList.Count);
+			for (int i = 0; i < (this.bar == 0 ? 1 : this.bar) * 2; i++) {
+				this.nejakejList.Add(this.nejakejList.Count);
 			}
-			bar = (bar == 0 ? 1 : bar) * 2;
+			this.bar = (this.bar == 0 ? 1 : this.bar) * 2;
 		}
 
 		[Button("Table doublify")]
 		public void SomeOtherMethod() {
-			for (int i = 0; i < (baz == 0 ? 1 : baz) * 2; i++) {
-				nejakaTabulka.Add(nejakaTabulka.Count + ".)", nejakaTabulka.Count);
+			for (int i = 0; i < (this.baz == 0 ? 1 : this.baz) * 2; i++) {
+				this.nejakaTabulka.Add(this.nejakaTabulka.Count + ".)", this.nejakaTabulka.Count);
 			}
-			baz = (baz == 0 ? 1 : baz) * 2;
+			this.baz = (this.baz == 0 ? 1 : this.baz) * 2;
 		}
 	}
 

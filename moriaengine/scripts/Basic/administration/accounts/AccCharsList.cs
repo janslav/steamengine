@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			}
 			//mame-li ho, ulozme si ho do parametru pro pozdejsi pouziti
-			args.SetTag(D_Acc_Characters.accountTK, acc);
+			args.SetTag(accountTK, acc);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
-			AbstractAccount acc = (AbstractAccount) args.GetTag(D_Acc_Characters.accountTK);
+			AbstractAccount acc = (AbstractAccount) args.GetTag(accountTK);
 
 			if (gr.PressedButton < 10) { //ovladaci tlacitka		
 				switch (gr.PressedButton) {

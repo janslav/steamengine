@@ -180,7 +180,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public override int GetHashCode() {
-				return ((17 ^ x) ^ y) ^ z;
+				return ((17 ^ this.x) ^ this.y) ^ this.z;
 			}
 
 			public override bool Equals(object obj) {
@@ -193,19 +193,19 @@ namespace SteamEngine.CompiledScripts {
 
 			int IPoint2D.X {
 				get {
-					return (ushort) x;
+					return (ushort) this.x;
 				}
 			}
 
 			int IPoint2D.Y {
 				get {
-					return (ushort) y;
+					return (ushort) this.y;
 				}
 			}
 
 			int IPoint3D.Z {
 				get {
-					return (sbyte) z;
+					return (sbyte) this.z;
 				}
 			}
 
@@ -292,7 +292,7 @@ namespace SteamEngine.CompiledScripts {
 
 				byte m = self.M;
 				Map map = Map.GetMap(m);
-				Direction[] path = AStar.GetPathFromTo(self, targetted, map, settings);
+				Direction[] path = GetPathFromTo(self, targetted, map, settings);
 				if (path != null) {
 					IPoint3D start = self;
 					foreach (Direction dir in path) {
@@ -348,7 +348,7 @@ namespace SteamEngine.CompiledScripts {
 				double seconds = Convert.ToDouble(arr[1]);
 				byte m = self.M;
 				Map map = Map.GetMap(m);
-				Direction[] path = AStar.GetPathFromTo(self, targetted, map, self.MovementSettings);
+				Direction[] path = GetPathFromTo(self, targetted, map, self.MovementSettings);
 				if (path != null) {
 					self.RemoveTimer(walkTimerKey);
 					AStarWalkTimer timer = new AStarWalkTimer(path);
@@ -387,15 +387,15 @@ namespace SteamEngine.CompiledScripts {
 			protected sealed override void OnTimeout(TagHolder cont) {
 				Character self = (Character) cont;
 
-				if (pathIndex < path.Length) {
-					Direction nextStep = path[pathIndex];
+				if (this.pathIndex < this.path.Length) {
+					Direction nextStep = this.path[this.pathIndex];
 					if (nextStep != self.Direction) {
 						self.Direction = nextStep;
 					}
 					self.WalkRunOrFly(nextStep, true, false);
-					pathIndex++;
+					this.pathIndex++;
 				} else {
-					this.DueInSpan = Timer.negativeOneSecond;
+					this.DueInSpan = negativeOneSecond;
 				}
 			}
 		}

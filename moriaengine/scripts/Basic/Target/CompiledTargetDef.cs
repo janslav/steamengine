@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override sealed bool AllowGround {
+		protected sealed override bool AllowGround {
 			get {
 				return this.allowGround;
 			}
@@ -73,23 +73,23 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual TargetResult On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
 			Thing thing = targetted as Thing;
 			if (thing != null) {
-				return On_TargonThing(self, thing, parameter);
+				return this.On_TargonThing(self, thing, parameter);
 			}
 			AbstractInternalItem s = targetted as AbstractInternalItem;
 			if (s != null) {
-				return On_TargonStatic(self, s, parameter);
+				return this.On_TargonStatic(self, s, parameter);
 			}
-			return On_TargonGround(self, targetted, parameter);
+			return this.On_TargonGround(self, targetted, parameter);
 		}
 
 		protected virtual TargetResult On_TargonThing(Player self, Thing targetted, object parameter) {
 			Character ch = targetted as Character;
 			if (ch != null) {
-				return On_TargonChar(self, ch, parameter);
+				return this.On_TargonChar(self, ch, parameter);
 			}
 			Item item = targetted as Item;
 			if (item != null) {
-				return On_TargonItem(self, item, parameter);
+				return this.On_TargonItem(self, item, parameter);
 			}
 			return TargetResult.RestartTargetting;//item nor char? huh?
 		}
@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected virtual TargetResult On_TargonStatic(Player self, AbstractInternalItem targetted, object parameter) {
-			return On_TargonGround(self, targetted, parameter);
+			return this.On_TargonGround(self, targetted, parameter);
 		}
 
 		protected virtual TargetResult On_TargonGround(Player self, IPoint3D targetted, object parameter) {

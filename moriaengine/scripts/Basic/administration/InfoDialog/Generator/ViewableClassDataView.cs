@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// <summary>Yet another interface property - returns the prepared field for displaying</summary>
 			public T Current {
 				get {
-					return current;
+					return this.current;
 				}
 			}
 			#endregion
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			object IEnumerator.Current {
 				get {
-					return current;
+					return this.current;
 				}
 			}
 			#endregion

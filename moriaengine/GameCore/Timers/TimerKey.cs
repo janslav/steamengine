@@ -29,7 +29,7 @@ namespace SteamEngine.Timers {
 		}
 	}
 
-	public sealed class TimerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class TimerKeySaveImplementor : Persistence.ISimpleSaveImplementor {
 		public Type HandledType {
 			get {
 				return typeof(TimerKey);

@@ -11,11 +11,11 @@ namespace SteamEngine.Communication {
 		public readonly byte[] bytes;
 
 		public Buffer() {
-			bytes = new byte[bufferLen];
+			this.bytes = new byte[bufferLen];
 		}
 
 		public Buffer(int len) {
-			bytes = new byte[len];
+			this.bytes = new byte[len];
 		}
 
 		protected override void On_DisposeManagedResources() {
@@ -29,7 +29,7 @@ namespace SteamEngine.Communication {
 		public readonly List<T> list = new List<T>();
 
 		protected override void On_Reset() {
-			list.Clear();
+			this.list.Clear();
 
 			base.On_Reset();
 		}

@@ -36,13 +36,13 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Power of 2 determining the size of the sector i.e. size 5 means a rectangle 32*32 fields.</summary>
 		private const int scriptSectorSize = 5;
 
-		public readonly static TimeSpan cleaningPeriod = TimeSpan.FromMinutes(3);
+		public static readonly TimeSpan cleaningPeriod = TimeSpan.FromMinutes(3);
 
 		/// <summary>
 		/// Time for how long we allow all information to remain in the ScriptSector 
 		/// (if not refreshed) - e.g. player's TrackPoints etc.
 		/// </summary>
-		public readonly static TimeSpan maxEntityAge = TimeSpan.FromMinutes(3);
+		public static readonly TimeSpan maxEntityAge = TimeSpan.FromMinutes(3);
 
 		/// <summary>
 		/// The dictionary containing all characters that passed through this sector. Everyone leaves an information 
@@ -60,9 +60,9 @@ namespace SteamEngine.CompiledScripts {
 
 		private ScriptSector(SectorKey sectorIdentifier) {
 			this.sectorIdentifier = sectorIdentifier;
-			sectorTimer = new ScriptSectorTimer(this);
-			sectorTimer.DueInSpan = cleaningPeriod;//set the first timeout for checking
-			sectorTimer.PeriodSpan = cleaningPeriod;//set the period for periodic checking
+			this.sectorTimer = new ScriptSectorTimer(this);
+			this.sectorTimer.DueInSpan = cleaningPeriod;//set the first timeout for checking
+			this.sectorTimer.PeriodSpan = cleaningPeriod;//set the period for periodic checking
 		}
 
 		/// <summary>Perform all check necesarry to do on timeout</summary>
@@ -100,12 +100,12 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (charsToRemove != null) {
 				foreach (Character charToRemove in charsToRemove) {
-					charsPassing.Remove(charToRemove);
+					this.charsPassing.Remove(charToRemove);
 				}
 			}
 
 			//check if the sector contains any information, otherwise remove it from the global list
-			if (charsPassing.Count == 0) {
+			if (this.charsPassing.Count == 0) {
 				this.Remove();
 			}
 		}
@@ -247,7 +247,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>For the given player make a record of his actual position as a new tracking step</summary>
 		internal static void AddTrackingStep(Player whose, Direction direction) {
 			//get actual sector
-			ScriptSector hisSector = ScriptSector.GetScriptSector(whose);
+			ScriptSector hisSector = GetScriptSector(whose);
 
 			//check if we already have this any of char's trackpoints in this sector
 			TrackPoint.LinkedQueue sectorTPQueue;
@@ -344,7 +344,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public SectorKey Identifier {
 			get {
-				return sectorIdentifier;
+				return this.sectorIdentifier;
 			}
 		}
 
@@ -357,7 +357,7 @@ namespace SteamEngine.CompiledScripts {
 
 			protected override void OnTimeout() {
 				if ((this.ownerSector != null) && (this == this.ownerSector.sectorTimer)) { //sector exists and I'm it's timer
-					ownerSector.CheckOnTimeout();
+					this.ownerSector.CheckOnTimeout();
 				}
 			}
 		}
@@ -379,19 +379,19 @@ namespace SteamEngine.CompiledScripts {
 
 		public int X {
 			get {
-				return x;
+				return this.x;
 			}
 		}
 
 		public int Y {
 			get {
-				return y;
+				return this.y;
 			}
 		}
 
 		public byte M {
 			get {
-				return m;
+				return this.m;
 			}
 		}
 
@@ -405,7 +405,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//stolen from PointXD
 		public override int GetHashCode() {
-			return ((37 * 17 ^ x) ^ y) ^ m;
+			return ((37 * 17 ^ this.x) ^ this.y) ^ this.m;
 		}
 	}
 }

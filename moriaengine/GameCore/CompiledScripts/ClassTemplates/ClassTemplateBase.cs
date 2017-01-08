@@ -87,10 +87,10 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		internal CodeTypeDeclaration GeneratedType {
 			get {
-				if (generatedType == null) {
-					Process();
+				if (this.generatedType == null) {
+					this.Process();
 				}
-				return generatedType;
+				return this.generatedType;
 			}
 		}
 

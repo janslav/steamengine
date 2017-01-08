@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void Settings(object self, ScriptArgs args) {
 			if (args.Argv == null || args.Argv.Length == 0) {
 				//call the default settings dialog
-				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(SettingsCategories.instance));
+				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(instance));
 			} else {
 				//get the arguments to be sent to the dialog (especialy the first one which is the 
 				//desired object for infoizing)

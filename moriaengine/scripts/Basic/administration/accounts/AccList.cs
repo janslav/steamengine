@@ -26,12 +26,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
-			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(D_AccList.accListTK);//mame list v tagu, vytahneme ho
+			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(accListTK);//mame list v tagu, vytahneme ho
 			if (accList == null) {//nemame zadny seznam
-				accList = ScriptedAccount.RetreiveByStr(TagMath.SGetTag(args, D_AccList.searchStringTK));
+				accList = ScriptedAccount.RetreiveByStr(TagMath.SGetTag(args, searchStringTK));
 				accList.Sort(AccountComparer.instance);//setridit, to da rozum			
 			}
-			args.SetTag(D_AccList.accListTK, accList);//ulozime to do argumentu dialogu
+			args.SetTag(accListTK, accList);//ulozime to do argumentu dialogu
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...			
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(D_AccList.accListTK);
+			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(accListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
@@ -98,8 +98,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
-						args.SetTag(D_AccList.searchStringTK, nameCriteria);//uloz info o vyhledavacim kriteriu
-						args.RemoveTag(D_AccList.accListTK);//vycistit soucasny odkaz
+						args.SetTag(searchStringTK, nameCriteria);//uloz info o vyhledavacim kriteriu
+						args.RemoveTag(accListTK);//vycistit soucasny odkaz
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //zalozit novy acc.
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (text.Argv == null || text.Argv.Length == 0) {
 				sender.Dialog(SingletonScript<D_AccList>.Instance, newArgs);
 			} else {
-				newArgs.SetTag(D_AccList.searchStringTK, text.Args);
+				newArgs.SetTag(searchStringTK, text.Args);
 				sender.Dialog(SingletonScript<D_AccList>.Instance, newArgs);
 			}
 		}
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting accounts by account name asc</summary>
 	public class AccountComparer : IComparer<ScriptedAccount> {
-		public readonly static AccountComparer instance = new AccountComparer();
+		public static readonly AccountComparer instance = new AccountComparer();
 
 		private AccountComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci

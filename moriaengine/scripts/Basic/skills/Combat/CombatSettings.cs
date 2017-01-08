@@ -20,7 +20,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[HasSavedMembers]
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class CombatSettings : SettingsMetaCategory {
 
 		[SavedMember]

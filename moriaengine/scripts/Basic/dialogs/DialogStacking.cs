@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>For displaying the previously stored dialog (if any)</summary>
 		public static void ShowPreviousDialog(Gump actualGi) {
-			Gump sgi = DialogStacking.PopStackedDialog(actualGi);
+			Gump sgi = PopStackedDialog(actualGi);
 			if (sgi != null) {
 				ResendAndRestackDialog(sgi); //we also have to alter stack information about the resent dialog...
 			}

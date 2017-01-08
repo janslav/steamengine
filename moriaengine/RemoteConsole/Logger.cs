@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SteamEngine.RemoteConsole {
-	public class Logger : SteamEngine.Common.Logger {
+	public class Logger : Common.Logger {
 
 		public static void Init(LogStrDisplay display) {
 			new Logger();
 
-			Logger.OnConsoleWrite += display.WriteThreadSafe;
-			Logger.OnConsoleWriteLine += display.WriteLineThreadSafe;
+			OnConsoleWrite += display.WriteThreadSafe;
+			OnConsoleWriteLine += display.WriteLineThreadSafe;
 
 			//SteamEngine.Common.Logger.OpenFile();
 

@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		protected int columnRow;
 
 		/// <summary>Adding any children to the leaf is prohibited...</summary>
-		internal override sealed void AddComponent(GUTAComponent child) {
+		internal sealed override void AddComponent(GUTAComponent child) {
 			throw new GUTAComponentCannotBeExtendedException("GUTAcomponent " + this.GetType() + " cannot have any children");
 		}
 	}
@@ -188,13 +188,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			internal int GumpUp {
 				get {
-					return gumpUp;
+					return this.gumpUp;
 				}
 			}
 
 			internal int GumpDown {
 				get {
-					return gumpDown;
+					return this.gumpDown;
 				}
 			}
 		}
@@ -228,37 +228,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the button's relative X position</summary>
 			public ButtonBuilder XPos(int val) {
-				xPos = val;
+				this.xPos = val;
 				return this;
 			}
 
 			/// <summary>Set the button's relative Y position</summary>
 			public ButtonBuilder YPos(int val) {
-				yPos = val;
+				this.yPos = val;
 				return this;
 			}
 
 			/// <summary>Set the button's ID</summary>
 			public ButtonBuilder Id(int val) {
-				id = val;
+				this.id = val;
 				return this;
 			}
 
 			/// <summary>Set the button's state (active = clickable)</summary>
 			public ButtonBuilder Active(bool val) {
-				active = val;
+				this.active = val;
 				return this;
 			}
 
 			/// <summary>Set the button's referenced page</summary>
 			public ButtonBuilder Page(int val) {
-				page = val;
+				this.page = val;
 				return this;
 			}
 
 			/// <summary>Set the button's up and down graphics (using enumeration of types)</summary>
 			public ButtonBuilder Type(LeafComponentTypes val) {
-				type = val;
+				this.type = val;
 				return this;
 			}
 
@@ -267,7 +267,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAButton field: " + val.ToString()));
 				}
-				valign = val;
+				this.valign = val;
 				return this;
 			}
 
@@ -298,15 +298,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
 			GUTARow grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
-			columnRow = xPos / grandpa.RowHeight;
+			this.columnRow = this.xPos / grandpa.RowHeight;
 
 			int valignOffset = 0;
-			switch (valign) {
+			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
 					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_BUTTON_HEIGHT / 2; //moves the button to the middle of the column
 					break;
@@ -315,22 +315,22 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 			}
 			//no space here, the used button gumps have themselves some space...
-			xPos += parent.XPos;
-			yPos += parent.YPos + valignOffset;
+			this.xPos += parent.XPos;
+			this.yPos += parent.YPos + valignOffset;
 		}
 
 		/// <summary>Simply write the button (send the method request to the underlaying gump)</summary>
 		internal override void WriteComponent() {
-			gump.AddButton(xPos, yPos, gumps.GumpDown, gumps.GumpUp, active, 0, id);
+			this.gump.AddButton(this.xPos, this.yPos, this.gumps.GumpDown, this.gumps.GumpUp, this.active, 0, this.id);
 		}
 
 		public override string ToString() {
 			string linesTabsOffset = "\r\n"; //at least one row
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < columnRow; i++) {
+			for (int i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
 			return linesTabsOffset + "->" + stringDescription;
@@ -367,31 +367,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the checkbox's relative X position</summary>
 			public CheckBoxBuilder XPos(int val) {
-				xPos = val;
+				this.xPos = val;
 				return this;
 			}
 
 			/// <summary>Set the checkbox's relative Y position</summary>
 			public CheckBoxBuilder YPos(int val) {
-				yPos = val;
+				this.yPos = val;
 				return this;
 			}
 
 			/// <summary>Set the checkbox's ID</summary>
 			public CheckBoxBuilder Id(int val) {
-				id = val;
+				this.id = val;
 				return this;
 			}
 
 			/// <summary>Set the checkbox's state (checked/unchecked)</summary>
 			public CheckBoxBuilder Checked(bool val) {
-				isChecked = val;
+				this.isChecked = val;
 				return this;
 			}
 
 			/// <summary>Set the checkbox's up and down graphics (using enumeration of types)</summary>
 			public CheckBoxBuilder Type(LeafComponentTypes val) {
-				type = val;
+				this.type = val;
 				return this;
 			}
 
@@ -400,7 +400,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTACheckBox field: " + val.ToString()));
 				}
-				valign = val;
+				this.valign = val;
 				return this;
 			}
 
@@ -409,7 +409,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTACheckBox field: " + val.ToString()));
 				}
-				align = val;
+				this.align = val;
 				return this;
 			}
 
@@ -436,17 +436,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
 			GUTARow grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
-			columnRow = xPos / grandpa.RowHeight;
+			this.columnRow = this.xPos / grandpa.RowHeight;
 
 			int valignOffset = 0;
 			int alignOffset = 0;
 
-			switch (valign) {
+			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
 					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_CHECKBOX_HEIGHT / 2 + 1; //moves the button to the middle of the column
 					break;
@@ -455,7 +455,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 			}
 			int parentWidth = parent.Width;
-			switch (align) {
+			switch (this.align) {
 				case DialogAlignment.Align_Center:
 					alignOffset = parentWidth / 2 - ButtonMetrics.D_CHECKBOX_WIDTH / 2; //moves the text to the middle of the column
 					break;
@@ -464,14 +464,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 			}
 			//no space here, the used button gumps have themselves some space...
-			xPos += parent.XPos + alignOffset;
-			yPos += parent.YPos + valignOffset;
+			this.xPos += parent.XPos + alignOffset;
+			this.yPos += parent.YPos + valignOffset;
 		}
 
 		/// <summary>Simply call the gumps method for writing the checkbox</summary>
 		internal override void WriteComponent() {
 			//unchecked!!!,    checked !!!
-			gump.AddCheckBox(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
+			this.gump.AddCheckBox(this.xPos, this.yPos, this.gumps.GumpUp, this.gumps.GumpDown, this.isChecked, this.id);
 		}
 	}
 
@@ -505,31 +505,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the radiobutton's relative X position</summary>
 			public RadioBuilder XPos(int val) {
-				xPos = val;
+				this.xPos = val;
 				return this;
 			}
 
 			/// <summary>Set the radiobutton's relative Y position</summary>
 			public RadioBuilder YPos(int val) {
-				yPos = val;
+				this.yPos = val;
 				return this;
 			}
 
 			/// <summary>Set the radiobutton's ID</summary>
 			public RadioBuilder Id(int val) {
-				id = val;
+				this.id = val;
 				return this;
 			}
 
 			/// <summary>Set the radiobutton's state (checked/unchecked)</summary>
 			public RadioBuilder Checked(bool val) {
-				isChecked = val;
+				this.isChecked = val;
 				return this;
 			}
 
 			/// <summary>Set the radiobutton's checked/unchecked graphics (using enumeration of types)</summary>
 			public RadioBuilder Type(LeafComponentTypes val) {
-				type = val;
+				this.type = val;
 				return this;
 			}
 
@@ -538,7 +538,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTARadioButton field: " + val.ToString()));
 				}
-				valign = val;
+				this.valign = val;
 				return this;
 			}
 
@@ -547,7 +547,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTARadioButton field: " + val.ToString()));
 				}
-				align = val;
+				this.align = val;
 				return this;
 			}
 
@@ -574,17 +574,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
 			GUTARow grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
-			columnRow = xPos / grandpa.RowHeight;
+			this.columnRow = this.xPos / grandpa.RowHeight;
 
 			int valignOffset = 0;
 			int alignOffset = 0;
 
-			switch (valign) {
+			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
 					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_RADIO_HEIGHT / 2 + 1; //moves the button to the middle of the column
 					break;
@@ -593,7 +593,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 			}
 			int parentWidth = parent.Width;
-			switch (align) {
+			switch (this.align) {
 				case DialogAlignment.Align_Center:
 					alignOffset = parentWidth / 2 - ButtonMetrics.D_RADIO_WIDTH / 2; //moves the text to the middle of the column
 					break;
@@ -602,14 +602,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 			}
 			//no space here, the used button gumps have themselves some space...
-			xPos += parent.XPos + alignOffset;
-			yPos += parent.YPos + valignOffset;
+			this.xPos += parent.XPos + alignOffset;
+			this.yPos += parent.YPos + valignOffset;
 		}
 
 		/// <summary>Simply call the gumps method for writing the radiobutton</summary>
 		internal override void WriteComponent() {
 			//unselected!!!, selected!!!
-			gump.AddRadio(xPos, yPos, gumps.GumpUp, gumps.GumpDown, isChecked, id);
+			this.gump.AddRadio(this.xPos, this.yPos, this.gumps.GumpUp, this.gumps.GumpDown, this.isChecked, this.id);
 		}
 	}
 
@@ -653,61 +653,61 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the input field's relative X position</summary>
 			public InputBuilder XPos(int val) {
-				xPos = val;
+				this.xPos = val;
 				return this;
 			}
 
 			/// <summary>Set the input field's relative Y position</summary>
 			public InputBuilder YPos(int val) {
-				yPos = val;
+				this.yPos = val;
 				return this;
 			}
 
 			/// <summary>Set the input field's ID for inside-Response recognition</summary>
 			public InputBuilder Id(int val) {
-				id = val;
+				this.id = val;
 				return this;
 			}
 
 			/// <summary>Set the input field's width</summary>
 			public InputBuilder Width(int val) {
-				width = val;
+				this.width = val;
 				return this;
 			}
 
 			/// <summary>Set the input field's height</summary>
 			public InputBuilder Height(int val) {
-				height = val;
+				this.height = val;
 				return this;
 			}
 
 			/// <summary>Set the input type</summary>
 			public InputBuilder Type(LeafComponentTypes val) {
-				type = val;
+				this.type = val;
 				return this;
 			}
 
 			/// <summary>Set the input field's text hue</summary>
 			public InputBuilder Hue(int val) {
-				hue = val;
+				this.hue = val;
 				return this;
 			}
 
 			/// <summary>Set the input field's text hue usign enum</summary>
 			public InputBuilder Hue(Hues val) {
-				hue = (int) val;
+				this.hue = (int) val;
 				return this;
 			}
 
 			/// <summary>Set the input field's value</summary>
 			public InputBuilder Text(string val) {
-				text = val;
+				this.text = val;
 				return this;
 			}
 
 			/// <summary>Set the input field's text id (for prepared texts)</summary>
 			public InputBuilder TextId(int val) {
-				textId = val;
+				this.textId = val;
 				return this;
 			}
 
@@ -716,7 +716,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTAInput field: " + val.ToString()));
 				}
-				align = val;
+				this.align = val;
 				return this;
 			}
 
@@ -725,7 +725,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAInput field: " + val.ToString()));
 				}
-				valign = val;
+				this.valign = val;
 				return this;
 			}
 
@@ -756,46 +756,46 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		///  </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
 			GUTARow grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
-			columnRow = xPos / grandpa.RowHeight;
+			this.columnRow = this.xPos / grandpa.RowHeight;
 
-			xPos += parent.XPos;
-			yPos += parent.YPos;
-			if (width == 0) {
+			this.xPos += parent.XPos;
+			this.yPos += parent.YPos;
+			if (this.width == 0) {
 				//no width - get it from the parent
-				width = parent.Width;
-				width -= ImprovedDialog.D_COL_SPACE; //put it between the borders of the column with a little spaces
+				this.width = parent.Width;
+				this.width -= ImprovedDialog.D_COL_SPACE; //put it between the borders of the column with a little spaces
 				//substract also the space from the xPos adjustment of this field (it can be shorter to fit to the column)
 				//this makes  sense, if the input field is not at the beginning pos. of the column... - it will shorten it 
 				//of the space it is indented from the left border
-				width -= (xPos - parent.XPos);
+				this.width -= (this.xPos - parent.XPos);
 			}
 
 			int valignOffset = 0;
 			int alignOffset = 0;
-			switch (valign) {
+			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
-					valignOffset = grandpa.RowHeight / 2 - height / 2 + 1; //moves the field to the middle of the column
+					valignOffset = grandpa.RowHeight / 2 - this.height / 2 + 1; //moves the field to the middle of the column
 					break;
 				case DialogAlignment.Valign_Bottom:
-					valignOffset = grandpa.RowHeight - height + 1; //moves the field to the bottom
+					valignOffset = grandpa.RowHeight - this.height + 1; //moves the field to the bottom
 					break;
 			}
 			int parentWidth = parent.Width;
-			switch (align) {
+			switch (this.align) {
 				case DialogAlignment.Align_Center:
-					alignOffset = parentWidth / 2 - width / 2; //moves the field to the middle of the column
+					alignOffset = parentWidth / 2 - this.width / 2; //moves the field to the middle of the column
 					break;
 				case DialogAlignment.Align_Right:
-					alignOffset = parentWidth - width;
+					alignOffset = parentWidth - this.width;
 					break;
 			}
-			xPos += alignOffset;
-			yPos += valignOffset;
+			this.xPos += alignOffset;
+			this.yPos += valignOffset;
 		}
 
 		/// <summary>
@@ -804,25 +804,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		internal override void WriteComponent() {
 			//first of all add a different background
-			gump.AddGumpPicTiled(xPos, yPos, width, height, ImprovedDialog.D_DEFAULT_INPUT_BACKGROUND);
+			this.gump.AddGumpPicTiled(this.xPos, this.yPos, this.width, this.height, ImprovedDialog.D_DEFAULT_INPUT_BACKGROUND);
 			//and make it immediately transparent
-			gump.AddCheckerTrans(xPos, yPos, width, height);
-			switch (type) {
+			this.gump.AddCheckerTrans(this.xPos, this.yPos, this.width, this.height);
+			switch (this.type) {
 				case LeafComponentTypes.InputText: {
-						if (textId == 0) {//no text ID was specified, use the text version
-							gump.AddTextEntry(xPos, yPos, width, height, textHue, id, text);
+						if (this.textId == 0) {//no text ID was specified, use the text version
+							this.gump.AddTextEntry(this.xPos, this.yPos, this.width, this.height, this.textHue, this.id, this.text);
 						} else {
-							gump.AddTextEntry(xPos, yPos, width, height, textHue, id, textId);
+							this.gump.AddTextEntry(this.xPos, this.yPos, this.width, this.height, this.textHue, this.id, this.textId);
 						}
 						break;
 					}
 				case LeafComponentTypes.InputNumber: {
-						if (textId == 0) {//no text ID was specified, use the text version (but send it as double!)
+						if (this.textId == 0) {//no text ID was specified, use the text version (but send it as double!)
 							//if the text is empty (the input field will be empty), then display zero
-							decimal textToDisp = string.IsNullOrWhiteSpace(text) ? default(decimal) : decimal.Parse(text);
-							gump.AddNumberEntry(xPos, yPos, width, height, textHue, id, textToDisp);
+							decimal textToDisp = string.IsNullOrWhiteSpace(this.text) ? default(decimal) : decimal.Parse(this.text);
+							this.gump.AddNumberEntry(this.xPos, this.yPos, this.width, this.height, this.textHue, this.id, textToDisp);
 						} else {
-							gump.AddNumberEntry(xPos, yPos, width, height, textHue, id, textId);
+							this.gump.AddNumberEntry(this.xPos, this.yPos, this.width, this.height, this.textHue, this.id, this.textId);
 						}
 						break;
 					}
@@ -832,10 +832,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override string ToString() {
 			string linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < columnRow; i++) {
+			for (int i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
 			return linesTabsOffset + "->Input";
@@ -877,51 +877,51 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the text's relative X position</summary>
 			public TextBuilder XPos(int val) {
-				xPos = val;
+				this.xPos = val;
 				return this;
 			}
 
 			/// <summary>Set the text's relative Y position</summary>
 			public TextBuilder YPos(int val) {
-				yPos = val;
+				this.yPos = val;
 				return this;
 			}
 
 			/// <summary>Set the text's hue</summary>
 			public TextBuilder Hue(int val) {
-				hue = val;
+				this.hue = val;
 				return this;
 			}
 
 			/// <summary>Set the text's hue usign enum</summary>
 			public TextBuilder Hue(Hues val) {
-				hue = (int) val;
+				this.hue = (int) val;
 				return this;
 			}
 
 			/// <summary>Create the text as label (set the hue also)</summary>
 			public TextBuilder TextLabel(string val) {
-				text = val;
-				hue = (int) Hues.LabelColor;
+				this.text = val;
+				this.hue = (int) Hues.LabelColor;
 				return this;
 			}
 
 			/// <summary>Create the text as headline (set the hue also)</summary>
 			public TextBuilder TextHeadline(string val) {
-				text = val;
-				hue = (int) Hues.HeadlineColor;
+				this.text = val;
+				this.hue = (int) Hues.HeadlineColor;
 				return this;
 			}
 
 			/// <summary>Set the text value</summary>
 			public TextBuilder Text(string val) {
-				text = val;
+				this.text = val;
 				return this;
 			}
 
 			/// <summary>Set the text id (for prepared texts)</summary>
 			public TextBuilder TextId(int val) {
-				textId = val;
+				this.textId = val;
 				return this;
 			}
 
@@ -930,7 +930,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTAText field: " + val.ToString()));
 				}
-				align = val;
+				this.align = val;
 				return this;
 			}
 
@@ -939,7 +939,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAText field: " + val.ToString()));
 				}
-				valign = val;
+				this.valign = val;
 				return this;
 			}
 
@@ -963,19 +963,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>When added to the column we have to specify the position (count the absolute)</summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
 			GUTARow grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
-			columnRow = xPos / grandpa.RowHeight;
+			this.columnRow = this.xPos / grandpa.RowHeight;
 
 			int alignOffset = 0;
 			int valignOffset = 0;
-			if (text != null) { //we are not using the ID of the text, we can do some alignment computings if necessary
+			if (this.text != null) { //we are not using the ID of the text, we can do some alignment computings if necessary
 				int parentWidth = parent.Width;
-				int textWidth = ImprovedDialog.TextLength(text);
-				switch (align) {
+				int textWidth = ImprovedDialog.TextLength(this.text);
+				switch (this.align) {
 					case DialogAlignment.Align_Center:
 						alignOffset = parentWidth / 2 - textWidth / 2; //moves the text to the middle of the column
 						break;
@@ -983,7 +983,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						alignOffset = parentWidth - textWidth - 1; //moves the text to the right (1 pix added - it is the border)
 						break;
 				}
-				switch (valign) {
+				switch (this.valign) {
 					case DialogAlignment.Valign_Center:
 						valignOffset = grandpa.RowHeight / 2 - ImprovedDialog.D_TEXT_HEIGHT / 2; //moves the text to the middle of the column
 						break;
@@ -992,33 +992,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 				}
 			}
-			xPos += parent.XPos + alignOffset;
-			yPos += parent.YPos + valignOffset;
+			this.xPos += parent.XPos + alignOffset;
+			this.yPos += parent.YPos + valignOffset;
 
-			if (text == null) {
-				text = "null"; //we cannot display null so stringify it
+			if (this.text == null) {
+				this.text = "null"; //we cannot display null so stringify it
 			}
 		}
 
 		/// <summary>Call the underlaying gump istance's methods</summary>
 		internal override void WriteComponent() {
-			if (textId == 0) { //no text ID was specified, use the text version
-				gump.AddText(xPos, yPos, textHue, text);
+			if (this.textId == 0) { //no text ID was specified, use the text version
+				this.gump.AddText(this.xPos, this.yPos, this.textHue, this.text);
 			} else {
-				gump.AddText(xPos, yPos, textHue, textId);
+				this.gump.AddText(this.xPos, this.yPos, this.textHue, this.textId);
 			}
 		}
 
 		public override string ToString() {
 			string linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < columnRow; i++) {
+			for (int i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
-			return linesTabsOffset + "->GUTAText(" + text + ")";
+			return linesTabsOffset + "->GUTAText(" + this.text + ")";
 		}
 	}
 
@@ -1051,37 +1051,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the text's relative X position</summary>
 			public HTMLTextBuilder XPos(int val) {
-				xPos = val;
+				this.xPos = val;
 				return this;
 			}
 
 			/// <summary>Set the text's relative Y position</summary>
 			public HTMLTextBuilder YPos(int val) {
-				yPos = val;
+				this.yPos = val;
 				return this;
 			}
 
 			/// <summary>Set the text's scrollable state</summary>
 			public HTMLTextBuilder Scrollable(bool val) {
-				isScrollable = val;
+				this.isScrollable = val;
 				return this;
 			}
 
 			/// <summary>Set the text's scrollable state</summary>
 			public HTMLTextBuilder HasBoundBox(bool val) {
-				hasBoundBox = val;
+				this.hasBoundBox = val;
 				return this;
 			}
 
 			/// <summary>Set the text value</summary>
 			public HTMLTextBuilder Text(string val) {
-				text = val;
+				this.text = val;
 				return this;
 			}
 
 			/// <summary>Set the text id (for prepared texts)</summary>
 			public HTMLTextBuilder TextId(int val) {
-				textId = val;
+				this.textId = val;
 				return this;
 			}
 
@@ -1114,44 +1114,44 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>When added to the column we have to specify the position (count the absolute)</summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
 			GUTARow grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
-			columnRow = xPos / grandpa.RowHeight;
+			this.columnRow = this.xPos / grandpa.RowHeight;
 
 			//dont use spaces here or the text is glued to the bottom of the line on the single lined inputs
-			xPos += parent.XPos;
-			yPos += parent.YPos;
+			this.xPos += parent.XPos;
+			this.yPos += parent.YPos;
 			//if not specified, take the size from the parent
-			if (height == 0) {
-				height = parent.Height;
+			if (this.height == 0) {
+				this.height = parent.Height;
 			}
-			if (width == 0) {
-				width = parent.Width;
+			if (this.width == 0) {
+				this.width = parent.Width;
 			}
 		}
 
 		/// <summary>Call the underlaying gump istance's methods</summary>
 		internal override void WriteComponent() {
-			if (textId == 0) { //no text ID was specified, use the text version
-				gump.AddHtmlGump(xPos, yPos, width, height, text, hasBoundBox, isScrollable);
+			if (this.textId == 0) { //no text ID was specified, use the text version
+				this.gump.AddHtmlGump(this.xPos, this.yPos, this.width, this.height, this.text, this.hasBoundBox, this.isScrollable);
 			} else {
-				gump.AddHtmlGump(xPos, yPos, width, height, textId, hasBoundBox, isScrollable);
+				this.gump.AddHtmlGump(this.xPos, this.yPos, this.width, this.height, this.textId, this.hasBoundBox, this.isScrollable);
 			}
 		}
 
 		public override string ToString() {
 			string linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < columnRow; i++) {
+			for (int i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
-			return linesTabsOffset + "->HTMLText(" + text + ")";
+			return linesTabsOffset + "->HTMLText(" + this.text + ")";
 		}
 	}
 
@@ -1185,13 +1185,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Set the image's relative X position</summary>
 			public ImageBuilder XPos(int val) {
-				xPos = val;
+				this.xPos = val;
 				return this;
 			}
 
 			/// <summary>Set the image's relative Y position</summary>
 			public ImageBuilder YPos(int val) {
-				yPos = val;
+				this.yPos = val;
 				return this;
 			}
 
@@ -1200,7 +1200,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Align_Center && val != DialogAlignment.Align_Left && val != DialogAlignment.Align_Right) {
 					throw new SEException(LogStr.Error("Wrong align used for GUTAImage field: " + val.ToString()));
 				}
-				align = val;
+				this.align = val;
 				return this;
 			}
 
@@ -1209,19 +1209,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (val != DialogAlignment.Valign_Bottom && val != DialogAlignment.Valign_Center && val != DialogAlignment.Valign_Top) {
 					throw new SEException(LogStr.Error("Wrong valign used for GUTAImage field: " + val.ToString()));
 				}
-				valign = val;
+				this.valign = val;
 				return this;
 			}
 
 			/// <summary>Set the image's gump</summary>
 			public ImageBuilder Gump(int val) {
-				gumpId = val;
+				this.gumpId = val;
 				return this;
 			}
 
 			/// <summary>Set the image's gump using enumeration</summary>
 			public ImageBuilder NamedGump(GumpIDs val) {
-				gumpId = (int) val;
+				this.gumpId = (int) val;
 				return this;
 			}
 
@@ -1256,19 +1256,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>When added to the column we have to specify the position (count the absolute)</summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
 			GUTARow grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
-			columnRow = xPos / grandpa.RowHeight;
+			this.columnRow = this.xPos / grandpa.RowHeight;
 
-			GumpArtDimension picDim = GumpDimensions.Table[gumpId];
+			GumpArtDimension picDim = GumpDimensions.Table[this.gumpId];
 
 			int alignOffset = -picDim.X; //at least...
 			int valignOffset = -picDim.Y; //at least...
 
-			switch (align) {
+			switch (this.align) {
 				case DialogAlignment.Align_Center:
 					alignOffset += parent.Width / 2 - picDim.Width / 2; //moves the image to the middle of the column
 					break;
@@ -1276,7 +1276,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					alignOffset += parent.Width - picDim.Width - 1; //moves the image to the right (1 pix added - it is the border)
 					break;
 			}
-			switch (valign) {
+			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
 					valignOffset += grandpa.RowHeight / 2 - picDim.Height / 2; //moves the image to the middle of the column
 					break;
@@ -1284,29 +1284,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					valignOffset += grandpa.RowHeight - picDim.Height; //moves the image to the bottom
 					break;
 			}
-			xPos += parent.XPos + alignOffset;
-			yPos += parent.YPos + valignOffset;
+			this.xPos += parent.XPos + alignOffset;
+			this.yPos += parent.YPos + valignOffset;
 		}
 
 		/// <summary>Call the underlaying gump istance's methods</summary>
 		internal override void WriteComponent() {
 			if (this.color == 0) {
-				gump.AddTilePic(xPos, yPos, gumpId);
+				this.gump.AddTilePic(this.xPos, this.yPos, this.gumpId);
 			} else {
-				gump.AddTilePicHue(this.xPos, this.yPos, this.gumpId, this.color);
+				this.gump.AddTilePicHue(this.xPos, this.yPos, this.gumpId, this.color);
 			}
 		}
 
 		public override string ToString() {
 			string linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < columnRow; i++) {
+			for (int i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
-			return linesTabsOffset + "->Image(" + gumpId + ")";
+			return linesTabsOffset + "->Image(" + this.gumpId + ")";
 		}
 	}
 }

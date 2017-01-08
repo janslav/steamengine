@@ -181,7 +181,7 @@ namespace SteamEngine {
 
 							switch (type) {
 								case "function":
-									file.Add(SteamEngine.LScript.LScriptMain.LoadAsFunction(section.GetTrigger(0)));
+									file.Add(LScriptMain.LoadAsFunction(section.GetTrigger(0)));
 									if (section.TriggerCount > 1) {
 										Logger.WriteWarning(section.Filename, section.HeaderLine, "Triggers in a function are nonsensual (and ignored).");
 									}

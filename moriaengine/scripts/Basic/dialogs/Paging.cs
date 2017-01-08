@@ -43,19 +43,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		#region IPageableCollection<T> Members
 		public IEnumerable<T> GetPage(int firstLineIndex, int maxLinesOnPage) {
-			return new Page(firstLineIndex, maxLinesOnPage, wrappedList);
+			return new Page(firstLineIndex, maxLinesOnPage, this.wrappedList);
 		}
 		#endregion
 
 		#region IPageableCollection Members
 		public int LineCount {
 			get {
-				return wrappedList.Count;
+				return this.wrappedList.Count;
 			}
 		}
 
 		IEnumerable IPageableCollection.GetPage(int firstLineIndex, int maxLinesOnPage) {
-			return new Page(firstLineIndex, maxLinesOnPage, wrappedList);
+			return new Page(firstLineIndex, maxLinesOnPage, this.wrappedList);
 		}
 		#endregion
 
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			#region IEnumerator Members
 			object IEnumerator.Current {
 				get {
-					return current;
+					return this.current;
 				}
 			}
 
@@ -82,9 +82,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			/// and check also if we are not exceeding the wrapped list boundaries...
 			/// </summary>
 			public bool MoveNext() {
-				if (nextIndex < upperBound && nextIndex < wrappedList.Count) {
-					current = wrappedList[nextIndex];
-					nextIndex++; //prepare index for the next iteration round
+				if (this.nextIndex < this.upperBound && this.nextIndex < this.wrappedList.Count) {
+					this.current = this.wrappedList[this.nextIndex];
+					this.nextIndex++; //prepare index for the next iteration round
 					return true;
 				}
 				return false;
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			#region IEnumerator<T> Members
 			public T Current {
 				get {
-					return current;
+					return this.current;
 				}
 			}
 			#endregion

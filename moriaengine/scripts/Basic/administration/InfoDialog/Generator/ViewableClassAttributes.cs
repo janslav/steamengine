@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
@@ -107,19 +107,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public Type HandledType {
 			get {
-				return handledType;
+				return this.handledType;
 			}
 		}
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
 		public string[] NonDisplayedFields {
 			get {
-				return nonDisplayedFields;
+				return this.nonDisplayedFields;
 			}
 		}
 
@@ -150,13 +150,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
 		public Type FieldType {
 			get {
-				return fieldType;
+				return this.fieldType;
 			}
 		}
 
@@ -177,13 +177,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
 		public Type FieldType {
 			get {
-				return fieldType;
+				return this.fieldType;
 			}
 		}
 

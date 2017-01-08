@@ -160,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private void DisposeIfEmpty() {
 			if ((this.realPoints == 0) && (this.modification == 0)) { //removed last point(s)						
-				this.cont.InternalRemoveAbility(def);
+				this.cont.InternalRemoveAbility(this.def);
 			}
 		}
 

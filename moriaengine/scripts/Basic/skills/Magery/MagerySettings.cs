@@ -23,7 +23,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	[SaveableClass]
 	[HasSavedMembers]
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class MagerySettings : SettingsMetaCategory {
 
 		[SavedMember]
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 		public StaffMaxManaMassSetting allSpells = new StaffMaxManaMassSetting();
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class SpellsSettings : SettingsMetaCategory {
 		[InfoField("damage kouzel")]
 		public SpellDamageMassSetting spellDamage = new SpellDamageMassSetting();

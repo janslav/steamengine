@@ -39,19 +39,19 @@ namespace SteamEngine.CompiledScripts {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			switch (param) {
 				case "tiller":
-					shipComponentsHelpers[0] = new DMICDLoadHelper(filename, line, args);
+					this.shipComponentsHelpers[0] = new DMICDLoadHelper(filename, line, args);
 					return;
 				case "leftplank":
 				case "leftdoor":
-					shipComponentsHelpers[1] = new DMICDLoadHelper(filename, line, args);
+					this.shipComponentsHelpers[1] = new DMICDLoadHelper(filename, line, args);
 					return;
 				case "rightplank":
 				case "rightdoor":
-					shipComponentsHelpers[2] = new DMICDLoadHelper(filename, line, args);
+					this.shipComponentsHelpers[2] = new DMICDLoadHelper(filename, line, args);
 					return;
 				case "trunk":
 				case "hatch":
-					shipComponentsHelpers[3] = new DMICDLoadHelper(filename, line, args);
+					this.shipComponentsHelpers[3] = new DMICDLoadHelper(filename, line, args);
 					return;
 			}
 			base.LoadScriptLine(filename, line, param, args);
@@ -59,32 +59,32 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Unload() {
 			base.Unload();
-			shipComponentsHelpers = new DMICDLoadHelper[4];
-			shipComponentsDescs = null;
+			this.shipComponentsHelpers = new DMICDLoadHelper[4];
+			this.shipComponentsDescs = null;
 		}
 
 		protected override void On_Create(Thing t) {
 			base.On_Create(t);
-			if (shipComponentsDescs == null) {
-				shipComponentsDescs = new DynamicMultiItemComponentDescription[4];
-				ResolveDMICDLoadHelper(0, tillerModels);
-				ResolveDMICDLoadHelper(1, leftPlankModels);
-				ResolveDMICDLoadHelper(2, rightPlankModels);
-				ResolveDMICDLoadHelper(3, trunkModels);
+			if (this.shipComponentsDescs == null) {
+				this.shipComponentsDescs = new DynamicMultiItemComponentDescription[4];
+				this.ResolveDMICDLoadHelper(0, tillerModels);
+				this.ResolveDMICDLoadHelper(1, leftPlankModels);
+				this.ResolveDMICDLoadHelper(2, rightPlankModels);
+				this.ResolveDMICDLoadHelper(3, trunkModels);
 			}
 			Ship ship = (Ship) t;
-			CreateShipComponent(shipComponentsDescs[0], ship, ref ship.tiller);
-			CreateShipComponent(shipComponentsDescs[1], ship, ref ship.leftPlank);
-			CreateShipComponent(shipComponentsDescs[2], ship, ref ship.rightPlank);
-			CreateShipComponent(shipComponentsDescs[3], ship, ref ship.trunk);
+			this.CreateShipComponent(this.shipComponentsDescs[0], ship, ref ship.tiller);
+			this.CreateShipComponent(this.shipComponentsDescs[1], ship, ref ship.leftPlank);
+			this.CreateShipComponent(this.shipComponentsDescs[2], ship, ref ship.rightPlank);
+			this.CreateShipComponent(this.shipComponentsDescs[3], ship, ref ship.trunk);
 			ship.facing = this.Facing;
 		}
 
 		private void ResolveDMICDLoadHelper(int i, short[] models) {
-			DMICDLoadHelper helper = shipComponentsHelpers[i];
+			DMICDLoadHelper helper = this.shipComponentsHelpers[i];
 			if (helper != null) {
 				helper.args = string.Concat(models[(int) this.Facing], ",", helper.args);
-				shipComponentsDescs[i] = helper.Resolve();
+				this.shipComponentsDescs[i] = helper.Resolve();
 			}
 		}
 
@@ -119,30 +119,30 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Ship : MultiItem {
 
 		internal override void InitMultiRegion() {
-			int n = TypeDef.rectangleHelpers.Count;
+			int n = this.TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
 				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
 				for (int i = 0; i < n; i++) {
-					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
+					newRectangles[i] = this.TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
-				region = new ShipRegion(this, newRectangles);
+				this.region = new ShipRegion(this, newRectangles);
 				// TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!
 			}
 		}
 
 
 		internal void AddThing(Thing t) {
-			if (carriedThings == null) {
-				carriedThings = new LinkedList<Thing>();
+			if (this.carriedThings == null) {
+				this.carriedThings = new LinkedList<Thing>();
 			}
-			carriedThings.AddFirst(t);
+			this.carriedThings.AddFirst(t);
 		}
 
 		internal void RemoveThing(Thing t) {
-			if (carriedThings != null) {
-				carriedThings.Remove(t);
-				if (carriedThings.Count == 0) {
-					carriedThings = null;
+			if (this.carriedThings != null) {
+				this.carriedThings.Remove(t);
+				if (this.carriedThings.Count == 0) {
+					this.carriedThings = null;
 				}
 			}
 		}
@@ -269,31 +269,31 @@ namespace SteamEngine.CompiledScripts {
 
 		public Item Tiller {
 			get {
-				return tiller;
+				return this.tiller;
 			}
 		}
 
 		public Item LeftPlank {
 			get {
-				return leftPlank;
+				return this.leftPlank;
 			}
 		}
 
 		public Item RightPlank {
 			get {
-				return rightPlank;
+				return this.rightPlank;
 			}
 		}
 
 		public Item Trunk {
 			get {
-				return trunk;
+				return this.trunk;
 			}
 		}
 
 		public ShipFacing Facing {
 			get {
-				return facing;
+				return this.facing;
 			}
 			//set {
 			//    this.facing.CurrentValue = value;
@@ -302,17 +302,17 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Destroy() {
 			base.On_Destroy();
-			if (tiller != null) {
-				tiller.Delete();
+			if (this.tiller != null) {
+				this.tiller.Delete();
 			}
-			if (leftPlank != null) {
-				leftPlank.Delete();
+			if (this.leftPlank != null) {
+				this.leftPlank.Delete();
 			}
-			if (rightPlank != null) {
-				rightPlank.Delete();
+			if (this.rightPlank != null) {
+				this.rightPlank.Delete();
 			}
-			if (trunk != null) {
-				trunk.Delete();
+			if (this.trunk != null) {
+				this.trunk.Delete();
 			}
 		}
 	}
@@ -329,7 +329,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public Ship Ship {
 			get {
-				return (Ship) multiItem;
+				return (Ship) this.multiItem;
 			}
 		}
 
@@ -362,7 +362,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public int On_ItemPickUp_Ground(Character self, Item pickedUp) {
-				Ship ship = GetShipOnPoint(self.GetMap(), pickedUp.X, pickedUp.Y);
+				Ship ship = this.GetShipOnPoint(self.GetMap(), pickedUp.X, pickedUp.Y);
 				if (ship != null) {
 					ship.RemoveThing(pickedUp);
 				} else {
@@ -372,7 +372,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public int On_ItemDropOn_Ground(Character self, Item dropped, ushort x, ushort y, sbyte z) {
-				Ship ship = GetShipOnPoint(self.GetMap(), x, y);
+				Ship ship = this.GetShipOnPoint(self.GetMap(), x, y);
 				if (ship != null) {
 					ship.AddThing(dropped);
 				} else {
@@ -382,7 +382,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public int On_Say(Character self, string speech, SpeechType type, int[] keywords) {
-				Ship ship = GetShipOnPoint(self.GetMap(), self.X, self.Y);
+				Ship ship = this.GetShipOnPoint(self.GetMap(), self.X, self.Y);
 				if (ship != null) {
 					ship.HandleCommand(self, keywords);
 				} else {

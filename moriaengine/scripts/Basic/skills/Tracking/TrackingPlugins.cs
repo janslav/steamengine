@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class PlayerTrackingPlugin {
 		public static readonly PlayerTrackingPluginDef defInstance = new PlayerTrackingPluginDef("p_tracking", "C#scripts", -1);
-		private readonly static PluginKey trackingPluginKey = PluginKey.Acquire("_tracking_");
+		private static readonly PluginKey trackingPluginKey = PluginKey.Acquire("_tracking_");
 
 		public const int refreshTimeout = 5; //number of seconds after which all displayed footsteps will be refreshed (if necessary)
 
@@ -38,14 +38,14 @@ namespace SteamEngine.CompiledScripts {
 		private TimeSpan lastRefreshAt;
 
 		internal static void InstallOnChar(Character trackingChar, Character trackedChar, ImmutableRectangle playerRect, TimeSpan maxAge, int safeSteps) {
-			trackingChar.DeletePlugin(PlayerTrackingPlugin.trackingPluginKey);
-			PlayerTrackingPlugin tpl = (PlayerTrackingPlugin) PlayerTrackingPlugin.defInstance.Create();
+			trackingChar.DeletePlugin(trackingPluginKey);
+			PlayerTrackingPlugin tpl = (PlayerTrackingPlugin) defInstance.Create();
 			tpl.Init(trackedChar, playerRect, maxAge, safeSteps);
-			trackingChar.AddPlugin(PlayerTrackingPlugin.trackingPluginKey, tpl);
+			trackingChar.AddPlugin(trackingPluginKey, tpl);
 		}
 
 		internal static void UninstallPlugin(Character self) {
-			self.DeletePlugin(PlayerTrackingPlugin.trackingPluginKey);
+			self.DeletePlugin(trackingPluginKey);
 		}
 
 		private void Init(Character trackedChar, ImmutableRectangle rectangle, TimeSpan maxAge, int safeSteps) {
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 			this.trackingRectangle = rectangle;
 			this.maxFootstepAge = maxAge;
 			this.rectWidth = (ushort) rectangle.Width;
-			this.Timer = PlayerTrackingPlugin.refreshTimeout;//set the first timer
+			this.Timer = refreshTimeout;//set the first timer
 		}
 
 		public static PlayerTrackingPlugin GetInstalledPlugin(Character self) {
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 			//lower bound of the footsteps visibility-age (upper bound is Globals.TimeAsSpan)
 			//the footsteps LastStepTime must lie between these two bounds for the footprint to be visible
 			//the maxFootstepAge is computed from the tracker's skill
-			Character tracker = (Character) Cont;
+			Character tracker = (Character) this.Cont;
 			GameState state = tracker.GameState;
 			if (state != null) {
 				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			Character tracker = (Character) Cont;
+			Character tracker = (Character) this.Cont;
 			GameState state = tracker.GameState;
 			if (state != null) {
 				Communication.TCP.TcpConnection<GameState> conn = state.Conn;
@@ -173,10 +173,10 @@ namespace SteamEngine.CompiledScripts {
 
 			Character cont = (Character) this.Cont;
 			//to the tracked char's list add the actual tracker
-			List<Character> tbList = (List<Character>) trackedChar.GetTag(TrackingSkillDef.trackedByTK);
+			List<Character> tbList = (List<Character>) this.trackedChar.GetTag(TrackingSkillDef.trackedByTK);
 			if (tbList == null) {
 				tbList = new List<Character>();
-				trackedChar.SetTag(TrackingSkillDef.trackedByTK, tbList);
+				this.trackedChar.SetTag(TrackingSkillDef.trackedByTK, tbList);
 			}
 			if (!tbList.Contains(cont)) {
 				tbList.Add(cont);
@@ -188,18 +188,18 @@ namespace SteamEngine.CompiledScripts {
 
 			this.SendDeleteAllVisibleFootsteps(formerCont);
 			//remove from the trackedBy list on the tracked character
-			List<Character> tbList = (List<Character>) trackedChar.GetTag(TrackingSkillDef.trackedByTK);
+			List<Character> tbList = (List<Character>) this.trackedChar.GetTag(TrackingSkillDef.trackedByTK);
 			tbList.Remove(formerCont);
 			if (tbList.Count == 0) {
-				trackedChar.RemoveTag(TrackingSkillDef.trackedByTK);
+				this.trackedChar.RemoveTag(TrackingSkillDef.trackedByTK);
 			}
 		}
 
 		public void On_NewPosition(Point4D oldP) {
-			Player tracker = (Player) Cont;
+			Player tracker = (Player) this.Cont;
 			//check the steps counter
 			this.stepsCntr--;
-			if (stepsCntr == 0) {//force another check of tracking success
+			if (this.stepsCntr == 0) {//force another check of tracking success
 				if (!SkillDef.GetBySkillName(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
 					this.Delete();
 					return;
@@ -220,10 +220,10 @@ namespace SteamEngine.CompiledScripts {
 				if (dist > this.rectWidth) {//old and new have no intersection. We treat them separately, and only send delete packets in the area still visible to client
 					ImmutableRectangle updateRect = new ImmutableRectangle(tracker, state.UpdateRange);
 					ImmutableRectangle oldRectVisible = ImmutableRectangle.GetIntersection(oldRect, updateRect);
-					foreach (TrackPoint tp in ScriptSector.GetCharsPath(trackedChar, oldRectVisible, now, maxFootstepAge, tracker.M)) {
+					foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, oldRectVisible, now, this.maxFootstepAge, tracker.M)) {
 						SendDeletePacket(conn, tp);
 					}
-					foreach (TrackPoint tp in ScriptSector.GetCharsPath(trackedChar, newRect, now, maxFootstepAge, tracker.M)) {
+					foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, newRect, now, this.maxFootstepAge, tracker.M)) {
 						this.SendObjectPacket(now, conn, tp);
 					}
 				} else {
@@ -288,18 +288,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
-			Delete();
+			this.Delete();
 		}
 
 		public void On_Timer() {
 			if (!this.IsDeleted && this.Cont != null) {
 				this.RefreshVisibleFootsteps(); //force to recompute the displayed footsteps color and send the necessary refresh packets
-				this.Timer = PlayerTrackingPlugin.refreshTimeout;
+				this.Timer = refreshTimeout;
 			}
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class PlayerTrackingPluginDef {
 	}
 
@@ -313,17 +313,17 @@ namespace SteamEngine.CompiledScripts {
 
 		private void CheckDistance(Player tracker) {
 			//check the distance to the tracked target
-			int currentDist = Point2D.GetSimpleDistance(tracker, whoToTrack);
+			int currentDist = Point2D.GetSimpleDistance(tracker, this.whoToTrack);
 			if (currentDist > this.maxAllowedDist) {
 				this.Delete();
 			}
 		}
 
 		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
-			Player tracker = (Player) Cont;
+			Player tracker = (Player) this.Cont;
 			//check the steps counter
 			this.stepsCntr--;
-			if (stepsCntr == 0) {//force another check of tracking success
+			if (this.stepsCntr == 0) {//force another check of tracking success
 				if (!SkillDef.GetBySkillName(SkillName.Tracking).CheckSuccess(tracker, Globals.dice.Next(700))) { //the same success check as in On_Stroke phase
 					this.Delete();
 					return;
@@ -338,8 +338,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_Assign() {
 			//send the QuestArrow displaying packet
-			((Player) Cont).QuestArrow(true, whoToTrack);
-			stepsCntr = safeSteps; //set the counter
+			((Player) this.Cont).QuestArrow(true, this.whoToTrack);
+			this.stepsCntr = this.safeSteps; //set the counter
 		}
 
 		public void On_UnAssign(Character formerCont) {
@@ -350,16 +350,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Timer() {
-			CheckDistance((Player) Cont); //force check the distance to the target
+			this.CheckDistance((Player) this.Cont); //force check the distance to the target
 			this.Timer = PlayerTrackingPlugin.refreshTimeout;
 		}
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
-			Delete();
+			this.Delete();
 		}
 	}
 
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public partial class NPCTrackingPluginDef {
 	}
 }

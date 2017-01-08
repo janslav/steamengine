@@ -32,8 +32,8 @@ namespace SteamEngine.Common {
 		}
 
 		protected override void On_DisposeManagedResources() {
-			if (myPool != null) {
-				myPool.Release(this);
+			if (this.myPool != null) {
+				this.myPool.Release(this);
 			}
 			base.On_DisposeManagedResources();
 		}
@@ -50,10 +50,10 @@ namespace SteamEngine.Common {
 
 		public PoolBase MyPool {
 			get {
-				return myPool;
+				return this.myPool;
 			}
 			set {
-				myPool = value;
+				this.myPool = value;
 			}
 		}
 	}

@@ -37,7 +37,7 @@ namespace SteamEngine.LScript {
 		internal static ScriptedGumpDef Load(PropsSection input) {
 			string[] headers = input.HeaderName.Split(new char[] { ' ', '\t' }, 2);
 			string name = headers[0];//d_something
-			GumpDef gump = GumpDef.GetByDefname(name);
+			GumpDef gump = GetByDefname(name);
 			ScriptedGumpDef sgd;
 			if (gump != null) {
 				sgd = gump as ScriptedGumpDef;
@@ -113,15 +113,15 @@ namespace SteamEngine.LScript {
 								continue;
 							} else {
 								try {
-									int index = TagMath.ParseInt32(triggerName);
+									int index = ConvertTools.ParseInt32(triggerName);
 									responsesList.Add(new ResponseTrigger(index, index, trigger));
 									continue;
 								} catch {
 									string[] boundStrings = triggerName.Split(' ', '\t', ',');
 									if (boundStrings.Length == 2) {
 										try {
-											int lowerBound = TagMath.ParseInt32(boundStrings[0].Trim());
-											int upperBound = TagMath.ParseInt32(boundStrings[1].Trim());
+											int lowerBound = ConvertTools.ParseInt32(boundStrings[0].Trim());
+											int upperBound = ConvertTools.ParseInt32(boundStrings[1].Trim());
 											responsesList.Add(new ResponseTrigger(lowerBound, upperBound, trigger));
 											continue;
 										} catch { }
@@ -138,7 +138,7 @@ namespace SteamEngine.LScript {
 		}
 
 		internal static void LoadingFinished() {
-			foreach (AbstractScript script in AbstractScript.AllScripts) {
+			foreach (AbstractScript script in AllScripts) {
 				ScriptedGumpDef sgd = script as ScriptedGumpDef;
 				if (sgd != null) {
 					sgd.CheckValidity();
@@ -147,27 +147,27 @@ namespace SteamEngine.LScript {
 		}
 
 		private void CheckValidity() {//check method, used as delayed
-			if (layoutScript == null) {
-				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " missing the main (layout) section?");
+			if (this.layoutScript == null) {
+				Logger.WriteWarning("Dialog " + LogStr.Ident(this.Defname) + " missing the main (layout) section?");
 				this.Unload();
 				return;
 			}
-			if (this.IsUnloaded && (layoutScript != null)) {
-				Logger.WriteWarning("Dialog " + LogStr.Ident(Defname) + " resynced incompletely?");
+			if (this.IsUnloaded && (this.layoutScript != null)) {
+				Logger.WriteWarning("Dialog " + LogStr.Ident(this.Defname) + " resynced incompletely?");
 				return;
 			}
 		}
 
 		public sealed override void Unload() {
-			layoutScript = null;
-			responseTriggers = null;
-			textsScript = null;
+			this.layoutScript = null;
+			this.responseTriggers = null;
+			this.textsScript = null;
 
 			base.Unload();
 		}
 
 		internal sealed override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ThrowIfUnloaded();
+			this.ThrowIfUnloaded();
 			ScriptedGump instance = new ScriptedGump(this);
 			ScriptArgs sa = new ScriptArgs(instance, sendTo); //instance and recipient are stored everytime
 			if (args != null) {
@@ -175,21 +175,21 @@ namespace SteamEngine.LScript {
 			} else {
 				instance.InputArgs = new DialogArgs(); //prepare the empty DialogArgs object (no params)
 			}
-			if (textsScript != null) {
-				textsScript.TryRun(focus, sa);
-				if (!textsScript.lastRunSuccesful) {
+			if (this.textsScript != null) {
+				this.textsScript.TryRun(focus, sa);
+				if (!this.textsScript.lastRunSuccesful) {
 					return null;
 				}
 			}
 
-			layoutScript.TryRun(focus, sa);
+			this.layoutScript.TryRun(focus, sa);
 
 			ScriptedGump returnedInstance = sa.Argv[0] as ScriptedGump;
 			if (returnedInstance == null) {
 				returnedInstance = instance;
 			}
 
-			if (layoutScript.lastRunSuccesful) {
+			if (this.layoutScript.lastRunSuccesful) {
 				returnedInstance.FinishCompilingPacketData(focus, sendTo);
 				return returnedInstance;
 			}
@@ -197,9 +197,9 @@ namespace SteamEngine.LScript {
 		}
 
 		internal void OnResponse(ScriptedGump instance, int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
-			if (responseTriggers != null) {
-				for (int i = 0, n = responseTriggers.Length; i < n; i++) {
-					ResponseTrigger rt = responseTriggers[i];
+			if (this.responseTriggers != null) {
+				for (int i = 0, n = this.responseTriggers.Length; i < n; i++) {
+					ResponseTrigger rt = this.responseTriggers[i];
 					if (rt.IsInBounds(pressedButton)) {
 						ScriptArgs sa = new ScriptArgs(
 							instance,							//0
@@ -227,12 +227,12 @@ namespace SteamEngine.LScript {
 			}
 
 			internal bool IsInBounds(int index) {
-				return ((lowerBound <= index) && (index <= upperBound));
+				return ((this.lowerBound <= index) && (index <= this.upperBound));
 			}
 		}
 
 		public sealed override string ToString() {
-			return "ScriptedGumpDef " + Defname;
+			return "ScriptedGumpDef " + this.Defname;
 		}
 	}
 
@@ -244,8 +244,8 @@ namespace SteamEngine.LScript {
 
 		public int this[int id] {
 			get {
-				for (int i = 0, n = selectedSwitches.Length; i < n; i++) {
-					if (selectedSwitches[i] == id) {
+				for (int i = 0, n = this.selectedSwitches.Length; i < n; i++) {
+					if (this.selectedSwitches[i] == id) {
 						return 1;
 					}
 				}
@@ -262,8 +262,8 @@ namespace SteamEngine.LScript {
 
 		public string this[int id] {
 			get {
-				for (int i = 0, n = responseTexts.Length; i < n; i++) {
-					ResponseText rt = responseTexts[i];
+				for (int i = 0, n = this.responseTexts.Length; i < n; i++) {
+					ResponseText rt = this.responseTexts[i];
 					if (rt.Id == id) {
 						return rt.Text;
 					}
@@ -281,8 +281,8 @@ namespace SteamEngine.LScript {
 
 		public decimal this[int id] {
 			get {
-				for (int i = 0, n = responseNumbers.Length; i < n; i++) {
-					ResponseNumber rn = responseNumbers[i];
+				for (int i = 0, n = this.responseNumbers.Length; i < n; i++) {
+					ResponseNumber rn = this.responseNumbers[i];
 					if ((rn != null) && (rn.Id == id)) {
 						return rn.Number;
 					}
@@ -293,12 +293,12 @@ namespace SteamEngine.LScript {
 	}
 
 	public class ScriptedGump : Gump {
-		internal protected ScriptedGump(ScriptedGumpDef def)
+		protected internal ScriptedGump(ScriptedGumpDef def)
 			: base(def) {
 		}
 
 		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
-			ScriptedGumpDef sdef = (ScriptedGumpDef) Def;
+			ScriptedGumpDef sdef = (ScriptedGumpDef) this.Def;
 			sdef.OnResponse(this, pressedButton, selectedSwitches, responseTexts, responseNumbers);
 		}
 

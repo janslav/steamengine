@@ -23,7 +23,7 @@ using SteamEngine.CompiledScripts.Dialogs;
 namespace SteamEngine.CompiledScripts {
 	//[SaveableClass]
 	//[HasSavedMembers]
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public class PoisoningSettings : SettingsMetaCategory {
 
 		//[SavedMember]

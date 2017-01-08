@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class TalentTreeBranchDef : AbstractIndexedDef<TalentTreeBranchDef, string> {
 		#region Accessors
-		public static new TalentTreeBranchDef GetByDefname(string defname) {
+		public new static TalentTreeBranchDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as TalentTreeBranchDef;
 		}
 
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public TalentTreeEntry GetEntry(AbilityDef def) {
 			TalentTreeEntry leaf;
-			if (!cachedLeafs.TryGetValue(def, out leaf)) {
+			if (!this.cachedLeafs.TryGetValue(def, out leaf)) {
 				string defname = def.PrettyDefname;
 				string fvName = talentTierPrefix + defname;
 				if (this.HasFieldValue(fvName)) {
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 						Convert.ToInt32(this.GetCurrentFieldValue(talentTierPositionPrefix + defname)),
 						Convert.ToInt32(this.GetCurrentFieldValue(talentMaxPointsPrefix + defname)),
 						(ResourcesList) this.GetCurrentFieldValue(talentDependencyPrefix + defname));
-					cachedLeafs[def] = leaf;
+					this.cachedLeafs[def] = leaf;
 					this.cacheComplete = false;
 				}
 			}

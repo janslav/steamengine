@@ -44,7 +44,7 @@ namespace SteamEngine {
 			}
 			internal set {
 				this.formatArgs = value;
-				args = null;
+				this.args = null;
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace SteamEngine {
 
 		public string Args {
 			get {
-				if (args == null) {
+				if (this.args == null) {
 					if (this.formatArgs == null) {
 						if (this.argv.Length > 0) {//we fake the args of the function, in case it was actually called from compiled code
 							StringBuilder sb = new StringBuilder();
@@ -72,10 +72,10 @@ namespace SteamEngine {
 						}
 					}
 					//Console.WriteLine("format string: '{0}', with {1} args", formatArgs, argv.Length);
-					args = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+					this.args = string.Format(System.Globalization.CultureInfo.InvariantCulture,
 						this.formatArgs, this.argv);
 				}
-				return args;
+				return this.args;
 			}
 		}
 

@@ -93,15 +93,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			private static EnumItemFields instance;
 
 			internal static EnumItemFields GetInitializedInstance(int index, object target) {
-				if (EnumItemFields.instance == null) {
+				if (instance == null) {
 					//newinstantiation
-					EnumItemFields.instance = new EnumItemFields(index, target);
+					instance = new EnumItemFields(index, target);
 				} else {
 					//reset everything necessary
-					EnumItemFields.instance.Target = target;
-					EnumItemFields.instance.Index = index;
+					instance.Target = target;
+					instance.Index = index;
 				}
-				return EnumItemFields.instance;
+				return instance;
 			}
 
 			private EnumItemFields(int index, object target) {
@@ -111,23 +111,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			private int Index {
 				get {
-					return index;
+					return this.index;
 				}
 				set {
-					index = value;
+					this.index = value;
 				}
 			}
 
 			private object Target {
 				get {
-					return target;
+					return this.target;
 				}
 				set {
-					target = value;
-					targetEnumType = target.GetType();
-					underlyingType = Enum.GetUnderlyingType(targetEnumType);
-					names = Enum.GetNames(targetEnumType);
-					Array.Sort(names, delegate(string n1, string n2) {
+					this.target = value;
+					this.targetEnumType = this.target.GetType();
+					this.underlyingType = Enum.GetUnderlyingType(this.targetEnumType);
+					this.names = Enum.GetNames(this.targetEnumType);
+					Array.Sort(this.names, delegate(string n1, string n2) {
 						return n1.CompareTo(n2);
 					}
 							   );//sort alphabetically
@@ -135,31 +135,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return names[index];
+				return this.names[this.index];
 			}
 
 			public override Type FieldType {
 				get {
-					return Enum.GetUnderlyingType(targetEnumType);
+					return Enum.GetUnderlyingType(this.targetEnumType);
 				}
 			}
 
 			public override object GetValue(object target) {
-				int n = names.Length;
-				if (index < n) {
+				int n = this.names.Length;
+				if (this.index < n) {
 					//get the value for to the current Name in the sorted Names array
-					return Enum.Parse(targetEnumType, names[index]);
+					return Enum.Parse(this.targetEnumType, this.names[this.index]);
 				} else {
 					return null;
 				}
 			}
 
 			public override string GetStringValue(object target) {
-				int n = names.Length;
-				if (index < n) {
+				int n = this.names.Length;
+				if (this.index < n) {
 					//return the value casted to basic type (so e.g. number is displayed and not "red" text...)
-					object value = Enum.Parse(targetEnumType, names[index]);
-					return Convert.ToString(Convert.ChangeType(value, underlyingType));
+					object value = Enum.Parse(this.targetEnumType, this.names[this.index]);
+					return Convert.ToString(Convert.ChangeType(value, this.underlyingType));
 				} else {
 					return "";
 				}

@@ -30,16 +30,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static TagKey textHueTK = TagKey.Acquire("_text_hue_");
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			label = string.Concat(args[0]); //the gump's label
-			dispText = string.Concat(args[1]); //the text to be displayed
+			this.label = string.Concat(args[0]); //the gump's label
+			this.dispText = string.Concat(args[1]); //the text to be displayed
 
-			object hue = args.GetTag(D_Display_Text.textHueTK);
+			object hue = args.GetTag(textHueTK);
 			if (hue != null) {
-				textColor = (Hues) Convert.ToInt32(hue); //barva titulku volitelna
+				this.textColor = (Hues) Convert.ToInt32(hue); //barva titulku volitelna
 			} else {
-				textColor = Hues.HeadlineColor; //normalni nadpisek
+				this.textColor = Hues.HeadlineColor; //normalni nadpisek
 			}
-			ShowDialog();
+			this.ShowDialog();
 		}
 
 		/// <summary>Simply display the labeled text.</summary>
@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first row - the label of the dialog
 			dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = GUTAText.Builder.Text(label).Hue(textColor).Build();
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.Text(this.label).Hue(this.textColor).Build();
 			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dialogHandler.MakeLastTableTransparent();
 
@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(3, 0));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			//unbounded, scrollable html text area
-			dialogHandler.LastTable[0, 0] = GUTAHTMLText.Builder.Text(dispText).Scrollable(true).Build();
+			dialogHandler.LastTable[0, 0] = GUTAHTMLText.Builder.Text(this.dispText).Scrollable(true).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
 				DialogArgs newArgs = new DialogArgs("CHYBA", args.Argv[0]);
-				newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);
+				newArgs.SetTag(textHueTK, Hues.Red);
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 			} else {
 				Globals.SrcCharacter.Message("ShowError musí být volána s parametrem - text chyby", (int) Hues.Red);
@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)</summary>
 		public static Gump ShowError(string text) {
 			DialogArgs newArgs = new DialogArgs("CHYBA", text);
-			newArgs.SetTag(D_Display_Text.textHueTK, Hues.Red);
+			newArgs.SetTag(textHueTK, Hues.Red);
 			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 		}
 

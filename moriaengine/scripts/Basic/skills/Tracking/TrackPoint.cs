@@ -52,9 +52,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void TryDisposeFakeUID() {
-			if (fakeUID != 0) {
-				Thing.DisposeFakeUid(fakeUID);//return borrowed UID
-				fakeUID = 0; //set to zero so no duplicities can occur!
+			if (this.fakeUID != 0) {
+				Thing.DisposeFakeUid(this.fakeUID);//return borrowed UID
+				this.fakeUID = 0; //set to zero so no duplicities can occur!
 			}
 		}
 

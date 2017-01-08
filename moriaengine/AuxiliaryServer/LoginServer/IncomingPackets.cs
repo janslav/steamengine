@@ -41,7 +41,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 	public class GameSpyPacket : LoginIncomingPacket {
 		protected override ReadPacketResult Read() {
-			SeekFromCurrent(148);
+			this.SeekFromCurrent(148);
 			return ReadPacketResult.DiscardSingle;
 		}
 
@@ -54,7 +54,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		string accname;
 
 		protected override ReadPacketResult Read() {
-			accname = this.DecodeAsciiString(30);
+			this.accname = this.DecodeAsciiString(30);
 			this.SeekFromCurrent(31);
 			return ReadPacketResult.Success;
 		}
@@ -98,7 +98,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		int chosenServer;
 
 		protected override ReadPacketResult Read() {
-			chosenServer = DecodeUShort();
+			this.chosenServer = this.DecodeUShort();
 			return ReadPacketResult.Success;
 		}
 

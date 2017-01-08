@@ -37,10 +37,10 @@ namespace SteamEngine {
 		}
 
 		//the first trigger that throws an exceptions terminates the other ones that way
-		public override sealed object Run(object self, TriggerKey tk, ScriptArgs sa) {
-			ThrowIfUnloaded();
+		public sealed override object Run(object self, TriggerKey tk, ScriptArgs sa) {
+			this.ThrowIfUnloaded();
 			ScriptHolder sd;
-			if (triggers.TryGetValue(tk, out sd)) {
+			if (this.triggers.TryGetValue(tk, out sd)) {
 				return sd.Run(self, sa);
 			} else {
 				return null;	//This triggerGroup does not contain that trigger
@@ -48,10 +48,10 @@ namespace SteamEngine {
 		}
 
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
-		public override sealed object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
-			ThrowIfUnloaded();
+		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
+			this.ThrowIfUnloaded();
 			ScriptHolder sd;
-			if (triggers.TryGetValue(tk, out sd)) {
+			if (this.triggers.TryGetValue(tk, out sd)) {
 				return sd.TryRun(self, sa);
 			} else {
 				return null;	//This triggerGroup does not contain that trigger
@@ -62,19 +62,19 @@ namespace SteamEngine {
 			string name = sd.Name;
 			//Console.WriteLine("Adding trigger {0} to tg {1}", name, this);
 			TriggerKey tk = TriggerKey.Acquire(name);
-			if (triggers.ContainsKey(tk)) {
+			if (this.triggers.ContainsKey(tk)) {
 				Logger.WriteError("Attempted to declare triggers of the same name (" + LogStr.Ident(name) + ") in trigger-group " + LogStr.Ident(this.Defname) + "!");
 				return;
 			}
 			sd.contTriggerGroup = this;
-			triggers[tk] = sd;
+			this.triggers[tk] = sd;
 		}
 
 		public override string ToString() {
-			return "TriggerGroup " + Defname;
+			return "TriggerGroup " + this.Defname;
 		}
 
-		public static new TriggerGroup GetByDefname(string name) {
+		public new static TriggerGroup GetByDefname(string name) {
 			return AbstractScript.GetByDefname(name) as TriggerGroup;
 		}
 
@@ -111,7 +111,7 @@ namespace SteamEngine {
 		}
 
 		public override void Unload() {
-			triggers.Clear();
+			this.triggers.Clear();
 			base.Unload();
 		}
 	}

@@ -36,25 +36,25 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		protected override void Process() {
 			base.Process();
-			GenerateTypeDeclaration();
-			Fields();
-			CopyConstructor();
-			Save();
-			LoadLine();
-			DefProperty();
+			this.GenerateTypeDeclaration();
+			this.Fields();
+			this.CopyConstructor();
+			this.Save();
+			this.LoadLine();
+			this.DefProperty();
 		}
 
 		private void GenerateTypeDeclaration() {
-			generatedType = new CodeTypeDeclaration(section.className);
-			generatedType.BaseTypes.Add(section.baseClassName);
+			this.generatedType = new CodeTypeDeclaration(this.section.className);
+			this.generatedType.BaseTypes.Add(this.section.baseClassName);
 
-			generatedType.CustomAttributes.Add(new CodeAttributeDeclaration(
+			this.generatedType.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(DeepCopyableClassAttribute))));
-			generatedType.CustomAttributes.Add(new CodeAttributeDeclaration(
+			this.generatedType.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(Persistence.SaveableClassAttribute))));
 
-			generatedType.IsClass = true;
-			generatedType.IsPartial = true;
+			this.generatedType.IsClass = true;
+			this.generatedType.IsPartial = true;
 		}
 
 
@@ -62,15 +62,14 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			CodeMemberProperty defProperty = new CodeMemberProperty();
 			defProperty.Name = "TypeDef";
 			defProperty.Attributes = MemberAttributes.Final | MemberAttributes.Public | MemberAttributes.New;
-			defProperty.Type = new CodeTypeReference(section.defClassName);
+			defProperty.Type = new CodeTypeReference(this.section.defClassName);
 			CodeMethodReturnStatement ret = new CodeMethodReturnStatement(
-				new CodeCastExpression(
-					section.defClassName,
+				new CodeCastExpression(this.section.defClassName,
 					new CodePropertyReferenceExpression(
 						new CodeBaseReferenceExpression(),
 						"Def")));
 			defProperty.GetStatements.Add(ret);
-			generatedType.Members.Add(defProperty);
+			this.generatedType.Members.Add(defProperty);
 		}
 
 		private void Fields() {
@@ -83,7 +82,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 					}
 
 					field.InitExpression = new CodeSnippetExpression(ctfi.value);
-					generatedType.Members.Add(field);
+					this.generatedType.Members.Add(field);
 				}
 			}
 		}
@@ -93,16 +92,16 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			ctdCopyConstructor.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(DeepCopyImplementationAttribute))));
 			ctdCopyConstructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
-			ctdCopyConstructor.Parameters.Add(new CodeParameterDeclarationExpression(section.className, "copyFrom"));
+			ctdCopyConstructor.Parameters.Add(new CodeParameterDeclarationExpression(this.section.className, "copyFrom"));
 			ctdCopyConstructor.BaseConstructorArgs.Add(new CodeArgumentReferenceExpression("copyFrom"));
 
 			if (this.subSection != null) {
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
-					ctdCopyConstructor.Statements.Add(CopyFieldStatement(ctif));
+					ctdCopyConstructor.Statements.Add(this.CopyFieldStatement(ctif));
 				}
 			}
 
-			generatedType.Members.Add(ctdCopyConstructor);
+			this.generatedType.Members.Add(ctdCopyConstructor);
 		}
 
 		private CodeStatement CopyFieldStatement(ClassTemplateInstanceField field) {
@@ -111,14 +110,14 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 				field.uncapName);
 
 			if (field.needsCopying) {
-				CodeMemberMethod delayedCopyMethod = DelayedCopyMethod(field);
+				CodeMemberMethod delayedCopyMethod = this.DelayedCopyMethod(field);
 
 				return new CodeExpressionStatement(new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(typeof(DeepCopyFactory)),
 					"GetCopyDelayed",
 					copyFrom,
 					new CodeDelegateCreateExpression(
-						new CodeTypeReference(typeof(SteamEngine.ReturnCopy)),
+						new CodeTypeReference(typeof(ReturnCopy)),
 						new CodeThisReferenceExpression(),
 						delayedCopyMethod.Name)
 				));
@@ -155,7 +154,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						new CodeArgumentReferenceExpression("copy"))));
 			}
 
-			generatedType.Members.Add(method);
+			this.generatedType.Members.Add(method);
 			return method;
 		}
 
@@ -177,7 +176,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						new CodeBaseReferenceExpression(),
 						"Save"),
 					new CodeArgumentReferenceExpression("output")));
-				generatedType.Members.Add(save);
+				this.generatedType.Members.Add(save);
 			}
 		}
 
@@ -215,7 +214,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 				foreach (ClassTemplateInstanceField ctif in this.subSection.fields) {
 					load.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase \"" + ctif.uncapName.ToLowerInvariant() + "\":"));
-					load.Statements.Add(LoadFieldStatement(ctif));
+					load.Statements.Add(this.LoadFieldStatement(ctif));
 					load.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tbreak;\n"));
 				}
 
@@ -231,14 +230,14 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 				load.Statements.Add(new CodeSnippetStatement("\t\t\t\t\tbreak;\n\t\t\t}"));
 
-				generatedType.Members.Add(load);
+				this.generatedType.Members.Add(load);
 			}
 		}
 
 
 		private CodeStatement LoadFieldStatement(ClassTemplateInstanceField field) {
 			if ((field.type != null) &&
-					SteamEngine.Persistence.ObjectSaver.IsSimpleSaveableType(field.type)) {
+					Persistence.ObjectSaver.IsSimpleSaveableType(field.type)) {
 
 				return new CodeAssignStatement(
 					new CodeFieldReferenceExpression(
@@ -275,15 +274,15 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						field.uncapName),
 					rightSide));
 
-				generatedType.Members.Add(delayedLoadMethod);
+				this.generatedType.Members.Add(delayedLoadMethod);
 
 				return new CodeExpressionStatement(new CodeMethodInvokeExpression(
 					//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
 					new CodeMethodReferenceExpression(
-						new CodeTypeReferenceExpression(typeof(SteamEngine.Persistence.ObjectSaver)), "Load"),
+						new CodeTypeReferenceExpression(typeof(Persistence.ObjectSaver)), "Load"),
 						new CodeArgumentReferenceExpression("valueString"),
 						new CodeDelegateCreateExpression(
-							new CodeTypeReference(typeof(SteamEngine.Persistence.LoadObject)),
+							new CodeTypeReference(typeof(Persistence.LoadObject)),
 							new CodeThisReferenceExpression(),
 							delayedLoadMethod.Name),
 						new CodeArgumentReferenceExpression("filename"),

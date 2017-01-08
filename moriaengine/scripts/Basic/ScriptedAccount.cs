@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 		[Dialogs.NoShow]
 		public List<AccountNote> AccNotes {
 			get {
-				return new List<AccountNote>(accNotes);
+				return new List<AccountNote>(this.accNotes);
 			}
 		}
 
@@ -59,25 +59,25 @@ namespace SteamEngine.CompiledScripts {
 		[Dialogs.NoShow]
 		public List<AccountCrime> AccCrimes {
 			get {
-				return new List<AccountCrime>(accCrimes);
+				return new List<AccountCrime>(this.accCrimes);
 			}
 		}
 
 		/// <summary>Add a new note</summary>
 		public void AddNote(AccountNote note) {
-			accNotes.Add(note);
+			this.accNotes.Add(note);
 		}
 		/// <summary>Remove one selected note (cannot be removed from AccNotes property</summary>
 		public void RemoveNote(AccountNote note) {
-			accNotes.Remove(note);
+			this.accNotes.Remove(note);
 		}
 		/// <summary>Add a new crime</summary>
 		public void AddCrime(AccountCrime crime) {
-			accCrimes.Add(crime);
+			this.accCrimes.Add(crime);
 		}
 		/// <summary>Remove one selected crime (cannot be removed from AccCrimes property</summary>
 		public void RemoveCrime(AccountCrime crime) {
-			accCrimes.Remove(crime);
+			this.accCrimes.Remove(crime);
 		}
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
@@ -93,8 +93,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Save(SaveStream output) {
-			if (email != null) {
-				output.WriteValue("email", email);
+			if (this.email != null) {
+				output.WriteValue("email", this.email);
 			}
 			base.Save(output);
 		}

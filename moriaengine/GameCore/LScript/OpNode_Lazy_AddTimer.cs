@@ -86,31 +86,30 @@ namespace SteamEngine.LScript {
 				Type type = vars.self.GetType();
 
 				MemberResolver resolver = MemberResolver.GetInstance(
-					vars, this.parent, funcName, args, this.line, this.column, this.filename);
+					vars, this.parent, this.funcName, this.args, this.line, this.column, this.filename);
 				MemberDescriptor desc = null;
 
 				//as Method
 				memberNameMatched &= resolver.Resolve(type, BindingFlags.Instance, MemberTypes.Method, out desc);
-				if (!ResolveAsMethod(desc, out finalOpNode)) {//in other words, if desc was null
+				if (!this.ResolveAsMethod(desc, out finalOpNode)) {//in other words, if desc was null
 					memberNameMatched &= resolver.Resolve(type, BindingFlags.Static, MemberTypes.Method, out desc);
-					if (ResolveAsMethod(desc, out finalOpNode)) {
+					if (this.ResolveAsMethod(desc, out finalOpNode)) {
 						goto runit;
 					}
 				} else {
 					goto runit;
 				}
 				//as function
-				ScriptHolder function = ScriptHolder.GetFunction(funcName);//no, this is not unreachable, whatever the mono compjiler says...
+				ScriptHolder function = ScriptHolder.GetFunction(this.funcName);//no, this is not unreachable, whatever the mono compjiler says...
 				if (function != null) {
-					finalOpNode = new OpNode_AddFunctionTimer(this.parent, filename, line, column, this.OrigNode,
-						name, function, formatString, secondsNode, args);
+					finalOpNode = new OpNode_AddFunctionTimer(this.parent, this.filename, this.line, this.column, this.OrigNode, this.name, function, this.formatString, this.secondsNode, this.args);
 					goto runit;
 				}
 
 				//as intrinsic method
 				//intrinsic methods really as last... they are not too usual to be run delayed
 				memberNameMatched &= resolver.Resolve(typeof(IntrinsicMethods), BindingFlags.Static, MemberTypes.Method | MemberTypes.Property, out desc);
-				if (ResolveAsMethod(desc, out finalOpNode)) {
+				if (this.ResolveAsMethod(desc, out finalOpNode)) {
 					goto runit;
 				}
 
@@ -126,27 +125,27 @@ namespace SteamEngine.LScript {
 				//	Logger.WriteWarning(filename, line, sb.ToString());
 				//} else if (matches.Count < 1) {
 				if (memberNameMatched) {
-					throw new InterpreterException("Method '" + LogStr.Ident(funcName) + "' is getting bad arguments",
+					throw new InterpreterException("Method '" + LogStr.Ident(this.funcName) + "' is getting bad arguments",
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				} else {
-					throw new InterpreterException("Undefined identifier '" + LogStr.Ident(funcName) + "'",
-						this.line, this.column, this.filename, ParentScriptHolder.GetDecoratedName());
+					throw new InterpreterException("Undefined identifier '" + LogStr.Ident(this.funcName) + "'",
+						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
 			//}
 
 runit:	//I know that goto is usually considered dirty, but I find this case quite suitable for it...
 				if (resolver != null) {
-					results = resolver.results;
+					this.results = resolver.results;
 					MemberResolver.ReturnInstance(resolver);
 				}
 
 				IOpNodeHolder finalAsHolder = finalOpNode as IOpNodeHolder;
 				if (finalAsHolder != null) {
-					SetNewParentToArgs(finalAsHolder);
+					this.SetNewParentToArgs(finalAsHolder);
 				}
 				this.ReplaceSelf(finalOpNode);
-				if (results != null) {
-					return ((ITriable) finalOpNode).TryRun(vars, results);
+				if (this.results != null) {
+					return ((ITriable) finalOpNode).TryRun(vars, this.results);
 				} else {
 					return finalOpNode.Run(vars);
 				}
@@ -158,11 +157,11 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 
 		private void SetNewParentToArgs(IOpNodeHolder newParent) {
 			//Console.WriteLine("setting new parent "+newParent+"(type "+newParent.GetType()+") to arguments of "+this+"("+this.GetType()+")");
-			for (int i = 0, n = args.Length; i < n; i++) {
-				args[i].parent = newParent;
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				this.args[i].parent = newParent;
 			}
-			str.parent = newParent;
-			secondsNode.parent = newParent;
+			this.str.parent = newParent;
+			this.secondsNode.parent = newParent;
 		}
 
 		private bool ResolveAsMethod(MemberDescriptor desc, out OpNode finalOpNode) {
@@ -175,28 +174,28 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 			switch (desc.specialType) {
 				case SpecialType.Normal:
 					finalOpNode = new OpNode_AddMethodTimer(this.parent, this.filename, this.line, this.column,
-						this.OrigNode, name, MethodInfo, secondsNode, args);
+						this.OrigNode, this.name, MethodInfo, this.secondsNode, this.args);
 					break;
 				case SpecialType.String:
-					if ((args.Length == 1) && (MemberResolver.ReturnsString(args[0]))) {
+					if ((this.args.Length == 1) && (MemberResolver.ReturnsString(this.args[0]))) {
 						goto case SpecialType.Normal; //is it not nice? :)
 					}
 					finalOpNode = new OpNode_AddMethodTimer_String(this.parent, this.filename, this.line, this.column,
-						this.OrigNode, name, MethodInfo, secondsNode, args, formatString);
+						this.OrigNode, this.name, MethodInfo, this.secondsNode, this.args, this.formatString);
 					break;
 				case SpecialType.Params:
 					ParameterInfo[] pars = MethodInfo.GetParameters();//these are guaranteed to have the right number of arguments...
 					int methodParamLength = pars.Length;
 					Type paramsElementType = pars[methodParamLength - 1].ParameterType.GetElementType();
 					int normalArgsLength = methodParamLength - 1;
-					int paramArgsLength = args.Length - normalArgsLength;
+					int paramArgsLength = this.args.Length - normalArgsLength;
 					OpNode[] normalArgs = new OpNode[normalArgsLength];
 					OpNode[] paramArgs = new OpNode[paramArgsLength];
-					Array.Copy(args, normalArgs, normalArgsLength);
-					Array.Copy(args, normalArgsLength, paramArgs, 0, paramArgsLength);
+					Array.Copy(this.args, normalArgs, normalArgsLength);
+					Array.Copy(this.args, normalArgsLength, paramArgs, 0, paramArgsLength);
 
 					finalOpNode = new OpNode_AddMethodTimer_Params(this.parent, this.filename, this.line, this.column,
-						this.OrigNode, name, MethodInfo, secondsNode, normalArgs, paramArgs, paramsElementType);
+						this.OrigNode, this.name, MethodInfo, this.secondsNode, normalArgs, paramArgs, paramsElementType);
 					break;
 			}
 			return true;
@@ -217,29 +216,29 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					Node node = arg.GetChildAt(i);
 					argsList.Add(LScriptMain.CompileNode(this, node));
 				}
-                args = argsList.ToArray();
+				this.args = argsList.ToArray();
 
 				object[] stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);
-				str = OpNode_Lazy_QuotedString.ConstructFromArray(
+				this.str = OpNode_Lazy_QuotedString.ConstructFromArray(
 					this, arg, stringTokens);
-				formatString = sb.ToString();
+				this.formatString = sb.ToString();
 			} else {
 				OpNode compiled = LScriptMain.CompileNode(this, arg);
-				args = new OpNode[] { compiled };
-				str = OpNode_ToString.Construct(this, arg);
-				formatString = "{0}";
+				this.args = new OpNode[] { compiled };
+				this.str = OpNode_ToString.Construct(this, arg);
+				this.formatString = "{0}";
 			}
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
-				args[index] = newNode;
-			} else if (secondsNode == oldNode) {
-				secondsNode = newNode;
-			} else if (str == oldNode) {
-				str = newNode;
+				this.args[index] = newNode;
+			} else if (this.secondsNode == oldNode) {
+				this.secondsNode = newNode;
+			} else if (this.str == oldNode) {
+				this.str = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -262,13 +261,13 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 
 		public override string ToString() {
 			StringBuilder sb = new StringBuilder("AddTimer(");
-			sb.Append("(").Append(name.Name).Append(", ").Append(secondsNode.ToString());
-			sb.Append(funcName).Append(", ");
-			int n = args.Length;
+			sb.Append("(").Append(this.name.Name).Append(", ").Append(this.secondsNode.ToString());
+			sb.Append(this.funcName).Append(", ");
+			int n = this.args.Length;
 			if (n > 0) {
 				sb.Append(", ");
 				for (int i = 0; i < n; i++) {
-					sb.Append(args[i].ToString()).Append(", ");
+					sb.Append(this.args[i].ToString()).Append(", ");
 				}
 			}
 			return sb.Append(")").ToString();

@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if (toBeDeleted != null) {
 				foreach (Character delete in toBeDeleted) {
-					attackers.Remove(delete);
+					this.attackers.Remove(delete);
 				}
 			}
 			if (this.attackers.Count == 0) {

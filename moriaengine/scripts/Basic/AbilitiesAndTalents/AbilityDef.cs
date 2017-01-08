@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue effectPower;
 		private FieldValue effectDuration;
 
-		public static new AbilityDef GetByDefname(string defname) {
+		public new static AbilityDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbilityDef;
 		}
 
@@ -62,12 +62,12 @@ namespace SteamEngine.CompiledScripts {
 
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			this.cooldown = InitTypedField("cooldown", 0, typeof(double));
-			this.chance = InitTypedField("chance", 1, typeof(double));
-			this.resources = InitTypedField("resources", null, typeof(ResourcesList));
-			this.requirements = InitTypedField("requirements", null, typeof(ResourcesList));
-			this.effectPower = InitTypedField("effectPower", 1.0, typeof(double));
-			this.effectDuration = InitTypedField("effectDuration", 5.0, typeof(double));
+			this.cooldown = this.InitTypedField("cooldown", 0, typeof(double));
+			this.chance = this.InitTypedField("chance", 1, typeof(double));
+			this.resources = this.InitTypedField("resources", null, typeof(ResourcesList));
+			this.requirements = this.InitTypedField("requirements", null, typeof(ResourcesList));
+			this.effectPower = this.InitTypedField("effectPower", 1.0, typeof(double));
+			this.effectDuration = this.InitTypedField("effectDuration", 5.0, typeof(double));
 		}
 
 		public ResourcesList Requirements {
@@ -108,11 +108,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckSuccess(Character target) {
-			return CheckSuccess(target.GetAbility(this));
+			return this.CheckSuccess(target.GetAbility(this));
 		}
 
 		public bool CheckSuccess(Ability ab) {
-			return CheckSuccess(ab.ModifiedPoints);
+			return this.CheckSuccess(ab.ModifiedPoints);
 		}
 
 		public bool CheckSuccess(int points) {
@@ -146,20 +146,20 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Used in some abilities to compute the power of their effect</summary>
 		public double EffectPower {
 			get {
-				return (double) effectPower.CurrentValue;
+				return (double) this.effectPower.CurrentValue;
 			}
 			set {
-				effectPower.CurrentValue = value;
+				this.effectPower.CurrentValue = value;
 			}
 		}
 
 		/// <summary>Used in some abilities to compute the duration of their effect. Typically in seconds.</summary>
 		public double EffectDuration {
 			get {
-				return (double) effectDuration.CurrentValue;
+				return (double) this.effectDuration.CurrentValue;
 			}
 			set {
-				effectDuration.CurrentValue = value;
+				this.effectDuration.CurrentValue = value;
 			}
 		}
 
@@ -210,13 +210,13 @@ namespace SteamEngine.CompiledScripts {
 		protected void Trigger_Activate(Character chr, Ability ab) {
 			ScriptArgs sa = new ScriptArgs(this, ab);
 
-			var result = chr.TryCancellableTrigger(AbilityDef.tkActivateAbility, sa);
+			var result = chr.TryCancellableTrigger(tkActivateAbility, sa);
 			if (result != TriggerResult.Cancel) {
 				try {
 					result = chr.On_ActivateAbility(this, ab);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (result != TriggerResult.Cancel) {
-					result = this.TryCancellableTrigger(chr, AbilityDef.tkActivate, null);
+					result = this.TryCancellableTrigger(chr, tkActivate, null);
 					if (result != TriggerResult.Cancel) {
 						try {
 							this.On_Activate(chr, ab);
@@ -250,7 +250,7 @@ namespace SteamEngine.CompiledScripts {
 					result = chr.On_DenyActivateAbility(denyArgs);
 				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (result != TriggerResult.Cancel) {
-					result = this.TryCancellableTrigger(chr, AbilityDef.tkDenyActivate, denyArgs);
+					result = this.TryCancellableTrigger(chr, tkDenyActivate, denyArgs);
 					if (result != TriggerResult.Cancel) {
 						try {
 							this.On_DenyActivate(denyArgs);
@@ -298,7 +298,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//this is not a character trigger. I think for them the @valuechanged should be enough
 		private void Trigger_Assign(Character chr, Ability ab, ScriptArgs sa) {
-			this.TryTrigger(chr, AbilityDef.tkAssign, sa);
+			this.TryTrigger(chr, tkAssign, sa);
 			try {
 				this.On_Assign(chr, ab);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -311,7 +311,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//this is not a character trigger. I think for them the @valuechanged should be enough
 		internal void Trigger_UnAssign(Character chr, Ability ab, ScriptArgs sa) {
-			this.TryTrigger(chr, AbilityDef.tkUnAssign, sa);
+			this.TryTrigger(chr, tkUnAssign, sa);
 			try {
 				this.On_UnAssign(chr, ab);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -324,12 +324,12 @@ namespace SteamEngine.CompiledScripts {
 
 		internal void Trigger_ValueChanged(Character chr, Ability ab, int previousValue) {
 			ScriptArgs sa = new ScriptArgs(this, ab, previousValue);
-			chr.TryTrigger(AbilityDef.tkAbilityValueChanged, sa);
+			chr.TryTrigger(tkAbilityValueChanged, sa);
 			try {
 				chr.On_AbilityValueChanged(this, ab, previousValue);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-			this.TryTrigger(chr, AbilityDef.tkValueChanged, sa);
+			this.TryTrigger(chr, tkValueChanged, sa);
 			try {
 				this.On_ValueChanged(chr, ab, previousValue);
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }

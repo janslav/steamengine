@@ -46,9 +46,9 @@ namespace SteamEngine.CompiledScripts {
 
 		public SkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			advRate = InitTypedField("advRate", 0, typeof(double[]));
-			delay = InitTypedField("delay", 0, typeof(double[]));
-			effect = InitTypedField("effect", 0, typeof(double[]));
+			this.advRate = this.InitTypedField("advRate", 0, typeof(double[]));
+			this.delay = this.InitTypedField("delay", 0, typeof(double[]));
+			this.effect = this.InitTypedField("effect", 0, typeof(double[]));
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
@@ -67,22 +67,22 @@ namespace SteamEngine.CompiledScripts {
 
 		public double[] AdvRate {
 			get {
-				return (double[]) advRate.CurrentValue;
+				return (double[]) this.advRate.CurrentValue;
 			}
 			set {
-				advRate.CurrentValue = value;
+				this.advRate.CurrentValue = value;
 			}
 		}
 
 		public double MinAdvRate {
 			get {
-				return AdvRate[0];
+				return this.AdvRate[0];
 			}
 		}
 
 		public double MaxAdvRate {
 			get {
-				double[] arr = AdvRate;
+				double[] arr = this.AdvRate;
 				return arr[arr.Length - 1];
 			}
 		}
@@ -100,31 +100,31 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public double AdvRateForValue(ushort skillValue) {
-			return ScriptUtil.EvalRangePermille(skillValue, AdvRate);
+			return ScriptUtil.EvalRangePermille(skillValue, this.AdvRate);
 		}
 
 		public double AdvRateOfChar(Character ch) {
-			return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), AdvRate);
+			return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.AdvRate);
 		}
 
 		public double[] Delay {
 			get {
-				return (double[]) delay.CurrentValue;
+				return (double[]) this.delay.CurrentValue;
 			}
 			set {
-				delay.CurrentValue = value;
+				this.delay.CurrentValue = value;
 			}
 		}
 
 		public double MinDelay {
 			get {
-				return Delay[0];
+				return this.Delay[0];
 			}
 		}
 
 		public double MaxDelay {
 			get {
-				double[] arr = Delay;
+				double[] arr = this.Delay;
 				return arr[arr.Length - 1];
 			}
 		}
@@ -144,10 +144,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public double[] Effect {
 			get {
-				return (double[]) effect.CurrentValue;
+				return (double[]) this.effect.CurrentValue;
 			}
 			set {
-				effect.CurrentValue = value;
+				this.effect.CurrentValue = value;
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 			if (ch.IsGM) {
 				return ScriptUtil.EvalRangePermille(1000.0, this.Effect);
 			} else {
-				return ScriptUtil.EvalRangePermille(SkillValueOfChar(ch), this.Effect);
+				return ScriptUtil.EvalRangePermille(this.SkillValueOfChar(ch), this.Effect);
 			}
 		}
 		#endregion Accessors
@@ -174,7 +174,7 @@ namespace SteamEngine.CompiledScripts {
 			if (ch.IsGM) {
 				return true;
 			} else {
-				return SkillUtils.CheckSuccess(SkillValueOfChar(ch), difficulty);
+				return SkillUtils.CheckSuccess(this.SkillValueOfChar(ch), difficulty);
 			}
 		}
 
@@ -383,11 +383,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName) {
-			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName));
+			return Acquire(self, (SkillDef) AbstractSkillDef.GetById((int) skillName));
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, Item tool) {
-			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), null, null, tool, null, null);
+			return Acquire(self, (SkillDef) AbstractSkillDef.GetById((int) skillName), null, null, tool, null, null);
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef, Item tool) {
@@ -395,11 +395,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, Item tool, object param1) {
-			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), null, null, tool, param1, null);
+			return Acquire(self, (SkillDef) AbstractSkillDef.GetById((int) skillName), null, null, tool, param1, null);
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillName skillName, IPoint4D target1, IPoint4D target2, Item tool, object param1, object param2) {
-			return Acquire(self, (SkillDef) SkillDef.GetById((int) skillName), target1, target2, tool, param1, param2);
+			return Acquire(self, (SkillDef) AbstractSkillDef.GetById((int) skillName), target1, target2, tool, param1, param2);
 		}
 
 		public Character Self {
@@ -415,7 +415,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[Persistence.Save]
-		public void Save(SteamEngine.Persistence.SaveStream output) {
+		public void Save(Persistence.SaveStream output) {
 			if (this.self != null) {
 				output.WriteValue("self", this.self);
 			}

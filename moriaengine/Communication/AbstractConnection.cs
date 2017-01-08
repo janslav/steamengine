@@ -50,7 +50,7 @@ namespace SteamEngine.Communication {
 				throw new SEException("The type must be the same as the TConnection generic parameter");
 			}
 
-			this.joinedPGTimer = new Timer(JoinedPGTimerMethod, null, joinedPGintervalInMS, Timeout.Infinite);
+			this.joinedPGTimer = new Timer(this.JoinedPGTimerMethod, null, joinedPGintervalInMS, Timeout.Infinite);
 		}
 
 		public AsyncCore<TConnection, TState, TEndPoint> Core {
@@ -80,7 +80,7 @@ namespace SteamEngine.Communication {
 			}
 		}
 
-		public override sealed void Dispose() {
+		public sealed override void Dispose() {
 			this.Close("Dispose() called");
 		}
 
@@ -275,7 +275,7 @@ namespace SteamEngine.Communication {
 
 		//called from main loop
 		public void SendPacketGroup(PacketGroup group) {
-			ThrowIfDisposed();
+			this.ThrowIfDisposed();
 
 			if (!group.IsEmpty) {
 				if (!this.state.PacketGroupsJoiningAllowed) {

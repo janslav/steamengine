@@ -30,7 +30,7 @@ namespace SteamEngine {
 	}
 
 
-	public sealed class PluginKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class PluginKeySaveImplementor : Persistence.ISimpleSaveImplementor {
 		private static Regex re = new Regex(@"^\@\@(?<value>.+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 

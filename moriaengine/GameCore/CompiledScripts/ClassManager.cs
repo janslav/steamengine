@@ -35,9 +35,9 @@ namespace SteamEngine.CompiledScripts {
 
 	public static class ClassManager {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		private readonly static Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+		private static readonly Dictionary<string, Type> allTypesbyName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
-		private readonly static Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
+		private static readonly Dictionary<string, RegisterTGDeleg> registerTGmethods = new Dictionary<string, RegisterTGDeleg>(StringComparer.OrdinalIgnoreCase);
 
 		private static List<SupplyDecoratedTypeBase> supplyDecoratedTypesDelegs = new List<SupplyDecoratedTypeBase>();
 
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static ICollection<Type> AllManagedTypes {
 			get {
-				return ClassManager.allTypesbyName.Values;
+				return allTypesbyName.Values;
 			}
 		} 
 
@@ -124,8 +124,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static bool IsTypeFromScripts(Type type) {
-			return (type.Assembly == ClassManager.GeneratedAssembly) ||
-				(type.Assembly == ClassManager.ScriptsAssembly);
+			return (type.Assembly == GeneratedAssembly) ||
+				(type.Assembly == ScriptsAssembly);
 		}
 
 		public static Type GetType(string name) {
@@ -189,8 +189,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal override bool InvokeDeleg(object instance) {
-				if (deleg != null) {
-					deleg((T) instance);
+				if (this.deleg != null) {
+					this.deleg((T) instance);
 					return true;
 				}
 				return false;
@@ -198,10 +198,10 @@ namespace SteamEngine.CompiledScripts {
 
 			internal override Type TargetClass {
 				get {
-					if (deleg == null) {
+					if (this.deleg == null) {
 						return typeof(void);
 					} else {
-						return deleg.Method.DeclaringType;
+						return this.deleg.Method.DeclaringType;
 					}
 				}
 			}
@@ -365,7 +365,7 @@ namespace SteamEngine.CompiledScripts {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void InitScripts() {
 			Type[] types = commonAssembly.GetTypes();
-			if (!ClassManager.InitClasses(types, commonAssembly.GetName().Name)) {
+			if (!InitClasses(types, commonAssembly.GetName().Name)) {
 				throw new SEException("Common library invalid.");
 			}
 

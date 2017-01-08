@@ -232,7 +232,7 @@ namespace SteamEngine.Timers {
 
 		public bool IsDeleted {
 			get {
-				return isDeleted;
+				return this.isDeleted;
 			}
 		}
 
@@ -251,10 +251,10 @@ namespace SteamEngine.Timers {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public virtual void Save(SaveStream output) {
-			if (fireAt != negativeOneSecond) {
+			if (this.fireAt != negativeOneSecond) {
 				output.WriteValue("fireAt", this.fireAt.Ticks);
 			}
-			if (period != negativeOneSecond) {
+			if (this.period != negativeOneSecond) {
 				output.WriteValue("period", this.period.Ticks);
 			}
 		}

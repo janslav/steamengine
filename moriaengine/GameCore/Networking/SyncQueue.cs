@@ -32,7 +32,7 @@ namespace SteamEngine.Networking {
 		private Thread thread;
 		internal AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
-		static private bool enabled;
+		private static bool enabled;
 
 		protected SyncQueue() {
 			this.thread = new Thread(this.Cycle);

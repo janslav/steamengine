@@ -84,18 +84,18 @@ namespace SteamEngine.Regions {
 		/// Determines whether this rectangle contains the specified rectangle completely.
 		/// </summary>
 		public bool Contains(AbstractRectangle rect) {
-			return Contains(rect.MinX, rect.MinY)//left lower
-					&& Contains(rect.MinX, rect.MaxY) //left upper
-					&& Contains(rect.MaxX, rect.MaxY) //right upper
-					&& Contains(rect.MaxX, rect.MinY);//right lower
+			return this.Contains(rect.MinX, rect.MinY)//left lower
+					&& this.Contains(rect.MinX, rect.MaxY) //left upper
+					&& this.Contains(rect.MaxX, rect.MaxY) //right upper
+					&& this.Contains(rect.MaxX, rect.MinY);//right lower
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool IntersectsWith(AbstractRectangle rect) {
-			return Contains(rect.MinX, rect.MinY)//left lower
-					|| Contains(rect.MinX, rect.MaxY) //left upper
-					|| Contains(rect.MaxX, rect.MaxY) //right upper
-					|| Contains(rect.MaxX, rect.MinY);//right lower
+			return this.Contains(rect.MinX, rect.MinY)//left lower
+					|| this.Contains(rect.MinX, rect.MaxY) //left upper
+					|| this.Contains(rect.MaxX, rect.MaxY) //right upper
+					|| this.Contains(rect.MaxX, rect.MinY);//right lower
 		}
 
 		/// <summary>
@@ -172,28 +172,28 @@ namespace SteamEngine.Regions {
 			if ((minEndX >= maxStartX) && (minEndY >= maxStartY)) {
 				return new ImmutableRectangle(maxStartX, maxStartY, minEndX, minEndY);
 			}
-			return ImmutableRectangle.voidInstance;
+			return voidInstance;
 		}
 
-		public override sealed int MinX {
+		public sealed override int MinX {
 			get {
 				return this.minX;
 			}
 		}
 
-		public override sealed int MaxX {
+		public sealed override int MaxX {
 			get {
 				return this.maxX;
 			}
 		}
 
-		public override sealed int MinY {
+		public sealed override int MinY {
 			get {
 				return this.minY;
 			}
 		}
 
-		public override sealed int MaxY {
+		public sealed override int MaxY {
 			get {
 				return this.maxY;
 			}

@@ -131,15 +131,15 @@ namespace SteamEngine.Converter {
 			}
 
 
-			BasicStageImpl(this.firstStageImplementations);
+			this.BasicStageImpl(this.firstStageImplementations);
 		}
 
 		public virtual void SecondStage() {
-			BasicStageImpl(secondStageImplementations);
+			this.BasicStageImpl(this.secondStageImplementations);
 		}
 
 		public virtual void ThirdStage() {
-			BasicStageImpl(this.thirdStageImplementations);
+			this.BasicStageImpl(this.thirdStageImplementations);
 
 			foreach (PropsLine line in this.origData.PropsLines) {
 				if (line.Name.ToLowerInvariant().StartsWith("tag.")) {
@@ -176,7 +176,7 @@ namespace SteamEngine.Converter {
 
 		protected static void WriteInQuotes(ConvertedDef def, PropsLine line) {
 			string value;
-			Match ma = TagMath.stringRE.Match(line.Value);
+			Match ma = ConvertTools.stringRE.Match(line.Value);
 			if (ma.Success) {
 				value = String.Intern(ma.Groups["value"].Value);
 			} else {

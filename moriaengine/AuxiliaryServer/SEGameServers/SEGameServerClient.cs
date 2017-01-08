@@ -4,7 +4,7 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.NamedPipes;
 
 namespace SteamEngine.AuxiliaryServer.SEGameServers {
-	public class SEGameServerClient : SteamEngine.AuxiliaryServer.GameServer,
+	public class SEGameServerClient : GameServer,
 #if MSWIN
  IConnectionState<NamedPipeConnection<SEGameServerClient>, SEGameServerClient, string> {
 #else
@@ -22,7 +22,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 
 		public NamedPipeConnection<SEGameServerClient> Conn {
 			get {
-				return conn;
+				return this.conn;
 			}
 		}
 

@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 					string value = values[i].Value; //resource name (trimmed)
 					double nmr = ConvertTools.ParseDouble(number);
-					resources.Add(ResourcesListParser.ParseResListItem(nmr, value));
+					resources.Add(ParseResListItem(nmr, value));
 				}
 				retVal = new ResourcesList(resources);
 				return true;

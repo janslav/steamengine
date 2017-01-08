@@ -27,10 +27,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam lidi z parametru (if any)
-			ArrayList playersList = (ArrayList) args.GetTag(D_Admin.playersListTK);
+			ArrayList playersList = (ArrayList) args.GetTag(playersListTK);
 			if (playersList == null) {
 				playersList = ScriptUtil.ArrayListFromEnumerable(Networking.GameServer.GetAllPlayers());
-				args.SetTag(D_Admin.playersListTK, playersList);//ulozime do parametru dialogu
+				args.SetTag(playersListTK, playersList);//ulozime do parametru dialogu
 			}
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
@@ -131,7 +131,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
-			ArrayList playersList = (ArrayList) args.GetTag(D_Admin.playersListTK);
+			ArrayList playersList = (ArrayList) args.GetTag(playersListTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch (gr.PressedButton) {
 					case 0: //exit
@@ -197,10 +197,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting players (chars) by name asc</summary>
 	public class CharComparerByName<T> : IComparer<T>, IComparer where T : AbstractCharacter {
-		public readonly static CharComparerByName<T> instance = new CharComparerByName<T>();
+		public static readonly CharComparerByName<T> instance = new CharComparerByName<T>();
 
 		public int Compare(object a, object b) {
-			return Compare((T) a, (T) b);
+			return this.Compare((T) a, (T) b);
 		}
 
 		public int Compare(T x, T y) {
@@ -210,10 +210,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting players (chars) by location name asc</summary>
 	public class CharComparerByLocation : IComparer<Character>, IComparer {
-		public readonly static CharComparerByLocation instance = new CharComparerByLocation();
+		public static readonly CharComparerByLocation instance = new CharComparerByLocation();
 
 		public int Compare(object a, object b) {
-			return Compare((Character) a, (Character) b);
+			return this.Compare((Character) a, (Character) b);
 		}
 
 		public int Compare(Character x, Character y) {
@@ -224,10 +224,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting players (chars) by account name asc</summary>
 	public class CharComparerByAccount : IComparer<Character>, IComparer {
-		public readonly static CharComparerByAccount instance = new CharComparerByAccount();
+		public static readonly CharComparerByAccount instance = new CharComparerByAccount();
 
 		public int Compare(object a, object b) {
-			return Compare((Character) a, (Character) b);
+			return this.Compare((Character) a, (Character) b);
 		}
 
 		public int Compare(Character x, Character y) {

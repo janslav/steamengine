@@ -57,21 +57,21 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (arg != oldNode) {
+			if (this.arg != oldNode) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				arg = newNode;
+				this.arg = newNode;
 			}
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVar = arg.Run(vars);
-			this.ReplaceSelf(arg);
+			object retVar = this.arg.Run(vars);
+			this.ReplaceSelf(this.arg);
 			return retVar;
 		}
 
 		public override string ToString() {
-			return "<" + arg + ">";
+			return "<" + this.arg + ">";
 		}
 	}
 }

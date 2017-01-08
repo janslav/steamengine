@@ -69,82 +69,82 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Level of the item in the dialog - for inner purposes</summary>
 		public int Level {
 			get {
-				return level;
+				return this.level;
 			}
 			set {
-				level = value;
+				this.level = value;
 			}
 		}
 
 		/// <summary>Will the component be written ? If false, this component won't be written (but its children will)</summary>
 		public bool NoWrite {
 			get {
-				return noWrite;
+				return this.noWrite;
 			}
 			set {
-				noWrite = value;
+				this.noWrite = value;
 			}
 		}
 
 		public List<GUTAComponent> Components {
 			get {
-				return components;
+				return this.components;
 			}
 		}
 
 		public GUTAComponent Parent {
 			get {
-				return parent;
+				return this.parent;
 			}
 			set {
-				parent = value;
+				this.parent = value;
 			}
 		}
 
 		public Gump Gump {
 			get {
-				return gump;
+				return this.gump;
 			}
 			set {
-				gump = value;
+				this.gump = value;
 			}
 		}
 
 		public int Width {
 			get {
-				return width;
+				return this.width;
 			}
 			set {
-				width = value;
+				this.width = value;
 			}
 		}
 
 		public virtual int Height {
 			get {
-				return height;
+				return this.height;
 			}
 			set {
-				height = value;
+				this.height = value;
 			}
 		}
 
 		/// <summary>Relative Y-position in the gump</summary>
 		public int YPos {
 			set {
-				yPos = value;
+				this.yPos = value;
 			}
 			get { //mainly for debug purposes
-				return yPos;
+				return this.yPos;
 			}
 		}
 
 		/// <summary>Relative X-position in the gump</summary>
 		public int XPos {
 			set {
-				xPos = value;
+				this.xPos = value;
 			}
 			get { //mainly for debug purposes
-				return xPos;
+				return this.xPos;
 			}
 		}
 
@@ -174,13 +174,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//first prepare all childrens size, positions etc - it is necessary to separate this from 
 			//writing all children because one child can have influcence to the previous children 
 			//(which must be considered before writing them)
-			foreach (GUTAComponent child in components) {
+			foreach (GUTAComponent child in this.components) {
 				child.parent = this;
 				child.gump = this.gump;
 				child.OnBeforeWrite(this);
 			}
 			//now write them
-			foreach (GUTAComponent child in components) {
+			foreach (GUTAComponent child in this.components) {
 				child.WriteComponent();
 			}
 		}
@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// processing if overriden.
 		/// </summary>
 		protected void AddNewChild(GUTAComponent child) {
-			components.Add(child);//simply add to the list			
+			this.components.Add(child);//simply add to the list			
 		}
 
 		/// <summary>
@@ -198,14 +198,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// to the actual ones
 		/// </summary>
 		public void AdjustPosition(int xPart, int yPart) {
-			xPos += xPart;
-			yPos += yPart;
+			this.xPos += xPart;
+			this.yPos += yPart;
 			//handle possible negative values if the argujments are negative...
-			if (xPos < 0)
-				xPos = 0;
-			if (yPos < 0)
-				yPos = 0;
-			foreach (GUTAComponent child in components) {
+			if (this.xPos < 0)
+				this.xPos = 0;
+			if (this.yPos < 0)
+				this.yPos = 0;
+			foreach (GUTAComponent child in this.components) {
 				child.AdjustPosition(xPart, yPart);
 			}
 		}
@@ -238,30 +238,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (!(child is GUTATable)) {
 				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " directly into the GUTAMatrix");
 			}
-			AddNewChild(child);
+			this.AddNewChild(child);
 		}
 
 		/// <summary>Writing the table means writing the background and calling the writing on all of its rows</summary>
 		internal override void WriteComponent() {
 			//first count the height from the number of rows (and spaces between them)
 			//upper and lower borders   //upper and lower row delimiters
-			height += 2 * ImprovedDialog.D_BORDER + 2 * ImprovedDialog.D_SPACE;
-			foreach (GUTATable row in components) {
+			this.height += 2 * ImprovedDialog.D_BORDER + 2 * ImprovedDialog.D_SPACE;
+			foreach (GUTATable row in this.components) {
 				//row height   //upper and lower inner row border delimiter
-				height += row.Height + 2 * ImprovedDialog.D_ROW_SPACE;
+				this.height += row.Height + 2 * ImprovedDialog.D_ROW_SPACE;
 			}
 			//add a smaller space between every row and add the total rows height
-			height += (components.Count - 1) * ImprovedDialog.D_ROW_SPACE;
+			this.height += (this.components.Count - 1) * ImprovedDialog.D_ROW_SPACE;
 
-			if (!NoWrite) {
+			if (!this.NoWrite) {
 				//make borders
-				gump.AddResizePic(xPos, yPos, ImprovedDialog.D_DEFAULT_DIALOG_BORDERS, width, height);
+				this.gump.AddResizePic(this.xPos, this.yPos, ImprovedDialog.D_DEFAULT_DIALOG_BORDERS, this.width, this.height);
 				//make the inner space
-				gump.AddGumpPicTiled(xPos + ImprovedDialog.D_BORDER, yPos + ImprovedDialog.D_BORDER,
-									 width - 2 * ImprovedDialog.D_BORDER, height - 2 * ImprovedDialog.D_BORDER,
+				this.gump.AddGumpPicTiled(this.xPos + ImprovedDialog.D_BORDER, this.yPos + ImprovedDialog.D_BORDER, this.width - 2 * ImprovedDialog.D_BORDER, this.height - 2 * ImprovedDialog.D_BORDER,
 									 ImprovedDialog.D_DEFAULT_DIALOG_BACKGROUND);
 			}
-			WriteChildren();
+			this.WriteChildren();
 		}
 
 		/// <summary>
@@ -270,7 +269,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public override string ToString() {
 			StringBuilder retStr = new StringBuilder("Dialog");
-			foreach (GUTAComponent child in components) {
+			foreach (GUTAComponent child in this.components) {
 				retStr.Append(child.ToString());
 			}
 			return retStr.ToString();
@@ -283,10 +282,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private bool transparent;
 		public bool Transparent {
 			get {
-				return transparent;
+				return this.transparent;
 			}
 			set {
-				transparent = value;
+				this.transparent = value;
 			}
 		}
 
@@ -297,7 +296,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Basic gump table - single virtual row - specify the number of innerrows only</summary>
 		public GUTATable(int rowCount) {
 			GUTARow oneRow = new GUTARow(rowCount); //virtual Row the columns are all inside
-			AddComponent(oneRow); //this will serve as component[0] in the following constructor (if necessary)
+			this.AddComponent(oneRow); //this will serve as component[0] in the following constructor (if necessary)
 		}
 
 		/// <summary>
@@ -313,12 +312,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (shallBeLast) { //are we adding the last column?					
 					GUTAColumn lastCol = new GUTAColumn(columnSizes[i]);
 					lastCol.IsLast = true;
-					components[0].AddComponent(lastCol);
+					this.components[0].AddComponent(lastCol);
 				} else {
 					if (columnSizes[i] == 0) {
-						components[0].AddComponent(new GUTAColumn());
+						this.components[0].AddComponent(new GUTAColumn());
 					} else {
-						components[0].AddComponent(new GUTAColumn(columnSizes[i]));
+						this.components[0].AddComponent(new GUTAColumn(columnSizes[i]));
 					}
 				}
 				//if the one-before-last column is zero sized, the next column will be added 'as last'				
@@ -333,30 +332,30 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public int RowHeight {
 			get {
-				return ((GUTARow) components[0]).RowHeight;
+				return ((GUTARow) this.components[0]).RowHeight;
 			}
 			set {
-				((GUTARow) components[0]).RowHeight = value;
+				((GUTARow) this.components[0]).RowHeight = value;
 			}
 		}
 
 		/// <summary>Similar behaviour as RowHeight - propagate to the virtual row inside</summary>
 		public int RowCount {
 			get {
-				return ((GUTARow) components[0]).RowCount;
+				return ((GUTARow) this.components[0]).RowCount;
 			}
 			set {
-				((GUTARow) components[0]).RowCount = value;
+				((GUTARow) this.components[0]).RowCount = value;
 			}
 		}
 
 		/// <summary>Similar behaviour as RowHeight - propagate to the virtual row inside</summary>
 		public bool InnerRowsDelimited {
 			get {
-				return ((GUTARow) components[0]).InnerRowsDelimited;
+				return ((GUTARow) this.components[0]).InnerRowsDelimited;
 			}
 			set {
-				((GUTARow) components[0]).InnerRowsDelimited = value;
+				((GUTARow) this.components[0]).InnerRowsDelimited = value;
 			}
 		}
 
@@ -366,29 +365,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		///  </summary>
 		public override int Height {
 			get {
-				if (height == 0) {
+				if (this.height == 0) {
 					//height has not yet been computed, compute it now, sumarize it from the GUTARows inside
-					foreach (GUTARow virtualRow in components) {
-						height += virtualRow.RowCount * virtualRow.RowHeight +
+					foreach (GUTARow virtualRow in this.components) {
+						this.height += virtualRow.RowCount * virtualRow.RowHeight +
 							//if the inner rows of the virtual row are to be delimited, add corresponding number of space for it
 							(virtualRow.InnerRowsDelimited ? (virtualRow.RowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
 						//if the GUTARow row is to be separated from the other GUTARows then add the separating space
 						//(but dont separate the last row!)
-						if (components.IndexOf(virtualRow) < (components.Count - 1)) {
-							height += (virtualRow.InTableSeparated ? 1 : 0) * ImprovedDialog.D_ROW_SPACE;
+						if (this.components.IndexOf(virtualRow) < (this.components.Count - 1)) {
+							this.height += (virtualRow.InTableSeparated ? 1 : 0) * ImprovedDialog.D_ROW_SPACE;
 						}
 					}
-					return height;
+					return this.height;
 				} else {
 					//the height has been computed, use it instead of computing it again...
-					return height;
+					return this.height;
 				}
 			}
 		}
 
 		/// <summary>Add a single user-defined GUTARow to the table</summary>
 		public void AddRow(GUTARow row) {
-			AddComponent(row);
+			this.AddComponent(row);
 		}
 
 		/// <summary>
@@ -409,12 +408,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public GUTAComponent this[int row, int col] {
 			set {
 				//set it on the 1st virtual row
-				((GUTARow) components[0])[row, col] = value;
+				((GUTARow) this.components[0])[row, col] = value;
 			}
 			get {
 				//get the value from the first virtual row
-				GUTARow virtualRow = (GUTARow) components[0];
-				return ((GUTARow) components[0])[row, col];
+				GUTARow virtualRow = (GUTARow) this.components[0];
+				return ((GUTARow) this.components[0])[row, col];
 			}
 		}
 
@@ -432,7 +431,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		///  </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 			if (parent.Components.IndexOf(this) > 0) { //this is not the first row
 				//take the position from the previous sibling table
 				GUTATable lastTable = (GUTATable) parent.Components[parent.Components.IndexOf(this) - 1];
@@ -452,7 +451,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					this.yPos += ImprovedDialog.D_BORDER; //just bellow the top border   
 					this.yPos += ImprovedDialog.D_SPACE; //one space to delimit the row from the top border
 				} else {
-					width = parent.Width - ImprovedDialog.D_COL_SPACE; //substract the column delimiter since all parent columns get this substracted...
+					this.width = parent.Width - ImprovedDialog.D_COL_SPACE; //substract the column delimiter since all parent columns get this substracted...
 					GUTAColumn parCol = (GUTAColumn) parent;
 					//parentalGUTAColumn->GUTARow.Components.IndexOf(parentalGUTAColumn) > 0
 					//if (parCol.Parent.Components.IndexOf(parCol) == parCol.Parent.Components.Count - 1) {
@@ -464,10 +463,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			//if adding to GUTAMatrix, resize it to fit, otherwise take simply the size of the parent (usually GUTAColumn)
 			if (parent is GUTAMatrix) {
-				width = parent.Width - 2 * ImprovedDialog.D_BORDER; //the row must get between two table borders...
-				width -= 2 * ImprovedDialog.D_SPACE + 2 * ImprovedDialog.D_ROW_SPACE; //delimit row from the table borders and fit into the grey row borders
+				this.width = parent.Width - 2 * ImprovedDialog.D_BORDER; //the row must get between two table borders...
+				this.width -= 2 * ImprovedDialog.D_SPACE + 2 * ImprovedDialog.D_ROW_SPACE; //delimit row from the table borders and fit into the grey row borders
 
-				yPos += ImprovedDialog.D_ROW_SPACE; //one space in the inner row border			
+				this.yPos += ImprovedDialog.D_ROW_SPACE; //one space in the inner row border			
 			}
 		}
 
@@ -479,33 +478,33 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//set the row's parent now (we may need it for computing the columns height) e.g. when
 			//adding a prev/next buttons to the bottom of the column (we need to know its height)
 			child.Parent = this;
-			AddNewChild(child);
+			this.AddNewChild(child);
 		}
 
 		/// <summary>Simply write the row background and continue with the virtual rows)</summary>
 		internal override void WriteComponent() {
-			if (!NoWrite) { //dont write the grey background (we dont need the borders)
+			if (!this.NoWrite) { //dont write the grey background (we dont need the borders)
 				//first add the main "grey" - border tile, within the table borders delimited by spaces
 				//take one space back (see OnBeforeWrite method why...)
-				gump.AddGumpPicTiled(xPos - ImprovedDialog.D_ROW_SPACE, yPos - ImprovedDialog.D_ROW_SPACE,
+				this.gump.AddGumpPicTiled(this.xPos - ImprovedDialog.D_ROW_SPACE, this.yPos - ImprovedDialog.D_ROW_SPACE,
 					//size to fit the rows outer grey border
-									 width + 2 * ImprovedDialog.D_ROW_SPACE, Height + 2 * ImprovedDialog.D_ROW_SPACE,
+					this.width + 2 * ImprovedDialog.D_ROW_SPACE, this.Height + 2 * ImprovedDialog.D_ROW_SPACE,
 									 ImprovedDialog.D_DEFAULT_ROW_BORDERS);
 			}
 			////then add the inner beige tile, delimit it from the inner border by a little space too
 			//gump.AddGumpPicTiled(xPos, yPos, width, Height, gumpBackground);
 			//Globals.SrcCharacter.SysMessage("Table: " + (xPos - ImprovedDialog.D_ROW_SPACE) + "," + (yPos - ImprovedDialog.D_ROW_SPACE) + "," + (width + 2 * ImprovedDialog.D_ROW_SPACE) + "," + (height + 2 * ImprovedDialog.D_ROW_SPACE));
 			//write GUTARows
-			WriteChildren();
+			this.WriteChildren();
 		}
 
 		public override string ToString() {
 			string offset = "\r\n";
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				offset += "\t";
 			}
 			StringBuilder retStr = new StringBuilder(offset + "->Table");
-			foreach (GUTAComponent child in components) {
+			foreach (GUTAComponent child in this.components) {
 				retStr.Append(child.ToString());
 			}
 			return retStr.ToString();
@@ -547,12 +546,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (shallBeLast) { //are we adding the last column?					
 					GUTAColumn lastCol = new GUTAColumn(columnSizes[i]);
 					lastCol.IsLast = true;
-					AddComponent(lastCol);
+					this.AddComponent(lastCol);
 				} else {
 					if (columnSizes[i] == 0) {
-						AddComponent(new GUTAColumn());
+						this.AddComponent(new GUTAColumn());
 					} else {
-						AddComponent(new GUTAColumn(columnSizes[i]));
+						this.AddComponent(new GUTAColumn(columnSizes[i]));
 					}
 				}
 				//if the one-before-last column is zero sized, the next column will be added 'as last'				
@@ -563,28 +562,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public GUTAComponent this[int row, int col] {
 			get {
 				//just return the desired GUTAColumn if present
-				if (Components.Count <= col) {
+				if (this.Components.Count <= col) {
 					//dont forget that indexing is counted from zero! 
 					//so col=6 means we want to access 7th column
 					throw new SEException("Not enough columns in the GUTARow - trying to access " +
-										   (col + 1) + ". column out of " + Components.Count);
+										   (col + 1) + ". column out of " + this.Components.Count);
 				}
-				return Components[col];
+				return this.Components[col];
 			}
 			set {
 				//first check if we have enough columns
-				if (RowCount < row) {
+				if (this.RowCount < row) {
 					throw new SEException("Not enough rows in the GUTARow - trying to access " +
-										  (row + 1) + ". row out of " + RowCount);
+										  (row + 1) + ". row out of " + this.RowCount);
 				}
-				if (Components.Count <= col) {
+				if (this.Components.Count <= col) {
 					//dont forget that indexing is counted from zero! 
 					//so col=6 means we want to access 7th column
 					throw new SEException("Not enough columns in the GUTARow - trying to access " +
-										   (col + 1) + ". column out of " + Components.Count);
+										   (col + 1) + ". column out of " + this.Components.Count);
 				}
 				//get the column we are adding the component to
-				GUTAColumn columnToAccess = (GUTAColumn) Components[col];
+				GUTAColumn columnToAccess = (GUTAColumn) this.Components[col];
 				//now check what is the component:
 				GUTAComponent addedObj = value as GUTAComponent;//the component will be added directly	
 				if (addedObj == null) {
@@ -597,8 +596,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 
 				//move the component to the desired row
-				addedObj.YPos += row * RowHeight;
-				if (InnerRowsDelimited) { //add the proper space !
+				addedObj.YPos += row *this.RowHeight;
+				if (this.InnerRowsDelimited) { //add the proper space !
 					addedObj.YPos += (row - 1) * ImprovedDialog.D_COL_SPACE; //from the second row we must add some pixels...
 				}
 				//and add the component
@@ -616,10 +615,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public int RowCount {
 			get {
-				return rowCount;
+				return this.rowCount;
 			}
 			set {//the setter may be needed in 'setting' dialog - we may need to add some rows...
-				rowCount = value;
+				this.rowCount = value;
 			}
 		}
 
@@ -629,37 +628,37 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public int RowHeight {
 			get {
-				return rowHeight;
+				return this.rowHeight;
 			}
 			set {
-				rowHeight = value;
+				this.rowHeight = value;
 			}
 		}
 
 		public override int Height {
 			get {
-				if (height == 0) {
+				if (this.height == 0) {
 					//height has not yet been computed, compute it now from the RowHeight and RowCount
-					height += RowCount * RowHeight +
+					this.height += this.RowCount *this.RowHeight +
 						//if the inner rows of the virtual row are to be delimited, add corresponding number of space for it
-							(InnerRowsDelimited ? (RowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
+							(this.InnerRowsDelimited ? (this.RowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
 
-					return height;
+					return this.height;
 				} else {
 					//the height has been computed, use it instead of computing it again...
-					return height;
+					return this.height;
 				}
 			}
 		}
 
 		public bool InnerRowsDelimited {
 			get {
-				return innerRowsDelimited;
+				return this.innerRowsDelimited;
 			}
 			set {
-				innerRowsDelimited = value;
-				if (innerRowsDelimited && (rowCount > 1)) { //makes sense only for more than 1 row...
-					foreach (GUTAColumn child in components) {
+				this.innerRowsDelimited = value;
+				if (this.innerRowsDelimited && (this.rowCount > 1)) { //makes sense only for more than 1 row...
+					foreach (GUTAColumn child in this.components) {
 						child.DelimitRows = true;
 					}
 				}
@@ -668,10 +667,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public bool InTableSeparated {
 			get {
-				return inTableSeparated;
+				return this.inTableSeparated;
 			}
 			set {
-				inTableSeparated = value;
+				this.inTableSeparated = value;
 			}
 		}
 
@@ -681,7 +680,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 			if (parent.Components.IndexOf(this) > 0) { //this is not the first virtual row
 				//take the position from the previous sibling table
 				GUTARow lastRow = (GUTARow) parent.Components[parent.Components.IndexOf(this) - 1];
@@ -695,39 +694,39 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.xPos = parent.XPos;
 				this.yPos = parent.YPos;
 			}
-			width = parent.Width;
+			this.width = parent.Width;
 		}
 
 		internal override void AddComponent(GUTAComponent child) {
 			//set the column's parent now (we may need it for computing the columns height) e.g. when
 			//adding a prev/next buttons to the bottom of the column (we need to know its height)
 			child.Parent = this;
-			AddNewChild(child);
+			this.AddNewChild(child);
 		}
 
 		internal override void WriteComponent() {
 			//add the inner-GUTATabular beige tile, delimit it from the table's inner border by a little space too
-			gump.AddGumpPicTiled(xPos, yPos, width, Height, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
+			this.gump.AddGumpPicTiled(this.xPos, this.yPos, this.width, this.Height, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
 
 			//and also check the delimiting space for GUTARows in the GUTATable (if demanded)
-			if (parent.Components.IndexOf(this) < (parent.Components.Count - 1)) { //it is not the last GUTARow in the table
-				if (inTableSeparated) {//and this GUTARow is to be separated
+			if (this.parent.Components.IndexOf(this) < (this.parent.Components.Count - 1)) { //it is not the last GUTARow in the table
+				if (this.inTableSeparated) {//and this GUTARow is to be separated
 					//add the delimiting beige line (delimiting one GUTARow from the other
-					gump.AddGumpPicTiled(xPos, yPos + Height, width, ImprovedDialog.D_ROW_SPACE, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
+					this.gump.AddGumpPicTiled(this.xPos, this.yPos + this.Height, this.width, ImprovedDialog.D_ROW_SPACE, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
 				}
 			}
 
 			//write GUTAColumns
-			WriteChildren();
+			this.WriteChildren();
 		}
 
 		public override string ToString() {
 			string offset = "\r\n";
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				offset += "\t";
 			}
 			StringBuilder retStr = new StringBuilder(offset + "->Row");
-			foreach (GUTAComponent child in components) {
+			foreach (GUTAComponent child in this.components) {
 				retStr.Append(child.ToString());
 			}
 			return retStr.ToString();
@@ -763,16 +762,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public int RowCount {
 			get {
-				if (rowCount == 0) {
+				if (this.rowCount == 0) {
 					//row count is not yet set - get it from the parent
-					rowCount = ((GUTARow) parent).RowCount;
-					return rowCount;
+					this.rowCount = ((GUTARow) this.parent).RowCount;
+					return this.rowCount;
 				} else {
-					return rowCount;
+					return this.rowCount;
 				}
 			}
 			set {
-				rowCount = value;
+				this.rowCount = value;
 			}
 		}
 
@@ -783,58 +782,58 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public override int Height {
 			get {
-				if (height == 0) {
+				if (this.height == 0) {
 					//height is not yet set
-					height = RowCount * ((GUTARow) parent).RowHeight +
+					this.height = this.RowCount * ((GUTARow) this.parent).RowHeight +
 						//in case of delimiting the rows, add the delimiting spaces
-						(delimitRows ? (rowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
-					return height;
+						(this.delimitRows ? (this.rowCount - 1) * ImprovedDialog.D_COL_SPACE : 0);
+					return this.height;
 				} else {
-					return height;
+					return this.height;
 				}
 			}
 		}
 
 		public bool IsLast {
 			get {
-				return isLast;
+				return this.isLast;
 			}
 			set {
-				isLast = value;
+				this.isLast = value;
 			}
 		}
 
 		public bool DelimitRows {
 			get {
-				return delimitRows;
+				return this.delimitRows;
 			}
 			set {
-				delimitRows = value;
+				this.delimitRows = value;
 			}
 		}
 
 		/// <summary>Set the position according to the previous columns (if any) and set the size</summary>
 		protected override void OnBeforeWrite(GUTAComponent parent) {
 			//set the level
-			level = parent.Level + 1;
+			this.level = parent.Level + 1;
 
 			if (parent.Components.IndexOf(this) > 0) {//this is not the first column
 				//get the previous column
 				GUTAColumn prevCol = (GUTAColumn) parent.Components[parent.Components.IndexOf(this) - 1];
 				bool lastInRow = parent.Components.IndexOf(this) == parent.Components.Count - 1;
-				if (isLast) { //last column and the previous sibling had 0 width specified - it will be recomputed now
+				if (this.isLast) { //last column and the previous sibling had 0 width specified - it will be recomputed now
 					//adjust the previous columns size to the space between the twiceprevious column 
 					//and the newly added column (it can be also negative value...)              
-					prevCol.Width += parent.Width - (prevCol.XPos - parent.XPos) - prevCol.Width - width;
+					prevCol.Width += parent.Width - (prevCol.XPos - parent.XPos) - prevCol.Width - this.width;
 					//now the size is recomputed, the new column will fit right to the end of the row...
 				}
 				//the x position is right to the right of the previous sibling
 				this.xPos = prevCol.xPos + prevCol.width;
 				//the y position is simple
 				this.yPos = prevCol.yPos;
-				if (width == 0) {//no width - it is probably the last column in the row 
+				if (this.width == 0) {//no width - it is probably the last column in the row 
 					//take the rest to the end of the row
-					width = parent.Width - (xPos - parent.XPos);
+					this.width = parent.Width - (this.xPos - parent.XPos);
 				}
 				if (lastInRow) { //really last column (no looking on the prev. col. width as in "isLast" case
 					prevCol.width += ImprovedDialog.D_COL_SPACE; //widen the previous column
@@ -844,13 +843,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//first column in the table
 				this.xPos = parent.XPos;// + ImprovedDialog.D_COL_SPACE; //(1 space for column's border)
 				this.yPos = parent.YPos;// + ImprovedDialog.D_COL_SPACE; //(1 space for column's border)
-				if (width == 0) {
+				if (this.width == 0) {
 					//no width was specified in the constructor - this is probably the only column in the row,
 					//set the width from the parent
-					width = parent.Width;
+					this.width = parent.Width;
 				}
 				if (parent.Components.Count == 1) {//only one column in the row (so this is both the first and the last one)
-					width += ImprovedDialog.D_COL_SPACE; //add the colspace to it (it is always substracted in the WriteComponent method and it would be missing in this particular case...)
+					this.width += ImprovedDialog.D_COL_SPACE; //add the colspace to it (it is always substracted in the WriteComponent method and it would be missing in this particular case...)
 				}
 			}
 		}
@@ -860,46 +859,46 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if ((child is GUTAMatrix) || (child is GUTAColumn)) {
 				throw new IllegalGUTAComponentExtensionException("Cannot insert " + child.GetType() + " into the GUTAColumn. Use the GUTATable, leaf components or texts instead!");
 			}
-			AddNewChild(child);
+			this.AddNewChild(child);
 		}
 
 		/// <summary>Simply write the columns background and continue with the children)</summary>
 		internal override void WriteComponent() {
-			if (!NoWrite) {
+			if (!this.NoWrite) {
 				//position is specified, remove one space from the width (will appear on the right col. side)
-				gump.AddGumpPicTiled(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, Height, ImprovedDialog.D_DEFAULT_COL_BACKGROUND);
+				this.gump.AddGumpPicTiled(this.xPos, this.yPos, this.width - ImprovedDialog.D_COL_SPACE, this.Height, ImprovedDialog.D_DEFAULT_COL_BACKGROUND);
 			}
 			//parent = GUTARow, Parent = rows.parent...
-			if (((GUTATable) parent.Parent).Transparent) {//the grandparent table is set to be transparent
-				SetTransparency();//make it transparent after writing out
+			if (((GUTATable) this.parent.Parent).Transparent) {//the grandparent table is set to be transparent
+				this.SetTransparency();//make it transparent after writing out
 			}
-			if (!NoWrite) {
+			if (!this.NoWrite) {
 				//and also check the delimiting spaces for rows..., after the transparency check
-				if (delimitRows) {
-					int rowHeight = ((GUTARow) parent).RowHeight;
-					for (int i = 0; i < rowCount - 1; i++) {
+				if (this.delimitRows) {
+					int rowHeight = ((GUTARow) this.parent).RowHeight;
+					for (int i = 0; i < this.rowCount - 1; i++) {
 						//add after each "row" one pixel beige line...
-						gump.AddGumpPicTiled(xPos, yPos + (i + 1) * rowHeight + (i) * ImprovedDialog.D_COL_SPACE, width - ImprovedDialog.D_COL_SPACE, 1, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
+						this.gump.AddGumpPicTiled(this.xPos, this.yPos + (i + 1) * rowHeight + (i) * ImprovedDialog.D_COL_SPACE, this.width - ImprovedDialog.D_COL_SPACE, 1, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
 					}
 				}
 			}
 			//Globals.SrcCharacter.SysMessage("Col: " + xPos + "," + yPos + "," + width + "," + height);
 			//write children (another inner GUTATable or leaf components)
-			WriteChildren();
+			this.WriteChildren();
 		}
 
 		/// <summary>Make the whole column transparent</summary>
 		private void SetTransparency() {
-			gump.AddCheckerTrans(xPos, yPos, width - ImprovedDialog.D_COL_SPACE, Height);
+			this.gump.AddCheckerTrans(this.xPos, this.yPos, this.width - ImprovedDialog.D_COL_SPACE, this.Height);
 		}
 
 		public override string ToString() {
 			string offset = "\r\n";
-			for (int i = 0; i < level; i++) {
+			for (int i = 0; i < this.level; i++) {
 				offset += "\t";
 			}
 			StringBuilder retStr = new StringBuilder(offset + "->Column");
-			foreach (GUTAComponent child in components) {
+			foreach (GUTAComponent child in this.components) {
 				retStr.Append(child.ToString());
 			}
 			return retStr.ToString();

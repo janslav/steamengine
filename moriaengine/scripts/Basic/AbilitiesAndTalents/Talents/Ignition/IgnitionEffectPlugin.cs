@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void OnTimeout(TagHolder cont) {
 			IgnitionEffectPlugin ignition = (IgnitionEffectPlugin) cont;
-			ignition.ModifyEffect(differencePerTick);
+			ignition.ModifyEffect(this.differencePerTick);
 			ignition.AnnounceIgnitionStrength();
 		}
 	}

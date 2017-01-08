@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			var skl = (SkillDef) AbstractSkillDef.GetByKey(definition); //"hiding", "anatomy" etc.
 			if (skl == null) {
-				skl = (SkillDef) SkillDef.GetByDefname(definition); //"skill_hiding, "skill_anatomy" etc.
+				skl = (SkillDef) AbstractSkillDef.GetByDefname(definition); //"skill_hiding, "skill_anatomy" etc.
 			}
 			if (skl != null) {
 				resource = new SkillResource(skl, number, asPercentage);
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public SkillDef SkillDef {
-			get { return skillDef; }
+			get { return this.skillDef; }
 		}
 
 		public override string ParsableString {
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 		public override bool IsSameResource(IResourceListEntry newOne) {
 			SkillResource newResource = newOne as SkillResource;
 			if (newResource != null) {
-				return (skillDef == newResource.skillDef);
+				return (this.skillDef == newResource.skillDef);
 			}
 			return false;
 		}

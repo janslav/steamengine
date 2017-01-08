@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 
 	public abstract class MassSettings_ByClass<DefType> : SettingsMetaCategory, IMassSettings where DefType : AbstractDef {
-		static protected List<DefType> defs;
+		protected static List<DefType> defs;
 
 		static MassSettings_ByClass() {
 			if (defs == null) {
@@ -65,12 +65,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		protected class FieldView_ByClass_List : ReadOnlyDataFieldView {
 			protected int index;
 
-			internal protected FieldView_ByClass_List(int index) {
+			protected internal FieldView_ByClass_List(int index) {
 				this.index = index;
 			}
 
 			public override string GetName(object target) {
-				return defs[index].ToString();
+				return defs[this.index].ToString();
 			}
 
 			public override Type FieldType {
@@ -102,7 +102,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return defs[index].ToString();
+				return defs[this.index].ToString();
 			}
 
 			public override Type FieldType {
@@ -112,11 +112,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				return this.GetValue(defs[index]);
+				return this.GetValue(defs[this.index]);
 			}
 
 			public override void SetValue(object target, object value) {
-				this.SetValue(defs[index], (FieldType) value);
+				this.SetValue(defs[this.index], (FieldType) value);
 			}
 
 			public override string GetStringValue(object target) {
@@ -146,7 +146,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return defs[index].Name;
+				return defs[this.index].Name;
 			}
 		}
 	}
@@ -179,18 +179,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		private void InitDefList() {
-			if (defs == null) {
+			if (this.defs == null) {
 				int n = models.Length;
-				defs = new List<DefType>[n];
+				this.defs = new List<DefType>[n];
 				for (int i = 0; i < n; i++) {
 					ushort model = models[i];
 					List<DefType> list = new List<DefType>();
-					defs[i] = list;
+					this.defs[i] = list;
 					foreach (AbstractScript scp in AbstractScript.AllScripts) {
 						DefType def = scp as DefType;
 						if ((def != null) &&
-								(def.Model == model) &&
-								CheckIfApplies(def)) {
+								(def.Model == model) && this.CheckIfApplies(def)) {
 							list.Add(def);
 						}
 					}
@@ -212,7 +211,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public int Count {
 			get {
-				InitDefList();
+				this.InitDefList();
 				return models.Length;
 			}
 		}
@@ -230,7 +229,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				DefType def = ((MassSettings_ByModel<DefType, FieldType>) target).defs[index][0];
+				DefType def = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index][0];
 				return def.Name;
 			}
 
@@ -242,7 +241,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override object GetValue(object target) {
 				//set the fields on all defs to the same value.
-				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[index];
+				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index];
 				FieldType value = this.GetValue(defs[0]);
 
 				foreach (DefType def in defs) {
@@ -253,7 +252,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override void SetValue(object target, object value) {
-				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[index];
+				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index];
 
 				foreach (DefType def in defs) {
 					this.SetValue(def, (FieldType) value);
@@ -290,17 +289,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public SettingType[] settings = new SettingType[7];
 
 		public MetaMassSetting() {
-			for (int i = 0, n = settings.Length; i < n; i++) {
-				settings[i] = new SettingType();
+			for (int i = 0, n = this.settings.Length; i < n; i++) {
+				this.settings[i] = new SettingType();
 			}
 
-			settings[0].material = Material.Copper;
-			settings[1].material = Material.Iron;
-			settings[2].material = Material.Verite;
-			settings[3].material = Material.Valorite;
-			settings[4].material = Material.Obsidian;
-			settings[5].material = Material.Adamantinum;
-			settings[6].material = Material.Mithril;
+			this.settings[0].material = Material.Copper;
+			this.settings[1].material = Material.Iron;
+			this.settings[2].material = Material.Verite;
+			this.settings[3].material = Material.Valorite;
+			this.settings[4].material = Material.Obsidian;
+			this.settings[5].material = Material.Adamantinum;
+			this.settings[6].material = Material.Mithril;
 		}
 
 		public string Name {
@@ -323,7 +322,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return ((MetaMassSetting<SettingType, DefType, FieldType>) target).settings[index].material.ToString();
+				return ((MetaMassSetting<SettingType, DefType, FieldType>) target).settings[this.index].material.ToString();
 			}
 
 			public override Type FieldType {
@@ -331,11 +330,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				return ((MetaMassSetting<SettingType, DefType, FieldType>) target).settings[index];
+				return ((MetaMassSetting<SettingType, DefType, FieldType>) target).settings[this.index];
 			}
 
 			public override string GetStringValue(object target) {
-				return ObjectSaver.Save(GetValue(target));
+				return ObjectSaver.Save(this.GetValue(target));
 			}
 		}
 	}
@@ -398,14 +397,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			protected WearableType type;
 
 			protected FieldView_ByWearableTypeAndMaterial(int index) {
-				firstIndex = index / 9;
-				secondIndex = index % 9;
-				type = (WearableType) (firstIndex + 2);
-				mat = (Material) (secondIndex + 1);
+				this.firstIndex = index / 9;
+				this.secondIndex = index % 9;
+				this.type = (WearableType) (this.firstIndex + 2);
+				this.mat = (Material) (this.secondIndex + 1);
 			}
 
 			public override string GetName(object target) {
-				return type + ", " + mat;
+				return this.type + ", " + this.mat;
 			}
 
 			public override Type FieldType {
@@ -416,7 +415,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override object GetValue(object target) {
 				//set the fields on all defs to the same value.
-				List<DefType> defs = defSets[firstIndex, secondIndex];
+				List<DefType> defs = defSets[this.firstIndex, this.secondIndex];
 				FieldType value = this.GetValue(defs[0]);
 
 				foreach (DefType def in defs) {
@@ -427,7 +426,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override void SetValue(object target, object value) {
-				List<DefType> defs = defSets[firstIndex, secondIndex];
+				List<DefType> defs = defSets[this.firstIndex, this.secondIndex];
 
 				foreach (DefType def in defs) {
 					this.SetValue(def, (FieldType) value);

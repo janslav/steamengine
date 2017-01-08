@@ -60,17 +60,17 @@ namespace SteamEngine.RemoteConsole {
 			this.ContextMenu = new ContextMenu();
 
 			// Initialize default text and background colors
-			textColor = RtfColor.Black;
-			highlightColor = RtfColor.White;
+			this.textColor = RtfColor.Black;
+			this.highlightColor = RtfColor.White;
 
 			// Get the horizontal and vertical resolutions at which the object is
 			// being displayed
 			using (Graphics _graphics = this.CreateGraphics()) {
-				xDpi = _graphics.DpiX;
-				yDpi = _graphics.DpiY;
+				this.xDpi = _graphics.DpiX;
+				this.yDpi = _graphics.DpiY;
 			}
 
-			HideCaret(Handle);
+			HideCaret(this.Handle);
 		}
 		#endregion
 
@@ -369,7 +369,7 @@ namespace SteamEngine.RemoteConsole {
 				fmt.cbSize = Marshal.SizeOf(fmt);
 
 				// Get the underline style
-				SendMessage(new HandleRef(this, Handle), EM_GETCHARFORMAT, SCF_SELECTION, ref fmt);
+				SendMessage(new HandleRef(this, this.Handle), EM_GETCHARFORMAT, SCF_SELECTION, ref fmt);
 				if ((fmt.dwMask & CFM_UNDERLINETYPE) == 0) {
 					return UnderlineStyle.None;
 				} else {
@@ -379,7 +379,7 @@ namespace SteamEngine.RemoteConsole {
 			}
 			set {
 				// Ensure we don't alter the color
-				UnderlineColor color = SelectionUnderlineColor;
+				UnderlineColor color = this.SelectionUnderlineColor;
 
 				// Ensure we don't show it if it shouldn't be shown
 				if (value == UnderlineStyle.None)
@@ -390,7 +390,7 @@ namespace SteamEngine.RemoteConsole {
 				fmt.cbSize = Marshal.SizeOf(fmt);
 				fmt.dwMask = CFM_UNDERLINETYPE;
 				fmt.bUnderlineType = (byte) ((byte) value | (byte) color);
-				SendMessage(new HandleRef(this, Handle), EM_SETCHARFORMAT, SCF_SELECTION, ref fmt);
+				SendMessage(new HandleRef(this, this.Handle), EM_SETCHARFORMAT, SCF_SELECTION, ref fmt);
 			}
 		}
 
@@ -409,7 +409,7 @@ namespace SteamEngine.RemoteConsole {
 				fmt.cbSize = Marshal.SizeOf(fmt);
 
 				// Get the underline color
-				SendMessage(new HandleRef(this, Handle), EM_GETCHARFORMAT, SCF_SELECTION, ref fmt);
+				SendMessage(new HandleRef(this, this.Handle), EM_GETCHARFORMAT, SCF_SELECTION, ref fmt);
 				if ((fmt.dwMask & CFM_UNDERLINETYPE) == 0) {
 					return UnderlineColor.None;
 				} else {
@@ -420,10 +420,10 @@ namespace SteamEngine.RemoteConsole {
 			set {
 				// If the an underline color of "None" is specified, remove underline effect
 				if (value == UnderlineColor.None) {
-					SelectionUnderlineStyle = UnderlineStyle.None;
+					this.SelectionUnderlineStyle = UnderlineStyle.None;
 				} else {
 					// Ensure we don't alter the style
-					UnderlineStyle style = SelectionUnderlineStyle;
+					UnderlineStyle style = this.SelectionUnderlineStyle;
 
 					// Ensure we don't show it if it shouldn't be shown
 					if (style == UnderlineStyle.None)
@@ -434,7 +434,7 @@ namespace SteamEngine.RemoteConsole {
 					fmt.cbSize = Marshal.SizeOf(fmt);
 					fmt.dwMask = CFM_UNDERLINETYPE;
 					fmt.bUnderlineType = (byte) ((byte) style | (byte) value);
-					SendMessage(new HandleRef(this, Handle), EM_SETCHARFORMAT, SCF_SELECTION, ref fmt);
+					SendMessage(new HandleRef(this, this.Handle), EM_SETCHARFORMAT, SCF_SELECTION, ref fmt);
 				}
 			}
 		}
@@ -458,15 +458,15 @@ namespace SteamEngine.RemoteConsole {
 		/// </remarks>
 		public void BeginUpdate() {
 			// Deal with nested calls
-			_Updating++;
-			if (_Updating > 1)
+			this._Updating++;
+			if (this._Updating > 1)
 				return;
 
 			// Prevent the control from raising any events
-			_OldEventMask = SendMessage(new HandleRef(this, Handle), EM_SETEVENTMASK, 0, 0);
+			this._OldEventMask = SendMessage(new HandleRef(this, this.Handle), EM_SETEVENTMASK, 0, 0);
 
 			// Prevent the control from redrawing itself
-			SendMessage(new HandleRef(this, Handle), WM_SETREDRAW, 0, 0);
+			SendMessage(new HandleRef(this, this.Handle), WM_SETREDRAW, 0, 0);
 		}
 
 		#endregion
@@ -482,15 +482,15 @@ namespace SteamEngine.RemoteConsole {
 		/// </remarks>
 		public void EndUpdate() {
 			// Deal with nested calls
-			_Updating--;
-			if (_Updating > 0)
+			this._Updating--;
+			if (this._Updating > 0)
 				return;
 
 			// Allow the control to redraw itself
-			SendMessage(new HandleRef(this, Handle), WM_SETREDRAW, 1, 0);
+			SendMessage(new HandleRef(this, this.Handle), WM_SETREDRAW, 1, 0);
 
 			// Allow the control to raise event messages
-			SendMessage(new HandleRef(this, Handle), EM_SETEVENTMASK, 0, _OldEventMask);
+			SendMessage(new HandleRef(this, this.Handle), EM_SETEVENTMASK, 0, this._OldEventMask);
 		}
 
 		#endregion
@@ -499,21 +499,21 @@ namespace SteamEngine.RemoteConsole {
 		/// This scrolls the scroll bar down to the bottom of the window.
 		/// </summary>
 		public void ScrollToBottom() {
-			SendMessage(new HandleRef(this, Handle), WM_VSCROLL, SB_BOTTOM, 0);
+			SendMessage(new HandleRef(this, this.Handle), WM_VSCROLL, SB_BOTTOM, 0);
 		}
 
 		/// <summary>
 		/// Scrolls the data up one page.
 		/// </summary>
 		public void ScrollPageUp() {
-			SendMessage(new HandleRef(this, Handle), WM_VSCROLL, SB_PAGEUP, 0);
+			SendMessage(new HandleRef(this, this.Handle), WM_VSCROLL, SB_PAGEUP, 0);
 		}
 
 		/// <summary>
 		/// Scrolls the data down one page.
 		/// </summary>
 		public void ScrollPageDown() {
-			SendMessage(new HandleRef(this, Handle), WM_VSCROLL, SB_PAGEDOWN, 0);
+			SendMessage(new HandleRef(this, this.Handle), WM_VSCROLL, SB_PAGEDOWN, 0);
 		}
 
 		/// <summary>
@@ -521,7 +521,7 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		public void ScrollLineUp(int num) {
 			for (int i = 0; i < num; i++) {
-				SendMessage(new HandleRef(this, Handle), WM_VSCROLL, SB_LINEUP, 0);
+				SendMessage(new HandleRef(this, this.Handle), WM_VSCROLL, SB_LINEUP, 0);
 			}
 		}
 
@@ -530,7 +530,7 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		public void ScrollLineDown(int num) {
 			for (int i = 0; i < num; i++) {
-				SendMessage(new HandleRef(this, Handle), WM_VSCROLL, SB_LINEDOWN, 0);
+				SendMessage(new HandleRef(this, this.Handle), WM_VSCROLL, SB_LINEDOWN, 0);
 			}
 		}
 
@@ -545,7 +545,7 @@ namespace SteamEngine.RemoteConsole {
 				info.cbSize = Marshal.SizeOf(info);
 				info.fMask = SIF_ALL;
 				//int ret = 
-					GetScrollInfo(new HandleRef(this, Handle), SBS_VERT, ref info);
+					GetScrollInfo(new HandleRef(this, this.Handle), SBS_VERT, ref info);
 				return new ScrollBarInformation(info.nMin, info.nMax, info.nPage, info.nPos, info.nTrackPos);
 			}
 		}
@@ -631,7 +631,7 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <param name="_text"></param>
 		public void AppendTextAsRtf(string _text) {
-			AppendTextAsRtf(_text, this.Font);
+			this.AppendTextAsRtf(_text, this.Font);
 		}
 
 		/// <summary>
@@ -641,7 +641,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="_text"></param>
 		/// <param name="_font"></param>
 		public void AppendTextAsRtf(string _text, Font _font) {
-			AppendTextAsRtf(_text, _font, textColor);
+			this.AppendTextAsRtf(_text, _font, this.textColor);
 		}
 
 		/// <summary>
@@ -652,7 +652,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="_font"></param>
 		/// <param name="_color"></param>
 		public void AppendTextAsRtf(string _text, Font _font, RtfColor _textColor) {
-			AppendTextAsRtf(_text, _font, _textColor, highlightColor);
+			this.AppendTextAsRtf(_text, _font, _textColor, this.highlightColor);
 		}
 
 		/// <summary>
@@ -668,7 +668,7 @@ namespace SteamEngine.RemoteConsole {
 			// Move carret to the end of the text
 			this.Select(this.TextLength, 0);
 
-			InsertTextAsRtf(_text, _font, _textColor, _backColor);
+			this.InsertTextAsRtf(_text, _font, _textColor, _backColor);
 		}
 
 		#endregion
@@ -679,7 +679,7 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <param name="_text"></param>
 		public void InsertTextAsRtf(string _text) {
-			InsertTextAsRtf(_text, this.Font);
+			this.InsertTextAsRtf(_text, this.Font);
 		}
 
 
@@ -690,7 +690,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="_text"></param>
 		/// <param name="_font"></param>
 		public void InsertTextAsRtf(string _text, Font _font) {
-			InsertTextAsRtf(_text, _font, textColor);
+			this.InsertTextAsRtf(_text, _font, this.textColor);
 		}
 
 		/// <summary>
@@ -701,7 +701,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="_font"></param>
 		/// <param name="_color"></param>
 		public void InsertTextAsRtf(string _text, Font _font, RtfColor _textColor) {
-			InsertTextAsRtf(_text, _font, _textColor, highlightColor);
+			this.InsertTextAsRtf(_text, _font, _textColor, this.highlightColor);
 		}
 
 		/// <summary>
@@ -731,15 +731,15 @@ namespace SteamEngine.RemoteConsole {
 
 			// Create the font table from the font passed in and append it to the
 			// RTF string
-			_rtf.Append(GetFontTable(_font));
+			_rtf.Append(this.GetFontTable(_font));
 
 			// Create the color table from the colors passed in and append it to the
 			// RTF string
-			_rtf.Append(GetColorTable(_textColor, _backColor));
+			_rtf.Append(this.GetColorTable(_textColor, _backColor));
 
 			// Create the document area from the text to be added as RTF and append
 			// it to the RTF string.
-			_rtf.Append(GetDocumentArea(_text, _font));
+			_rtf.Append(this.GetDocumentArea(_text, _font));
 
 			this.SelectedRtf = _rtf.ToString();
 		}
@@ -863,16 +863,16 @@ namespace SteamEngine.RemoteConsole {
 
 			// Create the font table using the RichTextBox's current font and append
 			// it to the RTF string
-			_rtf.Append(GetFontTable(this.Font));
+			_rtf.Append(this.GetFontTable(this.Font));
 
 			// Create the image control string and append it to the RTF string
-			_rtf.Append(GetImagePrefix(_image));
+			_rtf.Append(this.GetImagePrefix(_image));
 
 			// Create the Windows Metafile and append its bytes in HEX format
-			_rtf.Append(GetRtfImage(_image));
+			_rtf.Append(this.GetRtfImage(_image));
 
 			// Close the RTF image control string
-			_rtf.Append(RTF_IMAGE_POST);
+			_rtf.Append(this.RTF_IMAGE_POST);
 
 			this.SelectedRtf = _rtf.ToString();
 		}
@@ -937,16 +937,16 @@ namespace SteamEngine.RemoteConsole {
 			StringBuilder _rtf = new StringBuilder();
 
 			// Calculate the current width of the image in (0.01)mm
-			int picw = (int) Math.Round((_image.Width / xDpi) * HMM_PER_INCH);
+			int picw = (int) Math.Round((_image.Width /this.xDpi) * HMM_PER_INCH);
 
 			// Calculate the current height of the image in (0.01)mm
-			int pich = (int) Math.Round((_image.Height / yDpi) * HMM_PER_INCH);
+			int pich = (int) Math.Round((_image.Height /this.yDpi) * HMM_PER_INCH);
 
 			// Calculate the target width of the image in twips
-			int picwgoal = (int) Math.Round((_image.Width / xDpi) * TWIPS_PER_INCH);
+			int picwgoal = (int) Math.Round((_image.Width /this.xDpi) * TWIPS_PER_INCH);
 
 			// Calculate the target height of the image in twips
-			int pichgoal = (int) Math.Round((_image.Height / yDpi) * TWIPS_PER_INCH);
+			int pichgoal = (int) Math.Round((_image.Height /this.yDpi) * TWIPS_PER_INCH);
 
 			// Append values to RTF string
 			_rtf.Append(@"{\pict\wmetafile8");
@@ -1233,7 +1233,7 @@ namespace SteamEngine.RemoteConsole {
 			Marshal.StructureToPtr(fmtRange, lparam, false);
 
 			//Send the rendered data for printing
-			res = SendMessage(Handle, EM_FORMATRANGE, wparam, lparam);
+			res = SendMessage(this.Handle, EM_FORMATRANGE, wparam, lparam);
 
 			//Free the block of memory allocated
 			Marshal.FreeCoTaskMem(lparam);
@@ -1252,20 +1252,20 @@ namespace SteamEngine.RemoteConsole {
 				case WM_VSCROLL:
 					base.WndProc(ref m);
 					if ((m.WParam.ToInt32() & 0xffff) == SB_THUMBTRACK) {
-						OnVScroll(EventArgs.Empty);
+						this.OnVScroll(EventArgs.Empty);
 					}
 					if ((m.WParam.ToInt32() & 0xffff) == SB_THUMBPOSITION) {
-						OnVScroll(EventArgs.Empty);
+						this.OnVScroll(EventArgs.Empty);
 					}
 					break;
 
 				case WM_HSCROLL:
 					base.WndProc(ref m);
 					if ((m.WParam.ToInt32() & 0xffff) == SB_THUMBTRACK) {
-						OnHScroll(EventArgs.Empty);
+						this.OnHScroll(EventArgs.Empty);
 					}
 					if ((m.WParam.ToInt32() & 0xffff) == SB_THUMBPOSITION) {
-						OnHScroll(EventArgs.Empty);
+						this.OnHScroll(EventArgs.Empty);
 					}
 					break;
 				default:
@@ -1342,7 +1342,7 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <param name="text">Text to be inserted</param>
 		public void InsertLink(string text) {
-			InsertLink(text, this.SelectionStart);
+			this.InsertLink(text, this.SelectionStart);
 		}
 
 		/// <summary>
@@ -1371,7 +1371,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="text">Text to be inserted</param>
 		/// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
 		public void InsertLink(string text, string hyperlink) {
-			InsertLink(text, hyperlink, this.SelectionStart);
+			this.InsertLink(text, hyperlink, this.SelectionStart);
 		}
 
 		/// <summary>
@@ -1399,7 +1399,7 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <param name="link">true: set link style, false: clear link style</param>
 		public void SetSelectionLink(bool link) {
-			SetSelectionStyle(CFM_LINK, link ? CFE_LINK : 0);
+			this.SetSelectionStyle(CFM_LINK, link ? CFE_LINK : 0);
 		}
 
 		private void SetSelectionStyle(UInt32 mask, UInt32 effect) {
@@ -1413,7 +1413,7 @@ namespace SteamEngine.RemoteConsole {
 			Marshal.StructureToPtr(cf, lpar, false);
 
 			//IntPtr res = 
-				SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
+				SendMessage(this.Handle, EM_SETCHARFORMAT, wpar, lpar);
 
 			Marshal.FreeCoTaskMem(lpar);
 		}
@@ -1459,8 +1459,8 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <value>the minimum scrolling position</value>
 		public int Minimum {
-			get { return nMin; }
-			set { nMin = value; }
+			get { return this.nMin; }
+			set { this.nMin = value; }
 		}
 
 		/// <summary>
@@ -1468,8 +1468,8 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <value>the maximum scrolling position</value>
 		public int Maximum {
-			get { return nMax; }
-			set { nMax = value; }
+			get { return this.nMax; }
+			set { this.nMax = value; }
 		}
 
 		/// <summary>
@@ -1478,8 +1478,8 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <value></value>
 		public int Page {
-			get { return nPage; }
-			set { nPage = value; }
+			get { return this.nPage; }
+			set { this.nPage = value; }
 		}
 
 		/// <summary>
@@ -1487,8 +1487,8 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <value></value>
 		public int Position {
-			get { return nPos; }
-			set { nPos = value; }
+			get { return this.nPos; }
+			set { this.nPos = value; }
 		}
 
 		/// <summary>
@@ -1499,8 +1499,8 @@ namespace SteamEngine.RemoteConsole {
 		/// </summary>
 		/// <value>the immediated position of the scroll box</value>
 		public int TrackPosition {
-			get { return nTrackPos; }
-			set { nTrackPos = value; }
+			get { return this.nTrackPos; }
+			set { this.nTrackPos = value; }
 		}
 	}
 

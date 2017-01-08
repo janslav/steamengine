@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			object sorting = args.GetTag(D_Regions.regsSortingTK);
 			if (sorting != null) {//mame cim tridit?
-				SortBy(regionsList, (SortingCriteria) Convert.ToInt32(sorting));
+				this.SortBy(regionsList, (SortingCriteria) Convert.ToInt32(sorting));
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance

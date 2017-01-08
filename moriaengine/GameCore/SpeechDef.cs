@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(name) {
 		}
 
-		public override sealed object Run(object self, TriggerKey tk, ScriptArgs sa) {
+		public sealed override object Run(object self, TriggerKey tk, ScriptArgs sa) {
 			if (TriggerKey.hear.Uid == tk.Uid) {
 				AbstractCharacter ch = self as AbstractCharacter;
 				if (self != null) {
@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 			return null;
 		}
 
-		public override sealed object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
+		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			if (TriggerKey.hear.Uid == tk.Uid) {
 				AbstractCharacter ch = self as AbstractCharacter;
 				if (self != null) {
@@ -56,14 +56,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return "SpeechDef " + Defname;
+			return "SpeechDef " + this.Defname;
 		}
 
 		protected abstract SpeechResult Handle(AbstractCharacter listener, SpeechArgs speechArgs);
 
 		protected abstract SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs);
 
-		public static new AbstractSpeech GetByDefname(string defname) {
+		public new static AbstractSpeech GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbstractSpeech;
 		}
 	}

@@ -60,11 +60,11 @@ namespace SteamEngine.CompiledScripts {
 
 		//interrupt on meditation attempt
 		public TriggerResult On_SkillSelect(SkillSequenceArgs skillSeq) {
-			return CheckStartingSkill(skillSeq);
+			return this.CheckStartingSkill(skillSeq);
 		}
 
 		public TriggerResult On_SkillStart(SkillSequenceArgs skillSeq) {
-			return CheckStartingSkill(skillSeq);
+			return this.CheckStartingSkill(skillSeq);
 		}
 
 		private TriggerResult CheckStartingSkill(SkillSequenceArgs skillSeq) {

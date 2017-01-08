@@ -44,11 +44,11 @@ namespace SteamEngine.AuxiliaryServer {
 		public const string iniFileName = "steamaux.ini";
 
 		public static int TimeZone {
-			get { return Settings.timeZone; }
+			get { return timeZone; }
 		}
 
 		public static string LogPath {
-			get { return Settings.logPath; }
+			get { return logPath; }
 		}
 
 		public static System.Collections.ObjectModel.ReadOnlyCollection<IGameServerSetup> KnownGameServersList {
@@ -58,11 +58,11 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public static IPEndPoint LoginServerEndpoint {
-			get { return Settings.loginServerEndpoint; }
+			get { return loginServerEndpoint; }
 		}
 
 		public static IPEndPoint ConsoleServerEndpoint {
-			get { return Settings.consoleServerEndpoint; }
+			get { return consoleServerEndpoint; }
 		}
 
 		static Settings() {

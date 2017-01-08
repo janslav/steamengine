@@ -60,7 +60,7 @@ namespace SteamEngine {
 
 		public ItemDispidInfo DispidInfo {
 			get {
-				return dispidInfo;
+				return this.dispidInfo;
 			}
 		} 
 
@@ -118,7 +118,7 @@ namespace SteamEngine {
 		}
 
 		public void OverheadMessage(string arg) {
-			OverheadMessage(arg, 0);
+			this.OverheadMessage(arg, 0);
 		}
 
 		public void OverheadMessage(string arg, int color) {
@@ -148,7 +148,7 @@ namespace SteamEngine {
 		}
 
 		public int Color {
-			get { return color; }
+			get { return this.color; }
 		}
 	}
 }

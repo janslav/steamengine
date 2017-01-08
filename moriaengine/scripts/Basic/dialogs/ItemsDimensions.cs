@@ -59,31 +59,31 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private Point2D start, end;
 
 		public void Set(int x, int y, int width, int height) {
-			start = new Point2D((ushort) x, (ushort) y);
-			end = new Point2D((ushort) (x + width), (ushort) (y + height));
+			this.start = new Point2D((ushort) x, (ushort) y);
+			this.end = new Point2D((ushort) (x + width), (ushort) (y + height));
 		}
 
 		public int X {
 			get {
-				return start.X;
+				return this.start.X;
 			}
 		}
 
 		public int Y {
 			get {
-				return start.Y;
+				return this.start.Y;
 			}
 		}
 
 		public int Width {
 			get {
-				return end.X - start.X;
+				return this.end.X - this.start.X;
 			}
 		}
 
 		public int Height {
 			get {
-				return end.Y - start.Y;
+				return this.end.Y - this.start.Y;
 			}
 		}
 	}

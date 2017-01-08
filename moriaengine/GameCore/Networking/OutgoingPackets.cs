@@ -40,7 +40,7 @@ namespace SteamEngine.Networking {
 
 	public abstract class DynamicLengthOutPacket : GameOutgoingPacket {
 
-		protected override sealed void Write() {
+		protected sealed override void Write() {
 			this.SeekFromCurrent(2);
 			this.WriteDynamicPart();
 			this.SeekFromStart(1);
@@ -53,7 +53,7 @@ namespace SteamEngine.Networking {
 
 	[CLSCompliant(false)]
 	public abstract class GeneralInformationOutPacket : DynamicLengthOutPacket {
-		public override sealed byte Id {
+		public sealed override byte Id {
 			get { return 0xBF; }
 		}
 
@@ -61,7 +61,7 @@ namespace SteamEngine.Networking {
 			get;
 		}
 
-		protected override sealed void WriteDynamicPart() {
+		protected sealed override void WriteDynamicPart() {
 			this.EncodeUShort(this.SubCmdId);
 			this.WriteSubCmd();
 		}
@@ -369,14 +369,14 @@ namespace SteamEngine.Networking {
 			this.flagsToSend = ch.FlagsToSend;
 			this.highlight = (byte) highlight;
 
-			items.Clear();
+			this.items.Clear();
 			foreach (AbstractItem i in ch.VisibleEquip) {
-				items.Add(new ItemInfo(i.FlaggedUid, i.ShortColor, i.ShortModel, i.Layer));
+				this.items.Add(new ItemInfo(i.FlaggedUid, i.ShortColor, i.ShortModel, i.Layer));
 			}
 
 			AbstractCharacter mount = ch.Mount;
 			if (mount != null) {
-				items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.ShortColor, mount.MountItem, (int) LayerNames.Mount));
+				this.items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.ShortColor, mount.MountItem, (int) LayerNames.Mount));
 			}
 		}
 
@@ -596,16 +596,16 @@ namespace SteamEngine.Networking {
 		public bool PrepareContainer(AbstractItem cont, AbstractCharacter viewer, IList<AbstractItem> visibleItems) {
 			this.flaggedUid = cont.FlaggedUid;
 
-			items.Clear();
+			this.items.Clear();
 
 			foreach (AbstractItem i in cont) {
 				if (viewer.CanSeeVisibility(i)) {
-					items.Add(new ItemInfo(i));
+					this.items.Add(new ItemInfo(i));
 					visibleItems.Add(i);
 				}
 			}
 
-			return items.Count > 0;
+			return this.items.Count > 0;
 		}
 
 		[CLSCompliant(false)]
@@ -624,7 +624,7 @@ namespace SteamEngine.Networking {
 		public void PrepareSpellbook(uint flaggedUid, int offset, ulong content) {
 			this.flaggedUid = flaggedUid;
 
-			items.Clear();
+			this.items.Clear();
 
 			ulong mask = 1;
 			for (int i = 0; i < 64; i++, mask <<= 1) {
@@ -1062,9 +1062,9 @@ namespace SteamEngine.Networking {
 				this.type = 0x00;//full list without skillcaps
 			}
 
-			skillList.Clear();
+			this.skillList.Clear();
 			foreach (ISkill s in skills) {
-				skillList.Add(new SkillInfo(s.Id, s.RealValue, s.ModifiedValue, s.Cap, s.Lock));
+				this.skillList.Add(new SkillInfo(s.Id, s.RealValue, s.ModifiedValue, s.Cap, s.Lock));
 			}
 		}
 
@@ -1094,16 +1094,16 @@ namespace SteamEngine.Networking {
 			this.displaySkillCaps = false;
 			this.singleSkill = true;
 			this.type = 0xFF; //partial list without caps
-			skillList.Clear();
-			skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, 0, skillLock));
+			this.skillList.Clear();
+			this.skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, 0, skillLock));
 		}
 
 		public void PrepareSingleSkillUpdate(int skillId, int realValue, int modifiedValue, SkillLockType skillLock, int cap) {
 			this.displaySkillCaps = true;
 			this.singleSkill = true;
 			this.type = 0xDF; //partial list with caps
-			skillList.Clear();
-			skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, cap, skillLock));
+			this.skillList.Clear();
+			this.skillList.Add(new SkillInfo(skillId, realValue, modifiedValue, cap, skillLock));
 		}
 
 		private struct SkillInfo {
@@ -1197,9 +1197,9 @@ namespace SteamEngine.Networking {
 			this.EncodeZeros(2);
 			this.EncodeInt(this.propertiesUid);
 
-			for (int i = 0, n = ids.Count; i < n; i++) {
-				this.EncodeInt(ids[i]);
-				string msg = strings[i];
+			for (int i = 0, n = this.ids.Count; i < n; i++) {
+				this.EncodeInt(this.ids[i]);
+				string msg = this.strings[i];
 				if (msg == null) {
 					msg = "";
 				}
@@ -1597,9 +1597,9 @@ namespace SteamEngine.Networking {
 			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
 				AbstractCharacter ch = chars[i];
 				if (ch != null) {
-					names[i] = ch.Name;
+					this.names[i] = ch.Name;
 				} else {
-					names[i] = string.Empty;
+					this.names[i] = string.Empty;
 				}
 			}
 		}
@@ -2134,12 +2134,12 @@ namespace SteamEngine.Networking {
 		List<int> staticsPatches = new List<int>();
 
 		public void Prepare() {
-			this.facetsCount = (byte) Regions.Map.FacetCount;
+			this.facetsCount = (byte) Map.FacetCount;
 			this.mapPatches.Clear();
 			this.staticsPatches.Clear();
 			for (int i = 0; i < this.facetsCount; i++) {
-				this.mapPatches.Add(Regions.Map.GetFacetPatchesMapCount(i));
-				this.staticsPatches.Add(Regions.Map.GetFacetPatchesStaticsCount(i));
+				this.mapPatches.Add(Map.GetFacetPatchesMapCount(i));
+				this.staticsPatches.Add(Map.GetFacetPatchesStaticsCount(i));
 			}
 		}
 

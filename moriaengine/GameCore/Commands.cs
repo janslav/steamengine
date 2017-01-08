@@ -55,7 +55,7 @@ namespace SteamEngine {
 
 			if (AuthorizeCommand(commandSrc, "x")) {
 				state.WriteLine(Loc<CommandLoc>.Get(state.Language).XCommandPrompt);
-				state.Target(false, Commands.xCommand_Targon, Commands.xCommand_Cancel,
+				state.Target(false, xCommand_Targon, xCommand_Cancel,
 					new XCommandParameter(commandSrc, noprefix));
 				LogCommand(commandSrc, command, true, null);
 			} else {
@@ -178,7 +178,7 @@ namespace SteamEngine {
 					LScriptHolder scriptHolder;
 					if (!gmCommandsCache.TryGetValue(codeAsKey, out scriptHolder)) {
 						try {
-							scriptHolder = LScript.LScriptMain.GetNewSnippetRunner("<command>", 0, code);
+							scriptHolder = LScriptMain.GetNewSnippetRunner("<command>", 0, code);
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
@@ -222,8 +222,8 @@ namespace SteamEngine {
 			//Console.WriteLine("lscript: "+HighPerformanceTimer.TicksToMilliseconds(HighPerformanceTimer.TickCount - start)+" ms");
 		}
 
-		private static SteamEngine.Networking.OnTargon xCommand_Targon = XCommandTargon;
-		private static SteamEngine.Networking.OnTargonCancel xCommand_Cancel = XCommandCancel;
+		private static OnTargon xCommand_Targon = XCommandTargon;
+		private static OnTargonCancel xCommand_Cancel = XCommandCancel;
 
 		public static void XCommandCancel(GameState state, object parameter) {
 			//?
@@ -264,7 +264,7 @@ namespace SteamEngine {
 
 				if (arg.Length > 0) {
 					haveArg = true;
-					argIsNumber = TagMath.TryParseAnyNumber(arg, out argAsNumber);
+					argIsNumber = ConvertTools.TryParseAnyNumber(arg, out argAsNumber);
 				}
 
 				ScriptHolder func = ScriptHolder.GetFunction(name);
@@ -327,7 +327,7 @@ namespace SteamEngine {
 						if (pis.Length == 1) {
 							argType = pis[0].ParameterType;
 							if (argIsNumber) {
-								if (TagMath.IsNumberType(argType)) {
+								if (ConvertTools.IsNumberType(argType)) {
 									return mi;
 								}
 							} else if (argType.Equals(typeof(string))) {

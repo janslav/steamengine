@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Utils {
 
 		private LScriptComparer(string sortByExpression, int multiplier) {
 			sortByExpression = string.Concat("return(", sortByExpression, ")");
-			this.expression = LScript.LScriptMain.GetNewSnippetRunner("<comparer>", 0, sortByExpression);
+			this.expression = LScriptMain.GetNewSnippetRunner("<comparer>", 0, sortByExpression);
 			this.multiplier = multiplier;
 		}
 

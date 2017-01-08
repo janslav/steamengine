@@ -24,8 +24,8 @@ namespace SteamEngine.AuxServerPipe {
 		private StringToSendEventHandler onConsoleWriteLine;
 
 		public AuxServerPipeClient() {
-			this.onConsoleWrite = Logger_OnConsoleWrite;
-			this.onConsoleWriteLine = Logger_OnConsoleWriteLine;
+			this.onConsoleWrite = this.Logger_OnConsoleWrite;
+			this.onConsoleWriteLine = this.Logger_OnConsoleWriteLine;
 		}
 
 		internal static void Init() {
@@ -56,7 +56,7 @@ namespace SteamEngine.AuxServerPipe {
 			try {
 
 #if MSWIN
-				c = clientFactory.Connect(Common.Tools.commonPipeName);
+				c = clientFactory.Connect(Tools.commonPipeName);
 #else
 				c = clientFactory.Connect(new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, Common.Tools.commonPort));
 #endif
@@ -104,18 +104,18 @@ namespace SteamEngine.AuxServerPipe {
 		}
 
 		private void Logger_OnConsoleWriteLine(string data) {
-			SendLogString(data + Environment.NewLine);
+			this.SendLogString(data + Environment.NewLine);
 		}
 
 		private void Logger_OnConsoleWrite(string data) {
-			SendLogString(data);
+			this.SendLogString(data);
 		}
 
 		private void SendLogString(string data) {
 			if (this.sendLogStrings && this.pipe.IsConnected) {
 				LogStringPacket packet = Pool<LogStringPacket>.Acquire();
 				packet.Prepare(data);
-				pipe.SendSinglePacket(packet);
+				this.pipe.SendSinglePacket(packet);
 			}
 		}
 

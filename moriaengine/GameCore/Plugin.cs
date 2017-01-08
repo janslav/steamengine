@@ -43,13 +43,13 @@ namespace SteamEngine {
 
 		public PluginDef Def {
 			get {
-				return def;
+				return this.def;
 			}
 		}
 
 		public PluginDef TypeDef {
 			get {
-				return def;
+				return this.def;
 			}
 		}
 
@@ -63,13 +63,13 @@ namespace SteamEngine {
 		public void Run(TriggerKey tk, ScriptArgs sa, out object scriptedRetVal, out object compiledRetVal) {
 			scriptedRetVal = null;
 			compiledRetVal = null;
-			if (!isDeleted) {
+			if (!this.isDeleted) {
 				TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
 				if (scriptedTriggers != null) {
 					scriptedRetVal = scriptedTriggers.Run(this, tk, sa);
 				}
 
-				PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
+				PluginDef.PluginTriggerGroup compiledTriggers = this.def.compiledTriggers;
 				if (compiledTriggers != null) {
 					compiledRetVal = compiledTriggers.Run(this, tk, sa);
 				}
@@ -81,12 +81,12 @@ namespace SteamEngine {
 		public void TryRun(TriggerKey tk, ScriptArgs sa, out object scriptedRetVal, out object compiledRetVal) {
 			scriptedRetVal = null;
 			compiledRetVal = null;
-			if (!isDeleted) {
+			if (!this.isDeleted) {
 				TriggerGroup scriptedTriggers = this.def.scriptedTriggers;
 				if (scriptedTriggers != null) {
 					scriptedRetVal = scriptedTriggers.TryRun(this, tk, sa);
 				}
-				PluginDef.PluginTriggerGroup compiledTriggers = def.compiledTriggers;
+				PluginDef.PluginTriggerGroup compiledTriggers = this.def.compiledTriggers;
 				if (compiledTriggers != null) {
 					try {
 						compiledRetVal = compiledTriggers.Run(this, tk, sa);
@@ -103,10 +103,10 @@ namespace SteamEngine {
 			if (this.cont != null) {
 				this.cont.RemovePlugin(this);
 			}
-			if (!isDeleted) {
+			if (!this.isDeleted) {
 				object scriptedRetVal, compiledRetVal;
 				this.TryRun(TriggerKey.destroy, null, out scriptedRetVal, out compiledRetVal);
-				isDeleted = true;
+				this.isDeleted = true;
 			}
 			base.Delete();
 		}

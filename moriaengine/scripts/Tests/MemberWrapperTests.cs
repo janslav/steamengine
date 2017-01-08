@@ -57,8 +57,8 @@ namespace SteamEngine.CompiledScripts {
 		public object objField;
 
 		public MemberWrapperTests(int arg, string str) {
-			intField = arg;
-			objField = str;
+			this.intField = arg;
+			this.objField = str;
 		}
 
 		public static int TestStaticMethod(int i) {

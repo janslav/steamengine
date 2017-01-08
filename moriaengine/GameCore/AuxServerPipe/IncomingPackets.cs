@@ -49,7 +49,7 @@ namespace SteamEngine.AuxServerPipe {
 		byte sendLogStrings;
 
 		protected override ReadPacketResult Read() {
-			this.sendLogStrings = DecodeByte();
+			this.sendLogStrings = this.DecodeByte();
 			return ReadPacketResult.Success;
 		}
 
@@ -97,7 +97,7 @@ namespace SteamEngine.AuxServerPipe {
 					ReplyAccountLoginPacket reply = Pool<ReplyAccountLoginPacket>.Acquire();
 					reply.Prepare(this.consoleId, this.accName, acc != null);
 
-					conn.SendSinglePacket(reply);
+					this.conn.SendSinglePacket(reply);
 				}
 				this.Delete();
 			}

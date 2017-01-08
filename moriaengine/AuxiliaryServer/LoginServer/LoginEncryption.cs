@@ -57,10 +57,10 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				byte[] bytes = b.bytes;
 
 				for (int i = 0, n = LoginKey.loginKeys.Length; i < n; i++) {
-					table1 = orgTable1;
-					table2 = orgTable2;
-					key1 = (uint) LoginKey.loginKeys[i].Key1;
-					key2 = (uint) LoginKey.loginKeys[i].Key2;
+					this.table1 = orgTable1;
+					this.table2 = orgTable2;
+					this.key1 = (uint) LoginKey.loginKeys[i].Key1;
+					this.key2 = (uint) LoginKey.loginKeys[i].Key2;
 
 
 					this.Decrypt(buffer, 4, bytes, 0, length - 4);
@@ -68,11 +68,11 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 					// Check if it decrypted correctly
 					if ((bytes[0] == 0x80 || bytes[0] == 0xcf) && CheckCorrectASCIIString(bytes, 1, 30) && CheckCorrectASCIIString(bytes, 31, 30)) {
 						// Reestablish our current state
-						table1 = orgTable1;
-						table2 = orgTable2;
-						key1 = (uint) LoginKey.loginKeys[i].Key1;
-						key2 = (uint) LoginKey.loginKeys[i].Key2;
-						name = LoginKey.loginKeys[i].Name;
+						this.table1 = orgTable1;
+						this.table2 = orgTable2;
+						this.key1 = (uint) LoginKey.loginKeys[i].Key1;
+						this.key2 = (uint) LoginKey.loginKeys[i].Key2;
+						this.name = LoginKey.loginKeys[i].Name;
 						return true;
 					}
 				}
@@ -110,21 +110,21 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			uint eax, ecx, edx, esi;
 
 			for (int i = 0; i < length; i++) {
-				bytesOut[i] = (byte) (bytesIn[offsetIn + i] ^ (byte) (table1 & 0xFF));
-				edx = table2;
-				esi = table1 << 31;
-				eax = table2 >> 1;
+				bytesOut[i] = (byte) (bytesIn[offsetIn + i] ^ (byte) (this.table1 & 0xFF));
+				edx = this.table2;
+				esi = this.table1 << 31;
+				eax = this.table2 >> 1;
 				eax |= esi;
-				eax ^= key1 - 1;
+				eax ^= this.key1 - 1;
 				edx <<= 31;
 				eax >>= 1;
-				ecx = table1 >> 1;
+				ecx = this.table1 >> 1;
 				eax |= esi;
 				ecx |= edx;
-				eax ^= key1;
-				ecx ^= key2;
-				table1 = ecx;
-				table2 = eax;
+				eax ^= this.key1;
+				ecx ^= this.key2;
+				this.table1 = ecx;
+				this.table2 = eax;
 			}
 
 			return length;

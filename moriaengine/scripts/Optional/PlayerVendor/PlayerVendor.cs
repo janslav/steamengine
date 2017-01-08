@@ -370,7 +370,7 @@ namespace SteamEngine.CompiledScripts {
 		public static ContainerDef StockContainerDef {
 			get {
 				if (i_playervendor_stock_container == null) {
-					i_playervendor_stock_container = (ContainerDef) ThingDef.GetByDefname("i_playervendor_stock_container");
+					i_playervendor_stock_container = (ContainerDef) GetByDefname("i_playervendor_stock_container");
 				}
 				return i_playervendor_stock_container;
 			}
@@ -380,7 +380,7 @@ namespace SteamEngine.CompiledScripts {
 		public static PlayerVendorStockEntryDef StockEntryDef {
 			get {
 				if (i_playervendor_stock_entry == null) {
-					i_playervendor_stock_entry = (PlayerVendorStockEntryDef) ThingDef.GetByDefname("i_playervendor_stock_entry");
+					i_playervendor_stock_entry = (PlayerVendorStockEntryDef) GetByDefname("i_playervendor_stock_entry");
 				}
 				return i_playervendor_stock_entry;
 			}

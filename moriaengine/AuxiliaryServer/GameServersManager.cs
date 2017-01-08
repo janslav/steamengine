@@ -105,7 +105,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 
 			if (AllIdentifiedGameServers.Count == 0) { //it was the last server, we kick nonlogged consoles
-				List<ConsoleServer.ConsoleClient> toKick = new List<SteamEngine.AuxiliaryServer.ConsoleServer.ConsoleClient>();
+				List<ConsoleServer.ConsoleClient> toKick = new List<ConsoleServer.ConsoleClient>();
 				foreach (ConsoleServer.ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
 					if (!console.IsLoggedInAux) {
 						toKick.Add(console);

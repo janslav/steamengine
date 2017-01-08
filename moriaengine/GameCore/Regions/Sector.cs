@@ -226,7 +226,7 @@ namespace SteamEngine.Regions {
 			#region Static stuff
 			private void LoadStatics() {
 				if (this.staticSector == null) {
-					this.staticSector = StaticSector.GetStaticSector(this.sx, sy, this.m);
+					this.staticSector = StaticSector.GetStaticSector(this.sx, this.sy, this.m);
 				}
 			}
 
@@ -249,8 +249,8 @@ namespace SteamEngine.Regions {
 
 			internal int GetTileId(int x, int y) {
 				this.LoadStatics();
-				int basex = x & Map.sectorAnd;
-				int basey = y & Map.sectorAnd;
+				int basex = x & sectorAnd;
+				int basey = y & sectorAnd;
 
 				int relX = x - basex;
 				int relY = y - basey;
@@ -259,8 +259,8 @@ namespace SteamEngine.Regions {
 
 			internal int GetTileZ(int x, int y) {
 				this.LoadStatics();
-				int basex = x & Map.sectorAnd;
-				int basey = y & Map.sectorAnd;
+				int basex = x & sectorAnd;
+				int basey = y & sectorAnd;
 
 				int relX = x - basex;
 				int relY = y - basey;
@@ -269,8 +269,8 @@ namespace SteamEngine.Regions {
 
 			internal void GetTile(int x, int y, out int z, out int id) {
 				this.LoadStatics();
-				int basex = x & Map.sectorAnd;
-				int basey = y & Map.sectorAnd;
+				int basex = x & sectorAnd;
+				int basey = y & sectorAnd;
 
 				int relX = x - basex;
 				int relY = y - basey;
@@ -307,10 +307,10 @@ namespace SteamEngine.Regions {
 					//ACHTUNG!!! do not use the width but send immediatelly the second coordinates!!!
 					//ImmutableRectangle sectorRect = new ImmutableRectangle((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
 					//	Map.sectorWidth, Map.sectorWidth);
-					int startX = (this.sx << Map.sectorFactor);
-					int startY = (this.sy << Map.sectorFactor);
+					int startX = (this.sx << sectorFactor);
+					int startY = (this.sy << sectorFactor);
 					ImmutableRectangle sectorRect = new ImmutableRectangle(startX, startY,
-						(startX + Map.sectorWidth), (startY + Map.sectorWidth));
+						(startX + sectorWidth), (startY + sectorWidth));
 					SectRectComparer comparer = new SectRectComparer(sectorRect);
 					Array.Sort(this.rectangles, comparer);
 				}
@@ -339,8 +339,8 @@ namespace SteamEngine.Regions {
 						if (Globals.FastStartUp) {
 							return 0;
 						} else {
-							ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(sectorRectangle, a);
-							ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(sectorRectangle, b);
+							ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(this.sectorRectangle, a);
+							ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(this.sectorRectangle, b);
 							return intersectA.TilesNumber.CompareTo(intersectB.TilesNumber);
 						}
 					}

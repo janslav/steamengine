@@ -41,18 +41,18 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(blocks, oldNode);
+			int index = Array.IndexOf(this.blocks, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				blocks[index] = newNode;
+				this.blocks[index] = newNode;
 			}
 		}
 
 		internal override object Run(ScriptVars vars) {
 			object retVal = null;
-			for (int i = 0, n = blocks.Length; i < n; i++) {
-				retVal = blocks[i].Run(vars);
+			for (int i = 0, n = this.blocks.Length; i < n; i++) {
+				retVal = this.blocks[i].Run(vars);
 				if (vars.returned) {
 					return retVal;
 				}
@@ -62,8 +62,8 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder();
-			for (int i = 0, n = blocks.Length; i < n; i++) {
-				str.Append(blocks[i] + Environment.NewLine);
+			for (int i = 0, n = this.blocks.Length; i < n; i++) {
+				str.Append(this.blocks[i] + Environment.NewLine);
 			}
 			return str.ToString();
 		}
@@ -99,12 +99,12 @@ namespace SteamEngine.LScript {
 
 		}
 		internal override object Run(ScriptVars vars) {
-			return obj;
+			return this.obj;
 		}
 
 		public override string ToString() {
-			if (obj != null) {
-				return "'" + obj + "'(" + obj.GetType() + ")";
+			if (this.obj != null) {
+				return "'" + this.obj + "'(" + this.obj.GetType() + ")";
 			} else {
 				return "null";
 			}
@@ -112,10 +112,10 @@ namespace SteamEngine.LScript {
 
 		public Type ReturnType {
 			get {
-				if (obj == null) {
+				if (this.obj == null) {
 					return typeof(void);
 				} else {
-					return obj.GetType();
+					return this.obj.GetType();
 				}
 			}
 		}
@@ -146,19 +146,19 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (node == oldNode) {
-				node = newNode;
+			if (this.node == oldNode) {
+				this.node = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return string.Concat(node.Run(vars));
+			return string.Concat(this.node.Run(vars));
 		}
 
 		public override string ToString() {
-			return node.ToString() + ".TOSTRING()";
+			return this.node.ToString() + ".TOSTRING()";
 		}
 
 		public Type ReturnType {
@@ -194,18 +194,18 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				return con.Value;
+				return this.con.Value;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while getting value of Constant '" + con.Name + "'",
+				throw new InterpreterException("Exception while getting value of Constant '" + this.con.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 
 		public override string ToString() {
-			return string.Concat("Constant ", con.Name);
+			return string.Concat("Constant ", this.con.Name);
 		}
 	}
 }

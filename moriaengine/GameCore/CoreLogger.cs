@@ -29,12 +29,12 @@ namespace SteamEngine {
 				try {
 					initInstance = new CoreLogger();
 				} catch (Exception globalexp) {
-					Logger.WriteFatal(globalexp);
+					WriteFatal(globalexp);
 					MainClass.CommandExit();
 				}
 
 				if (Globals.LogToFiles) {
-					Logger.OpenFile();
+					OpenFile();
 				}
 			}
 		}

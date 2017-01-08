@@ -39,8 +39,8 @@ namespace SteamEngine.CompiledScripts {
 		public ThrowingAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.range = InitTypedField("range", 5, typeof(int));
-			this.immunityDuration = InitTypedField("immunityDuration", 10, typeof(double));
+			this.range = this.InitTypedField("range", 5, typeof(int));
+			this.immunityDuration = this.InitTypedField("immunityDuration", 10, typeof(double));
 		}
 
 		public int Range {

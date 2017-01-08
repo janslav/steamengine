@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[SteamFunction]
 		public static void TestDlg(TagHolder self, ScriptArgs text) {
-			Globals.SrcCharacter.Dialog(D_CompoundDlg.Instance);
+			Globals.SrcCharacter.Dialog(Instance);
 		}
 	}
 }

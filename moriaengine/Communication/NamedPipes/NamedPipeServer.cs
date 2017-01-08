@@ -185,7 +185,7 @@ namespace SteamEngine.Communication.NamedPipes {
 			NamedPipeServerStream accepted = (NamedPipeServerStream) asyncResult.AsyncState;
 
 			try {
-				listener.EndWaitForConnection(asyncResult);
+				this.listener.EndWaitForConnection(asyncResult);
 			} catch (ObjectDisposedException) {
 				return;
 			} catch (Exception e) {
@@ -195,7 +195,7 @@ namespace SteamEngine.Communication.NamedPipes {
 			if (accepted != null) {
 				NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();
 				newConn.SetFields(this.pipeName, accepted);
-				InitNewConnection(newConn);
+				this.InitNewConnection(newConn);
 			}
 
 			//continue in accepting
@@ -219,7 +219,7 @@ namespace SteamEngine.Communication.NamedPipes {
 		}
 
 		protected override void On_DisposeUnmanagedResources() {
-			UnBind();
+			this.UnBind();
 
 			base.On_DisposeUnmanagedResources();
 		}

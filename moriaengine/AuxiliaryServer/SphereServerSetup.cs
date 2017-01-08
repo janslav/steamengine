@@ -141,13 +141,13 @@ namespace SteamEngine.AuxiliaryServer {
 
 		public string AdminAccount {
 			get {
-				return adminAccount;
+				return this.adminAccount;
 			}
 		}
 
 		public string AdminPassword {
 			get {
-				return adminPassword;
+				return this.adminPassword;
 			}
 		} 
 
@@ -249,7 +249,7 @@ namespace SteamEngine.AuxiliaryServer {
 
 				this.StartExitlaterScheduler();
 			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("ScheduledExitLater out");
 		}

@@ -42,7 +42,7 @@ namespace SteamEngine.Common {
 	}
 
 	public class Pool<T> : PoolBase where T : Poolable, new() {
-		static private SimpleQueue<T> queue = new SimpleQueue<T>();
+		private static SimpleQueue<T> queue = new SimpleQueue<T>();
 
 		static Pool<T> pool = new Pool<T>();
 
@@ -65,7 +65,7 @@ namespace SteamEngine.Common {
 		//    return instance;
 		//}
 
-		static public T Acquire() {
+		public static T Acquire() {
 			lock (pool) {
 				if (queue.Count > 0) {
 					T instance = queue.Dequeue();

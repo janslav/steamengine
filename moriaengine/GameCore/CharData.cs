@@ -66,7 +66,7 @@ namespace SteamEngine {
 							Logger.WriteWarning("Bodyconv.def contains a line in an unexpected format. That line is '" + line + "'");
 							break;
 						} else {
-							int model = TagMath.ParseInt32(args[0]);
+							int model = ConvertTools.ParseInt32(args[0]);
 							if (!Exists(model)) {
 								AddDispid(model);
 								AbstractCharacterDef def = ThingDef.FindCharDef(model);

@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 			[Save]
 			public override void Save(SaveStream output) {
 				if (this.canShowAbbrev) {
-					output.WriteValue("canShowAbbrev", canShowAbbrev);
+					output.WriteValue("canShowAbbrev", this.canShowAbbrev);
 				}
 				base.Save(output);
 			}

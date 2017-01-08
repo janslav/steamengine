@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 		public override bool IsSameResource(IResourceListEntry newOne) {
 			TriggerGroupResource newResource = newOne as TriggerGroupResource;
 			if (newResource != null) {
-				return (triggerGroup == newResource.triggerGroup);
+				return (this.triggerGroup == newResource.triggerGroup);
 			}
 			return false;
 		}

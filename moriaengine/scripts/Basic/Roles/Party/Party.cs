@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 				return false;
 			}
 
-			Party hisParty = Party.GetParty(newCandidate);
+			Party hisParty = GetParty(newCandidate);
 			if (hisParty != null) {
 				if (hisParty == this) {
 					leader.ClilocSysMessage(1005440); // This person is already in your party!
@@ -179,7 +179,7 @@ namespace SteamEngine.CompiledScripts {
 		//    //todo realms
 		//}
 
-		protected override void On_MemberAdded(Character newMember, Role.IRoleMembership membership) {
+		protected override void On_MemberAdded(Character newMember, IRoleMembership membership) {
 			////  : joined the party.
 			//SendToAll(new MessageLocalizedAffix(Serial.MinusOne, -1, MessageType.Label, 0x3B2, 3, 1008094, "", AffixType.Prepend | AffixType.System, from.Name, ""));
 

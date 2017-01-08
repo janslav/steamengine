@@ -69,7 +69,7 @@ namespace SteamEngine.RemoteConsole {
 
 				ini.WriteToFile();
 			} catch (Exception e) {
-				Logger.WriteError(e);
+				Common.Logger.WriteError(e);
 			}
 		}
 
@@ -172,13 +172,13 @@ namespace SteamEngine.RemoteConsole {
 				if (value < 0 || value > 65535) {
 					throw new SEException("Port number out of range");
 				}
-				port = value;
+				this.port = value;
 			}
-			get { return port; }
+			get { return this.port; }
 		}
 
 		public override string ToString() {
-			return name;
+			return this.name;
 		}
 	}
 }

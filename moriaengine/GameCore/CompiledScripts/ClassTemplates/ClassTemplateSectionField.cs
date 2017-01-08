@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			this.capName = Utility.Capitalize(name);
 			this.value = value;
 			this.access = ParseAccess(access);
-			SetType(type);
+			this.SetType(type);
 			if (isStatic.Length > 0) {
 				this.isStatic = true;
 			}
@@ -110,31 +110,31 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 						break;
 					}
 			}
-			type = SteamEngine.CompiledScripts.ClassManager.GetType(typeName);
-			if (type == null) {
-				type = Type.GetType(typeName, false, true);
-				if (type == null) {
-					type = Type.GetType("System." + typeName, false, true);
-					if (type == null) {
-						type = Type.GetType("SteamEngine." + typeName, false, true);
-						if (type == null) {
-							type = Type.GetType("System.Collections." + typeName, false, true);
+			this.type = ClassManager.GetType(typeName);
+			if (this.type == null) {
+				this.type = Type.GetType(typeName, false, true);
+				if (this.type == null) {
+					this.type = Type.GetType("System." + typeName, false, true);
+					if (this.type == null) {
+						this.type = Type.GetType("SteamEngine." + typeName, false, true);
+						if (this.type == null) {
+							this.type = Type.GetType("System.Collections." + typeName, false, true);
 						}
 					}
 				}
 			}
 
-			if (type != null) {
-				if (typeof(Thing).IsAssignableFrom(type)) {
-					needsCopying = false;
+			if (this.type != null) {
+				if (typeof(Thing).IsAssignableFrom(this.type)) {
+					this.needsCopying = false;
 				} else {
-					needsCopying = !DeepCopyFactory.IsNotCopied(type);
+					this.needsCopying = !DeepCopyFactory.IsNotCopied(this.type);
 				}
-				typeString = type.Name;
+				this.typeString = this.type.Name;
 			} else {
 				//Console.WriteLine("unrecognized type "+typeName);
-				typeString = typeName;
-				needsCopying = true;
+				this.typeString = typeName;
+				this.needsCopying = true;
 			}
 		}
 

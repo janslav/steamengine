@@ -24,8 +24,8 @@ namespace SteamEngine.CompiledScripts {
 	public partial class RegBox : Item {
 
 		public void EnsureDictionary() {
-			if (inBoxReags == null) {
-				inBoxReags = new Dictionary<ItemDef, int>();
+			if (this.inBoxReags == null) {
+				this.inBoxReags = new Dictionary<ItemDef, int>();
 			}
 		}
 
@@ -64,26 +64,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			int baseX = 20;
 			int baseY = 60;
-			SetLocation(70, 25);
-			ResizePic(0, 0, 5054, 660, 165 + radku * 80);
-			ResizePic(10, 10, 3000, 640, 145 + radku * 80);
-			Button(15, 25, 4005, 4007, true, 0, 1);		// add reagents
-			Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
-			HtmlGumpA(255, 15, 150, 20, "Bedýnka na regy", false, false);
-			HtmlGumpA(55, 27, 100, 20, "Pøidat regy", false, false);
+			this.SetLocation(70, 25);
+			this.ResizePic(0, 0, 5054, 660, 165 + radku * 80);
+			this.ResizePic(10, 10, 3000, 640, 145 + radku * 80);
+			this.Button(15, 25, 4005, 4007, true, 0, 1);		// add reagents
+			this.Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
+			this.HtmlGumpA(255, 15, 150, 20, "Bedýnka na regy", false, false);
+			this.HtmlGumpA(55, 27, 100, 20, "Pøidat regy", false, false);
 			if ((radku == 0) && (i == 0)) {
-				HtmlGumpA(baseX, 75, 200, 20, "Bedna na regy je prázdná", false, false);
+				this.HtmlGumpA(baseX, 75, 200, 20, "Bedna na regy je prázdná", false, false);
 			} else {
 				i = 0;
 				foreach (KeyValuePair<ItemDef, int> pair in box.inBoxReags) {
-					Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
-					HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
-					HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
-					HtmlGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
-					CheckBox(baseX, baseY + 38, 9903, 9904, false, buttonsCount);
-					HtmlGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
-					NumberEntryA(baseX + 80, baseY + 38, 65, 20, 0, buttonsCount, 0);
-					TilePic(baseX + 110, baseY, pair.Key.Model);
+					this.Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
+					this.HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
+					this.HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
+					this.HtmlGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
+					this.CheckBox(baseX, baseY + 38, 9903, 9904, false, buttonsCount);
+					this.HtmlGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
+					this.NumberEntryA(baseX + 80, baseY + 38, 65, 20, 0, buttonsCount, 0);
+					this.TilePic(baseX + 110, baseY, pair.Key.Model);
 					dictButtonForReags.Add(buttonsCount, pair.Key);
 					i++;
 					buttonsCount++;
@@ -96,9 +96,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 				}
 			}
-			args.SetTag(D_RegBox.buttonsCountTK, buttonsCount);
-			args.SetTag(D_RegBox.buttonsForReagsTK, dictButtonForReags);
-			Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
+			args.SetTag(buttonsCountTK, buttonsCount);
+			args.SetTag(buttonsForReagsTK, dictButtonForReags);
+			this.Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
 		}
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
@@ -111,8 +111,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.PressedButton == 1) {		// Add reags
 				((Player) gi.Cont).Target(SingletonScript<Targ_RegBox>.Instance, gi.Focus);
 			} else if (gr.PressedButton == 2) {		// OK -> give selected reags
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
-				int buttonsCount = TagMath.IGetTag(args, D_RegBox.buttonsCountTK);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForReagsTK);
+				int buttonsCount = TagMath.IGetTag(args, buttonsCountTK);
 				int i = 0;
 				int reagsToGive = 0;
 				while (i < buttonsCount) {
@@ -137,11 +137,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (gr.PressedButton >= 1000) {
 				int thisButtonValue = (int) gr.PressedButton - 1000;
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(D_RegBox.buttonsForReagsTK);
+				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForReagsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
 				Globals.LastNewItem.Amount = box.inBoxReags[buttonShowItemDef[thisButtonValue]];
 				box.inBoxReags.Remove(buttonShowItemDef[thisButtonValue]);
-				box.Dialog(gi.Cont, SingletonScript<Dialogs.D_RegBox>.Instance);
+				box.Dialog(gi.Cont, SingletonScript<D_RegBox>.Instance);
 			}
 		}
 	}
@@ -187,7 +187,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		protected override void On_TargonCancel(Player self, object parameter) {
 			RegBox focus = parameter as RegBox;
-			focus.Dialog(self, SingletonScript<Dialogs.D_RegBox>.Instance);
+			focus.Dialog(self, SingletonScript<D_RegBox>.Instance);
 		}
 	}
 }

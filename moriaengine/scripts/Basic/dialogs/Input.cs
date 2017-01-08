@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		/// <summary>Static 'factory' method for getting the instance of an existing input def.</summary>
-		public static new AbstractInputDef GetByDefname(string defname) {
+		public new static AbstractInputDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbstractInputDef;
 		}
 
@@ -163,11 +163,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public override void Response(Character sentTo, TagHolder focus, string filledText) {
 			//prepend the input text to previous input parameters
-			object[] oldParams = GumpInstance.InputArgs.GetArgsArray();
+			object[] oldParams = this.GumpInstance.InputArgs.GetArgsArray();
 			object[] newPars = new object[oldParams.Length + 1]; //create a new bigger array, we need to add a new 0th value...
 			Array.Copy(oldParams, 0, newPars, 1, oldParams.Length); //copy all old values to the new field beginning with the index 1
 			newPars[0] = filledText; //filled text will be 0th                        
-			on_response.Run(focus, newPars); //pass the filled text value
+			this.on_response.Run(focus, newPars); //pass the filled text value
 		}
 
 		///// <summary>Unregister the input dialog def from the other defs</summary>
@@ -180,20 +180,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//    AllScriptsByDefname[id.Defname] = id;
 		//}
 
-		public static new void Bootstrap() {
+		public new static void Bootstrap() {
 			ScriptLoader.RegisterScriptType(new string[] { "InputDef" },
 				Load, false);
 		}
 
 		public override string Label {
 			get {
-				return label;
+				return this.label;
 			}
 		}
 
 		public override string DefaultInput {
 			get {
-				return defaultInput;
+				return this.defaultInput;
 			}
 		}
 	}

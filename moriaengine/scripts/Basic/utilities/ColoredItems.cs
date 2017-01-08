@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			foreach (AbstractScript script in AbstractScript.AllScripts) {
 				ColoredType def = script as ColoredType;
 				if (def != null) {
-					BaseType baseDef = (BaseType) ItemDef.FindItemDef(def.Model);
+					BaseType baseDef = (BaseType) ThingDef.FindItemDef(def.Model);
 					if (baseDef == null) {
 						throw new SEException("No baseDef for '" + def + "' ?!");
 					}
@@ -90,7 +90,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				foreach (AbstractScript script in AbstractScript.AllScripts) {
 					ColoredArmorDef def = script as ColoredArmorDef;
 					if ((def != null) && (def.WearableType == type)) {
-						WearableDef baseDef = (WearableDef) ItemDef.FindItemDef(def.Model);
+						WearableDef baseDef = (WearableDef) ThingDef.FindItemDef(def.Model);
 						if (baseDef == null) {
 							throw new SEException("No baseDef for '" + def + "' ?!");
 						}

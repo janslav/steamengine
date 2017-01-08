@@ -205,10 +205,10 @@ namespace SteamEngine.LScript {
 				OpNode newNode;
 				if (this.args.Length == 1) {
 					newNode = new OpNode_Return(this.parent, this.filename, this.line, this.column, this.OrigNode, this.args[0]);
-					SetNewParentToArgs((IOpNodeHolder) newNode);
+					this.SetNewParentToArgs((IOpNodeHolder) newNode);
 				} else if (this.args.Length > 1) {
 					newNode = new OpNode_Return_String(this.parent, this.filename, this.line, this.column, this.OrigNode, this.args, this.formatString);
-					SetNewParentToArgs((IOpNodeHolder) newNode);
+					this.SetNewParentToArgs((IOpNodeHolder) newNode);
 				} else { //args.Length == 0
 					//Console.WriteLine("OpNode_Object.Construct from return");
 					OpNode nullNode = OpNode_Object.Construct(null, (object) null);
@@ -265,7 +265,7 @@ namespace SteamEngine.LScript {
 						ClassNameRef classRef = (ClassNameRef) vars.self;
 						type = Type.GetType(classRef.name, false, true);
 						if (type == null) {
-							type = SteamEngine.CompiledScripts.ClassManager.GetType(classRef.name);
+							type = CompiledScripts.ClassManager.GetType(classRef.name);
 						}
 						if (type == null) {
 							throw new SEException("We have not found class named " + classRef.name + ", thought we were supposed to. This should not happen.");
@@ -274,7 +274,7 @@ namespace SteamEngine.LScript {
 						tryInstance = false;//we look for a static member
 					}
 				} else if (vars.self == vars.defaultObject) {
-					seType = SteamEngine.CompiledScripts.ClassManager.GetType(this.name);//some SteamEngine class from our ClassManager class
+					seType = CompiledScripts.ClassManager.GetType(this.name);//some SteamEngine class from our ClassManager class
 					type = vars.self.GetType();
 				} else {
 					type = vars.self.GetType();
@@ -315,7 +315,7 @@ namespace SteamEngine.LScript {
 					if ((argsLength == 1) || (argsLength == 2)) {
 						resolver.RunArgs();
 						if ((resolver.results[0] is IThingFactory) && ((argsLength == 1) ||
-								((argsLength == 2) && (TagMath.IsNumberType(resolver.results[1].GetType()))))) {
+								((argsLength == 2) && (ConvertTools.IsNumberType(resolver.results[1].GetType()))))) {
 							OpNode amountNode;
 							if (argsLength == 1) {
 								amountNode = OpNode_Object.Construct(this, (uint) 1);
@@ -331,9 +331,9 @@ namespace SteamEngine.LScript {
 				}
 				MemberTypes typesToResolve = (tryInstance ? MemberTypes.All : MemberTypes.Constructor);
 				memberNameMatched |= resolver.Resolve(type, BindingFlags.Instance, typesToResolve, out desc);
-				if (!ResolveAsClassMember(desc, out finalOpNode)) {//in other words, if desc was null
+				if (!this.ResolveAsClassMember(desc, out finalOpNode)) {//in other words, if desc was null
 					memberNameMatched |= resolver.Resolve(type, BindingFlags.Static, MemberTypes.All, out desc);
-					if (ResolveAsClassMember(desc, out finalOpNode)) {
+					if (this.ResolveAsClassMember(desc, out finalOpNode)) {
 						goto runit;
 					}
 				} else {
@@ -342,7 +342,7 @@ namespace SteamEngine.LScript {
 			}
 			if (seType != null) {//try to resolve as constructor
 				memberNameMatched |= resolver.Resolve(seType, BindingFlags.Static, MemberTypes.Constructor, out desc);
-				if (ResolveAsClassMember(desc, out finalOpNode)) {
+				if (this.ResolveAsClassMember(desc, out finalOpNode)) {
 					goto runit;
 				}
 
@@ -351,7 +351,7 @@ namespace SteamEngine.LScript {
 			}
 
 			memberNameMatched |= resolver.Resolve(typeof(IntrinsicMethods), BindingFlags.Static, MemberTypes.Method | MemberTypes.Property, out desc);
-			if (ResolveAsClassMember(desc, out finalOpNode)) {
+			if (this.ResolveAsClassMember(desc, out finalOpNode)) {
 				goto runit;
 			}
 
@@ -415,7 +415,7 @@ namespace SteamEngine.LScript {
 					if (ScriptedGump.IsMethodName(this.name)) {
 						desc = null;
 						memberNameMatched = resolver.Resolve(typeof(ScriptedGump), BindingFlags.Instance, MemberTypes.Method, out desc);
-						ResolveAsClassMember(desc, out finalOpNode);
+						this.ResolveAsClassMember(desc, out finalOpNode);
 						if (finalOpNode != null) {
 							OpNode_MethodWrapper onmw = (OpNode_MethodWrapper) finalOpNode;
 							OpNode_RunOnArgo newNode = new OpNode_RunOnArgo(this.parent, this.filename, this.line, this.column, this.OrigNode, onmw);
@@ -476,7 +476,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 			//finally run it
 			IOpNodeHolder finalAsHolder = finalOpNode as IOpNodeHolder;
 			if (finalAsHolder != null) {
-				SetNewParentToArgs(finalAsHolder);
+				this.SetNewParentToArgs(finalAsHolder);
 			}
 			this.ReplaceSelf(finalOpNode);
 			if ((this.results != null) && (this.results.Length > 0)) {
@@ -526,7 +526,7 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 					}
 					break;
 				case SpecialType.String:
-					if ((this.args.Length == 1) && (MemberResolver.ReturnsString(args[0]))) {
+					if ((this.args.Length == 1) && (MemberResolver.ReturnsString(this.args[0]))) {
 						goto case SpecialType.Normal; //is it not nice? :)
 					}
 					if (MemberResolver.IsMethod(info)) {

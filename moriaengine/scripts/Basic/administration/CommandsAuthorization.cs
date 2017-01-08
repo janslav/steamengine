@@ -43,34 +43,34 @@ namespace SteamEngine.CompiledScripts {
 		//set the command plevels here... AND COMMENT IT!!!!!!!!!!!!!!!!!!!
 		public E_CommandsAuthorization_Global() {
 			//players
-			commands["Where"] = PLEVEL_PLAYER;//Show my coordinates and map region position			
-			commands["Sendgmpage"] = PLEVEL_PLAYER;//Post a new GMPage using an input dialog
-			commands["Resync"] = PLEVEL_PLAYER;//resend nearby stuff
-			commands["Messages"] = PLEVEL_PLAYER;//delayed messages board
+			this.commands["Where"] = PLEVEL_PLAYER;//Show my coordinates and map region position			
+			this.commands["Sendgmpage"] = PLEVEL_PLAYER;//Post a new GMPage using an input dialog
+			this.commands["Resync"] = PLEVEL_PLAYER;//resend nearby stuff
+			this.commands["Messages"] = PLEVEL_PLAYER;//delayed messages board
 
 
 			//GMs
 			//Print the value of given expression
-			commands["show"] = MORE_THAN_PLAYER;
+			this.commands["show"] = MORE_THAN_PLAYER;
 			//[Show the targetting cross to perform a given expression on target
-			commands["x"] = MORE_THAN_PLAYER;
-			commands["Page"] = MORE_THAN_PLAYER;//Post a new GMPage specified in arguments using direct input
+			this.commands["x"] = MORE_THAN_PLAYER;
+			this.commands["Page"] = MORE_THAN_PLAYER;//Post a new GMPage specified in arguments using direct input
 
 			//admins
-			commands["DeletePlayer"] = PLEVEL_ADMIN;//only admin can delete players
-			commands["DeleteAccount"] = PLEVEL_ADMIN;//only admin can delete accounts
-			commands["SetAccountPassword"] = PLEVEL_ADMIN;//only admin can set account passwords
-			commands["BlockAccount"] = PLEVEL_ADMIN;//only admin can block account
-			commands["UnBlockAccount"] = PLEVEL_ADMIN;//only admin can unblock account
+			this.commands["DeletePlayer"] = PLEVEL_ADMIN;//only admin can delete players
+			this.commands["DeleteAccount"] = PLEVEL_ADMIN;//only admin can delete accounts
+			this.commands["SetAccountPassword"] = PLEVEL_ADMIN;//only admin can set account passwords
+			this.commands["BlockAccount"] = PLEVEL_ADMIN;//only admin can block account
+			this.commands["UnBlockAccount"] = PLEVEL_ADMIN;//only admin can unblock account
 
-			commands["ScriptedAccount"] = PLEVEL_ADMIN;//ScriptedAccount constructor - not supposed to be used at all
-			commands["CreateGameAccount"] = PLEVEL_ADMIN;//only admin can create accounts
+			this.commands["ScriptedAccount"] = PLEVEL_ADMIN;//ScriptedAccount constructor - not supposed to be used at all
+			this.commands["CreateGameAccount"] = PLEVEL_ADMIN;//only admin can create accounts
 		}
 
 		public int on_Command(Globals globals, ISrc commandSrc, string cmd) {
 			int plevel = commandSrc.MaxPlevel;
 			int cmdPlevel;
-			if (commands.TryGetValue(cmd, out cmdPlevel)) {
+			if (this.commands.TryGetValue(cmd, out cmdPlevel)) {
 				if (plevel >= cmdPlevel) {
 					return 0;
 				} else {

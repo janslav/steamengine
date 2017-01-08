@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
@@ -46,10 +47,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (left == oldNode) {
-				left = newNode;
-			} else if (right == oldNode) {
-				right = newNode;
+			if (this.left == oldNode) {
+				this.left = newNode;
+			} else if (this.right == oldNode) {
+				this.right = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -58,143 +59,143 @@ namespace SteamEngine.LScript {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal override object Run(ScriptVars vars) {
 			string opString = LScriptMain.GetString(this.OrigNode).Trim().ToLowerInvariant();
-			leftResult = left.Run(vars);
-			rightResult = right.Run(vars);
+			this.leftResult = this.left.Run(vars);
+			this.rightResult = this.right.Run(vars);
 
 			try {
 				ITriable newNode = null;
 
 				switch (opString) {
 					case ("+"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							newNode = new OpNode_AddOperator(this.parent, this.OrigNode);
-						} else if ((leftResult is string) || (rightResult is string)) {
+						} else if ((this.leftResult is string) || (this.rightResult is string)) {
 							newNode = new OpNode_ConcatOperator(this.parent, this.OrigNode);
 						} else {
-							newNode = FindOperatorMethod("op_Addition");
+							newNode = this.FindOperatorMethod("op_Addition");
 						}
 						break;
 					case ("-"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							newNode = new OpNode_SubOperator(this.parent, this.OrigNode);
 						} else {
-							newNode = FindOperatorMethod("op_Subtraction");
+							newNode = this.FindOperatorMethod("op_Subtraction");
 						}
 						break;
 					case ("/"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
 								newNode = new OpNode_DivOperator_Double(this.parent, this.OrigNode);
 							} else {
 								newNode = new OpNode_DivOperator_Int(this.parent, this.OrigNode);
 							}
 						} else {
-							newNode = FindOperatorMethod("op_Division");
+							newNode = this.FindOperatorMethod("op_Division");
 						}
 						break;
 					case ("div"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							newNode = new OpNode_DivOperator_Int(this.parent, this.OrigNode);
 						}
 						break;
 					case ("*"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							newNode = new OpNode_MulOperator(this.parent, this.OrigNode);
 						} else {
-							newNode = FindOperatorMethod("op_Multiply");
+							newNode = this.FindOperatorMethod("op_Multiply");
 						}
 						break;
 					case ("%"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							newNode = new OpNode_ModOperator(this.parent, this.OrigNode);
 						} else {
-							newNode = FindOperatorMethod("op_Modulus");
+							newNode = this.FindOperatorMethod("op_Modulus");
 						}
 						break;
 					case ("&"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							newNode = new OpNode_BinaryAndOperator(this.parent, this.OrigNode);
 						} else {
-							newNode = FindOperatorMethod("op_BitwiseAnd");
+							newNode = this.FindOperatorMethod("op_BitwiseAnd");
 						}
 						break;
 					case ("|"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							newNode = new OpNode_BinaryOrOperator(this.parent, this.OrigNode);
 						} else {
-							newNode = FindOperatorMethod("op_BitwiseOr");
+							newNode = this.FindOperatorMethod("op_BitwiseOr");
 						}
 						break;
 					case ("=="):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
 								newNode = new OpNode_EqualityOperator_Double(this.parent, this.OrigNode);
 							} else {
 								newNode = new OpNode_EqualityOperator_Int(this.parent, this.OrigNode);
 							}
 						} else {
-							newNode = FindOperatorMethod("op_Equality");
+							newNode = this.FindOperatorMethod("op_Equality");
 							if (newNode == null) {
 								newNode = new OpNode_EqualsOperator(this.parent, this.OrigNode);
 							}
 						}
 						break;
 					case ("!="):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
 								newNode = new OpNode_InEqualityOperator_Double(this.parent, this.OrigNode);
 							} else {
 								newNode = new OpNode_InEqualityOperator_Int(this.parent, this.OrigNode);
 							}
 						} else {
-							newNode = FindOperatorMethod("op_Inequality");
+							newNode = this.FindOperatorMethod("op_Inequality");
 							if (newNode == null) {
 								newNode = new OpNode_EqualsNotOperator(this.parent, this.OrigNode);
 							}
 						}
 						break;
 					case ("<="):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
 								newNode = new OpNode_LessThanOrEqualOperator_Double(this.parent, this.OrigNode);
 							} else {
 								newNode = new OpNode_LessThanOrEqualOperator_Int(this.parent, this.OrigNode);
 							}
 						} else {
-							newNode = FindOperatorMethod("op_LessThanOrEqual");
+							newNode = this.FindOperatorMethod("op_LessThanOrEqual");
 						}
 						break;
 					case (">="):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
 								newNode = new OpNode_GreaterThanOrEqualOperator_Double(this.parent, this.OrigNode);
 							} else {
 								newNode = new OpNode_GreaterThanOrEqualOperator_Int(this.parent, this.OrigNode);
 							}
 						} else {
-							newNode = FindOperatorMethod("op_GreaterThanOrEqual");
+							newNode = this.FindOperatorMethod("op_GreaterThanOrEqual");
 						}
 						break;
 					case ("<"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
 								newNode = new OpNode_LessThanOperator_Double(this.parent, this.OrigNode);
 							} else {
 								newNode = new OpNode_LessThanOperator_Int(this.parent, this.OrigNode);
 							}
 						} else {
-							newNode = FindOperatorMethod("op_LessThan");
+							newNode = this.FindOperatorMethod("op_LessThan");
 						}
 						break;
 					case (">"):
-						if (OperandsAreNumbers()) {
+						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
 								newNode = new OpNode_GreaterThanOperator_Double(this.parent, this.OrigNode);
 							} else {
 								newNode = new OpNode_GreaterThanOperator_Int(this.parent, this.OrigNode);
 							}
 						} else {
-							newNode = FindOperatorMethod("op_GreaterThan");
+							newNode = this.FindOperatorMethod("op_GreaterThan");
 						}
 						break;
 					default:
@@ -205,24 +206,24 @@ namespace SteamEngine.LScript {
 					object retVal;
 					OpNode_Lazy_BinOperator newNodeAsBinOp = newNode as OpNode_Lazy_BinOperator;
 					if (newNodeAsBinOp != null) {
-						newNodeAsBinOp.left = left;
-						newNodeAsBinOp.right = right;
+						newNodeAsBinOp.left = this.left;
+						newNodeAsBinOp.right = this.right;
 					}
 					OpNode newNodeAsON = (OpNode) newNode;
 					this.ReplaceSelf(newNodeAsON);
-					retVal = newNode.TryRun(vars, new object[] { leftResult, rightResult });
-					if ((left is OpNode_Object) && (right is OpNode_Object)) {
+					retVal = newNode.TryRun(vars, new object[] {this.leftResult, this.rightResult });
+					if ((this.left is OpNode_Object) && (this.right is OpNode_Object)) {
 						//both operands are constant -> result is also constant
 						OpNode constNode = OpNode_Object.Construct(this.parent, retVal);
 						this.parent.Replace(newNodeAsON, constNode);
 					}
 					return retVal;
 				}
-				throw new SEException(string.Format(System.Globalization.CultureInfo.InvariantCulture, 
+				throw new SEException(string.Format(CultureInfo.InvariantCulture, 
 					"Operator {0} is not applicable to these operands(type {1} and {2}).",
 					opString,
-					(leftResult == null ? "<null>" : Common.Tools.TypeToString(leftResult.GetType())),
-					(rightResult == null ? "<null>" :  Common.Tools.TypeToString(rightResult.GetType()))));
+					(this.leftResult == null ? "<null>" : Common.Tools.TypeToString(this.leftResult.GetType())),
+					(this.rightResult == null ? "<null>" :  Common.Tools.TypeToString(this.rightResult.GetType()))));
 			} catch (InterpreterException) {
 				throw;
 			} catch (Exception e) {
@@ -232,31 +233,31 @@ namespace SteamEngine.LScript {
 		}
 
 		private bool OperandsAreNumbers() {
-			if (leftResult == null) {
-				if (rightResult == null) {
+			if (this.leftResult == null) {
+				if (this.rightResult == null) {
 					return false;
 				}
-				return TagMath.IsNumberType(rightResult.GetType());
-			} else if (rightResult == null) {
-				return TagMath.IsNumberType(leftResult.GetType());
+				return ConvertTools.IsNumberType(this.rightResult.GetType());
+			} else if (this.rightResult == null) {
+				return ConvertTools.IsNumberType(this.leftResult.GetType());
 			}
-			return ((TagMath.IsNumberType(leftResult.GetType())) && (TagMath.IsNumberType(rightResult.GetType())));
+			return ((ConvertTools.IsNumberType(this.leftResult.GetType())) && (ConvertTools.IsNumberType(this.rightResult.GetType())));
 		}
 
 		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
-			if (leftResult == null) {
-				if (rightResult == null) {
+			if (this.leftResult == null) {
+				if (this.rightResult == null) {
 					return null;
 				}
-				return FindOperatorMethodOnType(methodName, rightResult.GetType());
-			} else if (rightResult == null) {
-				return FindOperatorMethodOnType(methodName, leftResult.GetType());
+				return this.FindOperatorMethodOnType(methodName, this.rightResult.GetType());
+			} else if (this.rightResult == null) {
+				return this.FindOperatorMethodOnType(methodName, this.leftResult.GetType());
 			} else {
-				OpNode_MethodWrapper method = FindOperatorMethodOnType(methodName, leftResult.GetType());
+				OpNode_MethodWrapper method = this.FindOperatorMethodOnType(methodName, this.leftResult.GetType());
 				if (method != null) {
 					return method;
 				}
-				return FindOperatorMethodOnType(methodName, rightResult.GetType());
+				return this.FindOperatorMethodOnType(methodName, this.rightResult.GetType());
 			}
 		}
 
@@ -268,8 +269,8 @@ namespace SteamEngine.LScript {
 				if (mi.Name.Equals(methodName)) { //true for case insensitive
 					ParameterInfo[] pars = mi.GetParameters();
 					if (pars.Length == 2) {
-						if (MemberResolver.IsCompatibleType(pars[0].ParameterType, leftResult)
-								&& MemberResolver.IsCompatibleType(pars[1].ParameterType, rightResult)) {
+						if (MemberResolver.IsCompatibleType(pars[0].ParameterType, this.leftResult)
+								&& MemberResolver.IsCompatibleType(pars[1].ParameterType, this.rightResult)) {
 							matches.Add(mi);
 						}
 					}
@@ -278,7 +279,7 @@ namespace SteamEngine.LScript {
 			if (matches.Count == 1) {
 				MethodInfo method = MemberWrapper.GetWrapperFor((MethodInfo) matches[0]);
 				OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename,
-					this.line, this.column, this.OrigNode, method, new OpNode[] { left, right });
+					this.line, this.column, this.OrigNode, method, new OpNode[] {this.left, this.right });
 				return newNode;
 			} else if (matches.Count > 1) {
 				//List<MethodInfo> resolvedAmbiguities;
@@ -299,15 +300,15 @@ namespace SteamEngine.LScript {
 
 		internal override string OrigString {
 			get {
-				return left.OrigString + LScriptMain.GetString(this.OrigNode) + left.OrigString;
+				return this.left.OrigString + LScriptMain.GetString(this.OrigNode) + this.left.OrigString;
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.Append(left.ToString());
+			str.Append(this.left.ToString());
 			str.Append(" ").Append(LScriptMain.GetString(this.OrigNode).Trim()).Append(" ");
-			str.Append(right.ToString());
+			str.Append(this.right.ToString());
 			str.Append(")");
 			return str.ToString();
 		}

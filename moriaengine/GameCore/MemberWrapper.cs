@@ -153,7 +153,7 @@ namespace SteamEngine {
 				if (type.IsEnum) {
 					type = Enum.GetUnderlyingType(type);
 				}
-				MethodInfo convertMethod = MemberWrapper.GetConvertMethod(type);
+				MethodInfo convertMethod = GetConvertMethod(type);
 				if (convertMethod != null) {
 					il.EmitCall(OpCodes.Call, convertMethod, null);
 				} else {//there is no converting method
@@ -273,43 +273,43 @@ namespace SteamEngine {
 
 			public override RuntimeMethodHandle MethodHandle {
 				get {
-					return constructorInfo.MethodHandle;
+					return this.constructorInfo.MethodHandle;
 				}
 			}
 			public override MethodAttributes Attributes {
 				get {
-					return constructorInfo.Attributes;
+					return this.constructorInfo.Attributes;
 				}
 			}
 			public override string Name {
 				get {
-					return constructorInfo.Name;
+					return this.constructorInfo.Name;
 				}
 			}
 			public override Type DeclaringType {
 				get {
-					return constructorInfo.DeclaringType;
+					return this.constructorInfo.DeclaringType;
 				}
 			}
 			public override Type ReflectedType {
 				get {
-					return constructorInfo.ReflectedType;
+					return this.constructorInfo.ReflectedType;
 				}
 			}
 			public override ParameterInfo[] GetParameters() {
-				return constructorInfo.GetParameters();
+				return this.constructorInfo.GetParameters();
 			}
 			public override MethodImplAttributes GetMethodImplementationFlags() {
-				return constructorInfo.GetMethodImplementationFlags();
+				return this.constructorInfo.GetMethodImplementationFlags();
 			}
 			public override object[] GetCustomAttributes(bool inherit) {
-				return constructorInfo.GetCustomAttributes(inherit);
+				return this.constructorInfo.GetCustomAttributes(inherit);
 			}
 			public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-				return constructorInfo.GetCustomAttributes(attributeType, inherit);
+				return this.constructorInfo.GetCustomAttributes(attributeType, inherit);
 			}
 			public override bool IsDefined(Type attributeType, bool inherit) {
-				return constructorInfo.IsDefined(attributeType, inherit);
+				return this.constructorInfo.IsDefined(attributeType, inherit);
 			}
 
 			private static string GetWrapperClassNameFor(ConstructorInfo ci) {
@@ -352,7 +352,7 @@ namespace SteamEngine {
 			}
 
 			internal static ConstructorWrapper SpitAndInstantiateWrapperFor(ConstructorInfo constructor) {
-				TypeBuilder tb = MemberWrapper.module.DefineType(GetWrapperClassNameFor(constructor),
+				TypeBuilder tb = module.DefineType(GetWrapperClassNameFor(constructor),
 					TypeAttributes.NotPublic, typeof(ConstructorWrapper));
 
 				EmitInvokeMethod(constructor, tb, invokeParamTypes1, 3);
@@ -373,42 +373,42 @@ namespace SteamEngine {
 
 			public override RuntimeFieldHandle FieldHandle {
 				get {
-					return fieldInfo.FieldHandle;
+					return this.fieldInfo.FieldHandle;
 				}
 			}
 			public override FieldAttributes Attributes {
 				get {
-					return fieldInfo.Attributes;
+					return this.fieldInfo.Attributes;
 				}
 			}
 			public override string Name {
 				get {
-					return fieldInfo.Name;
+					return this.fieldInfo.Name;
 				}
 			}
 			public override Type DeclaringType {
 				get {
-					return fieldInfo.DeclaringType;
+					return this.fieldInfo.DeclaringType;
 				}
 			}
 			public override Type ReflectedType {
 				get {
-					return fieldInfo.ReflectedType;
+					return this.fieldInfo.ReflectedType;
 				}
 			}
 			public override Type FieldType {
 				get {
-					return fieldInfo.FieldType;
+					return this.fieldInfo.FieldType;
 				}
 			}
 			public override object[] GetCustomAttributes(bool inherit) {
-				return fieldInfo.GetCustomAttributes(inherit);
+				return this.fieldInfo.GetCustomAttributes(inherit);
 			}
 			public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-				return fieldInfo.GetCustomAttributes(attributeType, inherit);
+				return this.fieldInfo.GetCustomAttributes(attributeType, inherit);
 			}
 			public override bool IsDefined(Type attributeType, bool inherit) {
-				return fieldInfo.IsDefined(attributeType, inherit);
+				return this.fieldInfo.IsDefined(attributeType, inherit);
 			}
 
 
@@ -435,7 +435,7 @@ namespace SteamEngine {
 			}
 
 			internal static FieldWrapper SpitAndInstantiateWrapperFor(FieldInfo field) {
-				TypeBuilder tb = MemberWrapper.module.DefineType(GetWrapperClassNameFor(field), TypeAttributes.NotPublic, typeof(FieldWrapper));
+				TypeBuilder tb = module.DefineType(GetWrapperClassNameFor(field), TypeAttributes.NotPublic, typeof(FieldWrapper));
 
 				//first build the SetValue method
 				MethodBuilder mb;
@@ -512,56 +512,56 @@ namespace SteamEngine {
 
 			public override Type ReturnType {
 				get {
-					return methodInfo.ReturnType;
+					return this.methodInfo.ReturnType;
 				}
 			}
 			public override ICustomAttributeProvider ReturnTypeCustomAttributes {
 				get {
-					return methodInfo.ReturnTypeCustomAttributes;
+					return this.methodInfo.ReturnTypeCustomAttributes;
 				}
 			}
 			public override RuntimeMethodHandle MethodHandle {
 				get {
-					return methodInfo.MethodHandle;
+					return this.methodInfo.MethodHandle;
 				}
 			}
 			public override MethodAttributes Attributes {
 				get {
-					return methodInfo.Attributes;
+					return this.methodInfo.Attributes;
 				}
 			}
 			public override string Name {
 				get {
-					return methodInfo.Name;
+					return this.methodInfo.Name;
 				}
 			}
 			public override Type DeclaringType {
 				get {
-					return methodInfo.DeclaringType;
+					return this.methodInfo.DeclaringType;
 				}
 			}
 			public override Type ReflectedType {
 				get {
-					return methodInfo.ReflectedType;
+					return this.methodInfo.ReflectedType;
 				}
 			}
 			public override MethodInfo GetBaseDefinition() {
-				return methodInfo.GetBaseDefinition();
+				return this.methodInfo.GetBaseDefinition();
 			}
 			public override ParameterInfo[] GetParameters() {
-				return methodInfo.GetParameters();
+				return this.methodInfo.GetParameters();
 			}
 			public override MethodImplAttributes GetMethodImplementationFlags() {
-				return methodInfo.GetMethodImplementationFlags();
+				return this.methodInfo.GetMethodImplementationFlags();
 			}
 			public override object[] GetCustomAttributes(bool inherit) {
-				return methodInfo.GetCustomAttributes(inherit);
+				return this.methodInfo.GetCustomAttributes(inherit);
 			}
 			public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-				return methodInfo.GetCustomAttributes(attributeType, inherit);
+				return this.methodInfo.GetCustomAttributes(attributeType, inherit);
 			}
 			public override bool IsDefined(Type attributeType, bool inherit) {
-				return methodInfo.IsDefined(attributeType, inherit);
+				return this.methodInfo.IsDefined(attributeType, inherit);
 			}
 
 			private static string GetWrapperClassNameFor(MethodInfo mi) {
@@ -584,7 +584,7 @@ namespace SteamEngine {
 				typeof(Object), typeof(BindingFlags), typeof(Binder), typeof(Object[]), typeof(CultureInfo)};
 
 			internal static MethodWrapper SpitAndInstantiateWrapperFor(MethodInfo method) {
-				TypeBuilder tb = MemberWrapper.module.DefineType(GetWrapperClassNameFor(method),
+				TypeBuilder tb = module.DefineType(GetWrapperClassNameFor(method),
 					TypeAttributes.NotPublic, typeof(MethodWrapper));
 				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
 					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(Object), invokeParamTypes);

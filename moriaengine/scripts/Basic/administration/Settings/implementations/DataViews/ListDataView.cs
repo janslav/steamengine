@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return "[" + index + "]";
+				return "[" + this.index + "]";
 			}
 
 			public override Type FieldType {
@@ -107,8 +107,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			public override object GetValue(object target) {
 				IList list = (IList) target;
 				int n = list.Count;
-				if (index < n) {
-					return list[index];
+				if (this.index < n) {
+					return list[this.index];
 				} else {
 					return null;
 				}
@@ -117,8 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			public override string GetStringValue(object target) {
 				IList list = (IList) target;
 				int n = list.Count;
-				if (index < n) {
-					return ObjectSaver.Save(list[index]);
+				if (this.index < n) {
+					return ObjectSaver.Save(list[this.index]);
 				} else {
 					return "";
 				}
@@ -127,16 +127,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			public override void SetValue(object target, object value) {
 				IList list = (IList) target;
 				int n = list.Count;
-				if (index < n) {
-					list[index] = value;
+				if (this.index < n) {
+					list[this.index] = value;
 				}
 			}
 
 			public override void SetStringValue(object target, string value) {
 				IList list = (IList) target;
 				int n = list.Count;
-				if (index < n) {
-					list[index] = ObjectSaver.Load(value);
+				if (this.index < n) {
+					list[this.index] = ObjectSaver.Load(value);
 				}
 			}
 		}

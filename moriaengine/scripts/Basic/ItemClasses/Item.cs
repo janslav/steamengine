@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override sealed bool Flag_NonMovable {
+		public sealed override bool Flag_NonMovable {
 			get {
 				return this.ProtectedFlag4;
 			}
@@ -138,7 +138,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override sealed bool IsNotVisible {
+		public sealed override bool IsNotVisible {
 			get {
 				return (this.Flag_Invisible || !this.IsInVisibleLayer || this.Flag_Disconnected);
 			}
@@ -169,7 +169,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Enumerates every item in this item and items in all subcontainers, but does not recurse deeper.</summary>
 		public IEnumerable<Item> EnumShallow() {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();
 			while (e.MoveNext()) {
 				Item i = (Item) e.Current;
@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override float Weight {
 			get {
-				return Def.Weight;
+				return this.Def.Weight;
 			}
 		}
 
@@ -210,7 +210,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item FindByType(TriggerGroup type) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			foreach (Item i in this.EnumDeep()) {
 				if (i.Type == type) {
 					return i;
@@ -220,7 +220,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item FindByTypeShallow(TriggerGroup type) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			foreach (Item i in this.EnumShallow()) {
 				if (i.Type == type) {
 					return i;

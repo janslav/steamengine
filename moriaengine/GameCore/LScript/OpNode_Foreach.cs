@@ -79,29 +79,29 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (enumerableNode == oldNode) {
-				enumerableNode = newNode;
+			if (this.enumerableNode == oldNode) {
+				this.enumerableNode = newNode;
 				return;
 			}
-			if (blockNode == oldNode) {
-				blockNode = newNode;
+			if (this.blockNode == oldNode) {
+				this.blockNode = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {
-			if (blockNode != null) {
+			if (this.blockNode != null) {
 				object retVal = null;
-				IEnumerable enumerable = enumerableNode.Run(vars) as IEnumerable;
+				IEnumerable enumerable = this.enumerableNode.Run(vars) as IEnumerable;
 				if (enumerable != null) {
 					IEnumerator enumerator = enumerable.GetEnumerator();
 					while ((!vars.returned) && (enumerator.MoveNext())) {
-						vars.localVars[localIndex] = enumerator.Current;
-						retVal = blockNode.Run(vars);
+						vars.localVars[this.localIndex] = enumerator.Current;
+						retVal = this.blockNode.Run(vars);
 					}
 				} else {
-					throw new InterpreterException("Result of the expression '" + LogStr.Ident(enumerableNode) + "' is not an IEnumerable instance",
+					throw new InterpreterException("Result of the expression '" + LogStr.Ident(this.enumerableNode) + "' is not an IEnumerable instance",
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				}
 				return retVal;
@@ -111,8 +111,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return String.Concat("Foreach (", localName, " in ", enumerableNode, ")",
-				Environment.NewLine, blockNode, Environment.NewLine, "endforeach");
+			return String.Concat("Foreach (", this.localName, " in ", this.enumerableNode, ")",
+				Environment.NewLine, this.blockNode, Environment.NewLine, "endforeach");
 		}
 	}
 }

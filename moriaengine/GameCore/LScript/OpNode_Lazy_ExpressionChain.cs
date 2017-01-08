@@ -99,25 +99,25 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(chain, oldNode);
+			int index = Array.IndexOf(this.chain, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				chain[index] = newNode;
+				this.chain[index] = newNode;
 			}
 		}
 
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			try {
-				for (int i = 0; i < chain.Length; ) {
+				for (int i = 0; i < this.chain.Length; ) {
 					try {
-						vars.self = chain[i].Run(vars);
+						vars.self = this.chain[i].Run(vars);
 						i++;
 					} catch (NameRefException nre) {
 						//Console.WriteLine("caught NameRefException: "+nre.nameRef.name);
 						//Console.WriteLine("chain before: "+Tools.ObjToString(chain));
-						ChainExceptIndex(i);
+						this.ChainExceptIndex(i);
 						//Console.WriteLine("chain after: "+Tools.ObjToString(chain));
 						vars.self = nre.nameRef;
 					}
@@ -130,21 +130,21 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder();
-			for (int i = 0, n = chain.Length; i < n; i++) {
-				str.Append(chain[i].ToString()).Append(".");
+			for (int i = 0, n = this.chain.Length; i < n; i++) {
+				str.Append(this.chain[i].ToString()).Append(".");
 			}
 			return str.ToString();
 		}
 
 		private void ChainExceptIndex(int index) {
-			OpNode[] newChain = new OpNode[chain.Length - 1];
-			for (int i = 0, j = 0, n = chain.Length; i < n; i++) {
+			OpNode[] newChain = new OpNode[this.chain.Length - 1];
+			for (int i = 0, j = 0, n = this.chain.Length; i < n; i++) {
 				if (i != index) {
-					newChain[j] = chain[i];
+					newChain[j] = this.chain[i];
 					j++;
 				}
 			}
-			chain = newChain;
+			this.chain = newChain;
 		}
 
 		internal int GetChildIndex(OpNode possibleChild) {

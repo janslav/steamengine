@@ -11,7 +11,7 @@ using SteamEngine.Communication.TCP;
 namespace SteamEngine.RemoteConsole {
 	public partial class ConnectionForm : Form {
 		public ConnectionForm() {
-			InitializeComponent();
+			this.InitializeComponent();
 
 			this.chkSavePassword.Checked = Settings.saveEndpointPasswords;
 

@@ -264,16 +264,16 @@ namespace SteamEngine {
 				this.implementation = new NormalConstant(retVal);
 			} else {
 				string statement = string.Concat("return ", value);
-				retVal = SteamEngine.LScript.LScriptMain.TryRunSnippet(
+				retVal = LScriptMain.TryRunSnippet(
 					this.filename, this.line, Globals.Instance, statement);
-				if (!SteamEngine.LScript.LScriptMain.LastSnippetSuccess) {
+				if (!LScriptMain.LastSnippetSuccess) {
 					this.unloaded = true;
 					Logger.WriteWarning(this.filename, this.line, "No value was set on this (" + this + "): It is now unloaded!");
 				} else {
 					this.unloaded = false;
-					if (SteamEngine.LScript.LScriptMain.snippetRunner.ContainsRandomExpression) {
-						this.implementation = new LScriptHolderConstant(SteamEngine.LScript.LScriptMain.snippetRunner);
-						SteamEngine.LScript.LScriptMain.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
+					if (LScriptMain.snippetRunner.ContainsRandomExpression) {
+						this.implementation = new LScriptHolderConstant(LScriptMain.snippetRunner);
+						LScriptMain.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
 					} else {
 						this.implementation = new NormalConstant(retVal);
 					}
@@ -314,9 +314,9 @@ namespace SteamEngine {
 				}
 			}
 
-			internal override sealed object Value {
+			internal sealed override object Value {
 				get {
-					return value;
+					return this.value;
 				}
 			}
 
@@ -333,9 +333,9 @@ namespace SteamEngine {
 				this.sh = sh;
 			}
 
-			internal override sealed object Value {
+			internal sealed override object Value {
 				get {
-					return sh.Run(Globals.Instance, (ScriptArgs) null);
+					return this.sh.Run(Globals.Instance, (ScriptArgs) null);
 				}
 			}
 
@@ -353,10 +353,10 @@ namespace SteamEngine {
 				this.str = str;
 			}
 
-			internal override sealed object Value {
+			internal sealed override object Value {
 				get {
-					holder.ResolveValueFromScript(str);
-					return holder.Value;
+					this.holder.ResolveValueFromScript(this.str);
+					return this.holder.Value;
 				}
 			}
 

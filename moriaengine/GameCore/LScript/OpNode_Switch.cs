@@ -163,19 +163,19 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (switchNode == oldNode) {
-				switchNode = newNode;
+			if (this.switchNode == oldNode) {
+				this.switchNode = newNode;
 				return;
 			}
-			if (defaultNode == oldNode) {
-				defaultNode = newNode;
+			if (this.defaultNode == oldNode) {
+				this.defaultNode = newNode;
 				return;
 			}
 
 			bool foundSome = false;
-			foreach (object key in cases.Keys) {
+			foreach (object key in this.cases.Keys) {
 				if (key == oldNode) {
-					cases[key] = newNode;
+					this.cases[key] = newNode;
 					foundSome = true;
 				}
 			}
@@ -184,12 +184,12 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		internal override abstract object Run(ScriptVars vars);
+		internal abstract override object Run(ScriptVars vars);
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("Switch (");
-			str.Append(switchNode).Append(")").Append(Environment.NewLine);
-			foreach (DictionaryEntry entry in cases) {
+			str.Append(this.switchNode).Append(")").Append(Environment.NewLine);
+			foreach (DictionaryEntry entry in this.cases) {
 				str.Append("case (").Append(entry.Key).Append(")").Append(Environment.NewLine);
 				str.Append(entry.Value);
 			}
@@ -205,11 +205,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object value = String.Concat(switchNode.Run(vars));
-			OpNode node = (OpNode)cases[value];
+			object value = String.Concat(this.switchNode.Run(vars));
+			OpNode node = (OpNode) this.cases[value];
 			if (node != nullOpNodeInstance) {
 				if (node == null) {
-					node = defaultNode;
+					node = this.defaultNode;
 				}
 				if ((node != nullOpNodeInstance) && (node != null)) {
 					return node.Run(vars);
@@ -228,15 +228,15 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object value;
 			try {
-				value = Convert.ToInt32(switchNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+				value = Convert.ToInt32(this.switchNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while parsing integer",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
-			OpNode node = (OpNode)cases[value];
+			OpNode node = (OpNode) this.cases[value];
 			if (node != nullOpNodeInstance) {
 				if (node == null) {
-					node = defaultNode;
+					node = this.defaultNode;
 				}
 				if ((node != nullOpNodeInstance) && (node != null)) {
 					return node.Run(vars);

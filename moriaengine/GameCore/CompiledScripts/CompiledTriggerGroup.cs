@@ -40,9 +40,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public override sealed object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
+		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			try {
-				return Run(self, tk, sa);
+				return this.Run(self, tk, sa);
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
@@ -127,13 +127,13 @@ namespace SteamEngine.CompiledScripts {
 			Type tgType;
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_" + tgType.Name);
+				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_" + this.tgType.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
-				codeTypeDeclatarion.BaseTypes.Add(tgType);
+				codeTypeDeclatarion.BaseTypes.Add(this.tgType);
 				codeTypeDeclatarion.IsClass = true;
 
-				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
-				codeTypeDeclatarion.Members.Add(GenerateGetNameMethod());
+				codeTypeDeclatarion.Members.Add(this.GenerateRunMethod());
+				codeTypeDeclatarion.Members.Add(this.GenerateGetNameMethod());
 
 				return codeTypeDeclatarion;
 			}
@@ -147,7 +147,7 @@ namespace SteamEngine.CompiledScripts {
 				foreach (MemberInfo m in mis) {
 					MethodInfo mi = m as MethodInfo;
 					if (mi != null) {
-						triggerMethods.Add(mi);
+						this.triggerMethods.Add(mi);
 					}
 				}
 			}
@@ -161,13 +161,13 @@ namespace SteamEngine.CompiledScripts {
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(ScriptArgs), "sa"));
 				retVal.ReturnType = new CodeTypeReference(typeof(object));
 
-				if (triggerMethods.Count > 0) {
+				if (this.triggerMethods.Count > 0) {
 					retVal.Statements.Add(new CodeVariableDeclarationStatement(
 						typeof(object[]),
 						"argv"));
 
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.Uid) {"));
-					foreach (MethodInfo mi in triggerMethods) {
+					foreach (MethodInfo mi in this.triggerMethods) {
 						TriggerKey tk = TriggerKey.Acquire(mi.Name.Substring(3));
 						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.Uid + "): //" + tk.Name));
 						retVal.Statements.AddRange(
@@ -192,7 +192,7 @@ namespace SteamEngine.CompiledScripts {
 
 				retVal.Statements.Add(
 					new CodeMethodReturnStatement(
-						new CodePrimitiveExpression(tgType.Name)));
+						new CodePrimitiveExpression(this.tgType.Name)));
 
 
 				return retVal;
@@ -211,7 +211,7 @@ namespace SteamEngine.CompiledScripts {
 	//if someone has a better idea about how to do this ...
 	public abstract class GroundTileType : CompiledTriggerGroup {
 
-		public static new GroundTileType GetByDefname(string name) {
+		public new static GroundTileType GetByDefname(string name) {
 			return AbstractScript.GetByDefname(name) as GroundTileType;
 		}
 

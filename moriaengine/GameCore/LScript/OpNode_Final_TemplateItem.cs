@@ -42,12 +42,12 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (defNode == oldNode) {
-				defNode = newNode;
+			if (this.defNode == oldNode) {
+				this.defNode = newNode;
 				return;
 			}
-			if (amountNode == oldNode) {
-				amountNode = newNode;
+			if (this.amountNode == oldNode) {
+				this.amountNode = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -61,8 +61,8 @@ namespace SteamEngine.LScript {
 			IThingFactory tf;
 			int amount;
 			try {
-				tf = (IThingFactory) defNode.Run(vars);
-				amount = Convert.ToInt32(amountNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+				tf = (IThingFactory) this.defNode.Run(vars);
+				amount = Convert.ToInt32(this.amountNode.Run(vars), CultureInfo.InvariantCulture);
 			} finally {
 				vars.self = t;
 			}
@@ -89,7 +89,7 @@ namespace SteamEngine.LScript {
 			IThingFactory tf = (IThingFactory) results[0];
 			int amount = 1;
 			if (results.Length > 1) {
-				amount = Convert.ToInt32(results[1], System.Globalization.CultureInfo.InvariantCulture);
+				amount = Convert.ToInt32(results[1], CultureInfo.InvariantCulture);
 			}
 			try {
 				AbstractItem i = t.NewItem(tf, amount);
@@ -107,7 +107,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return (isnewbie ? "ITEMNEWBIE" : "ITEM") + "(" + defNode + ", " + amountNode + ")";
+			return (this.isnewbie ? "ITEMNEWBIE" : "ITEM") + "(" + this.defNode + ", " + this.amountNode + ")";
 		}
 
 		public Type ReturnType {

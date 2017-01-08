@@ -58,7 +58,7 @@ namespace SteamEngine {
 			throw new SEException("This should not happen");
 		}
 
-		internal protected void RegisterAsFunction() {
+		protected internal void RegisterAsFunction() {
 			if (!functionsByName.TryAdd(this.name, this)) {
 				throw new ServerException("ScriptHolder '" + this.name + "' already exists; Cannot create a new one with the same name.");
 			}
@@ -82,22 +82,22 @@ namespace SteamEngine {
 		public abstract object Run(object self, ScriptArgs sa);
 
 		public object Run(object self, params object[] args) {
-			return Run(self, new ScriptArgs(args));
+			return this.Run(self, new ScriptArgs(args));
 		}
 
 		public object TryRun(object self, ScriptArgs sa) {
 			try {
-				return Run(self, sa);
+				return this.Run(self, sa);
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				Error(e);
+				this.Error(e);
 			}
 			return null;
 		}
 
 		public object TryRun(object self, params object[] args) {
-			return TryRun(self, new ScriptArgs(args));
+			return this.TryRun(self, new ScriptArgs(args));
 		}
 		protected virtual void Error(Exception e) {
 			Logger.WriteError(e);

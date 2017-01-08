@@ -64,16 +64,16 @@ namespace SteamEngine.Regions {
 			Match match = Point4D.positionRE.Match(value);
 			if (match.Success) {
 				GroupCollection gc = match.Groups;
-				int x = TagMath.ParseUInt16(gc["x"].Value);
-				int y = TagMath.ParseUInt16(gc["y"].Value);
+				int x = ConvertTools.ParseUInt16(gc["x"].Value);
+				int y = ConvertTools.ParseUInt16(gc["y"].Value);
 				string zstr = gc["z"].Value;
 				string mstr = gc["m"].Value;
 				int z;
 				byte m;
 				if (zstr.Length > 0) {
-					z = TagMath.ParseSByte(zstr);
+					z = ConvertTools.ParseSByte(zstr);
 					if (mstr.Length > 0) {
-						m = TagMath.ParseByte(mstr);
+						m = ConvertTools.ParseByte(mstr);
 					} else {
 						m = 0;
 					}

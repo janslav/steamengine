@@ -64,7 +64,7 @@ namespace SteamEngine.Networking {
 			key[3] = key[7] = key[11] = key[15] = bytesIn[checked(offsetIn + 3)]; // (byte) (seed & 0xff);
 
 			byte[] iv = new byte[0];
-			this.engine = new SteamEngine.Networking.TwofishEncryption(128, ref key, ref iv, CipherMode.ECB, SteamEngine.Networking.TwofishBase.EncryptionDirection.Decrypting);
+			this.engine = new TwofishEncryption(128, ref key, ref iv, CipherMode.ECB, TwofishBase.EncryptionDirection.Decrypting);
 
 			// Initialize table
 			for (int i = 0; i < 256; ++i) {
@@ -74,12 +74,12 @@ namespace SteamEngine.Networking {
 			this.sendPos = 0;
 
 			// We need to fill the table initially to calculate the MD5 hash of it
-			refreshCipherTable();
+			this.refreshCipherTable();
 
 			// Create a MD5 hash of the twofish crypt data and use it as a 16-byte xor table
 			// for encrypting the server->client stream.
 			MD5 md5 = new MD5CryptoServiceProvider();
-			this.xorData = md5.ComputeHash(cipherTable);
+			this.xorData = md5.ComputeHash(this.cipherTable);
 
 			return EncryptionInitResult.SuccessUseEncryption;
 		}
@@ -88,12 +88,12 @@ namespace SteamEngine.Networking {
 			uint[] block = new uint[4];
 
 			for (int i = 0; i < 256; i += 16) {
-				System.Buffer.BlockCopy(cipherTable, i, block, 0, 16);
-				engine.blockEncrypt(ref block);
-				System.Buffer.BlockCopy(block, 0, cipherTable, i, 16);
+				System.Buffer.BlockCopy(this.cipherTable, i, block, 0, 16);
+				this.engine.blockEncrypt(ref block);
+				System.Buffer.BlockCopy(block, 0, this.cipherTable, i, 16);
 			}
 
-			recvPos = 0;
+			this.recvPos = 0;
 		}
 
 		public int Encrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length) {

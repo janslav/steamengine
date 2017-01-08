@@ -316,7 +316,7 @@ namespace SteamEngine {
 		}
 
 		//commands:
-		public override sealed void Resend() {
+		public sealed override void Resend() {
 			ItemSyncQueue.Resend(this);
 		}
 
@@ -429,14 +429,14 @@ namespace SteamEngine {
 			this.Model = this.TypeDef.GetNextFlipModel(this.Model);
 		}
 
-		public static new void RegisterTriggerGroup(TriggerGroup tg) {
+		public new static void RegisterTriggerGroup(TriggerGroup tg) {
 			if (!registeredTGs.Contains(tg)) {
 				registeredTGs.Add(tg);
 			}
 		}
 
 		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				tg.Run(this, tk, sa);
@@ -448,7 +448,7 @@ namespace SteamEngine {
 		}
 
 		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				tg.TryRun(this, tk, sa);
@@ -481,7 +481,7 @@ namespace SteamEngine {
 		}
 
 		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
@@ -501,7 +501,7 @@ namespace SteamEngine {
 			return TriggerResult.Continue;
 		}
 
-		internal override sealed TriggerResult Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
+		internal sealed override TriggerResult Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
 			//helper method for Trigger_Click
 			var result = clickingChar.TryCancellableTrigger(TriggerKey.itemClick, sa);
 			if (result != TriggerResult.Cancel) {
@@ -512,7 +512,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		internal void Trigger_Step(AbstractCharacter steppingChar, bool repeated, MovementType movementType) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated, movementType);
 
 			steppingChar.TryTrigger(TriggerKey.itemStep, sa);
@@ -563,10 +563,10 @@ namespace SteamEngine {
 					this.name = String.Intern(ConvertTools.LoadSimpleQuotedString(valueString));
 					break;
 				case "amount":
-					this.amount = TagMath.ParseInt32(valueString);
+					this.amount = ConvertTools.ParseInt32(valueString);
 					break;
 				case "flags":
-					this.flags = (InternalFlag) TagMath.ParseByte(valueString);
+					this.flags = (InternalFlag) ConvertTools.ParseByte(valueString);
 					break;
 				case "type":
 					this.type = TriggerGroup.GetByDefname(valueString);
@@ -578,32 +578,32 @@ namespace SteamEngine {
 		}
 
 
-		public override sealed bool IsItem {
+		public sealed override bool IsItem {
 			get {
 				return true;
 			}
 		}
 
-		public override sealed bool IsEquipped {
+		public sealed override bool IsEquipped {
 			get {
 				return (this.Cont is AbstractCharacter);
 			}
 		}
 
-		public override sealed bool IsOnGround {
+		public sealed override bool IsOnGround {
 			get {
 				return (this.Cont == null);
 			}
 		}
 
-		public override sealed bool IsInContainer {
+		public sealed override bool IsInContainer {
 			get {
 				Thing c = this.Cont;
 				return (c != null && c.IsItem);
 			}
 		}
 
-		public override sealed Thing TopObj() {
+		public sealed override Thing TopObj() {
 			Thing c = this.Cont;
 			if (c != null) {
 				return c.TopObj();
@@ -625,7 +625,7 @@ namespace SteamEngine {
 			return false;
 		}
 
-		public override sealed IEnumerator<AbstractItem> GetEnumerator() {
+		public sealed override IEnumerator<AbstractItem> GetEnumerator() {
 			this.ThrowIfDeleted();
 			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {

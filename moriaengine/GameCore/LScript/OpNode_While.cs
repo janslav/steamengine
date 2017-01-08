@@ -24,6 +24,7 @@ using System.Collections;
 using System.Reflection;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
@@ -57,10 +58,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (condition == oldNode) {
-				condition = newNode;
-			} else if (code == oldNode) {
-				code = newNode;
+			if (this.condition == oldNode) {
+				this.condition = newNode;
+			} else if (this.code == oldNode) {
+				this.code = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -68,13 +69,13 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			object retVal = null;
-			if (code == null) {
-				while ((!vars.returned) && (TagMath.ToBoolean(condition.Run(vars)))) {
+			if (this.code == null) {
+				while ((!vars.returned) && (ConvertTools.ToBoolean(this.condition.Run(vars)))) {
 					//empty
 				}
 			} else {
-				while ((!vars.returned) && (TagMath.ToBoolean(condition.Run(vars)))) {
-					retVal = code.Run(vars);
+				while ((!vars.returned) && (ConvertTools.ToBoolean(this.condition.Run(vars)))) {
+					retVal = this.code.Run(vars);
 				}
 			}
 			return retVal;
@@ -82,9 +83,9 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("While (");
-			str.Append(condition.ToString()).Append(")").Append(Environment.NewLine);
-			if (code != null) {
-				str.Append(code.ToString());
+			str.Append(this.condition.ToString()).Append(")").Append(Environment.NewLine);
+			if (this.code != null) {
+				str.Append(this.code.ToString());
 			}
 			str.Append("Endwhile");
 			return str.ToString();

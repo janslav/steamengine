@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
 			//zkusime se mrknout jestli uz nemame defname predvyplneno (napriklad pri neuspesnem zadani - preklep apd.)
-			string filledDefname = TagMath.SGetTag(args, D_NewTriggerGroup.prefilledDefnameTK);
+			string filledDefname = TagMath.SGetTag(args, prefilledDefnameTK);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					//zobrait chybovou hlasku
 					Gump newGi = D_Display_Text.ShowError("Trigger group s defnamem '" + tgDefname + "' nenalezena!");
 					//ulozime do tagu vlozene defname
-					args.SetTag(D_NewTriggerGroup.prefilledDefnameTK, tgDefname);
+					args.SetTag(prefilledDefnameTK, tgDefname);
 
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;

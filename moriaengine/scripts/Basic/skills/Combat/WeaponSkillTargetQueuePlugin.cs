@@ -53,45 +53,45 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void AddTarget(Character target) {
-			LinkedListNode<Character> node = targetQueue.First;
+			LinkedListNode<Character> node = this.targetQueue.First;
 			if (node != null) {
-				if (target != targetQueue.First.Value) {
+				if (target != this.targetQueue.First.Value) {
 					while (node != null) {
 						if (node.Value == target) {
-							targetQueue.Remove(node);
+							this.targetQueue.Remove(node);
 							break;
 						}
 						node = node.Next;
 					}
-					targetQueue.AddFirst(target);
+					this.targetQueue.AddFirst(target);
 				}
 			} else {
-				targetQueue.AddFirst(target);
+				this.targetQueue.AddFirst(target);
 			}
 
-			FightCurrentTarget();
+			this.FightCurrentTarget();
 		}
 
 		public void RemoveTarget(Character target) {
-			LinkedListNode<Character> node = targetQueue.First;
+			LinkedListNode<Character> node = this.targetQueue.First;
 			while (node != null) {
 				if (node.Value == target) {
-					targetQueue.Remove(node);
+					this.targetQueue.Remove(node);
 					break;
 				}
 				node = node.Next;
 			}
-			FightCurrentTarget();
+			this.FightCurrentTarget();
 		}
 
 		public void FightCurrentTarget() {
-			if (targetQueue.Count > 0) {
+			if (this.targetQueue.Count > 0) {
 				this.Timer = CombatSettings.instance.secondsToRememberTargets;
 				Character target = null;
 				while (true) {
-					target = targetQueue.First.Value;
+					target = this.targetQueue.First.Value;
 					if (!target.IsAliveAndValid) {
-						targetQueue.RemoveFirst();
+						this.targetQueue.RemoveFirst();
 						target = null;
 					} else {
 						break;
@@ -131,7 +131,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_WarModeChange() {
-			if (!Cont.Flag_WarMode) {//
+			if (!this.Cont.Flag_WarMode) {//
 				this.Delete();
 			}
 		}

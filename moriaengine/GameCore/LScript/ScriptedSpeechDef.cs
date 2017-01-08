@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override SpeechResult Handle(AbstractCharacter listener, SpeechArgs speechArgs) {
 			string message = speechArgs.Speech;
-			foreach (SpeechTrigger st in triggers) {
+			foreach (SpeechTrigger st in this.triggers) {
 				Match m = st.re.Match(message);
 				if (m.Success) {
 					object o = st.holder.Run(listener, speechArgs);
@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs) {
 			string message = speechArgs.Speech;
-			foreach (SpeechTrigger st in triggers) {
+			foreach (SpeechTrigger st in this.triggers) {
 				Match m = st.re.Match(message);
 				if (m.Success) {
 					object o = st.holder.TryRun(listener, speechArgs);

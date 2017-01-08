@@ -32,12 +32,12 @@ namespace SteamEngine {
 	public abstract class TriggerGroup : AbstractScript {
 		protected TriggerGroup()
 			: base() {
-			Init(this.Defname);
+			this.Init(this.Defname);
 		}
 
 		protected TriggerGroup(string defname)
 			: base(defname) {
-			Init(defname);
+			this.Init(defname);
 		}
 
 		private static Regex globalNameRE = new Regex(@"^.*_all(?<value>[a-z][0-9a-z]+)s\s*$",
@@ -71,15 +71,15 @@ namespace SteamEngine {
 		public abstract object TryRun(object self, TriggerKey tk, ScriptArgs sa);
 
 		public override string ToString() {
-			return "TriggerGroup " + Defname;
+			return "TriggerGroup " + this.Defname;
 		}
 
-		public static new TriggerGroup GetByDefname(string name) {
+		public new static TriggerGroup GetByDefname(string name) {
 			return AbstractScript.GetByDefname(name) as TriggerGroup;
 		}
 
 		internal static void ReAddGlobals() {
-			foreach (AbstractScript script in AbstractScript.AllScripts) {
+			foreach (AbstractScript script in AllScripts) {
 				TriggerGroup tg = script as TriggerGroup;
 				if (tg != null) {
 					if (tg.Defname.ToLowerInvariant().EndsWith("_global")) {

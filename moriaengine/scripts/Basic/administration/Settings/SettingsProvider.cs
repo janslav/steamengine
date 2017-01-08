@@ -16,6 +16,7 @@
 */
 using System;
 using System.Collections.Generic;
+using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 
@@ -51,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						oneRes.ErroneousValue = newStringValue;
 					}
 					resList.Add(oneRes);//add to the list (only if changed somehow)
-				} else if (typeof(Enum).IsAssignableFrom(field.FieldType) && SettingsProvider.IsEnumValueChanged(field, target, newStringValue)) {
+				} else if (typeof(Enum).IsAssignableFrom(field.FieldType) && IsEnumValueChanged(field, target, newStringValue)) {
 					//if the field handles the Enum type, we have to check it a slightly different way...
 					oneRes.Outcome = SettingsEnums.ChangedOK;
 					try {
@@ -122,7 +123,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//we will store it in the special dictionary
 			if (!prefixTypes.TryGetValue(t, out valuePrefix)) {
 				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
-				if (t.IsEnum || TagMath.IsNumberType(t) || t.Equals(typeof(String))
+				if (t.IsEnum || ConvertTools.IsNumberType(t) || t.Equals(typeof(String))
 					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
 				} else if (typeof(Thing).IsAssignableFrom(t)) {
 					valuePrefix = "#";
@@ -157,7 +158,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return "(Obj)";
 			} else if (t.IsEnum) {
 				return "(Enum)";
-			} else if (TagMath.IsNumberType(t)) {
+			} else if (ConvertTools.IsNumberType(t)) {
 				return "(Num)";
 			} else if (t.Equals(typeof(String))) {
 				return "(Str)";
@@ -208,23 +209,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public SettingResult(IDataFieldView field, object target) {
 			this.field = field;
 			this.target = target;
-			formerValue = field.GetValue(target);
+			this.formerValue = field.GetValue(target);
 		}
 
 		/// <summary>What is the result of the setting?</summary>
 		public SettingsEnums Outcome {
 			get {
-				return outcome;
+				return this.outcome;
 			}
 			set {
-				outcome = value;
+				this.outcome = value;
 			}
 		}
 
 		/// <summary>Get the name from the IDataFieldView</summary>
 		public string Name {
 			get {
-				return field.GetName(target);
+				return this.field.GetName(this.target);
 			}
 		}
 
@@ -232,10 +233,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public string ErroneousValue {
 			get {
 				//if the setting is OK, then return an empty string
-				return erroneousValue == null ? "" : erroneousValue;
+				return this.erroneousValue == null ? "" : this.erroneousValue;
 			}
 			set {
-				erroneousValue = value;
+				this.erroneousValue = value;
 			}
 		}
 
@@ -243,14 +244,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public string FormerValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)
-				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
-					return Enum.GetName(field.FieldType, formerValue);
+				if (typeof(Enum).IsAssignableFrom(this.field.FieldType)) {
+					return Enum.GetName(this.field.FieldType, this.formerValue);
 				} else {
-					return ObjectSaver.Save(formerValue);
+					return ObjectSaver.Save(this.formerValue);
 				}
 			}
 			set {
-				formerValue = value;
+				this.formerValue = value;
 			}
 		}
 
@@ -258,10 +259,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public string CurrentValue {
 			get {
 				//Handle the Enums differently (show the name, not the value...)				
-				if (typeof(Enum).IsAssignableFrom(field.FieldType)) {
-					return Enum.GetName(field.FieldType, field.GetValue(target));
+				if (typeof(Enum).IsAssignableFrom(this.field.FieldType)) {
+					return Enum.GetName(this.field.FieldType, this.field.GetValue(this.target));
 				} else {
-					return field.GetStringValue(target);
+					return this.field.GetStringValue(this.target);
 				}
 			}
 		}

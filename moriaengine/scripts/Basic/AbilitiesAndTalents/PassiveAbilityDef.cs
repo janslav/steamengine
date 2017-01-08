@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		/// Just call the activate method from parent (this will ensure assigning all TGs and Plugins
 		/// </summary>
 		protected override void On_Assign(Character ch, Ability ab) {
-			Activate(ch); //activate the ability automatically
+			this.Activate(ch); //activate the ability automatically
 		}
 
 		//protected override void On_ValueChanged(Character ch, Ability ab, int previousValue) {

@@ -61,7 +61,7 @@ namespace SteamEngine {
 
 		public string Filepos {
 			get {
-				return "line " + headerLine + " of " + filename;
+				return "line " + this.headerLine + " of " + this.filename;
 			}
 		}
 
@@ -79,12 +79,12 @@ namespace SteamEngine {
 		public override string PrettyDefname {
 			get {
 				//from the two available defnames (like c_0x190 and c_man) it returns the more understandable (c_man)
-				if (Defname.IndexOf("_0x") > 0) {
+				if (this.Defname.IndexOf("_0x") > 0) {
 					if (this.altdefname != null) {
 						return this.altdefname;
 					}
 				}
-				return Defname;
+				return this.Defname;
 			}
 		}
 
@@ -93,10 +93,10 @@ namespace SteamEngine {
 		}
 
 		public override int GetHashCode() {
-			return uid;
+			return this.uid;
 		}
 
-		public static new AbstractDef GetByDefname(string name) {
+		public new static AbstractDef GetByDefname(string name) {
 			return AbstractScript.GetByDefname(name) as AbstractDef;
 		}
 		#endregion Accessors
@@ -124,7 +124,7 @@ namespace SteamEngine {
 
 		public virtual void LoadFromSaves(PropsSection input) {
 			foreach (PropsLine pl in input.PropsLines) {
-				ObjectSaver.Load(pl.Value, new LoadObjectParam(this.LoadField_Delayed), filename, pl.Line,
+				ObjectSaver.Load(pl.Value, new LoadObjectParam(this.LoadField_Delayed), this.filename, pl.Line,
 					pl.Name);
 			}
 		}
@@ -132,7 +132,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void LoadField_Delayed(object resolvedObject, string filename, int line, object args) {
 			string fieldName = (string) args;
-			FieldValue fv = (FieldValue) fieldValues[fieldName];
+			FieldValue fv = (FieldValue) this.fieldValues[fieldName];
 
 			if (fv == null) {//that means it's not in scripts
 				Match m = TagHolder.tagRE.Match(fieldName);
@@ -141,8 +141,8 @@ namespace SteamEngine {
 					TagKey tk = TagKey.Acquire(tagName);
 					tagName = "tag." + tagName;
 					fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
-					fieldValues[tk] = fv;
-					fieldValues[tagName] = fv;
+					this.fieldValues[tk] = fv;
+					this.fieldValues[tagName] = fv;
 				} else {
 					Logger.WriteWarning("Unknown saved FieldValue line: " + fieldName + " = '" + resolvedObject.ToString() + "'");
 					return;
@@ -164,12 +164,12 @@ namespace SteamEngine {
 		#region FieldValue methods
 		protected FieldValue InitTypedField(string name, object value, Type type) {
 			if (typeof(ThingDef).IsAssignableFrom(type)) {
-				return InitThingDefField(name, value, type);
+				return this.InitThingDefField(name, value, type);
 			}
-			FieldValue fieldValue = (FieldValue) fieldValues[name];
+			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
 			if (fieldValue == null) {
 				fieldValue = new FieldValue(name, FieldValueType.Typed, type, value);
-				fieldValues[name] = fieldValue;
+				this.fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
@@ -177,10 +177,10 @@ namespace SteamEngine {
 		}
 
 		protected FieldValue InitThingDefField(string name, object value, Type type) {
-			FieldValue fieldValue = (FieldValue) fieldValues[name];
+			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
 			if (fieldValue == null) {
 				fieldValue = new FieldValue(name, FieldValueType.ThingDefType, type, value);
-				fieldValues[name] = fieldValue;
+				this.fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Typed called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
@@ -188,10 +188,10 @@ namespace SteamEngine {
 		}
 
 		protected FieldValue InitModelField(string name, object value) {
-			FieldValue fieldValue = (FieldValue) fieldValues[name];
+			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
 			if (fieldValue == null) {
 				fieldValue = new FieldValue(name, FieldValueType.Model, null, value);
-				fieldValues[name] = fieldValue;
+				this.fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Model called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
@@ -199,10 +199,10 @@ namespace SteamEngine {
 		}
 
 		protected FieldValue InitTypelessField(string name, object value) {
-			FieldValue fieldValue = (FieldValue) fieldValues[name];
+			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
 			if (fieldValue == null) {
 				fieldValue = new FieldValue(name, FieldValueType.Typeless, null, value);
-				fieldValues[name] = fieldValue;
+				this.fieldValues[name] = fieldValue;
 			} else {
 				throw new SanityCheckException("InitField_Typeless called , when a fieldvalue called " + LogStr.Ident(name) + " already exists.");
 			}
@@ -273,7 +273,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Save(SaveStream output) {
 			bool headerWritten = false;
-			foreach (DictionaryEntry entry in fieldValues) {
+			foreach (DictionaryEntry entry in this.fieldValues) {
 				if (entry.Key is TagKey) {//so that tags dont get written twice
 					continue;
 				}
@@ -346,7 +346,7 @@ namespace SteamEngine {
 			return parserMethod;
 		}
 
-		public static new void Bootstrap() {
+		public new static void Bootstrap() {
 			//all AbstractDef descendants will be registered so that they get loaded by our LoadFromScripts method
 			CompiledScripts.ClassManager.RegisterSupplySubclasses<AbstractDef>(RegisterSubtype);
 		}
@@ -476,7 +476,7 @@ namespace SteamEngine {
 
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
-		override public AbstractScript Register() {
+		public override AbstractScript Register() {
 			try {
 				if (!string.IsNullOrEmpty(this.altdefname)) {
 					var previous = AllScriptsByDefname.GetOrAdd(this.altdefname, this);
@@ -492,7 +492,7 @@ namespace SteamEngine {
 
 		//unregister from static dictionaries and lists. 
 		//Can be called multiple times without harm
-		override protected void Unregister() {
+		protected override void Unregister() {
 			try {
 				if (!string.IsNullOrEmpty(this.altdefname)) {
 
@@ -540,12 +540,12 @@ namespace SteamEngine {
 			if (m.Success) {	//If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
 				TagKey tk = TagKey.Acquire(tagName);
-				fieldValue = (FieldValue) fieldValues[tk];
+				fieldValue = (FieldValue) this.fieldValues[tk];
 				if (fieldValue == null) {
 					tagName = "tag." + tagName;
 					fieldValue = new FieldValue(tagName, FieldValueType.Typeless, null, filename, line, args);
-					fieldValues[tk] = fieldValue;
-					fieldValues[tagName] = fieldValue;
+					this.fieldValues[tk] = fieldValue;
+					this.fieldValues[tagName] = fieldValue;
 				} else {
 					fieldValue.SetFromScripts(filename, line, args);
 				}
@@ -559,7 +559,7 @@ namespace SteamEngine {
 					return;
 				//axis props are ignored. Or shouldnt they? :)
 				default:
-					fieldValue = (FieldValue) fieldValues[param];
+					fieldValue = (FieldValue) this.fieldValues[param];
 					if (fieldValue != null) {
 						fieldValue.SetFromScripts(filename, line, args);
 						return;
@@ -610,7 +610,7 @@ namespace SteamEngine {
 			}
 		}
 
-		virtual protected void On_AfterLoadFromScripts() {
+		protected virtual void On_AfterLoadFromScripts() {
 		}
 
 		/// <summary>
@@ -665,7 +665,7 @@ namespace SteamEngine {
 
 		//unloads instances that come from scripts.
 		internal static void ForgetScripts() {
-			AbstractScript.ForgetAll(); //just to be sure - unregister everything. Should be called by Main anyway
+			ForgetAll(); //just to be sure - unregister everything. Should be called by Main anyway
 
 			constructorsByTypeName.Clear();//we assume that inside core there are no non-abstract defs
 
@@ -682,7 +682,7 @@ namespace SteamEngine {
 
 		#region ITagHolder methods
 		public object GetTag(TagKey tk) {
-			FieldValue fv = (FieldValue) fieldValues[tk];
+			FieldValue fv = (FieldValue) this.fieldValues[tk];
 			if (fv != null) {
 				return fv.CurrentValue;
 			} else {
@@ -691,29 +691,29 @@ namespace SteamEngine {
 		}
 
 		public void SetTag(TagKey tk, object value) {
-			FieldValue fv = (FieldValue) fieldValues[tk];
+			FieldValue fv = (FieldValue) this.fieldValues[tk];
 			if (fv == null) {
 				string tagName = "tag." + tk;
 				fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
-				fieldValues[tk] = fv;
-				fieldValues[tagName] = fv;
+				this.fieldValues[tk] = fv;
+				this.fieldValues[tagName] = fv;
 			}
 			fv.CurrentValue = value;
 		}
 
 		public bool HasTag(TagKey tk) {
-			return (fieldValues.ContainsKey(tk));
+			return (this.fieldValues.ContainsKey(tk));
 		}
 
 		public void RemoveTag(TagKey tk) {
-			FieldValue fv = (FieldValue) fieldValues[tk];
+			FieldValue fv = (FieldValue) this.fieldValues[tk];
 			if (fv != null) {
 				fv.CurrentValue = null;
 			}
 		}
 
 		public void ClearTags() {
-			foreach (DictionaryEntry entry in fieldValues) {
+			foreach (DictionaryEntry entry in this.fieldValues) {
 				if (entry.Key is TagKey) {
 					FieldValue fv = (FieldValue) entry.Value;
 					fv.CurrentValue = null;

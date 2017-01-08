@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string Save(object objToSave) {
-			return Prefix + ((ResourcesList) objToSave).ToParsableString();
+			return this.Prefix + ((ResourcesList) objToSave).ToParsableString();
 		}
 
 		public object Load(Match match) {
