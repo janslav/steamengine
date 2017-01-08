@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 		internal Gump gumpInstance; //this is to be used only in the abstract methods
 		public Gump GumpInstance {
 			get {
-				return gumpInstance;
+				return this.gumpInstance;
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 
 			this.gumpInstance = gi;
 			try {
-				Construct(focus, sendTo, args);
+				this.Construct(focus, sendTo, args);
 				if (this.gumpInstance != null) {
 					gi = this.gumpInstance;
 					this.gumpInstance = null;
@@ -85,224 +85,224 @@ namespace SteamEngine.CompiledScripts {
 		#region drawing interface
 		//RunUO interface
 		public void AddAlphaRegion(int x, int y, int width, int height) {
-			GumpInstance.AddCheckerTrans(x, y, width, height);
+			this.GumpInstance.AddCheckerTrans(x, y, width, height);
 		}
 
 		//sphere-like interface
 		public void CheckerTrans(int x, int y, int width, int height) {
-			GumpInstance.AddCheckerTrans(x, y, width, height);
+			this.GumpInstance.AddCheckerTrans(x, y, width, height);
 		}
 
 		public void CheckerTrans() {
-			GumpInstance.AddCheckerTrans();
+			this.GumpInstance.AddCheckerTrans();
 		}
 
 		public void AddBackground(int x, int y, int width, int height, int gumpId) {
-			GumpInstance.AddResizePic(x, y, gumpId, width, height);
+			this.GumpInstance.AddResizePic(x, y, gumpId, width, height);
 		}
 
 		public void ResizePic(int x, int y, int gumpId, int width, int height) {
-			GumpInstance.AddResizePic(x, y, gumpId, width, height);
+			this.GumpInstance.AddResizePic(x, y, gumpId, width, height);
 		}
 
 		public void AddButton(int x, int y, int normalId, int pressedId, int buttonId, GumpButtonType type, int param) {
 			if (type == GumpButtonType.Reply) {
-				GumpInstance.AddButton(x, y, normalId, pressedId, true, param, buttonId);
+				this.GumpInstance.AddButton(x, y, normalId, pressedId, true, param, buttonId);
 			} else {
-				GumpInstance.AddButton(x, y, normalId, pressedId, false, param, buttonId);
+				this.GumpInstance.AddButton(x, y, normalId, pressedId, false, param, buttonId);
 			}
 		}
 
 		public void Button(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId) {
-			GumpInstance.AddButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId);
+			this.GumpInstance.AddButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId);
 		}
 
 		public void AddImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemId, int hue, int width, int height) {
-			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemId, hue, width, height);
+			this.GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemId, hue, width, height);
 		}
 
 		public void ImageTiledButton(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId, int itemId, int hue, int width, int height) {
-			GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemId, hue, width, height);
+			this.GumpInstance.AddTiledButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId, itemId, hue, width, height);
 		}
 
 		public void AddGroup(int group) {
-			GumpInstance.AddGroup(group);
+			this.GumpInstance.AddGroup(group);
 		}
 
 		public void Group(int groupId) {
-			GumpInstance.AddGroup(groupId);
+			this.GumpInstance.AddGroup(groupId);
 		}
 
 		public void AddHtml(int x, int y, int width, int height, string text, bool background, bool scrollbar) {
-			GumpInstance.AddHtmlGump(x, y, width, height, text, background, scrollbar);
+			this.GumpInstance.AddHtmlGump(x, y, width, height, text, background, scrollbar);
 		}
 
 		public void HtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
+			this.GumpInstance.AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 		//99z+ interface
 		public void HtmlGumpA(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
+			this.GumpInstance.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 		//55ir interface
 		public void DhtmlGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
+			this.GumpInstance.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
 		}
 
 		public void AddHtmlLocalized(int x, int y, int width, int height, int number, bool background, bool scrollbar) {
-			GumpInstance.AddXmfhtmlGump(x, y, width, height, number, background, scrollbar);
+			this.GumpInstance.AddXmfhtmlGump(x, y, width, height, number, background, scrollbar);
 		}
 
 		public void AddHtmlLocalized(int x, int y, int width, int height, int number, int color, bool background, bool scrollbar) {
-			GumpInstance.AddXmfhtmlGumpColor(x, y, width, height, number, background, scrollbar, color);
+			this.GumpInstance.AddXmfhtmlGumpColor(x, y, width, height, number, background, scrollbar, color);
 		}
 
 		public void XmfhtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			GumpInstance.AddXmfhtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
+			this.GumpInstance.AddXmfhtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 		}
 
 		public void XmfhtmlGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
-			GumpInstance.AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
+			this.GumpInstance.AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
 		}
 
 		public void AddCheck(int x, int y, int inactiveId, int activeId, bool initialState, int switchId) {
-			GumpInstance.AddCheckBox(x, y, inactiveId, activeId, initialState, switchId);
+			this.GumpInstance.AddCheckBox(x, y, inactiveId, activeId, initialState, switchId);
 		}
 
 		public void CheckBox(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
-			GumpInstance.AddCheckBox(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
+			this.GumpInstance.AddCheckBox(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
 		}
 
 		public void AddItem(int x, int y, int itemId) {
-			GumpInstance.AddTilePic(x, y, itemId);
+			this.GumpInstance.AddTilePic(x, y, itemId);
 		}
 
 		public void AddItem(int x, int y, int itemId, int hue) {
-			GumpInstance.AddTilePicHue(x, y, itemId, hue);
+			this.GumpInstance.AddTilePicHue(x, y, itemId, hue);
 		}
 
 		public void TilePic(int x, int y, int tileId) {
-			GumpInstance.AddTilePic(x, y, tileId);
+			this.GumpInstance.AddTilePic(x, y, tileId);
 		}
 
 		public void TilePicHue(int x, int y, int tileId, int hue) {
-			GumpInstance.AddTilePicHue(x, y, tileId, hue);
+			this.GumpInstance.AddTilePicHue(x, y, tileId, hue);
 		}
 
 		public void AddImage(int x, int y, int gumpId) {
-			GumpInstance.AddGumpPic(x, y, gumpId);
+			this.GumpInstance.AddGumpPic(x, y, gumpId);
 		}
 
 		public void AddImage(int x, int y, int gumpId, int hue) {
-			GumpInstance.AddGumpPic(x, y, gumpId, hue);
+			this.GumpInstance.AddGumpPic(x, y, gumpId, hue);
 		}
 
 		public void AddImageTiled(int x, int y, int width, int height, int gumpId) {
-			GumpInstance.AddGumpPicTiled(x, y, width, height, gumpId);
+			this.GumpInstance.AddGumpPicTiled(x, y, width, height, gumpId);
 		}
 
 		public void GumpPicTiled(int x, int y, int width, int height, int gumpId) {
-			GumpInstance.AddGumpPicTiled(x, y, width, height, gumpId);
+			this.GumpInstance.AddGumpPicTiled(x, y, width, height, gumpId);
 		}
 
 		public void AddLabel(int x, int y, int hue, string text) {
-			GumpInstance.AddText(x, y, hue, text);
+			this.GumpInstance.AddText(x, y, hue, text);
 		}
 
 		public void Text(int x, int y, int hue, int textId) {
-			GumpInstance.AddText(x, y, hue, textId);
+			this.GumpInstance.AddText(x, y, hue, textId);
 		}
 		//99z+ interface
 		public void TextA(int x, int y, int hue, string text) {
-			GumpInstance.AddText(x, y, hue, text);
+			this.GumpInstance.AddText(x, y, hue, text);
 		}
 		//55ir+ interface. why can the idiots not unite? :P
 		public void DText(int x, int y, int hue, string text) {
-			GumpInstance.AddText(x, y, hue, text);
+			this.GumpInstance.AddText(x, y, hue, text);
 		}
 
 		public void AddLabelCropped(int x, int y, int width, int height, int hue, string text) {
-			GumpInstance.AddCroppedText(x, y, width, height, hue, text);
+			this.GumpInstance.AddCroppedText(x, y, width, height, hue, text);
 		}
 
 		public void CroppedText(int x, int y, int width, int height, int hue, int textId) {
-			GumpInstance.AddCroppedText(x, y, width, height, hue, textId);
+			this.GumpInstance.AddCroppedText(x, y, width, height, hue, textId);
 		}
 
 		public void CroppedTextA(int x, int y, int width, int height, int hue, string textId) {
-			GumpInstance.AddCroppedText(x, y, width, height, hue, textId);
+			this.GumpInstance.AddCroppedText(x, y, width, height, hue, textId);
 		}
 
 		public void DCroppedText(int x, int y, int width, int height, int hue, string textId) {
-			GumpInstance.AddCroppedText(x, y, width, height, hue, textId);
+			this.GumpInstance.AddCroppedText(x, y, width, height, hue, textId);
 		}
 
 		public void AddPage(int page) {
-			GumpInstance.AddPage(page);
+			this.GumpInstance.AddPage(page);
 		}
 
 		public void Page(int pageId) {
-			GumpInstance.AddPage(pageId);
+			this.GumpInstance.AddPage(pageId);
 		}
 
 		public void AddRadio(int x, int y, int inactiveId, int activeId, bool initialState, int switchId) {
-			GumpInstance.AddRadio(x, y, inactiveId, activeId, initialState, switchId);
+			this.GumpInstance.AddRadio(x, y, inactiveId, activeId, initialState, switchId);
 		}
 
 		public void Radio(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
-			GumpInstance.AddRadio(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
+			this.GumpInstance.AddRadio(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
 		}
 
 		public void AddTextEntry(int x, int y, int width, int height, int hue, int entryId, string initialText) {
-			GumpInstance.AddTextEntry(x, y, width, height, hue, entryId, initialText);
+			this.GumpInstance.AddTextEntry(x, y, width, height, hue, entryId, initialText);
 		}
 
 		public void TextEntry(int x, int y, int widthPix, int widthChars, int hue, int id, int textId) {
-			GumpInstance.AddTextEntry(x, y, widthPix, widthChars, hue, id, textId);
+			this.GumpInstance.AddTextEntry(x, y, widthPix, widthChars, hue, id, textId);
 		}
 		//99z+ interface
 		public void TextEntryA(int x, int y, int widthPix, int widthChars, int hue, int id, string text) {
-			GumpInstance.AddTextEntry(x, y, widthPix, widthChars, hue, id, text);
+			this.GumpInstance.AddTextEntry(x, y, widthPix, widthChars, hue, id, text);
 		}
 		//55ir interface
 		public void DTextEntry(int x, int y, int widthPix, int widthChars, int hue, int id, string text) {
-			GumpInstance.AddTextEntry(x, y, widthPix, widthChars, hue, id, text);
+			this.GumpInstance.AddTextEntry(x, y, widthPix, widthChars, hue, id, text);
 		}
 
 		public void NumberEntry(int x, int y, int widthPix, int widthChars, int hue, int id, int textId) {
-			GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, textId);
+			this.GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, textId);
 		}
 		//hypothetical 55ir interface
 		public void DNumberEntry(int x, int y, int widthPix, int widthChars, int hue, int id, decimal text) {
-			GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
+			this.GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
 		}
 		//hypothetical 99z+ interface
 		public void NumberEntryA(int x, int y, int widthPix, int widthChars, int hue, int id, decimal text) {
-			GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
+			this.GumpInstance.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
 		}
 
 		//RunUO interface
 		public int X {
 			get {
-				return (int) GumpInstance.X;
+				return (int) this.GumpInstance.X;
 			}
 			set {
-				GumpInstance.X = value;
+				this.GumpInstance.X = value;
 			}
 		}
 		//RunUO interface
 		public int Y {
 			get {
-				return GumpInstance.Y;
+				return this.GumpInstance.Y;
 			}
 			set {
-				GumpInstance.Y = value;
+				this.GumpInstance.Y = value;
 			}
 		}
 		//sphere interface
 		public void SetLocation(int x, int y) {
-			GumpInstance.X = x;
-			GumpInstance.Y = y;
+			this.GumpInstance.X = x;
+			this.GumpInstance.Y = y;
 		}
 
 		public void NoClose() {
@@ -337,16 +337,16 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool Dragable {
 			get {
-				return GumpInstance.movable;
+				return this.GumpInstance.movable;
 			}
 			set {
-				GumpInstance.movable = value;
+				this.GumpInstance.movable = value;
 			}
 		}
 		#endregion drawing interface
 
 		public override string ToString() {
-			return "CompiledGumpDef " + Defname;
+			return "CompiledGumpDef " + this.Defname;
 		}
 	}
 
@@ -356,7 +356,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
-			CompiledGumpDef gdef = (CompiledGumpDef) Def;
+			CompiledGumpDef gdef = (CompiledGumpDef) this.Def;
 			gdef.gumpInstance = this;
 			try {
 				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, responseTexts, responseNumbers), this.InputArgs);
@@ -385,7 +385,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public int PressedButton {
 			get {
-				return pressedButton;
+				return this.pressedButton;
 			}
 		}
 
@@ -408,8 +408,8 @@ namespace SteamEngine.CompiledScripts {
 		//} 
 
 		public bool IsSwitched(int id) {
-			for (int i = 0, n = selectedSwitches.Length; i < n; i++) {
-				if (selectedSwitches[i] == id) {
+			for (int i = 0, n = this.selectedSwitches.Length; i < n; i++) {
+				if (this.selectedSwitches[i] == id) {
 					return true;
 				}
 			}
@@ -417,8 +417,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string GetTextResponse(int id) {
-			for (int i = 0, n = responseTexts.Length; i < n; i++) {
-				ResponseText rt = responseTexts[i];
+			for (int i = 0, n = this.responseTexts.Length; i < n; i++) {
+				ResponseText rt = this.responseTexts[i];
 				if (rt.Id == id) {
 					return rt.Text;
 				}
@@ -427,8 +427,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public decimal GetNumberResponse(int id) {
-			for (int i = 0, n = responseNumbers.Length; i < n; i++) {
-				ResponseNumber rn = responseNumbers[i];
+			for (int i = 0, n = this.responseNumbers.Length; i < n; i++) {
+				ResponseNumber rn = this.responseNumbers[i];
 				if ((rn != null) && (rn.Id == id)) {
 					return rn.Number;
 				}

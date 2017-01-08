@@ -115,19 +115,19 @@ namespace SteamEngine.CompiledScripts {
 				RegenerationPlugin.TryInstallPlugin(this, this.Mana, this.MaxMana, this.ManaRegenSpeed);
 
 				//meditation finish
-				if (this.Mana >= MaxMana) {
+				if (this.Mana >= this.MaxMana) {
 					this.DeletePlugin(MeditationPlugin.meditationPluginKey);
 				}
 			}
 		}
 
 		public void Where() {
-			Message("You are at " + P());
-			Message("You are in " + Region.HierarchyName);
+			this.Message("You are at " + this.P());
+			this.Message("You are in " + this.Region.HierarchyName);
 		}
 
 		public void Password(string newpass) {
-			AbstractAccount acc = Account;
+			AbstractAccount acc = this.Account;
 			if (acc != null) {
 				acc.Password(newpass);
 			}
@@ -250,7 +250,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>@Death trigger - check if none of the skills goes above the maximal limit</summary>
 		public override void On_Death(Character killedBy) {
-			CheckSkillMaxima();
+			this.CheckSkillMaxima();
 			base.On_Death(killedBy);
 		}
 
@@ -259,9 +259,9 @@ namespace SteamEngine.CompiledScripts {
 		/// selected profession, but can be altered e.g. by magic items etc...)
 		/// </summary>
 		internal short GetSkillMaxModifier(SkillName name) {
-			if (maxSkillModifier != null) {
+			if (this.maxSkillModifier != null) {
 				short outVal = 0;
-				if (maxSkillModifier.TryGetValue(name, out outVal)) {
+				if (this.maxSkillModifier.TryGetValue(name, out outVal)) {
 					return outVal;//skill is modified somehow
 				} else {
 					return 0; //skill is not modified
@@ -275,16 +275,16 @@ namespace SteamEngine.CompiledScripts {
 		/// allowed to go over his normal profession's maximum for this particular skill
 		/// </summary>
 		internal void SetSkillMaxModifier(SkillName name, short value) {
-			if (maxSkillModifier == null) {
-				maxSkillModifier = new Dictionary<SkillName, short>();
+			if (this.maxSkillModifier == null) {
+				this.maxSkillModifier = new Dictionary<SkillName, short>();
 			}
 			if (value == 0) {//remove the value from the dictionary
-				maxSkillModifier.Remove(name);
-				if (maxSkillModifier.Keys.Count == 0) {
-					maxSkillModifier = null; //no modifiers left, release the reference
+				this.maxSkillModifier.Remove(name);
+				if (this.maxSkillModifier.Keys.Count == 0) {
+					this.maxSkillModifier = null; //no modifiers left, release the reference
 				}
 			} else {
-				maxSkillModifier[name] = value;
+				this.maxSkillModifier[name] = value;
 			}
 		}
 
@@ -337,7 +337,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Messaging
 		public void DelayedMessage(string text) {
-			DelayedMessage(null, text);
+			this.DelayedMessage(null, text);
 		}
 
 		/// <summary>
@@ -349,14 +349,14 @@ namespace SteamEngine.CompiledScripts {
 				//add a new message without the sender
 				MsgsBoard.AddNewMessage(this, new DelayedMsg(text));
 				//send the message also to the client
-				SysMessage("System: " + text);
+				this.SysMessage("System: " + text);
 			} else {
 				//add a new message with the sender
 				MsgsBoard.AddNewMessage(this, new DelayedMsg(sender, text));
 				//send the message also to the client
-				SysMessage(sender.Name + ": " + text);
+				this.SysMessage(sender.Name + ": " + text);
 			}
-			InfoMessage("Nova zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
+			this.InfoMessage("Nova zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
 		}
 
 		/// <summary>
@@ -372,12 +372,12 @@ namespace SteamEngine.CompiledScripts {
 				MsgsBoard.AddNewMessage(this, new DelayedMsg(sender, text, hue));
 			}
 			//send the message also to the client
-			SysMessage(text, (int) hue);
-			InfoMessage("Nova zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
+			this.SysMessage(text, (int) hue);
+			this.InfoMessage("Nova zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
 		}
 
 		public void DelayedRedMessage(string text) {
-			DelayedRedMessage(null, text);
+			this.DelayedRedMessage(null, text);
 		}
 
 		/// <summary>
@@ -393,8 +393,8 @@ namespace SteamEngine.CompiledScripts {
 				MsgsBoard.AddNewMessage(this, new DelayedMsg(sender, text, true));
 			}
 			//send the message also to the client
-			RedMessage(text);
-			InfoMessage("Nova vyznamna zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
+			this.RedMessage(text);
+			this.InfoMessage("Nova vyznamna zprava, celkem neprectenych: " + MsgsBoard.CountUnread(this));
 		}
 		#endregion Messaging
 
@@ -461,7 +461,7 @@ namespace SteamEngine.CompiledScripts {
 			//to bychom meli, ted skill
 			ResourcesList skillMake = what.SkillMake;
 			double highestSkillVal = 0;
-			CraftingSkillDef highestCsd = (CraftingSkillDef) SkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
+			CraftingSkillDef highestCsd = (CraftingSkillDef) AbstractSkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
 			if (skillMake != null) {
 				foreach (IResourceListEntry_Simple itm in skillMake.NonMultiplicablesSublist) {
 					SkillResource sklr = itm as SkillResource;

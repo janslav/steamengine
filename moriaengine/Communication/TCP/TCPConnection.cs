@@ -71,7 +71,7 @@ namespace SteamEngine.Communication.TCP {
 			byte[] buffer = this.receivingBuffer.bytes;
 
 			this.socket.BeginReceive(buffer, offset,
-				buffer.Length - offset, SocketFlags.None, onReceieve, null);
+				buffer.Length - offset, SocketFlags.None, this.onReceieve, null);
 		}
 
 		private void OnReceieve(IAsyncResult asyncResult) {
@@ -81,7 +81,7 @@ namespace SteamEngine.Communication.TCP {
 
 					if (length > 0) {
 						//we have new data, but still possibly have some old data.
-						base.ProcessReceievedData(length);
+						this.ProcessReceievedData(length);
 					} else {
 						this.Close("Connection lost");
 					}
@@ -109,7 +109,7 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		protected override void BeginSend(BufferToSend toSend) {
-			this.socket.BeginSend(toSend.buffer.bytes, toSend.offset, toSend.len, SocketFlags.None, onSend, toSend.buffer);
+			this.socket.BeginSend(toSend.buffer.bytes, toSend.offset, toSend.len, SocketFlags.None, this.onSend, toSend.buffer);
 		}
 
 		private void OnSend(IAsyncResult asyncResult) {

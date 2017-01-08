@@ -47,65 +47,65 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public PriorityQueue() {
-			capacity = 15;
-			heap = new Node<TNode, TPriority>[capacity];
+			this.capacity = 15;
+			this.heap = new Node<TNode, TPriority>[this.capacity];
 		}
 
 		public void Clear() {
-			Array.Clear(heap, 0, count);
-			count = 0;
+			Array.Clear(this.heap, 0, this.count);
+			this.count = 0;
 		}
 
 		public TNode Dequeue() {
-			if (count == 0) {
+			if (this.count == 0) {
 				throw new SEException("count == 0");
 			}
-			TNode result = heap[0].value;
-			count--;
-			TrickleDown(0, heap[count]);
+			TNode result = this.heap[0].value;
+			this.count--;
+			this.TrickleDown(0, this.heap[this.count]);
 			//heap[count] = default(TNode);
-			version++;
+			this.version++;
 			return result;
 		}
 
 		private void RemoveAt(int i) {
-			count--;
-			TrickleDown(i, heap[count]);
+			this.count--;
+			this.TrickleDown(i, this.heap[this.count]);
 			//heap[count] = default(TNode);
-			version++;
+			this.version++;
 		}
 
 		public TNode Peek() {
-			if (count == 0) {
+			if (this.count == 0) {
 				throw new SEException("count == 0");
 			}
-			return heap[0].value;
+			return this.heap[0].value;
 		}
 
 		public void Enqueue(TNode nodeValue, TPriority priority) {
-			if (count == capacity) {
-				Grow();
+			if (this.count == this.capacity) {
+				this.Grow();
 			}
-			count++;
+			this.count++;
 			Node<TNode, TPriority> node = new Node<TNode, TPriority>();
 			node.value = nodeValue;
 			node.priority = priority;
-			BubbleUp(count - 1, node);
-			version++;
+			this.BubbleUp(this.count - 1, node);
+			this.version++;
 		}
 
 		private void BubbleUp(int index, Node<TNode, TPriority> node) {
-			int parent = GetParent(index);
+			int parent = this.GetParent(index);
 			// note: (index > 0) means there is a parent
 
 			while ((index > 0) &&
-					(heap[parent].priority.CompareTo(node.priority) > 0)) {
-				Node<TNode, TPriority> parentAStarNode = heap[parent];
-				heap[index] = parentAStarNode;
+					(this.heap[parent].priority.CompareTo(node.priority) > 0)) {
+				Node<TNode, TPriority> parentAStarNode = this.heap[parent];
+				this.heap[index] = parentAStarNode;
 				index = parent;
-				parent = GetParent(index);
+				parent = this.GetParent(index);
 			}
-			heap[index] = node;
+			this.heap[index] = node;
 		}
 
 		private int GetLeftChild(int index) {
@@ -117,40 +117,40 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void Grow() {
-			capacity = (capacity * 2) + 1;
-			Node<TNode, TPriority>[] newHeap = new Node<TNode, TPriority>[capacity];
-			System.Array.Copy(heap, 0, newHeap, 0, count);
-			heap = newHeap;
+			this.capacity = (this.capacity * 2) + 1;
+			Node<TNode, TPriority>[] newHeap = new Node<TNode, TPriority>[this.capacity];
+			Array.Copy(this.heap, 0, newHeap, 0, this.count);
+			this.heap = newHeap;
 		}
 
 		private void TrickleDown(int index, Node<TNode, TPriority> node) {
-			int child = GetLeftChild(index);
-			while (child < count) {
-				if (((child + 1) < count) &&
-						(heap[child].priority.CompareTo(heap[child + 1].priority) > 0)) {
+			int child = this.GetLeftChild(index);
+			while (child < this.count) {
+				if (((child + 1) < this.count) &&
+						(this.heap[child].priority.CompareTo(this.heap[child + 1].priority) > 0)) {
 					child++;
 				}
-				Node<TNode, TPriority> childAStarNode = heap[child];
-				heap[index] = childAStarNode;
+				Node<TNode, TPriority> childAStarNode = this.heap[child];
+				this.heap[index] = childAStarNode;
 				index = child;
-				child = GetLeftChild(index);
+				child = this.GetLeftChild(index);
 			}
-			BubbleUp(index, node);
+			this.BubbleUp(index, node);
 		}
 
 		public IEnumerator GetEnumerator() {
 			int startVersion = this.version;
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < this.count; i++) {
 				if (startVersion != this.version) {
 					throw new SEException("Do not touch while enumerating");
 				}
-				yield return heap[i];
+				yield return this.heap[i];
 			}
 		}
 
 		public int Count {
 			get {
-				return count;
+				return this.count;
 			}
 		}
 	}

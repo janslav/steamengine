@@ -35,7 +35,7 @@ namespace SteamEngine.Timers {
 		protected BoundTimer() {
 		}
 
-		protected override sealed void OnTimeout() {
+		protected sealed override void OnTimeout() {
 			TagHolder cont = this.Cont;
 			if (cont != null) {
 				if ((this.PeriodInSeconds < 0) && (this.DueInSeconds < 0)) {
@@ -51,7 +51,7 @@ namespace SteamEngine.Timers {
 
 		public TagHolder Cont {
 			get {
-				TagHolder c = contRef.Target as TagHolder;
+				TagHolder c = this.contRef.Target as TagHolder;
 				if (c == null || c.IsDeleted) {
 					return null;
 				}

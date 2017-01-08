@@ -104,33 +104,33 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private void TryInsertIntoDict() {
-				if (valueSet && keySet) {
-					dict[key] = value;
+				if (this.valueSet && this.keySet) {
+					this.dict[this.key] = this.value;
 				}
 			}
 
 			internal void DelayedLoad_Value(object loadedObj, string filename, int line) {
-				this.value = ConvertTools.ConvertTo(valueType, loadedObj);
-				valueSet = true;
-				TryInsertIntoDict();
+				this.value = ConvertTools.ConvertTo(this.valueType, loadedObj);
+				this.valueSet = true;
+				this.TryInsertIntoDict();
 			}
 
 			internal void DelayedLoad_Key(object loadedObj, string filename, int line) {
-				this.key = ConvertTools.ConvertTo(keyType, loadedObj);
-				keySet = true;
-				TryInsertIntoDict();
+				this.key = ConvertTools.ConvertTo(this.keyType, loadedObj);
+				this.keySet = true;
+				this.TryInsertIntoDict();
 			}
 
 			internal void DelayedCopy_Value(object loadedObj) {
-				this.value = ConvertTools.ConvertTo(valueType, loadedObj);
-				valueSet = true;
-				TryInsertIntoDict();
+				this.value = ConvertTools.ConvertTo(this.valueType, loadedObj);
+				this.valueSet = true;
+				this.TryInsertIntoDict();
 			}
 
 			internal void DelayedCopy_Key(object loadedObj) {
-				this.key = ConvertTools.ConvertTo(keyType, loadedObj);
-				keySet = true;
-				TryInsertIntoDict();
+				this.key = ConvertTools.ConvertTo(this.keyType, loadedObj);
+				this.keySet = true;
+				this.TryInsertIntoDict();
 			}
 		}
 

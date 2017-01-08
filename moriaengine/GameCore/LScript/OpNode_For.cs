@@ -86,26 +86,26 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (leftBoundNode == oldNode) {
-				leftBoundNode = newNode;
+			if (this.leftBoundNode == oldNode) {
+				this.leftBoundNode = newNode;
 				return;
 			}
-			if (rightBoundNode == oldNode) {
-				rightBoundNode = newNode;
+			if (this.rightBoundNode == oldNode) {
+				this.rightBoundNode = newNode;
 				return;
 			}
-			if (blockNode == oldNode) {
-				blockNode = newNode;
+			if (this.blockNode == oldNode) {
+				this.blockNode = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {
-			if (blockNode != null) {
+			if (this.blockNode != null) {
 				try {
-					int leftBound = Convert.ToInt32(leftBoundNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
-					int rightBound = Convert.ToInt32(rightBoundNode.Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+					int leftBound = Convert.ToInt32(this.leftBoundNode.Run(vars), CultureInfo.InvariantCulture);
+					int rightBound = Convert.ToInt32(this.rightBoundNode.Run(vars), CultureInfo.InvariantCulture);
 					int step;
 					if (leftBound < rightBound) {
 						step = 1;
@@ -119,8 +119,8 @@ namespace SteamEngine.LScript {
 					leftBound -= step;
 					do {
 						leftBound += step;
-						vars.localVars[localIndex] = leftBound;
-						retVal = blockNode.Run(vars);
+						vars.localVars[this.localIndex] = leftBound;
+						retVal = this.blockNode.Run(vars);
 					} while ((!vars.returned) && (leftBound != rightBound));
 
 					return retVal;
@@ -138,8 +138,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return String.Concat("For (", localName, ", ", leftBoundNode, ", ", rightBoundNode, ")",
-				Environment.NewLine, blockNode, Environment.NewLine, "endfor");
+			return String.Concat("For (", this.localName, ", ", this.leftBoundNode, ", ", this.rightBoundNode, ")",
+				Environment.NewLine, this.blockNode, Environment.NewLine, "endfor");
 		}
 	}
 }

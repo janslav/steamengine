@@ -61,35 +61,35 @@ namespace SteamEngine.Regions {
 
 		#region CanFit
 		public bool CanFit(IPoint3D p, int height, bool checkBlocksFit) {
-			return CanFit(p.X, p.Y, p.Z, height, checkBlocksFit, true, true);
+			return this.CanFit(p.X, p.Y, p.Z, height, checkBlocksFit, true, true);
 		}
 
 		public bool CanFit(IPoint3D p, int height, bool checkBlocksFit, bool checkCharacters) {
-			return CanFit(p.X, p.Y, p.Z, height, checkBlocksFit, checkCharacters, true);
+			return this.CanFit(p.X, p.Y, p.Z, height, checkBlocksFit, checkCharacters, true);
 		}
 
 		public bool CanFit(IPoint2D p, int z, int height, bool checkBlocksFit) {
-			return CanFit(p.X, p.Y, z, height, checkBlocksFit, true, true);
+			return this.CanFit(p.X, p.Y, z, height, checkBlocksFit, true, true);
 		}
 
 		public bool CanFit(IPoint3D p, int height) {
-			return CanFit(p.X, p.Y, p.Z, height, false, true, true);
+			return this.CanFit(p.X, p.Y, p.Z, height, false, true, true);
 		}
 
 		public bool CanFit(IPoint2D p, int z, int height) {
-			return CanFit(p.X, p.Y, z, height, false, true, true);
+			return this.CanFit(p.X, p.Y, z, height, false, true, true);
 		}
 
 		public bool CanFit(int x, int y, int z, int height) {
-			return CanFit(x, y, z, height, false, true, true);
+			return this.CanFit(x, y, z, height, false, true, true);
 		}
 
 		public bool CanFit(int x, int y, int z, int height, bool checksBlocksFit) {
-			return CanFit(x, y, z, height, checksBlocksFit, true, true);
+			return this.CanFit(x, y, z, height, checksBlocksFit, true, true);
 		}
 
 		public bool CanFit(int x, int y, int z, int height, bool checkBlocksFit, bool checkCharacters) {
-			return CanFit(x, y, z, height, checkBlocksFit, checkCharacters, true);
+			return this.CanFit(x, y, z, height, checkBlocksFit, checkCharacters, true);
 		}
 
 		public bool CanFit(int x, int y, int z, int height, bool checkBlocksFit, bool checkCharacters, bool requireSurface) {
@@ -320,13 +320,13 @@ namespace SteamEngine.Regions {
 				}
 			}
 
-			GetStartZ(settings, point, itemsPoolStart, out startZ, out startTop);
+			this.GetStartZ(settings, point, itemsPoolStart, out startZ, out startTop);
 
-			bool moveIsOk = Check(point, settings, itemsPoolForward, xForward, yForward, startTop, startZ, out newZ);
+			bool moveIsOk = this.Check(point, settings, itemsPoolForward, xForward, yForward, startTop, startZ, out newZ);
 			if (moveIsOk && checkDiagonals) {
 				int hold;
 				//ani monstra ani hraci nemuzou projit sikmo pres roh, natoz pres diagonalni zed
-				if (!Check(point, settings, itemsPoolLeft, xLeft, yLeft, startTop, startZ, out hold) || !Check(point, settings, itemsPoolRight, xRight, yRight, startTop, startZ, out hold)) {
+				if (!this.Check(point, settings, itemsPoolLeft, xLeft, yLeft, startTop, startZ, out hold) || !this.Check(point, settings, itemsPoolRight, xRight, yRight, startTop, startZ, out hold)) {
 					moveIsOk = false;
 				}
 			}

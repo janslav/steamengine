@@ -35,13 +35,13 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		protected override void Process() {
 			base.Process();
-			LoadSaveAttributes();
-			DefaultConstructor();
+			this.LoadSaveAttributes();
+			this.DefaultConstructor();
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0")]
 		private void LoadSaveAttributes() {
-			foreach (CodeTypeMember member in generatedType.Members) {
+			foreach (CodeTypeMember member in this.generatedType.Members) {
 				CodeMemberMethod method = member as CodeMemberMethod;
 				if (method != null) {
 					switch (method.Name.ToLowerInvariant()) {
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			constructor.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(Persistence.LoadingInitializerAttribute))));
 			constructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
-			generatedType.Members.Add(constructor);
+			this.generatedType.Members.Add(constructor);
 		}
 	}
 }

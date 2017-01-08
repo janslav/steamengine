@@ -183,7 +183,7 @@ namespace SteamEngine.Communication.NamedPipes {
 
 					if (length > 0) {
 						//we have new data, but still possibly have some old data.
-						base.ProcessReceievedData(length);
+						this.ProcessReceievedData(length);
 					} else {
 						this.Close("Connection lost");
 					}

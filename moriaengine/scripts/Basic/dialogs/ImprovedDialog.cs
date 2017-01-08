@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (charsLength.TryGetValue(text[i], out val)) {
 					retVal += val;
 				} else {//default approx value
-					retVal += ImprovedDialog.D_CHARACTER_WIDTH;
+					retVal += D_CHARACTER_WIDTH;
 				}
 			}
 			return retVal + 1; //last letter ends with its boundary (1 pixel)
@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// <summary>Getter for the lastcolumn - may be needed from LScript if we have to operate with the sies or positions</summary>
 		public GUTAColumn LastColumn {
 			get {
-				return lastColumn;
+				return this.lastColumn;
 			}
 		}
 
@@ -96,14 +96,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public GUTATable LastTable {
 			get {
-				return lastTable;
+				return this.lastTable;
 			}
 		}
 
 		/// <summary>The getter for the background table - usable for manual creating of the dialog structure</summary>
 		public GUTAMatrix Background {
 			get {
-				return background;
+				return this.background;
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Create the dialog background and set its size</summary>
 		public void CreateBackground(int width) {
-			background = new GUTAMatrix(instance, width);
+			this.background = new GUTAMatrix(this.instance, width);
 		}
 
 		/// <summary>
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// set background
 		/// </summary>
 		public void SetLocation(int newX, int newY) {
-			background.AdjustPosition(newX - background.XPos, newY - background.YPos);
+			this.background.AdjustPosition(newX - this.background.XPos, newY - this.background.YPos);
 		}
 
 		/// <summary>
@@ -132,19 +132,19 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public List<GUTAComponent> Table {
 			get {
-				return background.Components;
+				return this.background.Components;
 			}
 		}
 
 		/// <summary>Add a single GUTATable to the dialog and set is as 'last'</summary>
 		public GUTATable AddTable(GUTATable table) {
-			background.AddComponent(table);
-			lastTable = table;
+			this.background.AddComponent(table);
+			this.lastTable = table;
 			return table;
 		}
 
 		private void AddLastColumn(GUTAColumn col) {
-			if (lastTable == null || lastTable.Components.Count == 0) {
+			if (this.lastTable == null || this.lastTable.Components.Count == 0) {
 				throw new SEException("Cannot add a last column into the row which either does not exist or is empty");
 			}
 			//get the lastly added column
@@ -159,11 +159,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//col.IsLast = true;
 			//add the paging column to the headings and to the data area
 			//headingTable.Components[0].AddComponent(newHeadsCol);
-			lastTable.Components[0].AddComponent(col);
+			this.lastTable.Components[0].AddComponent(col);
 			//unmark the previous "last" columns
 			//((GUTAColumn) headingTable.Components[0].Components[headingTable.Components[0].Components.IndexOf(newHeadsCol) - 1]).IsLast = false;
 			//((GUTAColumn) lastTable.Components[0].Components[lastTable.Components[0].Components.IndexOf(col) - 1]).IsLast = false;
-			lastColumn = col;
+			this.lastColumn = col;
 		}
 
 		/// <summary>
@@ -172,7 +172,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public void CopyColsFromLastTable() {
 			//take the last row (count-1 = this, new, row; count-2 = previous row)
-			CopyColsFromTable(background.Components.Count - 2);
+			this.CopyColsFromTable(this.background.Components.Count - 2);
 		}
 
 		/// <summary>
@@ -181,23 +181,23 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// No underlaying columns children will be copied!
 		/// </summary>
 		public void CopyColsFromTable(int tableNumber) {
-			GUTATable theTable = (GUTATable) background.Components[tableNumber];
+			GUTATable theTable = (GUTATable) this.background.Components[tableNumber];
 			foreach (GUTAColumn col in theTable.Components[0].Components) { //use the first (mainly only) virtual Row
 				//copy every column to the newly added (now empty) row
 				GUTAColumn newCol = new GUTAColumn(col.Width);
 				newCol.IsLast = col.IsLast;
-				lastTable.Components[0].AddComponent(newCol);
+				this.lastTable.Components[0].AddComponent(newCol);
 			}
 		}
 
 		/// <summary>Take the last table, iterate through the columns and make them all transparent</summary>
 		public void MakeLastTableTransparent() {
-			lastTable.Transparent = true;
+			this.lastTable.Transparent = true;
 		}
 
 		/// <summary>Last method to be called - it prints out the whole dialog</summary>
 		public void WriteOut() {
-			background.WriteComponent();
+			this.background.WriteComponent();
 		}
 
 		/// <summary>
@@ -206,43 +206,43 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// We also specify the number of columns - not only single is now available for paging
 		/// </summary>
 		public void CreatePaging(int itemsCount, int firstNumber, int columnsCount) {
-			if (itemsCount <= ImprovedDialog.PAGE_ROWS * columnsCount) {//do we need paging at all...?
+			if (itemsCount <= PAGE_ROWS * columnsCount) {//do we need paging at all...?
 				//...no
 				return;
 			}
-			int lastNumber = Math.Min(firstNumber + ImprovedDialog.PAGE_ROWS * columnsCount, itemsCount);
-			int pagesCount = (int) Math.Ceiling((double) itemsCount / (ImprovedDialog.PAGE_ROWS * columnsCount));
+			int lastNumber = Math.Min(firstNumber + PAGE_ROWS * columnsCount, itemsCount);
+			int pagesCount = (int) Math.Ceiling((double) itemsCount / (PAGE_ROWS * columnsCount));
 			//first index on the page is a multiple of number of rows per page...
-			int actualPage = (firstNumber / (ImprovedDialog.PAGE_ROWS * columnsCount)) + 1;
+			int actualPage = (firstNumber / (PAGE_ROWS * columnsCount)) + 1;
 
 			bool prevNextColumnAdded = false; //indicator of navigating column
 			if (actualPage > 1) {
-				AddLastColumn(new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH));
-				lastColumn.AddComponent(GUTAButton.Builder.Type(LeafComponentTypes.ButtonPrev).Id(ID_PREV_BUTTON).Build()); //prev
+				this.AddLastColumn(new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH));
+				this.lastColumn.AddComponent(GUTAButton.Builder.Type(LeafComponentTypes.ButtonPrev).Id(ID_PREV_BUTTON).Build()); //prev
 				prevNextColumnAdded = true; //the column has been created				
 			}
 			if (actualPage < pagesCount) { //there will be next page
 				if (!prevNextColumnAdded) { //the navigating column does not exist (e.g. we are on the 1st page)
-					AddLastColumn(new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH));
+					this.AddLastColumn(new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH));
 				}
-				lastColumn.AddComponent(GUTAButton.Builder.Type(LeafComponentTypes.ButtonNext).YPos(lastColumn.Height - 21).Id(ID_NEXT_BUTTON).Build()); //next
+				this.lastColumn.AddComponent(GUTAButton.Builder.Type(LeafComponentTypes.ButtonNext).YPos(this.lastColumn.Height - 21).Id(ID_NEXT_BUTTON).Build()); //next
 			}
-			MakeLastTableTransparent(); //the row where we added the navigating column
+			this.MakeLastTableTransparent(); //the row where we added the navigating column
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
 			//it looks like this: "Stránka |__| / 23. <GOPAGE>  where |__| is editable field
 			//and <GOPAGE> is confirming button that jumps to the written page.
-			GUTATable storedLastTable = lastTable; //store these two things :)
-			GUTAColumn storedLastColumn = lastColumn;
-			AddTable(new GUTATable(1, 0));
-			lastTable[0, 0] = GUTAText.Builder.TextLabel("Stránka").Build();
+			GUTATable storedLastTable = this.lastTable; //store these two things :)
+			GUTAColumn storedLastColumn = this.lastColumn;
+			this.AddTable(new GUTATable(1, 0));
+			this.lastTable[0, 0] = GUTAText.Builder.TextLabel("Stránka").Build();
 			//type if input,x,y,ID, width, height, prescribed text
-			lastTable[0, 0] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).XPos(65).Id(ID_PAGE_NO_INPUT).Width(30).Text(actualPage.ToString()).Build();
-			lastTable[0, 0] = GUTAText.Builder.TextLabel("/" + pagesCount.ToString()).XPos(95).Build();
-			lastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).XPos(135).Id(ID_JUMP_PAGE_BUTTON).Build();
-			MakeLastTableTransparent(); //newly created row
+			this.lastTable[0, 0] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).XPos(65).Id(ID_PAGE_NO_INPUT).Width(30).Text(actualPage.ToString()).Build();
+			this.lastTable[0, 0] = GUTAText.Builder.TextLabel("/" + pagesCount.ToString()).XPos(95).Build();
+			this.lastTable[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonOK).XPos(135).Id(ID_JUMP_PAGE_BUTTON).Build();
+			this.MakeLastTableTransparent(); //newly created row
 			//restore the last components
-			lastTable = storedLastTable;
-			lastColumn = storedLastColumn;
+			this.lastTable = storedLastTable;
+			this.lastColumn = storedLastColumn;
 		}
 
 		/// <summary>Tag key using for holding information about paging actual item index for dialogs.</summary>
@@ -264,12 +264,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
 			switch (gr.PressedButton) {
 				case ID_PREV_BUTTON:
-					args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) - (PAGE_ROWS * columnsCount));
+					args.SetTag(pagingIndexTK, TagMath.IGetTag(args, pagingIndexTK) - (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
-					args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) + (PAGE_ROWS * columnsCount));
+					args.SetTag(pagingIndexTK, TagMath.IGetTag(args, pagingIndexTK) + (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
@@ -287,7 +287,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						int lastPage = (itemsCount / (PAGE_ROWS * columnsCount)) + 1; //(int) casted last page number
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS * columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
-					args.SetTag(ImprovedDialog.pagingIndexTK, countedFirstIndex);//set the index of the first item
+					args.SetTag(pagingIndexTK, countedFirstIndex);//set the index of the first item
 					DialogStacking.ResendAndRestackDialog(gi);
 					pagingHandled = true;
 					break;
@@ -310,12 +310,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			DialogArgs args = actualGi.InputArgs;
 			switch (buttNo) {
 				case ID_PREV_BUTTON:
-					args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) - (PAGE_ROWS * columnsCount));
+					args.SetTag(pagingIndexTK, TagMath.IGetTag(args, pagingIndexTK) - (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
 				case ID_NEXT_BUTTON:
-					args.SetTag(ImprovedDialog.pagingIndexTK, TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK) + (PAGE_ROWS * columnsCount));
+					args.SetTag(pagingIndexTK, TagMath.IGetTag(args, pagingIndexTK) + (PAGE_ROWS * columnsCount));
 					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;
@@ -333,7 +333,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						int lastPage = (itemsCount / (PAGE_ROWS * columnsCount)) + 1; //(int) casted last page number
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS * columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
-					args.SetTag(ImprovedDialog.pagingIndexTK, countedFirstIndex);
+					args.SetTag(pagingIndexTK, countedFirstIndex);
 					DialogStacking.ResendAndRestackDialog(actualGi);
 					pagingHandled = true;
 					break;

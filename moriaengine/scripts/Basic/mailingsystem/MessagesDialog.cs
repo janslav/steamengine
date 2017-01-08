@@ -26,14 +26,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Display the list of the messages</summary>
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			List<DelayedMsg> messagesList = (List<DelayedMsg>) args.GetTag(D_DelayedMessages.msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
+			List<DelayedMsg> messagesList = (List<DelayedMsg>) args.GetTag(msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
 			if (messagesList == null) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				messagesList = MsgsBoard.GetClientsMessages((Character) sendTo);
 				//setrid zpravy (neni li specifikaovano trideni, pouzije se prirozene trideni dle casu)
-				messagesList = MsgsBoard.GetSortedBy(messagesList, (SortingCriteria) TagMath.IGetTag(args, D_DelayedMessages.msgsSortingTK));
-				args.SetTag(D_DelayedMessages.msgsListTK, messagesList); //ulozime mezi parametry dialogu
+				messagesList = MsgsBoard.GetSortedBy(messagesList, (SortingCriteria) TagMath.IGetTag(args, msgsSortingTK));
+				args.SetTag(msgsListTK, messagesList); //ulozime mezi parametry dialogu
 			}
 
 			int unreadCnt = MsgsBoard.CountUnread((Character) sendTo);
@@ -104,40 +104,40 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam zprav z kontextu (mohl jiz byt trideny apd.)
-			ArrayList messagesList = (ArrayList) args.GetTag(D_DelayedMessages.msgsListTK);
+			ArrayList messagesList = (ArrayList) args.GetTag(msgsListTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //tridit dle casu asc						
-						args.SetTag(D_DelayedMessages.msgsSortingTK, SortingCriteria.TimeAsc);
-						args.RemoveTag(D_DelayedMessages.msgsListTK);//odstranit seznm, bude prenacten a jinak setriden
+						args.SetTag(msgsSortingTK, SortingCriteria.TimeAsc);
+						args.RemoveTag(msgsListTK);//odstranit seznm, bude prenacten a jinak setriden
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //tridit dle casu desc
-						args.SetTag(D_DelayedMessages.msgsSortingTK, SortingCriteria.TimeDesc);
-						args.RemoveTag(D_DelayedMessages.msgsListTK);
+						args.SetTag(msgsSortingTK, SortingCriteria.TimeDesc);
+						args.RemoveTag(msgsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //tridit dle sendera asc
-						args.SetTag(D_DelayedMessages.msgsSortingTK, SortingCriteria.NameAsc);
-						args.RemoveTag(D_DelayedMessages.msgsListTK);
+						args.SetTag(msgsSortingTK, SortingCriteria.NameAsc);
+						args.RemoveTag(msgsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //tridit dle sendera desc
-						args.SetTag(D_DelayedMessages.msgsSortingTK, SortingCriteria.NameDesc);
-						args.RemoveTag(D_DelayedMessages.msgsListTK);
+						args.SetTag(msgsSortingTK, SortingCriteria.NameDesc);
+						args.RemoveTag(msgsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //tridit dle neprectenych asc
-						args.SetTag(D_DelayedMessages.msgsSortingTK, SortingCriteria.UnreadAsc);
-						args.RemoveTag(D_DelayedMessages.msgsListTK);
+						args.SetTag(msgsSortingTK, SortingCriteria.UnreadAsc);
+						args.RemoveTag(msgsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 6: //tridit dle neprectenych desc
-						args.SetTag(D_DelayedMessages.msgsSortingTK, SortingCriteria.UnreadDesc);
-						args.RemoveTag(D_DelayedMessages.msgsListTK);
+						args.SetTag(msgsSortingTK, SortingCriteria.UnreadDesc);
+						args.RemoveTag(msgsListTK);
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
@@ -174,10 +174,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//ten poslendi null - misto pro seznam messagi
 			DialogArgs newArgs = new DialogArgs();
 			if (args.Args.Length == 0) {
-				newArgs.SetTag(D_DelayedMessages.msgsSortingTK, SortingCriteria.TimeAsc);
+				newArgs.SetTag(msgsSortingTK, SortingCriteria.TimeAsc);
 				sender.Dialog(SingletonScript<D_DelayedMessages>.Instance, newArgs);//default sorting, beginning from the first message
 			} else {
-				newArgs.SetTag(D_DelayedMessages.msgsSortingTK, (SortingCriteria) args.Args[0]);
+				newArgs.SetTag(msgsSortingTK, (SortingCriteria) args.Args[0]);
 				sender.Dialog(SingletonScript<D_DelayedMessages>.Instance, newArgs); //we expect a sorting criterion !, listing from the first message
 			}
 		}

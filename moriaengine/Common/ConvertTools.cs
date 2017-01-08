@@ -26,22 +26,22 @@ namespace SteamEngine.Common {
 	public class ConvertTools {
 		private static ConvertTools instance;
 
-		private readonly static CultureInfo invariantCulture = CultureInfo.InvariantCulture;
+		private static readonly CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		public readonly static Regex stringRE = new Regex(@"^""(?<value>.*)""\s*$",
+		public static readonly Regex stringRE = new Regex(@"^""(?<value>.*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		public readonly static Regex floatRE = new Regex(@"^(?<value>-?\d*\.\d*)\s*$",
+		public static readonly Regex floatRE = new Regex(@"^(?<value>-?\d*\.\d*)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		public readonly static Regex intRE = new Regex(@"^(?<value>-?\d+)\s*$",
+		public static readonly Regex intRE = new Regex(@"^(?<value>-?\d+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		public readonly static Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
+		public static readonly Regex hexRE = new Regex(@"^0[x]?(?<value>[0-9a-f]+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		//public static Regex timeSpanRE = new Regex(@"^\:(?<value>\d+)\s*$",
@@ -154,7 +154,7 @@ namespace SteamEngine.Common {
 		/// <returns></returns>
 		public static bool TryConvertTo(Type type, object obj, out object retVal) {
 			try {
-				retVal = ConvertTools.ConvertTo(type, obj);
+				retVal = ConvertTo(type, obj);
 				return true;
 			} catch (FatalException) {
 				throw;

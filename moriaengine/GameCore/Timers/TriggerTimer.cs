@@ -50,11 +50,11 @@ namespace SteamEngine.Timers {
 			this.args = args;
 		}
 
-		protected override sealed void OnTimeout(TagHolder cont) {
-			ScriptArgs sa = new ScriptArgs(args);
-			sa.FormatString = formatString;
+		protected sealed override void OnTimeout(TagHolder cont) {
+			ScriptArgs sa = new ScriptArgs(this.args);
+			sa.FormatString = this.formatString;
 			Globals.SetSrc(null);
-			((PluginHolder) cont).TryTrigger(trigger, sa);
+			((PluginHolder) cont).TryTrigger(this.trigger, sa);
 		}
 	}
 }

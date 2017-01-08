@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			return new Role(this, key);
 		}
 
-		public static new RoleDef GetByDefname(string defname) {
+		public new static RoleDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as RoleDef;
 		}
 

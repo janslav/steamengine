@@ -39,15 +39,15 @@ namespace SteamEngine.LScript {
 			this.args = args;
 			this.function = function;
 			this.formatString = formatString;
-			argsCount = args.Length;
+			this.argsCount = args.Length;
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				args[index] = newNode;
+				this.args[index] = newNode;
 			}
 		}
 
@@ -55,19 +55,19 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			object[] results = new object[argsCount];
+			object[] results = new object[this.argsCount];
 
 			try {
-				for (int i = 0; i < argsCount; i++) {
-					results[i] = args[i].Run(vars);
+				for (int i = 0; i < this.argsCount; i++) {
+					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			ScriptArgs sa = new ScriptArgs(results);
-			sa.FormatString = formatString;
+			sa.FormatString = this.formatString;
 			try {
-				return function.Run(oSelf, sa); //I found here being RunAndCatch... why, omg?? can't remember myself :\ -tar
+				return this.function.Run(oSelf, sa); //I found here being RunAndCatch... why, omg?? can't remember myself :\ -tar
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
@@ -76,15 +76,15 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			ScriptArgs sa = new ScriptArgs(results);
-			sa.FormatString = formatString;
-			return function.TryRun(vars.self, sa);
+			sa.FormatString = this.formatString;
+			return this.function.TryRun(vars.self, sa);
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.AppendFormat("function {0}(", function.Name);
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			str.AppendFormat("function {0}(", this.function.Name);
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append("))").ToString();
 		}

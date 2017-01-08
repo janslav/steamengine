@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 
 	/// <summary>Comparer for sorting account notes by time</summary>
 	public class NotesTimeComparer<T> : IComparer<T> where T : AccountNote {
-		public readonly static NotesTimeComparer<T> instance = new NotesTimeComparer<T>();
+		public static readonly NotesTimeComparer<T> instance = new NotesTimeComparer<T>();
 
 		private NotesTimeComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 
 	/// <summary>Comparer for sorting account notes by referered character</summary>
 	public class NotesRefCharComparer<T> : IComparer<T> where T : AccountNote {
-		public readonly static NotesRefCharComparer<T> instance = new NotesRefCharComparer<T>();
+		public static readonly NotesRefCharComparer<T> instance = new NotesRefCharComparer<T>();
 
 		private NotesRefCharComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 
 	/// <summary>Comparer for sorting account notes by note issuer</summary>
 	public class NotesIssuerComparer<T> : IComparer<T> where T : AccountNote {
-		public readonly static NotesIssuerComparer<T> instance = new NotesIssuerComparer<T>();
+		public static readonly NotesIssuerComparer<T> instance = new NotesIssuerComparer<T>();
 
 		private NotesIssuerComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 
 	/// <summary>Comparer for sorting account notes its AFK or nonAFK type</summary>
 	public class CrimesAFKComparer<T> : IComparer<T> where T : AccountNote {
-		public readonly static CrimesAFKComparer<T> instance = new CrimesAFKComparer<T>();
+		public static readonly CrimesAFKComparer<T> instance = new CrimesAFKComparer<T>();
 
 		private CrimesAFKComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool AFK { //setter for the AFK property
 			set {
-				isAFK = value;
+				this.isAFK = value;
 			}
 		}
 	}

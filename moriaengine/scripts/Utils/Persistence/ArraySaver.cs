@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 					PropsLine valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
 					ArrayLoadHelper alip = new ArrayLoadHelper(arr, i, elemType);
-					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(DelayedLoad_Index), input.Filename, valueLine.Line, alip);
+					ObjectSaver.Load(valueLine.Value, new LoadObjectParam(this.DelayedLoad_Index), input.Filename, valueLine.Line, alip);
 				}
 				return arr;
 			} catch (FatalException) {
@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 			Array newArray = Array.CreateInstance(elemType, n);
 			for (int i = 0; i < n; i++) {
 				ArrayLoadHelper aip = new ArrayLoadHelper(newArray, i, elemType);
-				DeepCopyFactory.GetCopyDelayed(copyFromArray.GetValue(i), DelayedCopy_Index, aip);
+				DeepCopyFactory.GetCopyDelayed(copyFromArray.GetValue(i), this.DelayedCopy_Index, aip);
 			}
 			return newArray;
 		}

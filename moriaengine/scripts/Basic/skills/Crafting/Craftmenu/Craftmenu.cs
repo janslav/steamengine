@@ -125,24 +125,24 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Get name compound also from the possible parent's name (if any)</summary>
 		public string FullName {
 			get {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				if (this.Parent == this) {//main Categories have Parental reference on themselves
-					return name;
+					return this.name;
 				} else {
-					return this.Parent.FullName + "->" + name;
+					return this.Parent.FullName + "->" + this.name;
 				}
 			}
 		}
 
 		public List<ICraftmenuElement> Contents {
 			get {
-				return contents;
+				return this.contents;
 			}
 		}
 
 		public bool IsLoaded {
 			get {
-				return isLoaded;
+				return this.isLoaded;
 			}
 		}
 
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 		#region ICraftmenuElement Members
 		public string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
@@ -183,11 +183,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public CraftmenuCategory Parent {
 			get {
-				if (!isLoaded) {
+				if (!this.isLoaded) {
 					//if the parent is null and we aren't working with one of the main categories, try load all craftmenu elements' parental hierarchy
 					CraftmenuContents.TryLoadParents();
 				}
-				return parent;
+				return this.parent;
 			}
 			internal set {
 				this.parent = value;
@@ -199,15 +199,15 @@ namespace SteamEngine.CompiledScripts {
 			if (this.Parent != null) {
 				this.Parent.Contents.Remove(this); //remove from the parent's hierarchy list
 			}
-			foreach (ICraftmenuElement subElem in contents) {
+			foreach (ICraftmenuElement subElem in this.contents) {
 				subElem.Remove();//remove every element in the removed category (incl. subcategories)
 			}
-			Delete(); //will clear the reference to the parent and disable the overall usage as favourite category etc.
+			this.Delete(); //will clear the reference to the parent and disable the overall usage as favourite category etc.
 		}
 
 		/// <summary>After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it</summary>
 		public void Bounce(AbstractItem whereto) {
-			Item newPouch = (Item) ItemDef.GetByDefname("i_pouch").Create(whereto);
+			Item newPouch = (Item) ThingDef.GetByDefname("i_pouch").Create(whereto);
 			newPouch.Name = this.Name;
 			foreach (ICraftmenuElement innerElem in this.Contents) {
 				innerElem.Bounce(newPouch);
@@ -219,7 +219,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool IsDeleted {
 			get {
-				return (isLoaded == true && parent == null);//has been loaded but the parent is null? (this can happen only if the category was deleted)
+				return (this.isLoaded == true && this.parent == null);//has been loaded but the parent is null? (this can happen only if the category was deleted)
 			}
 		}
 
@@ -227,8 +227,8 @@ namespace SteamEngine.CompiledScripts {
 			//method is called when the category is removed from the categories hierarchy
 			//but there can exist references on it (favourite categroy etc...) so we need to mark it somehow
 			//in order to disable its usage anymore
-			isLoaded = true; //consider it as loaded (but in time of deleting it should be loaded anyways)
-			parent = null;
+			this.isLoaded = true; //consider it as loaded (but in time of deleting it should be loaded anyways)
+			this.parent = null;
 		}
 		#endregion
 
@@ -259,7 +259,7 @@ namespace SteamEngine.CompiledScripts {
 		#region ICraftmenuElement Members
 		public string Name {
 			get {
-				return itemDef.Name;
+				return this.itemDef.Name;
 			}
 		}
 
@@ -272,11 +272,11 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>CraftmenuItem must always be in some CraftmenuCategory!</summary>
 		public CraftmenuCategory Parent {
 			get {
-				if (parent == null) {
+				if (this.parent == null) {
 					//if the parent is null try to load the parental hierarchy
 					CraftmenuContents.TryLoadParents();
 				}
-				return parent;
+				return this.parent;
 			}
 			internal set {
 				this.parent = value;
@@ -293,7 +293,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Bouncing of the item means creating an instance and putting to the specified location</summary>
 		public void Bounce(AbstractItem whereto) {
-			Item newItm = (Item) itemDef.Create(whereto);
+			Item newItm = (Item) this.itemDef.Create(whereto);
 		}
 		#endregion
 	}
@@ -314,7 +314,7 @@ namespace SteamEngine.CompiledScripts {
 				newSubcat.Parent = whereto;
 				whereto.Contents.Add(newSubcat);
 				foreach (Item inner in oneItm) {
-					Encategorize(inner, newSubcat);//proceed with every found item
+					this.Encategorize(inner, newSubcat);//proceed with every found item
 				}
 			} else {//normal item or an empty container
 				CraftmenuItem newItem = new CraftmenuItem((ItemDef) oneItm.Def);//add the contained items
@@ -326,7 +326,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			CraftmenuCategory catToPut = (CraftmenuCategory) parameter;
 
-			Encategorize(targetted, catToPut);
+			this.Encategorize(targetted, catToPut);
 
 			//reopen the dialog on the stored position
 			Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(D_Craftmenu.TkLastCat);

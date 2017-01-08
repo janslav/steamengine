@@ -33,7 +33,7 @@ namespace SteamEngine.Networking {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Member")]
-		public readonly static GameCompression instance = new GameCompression();
+		public static readonly GameCompression instance = new GameCompression();
 
 		static GameCompression() {
 			ConstructBitTables();

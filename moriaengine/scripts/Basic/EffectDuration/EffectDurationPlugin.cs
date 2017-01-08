@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 		
-		virtual public string EffectName {
+		public virtual string EffectName {
 			get {
 				if (this.sourceDef != null) {
 					if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {

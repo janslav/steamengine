@@ -29,12 +29,12 @@ namespace SteamEngine.Common {
 
 		// subclass should to implement these two methods
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		virtual protected void On_DisposeManagedResources() {
+		protected virtual void On_DisposeManagedResources() {
 
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
-		virtual protected void On_DisposeUnmanagedResources() {
+		protected virtual void On_DisposeUnmanagedResources() {
 
 		}
 
@@ -52,7 +52,7 @@ namespace SteamEngine.Common {
 
 		public bool IsDisposed {
 			get {
-				return disposed;
+				return this.disposed;
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace SteamEngine.Common {
 
 		~Disposable() // maps to finalize
 		{
-			Dispose(false);
+			this.Dispose(false);
 		}
 	}
 }

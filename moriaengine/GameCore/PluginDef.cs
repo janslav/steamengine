@@ -40,7 +40,7 @@ namespace SteamEngine {
 		protected PluginDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 			{
-				TryActivateCompiledTriggers();
+				this.TryActivateCompiledTriggers();
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace SteamEngine {
 			return p;
 		}
 
-		public static new PluginDef GetByDefname(string defname) {
+		public new static PluginDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as PluginDef;
 		}
 
@@ -115,7 +115,7 @@ namespace SteamEngine {
 		}
 
 		internal static void Init() {
-			foreach (AbstractScript script in AbstractScript.AllScripts) {
+			foreach (AbstractScript script in AllScripts) {
 				PluginDef pd = script as PluginDef;
 				if (pd != null) {
 					pd.TryActivateCompiledTriggers();

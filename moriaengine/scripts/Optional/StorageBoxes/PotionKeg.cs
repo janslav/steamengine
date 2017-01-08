@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			base.On_Click(clicker, clickerState, clickerConn);
 			Language language = clickerState.Language;
-			Networking.PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
+			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				String.Concat(this.potionsCount.ToString(), " potions"),
 				0);
 		}

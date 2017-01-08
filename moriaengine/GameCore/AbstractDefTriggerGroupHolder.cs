@@ -85,10 +85,10 @@ namespace SteamEngine {
 
 		public void AddTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return;
-			if (firstTGListNode == null) {
-				firstTGListNode = new PluginHolder.TGListNode(tg);
+			if (this.firstTGListNode == null) {
+				this.firstTGListNode = new PluginHolder.TGListNode(tg);
 			} else {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				while (true) {
 					if (curNode.storedTG == tg) {
 						return;// false;//we already have it
@@ -103,8 +103,8 @@ namespace SteamEngine {
 		}
 
 		public IEnumerable<TriggerGroup> GetAllTriggerGroups() {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					yield return curNode.storedTG;
 					curNode = curNode.nextNode;
@@ -114,12 +114,12 @@ namespace SteamEngine {
 
 		public void RemoveTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return;
-			if (firstTGListNode != null) {
-				if (firstTGListNode.storedTG == tg) {
-					firstTGListNode = firstTGListNode.nextNode;
+			if (this.firstTGListNode != null) {
+				if (this.firstTGListNode.storedTG == tg) {
+					this.firstTGListNode = this.firstTGListNode.nextNode;
 					return;
 				}
-				PluginHolder.TGListNode lastNode = firstTGListNode;
+				PluginHolder.TGListNode lastNode = this.firstTGListNode;
 				PluginHolder.TGListNode curNode = lastNode.nextNode;
 				while (curNode != null) {
 					if (curNode.storedTG == tg) {
@@ -135,7 +135,7 @@ namespace SteamEngine {
 
 		public bool HasTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return false;
-			PluginHolder.TGListNode curNode = firstTGListNode;
+			PluginHolder.TGListNode curNode = this.firstTGListNode;
 			do {
 				if (curNode.storedTG == tg) {
 					return true;
@@ -146,7 +146,7 @@ namespace SteamEngine {
 		}
 
 		public void ClearTriggerGroups() {
-			firstTGListNode = null;
+			this.firstTGListNode = null;
 		}
 
 
@@ -158,7 +158,7 @@ namespace SteamEngine {
 			//        curNode = curNode.nextNode;
 			//    } while (curNode != null);
 			//}
-			firstTGListNode = null;
+			this.firstTGListNode = null;
 			base.Unload();
 		}
 
@@ -168,8 +168,8 @@ namespace SteamEngine {
 		/// <param name="tk">The TriggerKey for the trigger to call.</param>
 		/// <param name="sa">The arguments (other than argv) for sphere scripts</param>
 		public virtual void Trigger(TriggerKey tk, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					curNode.storedTG.Run(this, tk, sa);
 					curNode = curNode.nextNode;
@@ -178,8 +178,8 @@ namespace SteamEngine {
 		}
 
 		public virtual void TryTrigger(TriggerKey tk, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					curNode.storedTG.TryRun(this, tk, sa);
 					curNode = curNode.nextNode;
@@ -194,8 +194,8 @@ namespace SteamEngine {
 		/// <param name="sa">Arguments for scripts (argn, args, argo, argn1, argn2, etc). Can be null.</param>
 		/// <returns>TriggerResult.Cancel if any called trigger scripts returned 1, TriggerResult.Continue otherwise.</returns>
 		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					if (TagMath.Is1(curNode.storedTG.Run(this, tk, sa))) {
 						return TriggerResult.Cancel;
@@ -207,8 +207,8 @@ namespace SteamEngine {
 		}
 
 		public virtual TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			if (firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = firstTGListNode;
+			if (this.firstTGListNode != null) {
+				PluginHolder.TGListNode curNode = this.firstTGListNode;
 				do {
 					if (TagMath.Is1(curNode.storedTG.TryRun(this, tk, sa))) {
 						return TriggerResult.Cancel;
@@ -221,17 +221,17 @@ namespace SteamEngine {
 
 		public void Trigger(TriggerKey tk, params object[] scriptArguments) {
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
-				Trigger(tk, new ScriptArgs(scriptArguments));
+				this.Trigger(tk, new ScriptArgs(scriptArguments));
 			} else {
-				Trigger(tk, (ScriptArgs) null);
+				this.Trigger(tk, (ScriptArgs) null);
 			}
 		}
 
 		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
-				return CancellableTrigger(tk, new ScriptArgs(scriptArguments));
+				return this.CancellableTrigger(tk, new ScriptArgs(scriptArguments));
 			} else {
-				return CancellableTrigger(tk, (ScriptArgs) null);
+				return this.CancellableTrigger(tk, (ScriptArgs) null);
 			}
 		}
 	}

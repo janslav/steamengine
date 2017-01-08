@@ -30,8 +30,8 @@ namespace SteamEngine.CompiledScripts {
 
 	[Dialogs.ViewableClass]
 	public partial class Corpse : Container {
-		uint hairFakeUid = Thing.GetFakeItemUid();
-		uint beardFakeUid = Thing.GetFakeItemUid();
+		uint hairFakeUid = GetFakeItemUid();
+		uint beardFakeUid = GetFakeItemUid();
 
 		bool hasEquippedItems = true;
 
@@ -84,14 +84,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 			Item hair = dieingChar.Hair;
 			if (hair != null) {
-				hairModel = hair.ShortModel;
-				hairColor = hair.ShortColor;
+				this.hairModel = hair.ShortModel;
+				this.hairColor = hair.ShortColor;
 			}
 
 			Item beard = dieingChar.Beard;
 			if (beard != null) {
-				beardModel = beard.ShortModel;
-				beardColor = beard.ShortColor;
+				this.beardModel = beard.ShortModel;
+				this.beardColor = beard.ShortColor;
 			}
 			AbstractItem pack = dieingChar.Backpack;
 			foreach (Item inBackpack in pack) {
@@ -102,17 +102,17 @@ namespace SteamEngine.CompiledScripts {
 			foreach (Item equipped in dieingChar.VisibleEquip) {
 				if (equipped.CanFallToCorpse && equipped != pack && equipped != hair && equipped != beard) {
 					equipped.Cont = this;
-					if (equippedItems == null) {
-						equippedItems = new Dictionary<ICorpseEquipInfo, AbstractItem>();
+					if (this.equippedItems == null) {
+						this.equippedItems = new Dictionary<ICorpseEquipInfo, AbstractItem>();
 					}
-					equippedItems[equipped] = equipped;
+					this.equippedItems[equipped] = equipped;
 				}
 			}
 		}
 
 		public void ReturnStuffToChar(Character resurrectedChar) {
-			if (equippedItems != null) {
-				foreach (Item i in equippedItems.Values) {
+			if (this.equippedItems != null) {
+				foreach (Item i in this.equippedItems.Values) {
 					i.Cont = resurrectedChar;
 					//resurrectedChar.TryEquip(resurrectedChar, i);
 				}
@@ -131,7 +131,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				value = value & Direction.Mask;
 				if (value != this.direction) {
-					SteamEngine.Networking.ItemSyncQueue.AboutToChange(this);
+					ItemSyncQueue.AboutToChange(this);
 					this.direction = value;
 				}
 			}
@@ -151,8 +151,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Destroy() {
 			base.On_Destroy();
-			Thing.DisposeFakeUid(hairFakeUid);
-			Thing.DisposeFakeUid(beardFakeUid);
+			DisposeFakeUid(this.hairFakeUid);
+			DisposeFakeUid(this.beardFakeUid);
 
 			if (this.hairItemsPackets != null) {
 				this.hairItemsPackets.Dispose();
@@ -209,7 +209,7 @@ namespace SteamEngine.CompiledScripts {
 				: base(corpse) {
 			}
 
-			public override void SendTo(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TcpConnection<GameState> viewerConn) {
+			public override void SendTo(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 				base.SendTo(viewer, viewerState, viewerConn);
 
 				Corpse corpse = (Corpse) this.ContItem;
@@ -288,24 +288,22 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, SteamEngine.Communication.TCP.TcpConnection<GameState> viewerConn) {
+		public override void On_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 			base.On_ContainerOpen(viewer, viewerState, viewerConn);
 
 			if (this.IsOnGround && this.hasHairItems) {
 				if (this.hairItemsPackets == null) {
 					this.hairItemsPackets = PacketGroup.CreateFreePG();
-					if (hairModel != 0) {
-						CorpseEquipInfo hair = new CorpseEquipInfo(
-							hairFakeUid, (int) LayerNames.Hair, hairColor, hairModel);
+					if (this.hairModel != 0) {
+						CorpseEquipInfo hair = new CorpseEquipInfo(this.hairFakeUid, (int) LayerNames.Hair, this.hairColor, this.hairModel);
 						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, hair);
-						hasHairItems = true;
+						this.hasHairItems = true;
 					}
-					if (beardModel != 0) {
-						CorpseEquipInfo beard = new CorpseEquipInfo(
-							beardFakeUid, (int) LayerNames.Beard, beardColor, beardModel);
+					if (this.beardModel != 0) {
+						CorpseEquipInfo beard = new CorpseEquipInfo(this.beardFakeUid, (int) LayerNames.Beard, this.beardColor, this.beardModel);
 
 						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, beard);
-						hasHairItems = true;
+						this.hasHairItems = true;
 					}
 
 					if (!this.hasHairItems) {
@@ -319,67 +317,67 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_ItemLeave(ItemInItemArgs args) {
-			if (equippedItems != null) {
-				if (equippedItems.ContainsKey(args.ManipulatedItem)) {
+			if (this.equippedItems != null) {
+				if (this.equippedItems.ContainsKey(args.ManipulatedItem)) {
 					ItemOnGroundUpdater.RemoveFromCache(this);
 				}
 			}
 		}
 
-		public override sealed Thing Link {
+		public sealed override Thing Link {
 			get {
-				return owner;
+				return this.owner;
 			}
 			set {
-				owner = (Character) value;
+				this.owner = (Character) value;
 			}
 		}
 
 		public Character Owner {
 			get {
-				return owner;
+				return this.owner;
 			}
 			set {
-				owner = value;
+				this.owner = value;
 			}
 		}
 
 		public string OwnerName {
 			get {
-				return ownerName;
+				return this.ownerName;
 			}
 			set {
-				ownerName = value;
+				this.ownerName = value;
 			}
 		}
 
 		public ushort HairColor {
 			get {
-				return hairColor;
+				return this.hairColor;
 			}
 		}
 
 		public ushort HairModel {
 			get {
-				return hairModel;
+				return this.hairModel;
 			}
 		}
 
 		public ushort BeardModel {
 			get {
-				return beardModel;
+				return this.beardModel;
 			}
 		}
 
 		public ushort BeardColor {
 			get {
-				return beardColor;
+				return this.beardColor;
 			}
 		}
 
 		public CharacterDef CharDef {
 			get {
-				return charDef;
+				return this.charDef;
 			}
 		}
 	}

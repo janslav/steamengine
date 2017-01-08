@@ -33,10 +33,10 @@ namespace SteamEngine.CompiledScripts {
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			switch (param) {
 				case "component":
-					loadHelpers.Add(new DMICDLoadHelper(filename, line, args));
+					this.loadHelpers.Add(new DMICDLoadHelper(filename, line, args));
 					return;
 				case "multiregion":
-					rectangleHelpers.Add(new MultiRegionRectangleHelper(args));
+					this.rectangleHelpers.Add(new MultiRegionRectangleHelper(args));
 					return;
 			}
 			base.LoadScriptLine(filename, line, param, args);
@@ -44,25 +44,25 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_Create(Thing t) {
 			base.On_Create(t);
-			if (components == null) {
-				List<DynamicMultiItemComponentDescription> dmicds = new List<DynamicMultiItemComponentDescription>(loadHelpers.Count);
-				foreach (DMICDLoadHelper helper in loadHelpers) {
+			if (this.components == null) {
+				List<DynamicMultiItemComponentDescription> dmicds = new List<DynamicMultiItemComponentDescription>(this.loadHelpers.Count);
+				foreach (DMICDLoadHelper helper in this.loadHelpers) {
 					DynamicMultiItemComponentDescription dmicd = helper.Resolve();
 					if (dmicd != null) {
 						dmicds.Add(dmicd);
 					}
 				}
-				components = dmicds.ToArray();
-				loadHelpers = null;
+				this.components = dmicds.ToArray();
+				this.loadHelpers = null;
 			}
 
 			MultiItem mi = (MultiItem) t;
 
-			int n = components.Length;
+			int n = this.components.Length;
 			if (n > 0) {
 				Item[] items = new Item[n];
 				for (int i = 0; i < n; i++) {
-					items[i] = components[i].Create(t.X, t.Y, t.Z, t.M); ;
+					items[i] = this.components[i].Create(t.X, t.Y, t.Z, t.M); ;
 				}
 				mi.components = items;
 			}
@@ -85,11 +85,11 @@ namespace SteamEngine.CompiledScripts {
 
 			internal DynamicMultiItemComponentDescription Resolve() {
 				try {
-					return DynamicMultiItemComponentDescription.Parse(args);
+					return DynamicMultiItemComponentDescription.Parse(this.args);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {
-					Logger.WriteWarning(filename, line, ex);
+					Logger.WriteWarning(this.filename, this.line, ex);
 				}
 				return null;
 			}
@@ -97,8 +97,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Unload() {
 			base.Unload();
-			components = null;
-			loadHelpers = new List<DMICDLoadHelper>();
+			this.components = null;
+			this.loadHelpers = new List<DMICDLoadHelper>();
 		}
 
 
@@ -115,18 +115,18 @@ namespace SteamEngine.CompiledScripts {
 				Match m = rectRE.Match(args);
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
-					startX = TagMath.ParseInt32(gc["x1"].Value);
-					startY = TagMath.ParseInt32(gc["y1"].Value);
-					endX = TagMath.ParseInt32(gc["x2"].Value);
-					endY = TagMath.ParseInt32(gc["y2"].Value);
+					this.startX = ConvertTools.ParseInt32(gc["x1"].Value);
+					this.startY = ConvertTools.ParseInt32(gc["y1"].Value);
+					this.endX = ConvertTools.ParseInt32(gc["x2"].Value);
+					this.endY = ConvertTools.ParseInt32(gc["y2"].Value);
 				} else {
 					throw new SEException("Unrecognized Rectangle format ('" + args + "')");
 				}
 			}
 
 			internal ImmutableRectangle CreateRect(IPoint2D p) {
-				return new ImmutableRectangle((ushort) (p.X + startX), (ushort) (p.Y + startY),
-											  (ushort) (p.X + endX), (ushort) (p.Y + endY));
+				return new ImmutableRectangle((ushort) (p.X + this.startX), (ushort) (p.Y + this.startY),
+											  (ushort) (p.X + this.endX), (ushort) (p.Y + this.endY));
 			}
 		}
 
@@ -145,10 +145,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal Item Create(int centerX, int centerY, int centerZ, byte m) {
-				return (Item) def.Create(
-					centerX + offsetX,
-					centerY + offsetY,
-					centerZ + offsetZ, m);
+				return (Item) this.def.Create(
+					centerX + this.offsetX,
+					centerY + this.offsetY,
+					centerZ + this.offsetZ, m);
 			}
 
 			internal static Regex dmicdRE = new Regex(@"\s*(?<defname>[a-z_0-9]+)\s*(,|\s)\s*(?<x>-?\d+)\s*(,|\s)\s*(?<y>-?\d+)\s*((,|\s)\s*(?<z>-?\d+))?\s*",
@@ -159,23 +159,23 @@ namespace SteamEngine.CompiledScripts {
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
 					string defname = gc["defname"].Value;
-					ItemDef def = ThingDef.GetByDefname(defname) as ItemDef;
+					ItemDef def = GetByDefname(defname) as ItemDef;
 					if (def == null) {
 						int model;
 						if (ConvertTools.TryParseInt32(defname, out model)) {
-							def = ThingDef.FindItemDef(model) as ItemDef;
+							def = FindItemDef(model) as ItemDef;
 						}
 						if (def == null) {
 							throw new SEException("Unrecognized Itemdef in Component parse: '" + defname + "'");
 						}
 					}
 
-					short x = TagMath.ParseInt16(gc["x"].Value);
-					short y = TagMath.ParseInt16(gc["y"].Value);
+					short x = ConvertTools.ParseInt16(gc["x"].Value);
+					short y = ConvertTools.ParseInt16(gc["y"].Value);
 					string zstr = gc["z"].Value;
 					sbyte z;
 					if (zstr.Length > 0) {
-						z = TagMath.ParseSByte(zstr);
+						z = ConvertTools.ParseSByte(zstr);
 					} else {
 						z = 0;
 					}
@@ -192,17 +192,17 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ComponentCount {
 			get {
-				if (components != null) {
-					return components.Length;
+				if (this.components != null) {
+					return this.components.Length;
 				}
 				return 0;
 			}
 		}
 
 		public Item GetComponent(int index) {
-			if (components != null) {
+			if (this.components != null) {
 				if ((index > 0) && (index < this.components.Length)) {
-					return components[index];
+					return this.components[index];
 				}
 			}
 			return null;
@@ -210,39 +210,39 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Destroy() {
 			base.On_Destroy();
-			if (components != null) {
-				foreach (Item i in components) {
+			if (this.components != null) {
+				foreach (Item i in this.components) {
 					if (i != null) {
 						i.Delete();
 					}
 				}
 			}
-			if (region != null) {
-				region.Delete();
+			if (this.region != null) {
+				this.region.Delete();
 			}
 		}
 
 		public override void On_AfterLoad() {
 			base.On_AfterLoad();
 			if (this.IsOnGround) {
-				InitMultiRegion();
+				this.InitMultiRegion();
 			}
 		}
 
 		public override Region Region {
 			get {
-				return region;
+				return this.region;
 			}
 		}
 
 		internal virtual void InitMultiRegion() {
-			int n = TypeDef.rectangleHelpers.Count;
+			int n = this.TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
 				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
 				for (int i = 0; i < n; i++) {
-					newRectangles[i] = TypeDef.rectangleHelpers[i].CreateRect(this);
+					newRectangles[i] = this.TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
-				region = new MultiRegion(this, newRectangles);
+				this.region = new MultiRegion(this, newRectangles);
 				// TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!
 			}
 		}
@@ -262,13 +262,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string ToString() {
-			return GetType().Name + " " + Name;
+			return this.GetType().Name + " " + this.Name;
 		}
 
 		public override string Name {
 			get {
-				if (multiItem != null) {
-					return multiItem.Name;
+				if (this.multiItem != null) {
+					return this.multiItem.Name;
 				}
 				return "MultiRegion wihout MultiItem";
 			}

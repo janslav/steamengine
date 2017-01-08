@@ -15,6 +15,7 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
 
@@ -65,7 +66,7 @@ namespace SteamEngine {
 				if (value == null) {
 					return Globals.MaxUpdateRange;
 				} else {
-					return TagMath.ToInt32(value);
+					return ConvertTools.ToInt32(value);
 				}
 			}
 			set {
@@ -109,7 +110,7 @@ namespace SteamEngine {
 					return DenyResultMessages.Deny_ThatIsInvisible;
 				}
 			} else if (target.IsEquipped) {
-				if (target.Z < AbstractCharacter.sentLayers) {
+				if (target.Z < sentLayers) {
 					Thing container = target.TopObj(); //the char that has this item equipped
 					DenyResult canSeeContainer = this.CanSeeForUpdateImpl(fromCoordinates, targetMapCoordinates, container);
 
@@ -152,7 +153,7 @@ namespace SteamEngine {
 				return false;
 			}
 
-			return CanSeeCoordinatesFrom(fromCoordinates, target.X, target.Y, target.M);
+			return this.CanSeeCoordinatesFrom(fromCoordinates, target.X, target.Y, target.M);
 		}
 
 		private bool CanSeeCoordinatesFrom(IPoint4D fromCoordinates, int targetX, int targetY, byte targetM) {
@@ -182,7 +183,7 @@ namespace SteamEngine {
 			Thing topobj = null;
 
 			if (checkTopObj) {
-				if (!CanReachMapRangeFrom(fromCoordinates, targetMapCoordinates)) {
+				if (!this.CanReachMapRangeFrom(fromCoordinates, targetMapCoordinates)) {
 					return DenyResultMessages.Deny_ThatIsTooFarAway;
 				}
 
@@ -218,7 +219,7 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public DenyResult CanReachCoordinates(IPoint4D target) {
 			target = target.TopPoint;
-			if (!CanReachMapRangeFrom(this, target)) {
+			if (!this.CanReachMapRangeFrom(this, target)) {
 				return DenyResultMessages.Deny_ThatIsTooFarAway;
 			}
 			Map m = this.GetMap();
@@ -237,7 +238,7 @@ namespace SteamEngine {
 			if ((targetAs4D != null) && (targetAs4D.M != thisM)) { //different M
 				return DenyResultMessages.Deny_ThatIsTooFarAway;
 			} else {
-				Regions.Map map = Regions.Map.GetMap(thisM);
+				Map map = Map.GetMap(thisM);
 				Thing targetAsThing = target as Thing;
 				if (targetAsThing != null) {
 					if ((targetAsThing.IsDeleted) || (targetAsThing.Flag_Disconnected)) {
@@ -268,7 +269,7 @@ namespace SteamEngine {
 		}
 
 		internal bool CanReachMapRangeFrom(IPoint4D fromCoordinates, IPoint4D target) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (target == null) {
 				return false;
 			}

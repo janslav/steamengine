@@ -38,7 +38,7 @@ namespace SteamEngine {
 		}
 
 		public override int GetHashCode() {
-			return uid;
+			return this.uid;
 		}
 
 		public override bool Equals(Object obj) {

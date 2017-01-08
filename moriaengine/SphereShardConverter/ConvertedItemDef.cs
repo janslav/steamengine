@@ -324,25 +324,25 @@ namespace SteamEngine.Converter {
 			if (this.headerType.Equals("ItemDef")) {
 				this.headerType = "EquippableDef";
 			}
-			isEquippable = true;
+			this.isEquippable = true;
 		}
 
 		public override void ThirdStage() {
-			if (isEquippable && !layerSet) {
+			if (this.isEquippable && !this.layerSet) {
 				int model = this.Model;
 				ItemDispidInfo info = ItemDispidInfo.GetByModel(model);
 				if (info != null) {
 					this.layer = info.Quality.ToString();
 					this.Set("layer", this.layer, "Set by Converter");
-					layerSet = true;
+					this.layerSet = true;
 				} else {
 					this.Set("//layer", "unknown", "");
-					Info(this.origData.HeaderLine, "Unknown layer for ItemDef " + this.headerName);
+					this.Info(this.origData.HeaderLine, "Unknown layer for ItemDef " + this.headerName);
 				}
 			}
 
-			if (isWeapon) {
-				bool isColored = IsColoredMetal();
+			if (this.isWeapon) {
+				bool isColored = this.IsColoredMetal();
 				if (isColored) {
 					this.headerType = "ColoredWeaponDef";
 				} else {
@@ -356,13 +356,13 @@ namespace SteamEngine.Converter {
 					case "t_weapon_sword":
 						string prettyDefName = this.PrettyDefname.ToLowerInvariant();
 						if (prettyDefName.Contains("_axe_") || prettyDefName.EndsWith("_axe")) {
-							if (isTwoHanded) {
+							if (this.isTwoHanded) {
 								weaponType = WeaponType.TwoHandAxe;
 							} else {
 								weaponType = WeaponType.OneHandAxe;
 							}
 						} else {
-							if (isTwoHanded) {
+							if (this.isTwoHanded) {
 								weaponType = WeaponType.TwoHandSword;
 							} else {
 								weaponType = WeaponType.OneHandSword;
@@ -370,7 +370,7 @@ namespace SteamEngine.Converter {
 						}
 						break;
 					case "t_weapon_fence":
-						if (isTwoHanded) {
+						if (this.isTwoHanded) {
 							weaponType = WeaponType.TwoHandSpike;
 						} else {
 							weaponType = WeaponType.OneHandSpike;
@@ -385,7 +385,7 @@ namespace SteamEngine.Converter {
 						materialType = MaterialType.Wood;
 						goto case "t_weapon_mace_smith";
 					case "t_weapon_mace_smith":
-						if (isTwoHanded) {
+						if (this.isTwoHanded) {
 							weaponType = WeaponType.TwoHandSpike;
 						} else {
 							weaponType = WeaponType.OneHandSpike;
@@ -426,16 +426,16 @@ namespace SteamEngine.Converter {
 				if (isColored) {
 					this.Set("MaterialType", "MaterialType." + materialType, "guessed by Converter");
 				}
-			} else if (isWearable) {
-				bool isColored = IsColoredMetal();
+			} else if (this.isWearable) {
+				bool isColored = this.IsColoredMetal();
 				if (isColored) {
 					this.headerType = "ColoredArmorDef";
 					this.Set("MaterialType", "MaterialType.Metal", "guessed by Converter");
 				} else {
 					this.headerType = "WearableDef";
 				}
-				if (!wearableTypeSet) {
-					this.Set("WearableType", "WearableType." + GetWearableType(this.PrettyDefname), "guessed by Converter");
+				if (!this.wearableTypeSet) {
+					this.Set("WearableType", "WearableType." + this.GetWearableType(this.PrettyDefname), "guessed by Converter");
 
 				}
 			}

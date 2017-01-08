@@ -99,7 +99,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 				//server online, we do nothing
 			} else {
 				IGameServerSetup sett = Settings.KnownGameServersList[this.iniID];
-				Sanity.IfTrueThrow((iniID != sett.IniID), "Server ini ID number is different from it's index in list");
+				Sanity.IfTrueThrow((this.iniID != sett.IniID), "Server ini ID number is different from it's index in list");
 
 				sett.StartGameServerProcess(this.build);
 			}

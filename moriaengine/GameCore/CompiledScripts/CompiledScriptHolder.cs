@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public string NewFunctionName {
 			get {
-				return newFunctionName;
+				return this.newFunctionName;
 			}
 		}
 	}
@@ -226,21 +226,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedScriptHolder_" + name);
+				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedScriptHolder_" + this.name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(CompiledScriptHolder));
 				codeTypeDeclatarion.IsClass = true;
 
-				codeTypeDeclatarion.Members.Add(GenerateConstructor());
-				codeTypeDeclatarion.Members.Add(GenerateRunMethod());
+				codeTypeDeclatarion.Members.Add(this.GenerateConstructor());
+				codeTypeDeclatarion.Members.Add(this.GenerateRunMethod());
 				return codeTypeDeclatarion;
 			}
 
 			private CodeMemberMethod GenerateConstructor() {
 				CodeConstructor retVal = new CodeConstructor();
 				retVal.Attributes = MemberAttributes.Public;
-				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(name));
-				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(desc));
+				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(this.name));
+				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(this.desc));
 
 				retVal.Statements.Add(new CodeMethodInvokeExpression(
 					new CodeBaseReferenceExpression(), "RegisterAsFunction"));
@@ -255,14 +255,14 @@ namespace SteamEngine.CompiledScripts {
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(ScriptArgs), "sa"));
 				retVal.ReturnType = new CodeTypeReference(typeof(object));
 
-				if (method.GetParameters().Length > 0) {
+				if (this.method.GetParameters().Length > 0) {
 					retVal.Statements.Add(new CodeVariableDeclarationStatement(
 						typeof(object[]),
 						"argv"));
 				}
 
 				retVal.Statements.AddRange(
-					GenerateMethodInvocation(method, new CodeTypeReferenceExpression(method.DeclaringType), true));
+					GenerateMethodInvocation(this.method, new CodeTypeReferenceExpression(this.method.DeclaringType), true));
 
 				return retVal;
 			}

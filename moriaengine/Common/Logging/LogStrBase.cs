@@ -58,27 +58,27 @@ namespace SteamEngine.Common {
 		}
 
 		public bool IsLink {
-			get { return isLink; }
+			get { return this.isLink; }
 		}
 
 		public Color TextColor {
-			get { return textColor; }
+			get { return this.textColor; }
 		}
 
 		public FontStyle FontStyle {
-			get { return fontStyle; }
+			get { return this.fontStyle; }
 		}
 
 		public FontFamily FontFamily {
-			get { return fontFamily; }
+			get { return this.fontFamily; }
 		}
 
 		public float FontSize {
-			get { return fontSize; }
+			get { return this.fontSize; }
 		}
 
 		public Font Font {
-			get { return font; }
+			get { return this.font; }
 		}
 
 

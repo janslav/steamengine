@@ -35,9 +35,9 @@ namespace SteamEngine.CompiledScripts {
 		public StatDrainingAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
-			this.hitsDrain = InitTypedField("hitsDrain", 0, typeof(double));
-			this.stamDrain = InitTypedField("stamDrain", 0, typeof(double));
-			this.manaDrain = InitTypedField("manaDrain", 0, typeof(double));
+			this.hitsDrain = this.InitTypedField("hitsDrain", 0, typeof(double));
+			this.stamDrain = this.InitTypedField("stamDrain", 0, typeof(double));
+			this.manaDrain = this.InitTypedField("manaDrain", 0, typeof(double));
 		}
 
 		public double HitsDrain {

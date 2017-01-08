@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short Gump {
 			get {
-				short gump = TypeDef.Gump;
+				short gump = this.TypeDef.Gump;
 				if (gump == -1) {		//It has no defined gump
 					AbstractItemDef idef = ThingDef.FindItemDef(this.Model);
 					ContainerDef cdef = idef as ContainerDef;
@@ -81,13 +81,13 @@ namespace SteamEngine.CompiledScripts {
 			this.OpenTo(Globals.SrcCharacter);
 		}
 
-		public override sealed bool IsContainer {
+		public sealed override bool IsContainer {
 			get {
 				return true;
 			}
 		}
 
-		public override sealed bool CanContain {
+		public sealed override bool CanContain {
 			get {
 				return true;
 			}
@@ -130,19 +130,19 @@ namespace SteamEngine.CompiledScripts {
 
 		public override float Weight {
 			get {
-				return weight;
+				return this.weight;
 			}
 		}
 
 		public override void FixWeight() {
-			float w = Def.Weight;
+			float w = this.Def.Weight;
 			foreach (AbstractItem i in this) {
 				if (i != null) {
 					i.FixWeight();
 					w += i.Weight;
 				}
 			}
-			weight = w;
+			this.weight = w;
 		}
 
 		protected override void AdjustWeight(float adjust) {
@@ -158,7 +158,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			base.On_Click(clicker, clickerState, clickerConn);
 			Language language = clickerState.Language;
-			Networking.PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
+			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				String.Concat(this.Count.ToString(), " ", Loc<ContainerLoc>.Get(language).itemsGenitiv, ", ",
 				this.Weight.ToString(), " ", Loc<ContainerLoc>.Get(language).stonesGenitiv),
 				0);

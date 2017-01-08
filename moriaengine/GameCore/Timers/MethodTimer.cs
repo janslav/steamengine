@@ -39,7 +39,7 @@ namespace SteamEngine.Timers {
 		public object[] args;
 
 		protected sealed override void OnTimeout(TagHolder cont) {
-			method.Invoke(cont, BindingFlags.Default, null, args, null);
+			this.method.Invoke(cont, BindingFlags.Default, null, this.args, null);
 		}
 
 		[LoadingInitializer]		
@@ -57,11 +57,11 @@ namespace SteamEngine.Timers {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
-		public override void Save(SteamEngine.Persistence.SaveStream output) {
-			StringBuilder sb = new StringBuilder(method.DeclaringType.ToString());
-			sb.Append(".").Append(method.Name);
+		public override void Save(SaveStream output) {
+			StringBuilder sb = new StringBuilder(this.method.DeclaringType.ToString());
+			sb.Append(".").Append(this.method.Name);
 			sb.Append("(");
-			ParameterInfo[] pars = method.GetParameters();
+			ParameterInfo[] pars = this.method.GetParameters();
 			if (pars.Length > 0) {
 				foreach (ParameterInfo pi in pars) {
 					sb.Append(pi.ParameterType.ToString());
@@ -95,7 +95,7 @@ namespace SteamEngine.Timers {
 					}
 					MethodInfo mi = type.GetMethod(methodName, paramTypes);
 					if (mi != null) {
-						method = MemberWrapper.GetWrapperFor(mi);
+						this.method = MemberWrapper.GetWrapperFor(mi);
 					} else {
 						throw new SEException("Unrecognized method.");
 					}

@@ -101,7 +101,7 @@ namespace SteamEngine.CompiledScripts {
 			string zstr = gc["z"].Value;
 			sbyte z = 0;
 			if (zstr.Length > 0) {
-				z = TagMath.ParseSByte(zstr);
+				z = ConvertTools.ParseSByte(zstr);
 			}
 
 			return new Point3D(x, y, z);
@@ -165,9 +165,9 @@ namespace SteamEngine.CompiledScripts {
 			sbyte z = 0;
 			byte m = 0;
 			if (zstr.Length > 0) {
-				z = TagMath.ParseSByte(zstr);
+				z = ConvertTools.ParseSByte(zstr);
 				if (mstr.Length > 0) {
-					m = TagMath.ParseByte(mstr);
+					m = ConvertTools.ParseByte(mstr);
 				}
 			}
 			return new Point4D(x, y, z, m);

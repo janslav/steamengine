@@ -95,7 +95,7 @@ namespace SteamEngine.Converter {
 			this.Set("Name", "\"" + name + "\"", "");
 			if (StringComparer.OrdinalIgnoreCase.Equals(name, "%servname%")) {
 				//headerType = "WorldRegion";
-				hierarchyIndex = 0;
+				this.hierarchyIndex = 0;
 				//} else {
 				//headerType = "Region";
 			}
@@ -118,7 +118,7 @@ namespace SteamEngine.Converter {
 			if (defnameLine != null) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(defnameLine.Value, "a_world")) {
 					//headerType = "Worldregion";
-					hierarchyIndex = 0;
+					this.hierarchyIndex = 0;
 				}
 				regionsByDefname.Remove(this.headerName);
 				this.headerName = defnameLine.Value;
@@ -132,10 +132,10 @@ namespace SteamEngine.Converter {
 				GroupCollection gc = m.Groups;
 				//Console.WriteLine("args: "+args);
 				//Console.WriteLine("parsed as: {0}, {1}, {2}, {3}", gc["x1"], gc["y1"], gc["x2"], gc["y2"]);
-				ushort x1 = TagMath.ParseUInt16(gc["x1"].Value);
-				ushort y1 = TagMath.ParseUInt16(gc["y1"].Value);
-				ushort x2 = TagMath.ParseUInt16(gc["x2"].Value);
-				ushort y2 = TagMath.ParseUInt16(gc["y2"].Value);
+				ushort x1 = ConvertTools.ParseUInt16(gc["x1"].Value);
+				ushort y1 = ConvertTools.ParseUInt16(gc["y1"].Value);
+				ushort x2 = ConvertTools.ParseUInt16(gc["x2"].Value);
+				ushort y2 = ConvertTools.ParseUInt16(gc["y2"].Value);
 				ushort minX;
 				ushort maxX;
 				ushort minY;
@@ -167,13 +167,13 @@ namespace SteamEngine.Converter {
 
 		private static void ParseMapplane(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
-			r.mapplane = TagMath.ParseByte(line.Value);
+			r.mapplane = ConvertTools.ParseByte(line.Value);
 			r.mapplaneSet = true;
 			r.mapplaneLine = line;
 			//return "";
 		}
 
-		private static SteamEngine.CompiledScripts.Point4DSaveImplementor pImplementor = new SteamEngine.CompiledScripts.Point4DSaveImplementor();
+		private static CompiledScripts.Point4DSaveImplementor pImplementor = new CompiledScripts.Point4DSaveImplementor();
 
 		private static void ParseP(ConvertedDef def, PropsLine line) {
 			ConvertedRegion r = (ConvertedRegion) def;
@@ -209,7 +209,7 @@ namespace SteamEngine.Converter {
 					break;
 			}
 
-			int value = TagMath.ParseInt32(line.Value);
+			int value = ConvertTools.ParseInt32(line.Value);
 			if (value != 0) {//it is flagged region
 				//if (def.headerType.StartsWith("World")) {
 				//    def.headerType = "WorldFlaggedRegion";
@@ -223,19 +223,19 @@ namespace SteamEngine.Converter {
 		}
 
 		public override void SecondStage() {
-			int rectanglesCount = rectangles.Count;
-			points = new Point2D[rectanglesCount * 4];
+			int rectanglesCount = this.rectangles.Count;
+			this.points = new Point2D[rectanglesCount * 4];
 			for (int i = 0; i < rectanglesCount; i++) {
-				ImmutableRectangle rect = (ImmutableRectangle) rectangles[i];
-				points[(i * 4) + 0] = new Point2D(rect.MinX, rect.MinY);//left lower
-				points[(i * 4) + 1] = new Point2D(rect.MinX, rect.MaxY);//left upper
-				points[(i * 4) + 2] = new Point2D(rect.MaxX, rect.MaxY);//right upper
-				points[(i * 4) + 3] = new Point2D(rect.MaxX, rect.MinY);//right lower
+				ImmutableRectangle rect = (ImmutableRectangle) this.rectangles[i];
+				this.points[(i * 4) + 0] = new Point2D(rect.MinX, rect.MinY);//left lower
+				this.points[(i * 4) + 1] = new Point2D(rect.MinX, rect.MaxY);//left upper
+				this.points[(i * 4) + 2] = new Point2D(rect.MaxX, rect.MaxY);//right upper
+				this.points[(i * 4) + 3] = new Point2D(rect.MaxX, rect.MinY);//right lower
 			}
 
 			List<DictionaryEntry> temp = new List<DictionaryEntry>();
 			foreach (ConvertedRegion reg in allRegions) {
-				if (HasSameMapplane(reg)) {
+				if (this.HasSameMapplane(reg)) {
 					int contained = reg.ContainsPoints(this.points);
 					temp.Add(new DictionaryEntry(contained, reg));
 				}
@@ -247,7 +247,7 @@ namespace SteamEngine.Converter {
 				DictionaryEntry entry = (DictionaryEntry) temp[i];
 				int result = (int) entry.Key;
 				ConvertedRegion p = (ConvertedRegion) entry.Value;
-				if ((this != p) && HasSameMapplane(p)) {
+				if ((this != p) && this.HasSameMapplane(p)) {
 					if (result > highestResult) {
 						occurences = 0;
 						highestResult = result;
@@ -257,17 +257,17 @@ namespace SteamEngine.Converter {
 					}
 				}
 			}
-			if ((occurences == 0) && (hierarchyIndex != 0)) {
-				Warning(this.origData.HeaderLine, "Region " + this.headerName + " has no parents!");
+			if ((occurences == 0) && (this.hierarchyIndex != 0)) {
+				this.Warning(this.origData.HeaderLine, "Region " + this.headerName + " has no parents!");
 			}
-			parents = new ConvertedRegion[occurences];
+			this.parents = new ConvertedRegion[occurences];
 			int index = 0;
 			for (int i = 0; i < tempCount; i++) {
 				DictionaryEntry entry = (DictionaryEntry) temp[i];
 				int result = (int) entry.Key;
 				ConvertedRegion p = (ConvertedRegion) entry.Value;
-				if ((result == highestResult) && (p != this) && HasSameMapplane(p)) {
-					parents[index] = p;
+				if ((result == highestResult) && (p != this) && this.HasSameMapplane(p)) {
+					this.parents[index] = p;
 					index++;
 				}
 			}
@@ -276,10 +276,10 @@ namespace SteamEngine.Converter {
 		}
 
 		public override void ThirdStage() {
-			if (mapplaneLine != null) {
-				this.Set("Mapplane", mapplane.ToString(), mapplaneLine.Comment);
+			if (this.mapplaneLine != null) {
+				this.Set("Mapplane", this.mapplane.ToString(), this.mapplaneLine.Comment);
 			} else {
-				this.Set("Mapplane", mapplane.ToString(), "");
+				this.Set("Mapplane", this.mapplane.ToString(), "");
 			}
 		}
 
@@ -298,7 +298,7 @@ namespace SteamEngine.Converter {
 			int counter = 0;
 			for (int i = 0, n = ps.Length; i < n; i++) {
 				Point2D p = ps[i];
-				foreach (ImmutableRectangle rect in rectangles) {
+				foreach (ImmutableRectangle rect in this.rectangles) {
 					if (rect.Contains(p)) {
 						counter++;
 						continue;
@@ -309,13 +309,13 @@ namespace SteamEngine.Converter {
 		}
 
 		private bool TryDefinitiveParent() {
-			if (hierarchyIndex != -1) {
+			if (this.hierarchyIndex != -1) {
 				return true;
 			}
 			int highestHierarchyIndex = -2;
 			int highestHierarchyIndexAt = -1;
-			for (int i = 0, n = parents.Length; i < n; i++) {
-				ConvertedRegion reg = parents[i];
+			for (int i = 0, n = this.parents.Length; i < n; i++) {
+				ConvertedRegion reg = this.parents[i];
 				if (reg.hierarchyIndex == -1) {
 					return false;
 				} else if (reg.hierarchyIndex > highestHierarchyIndex) {
@@ -323,9 +323,9 @@ namespace SteamEngine.Converter {
 					highestHierarchyIndexAt = i;
 				}
 			}
-			ConvertedRegion definitiveParent = parents[highestHierarchyIndexAt];
-			parents = new ConvertedRegion[] { definitiveParent };
-			hierarchyIndex = definitiveParent.hierarchyIndex + 1;
+			ConvertedRegion definitiveParent = this.parents[highestHierarchyIndexAt];
+			this.parents = new ConvertedRegion[] { definitiveParent };
+			this.hierarchyIndex = definitiveParent.hierarchyIndex + 1;
 			this.Set("Parent", "(" + definitiveParent.headerName + ")", "calculated by Converter");
 			//Console.WriteLine("Parent for "+this.headerName+"set to "+definitiveParent.headerName);
 			return true;
@@ -362,7 +362,7 @@ namespace SteamEngine.Converter {
 		}
 		//		
 		public override string ToString() {
-			return "ConvertedRegion " + this.headerName + "(" + hierarchyIndex + ")";
+			return "ConvertedRegion " + this.headerName + "(" + this.hierarchyIndex + ")";
 		}
 	}
 }

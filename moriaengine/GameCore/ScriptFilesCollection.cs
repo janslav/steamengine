@@ -75,7 +75,7 @@ namespace SteamEngine {
 				this.scriptFiles = new Dictionary<string, ScriptFile>();
 			}
 			this.scriptFiles[file.FullName] = sf;
-			CheckTime(file);
+			this.CheckTime(file);
 			this.lengthSum += file.Length;
 			return sf;
 		}
@@ -97,28 +97,28 @@ namespace SteamEngine {
 		internal ICollection<ScriptFile> GetAllFiles() {
 			if (this.scriptFiles == null) {
 				this.scriptFiles = new Dictionary<string, ScriptFile>();
-				InitializeList(this.mainDir);
+				this.InitializeList(this.mainDir);
 			} else {
-				FindNewFiles(this.mainDir, new List<ScriptFile>());
+				this.FindNewFiles(this.mainDir, new List<ScriptFile>());
 			}
 			return this.scriptFiles.Values;
 		}
 
 		internal ICollection<ScriptFile> GetChangedFiles() {
 			if (this.scriptFiles == null) {
-				return GetAllFiles();
+				return this.GetAllFiles();
 			} else {
 				List<ScriptFile> list = new List<ScriptFile>();
 				//if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
-				FindNewFiles(this.mainDir, list);
+				this.FindNewFiles(this.mainDir, list);
 				//}
-				FindChangedFiles(list);
+				this.FindChangedFiles(list);
 				return list;
 			}
 		}
 
 		internal string[] GetAllFileNames() {
-			ICollection<ScriptFile> sfs = GetAllFiles();
+			ICollection<ScriptFile> sfs = this.GetAllFiles();
 			string[] fileNames = new string[sfs.Count];
 			int i = 0;
 			foreach (ScriptFile sf in sfs) {
@@ -132,14 +132,14 @@ namespace SteamEngine {
 			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
 				DirectoryInfo di = entry as DirectoryInfo;
 				if (di != null) {
-					if (!IsAvoidedDirectory(di)) {
-						FindNewFiles(di, list);
+					if (!this.IsAvoidedDirectory(di)) {
+						this.FindNewFiles(di, list);
 					}
 				} else {
-					if (IsRightExtension(entry.Extension)) {
+					if (this.IsRightExtension(entry.Extension)) {
 						FileInfo file = (FileInfo) entry;
-						if (!HasFile(file)) {
-							list.Add(AddFile(file));
+						if (!this.HasFile(file)) {
+							list.Add(this.AddFile(file));
 						}
 					}
 				}
@@ -167,12 +167,12 @@ namespace SteamEngine {
 			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
 				if ((entry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
 					DirectoryInfo di = (DirectoryInfo) entry;
-					if (!IsAvoidedDirectory(di)) {
-						InitializeList(di);
+					if (!this.IsAvoidedDirectory(di)) {
+						this.InitializeList(di);
 					}
 				} else {
-					if (IsRightExtension(entry.Extension)) {
-						AddFile((FileInfo) entry);
+					if (this.IsRightExtension(entry.Extension)) {
+						this.AddFile((FileInfo) entry);
 					}
 				}
 			}
@@ -206,7 +206,7 @@ namespace SteamEngine {
 
 		internal long Length {
 			get {
-				return length;
+				return this.length;
 			}
 		}
 
@@ -217,61 +217,61 @@ namespace SteamEngine {
 			this.file = file;
 			this.attribs = file.Attributes;
 			this.time = file.LastWriteTime;
-			length = file.Length;
-			scripts = new List<IUnloadable>();
+			this.length = file.Length;
+			this.scripts = new List<IUnloadable>();
 		}
 
 		internal void Add(IUnloadable script) {
-			scripts.Add(script);
+			this.scripts.Add(script);
 		}
 
 		internal void Unload() {
-			if (scripts != null) {
-				foreach (IUnloadable script in scripts) {
+			if (this.scripts != null) {
+				foreach (IUnloadable script in this.scripts) {
 					script.Unload();
 				}
-				scripts.Clear();
+				this.scripts.Clear();
 			}
 		}
 
 		internal bool CheckChanged() {
-			file.Refresh();
-			if (file.Exists) {
-				if (attribs == file.Attributes) {
-					if (time == file.LastWriteTime) {
-						if (length == file.Length) {
+			this.file.Refresh();
+			if (this.file.Exists) {
+				if (this.attribs == this.file.Attributes) {
+					if (this.time == this.file.LastWriteTime) {
+						if (this.length == this.file.Length) {
 							return false;
 						}
 					}
 				}
-				attribs = file.Attributes;
-				time = file.LastWriteTime;
-				length = file.Length;
+				this.attribs = this.file.Attributes;
+				this.time = this.file.LastWriteTime;
+				this.length = this.file.Length;
 			}
-			Unload();
+			this.Unload();
 			return true;
 		}
 
 		internal bool Exists {
 			get {
-				return file.Exists;
+				return this.file.Exists;
 			}
 		}
 
 		internal string FullName {
 			get {
-				return file.FullName;
+				return this.file.FullName;
 			}
 		}
 
 		internal string Name {
 			get {
-				return file.Name;
+				return this.file.Name;
 			}
 		}
 
 		internal StreamReader OpenText() {
-			return new StreamReader(file.FullName, Encoding.Default);
+			return new StreamReader(this.file.FullName, Encoding.Default);
 
 			//var bytes = File.ReadAllBytes(file.FullName);
 

@@ -34,9 +34,9 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVal = obj.Run(vars);
+			object retVal = this.obj.Run(vars);
 			try {
-				return !(TagMath.ToBoolean(retVal));
+				return !(ConvertTools.ToBoolean(retVal));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ! operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -45,7 +45,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return !(TagMath.ToBoolean(results[0]));
+				return !(ConvertTools.ToBoolean(results[0]));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ! operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -60,9 +60,9 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVal = obj.Run(vars);
+			object retVal = this.obj.Run(vars);
 			try {
-				return ~(Convert.ToInt64(retVal, System.Globalization.CultureInfo.InvariantCulture));
+				return ~(Convert.ToInt64(retVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ~ operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -71,7 +71,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return ~(Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture));
+				return ~(Convert.ToInt64(results[0], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating ~ operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -86,9 +86,9 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVal = obj.Run(vars);
+			object retVal = this.obj.Run(vars);
 			try {
-				return -(Convert.ToDouble(retVal, System.Globalization.CultureInfo.InvariantCulture));
+				return -(Convert.ToDouble(retVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating - operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -97,7 +97,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return -(Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture));
+				return -(Convert.ToDouble(results[0], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Expression while evaluating - operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);

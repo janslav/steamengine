@@ -511,7 +511,7 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		static internal void RenderException(ref string leftPad, LogStrBuilder builder, Exception e) {
+		internal static void RenderException(ref string leftPad, LogStrBuilder builder, Exception e) {
 			Exception innerEx = e.InnerException;
 			if (innerEx != null) {
 				RenderException(ref leftPad, builder, innerEx);

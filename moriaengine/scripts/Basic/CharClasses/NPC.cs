@@ -60,12 +60,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void ShowValues() {
-			Globals.SrcWriteLine("canCrossLand: " + canCrossLand);
-			Globals.SrcWriteLine("canSwim: " + canSwim);
-			Globals.SrcWriteLine("canCrossLava: " + canCrossLava);
-			Globals.SrcWriteLine("canFly: " + canFly);
-			Globals.SrcWriteLine("ignoreDoors: " + ignoreDoors);
-			Globals.SrcWriteLine("climbPower: " + climbPower);
+			Globals.SrcWriteLine("canCrossLand: " + this.canCrossLand);
+			Globals.SrcWriteLine("canSwim: " + this.canSwim);
+			Globals.SrcWriteLine("canCrossLava: " + this.canCrossLava);
+			Globals.SrcWriteLine("canFly: " + this.canFly);
+			Globals.SrcWriteLine("ignoreDoors: " + this.ignoreDoors);
+			Globals.SrcWriteLine("climbPower: " + this.climbPower);
 		}
 
 		public DynamicMovementSettings(bool canCrossLand, bool canSwim, bool canCrossLava,
@@ -80,32 +80,32 @@ namespace SteamEngine.CompiledScripts {
 
 		bool IMovementSettings.CanCrossLand {
 			get {
-				return canCrossLand;
+				return this.canCrossLand;
 			}
 		}
 		bool IMovementSettings.CanSwim {
 			get {
-				return canSwim;
+				return this.canSwim;
 			}
 		}
 		bool IMovementSettings.CanCrossLava {
 			get {
-				return canCrossLava;
+				return this.canCrossLava;
 			}
 		}
 		bool IMovementSettings.CanFly {
 			get {
-				return canFly;
+				return this.canFly;
 			}
 		}
 		bool IMovementSettings.IgnoreDoors {
 			get {
-				return ignoreDoors;
+				return this.ignoreDoors;
 			}
 		}
 		int IMovementSettings.ClimbPower {
 			get {
-				return climbPower;
+				return this.climbPower;
 			}
 		} //max positive difference in 1 step
 	}
@@ -119,10 +119,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short MaxHits {
 			get {
-				return maxHitpoints;
+				return this.maxHitpoints;
 			}
 			set {
-				if (value != maxHitpoints) {
+				if (value != this.maxHitpoints) {
 					CharSyncQueue.AboutToChangeHitpoints(this);
 					this.maxHitpoints = value;
 
@@ -134,10 +134,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short MaxMana {
 			get {
-				return maxMana;
+				return this.maxMana;
 			}
 			set {
-				if (value != maxMana) {
+				if (value != this.maxMana) {
 					CharSyncQueue.AboutToChangeMana(this);
 					this.maxMana = value;
 
@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 					RegenerationPlugin.TryInstallPlugin(this, this.Mana, this.maxMana, this.ManaRegenSpeed);
 					
 					//meditation finish
-					if (this.Mana >= MaxMana) {
+					if (this.Mana >= this.MaxMana) {
 						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
 					}
 				}
@@ -154,10 +154,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short MaxStam {
 			get {
-				return maxStamina;
+				return this.maxStamina;
 			}
 			set {
-				if (value != maxStamina) {
+				if (value != this.maxStamina) {
 					CharSyncQueue.AboutToChangeStamina(this);
 					this.maxStamina = value;
 
@@ -169,14 +169,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public override IMovementSettings MovementSettings {
 			get {
-				if (movementSettings == null) {
+				if (this.movementSettings == null) {
 					return base.MovementSettings;
 				} else {
-					return movementSettings;
+					return this.movementSettings;
 				}
 			}
 			set {
-				movementSettings = value;
+				this.movementSettings = value;
 			}
 		}
 	}

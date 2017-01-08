@@ -21,8 +21,8 @@ namespace SteamEngine.CompiledScripts {
 
 	public abstract class AbstractTargetDef : AbstractDef {
 
-		Networking.OnTargon targon;
-		Networking.OnTargonCancel targonCancel;
+		OnTargon targon;
+		OnTargonCancel targonCancel;
 
 		internal AbstractTargetDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 			this.targonCancel = this.On_TargonCancel;
 		}
 
-		public static new AbstractTargetDef GetByDefname(string defname) {
+		public new static AbstractTargetDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbstractTargetDef;
 		}
 
@@ -39,17 +39,17 @@ namespace SteamEngine.CompiledScripts {
 			this.On_Start(self, parameter);
 		}
 
-		virtual protected void On_Start(Player self, object parameter) {
+		protected virtual void On_Start(Player self, object parameter) {
 			GameState state = self.GameState;
 			if (state != null) {
-				state.Target(this.AllowGround, targon, targonCancel, parameter);
+				state.Target(this.AllowGround, this.targon, this.targonCancel, parameter);
 			}
 		}
 
-		abstract protected bool AllowGround { get; }
+		protected abstract bool AllowGround { get; }
 
-		abstract protected void On_Targon(GameState state, IPoint3D getback, object parameter);
+		protected abstract void On_Targon(GameState state, IPoint3D getback, object parameter);
 
-		abstract protected void On_TargonCancel(GameState state, object parameter);
+		protected abstract void On_TargonCancel(GameState state, object parameter);
 	}
 }

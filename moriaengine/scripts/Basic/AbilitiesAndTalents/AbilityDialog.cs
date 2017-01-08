@@ -29,14 +29,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam abilit
-			List<AbilityDef> abList = args.GetTag(D_AbilitiesList.listTK) as List<AbilityDef>;
+			List<AbilityDef> abList = args.GetTag(listTK) as List<AbilityDef>;
 
 			if (abList == null) {
 				//vzit seznam abilit dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				abList = ListifyAbilities(AbilityDef.AllAbilities, TagMath.SGetTag(args, D_AbilitiesList.criteriumTK));
-				SortAbilityDefs(abList, (SortingCriteria) TagMath.IGetTag(args, D_AbilitiesList.sortingTK));
-				args.SetTag(D_AbilitiesList.listTK, abList); //ulozime to do argumentu dialogu				
+				abList = this.ListifyAbilities(AbilityDef.AllAbilities, TagMath.SGetTag(args, criteriumTK));
+				this.SortAbilityDefs(abList, (SortingCriteria) TagMath.IGetTag(args, sortingTK));
+				args.SetTag(listTK, abList); //ulozime to do argumentu dialogu				
 			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, abList.Count);
@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam abilitydefu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<AbilityDef> abList = (List<AbilityDef>) args.GetTag(D_AbilitiesList.listTK);
+			List<AbilityDef> abList = (List<AbilityDef>) args.GetTag(listTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
@@ -106,28 +106,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
-						args.SetTag(D_AbilitiesList.criteriumTK, nameCriteria);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(criteriumTK, nameCriteria);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //name asc
-						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.NameAsc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.NameAsc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //name desc
-						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.NameDesc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.NameDesc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //defname asc
-						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.DefnameAsc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.DefnameAsc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //defname desc
-						args.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.DefnameDesc);
-						args.RemoveTag(D_AbilitiesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.DefnameDesc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
@@ -183,11 +183,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void AllAbilities(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_AbilitiesList.sortingTK, SortingCriteria.NameAsc);//default sorting
+			newArgs.SetTag(sortingTK, SortingCriteria.NameAsc);//default sorting
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_AbilitiesList>.Instance, newArgs);
 			} else {
-				newArgs.SetTag(D_AbilitiesList.criteriumTK, text.Args);//vyhl. kriterium
+				newArgs.SetTag(criteriumTK, text.Args);//vyhl. kriterium
 				self.Dialog(SingletonScript<D_AbilitiesList>.Instance, newArgs);
 			}
 		}
@@ -195,7 +195,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting abilities by ability name asc</summary>
 	public class AbilityDefsNameComparer : IComparer<AbilityDef> {
-		public readonly static AbilityDefsNameComparer instance = new AbilityDefsNameComparer();
+		public static readonly AbilityDefsNameComparer instance = new AbilityDefsNameComparer();
 
 		private AbilityDefsNameComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
@@ -211,7 +211,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting abstract defs defnames asc</summary>
 	public class AbilityDefsDefNameComparer : IComparer<AbilityDef> {
-		public readonly static AbilityDefsDefNameComparer instance = new AbilityDefsDefNameComparer();
+		public static readonly AbilityDefsDefNameComparer instance = new AbilityDefsDefNameComparer();
 
 		private AbilityDefsDefNameComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci

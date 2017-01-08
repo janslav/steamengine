@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class ProfessionDef : AbstractIndexedDef<ProfessionDef, string> {
 		#region Accessors
-		public static new ProfessionDef GetByDefname(string defname) {
+		public new static ProfessionDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as ProfessionDef;
 		}
 
@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 		public ProfessionSkillEntry GetSkillEntry(int skillId) {
 			ProfessionSkillEntry retVal;
 			if (!this.skillsCache.TryGetValue(skillId, out retVal)) {
-				string name = SkillDef.GetById(skillId).PrettyDefname;
+				string name = AbstractSkillDef.GetById(skillId).PrettyDefname;
 				retVal = new ProfessionSkillEntry(
 					Convert.ToInt32(this.GetCurrentFieldValue(skillMinimumPrefix + name)),
 					Convert.ToInt32(this.GetCurrentFieldValue(skillCapPrefix + name)));
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				if (!this.skillsCacheComplete) {
 					foreach (SkillDef skill in SkillDef.AllSkillDefs) {
-						GetSkillEntry(skill.Id);
+						this.GetSkillEntry(skill.Id);
 					}
 				}
 				return this.skillsCache.Values;
@@ -260,9 +260,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//try recognizing a skill name or defname. The parameters then mean starting and max (cap) points for this profession
-			AbstractSkillDef skillDef = SkillDef.GetByDefname(param);
+			AbstractSkillDef skillDef = AbstractSkillDef.GetByDefname(param);
 			if (skillDef == null) {
-				skillDef = SkillDef.GetByKey(param);
+				skillDef = AbstractSkillDef.GetByKey(param);
 			}
 			if (skillDef != null) {
 				string[] preparsed = Utility.SplitSphereString(args, true);

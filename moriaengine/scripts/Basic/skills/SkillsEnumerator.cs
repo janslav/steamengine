@@ -36,30 +36,30 @@ namespace SteamEngine.CompiledScripts {
 		#region IEnumerator<ISkill> Members
 		public ISkill Current {
 			get {
-				return current;
+				return this.current;
 			}
 		}
 		#endregion
 
 		#region IDisposable Members
 		public void Dispose() {
-			current = null;
-			valuesEnum = null;
+			this.current = null;
+			this.valuesEnum = null;
 		}
 		#endregion
 
 		#region IEnumerator Members
 		object IEnumerator.Current {
 			get {
-				return current;
+				return this.current;
 			}
 		}
 
 		/// <summary>Iterate through the players skillsAbiilities dictionary but jump only on Skills</summary>
 		public bool MoveNext() {
-			while (valuesEnum.MoveNext()) {//move to the next Value (which is either Skill or Ability)
-				current = valuesEnum.Current as Skill;
-				if (current != null) {//if it was Skill, it is stored as an actual 'current' and we finish iterating for now
+			while (this.valuesEnum.MoveNext()) {//move to the next Value (which is either Skill or Ability)
+				this.current = this.valuesEnum.Current as Skill;
+				if (this.current != null) {//if it was Skill, it is stored as an actual 'current' and we finish iterating for now
 					return true;
 				}
 			}
@@ -67,8 +67,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Reset() {
-			current = null;
-			valuesEnum.Reset();
+			this.current = null;
+			this.valuesEnum.Reset();
 		}
 		#endregion
 

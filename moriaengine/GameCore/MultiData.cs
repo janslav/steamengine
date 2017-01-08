@@ -42,9 +42,9 @@ namespace SteamEngine {
 
 		internal void SetRelativePos(int centerX, int centerY, int centerZ) {
 			checked {
-				this.X = centerX + mcd.OffsetX;
-				this.Y = centerY + mcd.OffsetY;
-				this.Z = centerZ + mcd.OffsetZ;
+				this.X = centerX + this.mcd.OffsetX;
+				this.Y = centerY + this.mcd.OffsetY;
+				this.Z = centerZ + this.mcd.OffsetZ;
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace SteamEngine {
 			}
 			internal set {
 				this.m = value;
-				base.Facet = Map.GetMap(value).Facet;
+				this.Facet = Map.GetMap(value).Facet;
 			}
 		}
 
@@ -135,7 +135,7 @@ namespace SteamEngine {
 			}
 		}
 
-		internal MultiItemComponent Create(int centerX, int centerY, int centerZ, Regions.Map map) {
+		internal MultiItemComponent Create(int centerX, int centerY, int centerZ, Map map) {
 			MultiItemComponent retVal = new MultiItemComponent(this, this.itemId, map, this.flags);
 			retVal.SetRelativePos(centerX, centerY, centerZ);
 			return retVal;
@@ -157,7 +157,7 @@ namespace SteamEngine {
 			return retVal;
 		}
 
-		internal MultiItemComponent[] Create(ushort x, ushort y, sbyte z, Regions.Map map) {
+		internal MultiItemComponent[] Create(ushort x, ushort y, sbyte z, Map map) {
 			int n = this.parts.Count;
 			MultiItemComponent[] retVal = new MultiItemComponent[n];
 			for (int i = 0; i < n; i++) {

@@ -40,11 +40,11 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				args[index] = newNode;
+				this.args[index] = newNode;
 			}
 		}
 
@@ -52,24 +52,24 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = args.Length;
+			int argsCount = this.args.Length;
 			object[] results = new object[argsCount];
 			try {
 				for (int i = 0; i < argsCount; i++) {
-					results[i] = args[i].Run(vars);
+					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				return method.Invoke(oSelf, results);
+				return this.method.Invoke(oSelf, results);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling method '" + method.Name + "'",
+				throw new InterpreterException("Exception while calling method '" + this.method.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -79,30 +79,30 @@ namespace SteamEngine.LScript {
 			//Console.WriteLine("OpNode_MethodWrapper results: "+Tools.ObjToString(results));
 			try {
 				//Console.WriteLine("results[0].GetType(): "+results[0]);
-				return method.Invoke(vars.self, results);
+				return this.method.Invoke(vars.self, results);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling method '" + method.Name + "'",
+				throw new InterpreterException("Exception while calling method '" + this.method.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.AppendFormat("{0} {1}.{2}(", method.ReturnType, method.DeclaringType, method.Name);
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			str.AppendFormat("{0} {1}.{2}(", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append("))").ToString();
 		}
 
 		public Type ReturnType {
 			get {
-				return method.ReturnType;
+				return this.method.ReturnType;
 			}
 		}
 	}
@@ -124,14 +124,14 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(normalArgs, oldNode);
+			int index = Array.IndexOf(this.normalArgs, oldNode);
 			if (index >= 0) {
-				normalArgs[index] = newNode;
+				this.normalArgs[index] = newNode;
 				return;
 			}
-			index = Array.IndexOf(paramArgs, oldNode);
+			index = Array.IndexOf(this.paramArgs, oldNode);
 			if (index >= 0) {
-				paramArgs[index] = newNode;
+				this.paramArgs[index] = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -141,72 +141,72 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int normalArgsLength = normalArgs.Length;
+			int normalArgsLength = this.normalArgs.Length;
 			object[] results = new object[normalArgsLength + 1];
 			try {
 				for (int i = 0; i < normalArgsLength; i++) {
-					results[i] = normalArgs[i].Run(vars);
+					results[i] = this.normalArgs[i].Run(vars);
 				}
-				int paramArrayLength = paramArgs.Length;
-				Array paramArray = Array.CreateInstance(paramsElementType, paramArrayLength);
+				int paramArrayLength = this.paramArgs.Length;
+				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
 				for (int i = 0; i < paramArrayLength; i++) {
-					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, paramArgs[i].Run(vars)), i);
+					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, this.paramArgs[i].Run(vars)), i);
 				}
 				results[normalArgsLength] = paramArray;
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				return method.Invoke(oSelf, results);
+				return this.method.Invoke(oSelf, results);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling method '" + method.Name + "'",
+				throw new InterpreterException("Exception while calling method '" + this.method.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {//the dont have the normalargs and paramsargs separated...
-			int normalArgsLength = normalArgs.Length;
+			int normalArgsLength = this.normalArgs.Length;
 			object[] modifiedResults = new object[normalArgsLength + 1];
 			Array.Copy(results, modifiedResults, normalArgsLength);
 			try {
 				//Console.WriteLine("results[0].GetType(): "+results[0]);
-				int paramArrayLength = paramArgs.Length;
-				Array paramArray = Array.CreateInstance(paramsElementType, paramArrayLength);
+				int paramArrayLength = this.paramArgs.Length;
+				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
 				for (int i = 0; i < paramArrayLength; i++) {
 					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, results[i + normalArgsLength]), i);
 				}
 				modifiedResults[normalArgsLength] = paramArray;
-				return method.Invoke(vars.self, modifiedResults);
+				return this.method.Invoke(vars.self, modifiedResults);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling method '" + method.Name + "'",
+				throw new InterpreterException("Exception while calling method '" + this.method.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.AppendFormat("{0} {1}.{2}(", method.ReturnType, method.DeclaringType, method.Name);
-			for (int i = 0, n = normalArgs.Length; i < n; i++) {
-				str.Append(normalArgs[i].ToString()).Append(", ");
+			str.AppendFormat("{0} {1}.{2}(", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
+			for (int i = 0, n = this.normalArgs.Length; i < n; i++) {
+				str.Append(this.normalArgs[i].ToString()).Append(", ");
 			}
-			str.Append(Tools.ObjToString(paramArgs));
+			str.Append(Tools.ObjToString(this.paramArgs));
 			return str.Append("))").ToString();
 		}
 
 		public Type ReturnType {
 			get {
-				return method.ReturnType;
+				return this.method.ReturnType;
 			}
 		}
 	}
@@ -232,9 +232,9 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
-				args[index] = newNode;
+				this.args[index] = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -243,24 +243,24 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = args.Length;
+			int argsCount = this.args.Length;
 			object[] results = new object[argsCount];
 			try {
 				for (int i = 0; i < argsCount; i++) {
-					results[i] = args[i].Run(vars);
+					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, formatString, results);
-				return method.Invoke(oSelf, new object[] { resultString });
+				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				return this.method.Invoke(oSelf, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling method '" + method.Name + "'", this.line,
+				throw new InterpreterException("Exception while calling method '" + this.method.Name + "'", this.line,
 					this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
@@ -268,31 +268,30 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			//Console.WriteLine("OpNode_MethodWrapper results: "+Tools.ObjToString(results));
 			try {
-				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					formatString, results);
-				return method.Invoke(vars.self, new object[] { resultString });
+				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				return this.method.Invoke(vars.self, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;
 			} catch (FatalException) {
 				throw;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while calling method '" + method.Name + "'", this.line,
+				throw new InterpreterException("Exception while calling method '" + this.method.Name + "'", this.line,
 					this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.AppendFormat("{0} {1}.{2}((", method.ReturnType, method.DeclaringType, method.Name);
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			str.AppendFormat("{0} {1}.{2}((", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append(")).TOSTRING())").ToString();
 		}
 
 		public Type ReturnType {
 			get {
-				return method.ReturnType;
+				return this.method.ReturnType;
 			}
 		}
 	}
@@ -310,7 +309,7 @@ namespace SteamEngine.LScript {
 			object origSelf = vars.self;
 			try {
 				vars.self = vars.scriptArgs.Argv[0];
-				return toRun.Run(vars);
+				return this.toRun.Run(vars);
 			} finally {
 				vars.self = origSelf;
 			}
@@ -318,10 +317,10 @@ namespace SteamEngine.LScript {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters", MessageId = "System.Exception.#ctor(System.String)")]
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (toRun != oldNode) {
+			if (this.toRun != oldNode) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				toRun = (OpNode_MethodWrapper) newNode;
+				this.toRun = (OpNode_MethodWrapper) newNode;
 			}
 		}
 
@@ -329,19 +328,19 @@ namespace SteamEngine.LScript {
 			object origSelf = vars.self;
 			try {
 				vars.self = vars.scriptArgs.Argv[0];
-				return toRun.TryRun(vars, results);
+				return this.toRun.TryRun(vars, results);
 			} finally {
 				vars.self = origSelf;
 			}
 		}
 
 		public override string ToString() {
-			return "ARGO." + toRun;
+			return "ARGO." + this.toRun;
 		}
 
 		public Type ReturnType {
 			get {
-				return toRun.ReturnType;
+				return this.toRun.ReturnType;
 			}
 		}
 	}

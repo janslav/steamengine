@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				return key.ToString();
+				return this.key.ToString();
 			}
 
 			public override Type FieldType {
@@ -111,13 +111,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override object GetValue(object target) {
 				IDictionary dict = (IDictionary) target;
-				return dict[key]; //null or correct value				
+				return dict[this.key]; //null or correct value				
 			}
 
 			public override string GetStringValue(object target) {
 				IDictionary dict = (IDictionary) target;
-				if (dict[key] != null) {
-					return ObjectSaver.Save(dict[key]);
+				if (dict[this.key] != null) {
+					return ObjectSaver.Save(dict[this.key]);
 				} else {
 					return "";
 				}
@@ -125,13 +125,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override void SetValue(object target, object value) {
 				IDictionary dict = (IDictionary) target;
-				dict[key] = value;
+				dict[this.key] = value;
 			}
 
 			public override void SetStringValue(object target, string value) {
 				IDictionary dict = (IDictionary) target;
 				int n = dict.Count;
-				dict[key] = ObjectSaver.Load(value);
+				dict[this.key] = ObjectSaver.Load(value);
 			}
 		}
 

@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override sealed bool IsEquippable {
+		public sealed override bool IsEquippable {
 			get {
 				return this.TypeDef.Layer != 0;
 			}
@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool IsTwoHanded {
 			get {
-				if (Def != null) return TypeDef.TwoHanded;
+				if (this.Def != null) return this.TypeDef.TwoHanded;
 				return false;
 			}
 		}

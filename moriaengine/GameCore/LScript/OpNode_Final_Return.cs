@@ -38,10 +38,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (arg != oldNode) {
+			if (this.arg != oldNode) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				arg = newNode;
+				this.arg = newNode;
 				//ParentScriptHolder.nodeToReturn = newNode;
 			}
 		}
@@ -51,7 +51,7 @@ namespace SteamEngine.LScript {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
-				retVal = arg.Run(vars);
+				retVal = this.arg.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
@@ -60,7 +60,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return "return(" + arg + ")";
+			return "return(" + this.arg + ")";
 		}
 	}
 
@@ -77,22 +77,21 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
-				args[index] = newNode;
+				this.args[index] = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 		}
 
 		internal override object Run(ScriptVars vars) {
-			int argsCount = args.Length;
+			int argsCount = this.args.Length;
 			object[] results = new object[argsCount];
 			for (int i = 0; i < argsCount; i++) {
-				results[i] = args[i].Run(vars);
+				results[i] = this.args[i].Run(vars);
 			}
-			string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				formatString, results);
+			string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
 			vars.returned = true;
 			return resultString;
 		}
@@ -100,8 +99,8 @@ namespace SteamEngine.LScript {
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
 			str.AppendFormat("return((");
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}

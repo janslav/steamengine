@@ -25,7 +25,7 @@ using SteamEngine.Common;
 namespace SteamEngine {
 	public abstract class AbstractScript : IUnloadable {
 
-		private readonly static ConcurrentDictionary<string, AbstractScript> byDefname = new ConcurrentDictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
+		private static readonly ConcurrentDictionary<string, AbstractScript> byDefname = new ConcurrentDictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
 
 		private string defname;
 		private bool unloaded = false;
@@ -50,7 +50,7 @@ namespace SteamEngine {
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
 		//Returns self for easier usage 
-		virtual public AbstractScript Register() {
+		public virtual AbstractScript Register() {
 			if (!string.IsNullOrEmpty(this.defname)) {
 				var previous = byDefname.GetOrAdd(this.defname, this);
 				if (previous != this) {
@@ -62,7 +62,7 @@ namespace SteamEngine {
 
 		//unregister from static dictionaries and lists. 
 		//Can be called multiple times without harm
-		virtual protected void Unregister() {
+		protected virtual void Unregister() {
 			if (!string.IsNullOrEmpty(this.defname)) {
 				AbstractScript previous;
 				if (byDefname.TryRemove(this.defname, out previous)) {
@@ -140,7 +140,7 @@ namespace SteamEngine {
 
 		protected void ThrowIfUnloaded() {
 			if (this.unloaded) {
-				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(defname) + "' is unloaded.");
+				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(this.defname) + "' is unloaded.");
 			}
 		}
 

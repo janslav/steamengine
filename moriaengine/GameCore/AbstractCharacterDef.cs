@@ -28,25 +28,25 @@ namespace SteamEngine {
 
 		protected AbstractCharacterDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
-			this.mountItem = InitModelField("mountItem", 0);
+			this.mountItem = this.InitModelField("mountItem", 0);
 		}
 
 		public int MountItem {
 			get {
-				return (int) mountItem.CurrentValue;
+				return (int) this.mountItem.CurrentValue;
 			}
 			set {
-				mountItem.CurrentValue = value;
+				this.mountItem.CurrentValue = value;
 			}
 		}
 
-		public override sealed bool IsItemDef {
+		public sealed override bool IsItemDef {
 			get {
 				return false;
 			}
 		}
 
-		public override sealed bool IsCharDef {
+		public sealed override bool IsCharDef {
 			get {
 				return true;
 			}

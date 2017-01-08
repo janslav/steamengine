@@ -136,7 +136,7 @@ namespace SteamEngine {
 	}
 
 
-	public sealed class TriggerKeySaveImplementor : SteamEngine.Persistence.ISimpleSaveImplementor {
+	public sealed class TriggerKeySaveImplementor : Persistence.ISimpleSaveImplementor {
 		private static Regex re = new Regex(@"^\@(?<value>.+)\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 

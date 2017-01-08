@@ -108,29 +108,29 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Id {
 			get {
-				return id;
+				return this.id;
 			}
 		}
 
 		public SkillName Name {
 			get {
-				return (SkillName) id;
+				return (SkillName) this.id;
 			}
 		}
 
 		public SkillDef Def {
 			get {
-				return (SkillDef) SkillDef.GetById(this.id);
+				return (SkillDef) AbstractSkillDef.GetById(this.id);
 			}
 		}
 
 		public SkillLockType Lock {
 			get {
-				return lockType;
+				return this.lockType;
 			}
 			set {
 				if (this.lockType != value) {
-					CharSyncQueue.AboutToChangeSkill(cont, id);
+					CharSyncQueue.AboutToChangeSkill(this.cont, this.id);
 					this.lockType = value;
 
 					this.DisposeIfEmpty();
@@ -140,7 +140,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private void DisposeIfEmpty() {
 			if (this.realValue == 0 && this.modification == 1000 && this.lockType == SkillLockType.Up) {
-				cont.InternalRemoveSkill(id);
+				this.cont.InternalRemoveSkill(this.id);
 			}
 		}
 

@@ -140,8 +140,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public class ThingAsContainer {
-			readonly internal IDataView infoView;
-			readonly internal Thing thing;
+			internal readonly IDataView infoView;
+			internal readonly Thing thing;
 
 			public ThingAsContainer(Thing thing) {
 				this.infoView = DataViewProvider.FindDataViewByType(thing.GetType());

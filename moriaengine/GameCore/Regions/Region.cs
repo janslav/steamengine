@@ -71,14 +71,14 @@ namespace SteamEngine.Regions {
 
 		public TimeSpan CreatedAt {
 			get {
-				return createdAt;
+				return this.createdAt;
 			}
 		}
 
 		public IList<ImmutableRectangle> Rectangles {
 			get {
 				RegionRectangle[] arr = new RegionRectangle[this.rectangles.Count];
-				rectangles.CopyTo(arr, 0);
+				this.rectangles.CopyTo(arr, 0);
 				return arr;
 			}
 		}
@@ -93,28 +93,28 @@ namespace SteamEngine.Regions {
 			get {
 				return this.hierarchyIndex;
 			}
-			internal set { hierarchyIndex = value; }
+			internal set { this.hierarchyIndex = value; }
 		}
 
 		public byte Mapplane {
 			get {
-				if (!mapplaneIsSet) {
-					mapplane = P.M;
-					mapplaneIsSet = true;
+				if (!this.mapplaneIsSet) {
+					this.mapplane = this.P.M;
+					this.mapplaneIsSet = true;
 				}
-				return mapplane;
+				return this.mapplane;
 			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public virtual Point4D P {
 			get {
-				return p;
+				return this.p;
 			}
 			set {
-				ThrowIfDeleted();
-				if (!ContainsPoint((Point2D) value)) {
-					throw new SEException("Spawnpoint " + value.ToString() + " is not contained in the region " + ToString());
+				this.ThrowIfDeleted();
+				if (!this.ContainsPoint((Point2D) value)) {
+					throw new SEException("Spawnpoint " + value.ToString() + " is not contained in the region " + this.ToString());
 				}
 				this.p = value;
 			}
@@ -125,13 +125,13 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool IsChildOf(Region tested) {
-			ThrowIfDeleted();
-			if (parent == null) {
+			this.ThrowIfDeleted();
+			if (this.parent == null) {
 				return false;
-			} else if (tested == parent) {
+			} else if (tested == this.parent) {
 				return true;
 			} else {
-				return parent.IsChildOf(tested);
+				return this.parent.IsChildOf(tested);
 			}
 		}
 
@@ -242,13 +242,13 @@ namespace SteamEngine.Regions {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPickupItemFrom(DenyPickupArgs args) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			return TriggerResult.Continue;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			Region region = this;
 
 			do {
@@ -270,7 +270,7 @@ namespace SteamEngine.Regions {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual TriggerResult On_DenyPutItemOn(DenyPutOnGroundArgs args) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			return TriggerResult.Continue;
 		}
 
@@ -284,16 +284,16 @@ namespace SteamEngine.Regions {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemLeave(ItemOnGroundArgs args) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_ItemEnter(ItemOnGroundArgs args) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 		}
 
 		public bool ContainsPoint(Point2D point) {
-			foreach (ImmutableRectangle rect in Rectangles) {
+			foreach (ImmutableRectangle rect in this.Rectangles) {
 				if (rect.Contains(point)) {
 					return true;
 				}
@@ -302,7 +302,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool ContainsPoint(int x, int y) {
-			foreach (ImmutableRectangle rect in Rectangles) {
+			foreach (ImmutableRectangle rect in this.Rectangles) {
 				if (rect.Contains(x, y)) {
 					return true;
 				}
@@ -316,18 +316,18 @@ namespace SteamEngine.Regions {
 
 		public string HierarchyName {
 			get {
-				if (parent == null) {
-					return Name;
+				if (this.parent == null) {
+					return this.Name;
 				} else {
-					return Name + " in " + parent.HierarchyName;
+					return this.Name + " in " + this.parent.HierarchyName;
 				}
 			}
 		}
 
 		public bool TryEnter(AbstractCharacter ch) {
-			ThrowIfDeleted();
-			if (TriggerResult.Cancel != TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
-				if (TriggerResult.Cancel != On_Enter(ch, false)) {
+			this.ThrowIfDeleted();
+			if (TriggerResult.Cancel != this.TryCancellableTrigger(TriggerKey.enter, new ScriptArgs(ch, 0))) {
+				if (TriggerResult.Cancel != this.On_Enter(ch, false)) {
 					return true;
 				}
 			}
@@ -335,9 +335,9 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool TryExit(AbstractCharacter ch) {
-			ThrowIfDeleted();
-			if (TriggerResult.Cancel != TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
-				if (TriggerResult.Cancel != On_Exit(ch, false)) {
+			this.ThrowIfDeleted();
+			if (TriggerResult.Cancel != this.TryCancellableTrigger(TriggerKey.exit, new ScriptArgs(ch, 0))) {
+				if (TriggerResult.Cancel != this.On_Exit(ch, false)) {
 					return true;
 				}
 			}
@@ -345,15 +345,15 @@ namespace SteamEngine.Regions {
 		}
 
 		public void Enter(AbstractCharacter ch) {
-			ThrowIfDeleted();
-			TryTrigger(TriggerKey.enter, new ScriptArgs(ch, 1));
-			On_Enter(ch, true);
+			this.ThrowIfDeleted();
+			this.TryTrigger(TriggerKey.enter, new ScriptArgs(ch, 1));
+			this.On_Enter(ch, true);
 		}
 
 		public void Exit(AbstractCharacter ch) {
-			ThrowIfDeleted();
-			TryTrigger(TriggerKey.exit, new ScriptArgs(ch, 1));
-			On_Exit(ch, true);
+			this.ThrowIfDeleted();
+			this.TryTrigger(TriggerKey.exit, new ScriptArgs(ch, 1));
+			this.On_Exit(ch, true);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
@@ -372,7 +372,7 @@ namespace SteamEngine.Regions {
 
 		public bool IsInactivated {
 			get {
-				return inactivated;
+				return this.inactivated;
 			}
 		}
 
@@ -394,10 +394,10 @@ namespace SteamEngine.Regions {
 					Match m = rectRE.Match(valueString);
 					if (m.Success) {
 						GroupCollection gc = m.Groups;
-						ushort x1 = TagMath.ParseUInt16(gc["x1"].Value);
-						ushort y1 = TagMath.ParseUInt16(gc["y1"].Value);
-						ushort x2 = TagMath.ParseUInt16(gc["x2"].Value);
-						ushort y2 = TagMath.ParseUInt16(gc["y2"].Value);
+						ushort x1 = ConvertTools.ParseUInt16(gc["x1"].Value);
+						ushort y1 = ConvertTools.ParseUInt16(gc["y1"].Value);
+						ushort x2 = ConvertTools.ParseUInt16(gc["x2"].Value);
+						ushort y2 = ConvertTools.ParseUInt16(gc["y2"].Value);
 						//Point2D point1 = new Point2D(x1, y1);
 						//Point2D point2 = new Point2D(x2, y2);
 						RegionRectangle rr = new RegionRectangle(x1, y1, x2, y2, this);
@@ -409,14 +409,14 @@ namespace SteamEngine.Regions {
 					break;
 				case "p":
 				case "spawnpoint":
-					p = (Point4D) ObjectSaver.Load(valueString);
+					this.p = (Point4D) ObjectSaver.Load(valueString);
 					break;
 				case "mapplane":
-					mapplane = TagMath.ParseByte(valueString);
-					mapplaneIsSet = true;
+					this.mapplane = ConvertTools.ParseByte(valueString);
+					this.mapplaneIsSet = true;
 					break;
 				case "parent":
-					ObjectSaver.Load(valueString, LoadParent_Delayed, filename, line);
+					ObjectSaver.Load(valueString, this.LoadParent_Delayed, filename, line);
 					break;
 
 				case "createdat":
@@ -431,7 +431,7 @@ namespace SteamEngine.Regions {
 		private void LoadParent_Delayed(object resolvedObject, string filename, int line) {
 			Region reg = resolvedObject as Region;
 			if (reg != null) {
-				parent = reg;
+				this.parent = reg;
 			} else {
 				Logger.WriteWarning(LogStr.FileLine(filename, line) + "'" + LogStr.Ident(resolvedObject) + "' is not a valid Region. Referenced as parent by '" + LogStr.Ident(this.Defname) + "'.");
 			}
@@ -440,10 +440,10 @@ namespace SteamEngine.Regions {
 		public override void Save(SaveStream output) {
 			output.WriteValue("p", this.p);
 			output.WriteValue("createdat", this.createdAt);
-			if (mapplane != 0) {
+			if (this.mapplane != 0) {
 				output.WriteValue("mapplane", this.mapplane);
 			}
-			if (parent != null) {
+			if (this.parent != null) {
 				output.WriteValue("parent", this.parent);
 			}
 			//RECT=2300,3612,3264,4096
@@ -479,7 +479,7 @@ namespace SteamEngine.Regions {
 		/// </summary>
 		internal RegionRectangle CloneMoved(int xDiff, int yDiff) {
 			return new RegionRectangle(this.MinX + xDiff, this.MinY + yDiff,
-				this.MaxX + xDiff, this.MaxY + yDiff, region);
+				this.MaxX + xDiff, this.MaxY + yDiff, this.region);
 		}
 	}
 }

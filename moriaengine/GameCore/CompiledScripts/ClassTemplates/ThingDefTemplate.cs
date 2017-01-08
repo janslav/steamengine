@@ -35,8 +35,8 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 
 		protected override void Process() {
 			base.Process();
-			CreateImpl();
-			Bootstrap();
+			this.CreateImpl();
+			this.Bootstrap();
 		}
 
 		private void CreateImpl() {
@@ -46,13 +46,12 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 			create.ReturnType = new CodeTypeReference(typeof(Thing));
 			create.Statements.Add(//return new "+name+"(x, y, z, m)
 				new CodeMethodReturnStatement(
-					new CodeObjectCreateExpression(
-						section.className,
+					new CodeObjectCreateExpression(this.section.className,
 						new CodeThisReferenceExpression()
 					)
 				)
 			);
-			generatedType.Members.Add(create);
+			this.generatedType.Members.Add(create);
 		}
 
 		private void Bootstrap() {
@@ -68,9 +67,9 @@ namespace SteamEngine.CompiledScripts.ClassTemplates {
 					new CodeMethodReferenceExpression(
 						new CodeTypeReferenceExpression(typeof(ThingDef)),
 						"RegisterThingDef"),
-					new CodeTypeOfExpression(section.defClassName),
-					new CodeTypeOfExpression(section.className)));
-			generatedType.Members.Add(init);
+					new CodeTypeOfExpression(this.section.defClassName),
+					new CodeTypeOfExpression(this.section.className)));
+			this.generatedType.Members.Add(init);
 		}
 	}
 }

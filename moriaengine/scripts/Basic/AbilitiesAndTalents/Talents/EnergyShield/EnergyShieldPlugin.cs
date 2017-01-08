@@ -57,11 +57,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public TriggerResult On_SkillSelect(SkillSequenceArgs skillSeq) {
-			return CheckAllowedSpells(skillSeq);
+			return this.CheckAllowedSpells(skillSeq);
 		}
 
 		public TriggerResult On_SkillStart(SkillSequenceArgs skillSeq) {
-			return CheckAllowedSpells(skillSeq);
+			return this.CheckAllowedSpells(skillSeq);
 		}
 
 		private TriggerResult CheckAllowedSpells(SkillSequenceArgs skillSeq) {

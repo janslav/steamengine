@@ -37,7 +37,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 			this.conn.StartLoginSequence(this.setup);
 
-			this.loginTimeout = new Timer(LoginTimeout, null, 5000, Timeout.Infinite);
+			this.loginTimeout = new Timer(this.LoginTimeout, null, 5000, Timeout.Infinite);
 		}
 
 		private void LoginTimeout(object o) {
@@ -45,7 +45,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			try {
 				this.Conn.Close("Login timed out.");
 			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("LoginTimeout out");
 		}
@@ -64,7 +64,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		public SphereServerConnection Conn {
 			get {
-				return conn;
+				return this.conn;
 			}
 		}
 
@@ -130,7 +130,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				new CallbackCommandResponse<ConsoleCredentials>(
 					this.OnAccountQueryResponse, state));
 
-			consoleAuthTimeout = new Timer(ConsoleAuthTimeout, state, 5000, Timeout.Infinite);
+			this.consoleAuthTimeout = new Timer(this.ConsoleAuthTimeout, state, 5000, Timeout.Infinite);
 		}
 
 		private void ConsoleAuthTimeout(object o) {
@@ -139,7 +139,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				//ConsoleCredentials state = (ConsoleCredentials) o;
 				this.Conn.Close("Console user auth sequence timed out.");
 			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("ConsoleAuthTimeout out");
 		}
@@ -165,7 +165,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					Match m = passwordQueryRE.Match(line);
 					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
 						if (!m.Groups["password"].Value.Equals(state.accPassword)) {
-							DenyConsole(state, "and/or it's password.");
+							this.DenyConsole(state, "and/or it's password.");
 						} else {
 							this.conn.SendCommand("show findaccount(" + state.accName + ").priv",
 								new CallbackCommandResponse<ConsoleCredentials>(
@@ -176,7 +176,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				}
 			} catch (Exception e) {
 				this.DenyConsole(state, "Exception while auth sequence: " + e.Message);
-				Logger.WriteDebug(e);
+				Common.Logger.WriteDebug(e);
 			}
 		}
 
@@ -191,7 +191,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
 						int priv = ConvertTools.ParseInt32(m.Groups["priv"].Value.Trim());
 						if ((priv & 0x0200) == 0x0200) {
-							DenyConsole(state, "- the acc is blocked.");
+							this.DenyConsole(state, "- the acc is blocked.");
 						} else {
 							this.conn.SendCommand("show findaccount(" + state.accName + ").plevel",
 								new CallbackCommandResponse<ConsoleCredentials>(
@@ -202,7 +202,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				}
 			} catch (Exception e) {
 				this.DenyConsole(state, "Exception while auth sequence: " + e.Message);
-				Logger.WriteDebug(e);
+				Common.Logger.WriteDebug(e);
 			}
 		}
 
@@ -217,7 +217,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
 						int plevel = ConvertTools.ParseInt32(m.Groups["plevel"].Value.Trim());
 						if (plevel < 4) {
-							DenyConsole(state, "- low plevel.");
+							this.DenyConsole(state, "- low plevel.");
 						} else {
 							ConsoleServer.ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
 							if (console != null) {
@@ -231,7 +231,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				}
 			} catch (Exception e) {
 				this.DenyConsole(state, "Exception while auth sequence: " + e.Message);
-				Logger.WriteDebug(e);
+				Common.Logger.WriteDebug(e);
 			}
 		}
 
@@ -303,7 +303,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				object[] arr = (object[]) o;
 				this.SendCommand((ConsoleServer.ConsoleClient) arr[0], (string) arr[1]);
 			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("PrivateSendCommand out");
 		}
@@ -336,7 +336,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					this.SendCommand(console, "B Shutdown countdown aborted");
 				}
 			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("PrivateExitLater out");
 		}

@@ -28,8 +28,8 @@ namespace SteamEngine.Common {
 		internal string rawString;
 		internal string niceString;
 
-		public string RawString { get { return rawString; } }
-		public string NiceString { get { return niceString; } }
+		public string RawString { get { return this.rawString; } }
+		public string NiceString { get { return this.niceString; } }
 
 		static LogStr() {
 			for (int i = 0, n = prefixStrings.Length; i < n; i++) {
@@ -37,9 +37,9 @@ namespace SteamEngine.Common {
 			}
 		}
 
-		internal protected LogStr(string raw, string nice) {
-			rawString = raw;
-			niceString = nice;
+		protected internal LogStr(string raw, string nice) {
+			this.rawString = raw;
+			this.niceString = nice;
 		}
 
 		#region Operators
@@ -51,7 +51,7 @@ namespace SteamEngine.Common {
 		}
 
 		public static explicit operator LogStr(string str) {
-			return LogStr.Raw(str);
+			return Raw(str);
 		}
 
 		public static LogStr operator +(LogStr str1, string str2) {
@@ -79,7 +79,7 @@ namespace SteamEngine.Common {
 		#endregion
 
 		public override string ToString() {
-			return rawString;
+			return this.rawString;
 		}
 
 		public void Append(LogStr str) {
@@ -115,31 +115,31 @@ namespace SteamEngine.Common {
 		}
 		public static LogStr Warning(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Warning, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Warning, str));
 		}
 		public static LogStr Error(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Error, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Error, str));
 		}
 		public static LogStr Critical(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Critical, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Critical, str));
 		}
 		public static LogStr Fatal(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Fatal, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Fatal, str));
 		}
 		public static LogStr Debug(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Debug, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr Highlight(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Highlight, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Highlight, str));
 		}
 		public static LogStr Title(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(null, LogStr.GetTitleSettingMessage(str));
+			return new LogStr(null, GetTitleSettingMessage(str));
 		}
 		//public static LogStr SetStyle(LogStyles style) {
 		//    return new LogStr(null, LogStr.GetStyleMessage(style));
@@ -150,65 +150,65 @@ namespace SteamEngine.Common {
 		//}
 		public static LogStr Number(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Number, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Number, str));
 		}
 		public static LogStr Ident(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Ident, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Ident, str));
 		}
 		public static LogStr FilePos(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.FilePos, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.FilePos, str));
 		}
 		public static LogStr File(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.File, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.File, str));
 		}
 		public static LogStr Raw(string str) {
 			return new LogStr(str, str);
 		}
 		public static LogStr Warning(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Warning, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Warning, str));
 		}
 		public static LogStr Error(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Error, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Error, str));
 		}
 		public static LogStr Critical(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Critical, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Critical, str));
 		}
 		public static LogStr Fatal(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Fatal, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Fatal, str));
 		}
 		public static LogStr Debug(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Debug, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr FileLine(string file, int line) {
 			string str = TranslatePath(file) + ", " + line.ToString(System.Globalization.CultureInfo.InvariantCulture);
-			return new LogStr("(" + str + ") ", "(" + LogStr.GetStyleMessage(LogStyles.FileLine, str) + ") ");
+			return new LogStr("(" + str + ") ", "(" + GetStyleMessage(LogStyles.FileLine, str) + ") ");
 		}
 		public static LogStr Highlight(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Highlight, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Highlight, str));
 		}
 		public static LogStr Title(string str) {
-			return new LogStr(null, LogStr.GetTitleSettingMessage(str));
+			return new LogStr(null, GetTitleSettingMessage(str));
 		}
 		//public static LogStr Style(string str, LogStyles style) {
 		//    return new LogStr(str, LogStr.GetStyleMessage(style, str));
 		//}
 		public static LogStr Number(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Number, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Number, str));
 		}
 		public static LogStr Ident(string str) {
-			return new LogStr(str, LogStr.GetStyleMessage(LogStyles.Ident, str));
+			return new LogStr(str, GetStyleMessage(LogStyles.Ident, str));
 		}
 		public static LogStr FilePos(string str) {
-			return new LogStr(TranslatePath(str), LogStr.GetStyleMessage(LogStyles.FilePos, str));
+			return new LogStr(TranslatePath(str), GetStyleMessage(LogStyles.FilePos, str));
 		}
 		public static LogStr File(string str) {
-			return new LogStr(TranslatePath(str), LogStr.GetStyleMessage(LogStyles.File, str));
+			return new LogStr(TranslatePath(str), GetStyleMessage(LogStyles.File, str));
 		}
 		public static LogStr Code(string s) {
-			return LogStr.Debug("[") + LogStr.Ident(s) + LogStr.Debug("]");
+			return Debug("[") + Ident(s) + Debug("]");
 		}
 		public static LogStr Concat(LogStr arg0, LogStr arg1) {
 			return new LogStr(
@@ -281,38 +281,38 @@ namespace SteamEngine.Common {
 		}
 
 		public LogStrBuilder Append(LogStr arg) {
-			nice.Append(arg.niceString);
-			raw.Append(arg.rawString);
+			this.nice.Append(arg.niceString);
+			this.raw.Append(arg.rawString);
 			return this;
 		}
 
 		public LogStrBuilder Append(string arg) {
-			nice.Append(arg);
-			raw.Append(arg);
+			this.nice.Append(arg);
+			this.raw.Append(arg);
 			return this;
 		}
 
 		public LogStrBuilder Append(object arg) {
 			string str = arg as string;
 			if (str != null) {
-				Append(str);
+				this.Append(str);
 				return this;
 			}
 			LogStr ls = arg as LogStr;
 			if (ls != null) {
-				Append(ls);
+				this.Append(ls);
 				return this;
 			}
-			Append(String.Concat(str));
+			this.Append(String.Concat(str));
 			return this;
 		}
 
 		public override string ToString() {
-			return raw.ToString();
+			return this.raw.ToString();
 		}
 
 		public LogStr ToLogStr() {
-			return new LogStr(raw.ToString(), nice.ToString());
+			return new LogStr(this.raw.ToString(), this.nice.ToString());
 		}
 	}
 

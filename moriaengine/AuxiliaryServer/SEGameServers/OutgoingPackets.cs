@@ -21,7 +21,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		protected override void Write() {
-			EncodeBool(this.sendLogStrings);
+			this.EncodeBool(this.sendLogStrings);
 		}
 	}
 
@@ -43,9 +43,9 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		protected override void Write() {
-			EncodeInt(this.consoleId);
-			EncodeUTF8String(this.accName);
-			EncodeUTF8String(this.password);
+			this.EncodeInt(this.consoleId);
+			this.EncodeUTF8String(this.accName);
+			this.EncodeUTF8String(this.password);
 		}
 	}
 

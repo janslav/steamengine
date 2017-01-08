@@ -33,10 +33,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (arg == oldNode) {
-				arg = newNode;
-			} else if (index == oldNode) {
-				index = oldNode;
+			if (this.arg == oldNode) {
+				this.arg = newNode;
+			} else if (this.index == oldNode) {
+				this.index = oldNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -48,8 +48,8 @@ namespace SteamEngine.LScript {
 			object indexVal;
 			object argVal;
 			try {
-				indexVal = index.Run(vars);
-				argVal = arg.Run(vars);
+				indexVal = this.index.Run(vars);
+				argVal = this.arg.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
@@ -85,12 +85,12 @@ namespace SteamEngine.LScript {
 		//}
 
 		public override string ToString() {
-			if (arg == null) {
+			if (this.arg == null) {
 				return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					"(ArrayList)[{0}]", index);
+					"(ArrayList)[{0}]", this.index);
 			} else {
 				return String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				"(ArrayList)[{0}] = {1}", index, arg);
+				"(ArrayList)[{0}] = {1}", this.index, this.arg);
 			}
 		}
 	}

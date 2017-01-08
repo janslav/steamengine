@@ -38,8 +38,8 @@ namespace SteamEngine.CompiledScripts {
 		private const double MAX_TIMER = 1.0d; //maximal timer usable
 
 		public void On_Assign() {
-			lastServerTime = Globals.TimeInSeconds; //set the first time to be used for regeneration
-			Timer = MIN_TIMER; //set the basic timer for the first regen round
+			this.lastServerTime = Globals.TimeInSeconds; //set the first time to be used for regeneration
+			this.Timer = MIN_TIMER; //set the basic timer for the first regen round
 		}
 
 		/// <summary>Periodically check stats and regenerate computed amount of points (if any)</summary>
@@ -56,18 +56,18 @@ namespace SteamEngine.CompiledScripts {
 			int maxStam = holder.MaxStam;
 			int maxMana = holder.MaxMana;
 
-			double timeElapsed = Globals.TimeInSeconds - lastServerTime;
+			double timeElapsed = Globals.TimeInSeconds - this.lastServerTime;
 
 			//count the number of modified stats points (if any!)
-			int hitsChange = CheckStatChange(hitsRegenSpeed, hits, maxHits, timeElapsed, ref residuumHits);
-			int stamChange = CheckStatChange(stamRegenSpeed, stam, maxStam, timeElapsed, ref residuumStam);
-			int manaChange = CheckStatChange(manaRegenSpeed, mana, maxMana, timeElapsed, ref residuumMana);
+			int hitsChange = this.CheckStatChange(hitsRegenSpeed, hits, maxHits, timeElapsed, ref this.residuumHits);
+			int stamChange = this.CheckStatChange(stamRegenSpeed, stam, maxStam, timeElapsed, ref this.residuumStam);
+			int manaChange = this.CheckStatChange(manaRegenSpeed, mana, maxMana, timeElapsed, ref this.residuumMana);
 
 			if ((hitsChange == 0) && (stamChange == 0) && (manaChange == 0) && //nothing regenerated now
-				(residuumHits == 0) && (residuumStam == 0) && (residuumMana == 0)) {//nothing is left to the next round
+				(this.residuumHits == 0) && (this.residuumStam == 0) && (this.residuumMana == 0)) {//nothing is left to the next round
 				//delete the plugin for now. nothing is modified. it will be renewed when hits/mana/stamina lowers
 				//or when the regenerations get some point...
-				Delete();
+				this.Delete();
 				return;
 			}
 
@@ -76,16 +76,16 @@ namespace SteamEngine.CompiledScripts {
 			double usedTimer;
 			if ((hitsChange == 0) || (stamChange == 0) || (manaChange == 0)) { // some stat is unmodified, use the fastest regeneration
 				double fastestRegen = Math.Max(Math.Abs(hitsRegenSpeed), Math.Max(Math.Abs(stamRegenSpeed), Math.Abs(manaRegenSpeed)));
-				double fastestStatsResiduum = ((fastestRegen == Math.Abs(hitsRegenSpeed)) ? residuumHits : //fastest are hits - use them
-												((fastestRegen == Math.Abs(stamRegenSpeed)) ? residuumStam : //fastest is stamina - use it
+				double fastestStatsResiduum = ((fastestRegen == Math.Abs(hitsRegenSpeed)) ? this.residuumHits : //fastest are hits - use them
+												((fastestRegen == Math.Abs(stamRegenSpeed)) ? this.residuumStam : //fastest is stamina - use it
 													Math.Abs(manaRegenSpeed))); //use mana
 				//count the timer for the stat with the fastest regen speed
-				usedTimer = CountIdealTimer(fastestRegen, fastestStatsResiduum);
+				usedTimer = this.CountIdealTimer(fastestRegen, fastestStatsResiduum);
 			} else { //count the ideal timer for the next round
 				//we are using the newly counted residuum here (see CheckStatChange) method...
-				double hitsIdealTimer = CountIdealTimer(hitsRegenSpeed, residuumHits);
-				double stamIdealTimer = CountIdealTimer(stamRegenSpeed, residuumStam);
-				double manaIdealTimer = CountIdealTimer(manaRegenSpeed, residuumMana);
+				double hitsIdealTimer = this.CountIdealTimer(hitsRegenSpeed, this.residuumHits);
+				double stamIdealTimer = this.CountIdealTimer(stamRegenSpeed, this.residuumStam);
+				double manaIdealTimer = this.CountIdealTimer(manaRegenSpeed, this.residuumMana);
 				double midTimer = Utility.ArithmeticMean(hitsIdealTimer, stamIdealTimer, manaIdealTimer);
 				double hitsTmrDiff = Math.Abs(hitsIdealTimer - midTimer);
 				double manaTmrDiff = Math.Abs(stamIdealTimer - midTimer);
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 			holder.Mana += (short) manaChange;
 
 			this.Timer = usedTimer; //use the count timer
-			lastServerTime = Globals.TimeInSeconds; //remember the last usage
+			this.lastServerTime = Globals.TimeInSeconds; //remember the last usage
 		}
 
 		private int CheckStatChange(double regenSpeed, int stat, int maxStat, double timeElapsed, ref double residuumStat) {
@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 			//when does the stat get modified?
 			if ((regenSpeed < 0 && (stat > 0)) ||  //negative regeneration
 					(regenSpeed > 0 && (stat < maxStat))) { //positive regeneration
-				int countedChange = CountStatChange(regenSpeed, ref residuumStat, timeElapsed);
+				int countedChange = this.CountStatChange(regenSpeed, ref residuumStat, timeElapsed);
 				//do not overgo the maxhits or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!

@@ -133,14 +133,13 @@ namespace SteamEngine {
 									Array resultArray = Array.CreateInstance(elemType, n);
 
 									for (int i = 0; i < n; i++) {
-										resultArray.SetValue(ConvertTools.ConvertTo(elemType,
-											ResolveSingleValue(tempVI, sourceArray[i], null)),
+										resultArray.SetValue(ConvertTools.ConvertTo(elemType, this.ResolveSingleValue(tempVI, sourceArray[i], null)),
 											i);
 									}
 
 									retVal = resultArray;
 								} else {
-									retVal = ResolveSingleValue(tempVI, value, retVal);
+									retVal = this.ResolveSingleValue(tempVI, value, retVal);
 								}
 							} else {
 								retVal = "";
@@ -173,15 +172,15 @@ namespace SteamEngine {
 		}
 
 		private object ResolveSingleValue(TemporaryValueImpl tempVI, string value, object retVal) {
-			if (!ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
+			if (!this.ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
 				string statement = string.Concat("return(", value, ")");
-				retVal = SteamEngine.LScript.LScriptMain.RunSnippet(
+				retVal = LScript.LScriptMain.RunSnippet(
 					tempVI.filename, tempVI.line, Globals.Instance, statement);
 			}
 			return retVal;
 		}
 
-		private readonly static Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
+		private static readonly Regex simpleStringRE = new Regex(@"^""(?<value>[^\<\>]*)""\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -229,11 +228,11 @@ namespace SteamEngine {
 							}
 							break;
 						default: //it's a number
-							if (type.IsEnum) {
+							if (this.type.IsEnum) {
 								try {
-									string enumStr = value.Replace(type.Name + ".", "") // "FieldValueType.Typed | FieldValueType.Typeless" -> "Typed , Typeles"
+									string enumStr = value.Replace(this.type.Name + ".", "") // "FieldValueType.Typed | FieldValueType.Typeless" -> "Typed , Typeles"
 										.Replace("|", ",").Replace("+", ","); //hopefully the actual value won't change by this optimisation ;)
-									retVal = Enum.Parse(type, enumStr, true);
+									retVal = Enum.Parse(this.type, enumStr, true);
 									return true;
 								} catch { }
 							}
@@ -335,7 +334,7 @@ namespace SteamEngine {
 		private void SetFromCode(object value) {
 			Sanity.IfTrueThrow((this.isChangedManually || this.unloaded), "SetFromCode after change/unload? This should never happen.");
 
-			this.defaultValue = GetFittingValueImpl();
+			this.defaultValue = this.GetFittingValueImpl();
 			this.defaultValue.Value = value;
 			this.currentValue = this.defaultValue.Clone();
 			this.unloaded = false;
@@ -358,7 +357,7 @@ namespace SteamEngine {
 				return false;
 			}
 			if (this.isChangedManually) {//it was loaded/changed , so it should be also saved :)
-				return !CurrentAndDefaultEquals(CurrentValue, DefaultValue);
+				return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
 			}
 			if ((this.currentValue is TemporaryValueImpl) && (this.defaultValue is TemporaryValueImpl)) {
 				return false;//unresolved, no need of touching
@@ -383,7 +382,7 @@ namespace SteamEngine {
 				return false;
 			}
 
-			return object.Equals(a, b);
+			return Equals(a, b);
 		}
 
 		/// <summary>If true, it has not been set from scripts nor from saves nor manually</summary>
@@ -447,17 +446,17 @@ namespace SteamEngine {
 
 			internal override object Value {
 				get {
-					holder.ResolveTemporaryState();
-					if (holder.currentValue == this) {
-						return holder.CurrentValue;
+					this.holder.ResolveTemporaryState();
+					if (this.holder.currentValue == this) {
+						return this.holder.CurrentValue;
 					} else {
-						return holder.DefaultValue;
+						return this.holder.DefaultValue;
 					}
 				}
 				set {
-					if (holder.currentValue == this) {
-						holder.ResolveTemporaryState();
-						holder.CurrentValue = value;
+					if (this.holder.currentValue == this) {
+						this.holder.ResolveTemporaryState();
+						this.holder.CurrentValue = value;
 						return;
 					}
 					throw new SEException("Invalid TemporaryValueImpl instance, it's holder is not holding it, or something is setting defaultvalue. This should not happen.");
@@ -487,20 +486,20 @@ namespace SteamEngine {
 
 			internal override object Value {
 				get {
-					if (thingDef == null) {
-						return model;
+					if (this.thingDef == null) {
+						return this.model;
 					} else {
-						return thingDef.Model;
+						return this.thingDef.Model;
 					}
 				}
 				set {
-					thingDef = value as ThingDef;
-					if (thingDef == null) {
-						model = ConvertTools.ToInt32(value);
+					this.thingDef = value as ThingDef;
+					if (this.thingDef == null) {
+						this.model = ConvertTools.ToInt32(value);
 					} else {
-						if ((thingDef.model.currentValue == this) || (thingDef.model.defaultValue == this)) {
-							ThingDef d = thingDef;
-							thingDef = null;
+						if ((this.thingDef.model.currentValue == this) || (this.thingDef.model.defaultValue == this)) {
+							ThingDef d = this.thingDef;
+							this.thingDef = null;
 							throw new ScriptException(LogStr.Ident(d) + " specifies its own defname as its model, could lead to infinite loop...!");
 						}
 					}
@@ -548,20 +547,20 @@ namespace SteamEngine {
 						return script;
 					}
 				}
-				return GetInternStringIfPossible(TagMath.ConvertTo(type, value)); //ConvertTo will throw exception if impossible
+				return GetInternStringIfPossible(ConvertTools.ConvertTo(type, value)); //ConvertTo will throw exception if impossible
 			}
 
 			internal override object Value {
 				get {
-					return val;
+					return this.val;
 				}
 				set {
 					if (value != null) {
 						Type sourceType = value.GetType();
-						if ((sourceType != this.type) && (type.IsArray)) {
+						if ((sourceType != this.type) && (this.type.IsArray)) {
 							Array sourceArray;
 							Array resultArray;
-							Type elemType = type.GetElementType();
+							Type elemType = this.type.GetElementType();
 							if (sourceType.IsArray) {//we must change the element type
 								if (sourceType.GetArrayRank() > 1) {
 									throw new SEException("Can't use a multirank array in a FieldValue");
@@ -580,11 +579,11 @@ namespace SteamEngine {
 									ConvertSingleValue(elemType, sourceArray.GetValue(i)), i);
 							}
 
-							this.val = TagMath.ConvertTo(type, resultArray); //this should actually do nothing, just for check
+							this.val = ConvertTools.ConvertTo(this.type, resultArray); //this should actually do nothing, just for check
 							return;
 						}
 					}
-					this.val = ConvertSingleValue(type, value);
+					this.val = ConvertSingleValue(this.type, value);
 				}
 			}
 		}
@@ -609,7 +608,7 @@ namespace SteamEngine {
 
 			internal override object Value {
 				get {
-					return obj;
+					return this.obj;
 				}
 				set {
 					string asString = value as String;
@@ -647,9 +646,9 @@ namespace SteamEngine {
 					if (value != null) {
 						ThingDef td = value as ThingDef;
 						if (td == null) {
-							if (TagMath.IsNumberType(value.GetType())) {
+							if (ConvertTools.IsNumberType(value.GetType())) {
 								int id = ConvertTools.ToInt32(value);
-								if (typeof(AbstractItemDef).IsAssignableFrom(type)) {
+								if (typeof(AbstractItemDef).IsAssignableFrom(this.type)) {
 									td = ThingDef.FindItemDef(id);
 								} else {
 									td = ThingDef.FindCharDef(id);

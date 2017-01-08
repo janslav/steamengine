@@ -35,11 +35,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
+			object leftVar = this.left.Run(vars);
 			bool leftVarBool;
 
 			try {
-				leftVarBool = TagMath.ToBoolean(leftVar);
+				leftVarBool = ConvertTools.ToBoolean(leftVar);
 				if (!leftVarBool) {
 					return false;
 				}
@@ -48,9 +48,9 @@ namespace SteamEngine.LScript {
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 
-			object righVar = right.Run(vars);
+			object righVar = this.right.Run(vars);
 			try {
-				return TagMath.ToBoolean(righVar);
+				return ConvertTools.ToBoolean(righVar);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating && operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -66,11 +66,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
+			object leftVar = this.left.Run(vars);
 			bool leftVarBool;
 
 			try {
-				leftVarBool = TagMath.ToBoolean(leftVar);
+				leftVarBool = ConvertTools.ToBoolean(leftVar);
 				if (leftVarBool) {
 					return true;
 				}
@@ -79,9 +79,9 @@ namespace SteamEngine.LScript {
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 
-			object righVar = right.Run(vars);
+			object righVar = this.right.Run(vars);
 			try {
-				return TagMath.ToBoolean(righVar);
+				return ConvertTools.ToBoolean(righVar);
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating || operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);

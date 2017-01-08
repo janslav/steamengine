@@ -198,7 +198,7 @@ namespace SteamEngine.LScript {
 			TestSnippet(5, "TestMethod_IPointParam(LScriptTesterIPoint4D())", "ambiguity test 7");
 			TestSnippet(5, "TestMethod_PointAndIpointParam(LScriptTesterIPoint4D())", "ambiguity test 8");
 
-			Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Acquire("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
+			Sanity.IfTrueThrow(!Timers.TimerKey.Acquire("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
 			Sanity.IfTrueThrow(!TriggerKey.Acquire("testtriggerkey").Equals(LScriptMain.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
 
 			LScriptMain.RunSnippet(testObj, "return {0 1}");
@@ -313,82 +313,82 @@ namespace SteamEngine.LScript {
 		public double lastCounter = 0;
 
 		private void Incr() {
-			currentCounter++;
+			this.currentCounter++;
 		}
 
 		private void Incr(double difference) {
-			currentCounter += difference;
+			this.currentCounter += difference;
 		}
 
 		internal void CheckCounter(double difference, string failureMessage) {
-			double shouldbe = lastCounter + difference;
-			Sanity.IfTrueThrow(shouldbe != currentCounter, "Error while " + failureMessage);
-			lastCounter = currentCounter;
+			double shouldbe = this.lastCounter + difference;
+			Sanity.IfTrueThrow(shouldbe != this.currentCounter, "Error while " + failureMessage);
+			this.lastCounter = this.currentCounter;
 		}
 
 		public void TestMethod_NoParams() {
-			Incr();
+			this.Incr();
 		}
 
 		public void TestMethod_OneParam(double difference) {
 			//Console.WriteLine("TestMethod_OneParam("+difference+")");
-			Incr(difference);
+			this.Incr(difference);
 		}
 
 		public void TestMethod_OneParam(int difference) {
 			//Console.WriteLine("TestMethod_OneParam("+difference+")");
-			Incr(difference);
+			this.Incr(difference);
 		}
 
 
 
 		public void TestMethod_PointAndIpointParam(Point4D point) {
 			Console.WriteLine("TestMethod_PointAndIpointParam(Point4D)");
-			Incr(2);
+			this.Incr(2);
 		}
 
 		public void TestMethod_PointAndIpointParam(Point3D point) {
 			Console.WriteLine("TestMethod_PointAndIpointParam(Point3D)");
-			Incr(3);
+			this.Incr(3);
 		}
 
 		public void TestMethod_PointAndIpointParam(Point2D point) {
 			Console.WriteLine("TestMethod_PointAndIpointParam(Point2D)");
-			Incr(4);
+			this.Incr(4);
 		}
 
 		public void TestMethod_PointAndIpointParam(IPoint4D point) {
 			Console.WriteLine("TestMethod_OneParam(IPoint4D)");
-			Incr(5);
+			this.Incr(5);
 		}
 
 		public void TestMethod_PointAndIpointParam(IPoint3D point) {
 			Console.WriteLine("TestMethod_OneParam(IPoint3D)");
-			Incr(6);
+			this.Incr(6);
 		}
 
 		public void TestMethod_PointAndIpointParam(IPoint2D point) {
 			Console.WriteLine("TestMethod_OneParam(IPoint2D)");
-			Incr(7);
+			this.Incr(7);
 		}
 
 		public void TestMethod_IPointParam(IPoint4D point) {
 			Console.WriteLine("TestMethod_OneParam(IPoint4D)");
-			Incr(5);
+			this.Incr(5);
 		}
 
 		public void TestMethod_IPointParam(IPoint3D point) {
 			Console.WriteLine("TestMethod_OneParam(IPoint3D)");
-			Incr(6);
+			this.Incr(6);
 		}
 
 		public void TestMethod_IPointParam(IPoint2D point) {
 			Console.WriteLine("TestMethod_OneParam(IPoint2D)");
-			Incr(7);
+			this.Incr(7);
 		}
 
 		public void TestMethod_OneStringParam(string str) {
-			Incr();
+			this.Incr();
 		}
 
 		public int GetInteger() {

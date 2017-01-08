@@ -3,7 +3,7 @@ using System;
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 	public class LoginKey {
-		internal readonly static LoginKey[] loginKeys = new LoginKey[] {
+		internal static readonly LoginKey[] loginKeys = new LoginKey[] {
 			new LoginKey("5.0.1", 0x2eaba7ec, 0xa2417e7f),
 			new LoginKey("5.0.0", 0x2E93A5FC, 0xA25D527F),
 			new LoginKey("4.0.11", 0x2C7B574C, 0xA32D9E7F),
@@ -41,15 +41,15 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		private readonly string name;
 
 		public long Key1 {
-			get { return key1; }
+			get { return this.key1; }
 		}
 
 		public long Key2 {
-			get { return key2; }
+			get { return this.key2; }
 		}
 
 		public string Name {
-			get { return name; }
+			get { return this.name; }
 		}
 
 		public LoginKey(String name, long key1, long key2) {

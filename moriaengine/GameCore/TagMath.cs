@@ -74,12 +74,12 @@ namespace SteamEngine {
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static int IGetTag(TagHolder from, TagKey which) {
-			return ConvertTools.ToInt32(from.GetTag(which));
+			return ToInt32(from.GetTag(which));
 		}
 
 		public static bool Is1(object o) {
 			int i;
-			if (ConvertTools.TryConvertToInt32(o, out i)) {
+			if (TryConvertToInt32(o, out i)) {
 				if (i == 1) {
 					return true;
 				}
@@ -89,7 +89,7 @@ namespace SteamEngine {
 
 		public static string TimeSpanToString(TimeSpan ts, string format) {
 			DateTime dt = DateTime.MinValue.Add(ts);
-			return dt.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+			return dt.ToString(format, CultureInfo.InvariantCulture);
 		}
 
 		public static string TimeSpanToSimpleString(TimeSpan ts) {

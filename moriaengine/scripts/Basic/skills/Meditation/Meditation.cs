@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
-			if (!CheckPrerequisities(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs)) {
 				return TriggerResult.Cancel;
 			}
 			return TriggerResult.Continue;
@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			Character self = skillSeqArgs.Self;
 
-			if (!CheckPrerequisities(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs)) {
 				return TriggerResult.Cancel;
 			}
 			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));

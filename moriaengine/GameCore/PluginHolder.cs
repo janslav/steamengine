@@ -68,15 +68,15 @@ namespace SteamEngine {
 		public PluginHolder(PluginHolder copyFrom)
 			: base(copyFrom) { //copying constuctor
 			if (copyFrom.firstTGListNode != null) {
-				EnsureTagsTable();
+				this.EnsureTagsTable();
 
 				//copy triggergroups
 				TGListNode curNode = new TGListNode(copyFrom.firstTGListNode.storedTG);
-				firstTGListNode = curNode;
+				this.firstTGListNode = curNode;
 				TGListNode copiedNode = copyFrom.firstTGListNode.nextNode;
 				while (copiedNode != null) {
 					curNode.nextNode = new TGListNode(copiedNode.storedTG);
-					tags[copiedNode.storedTG] = curNode.nextNode;
+					this.tags[copiedNode.storedTG] = curNode.nextNode;
 					curNode.nextNode.prevNode = curNode;
 					curNode = curNode.nextNode;
 					copiedNode = copiedNode.nextNode;
@@ -88,14 +88,14 @@ namespace SteamEngine {
 				foreach (DictionaryEntry entry in copyFrom.tags) {
 					PluginKey pk = entry.Key as PluginKey;
 					if (pk != null) {
-						DeepCopyFactory.GetCopyDelayed(entry.Value, DelayedGetCopy_Plugin, pk);
+						DeepCopyFactory.GetCopyDelayed(entry.Value, this.DelayedGetCopy_Plugin, pk);
 					}
 				}
 
 				//now set nondelayed ones. If all works well, they shouldn't be copied twice
 				Plugin curPlugin = copyFrom.firstPlugin;
 				while (curPlugin != null) {
-					DeepCopyFactory.GetCopyDelayed(curPlugin, DelayedGetCopy_SetPluginAsNonSimple);
+					DeepCopyFactory.GetCopyDelayed(curPlugin, this.DelayedGetCopy_SetPluginAsNonSimple);
 					curPlugin = curPlugin.nextInList;
 				}
 			}
@@ -103,15 +103,15 @@ namespace SteamEngine {
 
 		private void DelayedGetCopy_SetPluginAsNonSimple(object resolvedObject) {
 			Plugin plugin = (Plugin) resolvedObject;
-			if (firstPlugin != null) {
-				firstPlugin.prevInList = plugin;
-				plugin.nextInList = firstPlugin;
+			if (this.firstPlugin != null) {
+				this.firstPlugin.prevInList = plugin;
+				plugin.nextInList = this.firstPlugin;
 			}
-			firstPlugin = plugin;
+			this.firstPlugin = plugin;
 		}
 
 		private void DelayedGetCopy_Plugin(object resolvedObject, object pluginKey) {
-			AddPluginImpl((PluginKey) pluginKey, (Plugin) resolvedObject);
+			this.AddPluginImpl((PluginKey) pluginKey, (Plugin) resolvedObject);
 		}
 		#endregion Copying constructor
 
@@ -132,34 +132,34 @@ namespace SteamEngine {
 		private bool PrivateAddTriggerGroup(TriggerGroup tg) {
 			if (tg == null)
 				return false;
-			if (tags != null) {
-				if (tags.ContainsKey(tg)) {
+			if (this.tags != null) {
+				if (this.tags.ContainsKey(tg)) {
 					return false;
 				}
 			} else {
-				tags = new Hashtable();
+				this.tags = new Hashtable();
 			}
 
 			TGListNode listNode = new TGListNode(tg);
-			tags[tg] = listNode;
-			if (firstTGListNode != null) {
-				firstTGListNode.prevNode = listNode;
-				listNode.nextNode = firstTGListNode;
+			this.tags[tg] = listNode;
+			if (this.firstTGListNode != null) {
+				this.firstTGListNode.prevNode = listNode;
+				listNode.nextNode = this.firstTGListNode;
 			}
-			firstTGListNode = listNode;
+			this.firstTGListNode = listNode;
 			return true;
 		}
 
 		public void RemoveTriggerGroup(TriggerGroup tg) {
 			if (tg == null)
 				return;
-			if (tags != null) {
-				TGListNode listNode = tags[tg] as TGListNode;
+			if (this.tags != null) {
+				TGListNode listNode = this.tags[tg] as TGListNode;
 				if (listNode != null) {
 					if (listNode.prevNode != null) {
 						listNode.prevNode.nextNode = listNode.nextNode;
 					} else {//no prev, means we were the first
-						firstTGListNode = listNode.nextNode;
+						this.firstTGListNode = listNode.nextNode;
 					}
 					if (listNode.nextNode != null) {
 						listNode.nextNode.prevNode = listNode.prevNode;
@@ -170,14 +170,14 @@ namespace SteamEngine {
 		}
 
 		public bool HasTriggerGroup(TriggerGroup tg) {
-			if (tags != null) {
-				return tags.ContainsKey(tg);
+			if (this.tags != null) {
+				return this.tags.ContainsKey(tg);
 			}
 			return false;
 		}
 
 		public IEnumerable<TriggerGroup> GetAllTriggerGroups() {
-			TGListNode curNode = firstTGListNode;
+			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
 				yield return curNode.storedTG;
 				curNode = curNode.nextNode;
@@ -185,12 +185,12 @@ namespace SteamEngine {
 		}
 
 		public void ClearTriggerGroups() {
-			TGListNode curNode = firstTGListNode;
+			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
-				tags.Remove(curNode.storedTG);
+				this.tags.Remove(curNode.storedTG);
 				curNode = curNode.nextNode;
 			}
-			firstTGListNode = null;
+			this.firstTGListNode = null;
 		}
 
 		internal class TGListNode {
@@ -221,12 +221,12 @@ namespace SteamEngine {
 				<Trigger>, <CancellableTriggers>
 		*/
 		public virtual void Trigger(TriggerKey tk, ScriptArgs sa) {
-			TGListNode curNode = firstTGListNode;
+			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
 				curNode.storedTG.Run(this, tk, sa);
 				curNode = curNode.nextNode;
 			}
-			Plugin curPlugin = firstPlugin;
+			Plugin curPlugin = this.firstPlugin;
 			while (curPlugin != null) {
 				object scriptedRetVal, compiledRetVal;
 				curPlugin.Run(tk, sa, out scriptedRetVal, out compiledRetVal);
@@ -235,12 +235,12 @@ namespace SteamEngine {
 		}
 
 		public virtual void TryTrigger(TriggerKey tk, ScriptArgs sa) {
-			TGListNode curNode = firstTGListNode;
+			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
 				curNode.storedTG.TryRun(this, tk, sa);
 				curNode = curNode.nextNode;
 			}
-			Plugin curPlugin = firstPlugin;
+			Plugin curPlugin = this.firstPlugin;
 			while (curPlugin != null) {
 				object scriptedRetVal, compiledRetVal;
 				curPlugin.TryRun(tk, sa, out scriptedRetVal, out compiledRetVal);
@@ -264,14 +264,14 @@ namespace SteamEngine {
 		*/
 
 		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			TGListNode curNode = firstTGListNode;
+			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
 				if (TagMath.Is1(curNode.storedTG.Run(this, tk, sa))) {
 					return TriggerResult.Cancel;
 				}
 				curNode = curNode.nextNode;
 			}
-			Plugin curPlugin = firstPlugin;
+			Plugin curPlugin = this.firstPlugin;
 			while (curPlugin != null) {
 				object scriptedRetVal, compiledRetVal;
 				curPlugin.Run(tk, sa, out scriptedRetVal, out compiledRetVal);
@@ -284,14 +284,14 @@ namespace SteamEngine {
 		}
 
 		public virtual TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			TGListNode curNode = firstTGListNode;
+			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
 				if (TagMath.Is1(curNode.storedTG.TryRun(this, tk, sa))) {
 					return TriggerResult.Cancel;
 				}
 				curNode = curNode.nextNode;
 			}
-			Plugin curPlugin = firstPlugin;
+			Plugin curPlugin = this.firstPlugin;
 			while (curPlugin != null) {
 				object scriptedRetVal, compiledRetVal;
 				curPlugin.TryRun(tk, sa, out scriptedRetVal, out compiledRetVal);
@@ -307,13 +307,13 @@ namespace SteamEngine {
 		#region save/load
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
-			TGListNode curNode = firstTGListNode;
+			TGListNode curNode = this.firstTGListNode;
 			while (curNode != null) {
 				output.WriteValue("TriggerGroup", curNode.storedTG);
 				curNode = curNode.nextNode;
 			}
-			if (tags != null) {
-				foreach (DictionaryEntry entry in tags) {
+			if (this.tags != null) {
+				foreach (DictionaryEntry entry in this.tags) {
 					object key = entry.Key;
 					if (key is PluginKey) {
 						Plugin value = (Plugin) entry.Value;
@@ -338,9 +338,9 @@ namespace SteamEngine {
 				string pluginName = m.Groups["name"].Value;
 				PluginKey tk = PluginKey.Acquire(pluginName);
 				if (m.Groups["asterisk"].Value.Length > 0) {
-					ObjectSaver.Load(valueString, DelayedLoad_SimplePlugin, filename, line, tk);
+					ObjectSaver.Load(valueString, this.DelayedLoad_SimplePlugin, filename, line, tk);
 				} else {
-					ObjectSaver.Load(valueString, DelayedLoad_Plugin, filename, line, tk);
+					ObjectSaver.Load(valueString, this.DelayedLoad_Plugin, filename, line, tk);
 				}
 				return;
 			}
@@ -370,45 +370,45 @@ namespace SteamEngine {
 
 		private void DelayedLoad_Plugin(object resolvedObject, string filename, int line, object pluginKey) {
 			Plugin plugin = (Plugin) resolvedObject;
-			AddPluginImpl((PluginKey) pluginKey, plugin);
-			if (firstPlugin != null) {
-				firstPlugin.prevInList = plugin;
-				plugin.nextInList = firstPlugin;
+			this.AddPluginImpl((PluginKey) pluginKey, plugin);
+			if (this.firstPlugin != null) {
+				this.firstPlugin.prevInList = plugin;
+				plugin.nextInList = this.firstPlugin;
 			}
-			firstPlugin = plugin;
+			this.firstPlugin = plugin;
 		}
 
 		private void DelayedLoad_SimplePlugin(object resolvedObject, string filename, int line, object pluginKey) {
-			AddPluginImpl((PluginKey) pluginKey, (Plugin) resolvedObject);
+			this.AddPluginImpl((PluginKey) pluginKey, (Plugin) resolvedObject);
 		}
 
 		#endregion save/load
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Plugin AddNewPlugin(PluginKey key, PluginDef def) {
-			return AddPlugin(key, def.Create());
+			return this.AddPlugin(key, def.Create());
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Plugin AddNewPluginAsSimple(PluginKey key, PluginDef def) {
-			return AddPluginAsSimple(key, def.Create());
+			return this.AddPluginAsSimple(key, def.Create());
 		}
 
 		#region IPluginHolder Members
 		public Plugin AddPlugin(PluginKey pk, Plugin plugin) {
-			AddPluginImpl(pk, plugin);
-			if (firstPlugin != null) {
-				firstPlugin.prevInList = plugin;
-				plugin.nextInList = firstPlugin;
+			this.AddPluginImpl(pk, plugin);
+			if (this.firstPlugin != null) {
+				this.firstPlugin.prevInList = plugin;
+				plugin.nextInList = this.firstPlugin;
 			}
-			firstPlugin = plugin;
+			this.firstPlugin = plugin;
 			object scriptedRetVal, compiledRetVal;
 			plugin.TryRun(TriggerKey.assign, null, out scriptedRetVal, out compiledRetVal);
 			return plugin;
 		}
 
 		public Plugin AddPluginAsSimple(PluginKey pk, Plugin plugin) {
-			AddPluginImpl(pk, plugin);
+			this.AddPluginImpl(pk, plugin);
 			object scriptedRetVal, compiledRetVal;
 			plugin.TryRun(TriggerKey.assign, null, out scriptedRetVal, out compiledRetVal);
 			return plugin;
@@ -418,48 +418,48 @@ namespace SteamEngine {
 			if (plugin.cont != null) {
 				plugin.cont.RemovePlugin(plugin);
 			}
-			if (tags != null) {
-				PluginKey prevKey = tags[plugin] as PluginKey;
+			if (this.tags != null) {
+				PluginKey prevKey = this.tags[plugin] as PluginKey;
 				if (prevKey != null && prevKey != pk) {
 					throw new SEException("You can't assign one Plugin to one PluginHolder under 2 different PluginKeys");
 				}
 
-				Plugin prevPlugin = tags[pk] as Plugin;
+				Plugin prevPlugin = this.tags[pk] as Plugin;
 				if (prevPlugin != null && prevPlugin != plugin) {
 					this.RemovePlugin(prevPlugin).Delete();
 				}
 			} else {
-				tags = new Hashtable();
+				this.tags = new Hashtable();
 			}
-			tags[pk] = plugin;
-			tags[plugin] = pk;
+			this.tags[pk] = plugin;
+			this.tags[plugin] = pk;
 			plugin.cont = this;
 		}
 
 		public void DeletePlugins() {
-			if (tags != null) {
+			if (this.tags != null) {
 				List<DictionaryEntry> allPlugins = new List<DictionaryEntry>();
-				foreach (DictionaryEntry entry in tags) {
+				foreach (DictionaryEntry entry in this.tags) {
 					if (entry.Key is PluginKey) {
 						allPlugins.Add(entry);
 					}
 				}
 				foreach (DictionaryEntry entry in allPlugins) {
-					RemovePluginImpl((PluginKey) entry.Key, (Plugin) entry.Value).Delete();
+					this.RemovePluginImpl((PluginKey) entry.Key, (Plugin) entry.Value).Delete();
 				}
 			}
 		}
 
 		public bool HasPlugin(PluginKey pk) {
-			if (tags != null) {
-				return tags.ContainsKey(pk);
+			if (this.tags != null) {
+				return this.tags.ContainsKey(pk);
 			}
 			return false;
 		}
 
 		public Plugin GetPlugin(PluginKey pk) {
-			if (tags != null) {
-				return tags[pk] as Plugin;
+			if (this.tags != null) {
+				return this.tags[pk] as Plugin;
 			}
 			return null;
 		}
@@ -469,28 +469,28 @@ namespace SteamEngine {
 		}
 
 		public Plugin RemovePlugin(Plugin plugin) {
-			if (tags != null) {
-				PluginKey pg = tags[plugin] as PluginKey;
+			if (this.tags != null) {
+				PluginKey pg = this.tags[plugin] as PluginKey;
 				if (pg != null) {
-					return RemovePluginImpl(pg, plugin);
+					return this.RemovePluginImpl(pg, plugin);
 				}
 			}
 			return null;
 		}
 
 		public Plugin RemovePlugin(PluginKey pk) {
-			if (tags != null) {
-				Plugin plugin = tags[pk] as Plugin;
+			if (this.tags != null) {
+				Plugin plugin = this.tags[pk] as Plugin;
 				if (plugin != null) {
-					return RemovePluginImpl(pk, plugin);
+					return this.RemovePluginImpl(pk, plugin);
 				}
 			}
 			return null;
 		}
 
 		public void DeletePlugin(PluginKey pk) {
-			if (tags != null) {
-				Plugin plugin = tags[pk] as Plugin;
+			if (this.tags != null) {
+				Plugin plugin = this.tags[pk] as Plugin;
 				if (plugin != null) {
 					plugin.Delete();
 				}
@@ -498,10 +498,10 @@ namespace SteamEngine {
 		}
 
 		private Plugin RemovePluginImpl(PluginKey pg, Plugin plugin) {
-			tags.Remove(pg);
-			tags.Remove(plugin);
-			if (plugin == firstPlugin) {
-				firstPlugin = plugin.nextInList;
+			this.tags.Remove(pg);
+			this.tags.Remove(plugin);
+			if (plugin == this.firstPlugin) {
+				this.firstPlugin = plugin.nextInList;
 			}
 			if (plugin.nextInList != null) {
 				plugin.nextInList.prevInList = plugin.prevInList;
@@ -518,7 +518,7 @@ namespace SteamEngine {
 		}
 
 		public IEnumerable<Plugin> GetNonSimplePlugins() {
-			Plugin curPlugin = firstPlugin;
+			Plugin curPlugin = this.firstPlugin;
 			while (curPlugin != null) {
 				yield return curPlugin;
 				curPlugin = curPlugin.nextInList;
@@ -526,8 +526,8 @@ namespace SteamEngine {
 		}
 
 		public IEnumerable<Plugin> GetAllPlugins() {
-			if (tags != null) {
-				foreach (DictionaryEntry entry in tags) {
+			if (this.tags != null) {
+				foreach (DictionaryEntry entry in this.tags) {
 					Plugin p = entry.Value as Plugin;
 					if (p != null) {
 						yield return p;
@@ -541,8 +541,8 @@ namespace SteamEngine {
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public IEnumerable<KeyValuePair<PluginKey, Plugin>> GetAllPluginsWithKeys() {
-			if (tags != null) {
-				foreach (DictionaryEntry entry in tags) {
+			if (this.tags != null) {
+				foreach (DictionaryEntry entry in this.tags) {
 					PluginKey pk = entry.Key as PluginKey;
 					if (pk != null) {
 						//returning PluginKey-Plugin pair (if the key is of type PluginKey then we expect Plugin as a value

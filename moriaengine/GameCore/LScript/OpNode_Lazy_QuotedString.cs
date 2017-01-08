@@ -97,11 +97,11 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(evals, oldNode);
+			int index = Array.IndexOf(this.evals, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			} else {
-				evals[index] = newNode;
+				this.evals[index] = newNode;
 			}
 		}
 
@@ -109,23 +109,22 @@ namespace SteamEngine.LScript {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
-				for (int i = 0, n = evals.Length; i < n; i++) {
-					results[i] = evals[i].Run(vars);
+				for (int i = 0, n = this.evals.Length; i < n; i++) {
+					this.results[i] = this.evals[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				formatString, results);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, this.formatString, this.results);
 		}
 
 		public override string ToString() {
-			object[] strings = new object[evals.Length];
-			for (int i = 0, n = evals.Length; i < n; i++) {
-				strings[i] = evals[i].ToString();
+			object[] strings = new object[this.evals.Length];
+			for (int i = 0, n = this.evals.Length; i < n; i++) {
+				strings[i] = this.evals[i].ToString();
 			}
 			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				"\"" + formatString + "\"", strings);
+				"\"" + this.formatString + "\"", strings);
 		}
 
 		public Type ReturnType {

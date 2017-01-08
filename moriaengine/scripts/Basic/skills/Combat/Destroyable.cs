@@ -29,11 +29,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public ushort Durability {
 			get {
-				return durability;
+				return this.durability;
 			}
 			set {
-				if (value != durability) {
-					durability = value;
+				if (value != this.durability) {
+					this.durability = value;
 					Character cont = this.Cont as Character;
 					if (cont != null) {
 						if (this is Weapon) {
@@ -48,11 +48,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public ushort MaxDurability {
 			get {
-				return maxDurability;
+				return this.maxDurability;
 			}
 			set {
-				if (value != maxDurability) {
-					maxDurability = value;
+				if (value != this.maxDurability) {
+					this.maxDurability = value;
 					Character cont = this.Cont as Character;
 					if (cont != null) {
 						if (this is Weapon) {
@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Create() {
 			base.On_Create();
-			this.maxDurability = TypeDef.MaxDurability; //set the initial maximal durability from the Def
+			this.maxDurability = this.TypeDef.MaxDurability; //set the initial maximal durability from the Def
 		}
 	}
 }

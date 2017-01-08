@@ -369,7 +369,7 @@ namespace SteamEngine.Networking {
 			}
 
 			private bool GetHighlightChanged() {
-				bool retVal = ((changeFlags & CharSyncFlags.Highlight) == CharSyncFlags.Highlight);
+				bool retVal = ((this.changeFlags & CharSyncFlags.Highlight) == CharSyncFlags.Highlight);
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetHighlightChanged: " + retVal);
 				return retVal;
 			}
@@ -383,7 +383,7 @@ namespace SteamEngine.Networking {
 
 			private bool GetHitpointsChanged() {
 				bool retVal = (((this.changeFlags & CharSyncFlags.Hits) == CharSyncFlags.Hits)
-					&& ((this.hitpoints != thing.Hits) || (this.maxHitpoints != thing.MaxHits)));
+					&& ((this.hitpoints != this.thing.Hits) || (this.maxHitpoints != this.thing.MaxHits)));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetHitpointsChanged: " + retVal);
 				return retVal;
 			}
@@ -926,7 +926,7 @@ namespace SteamEngine.Networking {
 								pg = PacketGroup.AcquireMultiUsePG();
 								pg.AcquirePacket<DeleteObjectOutPacket>().Prepare(this.thing);
 							}
-							Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing thing (" + thing + ") from the view of " + viewer);
+							Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing thing (" + this.thing + ") from the view of " + viewer);
 							state.Conn.SendPacketGroup(pg);
 						}
 					}
@@ -959,7 +959,7 @@ namespace SteamEngine.Networking {
 			state = Pool<CharState>.Acquire();
 			state.thing = ch;
 			ch.syncState = state;
-			queue.Enqueue(state);
+			this.queue.Enqueue(state);
 			this.autoResetEvent.Set();
 			return state;
 		}

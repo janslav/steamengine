@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void StartCrafting() {
-			SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character) Cont, craftingOrder.CraftingSkill);
+			SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character) this.Cont, this.craftingOrder.CraftingSkill);
 
 			CraftingSelection csl = this.craftingOrder.SelectionQueue.Peek();
 			ssa.Param1 = (csl != null ? csl.ItemDef : null);  //either selected ItemDef or null (both is acceptable)

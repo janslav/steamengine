@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region IResourceListEntry_Simple Members
 		public bool IsResourcePresent(Character chr) {
-			return chr.Str >= DesiredCount;
+			return chr.Str >= this.DesiredCount;
 		}
 
 		/// <summary>Indicates whether this is a consumable resource</summary>

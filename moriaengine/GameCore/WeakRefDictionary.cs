@@ -82,7 +82,7 @@ namespace SteamEngine {
 							return false;
 						}
 					}
-					return cache.comparer.Equals(keyA, keyB);
+					return this.cache.comparer.Equals(keyA, keyB);
 				}
 				return false;
 			}
@@ -101,7 +101,7 @@ namespace SteamEngine {
 		public void Purge() {
 			List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>> aliveEntries = new List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>>(this.dict.Count);
 			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
-				if (IsAlive(pair.Key.weakKey) && IsAlive(pair.Value)) {
+				if (this.IsAlive(pair.Key.weakKey) && this.IsAlive(pair.Value)) {
 					aliveEntries.Add(pair);
 				}
 			}
@@ -195,20 +195,20 @@ namespace SteamEngine {
 		private KeysCollection keys;
 		public ICollection<TKey> Keys {
 			get {
-				if (keys == null) {
-					keys = new KeysCollection(this);
+				if (this.keys == null) {
+					this.keys = new KeysCollection(this);
 				}
-				return keys;
+				return this.keys;
 			}
 		}
 
 		private ValuesCollection values;
 		public ICollection<TValue> Values {
 			get {
-				if (values == null) {
-					values = new ValuesCollection(this);
+				if (this.values == null) {
+					this.values = new ValuesCollection(this);
 				}
-				return values;
+				return this.values;
 			}
 		}
 
@@ -232,12 +232,12 @@ namespace SteamEngine {
 			}
 
 			public bool Contains(TKey key) {
-				return cache.dict.ContainsKey(new WeakRefDictionaryKeyEntry(key));
+				return this.cache.dict.ContainsKey(new WeakRefDictionaryKeyEntry(key));
 			}
 
 			public void CopyTo(TKey[] array, int arrayIndex) {
-				cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
+				this.cache.Purge();
+				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					array[arrayIndex] = (TKey) pair.Key.weakKey.Target;
 					arrayIndex++;
 				}
@@ -245,7 +245,7 @@ namespace SteamEngine {
 
 			public int Count {
 				get {
-					return cache.Count;
+					return this.cache.Count;
 				}
 			}
 
@@ -256,15 +256,15 @@ namespace SteamEngine {
 			}
 
 			public IEnumerator<TKey> GetEnumerator() {
-				cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
+				this.cache.Purge();
+				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					yield return (TKey) pair.Key.weakKey.Target;
 				}
 			}
 
 			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-				cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
+				this.cache.Purge();
+				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					yield return pair.Key.weakKey.Target;
 				}
 			}
@@ -290,12 +290,12 @@ namespace SteamEngine {
 			}
 
 			public bool Contains(TValue value) {
-				return cache.dict.ContainsValue(new WeakReference(value));
+				return this.cache.dict.ContainsValue(new WeakReference(value));
 			}
 
 			public void CopyTo(TValue[] array, int arrayIndex) {
-				cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
+				this.cache.Purge();
+				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					array[arrayIndex] = (TValue) pair.Value.Target;
 					arrayIndex++;
 				}
@@ -303,7 +303,7 @@ namespace SteamEngine {
 
 			public int Count {
 				get {
-					return cache.Count;
+					return this.cache.Count;
 				}
 			}
 
@@ -314,15 +314,15 @@ namespace SteamEngine {
 			}
 
 			public IEnumerator<TValue> GetEnumerator() {
-				cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
+				this.cache.Purge();
+				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					yield return (TValue) pair.Value.Target;
 				}
 			}
 
 			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-				cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in cache.dict) {
+				this.cache.Purge();
+				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
 					yield return pair.Value.Target;
 				}
 			}
@@ -345,8 +345,8 @@ namespace SteamEngine {
 		}
 
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
-			Purge();
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in dict) {
+			this.Purge();
+			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
 				array[arrayIndex] = new KeyValuePair<TKey, TValue>(
 					(TKey) pair.Key.weakKey.Target, (TValue) pair.Value.Target);
 				checked {
@@ -357,7 +357,7 @@ namespace SteamEngine {
 
 		public int Count {
 			get {
-				Purge();
+				this.Purge();
 				return this.dict.Count;
 			}
 		}
@@ -377,8 +377,8 @@ namespace SteamEngine {
 		#region IEnumerable<KeyValuePair<TKey,TValue>> Members
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
-			Purge();
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in dict) {
+			this.Purge();
+			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
 				yield return new KeyValuePair<TKey, TValue>(
 					(TKey) pair.Key.weakKey.Target, (TValue) pair.Value.Target);
 			}
@@ -389,8 +389,8 @@ namespace SteamEngine {
 		#region IEnumerable Members
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-			Purge();
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in dict) {
+			this.Purge();
+			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
 				yield return new KeyValuePair<TKey, TValue>(
 					(TKey) pair.Key.weakKey.Target, (TValue) pair.Value.Target);
 			}

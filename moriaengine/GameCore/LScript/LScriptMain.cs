@@ -57,7 +57,7 @@ namespace SteamEngine.LScript {
 			newSnippetRunner.line = line;
 			try {
 				using (StringReader reader = new StringReader(script)) {
-					newSnippetRunner.code = LScriptMain.Compile(newSnippetRunner, reader, line);
+					newSnippetRunner.code = Compile(newSnippetRunner, reader, line);
 				}
 				newSnippetRunner.lastRunSuccesful = true;
 				return newSnippetRunner;
@@ -91,7 +91,7 @@ namespace SteamEngine.LScript {
 			snippetRunner.lastRunSuccesful = false;
 			try {
 				using (StringReader reader = new StringReader(script)) {
-					snippetRunner.code = LScriptMain.Compile(snippetRunner, reader, line);
+					snippetRunner.code = Compile(snippetRunner, reader, line);
 				}
 				object retVal = snippetRunner.code.Run(new ScriptVars(null, self, snippetRunner.LocalVarsCount));
 				snippetRunner.lastRunSuccesful = true;
@@ -240,7 +240,7 @@ namespace SteamEngine.LScript {
 
 
 				throw new InterpreterException("Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) + "'(Node type " + LogStr.Ident(code.ToString()) + ") in an invalid way.",
-					LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
+					startLine + code.GetStartLine(), code.GetStartColumn(),
 					GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName());
 			} else {
 				return CompileNode(parent, code);
@@ -280,7 +280,7 @@ namespace SteamEngine.LScript {
 					return OpNode_Object.Construct(parent, (object) null);
 
 				case StrictConstants.TIMER_KEY:
-					return OpNode_Object.Construct(parent, SteamEngine.Timers.TimerKey.Acquire(
+					return OpNode_Object.Construct(parent, Timers.TimerKey.Acquire(
 						((Token) code.GetChildAt(1)).GetImage()));
 
 				case StrictConstants.TRIGGER_KEY:
@@ -361,10 +361,10 @@ namespace SteamEngine.LScript {
 				case StrictConstants.INTEGER:
 					long i;
 					try {
-						i = TagMath.ParseInt64(((Token) code).GetImage());
+						i = ConvertTools.ParseInt64(((Token) code).GetImage());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing integer",
-							LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
+							startLine + code.GetStartLine(), code.GetStartColumn(),
 							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
 					if ((i <= int.MaxValue) && (i >= int.MinValue)) {
@@ -376,10 +376,10 @@ namespace SteamEngine.LScript {
 				case StrictConstants.HEXNUMBER:
 					ulong h;
 					try {
-						h = TagMath.ParseUInt64(((Token) code).GetImage().Trim());
+						h = ConvertTools.ParseUInt64(((Token) code).GetImage().Trim());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing hexadecimal integer",
-							LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
+							startLine + code.GetStartLine(), code.GetStartColumn(),
 							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
 					if ((h <= uint.MaxValue) && (h >= uint.MinValue)) {
@@ -391,17 +391,17 @@ namespace SteamEngine.LScript {
 				case StrictConstants.FLOAT:
 					double d;
 					try {
-						d = TagMath.ParseDouble(((Token) code).GetImage());
+						d = ConvertTools.ParseDouble(((Token) code).GetImage());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing decimal number",
-							LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
+							startLine + code.GetStartLine(), code.GetStartColumn(),
 							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
 					return OpNode_Object.Construct(parent, d);
 			}
 
 			throw new InterpreterException("Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) + "'(Node type " + LogStr.Ident(code.ToString()) + ")  in an invalid way.",
-				LScriptMain.startLine + code.GetStartLine(), code.GetStartColumn(),
+				startLine + code.GetStartLine(), code.GetStartColumn(),
 				GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName());
 		}
 

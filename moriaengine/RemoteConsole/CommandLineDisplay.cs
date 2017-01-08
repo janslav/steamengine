@@ -12,7 +12,7 @@ namespace SteamEngine.RemoteConsole {
 
 		public CommandLineDisplay(string name, GameUid id) {
 			this.id = id;
-			InitializeComponent();
+			this.InitializeComponent();
 			this.txtDisplay.DefaultTitle = name;
 			this.InitButtons();
 		}
@@ -24,20 +24,20 @@ namespace SteamEngine.RemoteConsole {
 
 		private void txtCommandLine_KeyPress(object sender, KeyPressEventArgs e) {
 			if (e.KeyChar == '\r') {
-				string cmd = txtCommandLine.Text;
-				txtCommandLine.Items.Remove(cmd);
+				string cmd = this.txtCommandLine.Text;
+				this.txtCommandLine.Items.Remove(cmd);
 
 				//if (txtCommandLine.Items.Count>maxCmdHistory)
 				//    txtCommandLine.Items.RemoveAt(txtCommandLine.Items.Count-1);
-				txtCommandLine.Items.Insert(0, cmd);
+				this.txtCommandLine.Items.Insert(0, cmd);
 
 				if (cmd.Trim() != "") {
 					ConsoleClient.SendCommand(this.id, cmd);
-					txtCommandLine.Text = "";
+					this.txtCommandLine.Text = "";
 				}
 				e.Handled = true;
 			} else if (e.KeyChar == 27) {
-				txtCommandLine.Text = "";
+				this.txtCommandLine.Text = "";
 				e.Handled = true;
 			}
 		}

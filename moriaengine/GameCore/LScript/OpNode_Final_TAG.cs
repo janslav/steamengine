@@ -32,8 +32,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (arg == oldNode) {
-				arg = newNode;
+			if (this.arg == oldNode) {
+				this.arg = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -45,7 +45,7 @@ namespace SteamEngine.LScript {
 				object oSelf = vars.self;
 				vars.self = vars.defaultObject;
 				try {
-					th.SetTag(name, arg.Run(vars));
+					th.SetTag(this.name, this.arg.Run(vars));
 				} finally {
 					vars.self = oSelf;
 				}
@@ -59,7 +59,7 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
-				th.SetTag(name, results[0]);
+				th.SetTag(this.name, results[0]);
 			} else {
 				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -68,7 +68,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("TAG ", name, " = ", arg);
+			return string.Concat("TAG ", this.name, " = ", this.arg);
 		}
 	}
 
@@ -85,7 +85,7 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
-				return th.GetTag(name);
+				return th.GetTag(this.name);
 			} else {
 				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -95,7 +95,7 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
-				return th.GetTag(name);
+				return th.GetTag(this.name);
 			} else {
 				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -103,7 +103,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("TAG(", name, ")");
+			return string.Concat("TAG(", this.name, ")");
 		}
 	}
 
@@ -120,7 +120,7 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
-				th.RemoveTag(name);
+				th.RemoveTag(this.name);
 			} else {
 				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -131,7 +131,7 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
-				th.RemoveTag(name);
+				th.RemoveTag(this.name);
 			} else {
 				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -140,7 +140,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("TAG.remove(", name, ")");
+			return string.Concat("TAG.remove(", this.name, ")");
 		}
 	}
 
@@ -157,7 +157,7 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
-				return th.HasTag(name);
+				return th.HasTag(this.name);
 			} else {
 				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -167,7 +167,7 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			TagHolder th = vars.self as TagHolder;
 			if (th != null) {
-				return th.HasTag(name);
+				return th.HasTag(this.name);
 			} else {
 				throw new InterpreterException("Tags can be used only on TagHolder and non-null objects.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
@@ -175,7 +175,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("TAG.EXISTS(", name, ")");
+			return string.Concat("TAG.EXISTS(", this.name, ")");
 		}
 	}
 }

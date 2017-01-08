@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 		public ItemDef DefaultTreasureItem {
 			get {
 				if (defaultTreasureItem == null) {
-					defaultTreasureItem = (ItemDef) ItemDef.GetByDefname("i_bag");
+					defaultTreasureItem = (ItemDef) ThingDef.GetByDefname("i_bag");
 				}
 				return defaultTreasureItem;
 			}
@@ -63,9 +63,9 @@ namespace SteamEngine.CompiledScripts {
 				this.Dialog(ac, SingletonScript<Dialogs.D_TreasureChest>.Instance);
 			} else {
 				p.SysMessage("otvirame poklad");
-				EnsureListItemEntry();
-				EnsureListSpawnEntry();
-				if (GetLastopenTimeDifference() / cycleTime >= 1) {	//it's time to generate another treasure;
+				this.EnsureListItemEntry();
+				this.EnsureListSpawnEntry();
+				if (this.GetLastopenTimeDifference() /this.cycleTime >= 1) {	//it's time to generate another treasure;
 					/*if (isLocked) { // some isLocked condition and locked container condidito and blah blah ...
 					 * ac.SysMessage("");
 					}
@@ -75,9 +75,9 @@ namespace SteamEngine.CompiledScripts {
 					}*/
 					int per;
 					//removeGuts of the container so that in the treasure will be just those items I really want to..
-					foreach (TreasureItemEntry tie in treasureItems) {
+					foreach (TreasureItemEntry tie in this.treasureItems) {
 						if (tie.periodic > 0) {
-							per = (int) (GetLastopenTimeDifference() / cycleTime) * tie.periodic;
+							per = (int) (this.GetLastopenTimeDifference() /this.cycleTime) * tie.periodic;
 							p.SysMessage("Periode is counted as: " + per.ToString());
 
 						} else {
@@ -94,37 +94,37 @@ namespace SteamEngine.CompiledScripts {
 							}
 						}
 					}
-					SetLastopen();	// we set the lastOpen field at the very time in which we generate the treasure.
-					OpenTo(ac);
+					this.SetLastopen();	// we set the lastOpen field at the very time in which we generate the treasure.
+					this.OpenTo(ac);
 				} else {
-					OpenTo(ac);	//Too early, there is no reward to give yet.
+					this.OpenTo(ac);	//Too early, there is no reward to give yet.
 				}
 			}
 		}
 
 		public override void On_Create() {
-			SetLastopen();
+			this.SetLastopen();
 		}
 
 		public void SetLastopen() {
-			lastOpen = (long) Globals.TimeInSeconds;
+			this.lastOpen = (long) Globals.TimeInSeconds;
 		}
 
 		/// <summary>Assigns a time in seconds to the lastOpen attribute representing the serverTime 'secBack' seconds before.</summary>
 		public void SetLastopen(int secBack) {
-			lastOpen = (long) Globals.TimeInSeconds - secBack;
+			this.lastOpen = (long) Globals.TimeInSeconds - secBack;
 		}
 
 		/// <summary>Returns a time in seconds from the last treasure opening.</summary>
 		public long GetLastopenTimeDifference() {
-			return (long) Globals.TimeInSeconds - lastOpen;
+			return (long) Globals.TimeInSeconds - this.lastOpen;
 		}
 
 		/// <summary>Returns a string containing easy to read info on how long it is from the last treasure opening.</summary>
 		public string GetLastopenTimeDifference(bool isTimeString) {
 			if (isTimeString) {
 				long d, h, m, s;
-				s = GetLastopenTimeDifference();
+				s = this.GetLastopenTimeDifference();
 				d = s / 86400;
 				s -= d * 86400;
 				h = s / 3600;
@@ -133,31 +133,31 @@ namespace SteamEngine.CompiledScripts {
 				s -= m * 60;
 				return d.ToString() + "d " + h.ToString() + "h " + m.ToString() + "min " + s.ToString() + "s";
 			} else {
-				return Convert.ToString(Globals.TimeInSeconds - lastOpen);
+				return Convert.ToString(Globals.TimeInSeconds - this.lastOpen);
 			}
 		}
 
 		public List<TreasureItemEntry> TreasureItems {
 			get {
-				EnsureListItemEntry();
-				return treasureItems;
+				this.EnsureListItemEntry();
+				return this.treasureItems;
 			}
 		}
 
 		public List<TreasureSpawnEntry> TreasureSpawns {
 			get {
-				EnsureListSpawnEntry();
-				return treasureSpawns;
+				this.EnsureListSpawnEntry();
+				return this.treasureSpawns;
 			}
 		}
 
 		public int MoneyCoefficient {
 			get {
-				return moneyCoefficient;
+				return this.moneyCoefficient;
 			}
 			set {
 				if (value > 0) {
-					moneyCoefficient = value;
+					this.moneyCoefficient = value;
 				} else {
 					// exception
 				}
@@ -166,11 +166,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Check {
 			get {
-				return check;
+				return this.check;
 			}
 			set {
 				if (value > 0) {
-					check = value;
+					this.check = value;
 				} else {
 					// exception
 				}
@@ -179,7 +179,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public int CycleTime {
 			get {
-				return cycleTime;
+				return this.cycleTime;
 			}
 			set {
 				if (value > 0) {
@@ -191,11 +191,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Lockpick {
 			get {
-				return lockpick;
+				return this.lockpick;
 			}
 			set {
 				if (value > 0) {
-					lockpick = value;
+					this.lockpick = value;
 				} else {
 					// exception
 				}
@@ -203,75 +203,75 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void EnsureListItemEntry() {
-			if (treasureItems == null) {
-				treasureItems = new List<TreasureItemEntry>();
+			if (this.treasureItems == null) {
+				this.treasureItems = new List<TreasureItemEntry>();
 			}
 		}
 
 		public void EnsureListSpawnEntry() {
-			if (treasureSpawns == null) {
-				treasureSpawns = new List<TreasureSpawnEntry>();
+			if (this.treasureSpawns == null) {
+				this.treasureSpawns = new List<TreasureSpawnEntry>();
 			}
 		}
 
 		/// <summary>Adds new item into TreasureItem List</summary>
 		public void AddTreasureItem(ItemDef item, int amount, int chance, int periodic) {
-			EnsureListItemEntry();
+			this.EnsureListItemEntry();
 			TreasureItemEntry newItem = new TreasureItemEntry();
 			newItem.itemID = item;
 			newItem.amount = amount;
 			newItem.chance = chance;
 			newItem.periodic = periodic;
-			treasureItems.Add(newItem);
+			this.treasureItems.Add(newItem);
 		}
 
 		/// <summary>Overwrites attributes of one paticular TreasureItemEntry in the list of treasureItems</summary>
 		public void OverwriteTreasureItem(int itemIndex, ItemDef item, int amount, int chance, int periodic) {
-			if (treasureItems.Count <= itemIndex) {
+			if (this.treasureItems.Count <= itemIndex) {
 				// chyba !
 				return;
 			}
-			treasureItems[itemIndex].itemID = item;
-			treasureItems[itemIndex].amount = amount;
-			treasureItems[itemIndex].chance = chance;
-			treasureItems[itemIndex].periodic = periodic;
+			this.treasureItems[itemIndex].itemID = item;
+			this.treasureItems[itemIndex].amount = amount;
+			this.treasureItems[itemIndex].chance = chance;
+			this.treasureItems[itemIndex].periodic = periodic;
 		}
 
 		/// <summary>Removes an item from the list of treasureItems</summary>
 		public void RemoveTreasureItem(int itemIndex) {
-			if (treasureItems.Count <= itemIndex) {
+			if (this.treasureItems.Count <= itemIndex) {
 				// chyba !
 				return;
 			}
-			treasureItems.RemoveAt(itemIndex);
+			this.treasureItems.RemoveAt(itemIndex);
 		}
 
 		/// <summary>Adds new item into treasureSpawns List</summary>
 		public void AddTreasureSpawn(CharacterDef charDef, int amount) {
-			EnsureListSpawnEntry();
+			this.EnsureListSpawnEntry();
 			TreasureSpawnEntry newSpawn = new TreasureSpawnEntry();
 			newSpawn.charDef = charDef;
 			newSpawn.amount = amount;
-			treasureSpawns.Add(newSpawn);
+			this.treasureSpawns.Add(newSpawn);
 		}
 
 		/// <summary>Overwrites attributes of one paticular TreasureSpawnEntry in the list of treasureSpawns</summary>
 		public void OverwriteTreasureSpawn(int spawnIndex, CharacterDef charDef, int amount) {
-			if (treasureSpawns.Count <= spawnIndex) {
+			if (this.treasureSpawns.Count <= spawnIndex) {
 				// chyba !
 				return;
 			}
-			treasureSpawns[spawnIndex].charDef = charDef;
-			treasureSpawns[spawnIndex].amount = amount;
+			this.treasureSpawns[spawnIndex].charDef = charDef;
+			this.treasureSpawns[spawnIndex].amount = amount;
 		}
 
 		/// <summary>Removes an item from the list of treasureSpawns</summary>
 		public void RemoveTreasureSpawn(int spawnIndex) {
-			if (treasureSpawns.Count <= spawnIndex) {
+			if (this.treasureSpawns.Count <= spawnIndex) {
 				// chyba !
 				return;
 			}
-			treasureSpawns.RemoveAt(spawnIndex);
+			this.treasureSpawns.RemoveAt(spawnIndex);
 		}
 	}
 
@@ -526,7 +526,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					for (int i = 0; i < treasure.TreasureItems.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
-							thisItem = ItemDef.GetByDefname(thisDef) as ItemDef;
+							thisItem = ThingDef.GetByDefname(thisDef) as ItemDef;
 							if (thisItem == null) {
 								p.RedMessage("'" + thisDef + "' neni platny defname!");
 								err = true;
@@ -627,7 +627,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					for (int i = 0; i < treasure.TreasureSpawns.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
-							thisChar = CharacterDef.GetByDefname(thisDef) as CharacterDef;
+							thisChar = ThingDef.GetByDefname(thisDef) as CharacterDef;
 							if (thisChar == null) {
 								p.RedMessage("'" + thisDef + "' neni platny characterDef!");
 								err = true;
@@ -646,7 +646,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 					if (gr.PressedButton == 2) { // pressed Add button
 						p.SysMessage("Pøidán defaultní spawn.");
-						treasure.AddTreasureSpawn((CharacterDef) CharacterDef.GetByDefname("c_ostard_zostrich"), 1);
+						treasure.AddTreasureSpawn((CharacterDef) ThingDef.GetByDefname("c_ostard_zostrich"), 1);
 						treasure.Dialog(p, this);
 						return;
 					}

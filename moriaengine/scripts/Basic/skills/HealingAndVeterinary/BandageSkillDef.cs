@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 
 			//abort previous healing/veterinary, if needed
-			SkillSequenceArgs.SkillStrokeTimer timer = (SkillSequenceArgs.SkillStrokeTimer) self.RemoveTimer(healingTimerKey);
+			SkillSequenceArgs.SkillStrokeTimer timer = (SkillSequenceArgs.SkillStrokeTimer) self.RemoveTimer(this.healingTimerKey);
 			if (timer != null) {
 				timer.skillSeqArgs.PhaseAbort();
 				timer.skillSeqArgs = null;
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 			if (skillSeqArgs.DelaySpan < TimeSpan.Zero) {
 				skillSeqArgs.PhaseStroke();
 			} else {
-				self.AddTimer(healingTimerKey, new SkillSequenceArgs.SkillStrokeTimer(skillSeqArgs)).DueInSpan = skillSeqArgs.DelaySpan;
+				self.AddTimer(this.healingTimerKey, new SkillSequenceArgs.SkillStrokeTimer(skillSeqArgs)).DueInSpan = skillSeqArgs.DelaySpan;
 			}
 
 			return TriggerResult.Cancel; //cancel normal operation, we use separate timer here

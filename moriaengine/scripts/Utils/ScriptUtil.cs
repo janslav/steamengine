@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 			string testString = String.Concat(args);
 			Globals.SrcWriteLine("Listing scripts containing string '<testString>' in their defname:");
 
-			Regex re = new System.Text.RegularExpressions.Regex(testString);
+			Regex re = new Regex(testString);
 
 			foreach (AbstractScript script in AbstractScript.AllScripts) {
 				string defname = script.Defname;

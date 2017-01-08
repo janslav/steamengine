@@ -82,33 +82,33 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private void TryInsertIntoTable() {
-				if (valueSet && keySet) {
-					table[key] = value;
+				if (this.valueSet && this.keySet) {
+					this.table[this.key] = this.value;
 				}
 			}
 
 			internal void DelayedLoad_Value(object loadedObj, string filename, int line) {
 				this.value = loadedObj;
-				valueSet = true;
-				TryInsertIntoTable();
+				this.valueSet = true;
+				this.TryInsertIntoTable();
 			}
 
 			internal void DelayedLoad_Key(object loadedObj, string filename, int line) {
 				this.key = loadedObj;
-				keySet = true;
-				TryInsertIntoTable();
+				this.keySet = true;
+				this.TryInsertIntoTable();
 			}
 
 			internal void DelayedCopy_Value(object loadedObj) {
 				this.value = loadedObj;
-				valueSet = true;
-				TryInsertIntoTable();
+				this.valueSet = true;
+				this.TryInsertIntoTable();
 			}
 
 			internal void DelayedCopy_Key(object loadedObj) {
 				this.key = loadedObj;
-				keySet = true;
-				TryInsertIntoTable();
+				this.keySet = true;
+				this.TryInsertIntoTable();
 			}
 		}
 

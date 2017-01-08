@@ -34,7 +34,7 @@ namespace SteamEngine.Common {
 
 			this.entriesReadonly = new ReadOnlyCollection<string>(this.entriesByNumber);
 
-			base.Init(GetEntriesFromList(strings), language);
+			this.Init(GetEntriesFromList(strings), language);
 		}
 		
 		private static IEnumerable<KeyValuePair<string, string>> GetEntriesFromList(IList<string> strings) {

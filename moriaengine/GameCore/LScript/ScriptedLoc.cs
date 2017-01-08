@@ -80,7 +80,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Unload() {
-			foreach (IUnloadable member in array) {
+			foreach (IUnloadable member in this.array) {
 				if (member != null) {
 					member.Unload();
 				}
@@ -89,7 +89,7 @@ namespace SteamEngine.LScript {
 
 		public bool IsUnloaded {
 			get {
-				foreach (IUnloadable member in array) {
+				foreach (IUnloadable member in this.array) {
 					if (member != null) {
 						if (member.IsUnloaded) {
 							return true;

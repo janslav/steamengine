@@ -36,7 +36,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		public ConsoleId ConsoleId {
 			get {
-				return uid;
+				return this.uid;
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		public override string ToString() {
-			return "ConsoleClient " + uid;
+			return "ConsoleClient " + this.uid;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "accName"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "password")]
@@ -106,7 +106,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			openWindow.Prepare("AuxiliaryServer", GameUid.AuxServer);
 			this.Conn.SendSinglePacket(openWindow);
 
-			EnableCommandLine(GameUid.AuxServer);
+			this.EnableCommandLine(GameUid.AuxServer);
 		}
 
 		internal void EnableCommandLine(GameUid serverUid) {
@@ -124,15 +124,15 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		internal void SetLoggedInTo(GameServer gameServer) {
 			if (!this.isLoggedInAux) {
-				SetLoggedInToAux(false);
+				this.SetLoggedInToAux(false);
 			}
 
 			Console.WriteLine(this + " identified as " + this.accName + " with " + gameServer.Setup.Name);
 
 			Settings.RememberUser(this.accName, this.accPass);
 
-			OpenCmdWindow(gameServer.Setup.Name, gameServer.ServerUid);
-			EnableCommandLine(gameServer.ServerUid);
+			this.OpenCmdWindow(gameServer.Setup.Name, gameServer.ServerUid);
+			this.EnableCommandLine(gameServer.ServerUid);
 
 			GameServersManager.AddLoggedIn(this, gameServer);
 		}

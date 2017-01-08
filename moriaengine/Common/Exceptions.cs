@@ -27,23 +27,23 @@ namespace SteamEngine {
 
 		public SEException()
 			: base() {
-			niceMessage = LogStr.Raw(this.Message);
+			this.niceMessage = LogStr.Raw(this.Message);
 		}
 
 		public SEException(string s)
 			: base(s) {
-			niceMessage = (LogStr) s;
+			this.niceMessage = (LogStr) s;
 		}
 
 		public SEException(string s, Exception e)
 			: base(s, e) {
-			niceMessage = (LogStr) s;
+			this.niceMessage = (LogStr) s;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public SEException(LogStr s, Exception e)
 			: base(s.RawString, e) {
-			niceMessage = s;
+			this.niceMessage = s;
 		}
 
 		public SEException(string filename, int line, Exception e)
@@ -61,19 +61,19 @@ namespace SteamEngine {
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public SEException(LogStr s)
 			: base(s.RawString) {
-			niceMessage = s;
+			this.niceMessage = s;
 		}
 
 		public virtual bool StartsWithFileLine {
 			get {
-				return niceMessage.NiceString.StartsWith("(" + LogStr.GetStyleStartPrefix(LogStyles.FileLine));
+				return this.niceMessage.NiceString.StartsWith("(" + LogStr.GetStyleStartPrefix(LogStyles.FileLine));
 			}
 		}
 
 		public virtual void TryAddFileLineInfo(string filename, int line) {
-			if (!niceMessage.NiceString.StartsWith("(" + LogStr.GetStyleStartPrefix(LogStyles.FileLine))) {
+			if (!this.niceMessage.NiceString.StartsWith("(" + LogStr.GetStyleStartPrefix(LogStyles.FileLine))) {
 				//if we don't already start with the file/line info, let's add it on the beginning
-				niceMessage = LogStr.FileLine(filename, line) + niceMessage;
+				this.niceMessage = LogStr.FileLine(filename, line) + this.niceMessage;
 			}
 		}
 
@@ -401,22 +401,24 @@ namespace SteamEngine {
 		}
 		public ShowMessageAndExitException(string s, string t)
 			: base(s) {
-			msg = s; title = t;
+			this.msg = s;
+			this.title = t;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public ShowMessageAndExitException(LogStr s, string t)
 			: base(s) {
-			msg = s.RawString; title = t;
+			this.msg = s.RawString;
+			this.title = t;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
 		public void Show() {
 			IWin32Window window = Form.ActiveForm;
 			if (window != null) {
-				MessageBox.Show(window, msg, title);
+				MessageBox.Show(window, this.msg, this.title);
 			} else {
-				MessageBox.Show(msg, title);
+				MessageBox.Show(this.msg, this.title);
 			}
 		}
 	}

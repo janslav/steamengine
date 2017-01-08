@@ -30,18 +30,18 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		protected override void Write() {
 			int serverCount = this.names.Count;
-			EncodeUShort((ushort) ((serverCount * 40) + 6)); //length
+			this.EncodeUShort((ushort) ((serverCount * 40) + 6)); //length
 
-			EncodeByte(0x5d);	//0x13; //unknown //0x5d on RunUo
+			this.EncodeByte(0x5d);	//0x13; //unknown //0x5d on RunUo
 
-			EncodeUShort((ushort) serverCount);
+			this.EncodeUShort((ushort) serverCount);
 
 			for (int i = 0; i < serverCount; i++) {
-				EncodeUShort((ushort) i);
-				EncodeASCIIString(this.names[i], 32);
-				EncodeByte(0);
-				EncodeSByte(this.timezone);
-				EncodeBytesReversed(this.ip);
+				this.EncodeUShort((ushort) i);
+				this.EncodeASCIIString(this.names[i], 32);
+				this.EncodeByte(0);
+				this.EncodeSByte(this.timezone);
+				this.EncodeBytesReversed(this.ip);
 			}
 		}
 	}
@@ -56,15 +56,15 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "ip"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "port")]
 		public void Prepare(byte[] ip, int port) {
-			Logger.WriteDebug("Sending shard IP: " + new System.Net.IPEndPoint(new System.Net.IPAddress(ip), port));
+			Common.Logger.WriteDebug("Sending shard IP: " + new System.Net.IPEndPoint(new System.Net.IPAddress(ip), port));
 			this.ip = ip;
 			this.port = (ushort) port;
 		}
 
 		protected override void Write() {
-			EncodeBytes(this.ip);
-			EncodeUShort(this.port);
-			EncodeZeros(4); //new key. could be random, but who cares...
+			this.EncodeBytes(this.ip);
+			this.EncodeUShort(this.port);
+			this.EncodeZeros(4); //new key. could be random, but who cares...
 		}
 	}
 

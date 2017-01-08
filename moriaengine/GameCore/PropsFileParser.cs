@@ -59,7 +59,7 @@ namespace SteamEngine {
 
 			long streamLen = stream.BaseStream.Length;
 			long lastSentPercentage = -1;
-			string fileNameToDisplay = System.IO.Path.GetFileName(filename);
+			string fileNameToDisplay = Path.GetFileName(filename);
 
 			while (true) {
 				string curLine = stream.ReadLine();
@@ -122,7 +122,7 @@ namespace SteamEngine {
 						}
 						continue;
 					}
-					m = CompiledLocStringCollection.valueRE.Match(curLine);
+					m = LocStringCollection.valueRE.Match(curLine);
 					if (m.Success) {
 						if (curSection != null) {
 							GroupCollection gc = m.Groups;
@@ -169,33 +169,33 @@ namespace SteamEngine {
 		}
 
 		public string HeaderComment {
-			get { return headerComment; }
+			get { return this.headerComment; }
 		}
 
 		public string HeaderType {
-			get { return headerType; }
+			get { return this.headerType; }
 		}
 
 		public string HeaderName {
-			get { return headerName; }
-			set { headerName = value; }
+			get { return this.headerName; }
+			set { this.headerName = value; }
 		}
 
 		public int HeaderLine {
-			get { return headerLine; }
+			get { return this.headerLine; }
 		}
 
 		public string Filename {
-			get { return filename; }
+			get { return this.filename; }
 		} 
 
 
 		public TriggerSection GetTrigger(int index) {
-			return triggerSections[index];
+			return this.triggerSections[index];
 		}
 
 		public TriggerSection GetTrigger(string name) {
-			foreach (TriggerSection s in triggerSections) {
+			foreach (TriggerSection s in this.triggerSections) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.TriggerName)) {
 					return s;
 				}
@@ -204,17 +204,17 @@ namespace SteamEngine {
 		}
 
 		public TriggerSection PopTrigger(string name) {
-			int i = 0, n = triggerSections.Count;
+			int i = 0, n = this.triggerSections.Count;
 			TriggerSection s = null;
 			for (; i < n; i++) {
-				s = triggerSections[i];
+				s = this.triggerSections[i];
 				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.TriggerName)) {
 					n = -1;
 					break;
 				}
 			}
 			if (n == -1) {
-				triggerSections.RemoveAt(i);
+				this.triggerSections.RemoveAt(i);
 				return s;
 			}
 			return null;
@@ -222,40 +222,40 @@ namespace SteamEngine {
 
 		public int TriggerCount {
 			get {
-				return triggerSections.Count;
+				return this.triggerSections.Count;
 			}
 		}
 
 		internal void AddTrigger(TriggerSection value) {
-			triggerSections.Add(value);
+			this.triggerSections.Add(value);
 		}
 
 		internal void AddPropsLine(string name, string value, int line, string comment) {
 			PropsLine p = new PropsLine(name, value, line, comment);
 			string origKey = name;
 			string key = origKey;
-			for (int a = 0; props.ContainsKey(key); a++) {
+			for (int a = 0; this.props.ContainsKey(key); a++) {
 				key = origKey + a.ToString(System.Globalization.CultureInfo.InvariantCulture);
 				//duplicite properties get a counted name
 				//like if there is more "events=..." lines, they are in the hashtable with keys
 				//events, events0, events1, etc. 
 				//these entries wont be probably looked up by their name anyways.
 			}
-			props[key] = p;
+			this.props[key] = p;
 		}
 
 		public PropsLine TryPopPropsLine(string name) {
 			PropsLine line;
-			if (props.TryGetValue(name, out line)) {
-				props.Remove(name);
+			if (this.props.TryGetValue(name, out line)) {
+				this.props.Remove(name);
 			}
 			return line;
 		}
 
 		public PropsLine PopPropsLine(string name) {
 			PropsLine line;
-			if (props.TryGetValue(name, out line)) {
-				props.Remove(name);
+			if (this.props.TryGetValue(name, out line)) {
+				this.props.Remove(name);
 			} else {
 				throw new SEException(LogStr.FileLine(this.filename, this.headerLine) + "There is no '" + name + "' line!");
 			}
@@ -264,14 +264,13 @@ namespace SteamEngine {
 
 		public ICollection<PropsLine> PropsLines {
 			get {
-				return props.Values;
+				return this.props.Values;
 			}
 		}
 
 		public override string ToString() {
 			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				"[{0} {1}]", 
-				headerType, headerName);
+				"[{0} {1}]", this.headerType, this.headerName);
 		}
 	}
 
@@ -332,7 +331,7 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return string.Concat(triggerKey, "=@", triggerName);
+			return string.Concat(this.triggerKey, "=@", this.triggerName);
 		}
 	}
 
@@ -350,11 +349,11 @@ namespace SteamEngine {
 		}
 
 		public string Comment {
-			get { return comment; }
+			get { return this.comment; }
 		}
 
 		public string Name {
-			get { return name; }
+			get { return this.name; }
 		}
 
 		public string Value {
@@ -362,11 +361,11 @@ namespace SteamEngine {
 		}
 
 		public int Line {
-			get { return line; }
+			get { return this.line; }
 		} 
 
 		public override string ToString() {
-			return name + " = " + value;
+			return this.name + " = " + this.value;
 		}
 	}
 }

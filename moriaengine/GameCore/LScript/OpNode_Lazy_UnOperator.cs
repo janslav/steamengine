@@ -40,29 +40,29 @@ namespace SteamEngine.LScript {
 				base(parent, LScriptMain.GetParentScriptHolder(parent).filename, code.GetStartLine() + LScriptMain.startLine, code.GetStartColumn(), code) {
 
 			if (code.GetChildCount() == 3) {
-				operatorNode = code.GetChildAt(1);
-				obj = LScriptMain.CompileNode(this, code.GetChildAt(2));
+				this.operatorNode = code.GetChildAt(1);
+				this.obj = LScriptMain.CompileNode(this, code.GetChildAt(2));
 			} else if (code.GetChildCount() == 2) {
-				operatorNode = code.GetChildAt(0);
-				obj = LScriptMain.CompileNode(this, code.GetChildAt(1));
+				this.operatorNode = code.GetChildAt(0);
+				this.obj = LScriptMain.CompileNode(this, code.GetChildAt(1));
 			} else {
 				throw new SEException("Wrong number of child nodes. This should not happen.");
 			}
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			if (obj == oldNode) {
-				obj = newNode;
+			if (this.obj == oldNode) {
+				this.obj = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
 		internal override object Run(ScriptVars vars) {
-			string opString = LScriptMain.GetString(operatorNode).Trim();
-			result = obj.Run(vars);
+			string opString = LScriptMain.GetString(this.operatorNode).Trim();
+			this.result = this.obj.Run(vars);
 
-			if (result == null) {
+			if (this.result == null) {
 				throw new InterpreterException("Operand of the unary operator '" + opString + "' is null.",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
@@ -71,33 +71,33 @@ namespace SteamEngine.LScript {
 			ITriable newNode = null;
 			switch (opString) {
 				case ("+"):
-					if (TagMath.IsNumberType(result.GetType())) {
+					if (ConvertTools.IsNumberType(this.result.GetType())) {
 						//+ does nothing to numbers
-						this.ReplaceSelf(obj);
-						return result;
+						this.ReplaceSelf(this.obj);
+						return this.result;
 					} else {
-						newNode = FindOperatorMethod("op_UnaryPlus");
+						newNode = this.FindOperatorMethod("op_UnaryPlus");
 					}
 					break;
 				case ("-"):
-					if (TagMath.IsNumberType(result.GetType())) {
+					if (ConvertTools.IsNumberType(this.result.GetType())) {
 						newNode = new OpNode_MinusOperator(this.parent, this.OrigNode);
 					} else {
-						newNode = FindOperatorMethod("op_UnaryNegation");
+						newNode = this.FindOperatorMethod("op_UnaryNegation");
 					}
 					break;
 				case ("!"):
-					if ((TagMath.IsNumberType(result.GetType())) || (result is bool)) {
+					if ((ConvertTools.IsNumberType(this.result.GetType())) || (this.result is bool)) {
 					} else {
-						newNode = FindOperatorMethod("op_LogicalNot");
+						newNode = this.FindOperatorMethod("op_LogicalNot");
 					}
 					newNode = new OpNode_NotOperator(this.parent, this.OrigNode);
 					break;
 				case ("~"):
-					if (TagMath.IsNumberType(result.GetType())) {
+					if (ConvertTools.IsNumberType(this.result.GetType())) {
 						newNode = new OpNode_BitComplementOperator(this.parent, this.OrigNode);
 					} else {
-						newNode = FindOperatorMethod("op_OnesComplement");
+						newNode = this.FindOperatorMethod("op_OnesComplement");
 					}
 					break;
 				default:
@@ -108,12 +108,12 @@ namespace SteamEngine.LScript {
 				object retVal;
 				OpNode_Lazy_UnOperator newNodeAsUnOp = newNode as OpNode_Lazy_UnOperator;
 				if (newNodeAsUnOp != null) {
-					newNodeAsUnOp.obj = obj;
+					newNodeAsUnOp.obj = this.obj;
 				}
 				OpNode newNodeAsOpNode = (OpNode) newNode;
 				this.ReplaceSelf(newNodeAsOpNode);
-				retVal = newNode.TryRun(vars, new object[] { result });
-				if (obj is OpNode_Object) {
+				retVal = newNode.TryRun(vars, new object[] {this.result });
+				if (this.obj is OpNode_Object) {
 					//operand is constant -> result is also constant
 					OpNode constNode = OpNode_Object.Construct(this.parent, retVal);
 					this.parent.Replace(newNodeAsOpNode, constNode);
@@ -125,16 +125,16 @@ namespace SteamEngine.LScript {
 		}
 
 		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
-			if (result != null) {
+			if (this.result != null) {
                 List<MethodInfo> matches = new List<MethodInfo>();
 
-				Type type = result.GetType();
+				Type type = this.result.GetType();
 				MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 				foreach (MethodInfo mi in methods) {
 					if (mi.Name.Equals(methodName)) {
 						ParameterInfo[] pars = mi.GetParameters();
 						if (pars.Length == 1) {
-							if (MemberResolver.IsCompatibleType(pars[0].ParameterType, result)) {
+							if (MemberResolver.IsCompatibleType(pars[0].ParameterType, this.result)) {
 								matches.Add(mi);
 							}
 						}
@@ -142,8 +142,7 @@ namespace SteamEngine.LScript {
 				}
 				if (matches.Count == 1) {
 					MethodInfo method = MemberWrapper.GetWrapperFor(matches[0]);
-					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename,
-						line, this.column, this.OrigNode, method, new OpNode[] { obj });
+					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode, method, new OpNode[] {this.obj });
 					return newNode;
 				} else if (matches.Count > 1) {
 					//List<MethodInfo> resolvedAmbiguities;
@@ -169,8 +168,8 @@ namespace SteamEngine.LScript {
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("( ");
-			str.Append(LScriptMain.GetString(operatorNode).Trim()).Append(" ");
-			str.Append(obj.ToString()).Append(")");
+			str.Append(LScriptMain.GetString(this.operatorNode).Trim()).Append(" ");
+			str.Append(this.obj.ToString()).Append(")");
 			return str.ToString();
 		}
 	}

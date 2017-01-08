@@ -48,7 +48,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 				socket.BeginConnect(endpoint, BeginConnectCallBack, state);
 			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("ScheduledBeginConnect out");
 		}
@@ -63,7 +63,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				socket.EndConnect(result);
 			} catch (Exception e) {
 				Console.WriteLine("Connecting to sphere at '" + setup.RamdiscIniPath + "' failed:" + e.Message);
-				Logger.WriteDebug(e);
+				Common.Logger.WriteDebug(e);
 				ScheduleConnect(arr, 5000);
 				return;
 			}

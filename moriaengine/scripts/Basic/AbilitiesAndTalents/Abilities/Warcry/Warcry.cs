@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 			double power = ab.Def.EffectPower * ab.ModifiedPoints; //
 			TimeSpan duration = TimeSpan.FromSeconds(ab.Def.EffectDuration);
 
-			foreach (Player target in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort) ComputeRange(chr))) {
+			foreach (Player target in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort) this.ComputeRange(chr))) {
 				if (chr == target) {
 					continue; //dont do selfwarcry ;)
 				}
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Assign() {
-			((Character) Cont).RedMessage("Jsi v šoku!");
+			((Character) this.Cont).RedMessage("Jsi v šoku!");
 		}
 
 		public override void On_UnAssign(Character formerCont) {

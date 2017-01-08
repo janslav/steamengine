@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static TagKey TkLastCat {
 			get {
 				if (tkLastCat == null) {
-					tkLastCat = TagKey.Acquire(D_Craftmenu.tkCraftmenuLastposPrefix);
+					tkLastCat = TagKey.Acquire(tkCraftmenuLastposPrefix);
 				}
 				return tkLastCat;
 			}
@@ -169,7 +169,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
-			args.SetTag(D_Craftmenu.tkInputIds, inputIds);//store the id info
+			args.SetTag(tkInputIds, inputIds);//store the id info
 
 			//ted paging
 			dlg.CreatePaging(cat.Contents.Count, firstiVal, 1);
@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 4: //start making
 						//first we will prepare the list of Item-Count pairs to be made
-						List<int> inputIds = (List<int>) args.GetTag(D_Craftmenu.tkInputIds);//get the ids info
+						List<int> inputIds = (List<int>) args.GetTag(tkInputIds);//get the ids info
 						SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
 						foreach (int id in inputIds) {
 							int requestedCount = (int) gr.GetNumberResponse(id);//always integer number
@@ -344,12 +344,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public static void Craftmenu(Character self, string skillName) {
-			CraftingSkillDef sklDef = (CraftingSkillDef) CraftingSkillDef.GetByKey(skillName);
+			CraftingSkillDef sklDef = (CraftingSkillDef) AbstractSkillDef.GetByKey(skillName);
 			Craftmenu(self, sklDef);
 		}
 
 		public static void Craftmenu(Character self, SkillName skillName) {
-			CraftingSkillDef sklDef = (CraftingSkillDef) CraftingSkillDef.GetById((int) skillName);
+			CraftingSkillDef sklDef = (CraftingSkillDef) AbstractSkillDef.GetById((int) skillName);
 			Craftmenu(self, sklDef);
 		}
 

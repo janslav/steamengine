@@ -242,7 +242,7 @@ namespace SteamEngine.RemoteConsole {
 
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			ConsoleClient.Disconnect("Login failed: " + this.reason);
-			base.Dispose();
+			this.Dispose();
 		}
 
 		protected override ReadPacketResult Read() {

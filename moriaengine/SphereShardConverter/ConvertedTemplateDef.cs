@@ -39,7 +39,7 @@ namespace SteamEngine.Converter {
 			int defnum;
 			if (ConvertTools.TryParseInt32(this.headerName, out defnum)) {
 				this.headerName = "td_0x" + defnum.ToString("x");
-				hasNumericDefname = true;
+				this.hasNumericDefname = true;
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace SteamEngine.Converter {
 			int linenum = this.origData.HeaderLine;
 			while ((line = reader.ReadLine()) != null) {
 				linenum++;
-				Match m = CompiledLocStringCollection.valueRE.Match(line);
+				Match m = LocStringCollection.valueRE.Match(line);
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
 					string name = gc["name"].Value;
@@ -59,8 +59,8 @@ namespace SteamEngine.Converter {
 
 					switch (name.ToLowerInvariant()) {
 						case "defname":
-							if (hasNumericDefname) {
-								Info(linenum, "Ignoring the numeric defname of TemplateDef '" + value + "'.");
+							if (this.hasNumericDefname) {
+								this.Info(linenum, "Ignoring the numeric defname of TemplateDef '" + value + "'.");
 								this.headerName = value;
 								//origData.headerComment = origData.headerComment+" // "+comment;
 							} else {
@@ -86,7 +86,7 @@ namespace SteamEngine.Converter {
 			reader = new StringReader(writer.GetStringBuilder().ToString());
 			writer = new StringWriter();
 			while ((line = reader.ReadLine()) != null) {
-				Match m = CompiledLocStringCollection.valueRE.Match(line);
+				Match m = LocStringCollection.valueRE.Match(line);
 				if (m.Success) {
 					GroupCollection gc = m.Groups;
 					string name = gc["name"].Value;

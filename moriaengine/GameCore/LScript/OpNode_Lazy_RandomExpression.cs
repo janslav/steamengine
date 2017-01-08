@@ -74,15 +74,15 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(values, oldNode);
+			int index = Array.IndexOf(this.values, oldNode);
 			if (index >= 0) {
-				values[index] = newNode;
+				this.values[index] = newNode;
 				return;
 			}
-			if (odds != null) {
-				index = Array.IndexOf(odds, oldNode);
+			if (this.odds != null) {
+				index = Array.IndexOf(this.odds, oldNode);
 				if (index >= 0) {
-					odds[index] = newNode;
+					this.odds[index] = newNode;
 					return;
 				}
 			}
@@ -91,18 +91,18 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				if (isSimple) {
-					int lVal = Convert.ToInt32(values[0].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
-					int rVal = Convert.ToInt32(values[1].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+				if (this.isSimple) {
+					int lVal = Convert.ToInt32(this.values[0].Run(vars), CultureInfo.InvariantCulture);
+					int rVal = Convert.ToInt32(this.values[1].Run(vars), CultureInfo.InvariantCulture);
 					int min = lVal;
 					int max = rVal;
 					if (rVal < lVal) {
 						min = rVal;
 						max = lVal;
 					}
-					if ((values[0] is OpNode_Object) && (values[1] is OpNode_Object)) {
+					if ((this.values[0] is OpNode_Object) && (this.values[1] is OpNode_Object)) {
 						if (rVal == lVal) { //no randomness at all... we create an OpNode_Object
-							this.ReplaceSelf(values[0]);
+							this.ReplaceSelf(this.values[0]);
 							return rVal;
 						}
 						OpNode newNode = new OpNode_Final_RandomExpression_Simple_Constant(this.parent, this.filename,
@@ -111,20 +111,20 @@ namespace SteamEngine.LScript {
 						return newNode.Run(vars);
 					} else {
 						OpNode newNode = new OpNode_Final_RandomExpression_Simple_Variable(this.parent, this.filename,
-							this.line, this.column, this.OrigNode, values[0], values[1]);
+							this.line, this.column, this.OrigNode, this.values[0], this.values[1]);
 						this.ReplaceSelf(newNode);
 						return Globals.dice.Next(min, max + 1);
 					}
 				} else {
-					int pairCount = odds.Length;
+					int pairCount = this.odds.Length;
 					ValueOddsPair[] pairs = new ValueOddsPair[pairCount];
 					bool areConstant = true;
 					int totalOdds = 0;
 					for (int i = 0; i < pairCount; i++) {
-						int o = Convert.ToInt32(odds[i].Run(vars), System.Globalization.CultureInfo.InvariantCulture);
+						int o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
 						totalOdds += o;
-						pairs[i] = new ValueOddsPair(values[i], totalOdds);
-						if (!(odds[i] is OpNode_Object)) {
+						pairs[i] = new ValueOddsPair(this.values[i], totalOdds);
+						if (!(this.odds[i] is OpNode_Object)) {
 							areConstant = false;
 						}
 					}
@@ -135,7 +135,7 @@ namespace SteamEngine.LScript {
 						return newNode.Run(vars);
 					} else {
 						OpNode newNode = new OpNode_Final_RandomExpression_Variable(this.parent, this.filename,
-							this.line, this.column, this.OrigNode, pairs, odds);
+							this.line, this.column, this.OrigNode, pairs, this.odds);
 						this.ReplaceSelf(newNode);
 						return ((OpNode) GetRandomValue(pairs, totalOdds)).Run(vars);
 						//no TryRun or such... too lazy I am :)
@@ -152,12 +152,12 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			if (odds == null) {
-				return "{ " + values[0] + " " + values[1] + " }";
+			if (this.odds == null) {
+				return "{ " + this.values[0] + " " + this.values[1] + " }";
 			} else {
 				StringBuilder str = new StringBuilder("{");
-				for (int i = 0, n = odds.Length; i < n; i++) {
-					str.Append(values[i].ToString()).Append(", ").Append(odds[i].ToString()).Append(", ");
+				for (int i = 0, n = this.odds.Length; i < n; i++) {
+					str.Append(this.values[i].ToString()).Append(", ").Append(this.odds[i].ToString()).Append(", ");
 				}
 				str.Length -= 2;
 				return str.Append("}").ToString();
@@ -190,7 +190,7 @@ namespace SteamEngine.LScript {
 		}
 		public int Odds {
 			get {
-				return odds;
+				return this.odds;
 			}
 			set {
 				this.odds = value;
@@ -203,8 +203,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public int AdjustOdds(int previousOdds) {
-			odds += previousOdds;
-			return odds;
+			this.odds += previousOdds;
+			return this.odds;
 		}
 
 		public bool RolledSuccess(int oddsToCompare) {
@@ -212,15 +212,15 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			if (val != null) {
-				return (val + " " + odds);
+			if (this.val != null) {
+				return (this.val + " " + this.odds);
 			} else {
 				return "null";
 			}
 		}
 		public LogStr ToLogStr() {
-			if (val != null) {
-				return LogStr.Raw(val) + " " + LogStr.Number(odds);
+			if (this.val != null) {
+				return LogStr.Raw(this.val) + " " + LogStr.Number(this.odds);
 			} else {
 				return (LogStr) "null";
 			}

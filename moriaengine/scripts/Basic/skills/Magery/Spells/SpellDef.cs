@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 		private FieldValue effectRange;
 		private string runeWords;
 
-		public static new SpellDef GetByDefname(string defname) {
+		public new static SpellDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as SpellDef;
 		}
 
@@ -233,7 +233,7 @@ namespace SteamEngine.CompiledScripts {
 				int n = runes.Length;
 				string[] arr = new string[n];
 				for (int i = 0; i < n; i++) {
-					arr[i] = GetRuneWord(runes[i]);
+					arr[i] = this.GetRuneWord(runes[i]);
 				}
 				this.runeWords = string.Join(" ", arr);
 			}
@@ -306,14 +306,14 @@ namespace SteamEngine.CompiledScripts {
 			this.effectRange = this.InitTypedField("effectRange", 5, typeof(int));
 		}
 
-		public static new void Bootstrap() {
+		public new static void Bootstrap() {
 			//SpellDef script sections are special in that they have numeric header indicating spell id in spellbooks
-			AbstractDef.RegisterDefnameParser<SpellDef>(ParseDefnames);
+			RegisterDefnameParser<SpellDef>(ParseDefnames);
 		}
 
 		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
 			ushort spellId;
-			if (!TagMath.TryParseUInt16(section.HeaderName, out spellId)) {
+			if (!ConvertTools.TryParseUInt16(section.HeaderName, out spellId)) {
 				throw new ScriptException("Unrecognized format of the id number in the spelldef script header.");
 			}
 			defname = "spell_" + spellId.ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -791,7 +791,7 @@ namespace SteamEngine.CompiledScripts {
 		public void MakeSound(IPoint4D place) {
 			int sound = (int) this.Sound;
 			if (sound != -1) {
-				Networking.PacketSequences.SendSound(place, sound, Globals.MaxUpdateRange);
+				PacketSequences.SendSound(place, sound, Globals.MaxUpdateRange);
 			}
 		}
 		#endregion Trigger methods

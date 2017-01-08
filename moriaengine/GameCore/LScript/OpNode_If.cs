@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
+using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 
@@ -90,20 +91,20 @@ namespace SteamEngine.LScript {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(blocks, oldNode);
+			int index = Array.IndexOf(this.blocks, oldNode);
 			if (index < 0) {
-				index = Array.IndexOf(conditions, oldNode);
+				index = Array.IndexOf(this.conditions, oldNode);
 				if (index < 0) {
-					if (elseBlock == oldNode) {
-						elseBlock = newNode;
+					if (this.elseBlock == oldNode) {
+						this.elseBlock = newNode;
 						return;
 					}
 				} else {
-					conditions[index] = newNode;
+					this.conditions[index] = newNode;
 					return;
 				}
 			} else {
-				blocks[index] = newNode;
+				this.blocks[index] = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -112,36 +113,36 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			bool wasRun = false;
 			object retVal = null;
-			for (int i = 0, n = conditions.Length; i < n; i++) {
-				if (TagMath.ToBoolean(conditions[i].Run(vars))) {
-					if (blocks[i] != null) {
-						retVal = blocks[i].Run(vars);
+			for (int i = 0, n = this.conditions.Length; i < n; i++) {
+				if (ConvertTools.ToBoolean(this.conditions[i].Run(vars))) {
+					if (this.blocks[i] != null) {
+						retVal = this.blocks[i].Run(vars);
 					}
 					wasRun = true;
 					break;
 				}
 			}
-			if ((!wasRun) && (!vars.returned) && (elseBlock != null)) {
-				retVal = elseBlock.Run(vars);
+			if ((!wasRun) && (!vars.returned) && (this.elseBlock != null)) {
+				retVal = this.elseBlock.Run(vars);
 			}
 			return retVal;
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("If (");
-			str.Append(conditions[0].ToString()).Append(")").Append(Environment.NewLine);
-			if (blocks[0] != null) {
-				str.Append(blocks[0].ToString());
+			str.Append(this.conditions[0].ToString()).Append(")").Append(Environment.NewLine);
+			if (this.blocks[0] != null) {
+				str.Append(this.blocks[0].ToString());
 			}
-			for (int i = 1, n = conditions.Length; i < n; i++) {
-				str.Append("ElseIf (").Append(conditions[i].ToString()).Append(")").Append(Environment.NewLine);
-				if (blocks[i] != null) {
-					str.Append(blocks[i].ToString());
+			for (int i = 1, n = this.conditions.Length; i < n; i++) {
+				str.Append("ElseIf (").Append(this.conditions[i].ToString()).Append(")").Append(Environment.NewLine);
+				if (this.blocks[i] != null) {
+					str.Append(this.blocks[i].ToString());
 				}
 			}
-			if (elseBlock != null) {
+			if (this.elseBlock != null) {
 				str.Append("Else").Append(Environment.NewLine);
-				str.Append(elseBlock.ToString());
+				str.Append(this.elseBlock.ToString());
 			}
 			str.Append("Endif");
 			return str.ToString();

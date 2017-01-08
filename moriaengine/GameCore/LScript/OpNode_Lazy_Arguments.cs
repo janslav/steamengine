@@ -71,7 +71,7 @@ namespace SteamEngine.LScript {
 
 			List<OpNode> indicesList = new List<OpNode>();
 			OpNode_Lazy_Indexer lastIndex = null;
-			while (OpNode.IsType(code.GetChildAt(current), StrictConstants.INDEXER)) {
+			while (IsType(code.GetChildAt(current), StrictConstants.INDEXER)) {
 				Production indexprod = (Production) code.GetChildAt(current);
 				OpNode index = LScriptMain.CompileNode(parent, indexprod.GetChildAt(1));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 				lastIndex = OpNode_Lazy_Indexer.Construct(parent, indexprod.GetChildAt(1), index, null);
@@ -135,7 +135,7 @@ namespace SteamEngine.LScript {
 			//    return 1;
 			//}
 			string intStr = name.Substring(4);
-			return int.Parse(intStr, NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
+			return int.Parse(intStr, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		private static bool HasNumberAttached(Node code) {
@@ -144,10 +144,10 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (nodeIndex == oldNode) {
-				nodeIndex = newNode;
-			} else if (arg == oldNode) {
-				arg = newNode;
+			if (this.nodeIndex == oldNode) {
+				this.nodeIndex = newNode;
+			} else if (this.arg == oldNode) {
+				this.arg = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}

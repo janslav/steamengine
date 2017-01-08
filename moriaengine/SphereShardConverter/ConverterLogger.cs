@@ -24,7 +24,7 @@ namespace SteamEngine.Converter {
 		public static void Init() {
 			new ConverterLogger();
 
-			Logger.OpenFile();
+			OpenFile();
 		}
 
 		protected override string GetFilepath() {

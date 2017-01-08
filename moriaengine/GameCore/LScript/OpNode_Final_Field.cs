@@ -40,8 +40,8 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			if (arg == oldNode) {
-				arg = newNode;
+			if (this.arg == oldNode) {
+				this.arg = newNode;
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -52,32 +52,32 @@ namespace SteamEngine.LScript {
 			vars.self = vars.defaultObject;
 			object result;
 			try {
-				result = arg.Run(vars);
+				result = this.arg.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				field.SetValue(oSelf, result);
+				this.field.SetValue(oSelf, result);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
+				throw new InterpreterException("Exception while setting field '" + this.field.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				field.SetValue(vars.self, results[0]);
+				this.field.SetValue(vars.self, results[0]);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
+				throw new InterpreterException("Exception while setting field '" + this.field.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
-			"({0} {1}.{2} = {3})", field.FieldType, field.DeclaringType, field.Name, arg);
+			return string.Format(CultureInfo.InvariantCulture, 
+			"({0} {1}.{2} = {3})", this.field.FieldType, this.field.DeclaringType, this.field.Name, this.arg);
 		}
 
 		public Type ReturnType {
@@ -99,30 +99,30 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				return field.GetValue(vars.self);
+				return this.field.GetValue(vars.self);
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while getting field '" + field.Name + "'",
+				throw new InterpreterException("Exception while getting field '" + this.field.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return field.GetValue(vars.self);
+				return this.field.GetValue(vars.self);
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while getting field '" + field.Name + "'",
+				throw new InterpreterException("Exception while getting field '" + this.field.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, 
-				"({0} {1}.{2})", field.FieldType, field.DeclaringType, field.Name);
+			return string.Format(CultureInfo.InvariantCulture, 
+				"({0} {1}.{2})", this.field.FieldType, this.field.DeclaringType, this.field.Name);
 		}
 
 		public Type ReturnType {
 			get {
-				return field.FieldType;
+				return this.field.FieldType;
 			}
 		}
 	}
@@ -143,9 +143,9 @@ namespace SteamEngine.LScript {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(args, oldNode);
+			int index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
-				args[index] = newNode;
+				this.args[index] = newNode;
 				return;
 			}
 			throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
@@ -154,43 +154,41 @@ namespace SteamEngine.LScript {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = args.Length;
+			int argsCount = this.args.Length;
 			object[] results = new object[argsCount];
 			try {
 				for (int i = 0; i < argsCount; i++) {
-					results[i] = args[i].Run(vars);
+					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					formatString, results);
-				field.SetValue(oSelf, resultString);
+				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				this.field.SetValue(oSelf, resultString);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
+				throw new InterpreterException("Exception while setting field '" + this.field.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				string resultString = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-					formatString, results);
-				field.SetValue(vars.self, resultString);
+				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				this.field.SetValue(vars.self, resultString);
 				return null;
 			} catch (Exception e) {
-				throw new InterpreterException("Exception while setting field '" + field.Name + "'",
+				throw new InterpreterException("Exception while setting field '" + this.field.Name + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 		}
 
 		public override string ToString() {
 			StringBuilder str = new StringBuilder("(");
-			str.AppendFormat("({0} {1}.{2} = (", field.FieldType, field.DeclaringType, field.Name);
-			for (int i = 0, n = args.Length; i < n; i++) {
-				str.Append(args[i].ToString()).Append(", ");
+			str.AppendFormat("({0} {1}.{2} = (", this.field.FieldType, this.field.DeclaringType, this.field.Name);
+			for (int i = 0, n = this.args.Length; i < n; i++) {
+				str.Append(this.args[i].ToString()).Append(", ");
 			}
 			return str.Append(").TOSTRING())").ToString();
 		}

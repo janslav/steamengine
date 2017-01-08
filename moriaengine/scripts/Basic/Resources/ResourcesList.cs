@@ -63,15 +63,15 @@ namespace SteamEngine.CompiledScripts {
 		/// </summary>
 		public bool HasResourcesPresent(Character chr, ResourcesLocality where, out IResourceListEntry firstMissingResource) {
 			//first check non-multiplicables (these are easy to check (usually some "Has..." method))
-			if (!CheckSimpleEntries(chr, out firstMissingResource)) {
+			if (!this.CheckSimpleEntries(chr, out firstMissingResource)) {
 				return false;
 			}
 
 			//list of resource counters corresponding to the list of "multiplicable" resources
-			var resourceCounters = PrepareResourceCounters();
+			var resourceCounters = this.PrepareResourceCounters();
 			try {
 				//then check multiplicables (these may desire some items iterating e.t.c)
-				if (!CheckEntriesWithCounters(chr, where, resourceCounters, out firstMissingResource)) {
+				if (!this.CheckEntriesWithCounters(chr, where, resourceCounters, out firstMissingResource)) {
 					return false;
 				}
 				return true; //all resources present
@@ -87,13 +87,13 @@ namespace SteamEngine.CompiledScripts {
 		/// in case some resource is missing, it is set to the output variable.
 		/// </summary>
 		public bool ConsumeResourcesOnce(Character chr, ResourcesLocality where, out IResourceListEntry firstMissingResource) {
-			if (!CheckSimpleEntries(chr, out firstMissingResource)) {
+			if (!this.CheckSimpleEntries(chr, out firstMissingResource)) {
 				return false;
 			}
-			var resourceCounters = PrepareResourceCounters();
+			var resourceCounters = this.PrepareResourceCounters();
 			try {
 				//then check multiplicables (these may desire some items iterating e.t.c)
-				if (!CheckEntriesWithCounters(chr, where, resourceCounters, out firstMissingResource)) {
+				if (!this.CheckEntriesWithCounters(chr, where, resourceCounters, out firstMissingResource)) {
 					return false;
 				}
 				//if we are here then there is for every ResourceCounter the multiplicity at least 1 (which is enough for us)
@@ -114,17 +114,17 @@ namespace SteamEngine.CompiledScripts {
 		/// In case some resource is missing, it is set to the output variable.
 		/// </summary>
 		public double ConsumeResources(Character chr, ResourcesLocality where, out IResourceListEntry firstMissingResource) {
-			if (!CheckSimpleEntries(chr, out firstMissingResource)) {
+			if (!this.CheckSimpleEntries(chr, out firstMissingResource)) {
 				return 0;
 			}
-			var resourceCounters = PrepareResourceCounters();
+			var resourceCounters = this.PrepareResourceCounters();
 			try {
 				//then check multiplicables (these may desire some items iterating e.t.c)
-				if (!CheckEntriesWithCounters(chr, where, resourceCounters, out firstMissingResource)) {
+				if (!this.CheckEntriesWithCounters(chr, where, resourceCounters, out firstMissingResource)) {
 					//dispose counters
 					return 0;
 				}
-				double availableOnly = Math.Floor(ResListAvailableTimes(resourceCounters));
+				double availableOnly = Math.Floor(this.ResListAvailableTimes(resourceCounters));
 				foreach (ItemCounter ctr in resourceCounters) {
 					ctr.ConsumeItems(availableOnly);
 				}
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts {
 		/// </summary>
 		public void ConsumeSomeResources(Character chr, ResourcesLocality where) {
 
-			var resourceCounters = PrepareResourceCounters();
+			var resourceCounters = this.PrepareResourceCounters();
 			try {
 				//find the resources references
 				ResourceItemFinder.LocalizeItems(chr, where, resourceCounters);
@@ -174,7 +174,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Get all non-multiplicable resources from the list separated in their own sublist</summary>
 		public IEnumerable<IResourceListEntry_Simple> NonMultiplicablesSublist {
 			get {
-				return nonMultiplicablesSubList;
+				return this.nonMultiplicablesSubList;
 			}
 		}
 

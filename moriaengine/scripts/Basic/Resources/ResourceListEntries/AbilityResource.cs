@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 		public override bool IsSameResource(IResourceListEntry newOne) {
 			AbilityResource newResource = newOne as AbilityResource;
 			if (newResource != null) {
-				return (abilityDef == newResource.abilityDef);
+				return (this.abilityDef == newResource.abilityDef);
 			}
 			return false;
 		}

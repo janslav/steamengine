@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 		private CharModelInfo charModelInfo;
 
 		#region Flags
-		public override sealed byte FlagsToSend {
+		public sealed override byte FlagsToSend {
 			get {
 				int ret = 0;
 
@@ -214,7 +214,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		/// <summary>The mount this character is riding, or null if this character isn't riding a mount.</summary>
-		public override sealed AbstractCharacter Mount {
+		public sealed override AbstractCharacter Mount {
 			get {
 				if (this.Flag_Riding) {
 					return this.mountorrider;
@@ -263,7 +263,7 @@ namespace SteamEngine.CompiledScripts {
 
 					//move it to where we are
 					this.mountorrider.P(this);
-					this.mountorrider.Direction = Direction;
+					this.mountorrider.Direction = this.Direction;
 
 					Sanity.IfTrueThrow(this.mountorrider.mountorrider != this, "this.mountorrider.mountorrider != this");
 					Sanity.IfTrueThrow(this.mountorrider.Flag_Riding, "this.mountorrider.Flag_Riding on Dismount()");
@@ -373,14 +373,14 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TriggerKey visibilityChangeTK = TriggerKey.Acquire("visibilityChange");
 		public void Trigger_VisibilityChange() {
-			TryTrigger(visibilityChangeTK, null);
-			On_VisibilityChange();
+			this.TryTrigger(visibilityChangeTK, null);
+			this.On_VisibilityChange();
 		}
 
 		public virtual void On_VisibilityChange() {
 		}
 
-		public override sealed bool IsNotVisible {
+		public sealed override bool IsNotVisible {
 			get {
 				return (this.Flag_InvisByMagic || this.Flag_Hidden || this.Flag_Insubst || this.Flag_Disconnected);
 			}
@@ -389,11 +389,11 @@ namespace SteamEngine.CompiledScripts {
 		public override bool CanSeeVisibility(Thing target) {
 			Item targetAsItem = target as Item;
 			if (targetAsItem != null) {
-				return CanSeeVisibility(targetAsItem);
+				return this.CanSeeVisibility(targetAsItem);
 			}
 			Character targetAsChar = target as Character;
 			if (targetAsChar != null) {
-				return CanSeeVisibility(targetAsChar);
+				return this.CanSeeVisibility(targetAsChar);
 			}
 			return false;//it was null
 		}
@@ -586,7 +586,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion CanSee... / Check...
 
 		#region StatLock
-		public override sealed byte StatLockByte {
+		public sealed override byte StatLockByte {
 			get {
 				return this.statLockByte;
 			}
@@ -609,7 +609,7 @@ namespace SteamEngine.CompiledScripts {
 				return (StatLockType) ((this.statLockByte >> 2) & 0x3);
 			}
 			set {
-				if (value != DexLock) {
+				if (value != this.DexLock) {
 					this.statLockByte = (byte) ((this.statLockByte & 0xF3) + ((((byte) value) & 0x3) << 2));
 					PacketSequences.SendStatLocks(this);
 				}
@@ -621,7 +621,7 @@ namespace SteamEngine.CompiledScripts {
 				return (StatLockType) ((this.statLockByte) & 0x3);
 			}
 			set {
-				if (value != IntLock) {
+				if (value != this.IntLock) {
 					this.statLockByte = (byte) ((this.statLockByte & 0xFC) + ((((byte) value) & 0x3)));
 					PacketSequences.SendStatLocks(this);
 				}
@@ -632,18 +632,18 @@ namespace SteamEngine.CompiledScripts {
 		#region status properties
 		public override short Hits {
 			get {
-				return hitpoints;
+				return this.hitpoints;
 			}
 			set {
-				if (value != hitpoints) {
+				if (value != this.hitpoints) {
 					if (!this.Flag_Dead && value < 1) {
 						this.CauseDeath((Character) Globals.SrcCharacter);
 					} else {
 						CharSyncQueue.AboutToChangeHitpoints(this);
-						hitpoints = value;
+						this.hitpoints = value;
 
 						//try the hitpoints regeneration
-						RegenerationPlugin.TryInstallPlugin(this, this.hitpoints, this.MaxHits, hitsRegenSpeed);
+						RegenerationPlugin.TryInstallPlugin(this, this.hitpoints, this.MaxHits, this.hitsRegenSpeed);
 					}
 				}
 			}
@@ -660,18 +660,18 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short Mana {
 			get {
-				return mana;
+				return this.mana;
 			}
 			set {
-				if (value != mana) {
+				if (value != this.mana) {
 					CharSyncQueue.AboutToChangeMana(this);
-					mana = value;
+					this.mana = value;
 
 					//regeneration...
-					RegenerationPlugin.TryInstallPlugin(this, this.mana, this.MaxMana, manaRegenSpeed);
+					RegenerationPlugin.TryInstallPlugin(this, this.mana, this.MaxMana, this.manaRegenSpeed);
 
 					//meditation finish
-					if (mana >= this.MaxMana) {
+					if (this.mana >= this.MaxMana) {
 						this.DeletePlugin(MeditationPlugin.meditationPluginKey);
 					}
 				}
@@ -690,15 +690,15 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short Stam {
 			get {
-				return stamina;
+				return this.stamina;
 			}
 			set {
-				if (value != stamina) {
+				if (value != this.stamina) {
 					CharSyncQueue.AboutToChangeStamina(this);
-					stamina = value;
+					this.stamina = value;
 
 					//regeneration...
-					RegenerationPlugin.TryInstallPlugin(this, this.stamina, this.MaxStam, stamRegenSpeed);
+					RegenerationPlugin.TryInstallPlugin(this, this.stamina, this.MaxStam, this.stamRegenSpeed);
 				}
 			}
 		}
@@ -714,51 +714,51 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short Str {
 			get {
-				return strength;
+				return this.strength;
 			}
 			set {
-				if (value != strength) {
+				if (value != this.strength) {
 					CharSyncQueue.AboutToChangeStats(this);
 					this.InvalidateCombatWeaponValues();
-					strength = value;
+					this.strength = value;
 				}
 			}
 		}
 
 		public override short Dex {
 			get {
-				return dexterity;
+				return this.dexterity;
 			}
 			set {
-				if (value != dexterity) {
+				if (value != this.dexterity) {
 					CharSyncQueue.AboutToChangeStats(this);
 					this.InvalidateCombatWeaponValues();
-					dexterity = value;
+					this.dexterity = value;
 				}
 			}
 		}
 
 		public override short Int {
 			get {
-				return intelligence;
+				return this.intelligence;
 			}
 			set {
-				if (value != intelligence) {
+				if (value != this.intelligence) {
 					CharSyncQueue.AboutToChangeStats(this);
 					this.InvalidateCombatWeaponValues();
-					intelligence = value;
+					this.intelligence = value;
 				}
 			}
 		}
 
 		public override short TithingPoints {
 			get {
-				return tithingPoints;
+				return this.tithingPoints;
 			}
 			set {
-				if (value != tithingPoints) {
+				if (value != this.tithingPoints) {
 					CharSyncQueue.AboutToChangeStats(this);
-					tithingPoints = value;
+					this.tithingPoints = value;
 				}
 			}
 		}
@@ -845,10 +845,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistMagic {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistMagicTK));
-				return dynamicPart + TypeDef.ResistMagic;
+				return dynamicPart + this.TypeDef.ResistMagic;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistMagic;
+				int dynamicPart = value - this.TypeDef.ResistMagic;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMagicTK, dynamicPart);
 				} else {
@@ -860,10 +860,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistFire {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistFireTK));
-				return dynamicPart + TypeDef.ResistFire;
+				return dynamicPart + this.TypeDef.ResistFire;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistFire;
+				int dynamicPart = value - this.TypeDef.ResistFire;
 				if (dynamicPart != 0) {
 					this.SetTag(resistFireTK, dynamicPart);
 				} else {
@@ -875,10 +875,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistElectric {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistElectricTK));
-				return dynamicPart + TypeDef.ResistElectric;
+				return dynamicPart + this.TypeDef.ResistElectric;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistElectric;
+				int dynamicPart = value - this.TypeDef.ResistElectric;
 				if (dynamicPart != 0) {
 					this.SetTag(resistElectricTK, dynamicPart);
 				} else {
@@ -890,10 +890,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistAcid {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistAcidTK));
-				return dynamicPart + TypeDef.ResistAcid;
+				return dynamicPart + this.TypeDef.ResistAcid;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistAcid;
+				int dynamicPart = value - this.TypeDef.ResistAcid;
 				if (dynamicPart != 0) {
 					this.SetTag(resistAcidTK, dynamicPart);
 				} else {
@@ -905,10 +905,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistCold {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistColdTK));
-				return dynamicPart + TypeDef.ResistCold;
+				return dynamicPart + this.TypeDef.ResistCold;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistCold;
+				int dynamicPart = value - this.TypeDef.ResistCold;
 				if (dynamicPart != 0) {
 					this.SetTag(resistColdTK, dynamicPart);
 				} else {
@@ -920,10 +920,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistPoison {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistPoisonTK));
-				return dynamicPart + TypeDef.ResistPoison;
+				return dynamicPart + this.TypeDef.ResistPoison;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistPoison;
+				int dynamicPart = value - this.TypeDef.ResistPoison;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPoisonTK, dynamicPart);
 				} else {
@@ -935,10 +935,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistMystical {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistMysticalTK));
-				return dynamicPart + TypeDef.ResistMystical;
+				return dynamicPart + this.TypeDef.ResistMystical;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistMystical;
+				int dynamicPart = value - this.TypeDef.ResistMystical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMysticalTK, dynamicPart);
 				} else {
@@ -950,10 +950,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistPhysical {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistPhysicalTK));
-				return dynamicPart + TypeDef.ResistPhysical;
+				return dynamicPart + this.TypeDef.ResistPhysical;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistPhysical;
+				int dynamicPart = value - this.TypeDef.ResistPhysical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPhysicalTK, dynamicPart);
 				} else {
@@ -965,10 +965,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistSlashing {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistSlashingTK));
-				return dynamicPart + TypeDef.ResistSlashing;
+				return dynamicPart + this.TypeDef.ResistSlashing;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistSlashing;
+				int dynamicPart = value - this.TypeDef.ResistSlashing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSlashingTK, dynamicPart);
 				} else {
@@ -980,10 +980,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistStabbing {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistStabbingTK));
-				return dynamicPart + TypeDef.ResistStabbing;
+				return dynamicPart + this.TypeDef.ResistStabbing;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistStabbing;
+				int dynamicPart = value - this.TypeDef.ResistStabbing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistStabbingTK, dynamicPart);
 				} else {
@@ -995,10 +995,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistBlunt {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistBluntTK));
-				return dynamicPart + TypeDef.ResistBlunt;
+				return dynamicPart + this.TypeDef.ResistBlunt;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistBlunt;
+				int dynamicPart = value - this.TypeDef.ResistBlunt;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBluntTK, dynamicPart);
 				} else {
@@ -1010,10 +1010,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistArchery {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistArcheryTK));
-				return dynamicPart + TypeDef.ResistArchery;
+				return dynamicPart + this.TypeDef.ResistArchery;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistArchery;
+				int dynamicPart = value - this.TypeDef.ResistArchery;
 				if (dynamicPart != 0) {
 					this.SetTag(resistArcheryTK, dynamicPart);
 				} else {
@@ -1025,10 +1025,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistBleed {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistBleedTK));
-				return dynamicPart + TypeDef.ResistBleed;
+				return dynamicPart + this.TypeDef.ResistBleed;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistBleed;
+				int dynamicPart = value - this.TypeDef.ResistBleed;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBleedTK, dynamicPart);
 				} else {
@@ -1040,10 +1040,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistSummon {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistSummonTK));
-				return dynamicPart + TypeDef.ResistSummon;
+				return dynamicPart + this.TypeDef.ResistSummon;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistSummon;
+				int dynamicPart = value - this.TypeDef.ResistSummon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSummonTK, dynamicPart);
 				} else {
@@ -1055,10 +1055,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistDragon {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistDragonTK));
-				return dynamicPart + TypeDef.ResistDragon;
+				return dynamicPart + this.TypeDef.ResistDragon;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistDragon;
+				int dynamicPart = value - this.TypeDef.ResistDragon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistDragonTK, dynamicPart);
 				} else {
@@ -1070,10 +1070,10 @@ namespace SteamEngine.CompiledScripts {
 		public int ResistParalyse {
 			get {
 				int dynamicPart = Convert.ToInt32(this.GetTag(resistParalyseTK));
-				return dynamicPart + TypeDef.ResistParalyse;
+				return dynamicPart + this.TypeDef.ResistParalyse;
 			}
 			set {
-				int dynamicPart = value - TypeDef.ResistParalyse;
+				int dynamicPart = value - this.TypeDef.ResistParalyse;
 				if (dynamicPart != 0) {
 					this.SetTag(resistParalyseTK, dynamicPart);
 				} else {
@@ -1294,62 +1294,62 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Go() overrides
 		public void Go(Region reg) {
-			P(reg.P);
-			Fix();
+			this.P(reg.P);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(Point2D pnt) {
-			P(pnt.X, pnt.Y);
-			Fix();
+			this.P(pnt.X, pnt.Y);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(Point3D pnt) {
-			P(pnt.X, pnt.Y, pnt.Z);
-			Fix();
+			this.P(pnt.X, pnt.Y, pnt.Z);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(Point4D pnt) {
-			P(pnt.X, pnt.Y, pnt.Z, pnt.M);
-			Fix();
+			this.P(pnt.X, pnt.Y, pnt.Z, pnt.M);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(IPoint2D pnt) {
-			P(pnt.X, pnt.Y);
-			Fix();
+			this.P(pnt.X, pnt.Y);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(IPoint3D pnt) {
-			P(pnt.X, pnt.Y, pnt.Z);
-			Fix();
+			this.P(pnt.X, pnt.Y, pnt.Z);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(IPoint4D pnt) {
-			P(pnt.X, pnt.Y, pnt.Z, pnt.M);
-			Fix();
+			this.P(pnt.X, pnt.Y, pnt.Z, pnt.M);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(int x, int y) {
-			P(x, y);
-			Fix();
+			this.P(x, y);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(int x, int y, int z) {
-			P(x, y, z);
-			Fix();
+			this.P(x, y, z);
+			this.Fix();
 			//Update();
 		}
 
 		public void Go(int x, int y, int z, byte m) {
-			P(x, y, z, m);
-			Fix();
+			this.P(x, y, z, m);
+			this.Fix();
 			//Update();
 		}
 		#endregion Go() overrides
@@ -1374,7 +1374,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Return the appropriate Skill instance by given ID, or null if given skill values are default (value 0 and lock up).</summary>
 		public override ISkill GetSkillObject(int id) {
 			if (this.skillsabilities != null) {
-				AbstractSkillDef def = SkillDef.GetById(id);
+				AbstractSkillDef def = AbstractSkillDef.GetById(id);
 				object retVal = null;
 				if (this.skillsabilities.TryGetValue(def, out retVal)) {
 					return (ISkill) retVal;
@@ -1395,12 +1395,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void SetRealSkillValue(int id, int value) {
-			AbstractSkillDef def = SkillDef.GetById(id);
+			AbstractSkillDef def = AbstractSkillDef.GetById(id);
 			this.AcquireSkillObject(def).RealValue = value;
 		}
 
 		public override void SetSkillLockType(int id, SkillLockType type) {
-			AbstractSkillDef def = SkillDef.GetById(id);
+			AbstractSkillDef def = AbstractSkillDef.GetById(id);
 			this.AcquireSkillObject(def).Lock = type;
 		}
 
@@ -1410,7 +1410,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Change the 'modified' value of a skill.</summary>
 		public void ModifySkillValue(int id, int difference) {
-			AbstractSkillDef def = SkillDef.GetById(id);
+			AbstractSkillDef def = AbstractSkillDef.GetById(id);
 			this.AcquireSkillObject(def).ModifyValue(difference);
 		}
 
@@ -1462,7 +1462,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int GetRealSkillValue(int id) {
-			ISkill skl = GetSkillObject(id);
+			ISkill skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.ModifiedValue;
 			} else {
@@ -1475,7 +1475,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int GetRealSkillValue(AbstractSkillDef skillDef) {
-			Skill skl = GetSkillObject(skillDef);
+			Skill skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
 				return skl.ModifiedValue;
 			} else {
@@ -1485,7 +1485,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Get value of the lock type of skill with given ID, if the skill is not present return default</summary>
 		public SkillLockType GetSkillLockType(int id) {
-			ISkill skl = GetSkillObject(id);
+			ISkill skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.Lock;
 			} else {
@@ -1541,12 +1541,12 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Start a skill.</summary>
 		public void SelectSkill(SkillName skillName) {
-			SelectSkill((SkillDef) AbstractSkillDef.GetById((int) skillName));
+			this.SelectSkill((SkillDef) AbstractSkillDef.GetById((int) skillName));
 		}
 
 		/// <summary>Start a skill.</summary>
 		public void SelectSkill(int skillId) {
-			SelectSkill((SkillDef) AbstractSkillDef.GetById(skillId));
+			this.SelectSkill((SkillDef) AbstractSkillDef.GetById(skillId));
 		}
 
 		/// <summary>
@@ -1673,7 +1673,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Get number of modified points the character has for specified AbilityDef. Equals getting the ModifiedPoints property value on the Ability object directly.</summary>
 		public int GetAbility(AbilityDef aDef) {
-			Ability retAb = GetAbilityObject(aDef);
+			Ability retAb = this.GetAbilityObject(aDef);
 			return (retAb == null ? 0 : retAb.ModifiedPoints); //either null or Ability.Points if the player has it
 		}
 
@@ -1759,7 +1759,7 @@ namespace SteamEngine.CompiledScripts {
 		public override string PaperdollName {
 			get {
 				if (!String.IsNullOrEmpty(this.title)) {
-					return string.Concat(this.Name, ", ", title);
+					return string.Concat(this.Name, ", ", this.title);
 				}
 				return this.Name;
 			}
@@ -1791,8 +1791,8 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TriggerKey disruptionTK = TriggerKey.Acquire("disruption");
 		public void Trigger_Disrupt() {
-			TryTrigger(disruptionTK, null);
-			On_Disruption();
+			this.TryTrigger(disruptionTK, null);
+			this.On_Disruption();
 		}
 
 		public virtual void On_Disruption() {
@@ -1804,8 +1804,8 @@ namespace SteamEngine.CompiledScripts {
 		private static TriggerKey hostileActionTK = TriggerKey.Acquire("hostileAction");
 		public void Trigger_HostileAction(Character enemy) {
 			ScriptArgs sa = new ScriptArgs(enemy);
-			TryTrigger(hostileActionTK, sa);
-			On_HostileAction(enemy);
+			this.TryTrigger(hostileActionTK, sa);
+			this.On_HostileAction(enemy);
 		}
 
 		public virtual void On_HostileAction(Character enemy) {
@@ -1814,7 +1814,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static ContainerDef backpackDef = null;
 		private AbstractItem AddBackpack() {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (backpackDef == null) {
 				backpackDef = ThingDef.FindItemDef(0xe75) as ContainerDef;
 				if (backpackDef == null) {
@@ -1866,7 +1866,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override sealed AbstractItem NewItem(IThingFactory arg, int amount) {
+		public sealed override AbstractItem NewItem(IThingFactory arg, int amount) {
 			return this.Backpack.NewItem(arg, amount);
 		}
 
@@ -1897,7 +1897,7 @@ namespace SteamEngine.CompiledScripts {
 							new Ability(a, this)); //add copy of the Ability object to the duped char's storage
 					} else {
 						Skill s = (Skill) o;
-						this.SkillsAbilities.Add(SkillDef.GetById(s.Id),
+						this.SkillsAbilities.Add(AbstractSkillDef.GetById(s.Id),
 							new Skill(s, this)); //add copy of the Skill object to the duped char's storage
 					}
 				}
@@ -1905,7 +1905,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		#region Persistence
-		public override void On_Save(SteamEngine.Persistence.SaveStream output) {
+		public override void On_Save(Persistence.SaveStream output) {
 			if (this.skillsabilities != null) {
 				foreach (object o in this.skillsabilities.Values) {
 					Ability a = o as Ability;
@@ -1999,20 +1999,20 @@ namespace SteamEngine.CompiledScripts {
 
 		public override float Weight {
 			get {
-				return weight;
+				return this.weight;
 			}
 		}
 
 		public override void FixWeight() {
 			CharSyncQueue.AboutToChangeStats(this);
-			float w = Def.Weight;
+			float w = this.Def.Weight;
 			foreach (AbstractItem i in this) {
 				if (i != null) {
 					i.FixWeight();
 					w += i.Weight;
 				}
 			}
-			weight = w;
+			this.weight = w;
 		}
 
 		protected override void AdjustWeight(float adjust) {
@@ -2284,7 +2284,7 @@ namespace SteamEngine.CompiledScripts {
 						(this.weaponProjectile.Amount < 1))) {
 					this.weaponProjectile = null;//we had ammo but now don't have it anymore
 					this.InvalidateCombatWeaponValues();
-				} else if ((weaponProjectile == null) && (this.combatWeaponValues != null) &&
+				} else if ((this.weaponProjectile == null) && (this.combatWeaponValues != null) &&
 						(this.combatWeaponValues.projectileType != ProjectileType.None)) {
 					this.InvalidateCombatWeaponValues();//we have no ammo but we should, let's look for it
 				}
@@ -2413,7 +2413,7 @@ namespace SteamEngine.CompiledScripts {
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
 					this.charModelInfo = CharModelInfo.GetByModel(model);
 				}
-				return charModelInfo;
+				return this.charModelInfo;
 			}
 		}
 
@@ -2497,10 +2497,10 @@ namespace SteamEngine.CompiledScripts {
 		private CorpseDef corpseDef;
 		public CorpseDef CorpseDef {
 			get {
-				if (corpseDef == null) {
-					corpseDef = ThingDef.FindItemDef(this.CorpseModel) as CorpseDef;
+				if (this.corpseDef == null) {
+					this.corpseDef = FindItemDef(this.CorpseModel) as CorpseDef;
 				}
-				return corpseDef;
+				return this.corpseDef;
 			}
 		}
 
@@ -2510,7 +2510,7 @@ namespace SteamEngine.CompiledScripts {
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
 					this.charModelInfo = CharModelInfo.GetByModel(model);
 				}
-				return charModelInfo;
+				return this.charModelInfo;
 			}
 		}
 

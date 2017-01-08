@@ -81,7 +81,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		string str;
 
 		protected override ReadPacketResult Read() {
-			str = this.DecodeUTF8String();
+			this.str = this.DecodeUTF8String();
 			return ReadPacketResult.Success;
 		}
 

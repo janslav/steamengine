@@ -24,10 +24,10 @@ namespace SteamEngine.RemoteConsole {
 		List<string> contractedTexts = new List<string>();
 
 		public LogStrDisplay() {
-			InitializeComponent();
+			this.InitializeComponent();
 			this.internalWriteDeleg = this.InternalWriteInUIThread;
 			this.parser = new LogStrParser(this);
-			this.txtBox.LinkClicked += new LinkClickedEventHandler(txtBox_LinkClicked);
+			this.txtBox.LinkClicked += new LinkClickedEventHandler(this.txtBox_LinkClicked);
 		}
 
 		void txtBox_LinkClicked(object sender, LinkClickedEventArgs e) {
@@ -61,7 +61,7 @@ namespace SteamEngine.RemoteConsole {
 			this.Invoke(this.internalWriteDeleg, logStrEncoded + Environment.NewLine);
 		}
 
-		public void WriteThreadSafe(SteamEngine.Common.LogStr data) {
+		public void WriteThreadSafe(LogStr data) {
 			this.Invoke(this.internalWriteDeleg, data.RawString);
 		}
 
@@ -73,7 +73,7 @@ namespace SteamEngine.RemoteConsole {
 			this.InternalWriteInUIThread(logStrEncoded + Environment.NewLine);
 		}
 
-		public void Write(SteamEngine.Common.LogStr data) {
+		public void Write(LogStr data) {
 			this.InternalWriteInUIThread(data.RawString);
 		}
 

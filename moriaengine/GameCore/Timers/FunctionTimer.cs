@@ -42,9 +42,9 @@ namespace SteamEngine.Timers {
 		public object[] args;
 
 		protected sealed override void OnTimeout(TagHolder cont) {
-			ScriptArgs sa = new ScriptArgs(args);
-			sa.FormatString = formatString;
-			function.TryRun(cont, sa);
+			ScriptArgs sa = new ScriptArgs(this.args);
+			sa.FormatString = this.formatString;
+			this.function.TryRun(cont, sa);
 		}
 
 		[LoadingInitializer]
@@ -64,15 +64,15 @@ namespace SteamEngine.Timers {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public override void Save(SaveStream output) {
-			output.WriteValue("function", function.Name);
+			output.WriteValue("function", this.function.Name);
 			base.Save(output);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), LoadLine]
 		public override void LoadLine(string filename, int line, string name, string value) {
 			if (name.Equals("function")) {
-				function = ScriptHolder.GetFunction((string) ObjectSaver.OptimizedLoad_String(value));
-				if (function == null) {
+				this.function = ScriptHolder.GetFunction((string) ObjectSaver.OptimizedLoad_String(value));
+				if (this.function == null) {
 					throw new SEException("There is no function " + value);
 				}
 			}

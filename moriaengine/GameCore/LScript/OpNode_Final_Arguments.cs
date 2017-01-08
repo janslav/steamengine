@@ -34,7 +34,7 @@ namespace SteamEngine.LScript {
 			vars.self = vars.defaultObject;
 			object indexVal;
 			try {
-				indexVal = nodeIndex.Run(vars);
+				indexVal = this.nodeIndex.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
@@ -47,7 +47,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("ARGV(", nodeIndex, ")");
+			return string.Concat("ARGV(", this.nodeIndex, ")");
 		}
 	}
 
@@ -62,7 +62,7 @@ namespace SteamEngine.LScript {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				return vars.scriptArgs.Argv[intIndex];
+				return vars.scriptArgs.Argv[this.intIndex];
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while getting ARG",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -70,7 +70,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("ARGV", intIndex);
+			return string.Concat("ARGV", this.intIndex);
 		}
 	}
 
@@ -92,8 +92,8 @@ namespace SteamEngine.LScript {
 			object indexVal;
 			object argVal;
 			try {
-				indexVal = nodeIndex.Run(vars);
-				argVal = arg.Run(vars);
+				indexVal = this.nodeIndex.Run(vars);
+				argVal = this.arg.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
@@ -107,7 +107,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("ARGV(", nodeIndex, ") = ", arg);
+			return string.Concat("ARGV(", this.nodeIndex, ") = ", this.arg);
 		}
 	}
 
@@ -127,12 +127,12 @@ namespace SteamEngine.LScript {
 			vars.self = vars.defaultObject;
 			object argVal;
 			try {
-				argVal = arg.Run(vars);
+				argVal = this.arg.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				vars.scriptArgs.Argv[intIndex] = argVal;
+				vars.scriptArgs.Argv[this.intIndex] = argVal;
 				return null;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while setting ARG",
@@ -141,7 +141,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return string.Concat("ARGV", intIndex, " = ", arg);
+			return string.Concat("ARGV", this.intIndex, " = ", this.arg);
 		}
 	}
 

@@ -97,12 +97,12 @@ namespace SteamEngine.Timers {
 			int parent = GetParentIndex(index);
 			// note: (index > 0) means there is a parent
 			while ((index > 0) &&
-					(heap[parent].fireAt > timer.fireAt)) {
+					(this.heap[parent].fireAt > timer.fireAt)) {
 				//original line: (heap[parent].Priority.CompareTo(he.Priority) < 0)
 				//is true when parent priority is lower than our current priority - in case of timers means it higher time
 				Timer parentTimer = this.heap[parent];
 				parentTimer.index = index;
-				heap[index] = parentTimer;
+				this.heap[index] = parentTimer;
 				index = parent;
 				parent = GetParentIndex(index);
 			}
@@ -121,7 +121,7 @@ namespace SteamEngine.Timers {
 		private void Grow() {
 			this.capacity = (this.capacity * 2) + 1;
 			Timer[] newHeap = new Timer[this.capacity];
-			System.Array.Copy(this.heap, 0, newHeap, 0, this.count);
+			Array.Copy(this.heap, 0, newHeap, 0, this.count);
 			this.heap = newHeap;
 		}
 
@@ -149,7 +149,7 @@ namespace SteamEngine.Timers {
 
 		public int Count {
 			get {
-				return count;
+				return this.count;
 			}
 		}
 

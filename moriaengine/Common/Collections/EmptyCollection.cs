@@ -152,7 +152,7 @@ namespace SteamEngine.Common {
 	}
 
 	public class EmptyReadOnlyGenericCollection<T> : EmptyReadOnlyCollection, IEnumerable<T>, IEnumerator<T>, ICollection<T>, IList<T> {
-		public static new readonly EmptyReadOnlyGenericCollection<T> instance = new EmptyReadOnlyGenericCollection<T>();
+		public new static readonly EmptyReadOnlyGenericCollection<T> instance = new EmptyReadOnlyGenericCollection<T>();
 
 		public void Add(T item) {
 			throw new NotSupportedSEException();
@@ -201,7 +201,7 @@ namespace SteamEngine.Common {
 	}
 
 	public class EmptyReadOnlyDictionary<TKey, TValue> : EmptyReadOnlyGenericCollection<KeyValuePair<TKey, TValue>>, IDictionary<TKey, TValue> {
-		public static new readonly EmptyReadOnlyDictionary<TKey, TValue> instance = new EmptyReadOnlyDictionary<TKey, TValue>();
+		public new static readonly EmptyReadOnlyDictionary<TKey, TValue> instance = new EmptyReadOnlyDictionary<TKey, TValue>();
 
 		public void Add(TKey key, TValue value) {
 			throw new NotSupportedSEException();

@@ -40,7 +40,7 @@ namespace SteamEngine {
 			return cliver;
 		}
 
-		internal readonly static ClientVersion nullValue = new ClientVersion();
+		internal static readonly ClientVersion nullValue = new ClientVersion();
 
 		private readonly ClientType type = ClientType.Unknown;
 		private readonly string versionString;//what we got from the client
@@ -70,7 +70,7 @@ namespace SteamEngine {
 					this.type = ClientType.Osi2D;
 					this.osi2dVerNum = new OSI2DVersionNumber(major, minor, revision, letter);
 
-					int number = osi2dVerNum.ComparableNumber;
+					int number = this.osi2dVerNum.ComparableNumber;
 					if (number >= 3000803) {//client 3.0.8d
 						this.displaySkillCaps = true;
 					}
@@ -134,10 +134,10 @@ namespace SteamEngine {
 		//} }
 
 		public override string ToString() {
-			switch (type) {
+			switch (this.type) {
 
 				case ClientType.Osi2D:
-					return "OSI2D Client " + osi2dVerNum;
+					return "OSI2D Client " + this.osi2dVerNum;
 
 				//case ClientType.Iris:
 				//case ClientType.OSI3D:
@@ -146,7 +146,7 @@ namespace SteamEngine {
 				//case ClientType.Palanthir:
 				//case ClientType.Unknown:
 			}
-			return "not implemented client version: " + versionString;
+			return "not implemented client version: " + this.versionString;
 		}
 	}
 
@@ -187,7 +187,7 @@ namespace SteamEngine {
 			}
 		} 
 
-		internal readonly static OSI2DVersionNumber nullValue = new OSI2DVersionNumber(0, 0, 0, 'a');
+		internal static readonly OSI2DVersionNumber nullValue = new OSI2DVersionNumber(0, 0, 0, 'a');
 
 		public OSI2DVersionNumber(int major, int minor, int revision, char letter) {
 			this.major = major;
@@ -196,17 +196,17 @@ namespace SteamEngine {
 			this.letter = char.ToLower(letter, System.Globalization.CultureInfo.InvariantCulture);
 
 			checked {
-				comparableNumber = major * 1000000;
-				comparableNumber += minor * 10000;
-				comparableNumber += revision * 100;
-				comparableNumber += ((int) this.letter) - valueOfA;
+				this.comparableNumber = major * 1000000;
+				this.comparableNumber += minor * 10000;
+				this.comparableNumber += revision * 100;
+				this.comparableNumber += ((int) this.letter) - valueOfA;
 			}
 		}
 
 		const int valueOfA = (int) 'a';
 
 		public override string ToString() {
-			return string.Concat(major, ".", minor, ".", revision, letter);
+			return string.Concat(this.major, ".", this.minor, ".", this.revision, this.letter);
 		}
 	}
 }

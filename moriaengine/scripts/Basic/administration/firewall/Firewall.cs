@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void RemoveBlockedIP(String ip) {
-			Firewall.RemoveBlockedIP(IPAddress.Parse(ip));
+			RemoveBlockedIP(IPAddress.Parse(ip));
 		}
 
 		public static bool IsBlockedIP(IPAddress ip) {
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public static bool IsBlockedIP(String IP) {
-			return Firewall.IsBlockedIP(IPAddress.Parse(IP));
+			return IsBlockedIP(IPAddress.Parse(IP));
 		}
 
 		public static void ShowBlockedIPs() {
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void RemoveBlockedIPRange(String fromIP, String toIP) {
-			Firewall.RemoveBlockedIPRange(IPAddress.Parse(fromIP), IPAddress.Parse(toIP));
+			RemoveBlockedIPRange(IPAddress.Parse(fromIP), IPAddress.Parse(toIP));
 		}
 
 		public static bool IsIPInRange(IPAddress ip, IPAddress lower, IPAddress upper) {

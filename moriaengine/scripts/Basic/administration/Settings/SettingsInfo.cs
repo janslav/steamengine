@@ -21,7 +21,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Settings_Help : CompiledGumpDef {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			dlg.CreateBackground(1100);
 			dlg.SetLocation(0, 20);
 

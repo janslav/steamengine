@@ -458,10 +458,10 @@ namespace SteamEngine.Regions {
 			it is confirmed that the character is holding the item, before the item is actually moved.
 		*/
 		internal static void ChangedP(Thing thing, Point4D oldP) {
-			bool oldPValid = Map.IsValidPos(oldP);
-			bool newPValid = Map.IsValidPos(thing);
-			Map oldM = Map.GetMap(oldP.M);
-			Map newM = Map.GetMap(thing.M);
+			bool oldPValid = IsValidPos(oldP);
+			bool newPValid = IsValidPos(thing);
+			Map oldM = GetMap(oldP.M);
+			Map newM = GetMap(thing.M);
 			if (!oldPValid) {
 				if (newPValid) {
 					newM.Add(thing);
@@ -621,7 +621,7 @@ namespace SteamEngine.Regions {
 			foreach (Thing t in Thing.AllThings.ToList()) {
 				t.FixWeight();
 				if (t.IsOnGround) {
-					if (Map.IsValidPos(t)) {
+					if (IsValidPos(t)) {
 						t.GetMap().Add(t);
 					}
 					t.CheckPositionValidityAfterLoad();
@@ -1039,7 +1039,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public MapTileType GetMapTileType(int x, int y) {
-			int id = GetTileId(x, y);
+			int id = this.GetTileId(x, y);
 			return GetMapTileType(id);
 		}
 
@@ -1063,7 +1063,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileWater(int x, int y) {
-			int id = GetTileId(x, y);
+			int id = this.GetTileId(x, y);
 			return (TileData.GetTileFlags(id) & TileFlag.Wet) == TileFlag.Wet;
 		}
 		/**
@@ -1071,7 +1071,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileDirt(int x, int y) {
-			int id = GetTileId(x, y);
+			int id = this.GetTileId(x, y);
 			return (t_dirt.IsTypeOfMapTile(id));
 		}
 		/**
@@ -1079,7 +1079,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileLava(int x, int y) {
-			int id = GetTileId(x, y);
+			int id = this.GetTileId(x, y);
 			return (t_lava.IsTypeOfMapTile(id));
 		}
 		/**
@@ -1087,7 +1087,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileRock(int x, int y) {
-			int id = GetTileId(x, y);
+			int id = this.GetTileId(x, y);
 			return (t_rock.IsTypeOfMapTile(id));
 		}
 		/**
@@ -1095,7 +1095,7 @@ namespace SteamEngine.Regions {
 			Use GetMapTileType when you would have to call more than one of the IsMapTile* methods.
 		*/
 		public bool IsMapTileGrass(int x, int y) {
-			int id = GetTileId(x, y);
+			int id = this.GetTileId(x, y);
 			return (t_grass.IsTypeOfMapTile(id));
 		}
 
@@ -1295,7 +1295,7 @@ namespace SteamEngine.Regions {
 					foreach (Sector sector in this.GetSectorsInRectangle(rect)) {
 						addingOK = sector.AddDynamicRegionRect(rect, performControls);
 						if (!addingOK) { //there was an error during inserting 
-							RemoveDynamicRegion(region); //immediatelly remove - removes all so far inserted rects...
+							this.RemoveDynamicRegion(region); //immediatelly remove - removes all so far inserted rects...
 							return false;//stop trying immediatelly
 						}
 					}

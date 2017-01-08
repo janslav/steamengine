@@ -117,9 +117,9 @@ namespace SteamEngine.Regions {
 				try {
 					Logger.WriteDebug("Resolving loaded static regions");
 
-					StaticRegion.ResolveParents();
+					ResolveParents();
 
-					StaticRegion.ResolveRegionsHierarchy();
+					ResolveRegionsHierarchy();
 
 					foreach (StaticRegion region in AllRegions) {
 						byName[region.Name] = region;
@@ -133,7 +133,7 @@ namespace SteamEngine.Regions {
 					}
 
 					//and now finally activate the regions - spread the references to their rectangles to the map sectors :)
-					StaticRegion.InitRectanglesToMaps(AllRegions);//use list of all available regions
+					InitRectanglesToMaps(AllRegions);//use list of all available regions
 				} catch (FatalException) {
 					throw;
 				} catch (Exception e) {
@@ -161,7 +161,7 @@ namespace SteamEngine.Regions {
 
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
-				return StaticRegion.GetByDefname(m.Groups["value"].Value);
+				return GetByDefname(m.Groups["value"].Value);
 			}
 		}
 
@@ -185,28 +185,28 @@ namespace SteamEngine.Regions {
 		}
 
 		private int SetHierarchyIndex(ICollection<StaticRegion> tempList) {
-			if (Parent == null) {
-				if (IsWorldRegion) {
-					HierarchyIndex = 0;
+			if (this.Parent == null) {
+				if (this.IsWorldRegion) {
+					this.HierarchyIndex = 0;
 					tempList.Remove(this);
 					return 0;
 				} else {
 					throw new SEException("Region " + this + " has no parent region set");
 				}
-			} else if (!this.HasSameMapplane(Parent)) {
-				throw new SEException("Region " + this + " has as parent set " + Parent + ", which is on another mapplane.");
+			} else if (!this.HasSameMapplane(this.Parent)) {
+				throw new SEException("Region " + this + " has as parent set " + this.Parent + ", which is on another mapplane.");
 			} else {
-				int parentIndex = ((StaticRegion) Parent).SetHierarchyIndex(tempList);
-				HierarchyIndex = parentIndex + 1;
-				highestHierarchyIndex = Math.Max(highestHierarchyIndex, HierarchyIndex);
+				int parentIndex = ((StaticRegion) this.Parent).SetHierarchyIndex(tempList);
+				this.HierarchyIndex = parentIndex + 1;
+				highestHierarchyIndex = Math.Max(highestHierarchyIndex, this.HierarchyIndex);
 				tempList.Remove(this);
-				return HierarchyIndex;
+				return this.HierarchyIndex;
 			}
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public void SaveWithHeader(SaveStream output) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			output.WriteSection(this.GetType().Name, this.Defname);
 			this.Save(output);
 			output.WriteLine();
@@ -381,25 +381,25 @@ namespace SteamEngine.Regions {
 		}
 
 		private bool ContainsRectangle(ImmutableRectangle rect) {
-			return (IsWorldRegion || (ContainsPoint(rect.MinX, rect.MinY)//left upper
-					&& ContainsPoint(rect.MinX, rect.MaxY) //left lower
-					&& ContainsPoint(rect.MaxX, rect.MaxY) //right lower
-					&& ContainsPoint(rect.MaxX, rect.MinY)));//right upper
+			return (this.IsWorldRegion || (this.ContainsPoint(rect.MinX, rect.MinY)//left upper
+					&& this.ContainsPoint(rect.MinX, rect.MaxY) //left lower
+					&& this.ContainsPoint(rect.MaxX, rect.MaxY) //right lower
+					&& this.ContainsPoint(rect.MaxX, rect.MinY)));//right upper
 		}
 
 		private bool ContainsRectanglePartly(ImmutableRectangle rect) {
-			return (IsWorldRegion || (ContainsPoint(rect.MinX, rect.MinY)//left upper
-					|| ContainsPoint(rect.MinX, rect.MaxY) //left lower
-					|| ContainsPoint(rect.MaxX, rect.MaxY) //right lower
-					|| ContainsPoint(rect.MaxX, rect.MinY)));//right upper
+			return (this.IsWorldRegion || (this.ContainsPoint(rect.MinX, rect.MinY)//left upper
+					|| this.ContainsPoint(rect.MinX, rect.MaxY) //left lower
+					|| this.ContainsPoint(rect.MaxX, rect.MaxY) //right lower
+					|| this.ContainsPoint(rect.MaxX, rect.MinY)));//right upper
 		}
 
 		private bool CheckHasAllRectanglesIn(StaticRegion other) {
 			bool retState = true;
-			for (int i = 0, n = rectangles.Count; i < n; i++) {
-				ImmutableRectangle rect = rectangles[i];
+			for (int i = 0, n = this.rectangles.Count; i < n; i++) {
+				ImmutableRectangle rect = this.rectangles[i];
 				if (!other.ContainsRectangle(rect)) {
-					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(Defname) + " should be contained within region " + LogStr.Ident(other.Defname) + ", but is not.");
+					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(this.Defname) + " should be contained within region " + LogStr.Ident(other.Defname) + ", but is not.");
 					retState = false; //problem
 				}
 			}
@@ -408,10 +408,10 @@ namespace SteamEngine.Regions {
 
 		private bool CheckHasNoRectanglesIn(StaticRegion other) {
 			bool retState = true;
-			for (int i = 0, n = rectangles.Count; i < n; i++) {
-				ImmutableRectangle rect = rectangles[i];
+			for (int i = 0, n = this.rectangles.Count; i < n; i++) {
+				ImmutableRectangle rect = this.rectangles[i];
 				if (other.ContainsRectanglePartly(rect)) {
-					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(Defname) + " overlaps with " + LogStr.Ident(other.Defname) + ", but should not.");
+					Logger.WriteWarning("Rectangle " + LogStr.Ident(rect) + " of region " + LogStr.Ident(this.Defname) + " overlaps with " + LogStr.Ident(other.Defname) + ", but should not.");
 					retState = false; //problem
 				}
 			}
@@ -433,8 +433,8 @@ namespace SteamEngine.Regions {
 
 		private bool CheckConflictsAndWarn() {
 			bool retState = true;
-			if (Parent != null) {
-				if (!CheckHasAllRectanglesIn((StaticRegion) Parent)) {
+			if (this.Parent != null) {
+				if (!this.CheckHasAllRectanglesIn((StaticRegion) this.Parent)) {
 					retState = false; //problem
 				}
 			}
@@ -480,17 +480,17 @@ namespace SteamEngine.Regions {
 			}
 			//now the checking phase!
 			//IList<RegionRectangle> oldRects = rectangles; //save
-			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations
+			InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations
 			this.canBeActivated = false;
 			try {
-				rectangles = newArr; //switch the rectangles			
+				this.rectangles = newArr; //switch the rectangles			
 				if (!this.CheckConflictsAndWarn()) { //check the edited region for possible problems
 					//rectangles = oldRects; //return the previous set of rectangles
 					result = false; //some problem
 				}
 				this.canBeActivated = true; //if we are here, everythin went fine or with simple warnings, which does not cause the fatal problem -)
 			} finally {
-				StaticRegion.ActivateAll();//all OK
+				ActivateAll();//all OK
 			}
 			return result;
 		}
@@ -504,21 +504,21 @@ namespace SteamEngine.Regions {
 			this.Name = name; //nove jmeno, a zaroven ho to ulozi do prislusneho seznamu
 			//jeste nez nasetujeme rectangly (coz vyvola zaroven i celou kontrolu vsech regionu)
 			//tak musime zvlast vyresit zarazeni do hierarchie
-			StaticRegion.ResolveRegionsHierarchy();//to se resi jen na urovni parentu (bez rectanglu)
-			retval = SetRectangles(rects); //nastavit rect - ulozi se
-			P = home; //homepos muzeme az kdyz mame region i s rectangly 
+			ResolveRegionsHierarchy();//to se resi jen na urovni parentu (bez rectanglu)
+			retval = this.SetRectangles(rects); //nastavit rect - ulozi se
+			this.P = home; //homepos muzeme az kdyz mame region i s rectangly 
 
 			return retval; //jak to dopadlo
 		}
 
 		public override string Name {
 			get {
-				return name;
+				return this.name;
 			}
 			set {
-				ThrowIfDeleted();
-				byName.Remove(name);
-				name = String.Intern(value);
+				this.ThrowIfDeleted();
+				byName.Remove(this.name);
+				this.name = String.Intern(value);
 				if (this != voidRegion) {
 					byName[value] = this;
 				}
@@ -545,7 +545,7 @@ namespace SteamEngine.Regions {
 
 		public override bool IsDeleted {
 			get {
-				return isDeleted;
+				return this.isDeleted;
 			}
 		}
 
@@ -558,7 +558,7 @@ namespace SteamEngine.Regions {
 			}
 			//najdeme deti a prepojime je na parenta
 			List<StaticRegion> children = FindRegionsChildren(this);
-			StaticRegion.InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations			
+			InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations			
 			try {
 				foreach (StaticRegion child in children) {
 					child.Parent = this.Parent; //reset parents!
@@ -570,7 +570,7 @@ namespace SteamEngine.Regions {
 				byName.Remove(this.name); //remove it from the byNames dict
 				byDefname.Remove(this.Defname);//and from the byDefnames dict this means that the region is now completely removed
 			} finally {
-				StaticRegion.ActivateAll();//all OK
+				ActivateAll();//all OK
 			}
 			this.inactivated = true;
 			this.isDeleted = true;

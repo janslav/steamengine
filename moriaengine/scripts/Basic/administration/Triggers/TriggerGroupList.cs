@@ -30,13 +30,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme triggergroupy brat?
-			List<TriggerGroup> tgList = args.GetTag(D_TriggerGroupsList.tgListTK) as List<TriggerGroup>;
+			List<TriggerGroup> tgList = args.GetTag(tgListTK) as List<TriggerGroup>;
 			if (tgList == null) {
 				//vzit seznam triggergroup dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				tgList = ListifyTriggerGroups(ph.GetAllTriggerGroups(), TagMath.SGetTag(args, D_TriggerGroupsList.tgCriteriumTK));
+				tgList = this.ListifyTriggerGroups(ph.GetAllTriggerGroups(), TagMath.SGetTag(args, tgCriteriumTK));
 				tgList.Sort(TriggerGroupsComparer.instance); //setridit podle abecedy
-				args.SetTag(D_TriggerGroupsList.tgListTK, tgList); //ulozime to do argumentu dialogu				
+				args.SetTag(tgListTK, tgList); //ulozime to do argumentu dialogu				
 			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, tgList.Count);
@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			PluginHolder tgOwner = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme tg brat?				
 			//seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<TriggerGroup> tgList = (List<TriggerGroup>) args.GetTag(D_TriggerGroupsList.tgListTK);
+			List<TriggerGroup> tgList = (List<TriggerGroup>) args.GetTag(tgListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tgList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
@@ -108,8 +108,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
-						args.SetTag(D_TriggerGroupsList.tgCriteriumTK, nameCriteria);
-						args.RemoveTag(D_TriggerGroupsList.tgListTK);//vycistit soucasny odkaz na tglist aby se mohl prenacist
+						args.SetTag(tgCriteriumTK, nameCriteria);
+						args.RemoveTag(tgListTK);//vycistit soucasny odkaz na tglist aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //pridat novou trigger groupu
@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				switch (buttNo) {
 					case 0: //smazat						
 						tgOwner.RemoveTriggerGroup(tg);
-						args.RemoveTag(D_TriggerGroupsList.tgListTK);//na zaver smazat tglist (musi se reloadnout)
+						args.RemoveTag(tgListTK);//na zaver smazat tglist (musi se reloadnout)
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TriggerGroupsList>.Instance, newArgs);
 			} else {
-				newArgs.SetTag(D_TriggerGroupsList.tgCriteriumTK, text.Args);//vyhl. kriterium
+				newArgs.SetTag(tgCriteriumTK, text.Args);//vyhl. kriterium
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TriggerGroupsList>.Instance, newArgs);
 			}
 		}
@@ -172,7 +172,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting triggergroups by name</summary>
 	public class TriggerGroupsComparer : IComparer<TriggerGroup> {
-		public readonly static TriggerGroupsComparer instance = new TriggerGroupsComparer();
+		public static readonly TriggerGroupsComparer instance = new TriggerGroupsComparer();
 
 		private TriggerGroupsComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci

@@ -78,19 +78,19 @@ namespace SteamEngine.CompiledScripts {
 				throw new SEException("There is no Chardef for model 0x" + model.ToString("x"));
 			}
 
-			charAnimType = CharAnimType.Empty;
+			this.charAnimType = CharAnimType.Empty;
 			if (model < bodyTable.Length) {
-				charAnimType = bodyTable[model];
+				this.charAnimType = bodyTable[model];
 			}
 
 			this.gender = Gender.Undefined;
 			if (IsMaleModel(model)) {
-				gender = Gender.Male;
-				isMale = true;
+				this.gender = Gender.Male;
+				this.isMale = true;
 			}
 			if (IsFemaleModel(model)) {
-				gender = Gender.Female;
-				isFemale = true;
+				this.gender = Gender.Female;
+				this.isFemale = true;
 			}
 			this.isGhost = IsGhostModel(model);
 		}
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public uint AnimsAvailable {
 			get {
-				return charDef.AnimsAvailable;
+				return this.charDef.AnimsAvailable;
 			}
 		}
 
@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static bool IsHumanModel(int model) {
-			return (CharModelInfo.GetByModel(model).charAnimType & CharAnimType.Human) == CharAnimType.Human;
+			return (GetByModel(model).charAnimType & CharAnimType.Human) == CharAnimType.Human;
 		}
 	}
 }

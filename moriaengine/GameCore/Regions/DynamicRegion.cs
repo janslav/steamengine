@@ -27,9 +27,9 @@ namespace SteamEngine.Regions {
 			: base() {
 
 			int n = newRects.Length;
-			rectangles = new RegionRectangle[n];
+			this.rectangles = new RegionRectangle[n];
 			for (int i = 0; i < n; i++) {
-				rectangles[i] = new RegionRectangle(newRects[i], this);
+				this.rectangles[i] = new RegionRectangle(newRects[i], this);
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace SteamEngine.Regions {
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Place(Point4D p) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			if (p != null) { //already placed!
 				throw new SEException("This Dynamic region has already been placed to the map. For movement try setting its P");
 			}
@@ -61,11 +61,11 @@ namespace SteamEngine.Regions {
 				return base.P;
 			}
 			set {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				if (value == null) {
 					throw new SEException("P is null");
 				}
-				if (Step(value)) { //first move to the desired position after performing necessary checks
+				if (this.Step(value)) { //first move to the desired position after performing necessary checks
 					//(trying to move over another dynamic region causes movement to fail!)
 					base.P = value;
 				}
@@ -83,13 +83,13 @@ namespace SteamEngine.Regions {
 		public bool Step(int xDiff, int yDiff) {
 			//a new list of changed (moved) rectangles
 			List<RegionRectangle> movedRects = new List<RegionRectangle>();
-			foreach (RegionRectangle oneRect in rectangles) {
+			foreach (RegionRectangle oneRect in this.rectangles) {
 				movedRects.Add(oneRect.CloneMoved(xDiff, yDiff));
 			}
 			Point4D oldP = this.P;
 			Map oldMap = Map.GetMap(oldP.M); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
-			bool result = SetRectangles(movedRects, oldMap);
+			bool result = this.SetRectangles(movedRects, oldMap);
 			//add it without checks (these were performed when setting the rectangles)
 			//we will add either the new array of rectangles or the old one if there were problems
 			oldMap.AddDynamicRegion(this, false);
@@ -116,23 +116,23 @@ namespace SteamEngine.Regions {
 				int diffX = newP.X - oldPos.X;
 				int diffY = newP.Y - oldPos.Y;
 				List<RegionRectangle> movedRects = new List<RegionRectangle>();
-				foreach (RegionRectangle oneRect in rectangles) {
+				foreach (RegionRectangle oneRect in this.rectangles) {
 					movedRects.Add(oneRect.CloneMoved(diffX, diffY));
 				}
 				if (mapChanged) {
 					Map newMap = Map.GetMap(newP.M);
 					this.Parent = newMap.GetRegionFor(newP);
-					movingOK = SetRectangles(movedRects, newMap);
+					movingOK = this.SetRectangles(movedRects, newMap);
 					newMap.AddDynamicRegion(this, false);//place the region to the map (no checks, they were already performed in SetRectangles)
 				} else {
 					this.Parent = oldMap.GetRegionFor(newP);
-					movingOK = SetRectangles(movedRects, oldMap);
+					movingOK = this.SetRectangles(movedRects, oldMap);
 					oldMap.AddDynamicRegion(this, false);//and place (no checks as well)
 				}
 			} else if (mapChanged) {
 				Map newMap = Map.GetMap(newP.M);
 				this.Parent = newMap.GetRegionFor(newP);
-				movingOK = SetRectangles(rectangles, newMap); //here set the old rectangles (but to the new map)
+				movingOK = this.SetRectangles(this.rectangles, newMap); //here set the old rectangles (but to the new map)
 				newMap.AddDynamicRegion(this, false);//place, still no checks
 			} else { //nothing at all :) - set to the same position
 				oldMap.AddDynamicRegion(this, false);//return it			
@@ -158,7 +158,7 @@ namespace SteamEngine.Regions {
 				newArr[i] = new RegionRectangle(list[i].MinX, list[i].MinY, list[i].MaxX, list[i].MaxY, this);
 			}
 			//now the checking phase!
-			inactivated = true;
+			this.inactivated = true;
 			foreach (RegionRectangle rect in newArr) {
 				if (!map.CheckDynRectIntersection(rect)) {
 					//check the intercesction of the dynamic region, in case of any trouble immediatelly finish
@@ -166,8 +166,8 @@ namespace SteamEngine.Regions {
 				}
 			}
 			//everything is OK, we can swith the lists
-			rectangles = newArr;
-			inactivated = false;
+			this.rectangles = newArr;
+			this.inactivated = false;
 			return true;
 		}
 
@@ -176,11 +176,11 @@ namespace SteamEngine.Regions {
 			base.Delete();
 		}
 
-		public override sealed void Save(SteamEngine.Persistence.SaveStream output) {
+		public sealed override void Save(Persistence.SaveStream output) {
 			throw new SEException("Dynamic regions are not supposed to be saved");
 		}
 
-		public override sealed void LoadLine(string filename, int line, string valueName, string valueString) {
+		public sealed override void LoadLine(string filename, int line, string valueName, string valueString) {
 			throw new SEException("Dynamic regions are not supposed to be loaded");
 		}
 	}

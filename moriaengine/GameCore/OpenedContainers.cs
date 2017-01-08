@@ -29,8 +29,8 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	public static class OpenedContainers {
-		private readonly static Dictionary<AbstractItem, LinkedList<AbstractCharacter>> charsByContainer = new Dictionary<AbstractItem, LinkedList<AbstractCharacter>>();
-		private readonly static Dictionary<AbstractCharacter, HashSet<AbstractItem>> containersByChar = new Dictionary<AbstractCharacter, HashSet<AbstractItem>>();
+		private static readonly Dictionary<AbstractItem, LinkedList<AbstractCharacter>> charsByContainer = new Dictionary<AbstractItem, LinkedList<AbstractCharacter>>();
+		private static readonly Dictionary<AbstractCharacter, HashSet<AbstractItem>> containersByChar = new Dictionary<AbstractCharacter, HashSet<AbstractItem>>();
 
 		public static DenyResult HasContainerOpen(AbstractCharacter ch, AbstractItem container) {
 			HashSet<AbstractItem> conts;

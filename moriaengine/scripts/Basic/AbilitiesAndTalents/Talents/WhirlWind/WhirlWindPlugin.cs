@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		public void On_BeforeSwing(WeaponSwingArgs swingArgs) {
 			swingArgs.DamageAfterAC *= WhirlWindDef.EffectPower;
 
-			if (!isProcessingOthers) { //we don't want recursion
+			if (!this.isProcessingOthers) { //we don't want recursion
 				this.isProcessingOthers = true;
 
 				var self = (Character) this.Cont;

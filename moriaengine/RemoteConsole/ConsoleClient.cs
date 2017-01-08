@@ -61,7 +61,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void NoParamDeleg();
 
 		public void On_Close(string reason) {
-			IPEndPoint ep = conn.EndPoint;
+			IPEndPoint ep = this.conn.EndPoint;
 			Console.WriteLine("Disconnected from " + ep + ": " + reason);
 
 			connectedInstance = null;
@@ -103,11 +103,11 @@ namespace SteamEngine.RemoteConsole {
 					}
 				}
 				if (!compatibleAddressPresent) {
-					Logger.WriteError("Incompatible Address: '" + eps.Address + "'. Only IPv4 addresses supported");
+					Common.Logger.WriteError("Incompatible Address: '" + eps.Address + "'. Only IPv4 addresses supported");
 					return;
 				}
 			} catch (Exception e) {
-				Logger.WriteError(e);
+				Common.Logger.WriteError(e);
 			}
 
 			if (eps.KeepReconnecting) {

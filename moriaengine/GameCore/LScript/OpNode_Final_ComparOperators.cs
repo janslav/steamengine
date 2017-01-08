@@ -34,11 +34,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return object.Equals(left.Run(vars), right.Run(vars));
+			return Equals(this.left.Run(vars), this.right.Run(vars));
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			return object.Equals(results[0], results[1]);
+			return Equals(results[0], results[1]);
 		}
 	}
 
@@ -49,11 +49,11 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return !object.Equals(left.Run(vars), right.Run(vars));
+			return !Equals(this.left.Run(vars), this.right.Run(vars));
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			return !object.Equals(results[0], results[1]);
+			return !Equals(results[0], results[1]);
 		}
 	}
 
@@ -64,10 +64,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVar, System.Globalization.CultureInfo.InvariantCulture) == Convert.ToDouble(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(leftVar, CultureInfo.InvariantCulture) == Convert.ToDouble(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating == operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -76,7 +76,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) == Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(results[0], CultureInfo.InvariantCulture) == Convert.ToDouble(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating == operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -91,10 +91,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVar, System.Globalization.CultureInfo.InvariantCulture) == Convert.ToInt64(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(leftVar, CultureInfo.InvariantCulture) == Convert.ToInt64(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating == operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -103,7 +103,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) == Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(results[0], CultureInfo.InvariantCulture) == Convert.ToInt64(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating == operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -118,10 +118,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVar, System.Globalization.CultureInfo.InvariantCulture) != Convert.ToDouble(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(leftVar, CultureInfo.InvariantCulture) != Convert.ToDouble(rightVar, CultureInfo.InvariantCulture));
 			} catch (InterpreterException) {
 				throw;
 			} catch (FatalException) {
@@ -134,7 +134,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) != Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(results[0], CultureInfo.InvariantCulture) != Convert.ToDouble(results[1], CultureInfo.InvariantCulture));
 			} catch (InterpreterException) {
 				throw;
 			} catch (FatalException) {
@@ -153,10 +153,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVar, System.Globalization.CultureInfo.InvariantCulture) != Convert.ToInt64(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(leftVar, CultureInfo.InvariantCulture) != Convert.ToInt64(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating != operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -165,7 +165,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) != Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(results[0], CultureInfo.InvariantCulture) != Convert.ToInt64(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating != operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -180,10 +180,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVar, System.Globalization.CultureInfo.InvariantCulture) < Convert.ToDouble(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(leftVar, CultureInfo.InvariantCulture) < Convert.ToDouble(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating < operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -192,7 +192,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) < Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(results[0], CultureInfo.InvariantCulture) < Convert.ToDouble(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating < operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -207,10 +207,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVar, System.Globalization.CultureInfo.InvariantCulture) > Convert.ToDouble(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(leftVar, CultureInfo.InvariantCulture) > Convert.ToDouble(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating > operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -219,7 +219,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) > Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(results[0], CultureInfo.InvariantCulture) > Convert.ToDouble(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating > operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -234,10 +234,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVar, System.Globalization.CultureInfo.InvariantCulture) <= Convert.ToDouble(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(leftVar, CultureInfo.InvariantCulture) <= Convert.ToDouble(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating <= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -246,7 +246,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) <= Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(results[0], CultureInfo.InvariantCulture) <= Convert.ToDouble(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating <= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -261,10 +261,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToDouble(leftVar, System.Globalization.CultureInfo.InvariantCulture) >= Convert.ToDouble(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(leftVar, CultureInfo.InvariantCulture) >= Convert.ToDouble(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating >= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -273,7 +273,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToDouble(results[0], System.Globalization.CultureInfo.InvariantCulture) >= Convert.ToDouble(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToDouble(results[0], CultureInfo.InvariantCulture) >= Convert.ToDouble(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating >= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -288,10 +288,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVar, System.Globalization.CultureInfo.InvariantCulture) < Convert.ToInt64(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(leftVar, CultureInfo.InvariantCulture) < Convert.ToInt64(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating < operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -300,7 +300,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) < Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(results[0], CultureInfo.InvariantCulture) < Convert.ToInt64(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating < operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -315,10 +315,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVar, System.Globalization.CultureInfo.InvariantCulture) > Convert.ToInt64(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(leftVar, CultureInfo.InvariantCulture) > Convert.ToInt64(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating > operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -327,7 +327,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) > Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(results[0], CultureInfo.InvariantCulture) > Convert.ToInt64(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating > operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -342,10 +342,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVar, System.Globalization.CultureInfo.InvariantCulture) <= Convert.ToInt64(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(leftVar, CultureInfo.InvariantCulture) <= Convert.ToInt64(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating <= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -354,7 +354,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) <= Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(results[0], CultureInfo.InvariantCulture) <= Convert.ToInt64(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating <= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -369,10 +369,10 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = left.Run(vars);
-			object rightVar = right.Run(vars);
+			object leftVar = this.left.Run(vars);
+			object rightVar = this.right.Run(vars);
 			try {
-				return (Convert.ToInt64(leftVar, System.Globalization.CultureInfo.InvariantCulture) >= Convert.ToInt64(rightVar, System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(leftVar, CultureInfo.InvariantCulture) >= Convert.ToInt64(rightVar, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating >= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -381,7 +381,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				return (Convert.ToInt64(results[0], System.Globalization.CultureInfo.InvariantCulture) >= Convert.ToInt64(results[1], System.Globalization.CultureInfo.InvariantCulture));
+				return (Convert.ToInt64(results[0], CultureInfo.InvariantCulture) >= Convert.ToInt64(results[1], CultureInfo.InvariantCulture));
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating >= operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);

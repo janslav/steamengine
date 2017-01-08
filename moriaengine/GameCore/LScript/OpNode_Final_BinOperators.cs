@@ -34,7 +34,7 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			return string.Concat(left.Run(vars), right.Run(vars));
+			return string.Concat(this.left.Run(vars), this.right.Run(vars));
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {

@@ -20,7 +20,7 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
-	[Dialogs.ViewableClass]
+	[ViewableClass]
 	public abstract class CraftingSkillDef : SkillDef {
 
 		public CraftingSkillDef(string defname, string filename, int headerLine)
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
-			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs) || !this.DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return TriggerResult.Cancel; //something wrong, finish now
 			}
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 			Character self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
-			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs) || !this.DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return TriggerResult.Cancel; //something wrong, finish now
 			}
@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
-			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs) || !this.DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(skillSeqArgs.Self);
 				return TriggerResult.Cancel; //something wrong, finish now
 			}
@@ -92,12 +92,12 @@ namespace SteamEngine.CompiledScripts {
 			int strokesCnt = Convert.ToInt32(skillSeqArgs.Param2);
 			if (strokesCnt > 1) {
 				//do the animation, sound and repeat the stroke
-				DoStroke(skillSeqArgs);
+				this.DoStroke(skillSeqArgs);
 				skillSeqArgs.Param2 = strokesCnt - 1;
 				skillSeqArgs.DelayStroke();
 				return TriggerResult.Cancel; //stop here for now (we are waiting for the next stroke round...)
 			}
-			DoStroke(skillSeqArgs);//do the animation, sound and finish
+			this.DoStroke(skillSeqArgs);//do the animation, sound and finish
 			return TriggerResult.Continue; //continue to @success or @fail (the result is already prepared from the "@start" phase
 		}
 
@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 			Player self = (Player) skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
-			if (!CheckPrerequisities(skillSeqArgs) || !DoCheckSpecials(skillSeqArgs)) {
+			if (!this.CheckPrerequisities(skillSeqArgs) || !this.DoCheckSpecials(skillSeqArgs)) {
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return;//something wrong, finish now
 			}
@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 					self.SysMessage(String.Format(
 								Loc<CraftSkillsLoc>.Get(self.Language).ItemMadeAndPutInRecCont,
 								iDefToMake.Name, self.ReceivingContainer.Name));
-					DoSuccess(skillSeqArgs, newItem);
+					this.DoSuccess(skillSeqArgs, newItem);
 
 					CraftingProcessPlugin.MakeFinished(skillSeqArgs, true);
 				}

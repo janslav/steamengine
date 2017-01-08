@@ -115,13 +115,13 @@ namespace SteamEngine.Networking {
 		//called from incomingpacket.Handle, so we're also under lock(globallock)
 		internal void MovementRequest(Direction direction, bool running, byte sequence) {
 			lock (queue) {
-				int requestCount = moveRequests.Count;
+				int requestCount = this.moveRequests.Count;
 				if (requestCount == 0) {
 					this.ProcessMovement(new MoveRequest(direction, running, sequence));
 				} else {
 					this.moveRequests.Enqueue(new MoveRequest(direction, running, sequence));
 				}
-				if ((requestCount == 0) && (moveRequests.Count == 1)) {
+				if ((requestCount == 0) && (this.moveRequests.Count == 1)) {
 					queue.AddFirst(this.listNode);
 					manualResetEvent.Set();
 				}
@@ -136,7 +136,7 @@ namespace SteamEngine.Networking {
 			}
 
 			if (mr.direction != ch.Direction) {//no speedcheck if we're just changing direction
-				if (moveRequests.Count == 0) {
+				if (this.moveRequests.Count == 0) {
 					this.Movement(mr.direction, mr.running, mr.sequence);
 				}
 				return;
@@ -151,23 +151,23 @@ namespace SteamEngine.Networking {
 
 		private bool CanMoveAgain() {
 			long currentTime = HighPerformanceTimer.TickCount;
-			long diff = currentTime - nextMovementTime;
+			long diff = currentTime - this.nextMovementTime;
 
 			//Logger.WriteInfo(MovementTracingOn, "Time between movement = "+HighPerformanceTimer.TicksToSeconds(currentTime-lastMovementTime));
 
-			long reserves = lastStepReserve + secondLastStepReserve + thirdLastStepReserve;
+			long reserves = this.lastStepReserve + this.secondLastStepReserve + this.thirdLastStepReserve;
 
 			if (diff + reserves >= 0) {
 				//Logger.WriteInfo(MovementTracingOn, "Time later than allowed = "+HighPerformanceTimer.TicksToSeconds(diff + reserves));
 
 				if (this.gameState.CharacterNotNull.Flag_Riding) {
-					nextMovementTime = (currentTime + RidingRunStepTime);
+					this.nextMovementTime = (currentTime + this.RidingRunStepTime);
 				} else {
-					nextMovementTime = (currentTime + RunStepTime);
+					this.nextMovementTime = (currentTime + this.RunStepTime);
 				}
-				thirdLastStepReserve = secondLastStepReserve;
-				secondLastStepReserve = lastStepReserve;
-				lastStepReserve = Math.Max(diff, 0);
+				this.thirdLastStepReserve = this.secondLastStepReserve;
+				this.secondLastStepReserve = this.lastStepReserve;
+				this.lastStepReserve = Math.Max(diff, 0);
 				//lastMovementTime = currentTime;//...because sometimes the client tends to send more steps at once (or it looks like that), but it still isn't speedhacking
 				return true;
 			} else {

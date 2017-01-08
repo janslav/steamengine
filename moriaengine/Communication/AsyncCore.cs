@@ -47,7 +47,7 @@ namespace SteamEngine.Communication {
 			this.outgoingPackets = new BlockingCollection<OutgoingMessage>(new ConcurrentQueue<OutgoingMessage>());
 
 			string threadsName = Tools.TypeToString(this.GetType());
-			CreateAndStartWorkerThread(threadsName + "_Worker");
+			this.CreateAndStartWorkerThread(threadsName + "_Worker");
 		}
 
 		private Thread CreateAndStartWorkerThread(string name) {
@@ -88,7 +88,7 @@ namespace SteamEngine.Communication {
 			group.Enqueued();
 
 			this.outgoingPackets.Add(new OutgoingMessage(conn, group));
-			outgoingPacketEnqueued.Set();
+			this.outgoingPacketEnqueued.Set();
 
 			this.outgoingPacketsSentEvent.Reset();
 		}

@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 			this.entryName = entryName;
 		}
 
-		public override void SendDenyMessage(AbstractCharacter ch, GameState state, TcpConnection<SteamEngine.Networking.GameState> conn) {
+		public override void SendDenyMessage(AbstractCharacter ch, GameState state, TcpConnection<GameState> conn) {
 			if (ch != null) {
 				string msg = this.collection.GetEntry(this.entryName);
 				if (!string.IsNullOrEmpty(msg)) {
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 			this.entryName = entryName;
 		}
 
-		public override void SendDenyMessage(AbstractCharacter ch, GameState state, TcpConnection<SteamEngine.Networking.GameState> conn) {
+		public override void SendDenyMessage(AbstractCharacter ch, GameState state, TcpConnection<GameState> conn) {
 			if (ch != null) {
 				CompiledLocStringCollection loc = Loc<T>.Get(ch.Language);
 				string msg = loc.GetEntry(this.entryName);

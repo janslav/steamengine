@@ -38,7 +38,7 @@ namespace SteamEngine.Persistence {
 		//the name of the saveableclass displayed in settings dialog
 		public string Description {
 			get {
-				return description;
+				return this.description;
 			}
 		}
 
@@ -189,13 +189,13 @@ namespace SteamEngine.Persistence {
 
 		public Type HandledType {
 			get {
-				return handledType;
+				return this.handledType;
 			}
 		}
 
 		public string HeaderName {
 			get {
-				return headerName;
+				return this.headerName;
 			}
 		}
 
@@ -206,7 +206,7 @@ namespace SteamEngine.Persistence {
 		protected void LoadSectionLines(PropsSection ps, object loadedObject) {
 			foreach (PropsLine p in ps.PropsLines) {
 				try {
-					LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
+					this.LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 				} catch (FatalException) {
 					throw;
 				} catch (Exception ex) {

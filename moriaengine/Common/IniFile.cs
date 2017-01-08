@@ -45,8 +45,8 @@ namespace SteamEngine.Common {
 				using (StreamReader reader = new StreamReader(filename)) {
 
 					foreach (IniFileSection section in Parse(filename, reader)) {
-						allSections.Add(section);
-						sectionsByName[section.Name] = section;
+						this.allSections.Add(section);
+						this.sectionsByName[section.Name] = section;
 					}
 				}
 			}
@@ -60,7 +60,7 @@ namespace SteamEngine.Common {
 
 		public void WriteToFile() {
 			using (StreamWriter writer = new StreamWriter(this.filename)) {
-				foreach (IIniFilePart section in allSections) {
+				foreach (IIniFilePart section in this.allSections) {
 					section.WriteOut(writer);
 				}
 			}
@@ -68,25 +68,25 @@ namespace SteamEngine.Common {
 
 		public IniFileSection GetNewOrParsedSection(string sectionName) {
 			IniFileSection section;
-			if (!sectionsByName.TryGetValue(sectionName, out section)) {
+			if (!this.sectionsByName.TryGetValue(sectionName, out section)) {
 
 				section = new IniFileSection(sectionName, verticalLine);
-				allSections.Add(section);
-				sectionsByName[section.Name] = section;
+				this.allSections.Add(section);
+				this.sectionsByName[section.Name] = section;
 			}
 			return section;
 		}
 
 		public IniFileSection GetNewSection(string sectionName) {
 			IniFileSection section = new IniFileSection(sectionName, verticalLine);
-			allSections.Add(section);
-			sectionsByName[section.Name] = section;
+			this.allSections.Add(section);
+			this.sectionsByName[section.Name] = section;
 			return section;
 		}
 
 		public IniFileSection GetSection(string sectionName) {
 			IniFileSection section;
-			if (!sectionsByName.TryGetValue(sectionName, out section)) {
+			if (!this.sectionsByName.TryGetValue(sectionName, out section)) {
 				throw new SEException("Missing section " + sectionName + " from the ini file.");
 			}
 			return section;
@@ -97,7 +97,7 @@ namespace SteamEngine.Common {
 		}
 
 		public IEnumerable<IniFileSection> GetSections(string sectionName) {
-			foreach (IniFileSection section in allSections) {
+			foreach (IniFileSection section in this.allSections) {
 				if (sectionName.Equals(section.Name, StringComparison.OrdinalIgnoreCase)) {
 					yield return section;
 				}
@@ -105,15 +105,15 @@ namespace SteamEngine.Common {
 		}
 
 		public void RemoveSection(IniFileSection section) {
-			allSections.Remove(section);
+			this.allSections.Remove(section);
 
 			IniFileSection oldSection;
-			if (sectionsByName.TryGetValue(section.Name, out oldSection)) {
+			if (this.sectionsByName.TryGetValue(section.Name, out oldSection)) {
 				if (oldSection == section) {
-					sectionsByName.Remove(section.Name);
-					foreach (IniFileSection s in allSections) {
+					this.sectionsByName.Remove(section.Name);
+					foreach (IniFileSection s in this.allSections) {
 						if (string.Equals(s.Name, section.Name, StringComparison.OrdinalIgnoreCase)) {
-							sectionsByName[s.Name] = s;
+							this.sectionsByName[s.Name] = s;
 							return;
 						}
 					}
@@ -235,27 +235,27 @@ namespace SteamEngine.Common {
 
 		internal void SetParsedValue(IniFileValueLine valueLine) {
 			string valueName = valueLine.name;
-			if (props.ContainsKey(valueName)) {
+			if (this.props.ContainsKey(valueName)) {
 				Logger.WriteWarning("One section can't have more values of the same name (section [" + this.name + "], value name '" + valueName + "'. Ignoring.");
 				return;
 			}
-			props[valueName] = valueLine;
-			parts.Add(valueLine);
+			this.props[valueName] = valueLine;
+			this.parts.Add(valueLine);
 		}
 
 		public void AddComment(string comment) {
-			parts.Add(new IniFileComment(comment, false));
+			this.parts.Add(new IniFileComment(comment, false));
 		}
 
 		public T GetValue<T>(string valueName, T defaultValue, string comment) {
 			IniFileValueLine value;
-			if (props.TryGetValue(valueName, out value)) {
+			if (this.props.TryGetValue(valueName, out value)) {
 				return value.GetValue<T>();
 			} else {
 				comment = string.Concat(Environment.NewLine, "( ", valueName, ": ", comment, " )", Environment.NewLine);
 				value = new IniFileValueLine(valueName, string.Concat(defaultValue), comment, true, null);
-				props[valueName] = value;
-				parts.Add(value);
+				this.props[valueName] = value;
+				this.parts.Add(value);
 				return defaultValue;
 			}
 		}
@@ -267,8 +267,8 @@ namespace SteamEngine.Common {
 			} else {
 				comment = string.Concat(Environment.NewLine, "( ", valueName, ": ", comment, " )", Environment.NewLine);
 				valueLine = new IniFileValueLine(valueName, string.Concat(value), comment, true, null);
-				props[valueName] = valueLine;
-				parts.Add(valueLine);
+				this.props[valueName] = valueLine;
+				this.parts.Add(valueLine);
 			}
 		}
 
@@ -355,7 +355,7 @@ namespace SteamEngine.Common {
 				}
 				this.valueSet = true;
 			}
-			return ConvertTools.ConvertTo<T>(value);
+			return ConvertTools.ConvertTo<T>(this.value);
 		}
 
 		void IIniFilePart.WriteOut(TextWriter stream) {

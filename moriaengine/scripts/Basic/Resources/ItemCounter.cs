@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Add the item to the found items list and count its amount for resource's multiplicity determining</summary>
 		internal void IncludeItem(Item itm) {
-			foundItems.Add(itm); //add to the list
+			this.foundItems.Add(itm); //add to the list
 			this.foundCount += itm.Amount;
 		}
 
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 		/// </summary>
 		internal void ConsumeItems(double howManyTimes) {
 			long toConsume = (long) (this.DesiredCount * howManyTimes);
-			foreach (Item itm in foundItems) {
+			foreach (Item itm in this.foundItems) {
 				//try consume as much as possible of this item
 				long wasConsumed = itm.Consume(toConsume);
 				toConsume -= wasConsumed;
@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 		internal void ConsumeSomeItems() {
 			int available = (int) Math.Min(this.foundCount, this.DesiredCount); //we can consume at most the really desired count (but no more)
 			long toConsume = (long) Math.Round((new Random().NextDouble()) * available);
-			foreach (Item itm in foundItems) {
+			foreach (Item itm in this.foundItems) {
 				//try consume as much as possible of this item
 				long wasConsumed = itm.Consume(toConsume);
 				toConsume -= wasConsumed;

@@ -53,7 +53,7 @@ namespace SteamEngine.Converter {
 				} else {
 					return this.modelNum;
 				}
-				Error(this.origData.HeaderLine, "ThingDef " + this.headerName + " has no model set...?");
+				this.Error(this.origData.HeaderLine, "ThingDef " + this.headerName + " has no model set...?");
 				return -1;
 			}
 		}
@@ -127,7 +127,7 @@ namespace SteamEngine.Converter {
 				if (needsHeader) {
 					//what now? :)
 					this.headerName = "i_hadnodefname_0x" + headerNum.ToString("x");
-					Info(this.origData.HeaderLine, "Has no defname except a number, and model defined elsewhere...");
+					this.Info(this.origData.HeaderLine, "Has no defname except a number, and model defined elsewhere...");
 				}
 			}
 		}
@@ -177,7 +177,7 @@ namespace SteamEngine.Converter {
 			}
 			if (this.defname2 != null) {
 				if (defnameWritten) {
-					Warning(this.defname2.Line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
+					this.Warning(this.defname2.Line, "Defname2 ignored. In steamengine, defs can have mostly 1 alternative defname.");
 				} else if (!StringComparer.OrdinalIgnoreCase.Equals(this.headerType, this.defname2.Value)) {
 					this.Set("defname", this.defname2.Value, this.defname2.Comment);
 				}
@@ -236,7 +236,7 @@ namespace SteamEngine.Converter {
 					return this.defname1.Value;
 				}
 				if (this.defname2 != null) {
-					return defname2.Value;
+					return this.defname2.Value;
 				}
 
 				//it's numeric, so...

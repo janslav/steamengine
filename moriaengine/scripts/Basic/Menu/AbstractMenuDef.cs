@@ -28,8 +28,8 @@ namespace SteamEngine.CompiledScripts {
 
 	public abstract class AbstractMenuDef : AbstractDef {
 
-		Networking.MenuRespose responseCallback;
-		Networking.MenuCancel cancelCallback;
+		MenuRespose responseCallback;
+		MenuCancel cancelCallback;
 
 		internal AbstractMenuDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 			this.cancelCallback = this.On_Cancel;
 		}
 
-		public static new AbstractMenuDef GetByDefname(string defname) {
+		public new static AbstractMenuDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbstractMenuDef;
 		}
 
@@ -51,10 +51,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		abstract protected IEnumerable<string> GetAllTexts(Language language);
+		protected abstract IEnumerable<string> GetAllTexts(Language language);
 
-		abstract protected void On_Response(GameState state, int index, object parameter);
+		protected abstract void On_Response(GameState state, int index, object parameter);
 
-		abstract protected void On_Cancel(GameState state, object parameter);
+		protected abstract void On_Cancel(GameState state, object parameter);
 	}
 }

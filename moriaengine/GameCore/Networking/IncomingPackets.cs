@@ -30,7 +30,7 @@ namespace SteamEngine.Networking {
 	}
 
 	public abstract class DynamicLenInPacket : GameIncomingPacket {
-		protected override sealed ReadPacketResult Read() {
+		protected sealed override ReadPacketResult Read() {
 			int blockSize = this.DecodeShort();
 			if ((blockSize - 1) > this.LengthIn) {//-1 because "start" is after the first byte
 				return ReadPacketResult.NeedMoreData;
@@ -94,8 +94,8 @@ namespace SteamEngine.Networking {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
 		public abstract class SubPacket : Poolable {
-			internal protected abstract ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize);
-			internal protected abstract void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state);
+			protected internal abstract ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize);
+			protected internal abstract void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -532,9 +532,9 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			if (this.speech.IndexOf(Globals.CommandPrefix) == 0) {
-				Commands.PlayerCommand(state, speech.Substring(Globals.CommandPrefix.Length));
+				Commands.PlayerCommand(state, this.speech.Substring(Globals.CommandPrefix.Length));
 			} else if (this.speech.IndexOf(Globals.AlternateCommandPrefix) == 0) {
-				Commands.PlayerCommand(state, speech.Substring(Globals.AlternateCommandPrefix.Length));
+				Commands.PlayerCommand(state, this.speech.Substring(Globals.AlternateCommandPrefix.Length));
 			} else {
 				//this.font = 3;	//We don't want them speaking in runic or anything. -SL
 				//we don't? not sure here, we'll see -tar
@@ -564,7 +564,7 @@ namespace SteamEngine.Networking {
 
 			this.keywords = emptyInts;
 
-			if ((type & 0xc0) == 0xc0) {
+			if ((this.type & 0xc0) == 0xc0) {
 				int value = this.DecodeShort();
 				int numKeywords = (value & 0xFFF0) >> 4;
 				int hold = value & 0xF;
@@ -582,22 +582,22 @@ namespace SteamEngine.Networking {
 						hold = value & 0xF;
 					}
 
-					keywordsSet.Add(speechID);
+					this.keywordsSet.Add(speechID);
 				}
 
-				int n = keywordsSet.Count;
+				int n = this.keywordsSet.Count;
 				if (n > 0) {
 					this.keywords = new int[n];
-					keywordsSet.CopyTo(this.keywords, 0);
-					keywordsSet.Clear();
+					this.keywordsSet.CopyTo(this.keywords, 0);
+					this.keywordsSet.Clear();
 				}
 				this.type = (byte) (this.type & ~0xc0);
 
 				int speechlen = blockSize - this.Position;
 
-				speech = this.DecodeAsciiString(speechlen);
+				this.speech = this.DecodeAsciiString(speechlen);
 			} else {
-				speech = this.DecodeBigEndianUnicodeString(blockSize - 12);
+				this.speech = this.DecodeBigEndianUnicodeString(blockSize - 12);
 			}
 
 			return ReadPacketResult.Success;
@@ -1050,7 +1050,7 @@ namespace SteamEngine.Networking {
 			bool running = ((this.dir & 0x80) == 0x80);
 			Direction direction = (Direction) (this.dir & 0x07);
 
-			ms.MovementRequest(direction, running, sequence);
+			ms.MovementRequest(direction, running, this.sequence);
 		}
 	}
 
@@ -1141,7 +1141,7 @@ namespace SteamEngine.Networking {
 			if (i != null && cre.HasPickedUp(i)) {
 				DenyResult result;
 				if (this.contUid == -1) {//dropping on ground
-					result = cre.TryPutItemOnGround(x, y, z);
+					result = cre.TryPutItemOnGround(this.x, this.y, this.z);
 				} else {
 					Thing co = Thing.UidGetThing(this.contUid);
 					if (co != null) {
@@ -1149,9 +1149,9 @@ namespace SteamEngine.Networking {
 
 						AbstractItem coAsItem = co as AbstractItem;
 						if (coAsItem != null) {
-							if (coAsItem.IsContainer && (x != 0xFFFF) && (y != 0xFFFF)) {
+							if (coAsItem.IsContainer && (this.x != 0xFFFF) && (this.y != 0xFFFF)) {
 								//client put it to some coords inside container
-								result = cre.TryPutItemInItem(coAsItem, x, y, false);
+								result = cre.TryPutItemInItem(coAsItem, this.x, this.y, false);
 							} else {
 								//client put it on some other item. The client probably thinks the other item is either a container or that they can be stacked. We'll see ;)
 								result = cre.TryPutItemOnItem(coAsItem);//we ignore the x y
@@ -1288,7 +1288,7 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			switch (stat) {
+			switch (this.stat) {
 				case 0:
 					state.CharacterNotNull.StrLock = this.lockType;
 					break;
@@ -1356,7 +1356,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 			AbstractAccount acc = state.Account;
-			DeleteCharacterResult result = acc.RequestDeleteCharacter(charSlot);
+			DeleteCharacterResult result = acc.RequestDeleteCharacter(this.charSlot);
 			if (result == DeleteCharacterResult.Allow) {
 				ResendCharactersAfterDeleteOutPacket p = Pool<ResendCharactersAfterDeleteOutPacket>.Acquire();
 				p.Prepare(acc.Characters);
@@ -1440,7 +1440,7 @@ namespace SteamEngine.Networking {
 			int switchesCount = this.DecodeInt();
 			this.selectedSwitches = new int[switchesCount];
 			for (int i = 0; i < switchesCount; i++) {
-				selectedSwitches[i] = this.DecodeInt();
+				this.selectedSwitches[i] = this.DecodeInt();
 			}
 
 			uint entriesCount = this.DecodeUInt();
@@ -1460,7 +1460,7 @@ namespace SteamEngine.Networking {
 				int n = (gi.numEntryIDs != null) ? gi.numEntryIDs.Count : 0;
 				ResponseNumber[] responseNumbers = new ResponseNumber[n];
 				for (int i = 0; i < n; i++) {
-					foreach (ResponseText rt in responseTexts) {
+					foreach (ResponseText rt in this.responseTexts) {
 						if (gi.numEntryIDs[i] == rt.Id) {
 							decimal number;
 							if (ConvertTools.TryParseDecimal(rt.Text, out number)) {
@@ -1469,7 +1469,7 @@ namespace SteamEngine.Networking {
 								state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture, 
 									Loc<IncomingPacketsLoc>.Get(state.Language).NotANumber,
 									rt.Text));
-								SendGumpBack(conn, state, gi, responseTexts);
+								SendGumpBack(conn, state, gi, this.responseTexts);
 								return;
 							}
 							break;

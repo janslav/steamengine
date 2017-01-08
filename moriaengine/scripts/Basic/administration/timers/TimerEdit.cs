@@ -26,7 +26,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			TagHolder th = (TagHolder) args.GetTag(D_TimerList.holderTK); //na koho budeme timer ukladat?
-			Timer tm = (Timer) args.GetTag(D_EditTimer.editedTimerTK); //timer ktery editujeme
+			Timer tm = (Timer) args.GetTag(editedTimerTK); //timer ktery editujeme
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
 				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
-				Timer tm = (Timer) args.GetTag(D_EditTimer.editedTimerTK);
+				Timer tm = (Timer) args.GetTag(editedTimerTK);
 				tm.DueInSeconds = timerTime;
 				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
 				if (prevStacked.Def is D_TimerList) {

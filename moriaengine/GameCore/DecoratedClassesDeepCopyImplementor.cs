@@ -69,7 +69,7 @@ namespace SteamEngine {
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public System.CodeDom.CodeCompileUnit WriteSources() {
+		public CodeCompileUnit WriteSources() {
 			try {
 				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
 				if (decoratedClasses.Count > 0) {
@@ -98,7 +98,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public void HandleAssembly(System.Reflection.Assembly compiledAssembly) {
+		public void HandleAssembly(Assembly compiledAssembly) {
 
 		}
 
@@ -112,8 +112,8 @@ namespace SteamEngine {
 			internal GeneratedInstance(Type decoratedClass) {
 				this.decoratedClass = decoratedClass;
 				foreach (MemberInfo mi in decoratedClass.GetMembers()) {
-					HandleDeepCopyImplementationAttribute(mi);
-					HandleCopyableDataAttribute(mi);
+					this.HandleDeepCopyImplementationAttribute(mi);
+					this.HandleCopyableDataAttribute(mi);
 				}
 
 				if (this.initializer == null) {
@@ -219,11 +219,11 @@ namespace SteamEngine {
 
 				foreach (FieldInfo fi in this.copyableDataFields) {
 					string name = fi.Name;
-					deepCopyMethod.Statements.Add(GenerateCopyOperation(methods, name, fi.FieldType, false));
+					deepCopyMethod.Statements.Add(this.GenerateCopyOperation(methods, name, fi.FieldType, false));
 				}
 				foreach (PropertyInfo pi in this.copyableDataProperties) {
 					string name = pi.Name;
-					deepCopyMethod.Statements.Add(GenerateCopyOperation(methods, name, pi.PropertyType, true));
+					deepCopyMethod.Statements.Add(this.GenerateCopyOperation(methods, name, pi.PropertyType, true));
 				}
 
 				deepCopyMethod.Statements.Add(

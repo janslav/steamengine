@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				if (charType == CharacterTypes.Players) {
 					displayGump = chr.IsMale ? GumpIDs.Figurine_Man : GumpIDs.Figurine_Woman;
 				} else if (charType == CharacterTypes.All) {//for "all" determine the icon char by char
-					displayGump = GetGumpIconForChar(chr);
+					displayGump = this.GetGumpIconForChar(chr);
 				}
 
 				dlg.LastTable[rowCntr, 0] = GUTAImage.Builder.NamedGump(displayGump).Build();

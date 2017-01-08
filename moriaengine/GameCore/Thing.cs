@@ -84,7 +84,7 @@ namespace SteamEngine {
 				foreach (Thing t in things) {
 					SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
 				}
-				Logger.WriteDebug(string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				Logger.WriteDebug(string.Format(CultureInfo.InvariantCulture,
 												"Saved {0} things: {1} items and {2} characters.",
 												savedCharacters + savedItems, savedItems, savedCharacters));
 
@@ -96,7 +96,7 @@ namespace SteamEngine {
 				//this means real end of file(s)
 				uidBeingLoaded = -1;
 				things.LoadingFinished();
-				Logger.WriteDebug(string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				Logger.WriteDebug(string.Format(CultureInfo.InvariantCulture,
 												"Loaded {0} things: {1} items and {2} characters.",
 												loadedItems + loadedCharacters, loadedItems, loadedCharacters));
 				foreach (Thing t in things) {
@@ -120,8 +120,8 @@ namespace SteamEngine {
 
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
-				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
-				Thing thing = Thing.UidGetThing(uid);
+				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+				Thing thing = UidGetThing(uid);
 				if (thing != null) {
 					return thing;
 				} else {
@@ -246,7 +246,7 @@ namespace SteamEngine {
 		[CLSCompliant(false)]
 		public virtual uint FlaggedUid {
 			get {
-				return (uint) Uid;
+				return (uint) this.Uid;
 			}
 		}
 
@@ -268,7 +268,7 @@ namespace SteamEngine {
 		//or use Go instead.
 		public int X {
 			get {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				return this.point4d.x;
 			}
 			set {
@@ -278,7 +278,7 @@ namespace SteamEngine {
 
 		public int Y {
 			get {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				return this.point4d.y;
 			}
 			set {
@@ -288,7 +288,7 @@ namespace SteamEngine {
 
 		public int Z {
 			get {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				return this.point4d.z;
 			}
 			set {
@@ -299,7 +299,7 @@ namespace SteamEngine {
 		//public byte mapplane { get { return m; } set { m = value; } }
 		public byte M {
 			get {
-				ThrowIfDeleted();
+				this.ThrowIfDeleted();
 				return this.point4d.m;
 			}
 			set {
@@ -352,7 +352,7 @@ namespace SteamEngine {
 		}
 
 		public void P(int x, int y, int z) {
-			this.SetPosImpl(x, y, z, M);
+			this.SetPosImpl(x, y, z, this.M);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
@@ -380,10 +380,10 @@ namespace SteamEngine {
 		}
 
 		public void NudgeUp() {
-			NudgeUp(1);
+			this.NudgeUp(1);
 		}
 		public void NudgeDown() {
-			NudgeDown(1);
+			this.NudgeDown(1);
 		}
 
 		public void NudgeUp(int amt) {
@@ -401,10 +401,10 @@ namespace SteamEngine {
 			sbyte tmpZ = this.point4d.z;
 			try {
 				tmpZ = checked((sbyte) (tmpZ - amt));
-				Z = tmpZ;
+				this.Z = tmpZ;
 			} catch (OverflowException) {
 				//OverheadMessage("This cannot be nudged that much (It would make its z coordinate too low).");
-				Z = sbyte.MinValue;
+				this.Z = sbyte.MinValue;
 			}
 		}
 		#endregion P
@@ -423,11 +423,11 @@ namespace SteamEngine {
 		}
 
 		public void Update() {
-			Resend();
+			this.Resend();
 		}
 		public void UpdateX() {
-			RemoveFromView();
-			Resend();
+			this.RemoveFromView();
+			this.Resend();
 		}
 
 		public int Color {
@@ -497,7 +497,7 @@ namespace SteamEngine {
 		}
 
 		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				tg.Run(this, tk, sa);
@@ -507,7 +507,7 @@ namespace SteamEngine {
 		}
 
 		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				tg.TryRun(this, tk, sa);
@@ -524,7 +524,7 @@ namespace SteamEngine {
 					return TriggerResult.Cancel;
 				}
 			}
-			if (TriggerResult.Cancel == CancellableTrigger(tk, sa)) {
+			if (TriggerResult.Cancel == this.CancellableTrigger(tk, sa)) {
 				return TriggerResult.Cancel;
 			} else {
 				return this.def.CancellableTrigger(this, tk, sa);
@@ -532,7 +532,7 @@ namespace SteamEngine {
 		}
 
 		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
 				TriggerGroup tg = registeredTGs[i];
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
@@ -549,7 +549,7 @@ namespace SteamEngine {
 		//------------------------
 		//Public methods
 
-		public override abstract string Name { get; set; }
+		public abstract override string Name { get; set; }
 
 		public virtual bool IsEquipped {
 			get {
@@ -612,7 +612,7 @@ namespace SteamEngine {
 				prop = input.TryPopPropsLine("serial");
 			}
 			if (prop != null) {
-				if (!TagMath.TryParseInt32(prop.Value, out _uid)) {
+				if (!ConvertTools.TryParseInt32(prop.Value, out _uid)) {
 					Logger.WriteError(input.Filename, prop.Line, "Unrecognized UID property format. Thing loading interrupted.");
 					return null;
 				}
@@ -622,10 +622,10 @@ namespace SteamEngine {
 			}
 			_uid = UidClearFlags(_uid);
 
-			Thing.uidBeingLoaded = _uid;//the constructor should set this as Uid
+			uidBeingLoaded = _uid;//the constructor should set this as Uid
 			Thing constructed = thingDef.CreateWhenLoading();//let's hope the P gets loaded properly later ;)
 
-			Thing.things.AddLoaded(constructed, _uid);
+			things.AddLoaded(constructed, _uid);
 
 			//now load the rest of the properties
 			try {
@@ -658,7 +658,7 @@ namespace SteamEngine {
 		}
 
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			switch (valueName) {
 				case "p":
 					object o = ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(Point4D));
@@ -671,12 +671,12 @@ namespace SteamEngine {
 					//it will be put in world later by map or Cont
 					break;
 				case "color":
-					this.color = TagMath.ParseUInt16(valueString);
+					this.color = ConvertTools.ParseUInt16(valueString);
 					break;
 				case "dispid":
 				case "model":
 				case "body":
-					this.model = TagMath.ParseUInt16(valueString);
+					this.model = ConvertTools.ParseUInt16(valueString);
 					break;
 				case "createdat":
 					this.createdAt = (TimeSpan) ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(TimeSpan));
@@ -703,12 +703,12 @@ namespace SteamEngine {
 		}
 
 		public static void DisposeFakeUid(int uid) {
-			things.DisposeFakeUid(Thing.UidClearFlags(uid));
+			things.DisposeFakeUid(UidClearFlags(uid));
 		}
 
 		[CLSCompliant(false)]
 		public static void DisposeFakeUid(uint uid) {
-			things.DisposeFakeUid(Thing.UidClearFlags(uid));
+			things.DisposeFakeUid(UidClearFlags(uid));
 		}
 
 		internal static void SaveThis(SaveStream output, Thing t) {
@@ -746,7 +746,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public override void Save(SaveStream output) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			output.WriteValue("uid", this.uid);
 
 			output.WriteValue("p", this.P());
@@ -833,7 +833,7 @@ namespace SteamEngine {
 
 		public abstract void FixWeight();
 
-		internal protected abstract void AdjustWeight(float adjust);
+		protected internal abstract void AdjustWeight(float adjust);
 
 		//internal virtual void DecreaseWeightBy(float adjust) {
 		//}
@@ -1069,9 +1069,9 @@ namespace SteamEngine {
 
 		public override string ToString() {
 			if (this.def != null) {
-				return this.Name + " (0x" + this.uid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")";
+				return this.Name + " (0x" + this.uid.ToString("x", CultureInfo.InvariantCulture) + ")";
 			} else {
-				return "incomplete Thing (0x" + this.uid.ToString("x", System.Globalization.CultureInfo.InvariantCulture) + ")";
+				return "incomplete Thing (0x" + this.uid.ToString("x", CultureInfo.InvariantCulture) + ")";
 			}
 		}
 
@@ -1080,7 +1080,7 @@ namespace SteamEngine {
 		}
 
 		public override bool Equals(Object obj) {
-			return Object.ReferenceEquals(this, obj);
+			return ReferenceEquals(this, obj);
 		}
 
 		public virtual bool IsItem {
@@ -1103,7 +1103,7 @@ namespace SteamEngine {
 
 		public bool IsMulti {
 			get {
-				return Def.multiData != null;
+				return this.Def.multiData != null;
 			}
 		}
 
@@ -1127,13 +1127,13 @@ namespace SteamEngine {
 		}
 
 		public AbstractItem NewItem(IThingFactory factory) {
-			return NewItem(factory, 1);
+			return this.NewItem(factory, 1);
 		}
 
 		public abstract AbstractItem NewItem(IThingFactory factory, int amount);
 
 		public void Move(string dir) {
-			Move(dir, 1);
+			this.Move(dir, 1);
 		}
 
 		public static void ClearAll() {
@@ -1199,26 +1199,26 @@ namespace SteamEngine {
 		//}
 
 		public Gump Dialog(GumpDef gump) {
-			return Dialog(Globals.SrcCharacter, gump);
+			return this.Dialog(Globals.SrcCharacter, gump);
 		}
 
 		//volani primo s parametry (jak se s parametry nalozi, to zavisi na tom kterem dialogu)
 		public Gump Dialog(GumpDef gump, params object[] paramArr) {
-			return Dialog(Globals.SrcCharacter, gump, new DialogArgs(paramArr));
+			return this.Dialog(Globals.SrcCharacter, gump, new DialogArgs(paramArr));
 		}
 
 		public Gump Dialog(GumpDef gump, DialogArgs args) {
-			return Dialog(Globals.SrcCharacter, gump, args);
+			return this.Dialog(Globals.SrcCharacter, gump, args);
 		}
 
 		//jen presmerujeme volani jinam (bez argumentu ovsem)
 		public Gump Dialog(AbstractCharacter sendTo, GumpDef gump) {
-			return Dialog(sendTo, gump, new DialogArgs());
+			return this.Dialog(sendTo, gump, new DialogArgs());
 		}
 
 		//volani primo s parametry (jak se s parametry nalozi, to zavisi na tom kterem dialogu)
 		public Gump Dialog(AbstractCharacter sendTo, GumpDef gump, params object[] paramArr) {
-			return Dialog(sendTo, gump, new DialogArgs(paramArr));
+			return this.Dialog(sendTo, gump, new DialogArgs(paramArr));
 		}
 
 		public Gump Dialog(AbstractCharacter sendTo, GumpDef gump, DialogArgs args) {

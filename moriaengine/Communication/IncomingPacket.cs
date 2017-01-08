@@ -91,7 +91,7 @@ namespace SteamEngine.Communication {
 
 		protected abstract ReadPacketResult Read();
 
-		internal protected abstract void Handle(TConnection conn, TState state);
+		protected internal abstract void Handle(TConnection conn, TState state);
 
 		protected void SeekFromStart(int count) {
 			this.position = this.offset + count;
@@ -112,7 +112,7 @@ namespace SteamEngine.Communication {
 		/// <param name="len">The number of bytes to decode (two per character)</param>
 		/// <returns></returns>
 		protected string DecodeBigEndianUnicodeString(int len) {
-			return DecodeBigEndianUnicodeString(len, true);
+			return this.DecodeBigEndianUnicodeString(len, true);
 		}
 
 		/// <summary>
@@ -145,7 +145,7 @@ namespace SteamEngine.Communication {
 			int indexOfEnd = Array.IndexOf<byte>(this.buffer, 0, this.position);
 			int len = indexOfEnd - this.position;
 
-			return DecodeAsciiString(len, true);
+			return this.DecodeAsciiString(len, true);
 		}
 
 		/// <summary>
@@ -157,7 +157,7 @@ namespace SteamEngine.Communication {
 		/// If the string contains a \0 (the 'end-of-string' character), it will be truncated.
 		/// </remarks>
 		protected string DecodeAsciiString(int len) {
-			return DecodeAsciiString(len, true);
+			return this.DecodeAsciiString(len, true);
 		}
 
 		/// <summary>
@@ -242,9 +242,9 @@ namespace SteamEngine.Communication {
 
 		//non-UO
 		protected string DecodeUTF8String() {
-			int bytesCount = DecodeInt();
+			int bytesCount = this.DecodeInt();
 			string retVal = Encoding.UTF8.GetString(this.buffer, this.position, bytesCount);
-			SeekFromCurrent(bytesCount);
+			this.SeekFromCurrent(bytesCount);
 			return retVal;
 		}
 	}

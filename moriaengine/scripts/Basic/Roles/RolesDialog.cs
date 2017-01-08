@@ -29,13 +29,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam roli
-			List<RoleDef> rlList = args.GetTag(D_RolesList.listTK) as List<RoleDef>;
+			List<RoleDef> rlList = args.GetTag(listTK) as List<RoleDef>;
 			if (rlList == null) {
 				//vzit seznam roli dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
-				rlList = ListifyRoles(RoleDef.AllRoles, TagMath.SGetTag(args, D_RolesList.criteriumTK));
-				SortRoleDefs(rlList, (SortingCriteria) TagMath.IGetTag(args, D_RolesList.sortingTK));
-				args.SetTag(D_RolesList.listTK, rlList); //ulozime to do argumentu dialogu				
+				rlList = this.ListifyRoles(RoleDef.AllRoles, TagMath.SGetTag(args, criteriumTK));
+				this.SortRoleDefs(rlList, (SortingCriteria) TagMath.IGetTag(args, sortingTK));
+				args.SetTag(listTK, rlList); //ulozime to do argumentu dialogu				
 			}
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, rlList.Count);
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam roledefu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<RoleDef> rlList = (List<RoleDef>) args.GetTag(D_RolesList.listTK);
+			List<RoleDef> rlList = (List<RoleDef>) args.GetTag(listTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, rlList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
@@ -105,28 +105,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 1: //vyhledat dle zadani
 						string nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
-						args.SetTag(D_RolesList.criteriumTK, nameCriteria);
-						args.RemoveTag(D_RolesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(criteriumTK, nameCriteria);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //name asc
-						args.SetTag(D_RolesList.sortingTK, SortingCriteria.NameAsc);
-						args.RemoveTag(D_RolesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.NameAsc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 3: //name desc
-						args.SetTag(D_RolesList.sortingTK, SortingCriteria.NameDesc);
-						args.RemoveTag(D_RolesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.NameDesc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 4: //defname asc
-						args.SetTag(D_RolesList.sortingTK, SortingCriteria.DefnameAsc);
-						args.RemoveTag(D_RolesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.DefnameAsc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 5: //defname desc
-						args.SetTag(D_RolesList.sortingTK, SortingCriteria.DefnameDesc);
-						args.RemoveTag(D_RolesList.listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
+						args.SetTag(sortingTK, SortingCriteria.DefnameDesc);
+						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 				}
@@ -182,11 +182,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void AllRoles(Character self, ScriptArgs text) {
 			DialogArgs newArgs = new DialogArgs();
-			newArgs.SetTag(D_RolesList.sortingTK, SortingCriteria.NameAsc);//default sorting
+			newArgs.SetTag(sortingTK, SortingCriteria.NameAsc);//default sorting
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_RolesList>.Instance, newArgs);
 			} else {
-				newArgs.SetTag(D_RolesList.criteriumTK, text.Args);//vyhl. kriterium
+				newArgs.SetTag(criteriumTK, text.Args);//vyhl. kriterium
 				self.Dialog(SingletonScript<D_RolesList>.Instance, newArgs);
 			}
 		}
@@ -194,7 +194,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting roledefs by name asc</summary>
 	public class RoleDefsNameComparer : IComparer<RoleDef> {
-		public readonly static RoleDefsNameComparer instance = new RoleDefsNameComparer();
+		public static readonly RoleDefsNameComparer instance = new RoleDefsNameComparer();
 
 		private RoleDefsNameComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci
@@ -207,7 +207,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Comparer for sorting roledefs by defnames asc</summary>
 	public class RoleDefsDefNameComparer : IComparer<RoleDef> {
-		public readonly static RoleDefsDefNameComparer instance = new RoleDefsDefNameComparer();
+		public static readonly RoleDefsDefNameComparer instance = new RoleDefsDefNameComparer();
 
 		private RoleDefsDefNameComparer() {
 			//soukromy konstruktor, pristupovat budeme pres instanci

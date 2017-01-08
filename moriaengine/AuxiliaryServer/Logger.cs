@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SteamEngine.AuxiliaryServer {
-	public class Logger : SteamEngine.Common.Logger {
+	public class Logger : Common.Logger {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.AuxiliaryServer.Logger")]
 		public static void Init() {
 			new Logger();
 
-			SteamEngine.Common.Logger.OpenFile();
+			OpenFile();
 
-			Logger.OnConsoleWrite += ConsoleServer.ConsoleServer.WriteAsAux;
-			Logger.OnConsoleWriteLine += ConsoleServer.ConsoleServer.WriteLineAsAux;
+			OnConsoleWrite += ConsoleServer.ConsoleServer.WriteAsAux;
+			OnConsoleWriteLine += ConsoleServer.ConsoleServer.WriteLineAsAux;
 		}
 
 

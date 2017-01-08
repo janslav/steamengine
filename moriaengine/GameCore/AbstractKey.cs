@@ -45,23 +45,23 @@ namespace SteamEngine {
 		}
 
 		public string Name {
-			get { return name; }
+			get { return this.name; }
 		}
 
 		public int Uid {
-			get { return uid; }
+			get { return this.uid; }
 		}
 
 		public sealed override int GetHashCode() {
-			return uid;
+			return this.uid;
 		}
 
 		public sealed override string ToString() {
-			return name;
+			return this.name;
 		}
 
 		public sealed override bool Equals(Object obj) {
-			return Object.ReferenceEquals(this, obj);
+			return ReferenceEquals(this, obj);
 		}
 
 		protected static T Acquire(string name, Func<string, int, T> factory) {

@@ -20,7 +20,7 @@ using System.Collections.Generic;
 namespace SteamEngine.CompiledScripts {
 
 	public static class ItemTypeNames {
-		private readonly static Dictionary<string, string> typeNames = CreateDict();
+		private static readonly Dictionary<string, string> typeNames = CreateDict();
 
 		static Dictionary<string, string> CreateDict() {
 			var dict = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);

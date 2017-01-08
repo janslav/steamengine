@@ -177,7 +177,7 @@ namespace SteamEngine {
 
 			for (int i = 0, newI = 0; i < n; i++) {
 				Thing elem = origArray[i];
-				if (!Object.Equals(elem, null)) {
+				if (!Equals(elem, null)) {
 					newArray[newI] = elem;
 					elem.InternalSetUid(newI + startOffset);
 					newI++;
@@ -228,7 +228,7 @@ namespace SteamEngine {
 		}
 
 		public IEnumerator<Thing> GetEnumerator() {
-			int v = version;
+			int v = this.version;
 
 			for (int i = 0, n = this.highestUsedIndex; i <= n; i++) {
 				if (v != this.version) {

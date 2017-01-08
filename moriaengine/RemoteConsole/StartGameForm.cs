@@ -15,7 +15,7 @@ namespace SteamEngine.RemoteConsole {
 		public StartGameForm(SendServersToStartPacket.GameServerEntry[] entries) {
 			this.entries = entries;
 
-			InitializeComponent();
+			this.InitializeComponent();
 		}
 
 		private void StartGameForm_Load(object sender, EventArgs e) {

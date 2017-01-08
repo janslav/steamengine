@@ -114,7 +114,7 @@ namespace SteamEngine {
 
 		public AbstractCharacterDef TypeDef {
 			get {
-				return (AbstractCharacterDef) base.def;
+				return (AbstractCharacterDef) this.def;
 			}
 		}
 
@@ -166,13 +166,13 @@ namespace SteamEngine {
 			}
 		}
 
-		public override sealed bool IsChar {
+		public sealed override bool IsChar {
 			get {
 				return true;
 			}
 		}
 
-		public override sealed bool CanContain {
+		public sealed override bool CanContain {
 			get {
 				return true;
 			}
@@ -482,7 +482,7 @@ namespace SteamEngine {
 			if (acc.AttachCharacter(this, out slot)) {
 				this.account = acc;
 
-				FixDisconnectedFlagOnPlayers();
+				this.FixDisconnectedFlagOnPlayers();
 			} else {
 				Logger.WriteError("The character " + this + " declares " + acc + " as it's account, but the Account is already full. Deleting.");
 				this.Delete();
@@ -510,13 +510,13 @@ namespace SteamEngine {
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
 				case "account":
-					ObjectSaver.Load(valueString, new LoadObject(LoadAccount_Delayed), filename, line);
+					ObjectSaver.Load(valueString, new LoadObject(this.LoadAccount_Delayed), filename, line);
 					break;
 				case "name":
 					this.name = ConvertTools.LoadSimpleQuotedString(valueString);
 					break;
 				case "directionandflags":
-					this.directionAndFlags = (DirectionAndFlag) TagMath.ParseInt16(valueString);
+					this.directionAndFlags = (DirectionAndFlag) ConvertTools.ParseInt16(valueString);
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
@@ -530,7 +530,7 @@ namespace SteamEngine {
 		//ISrc implementation
 		public byte Plevel {
 			get {
-				AbstractAccount a = Account;
+				AbstractAccount a = this.Account;
 				if (a != null) {
 					return a.PLevel;
 				} else {
@@ -538,7 +538,7 @@ namespace SteamEngine {
 				}
 			}
 			set {
-				AbstractAccount a = Account;
+				AbstractAccount a = this.Account;
 				if (a != null) {
 					a.PLevel = value;
 				}//else ?
@@ -547,7 +547,7 @@ namespace SteamEngine {
 
 		public byte MaxPlevel {
 			get {
-				AbstractAccount a = Account;
+				AbstractAccount a = this.Account;
 				if (a != null) {
 					return a.MaxPLevel;
 				} else {
@@ -687,7 +687,7 @@ namespace SteamEngine {
 		//player or npc walking
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public bool WalkRunOrFly(Direction dir, bool running, bool requested) {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			this.Flag_Moving = true;
 			dir = dir & Direction.Mask;
 
@@ -702,7 +702,7 @@ namespace SteamEngine {
 					return false;
 				}
 
-				if (TriggerResult.Cancel == Trigger_Step(dir, running)) {
+				if (TriggerResult.Cancel == this.Trigger_Step(dir, running)) {
 					return false;
 				}
 
@@ -737,7 +737,7 @@ namespace SteamEngine {
 			return true;
 		}
 
-		internal override sealed void SetPosImpl(int x, int y, int z, byte m) {
+		internal sealed override void SetPosImpl(int x, int y, int z, byte m) {
 			if (Map.IsValidPos(x, y, m)) {
 				CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
 				Point4D oldP = this.P();
@@ -752,7 +752,7 @@ namespace SteamEngine {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
 				}
 				this.point4d.SetXYZM(x, y, z, m);
-				ChangedP(oldP, MovementType.Teleporting);
+				this.ChangedP(oldP, MovementType.Teleporting);
 			} else {
 				throw new SEException("Invalid position (" + x + "," + y + " on mapplane " + m + ")");
 			}
@@ -783,8 +783,8 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool IsStandingOn(AbstractItem i) {
-			int zdiff = Math.Abs(i.Z - Z);
-			return (X == i.X && Y == i.Y && zdiff >= 0 && zdiff <= i.Height);
+			int zdiff = Math.Abs(i.Z - this.Z);
+			return (this.X == i.X && this.Y == i.Y && zdiff >= 0 && zdiff <= i.Height);
 		}
 
 		//public bool IsStandingOnCheckZOnly(AbstractItem i) {
@@ -801,7 +801,7 @@ namespace SteamEngine {
 			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 			foreach (AbstractItem itm in this.GetMap().GetItemsInRange(this.X, this.Y, 0)) {
-				if (IsStandingOn(itm)) {
+				if (this.IsStandingOn(itm)) {
 					itm.Trigger_Step(this, false, movementType);
 				}
 			}
@@ -872,7 +872,7 @@ namespace SteamEngine {
 		#region Click and Dclick
 		//helper method for Trigger_Click
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal override sealed TriggerResult Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
+		internal sealed override TriggerResult Trigger_SpecificClick(AbstractCharacter clickingChar, ScriptArgs sa) {
 			var result = clickingChar.TryCancellableTrigger(TriggerKey.charClick, sa);
 			if (result != TriggerResult.Cancel) {
 
@@ -1071,7 +1071,7 @@ namespace SteamEngine {
 		#endregion Status, skills, stats
 
 		#region Resend/Resync/Update
-		public override sealed void Resend() {
+		public sealed override void Resend() {
 			CharSyncQueue.Resend(this);
 		}
 
@@ -1189,7 +1189,7 @@ namespace SteamEngine {
 
 			if (!this.IsLimbo) {
 				this.GetMap().Remove(this);
-				Thing.MarkAsLimbo(this);
+				MarkAsLimbo(this);
 			}
 		}
 
@@ -1197,7 +1197,7 @@ namespace SteamEngine {
 		public abstract AbstractItem GetBackpack();
 
 		public void EmptyCont() {
-			ThrowIfDeleted();
+			this.ThrowIfDeleted();
 			foreach (AbstractItem i in this) {
 				i.InternalDelete();
 			}
@@ -1308,8 +1308,8 @@ namespace SteamEngine {
 			return true;
 		}
 
-		public override sealed IEnumerator<AbstractItem> GetEnumerator() {
-			ThrowIfDeleted();
+		public sealed override IEnumerator<AbstractItem> GetEnumerator() {
+			this.ThrowIfDeleted();
 			return new EquipsEnumerator(this);
 		}
 		#endregion Equipped stuff
@@ -1352,7 +1352,7 @@ namespace SteamEngine {
 						} else {
 							if (this.next != null) {
 								this.current = this.next;
-								this.next = (AbstractItem) current.nextInList;
+								this.next = (AbstractItem) this.current.nextInList;
 								return true;
 							} else {
 								this.current = null;//continue on next state

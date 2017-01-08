@@ -47,8 +47,8 @@ namespace SteamEngine.CompiledScripts {
 			//...
 			//we expect the values from Lscript as follows
 			//triggerGroup = InitTypedField("triggerGroup", null, typeof(TriggerGroup)); //which trigger group will be stored on ability holder
-			pluginDef = InitTypedField("pluginDef", null, typeof(PluginDef)); //which plugin will be stored on ability holder
-			pluginKey = InitTypedField("pluginKey", null, typeof(PluginKey)); //how the plugin will be stored on ability holder
+			this.pluginDef = this.InitTypedField("pluginDef", null, typeof(PluginDef)); //which plugin will be stored on ability holder
+			this.pluginKey = this.InitTypedField("pluginKey", null, typeof(PluginKey)); //how the plugin will be stored on ability holder
 		}
 
 		public bool IsActive(Character ch) {
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts {
 		/// </summary>
 		public PluginDef PluginDef {
 			get {
-				return (PluginDef) pluginDef.CurrentValue;
+				return (PluginDef) this.pluginDef.CurrentValue;
 			}
 			set {
 				this.pluginDef.CurrentValue = value;
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Return plugin key from the field value (used e.g. for adding/removing plugins to the character)</summary>
 		public PluginKey PluginKey {
 			get {
-				return (PluginKey) pluginKey.CurrentValue;
+				return (PluginKey) this.pluginKey.CurrentValue;
 			}
 			set {
 				this.pluginKey.CurrentValue = value;

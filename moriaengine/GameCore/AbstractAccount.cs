@@ -69,7 +69,7 @@ namespace SteamEngine {
 		protected AbstractAccount(PropsSection input)
 			: this(input.HeaderName) {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
-			this.charactersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter>(characters);
+			this.charactersReadOnly = new System.Collections.ObjectModel.ReadOnlyCollection<AbstractCharacter>(this.characters);
 			this.LoadSectionLines(input);
 		}
 
@@ -139,7 +139,7 @@ namespace SteamEngine {
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
 				string name = m.Groups["value"].Value;
-				return AbstractAccount.GetByName(name);
+				return GetByName(name);
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace SteamEngine {
 					}
 					break;
 				case "passwordHash":
-					Match m = TagMath.stringRE.Match(valueString);
+					Match m = ConvertTools.stringRE.Match(valueString);
 					if (m.Success) {
 						if (Globals.HashPasswords) {
 							if (this.passwordHash == null) {	//Allows admins to set password=xxx without erasing passwordHash, and the password=xxx will override the passwordHash.
@@ -204,7 +204,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public void SaveWithHeader(SaveStream output) {
-			output.WriteLine("[" + Tools.TypeToString(this.GetType()) + " " + name + "]");
+			output.WriteLine("[" + Tools.TypeToString(this.GetType()) + " " + this.name + "]");
 			this.Save(output);
 			output.WriteLine();
 		}
@@ -218,9 +218,9 @@ namespace SteamEngine {
 			} else {
 				output.WriteValue("password", this.password);
 			}
-			if (maxPlevel != 1) {
-				output.WriteValue("plevel", plevel);
-				output.WriteValue("maxplevel", maxPlevel);
+			if (this.maxPlevel != 1) {
+				output.WriteValue("plevel", this.plevel);
+				output.WriteValue("maxplevel", this.maxPlevel);
 			}
 			if (this.blocked) {
 				output.WriteValue("blocked", this.blocked);
@@ -309,7 +309,7 @@ namespace SteamEngine {
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
 		public static LoginAttemptResult HandleLoginAttempt(string username, string password, GameState gs, out AbstractAccount acc) {
-			acc = AbstractAccount.GetByName(username);
+			acc = GetByName(username);
 			if (acc == null) {
 				if ((Globals.AutoAccountCreation) || (accounts.Count == 0)) {
 					acc = CreateAccount(username, password);
@@ -353,7 +353,7 @@ namespace SteamEngine {
 				acc.maxPlevel = Globals.MaximalPlevel;
 				acc.plevel = Globals.MaximalPlevel;
 			} else {
-				acc = AbstractAccount.GetByName(username);
+				acc = GetByName(username);
 			}
 			if (acc == null) {
 				return null;
@@ -366,22 +366,22 @@ namespace SteamEngine {
 
 		public override string Name {
 			get {
-				return name;
+				return this.name;
 			}
 		}
 
 		public byte PLevel {
-			get { return plevel; }
+			get { return this.plevel; }
 			set {
-				if (value < maxPlevel && value <= Globals.MaximalPlevel) {
-					plevel = value;
+				if (value < this.maxPlevel && value <= Globals.MaximalPlevel) {
+					this.plevel = value;
 				} else {
-					plevel = maxPlevel;
+					this.plevel = this.maxPlevel;
 				}
 			}
 		}
 		public byte MaxPLevel {
-			get { return maxPlevel; }
+			get { return this.maxPlevel; }
 		}
 
 		//readonly property for info dialogs...
@@ -403,10 +403,10 @@ namespace SteamEngine {
 				plevel - The maxPlevel you want them to be.
 		*/
 		public void Promote(int newMaxPlevel) {
-			PromoteOrDemote(Globals.Src.MaxPlevel, AbstractAccount.GetByName(name), newMaxPlevel);
+			PromoteOrDemote(Globals.Src.MaxPlevel, GetByName(this.name), newMaxPlevel);
 		}
 
-		public override bool IsDeleted { get { return deleted; } }
+		public override bool IsDeleted { get { return this.deleted; } }
 
 		public override void Delete() {
 			Commands.AuthorizeCommandThrow(Globals.Src, "DeleteAccount");
@@ -418,61 +418,61 @@ namespace SteamEngine {
 
 			//delete characters
 			for (int a = 0; a < maxCharactersPerGameAccount; a++) {
-				if (characters[a] != null) {
-					characters[a].InternalDelete();
-					characters[a] = null;
+				if (this.characters[a] != null) {
+					this.characters[a].InternalDelete();
+					this.characters[a] = null;
 				}
 			}
 
 			base.Delete();
 
 			accounts.Remove(this.name);
-			deleted = true;
+			this.deleted = true;
 
 		}
 
 		public void Block() {
 			if (this.blocked) {
-				Globals.SrcWriteLine("GameAccount " + name + " is already blocked.");
+				Globals.SrcWriteLine("GameAccount " + this.name + " is already blocked.");
 			} else {
-				if (MaxPLevel < Globals.MaximalPlevel) {
+				if (this.MaxPLevel < Globals.MaximalPlevel) {
 					Commands.AuthorizeCommandThrow(Globals.Src, "BlockAccount");
 					this.blocked = true;
-					Globals.SrcWriteLine("GameAccount " + name + " blocked successfully.");
+					Globals.SrcWriteLine("GameAccount " + this.name + " blocked successfully.");
 				} else {
-					Globals.SrcWriteLine("GameAccount " + name + " cannot be blocked; It's owner..");
+					Globals.SrcWriteLine("GameAccount " + this.name + " cannot be blocked; It's owner..");
 				}
 			}
 		}
 
 		public void Unblock() {
 			if (!this.blocked) {
-				Globals.SrcWriteLine("GameAccount " + name + " is not blocked.");
+				Globals.SrcWriteLine("GameAccount " + this.name + " is not blocked.");
 			} else {
 				this.blocked = false;
 				Commands.AuthorizeCommandThrow(Globals.Src, "UnblockAccount");
-				Globals.SrcWriteLine("GameAccount " + name + " unblocked successfully.");
+				Globals.SrcWriteLine("GameAccount " + this.name + " unblocked successfully.");
 			}
 		}
 
 		public void Block(bool yesorno) {
 			if (yesorno) {
-				Block();
+				this.Block();
 			} else {
-				Unblock();
+				this.Unblock();
 			}
 		}
 
 		public override string ToString() {
-			return name + " - Plevel " + PLevel + "/" + MaxPLevel;
+			return this.name + " - Plevel " + this.PLevel + "/" + this.MaxPLevel;
 		}
 
 		public override int GetHashCode() {
-			return name.GetHashCode();
+			return this.name.GetHashCode();
 		}
 
 		public override bool Equals(Object obj) {
-			return Object.ReferenceEquals(this, obj);
+			return ReferenceEquals(this, obj);
 		}
 
 		//------------------------
@@ -489,8 +489,8 @@ namespace SteamEngine {
 		*/
 		internal void DetachCharacter(AbstractCharacter cre) {
 			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
-				if (characters[i] == cre) {
-					characters[i] = null;
+				if (this.characters[i] == cre) {
+					this.characters[i] = null;
 					return;
 				}
 			}
@@ -508,14 +508,14 @@ namespace SteamEngine {
 		*/
 		internal bool AttachCharacter(AbstractCharacter cre, out int slot) {
 			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
-				if (characters[i] == cre) {//we have that char already
+				if (this.characters[i] == cre) {//we have that char already
 					slot = i;
 					return true;
 				}
 			}
 			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
-				if (characters[i] == null) {
-					characters[i] = cre;
+				if (this.characters[i] == null) {
+					this.characters[i] = cre;
 					slot = i;
 					return true;
 				}
@@ -525,18 +525,18 @@ namespace SteamEngine {
 		}
 
 		public AbstractCharacter GetCharacterInSlot(int index) {
-			Sanity.IfTrueThrow(index < 0 || index >= AbstractAccount.maxCharactersPerGameAccount, "Call was made to GetCharacterInSlot with an invalid character index " + index + ", valid values being from 0 to " + (AbstractAccount.maxCharactersPerGameAccount - 1) + ".");
+			Sanity.IfTrueThrow(index < 0 || index >= maxCharactersPerGameAccount, "Call was made to GetCharacterInSlot with an invalid character index " + index + ", valid values being from 0 to " + (maxCharactersPerGameAccount - 1) + ".");
 			//Sanity.IfTrueThrow(conn==null, "Call was made to LoginCharacter when account was null!"); //wtf?? why could it not be null? -tar
-			if (characters[index] == null) {
+			if (this.characters[index] == null) {
 				return null;
 			} else {
-				return characters[index];
+				return this.characters[index];
 			}
 		}
 
 		internal DeleteCharacterResult RequestDeleteCharacter(int index) {
-			Sanity.IfTrueThrow(index < 0 || index >= AbstractAccount.maxCharactersPerGameAccount, "Call was made to RequestDeleteCharacter with an invalid character index " + index + ", valid values being from 0 to " + (AbstractAccount.maxCharactersPerGameAccount - 1) + ".");
-			AbstractCharacter cre = characters[index];
+			Sanity.IfTrueThrow(index < 0 || index >= maxCharactersPerGameAccount, "Call was made to RequestDeleteCharacter with an invalid character index " + index + ", valid values being from 0 to " + (maxCharactersPerGameAccount - 1) + ".");
+			AbstractCharacter cre = this.characters[index];
 			if (cre == null) {
 				return DeleteCharacterResult.Deny_NonexistantCharacter;
 			}
@@ -559,10 +559,10 @@ namespace SteamEngine {
 
 		private void CheckReferences() {
 			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
-				if (characters[i] != null) {
-					if (characters[i].IsDeleted || characters[i].Account != this) {
+				if (this.characters[i] != null) {
+					if (this.characters[i].IsDeleted || this.characters[i].Account != this) {
 						//deleted or removed from account
-						characters[i] = null;
+						this.characters[i] = null;
 					}
 				}
 			}
@@ -571,7 +571,7 @@ namespace SteamEngine {
 		internal bool HasFreeSlot {
 			get {
 				for (int a = 0; a < maxCharactersPerGameAccount; a++) {
-					if (characters[a] == null) {
+					if (this.characters[a] == null) {
 						return true;
 					}
 				}
@@ -585,8 +585,8 @@ namespace SteamEngine {
 		//password despite there being a hashed password already.
 		internal bool TestPassword(string pass) {
 			//Preconditions
-			Sanity.IfTrueThrow((this.passwordHash != null && this.password != null), "GameAccount [" + name + "]: Has both a password and hashed password.");
-			Sanity.IfTrueThrow((this.passwordHash == null && this.password == null), "GameAccount [" + name + "]: Has neither a password nor hashed password.");
+			Sanity.IfTrueThrow((this.passwordHash != null && this.password != null), "GameAccount [" + this.name + "]: Has both a password and hashed password.");
+			Sanity.IfTrueThrow((this.passwordHash == null && this.password == null), "GameAccount [" + this.name + "]: Has neither a password nor hashed password.");
 
 			if (this.passwordHash != null) {
 				if (TestHash(this.passwordHash, Tools.HashPassword(pass))) {

@@ -49,7 +49,7 @@ namespace SteamEngine {
 				if (this.count == 0) {
 					throw new SEException("count == 0");
 				}
-				return this.array[headindex];
+				return this.array[this.headindex];
 			}
 		}
 
@@ -58,8 +58,8 @@ namespace SteamEngine {
 				if (this.count == 0) {
 					throw new SEException("count == 0");
 				}
-				T t = this.array[headindex];
-				this.array[headindex] = default(T);
+				T t = this.array[this.headindex];
+				this.array[this.headindex] = default(T);
 				this.headindex = ((this.headindex + 1) % this.array.Length);
 				this.count--;
 				return t;

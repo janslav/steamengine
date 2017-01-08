@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public ItemDef ItemDef {
-			get { return itemDef; }
+			get { return this.itemDef; }
 		}
 
 		public override string ParsableString {

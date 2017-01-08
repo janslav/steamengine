@@ -16,7 +16,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		readonly Socket socket;
 		readonly SphereServerClient state;
 
-		SteamEngine.Communication.Buffer receivingBuffer = Pool<SteamEngine.Communication.Buffer>.Acquire();
+		Communication.Buffer receivingBuffer = Pool<Communication.Buffer>.Acquire();
 
 		private AsyncCallback beginSendCallback;
 		private AsyncCallback beginReceiveCallback;
@@ -53,7 +53,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		public SphereServerClient State {
 			get {
-				return state;
+				return this.state;
 			}
 		}
 
@@ -71,7 +71,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			this.BeginSend(" ");
 			this.BeginSend(sphereServerSetup.AdminAccount);
 
-			new Timer(SendPassword, sphereServerSetup.AdminPassword, 1000, Timeout.Infinite);
+			new Timer(this.SendPassword, sphereServerSetup.AdminPassword, 1000, Timeout.Infinite);
 			
 		}
 		private void SendPassword(object o) {
@@ -79,7 +79,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			try {
 				this.BeginSend((string) o);
 			} catch (Exception e) {
-				Logger.WriteError("Unexpected error in timer callback method", e);
+				Common.Logger.WriteError("Unexpected error in timer callback method", e);
 			}
 			Console.WriteLine("SendPassword out");
 		}
@@ -110,7 +110,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 					}
 				}
 			} catch (Exception e) {
-				Logger.WriteDebug(e);
+				Common.Logger.WriteDebug(e);
 				this.Close(e.Message);
 			}
 		}
@@ -199,7 +199,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		public void BeginSend(string message) {
 			try {
 				if (this.IsConnected) {
-					SteamEngine.Communication.Buffer buffer = Pool<SteamEngine.Communication.Buffer>.Acquire();
+					Communication.Buffer buffer = Pool<Communication.Buffer>.Acquire();
 
 					message = message + "\n";
 					int len = Encoding.Default.GetBytes(message, 0, message.Length, buffer.bytes, 0);
@@ -212,12 +212,12 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				}
 			} catch (Exception e) {
 				this.Close("Exception while BeginSend: " + e.Message);
-				Logger.WriteDebug(e);
+				Common.Logger.WriteDebug(e);
 			}
 		}
 
 		private void BeginSendCallback(IAsyncResult asyncResult) {
-			SteamEngine.Communication.Buffer toDispose = (SteamEngine.Communication.Buffer) asyncResult.AsyncState;
+			Communication.Buffer toDispose = (Communication.Buffer) asyncResult.AsyncState;
 
 			try {
 				SocketError err;
@@ -228,7 +228,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				}
 			} catch (Exception e) {
 				this.Close("Exception while BeginSendCallback: " + e.Message);
-				Logger.WriteDebug(e);
+				Common.Logger.WriteDebug(e);
 			} finally {
 				toDispose.Dispose();
 			}
@@ -236,7 +236,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		#endregion Send
 
 		#region Close
-		public override sealed void Dispose() {
+		public sealed override void Dispose() {
 			this.Close("Dispose() called");
 		}
 
@@ -296,7 +296,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		internal override void OnRespond(IList<string> lines) {
-			this.callback(lines, state);
+			this.callback(lines, this.state);
 		}
 	}
 

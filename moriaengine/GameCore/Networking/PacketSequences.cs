@@ -27,7 +27,7 @@ using System.Net;
 namespace SteamEngine.Networking {
 	public static class PacketSequences {
 
-		internal class DelayedLoginTimer : SteamEngine.Timers.Timer {
+		internal class DelayedLoginTimer : Timers.Timer {
 			AbstractCharacter ch;
 
 			internal DelayedLoginTimer(AbstractCharacter ch) {
@@ -88,7 +88,7 @@ namespace SteamEngine.Networking {
 			new DelayedResyncTimer(ch).DueInSeconds = 1;
 		}
 
-		internal class DelayedResyncTimer : SteamEngine.Timers.Timer {
+		internal class DelayedResyncTimer : Timers.Timer {
 			AbstractCharacter ch;
 
 			internal DelayedResyncTimer(AbstractCharacter ch) {
@@ -106,7 +106,7 @@ namespace SteamEngine.Networking {
 
 
 					state.WriteLine(String.Format(System.Globalization.CultureInfo.InvariantCulture,
-						Common.Loc<PacketSequencesLoc>.Get(state.Language).WelcomeToShard,
+						Loc<PacketSequencesLoc>.Get(state.Language).WelcomeToShard,
 						Globals.ServerName));
 				}
 			}

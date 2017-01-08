@@ -221,15 +221,15 @@ namespace SteamEngine {
 
 			internal override void Run() {
 				object copy;
-				if (copies.TryGetValue(copyFrom, out copy)) {
-					deleg(copy);
+				if (copies.TryGetValue(this.copyFrom, out copy)) {
+					this.deleg(copy);
 					return;
 				}
-				if (copyFrom is Thing) {
-					deleg(copyFrom);
+				if (this.copyFrom is Thing) {
+					this.deleg(this.copyFrom);
 					return;
 				}
-				throw new NonExistingObjectException("The object '" + copyFrom + "' has not been copied. Copy requested by " + deleg.Target);
+				throw new NonExistingObjectException("The object '" + this.copyFrom + "' has not been copied. Copy requested by " + this.deleg.Target);
 			}
 		}
 
@@ -245,15 +245,15 @@ namespace SteamEngine {
 
 			internal override void Run() {
 				object copy;
-				if (copies.TryGetValue(copyFrom, out copy)) {
-					deleg(copy, param);
+				if (copies.TryGetValue(this.copyFrom, out copy)) {
+					this.deleg(copy, this.param);
 					return;
 				}
-				if (copyFrom is Thing) {
-					deleg(copyFrom, param);
+				if (this.copyFrom is Thing) {
+					this.deleg(this.copyFrom, this.param);
 					return;
 				}
-				throw new NonExistingObjectException("The object '" + copyFrom + "' has not been copied. Copy requested by " + deleg.Target);
+				throw new NonExistingObjectException("The object '" + this.copyFrom + "' has not been copied. Copy requested by " + this.deleg.Target);
 			}
 		}
 
