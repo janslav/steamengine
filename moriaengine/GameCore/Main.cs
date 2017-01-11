@@ -222,7 +222,7 @@ namespace SteamEngine {
 		//returns false if nothing was changing, otherwise true
 		internal static bool TryResyncCompiledScripts() {
 			ClassTemplateParser.Resync();
-			if (CompilerInvoker.SourcesHaveChanged) {
+			if (CompilerInvoker.FindIfSourcesHaveChanged()) {
 				RecompileScripts();
 				return true;
 			}
@@ -230,7 +230,7 @@ namespace SteamEngine {
 		}
 
 		internal static void RecompileScripts() {
-			using (StopWatch.StartAndDisplay("Recompiling...")) {
+			using (StopWatch.StartAndDisplay("Recompiling scripts...")) {
 				Commands.commandRunning = false;
 
 				RunLevelManager.SetRecompiling();

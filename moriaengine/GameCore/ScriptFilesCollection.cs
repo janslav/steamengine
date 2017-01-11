@@ -29,35 +29,30 @@ namespace SteamEngine {
 		bool IsUnloaded { get; }
 	}
 
-	internal class CompScriptFileCollection : ScriptFileCollection {
+	internal class CompiledScriptFileCollection : ScriptFileCollection {
 		internal Assembly assembly;
-		internal CompScriptFileCollection(string dirPath, string extension)
+		internal CompiledScriptFileCollection(string dirPath, string extension)
 			: base(dirPath, extension) {
 		}
 	}
 
 	internal class ScriptFileCollection {
 		private Dictionary<string, ScriptFile> scriptFiles;
-		private List<string> extensions = new List<string>();
-		private DirectoryInfo mainDir;
+		private readonly List<string> extensions = new List<string>();
+		private readonly DirectoryInfo mainDir;
 		private DateTime newestDateTime = DateTime.MinValue;
-		private List<string> avoided = new List<string>();
-		private long lengthSum;
+		private readonly List<string> avoided = new List<string>();
 
 		internal ScriptFileCollection(string dirPath, string extension) {
 			this.mainDir = new DirectoryInfo(dirPath);
 			this.extensions.Add(extension);
 		}
 
-		internal long LengthSum {
-			get {
-				return this.lengthSum;
-			}
-		}
+		internal long LengthSum { get; private set; }
 
 		public void Clear() {
 			this.scriptFiles.Clear();
-			this.lengthSum = 0;
+			this.LengthSum = 0;
 			this.newestDateTime = DateTime.MinValue;
 		}
 
@@ -77,7 +72,7 @@ namespace SteamEngine {
 			}
 			this.scriptFiles[file.FullName] = sf;
 			this.CheckTime(file);
-			this.lengthSum += file.Length;
+			this.LengthSum += file.Length;
 			return sf;
 		}
 
@@ -109,7 +104,7 @@ namespace SteamEngine {
 			if (this.scriptFiles == null) {
 				return this.GetAllFiles();
 			}
-			List<ScriptFile> list = new List<ScriptFile>();
+			var list = new List<ScriptFile>();
 			//if (!Globals.fastStartUp) {//in fastStartUp mode we only wanna resync the files we loaded manually
 			this.FindNewFiles(this.mainDir, list);
 			//}
@@ -118,7 +113,7 @@ namespace SteamEngine {
 		}
 
 		internal string[] GetAllFileNames() {
-			ICollection<ScriptFile> sfs = this.GetAllFiles();
+			var sfs = this.GetAllFiles();
 			string[] fileNames = new string[sfs.Count];
 			int i = 0;
 			foreach (ScriptFile sf in sfs) {
@@ -128,7 +123,7 @@ namespace SteamEngine {
 			return fileNames;
 		}
 
-		private void FindNewFiles(DirectoryInfo dir, List<ScriptFile> list) {
+		private void FindNewFiles(DirectoryInfo dir, ICollection<ScriptFile> list) {
 			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
 				DirectoryInfo di = entry as DirectoryInfo;
 				if (di != null) {
@@ -146,13 +141,13 @@ namespace SteamEngine {
 			}
 		}
 
-		private void FindChangedFiles(List<ScriptFile> list) {
+		private void FindChangedFiles(ICollection<ScriptFile> list) {
 			foreach (ScriptFile fs in this.scriptFiles.Values) {
 				long prevLength = fs.Length;
 				if (fs.CheckChanged()) {
 					list.Add(fs);
-					this.lengthSum -= prevLength;
-					this.lengthSum += fs.Length;//the new length already
+					this.LengthSum -= prevLength;
+					this.LengthSum += fs.Length;//the new length already
 				}
 			}
 		}
