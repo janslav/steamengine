@@ -153,7 +153,6 @@ namespace SteamEngine.Networking {
 
 			if (isOnGround || isEquippedAndVisible || isInContainer) {
 				PacketGroup pg = null;//iteminfo or paperdollinfo or itemincontainer
-				PacketGroup allmoveItemInfo = null;
 				AosToolTips[] toolTipsArray = null;
 
 				IEnumerable<AbstractCharacter> enumerator;
@@ -217,9 +216,6 @@ namespace SteamEngine.Networking {
 
 				if (pg != null) {
 					pg.Dispose();
-				}
-				if (allmoveItemInfo != null) {
-					allmoveItemInfo.Dispose();
 				}
 			}
 		}

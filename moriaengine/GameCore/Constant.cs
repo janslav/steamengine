@@ -179,8 +179,7 @@ namespace SteamEngine {
 				try {
 					d = allConstantsByName.AddOrUpdate(name,
 						n => new Constant(n, null),
-						(n, prev) =>
-						{
+						(n, prev) => {
 							if (prev.unloaded) {
 								prev.unloaded = false;
 								return prev;
@@ -261,6 +260,7 @@ namespace SteamEngine {
 			} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
 				this.implementation = new NormalConstant(retVal);
 			} else {
+				Logger.WriteDebug($"Resolving nontrivial constant value: '{value}'.");
 				string statement = string.Concat("return ", value);
 				retVal = LScriptMain.TryRunSnippet(
 					this.filename, this.line, Globals.Instance, statement);
@@ -276,6 +276,7 @@ namespace SteamEngine {
 						this.implementation = new NormalConstant(retVal);
 					}
 				}
+				Logger.WriteDebug($"Constant resolved as type '{this.implementation?.GetType()}'.");
 			}
 		}
 

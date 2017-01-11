@@ -104,9 +104,8 @@ namespace SteamEngine.CompiledScripts {
 								Logger.WriteWarning(input.Filename, linenumber, "Alternative defname already defined, ignoring.");
 							} else {
 								string altdefname = gc["value"].Value;
-								Match ma = ConvertTools.stringRE.Match(altdefname);
 								altdefname = String.Intern(ConvertTools.LoadSimpleQuotedString(altdefname));
-								AbstractScript def = GetByDefname(altdefname);
+								AbstractScript def = AbstractScript.GetByDefname(altdefname);
 								TemplateDef t = def as TemplateDef;
 								if (t == null) { //is null or isnt TeplateDef
 									if (def != null) {//it isnt TemplateDef
