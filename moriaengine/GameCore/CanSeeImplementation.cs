@@ -202,8 +202,7 @@ namespace SteamEngine {
 			} //else we already checked it
 
 			AbstractItem container = target.Cont as AbstractItem;
-			if (container != null)
-			{
+			if (container != null) {
 				if (this.IsOnline) {
 					return OpenedContainers.HasContainerOpenFromAt(this, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
 				}
@@ -227,6 +226,10 @@ namespace SteamEngine {
 		}
 
 		public DenyResult CanSeeLOS(IPoint3D target) {
+			if (target == null) {
+				return DenyResultMessages.Deny_ThatDoesntExist;
+			}
+
 			IPoint3D targetTop = target.TopPoint;
 
 			int thisM = this.M;
@@ -248,7 +251,7 @@ namespace SteamEngine {
 				if (!map.CanSeeLosFromTo(this, targetTop)) {
 					return DenyResultMessages.Deny_ThatIsOutOfLOS;
 				}
-			} else if (target != null) {
+			} else {
 				if (Point2D.GetSimpleDistance(this, targetTop) > this.VisionRange) {
 					return DenyResultMessages.Deny_ThatIsTooFarAway;
 				}
@@ -257,8 +260,6 @@ namespace SteamEngine {
 					//TODO? Could be wrong with statics on multiple facets, but we'll get there when we get there
 					return DenyResultMessages.Deny_ThatIsOutOfLOS;
 				}
-			} else { //target == null
-				return DenyResultMessages.Deny_ThatDoesntExist;
 			}
 
 			return DenyResultMessages.Allow;
