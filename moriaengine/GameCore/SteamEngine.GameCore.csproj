@@ -39,7 +39,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
-    <NoWarn>1591, 1570</NoWarn>
+    <NoWarn>1591</NoWarn>
     <DocumentationFile>..\build\Debug\SteamEngine.GameCore.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
@@ -55,50 +55,6 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="3rdParty\Encryption\ByteQueue.cs" />
-    <Compile Include="3rdParty\Encryption\Encryption.cs" />
-    <Compile Include="3rdParty\Encryption\GameEncryption.cs" />
-    <Compile Include="3rdParty\Encryption\IClientEncryption.cs" />
-    <Compile Include="3rdParty\Encryption\LoginEncryption.cs" />
-    <Compile Include="3rdParty\Encryption\LoginKey.cs" />
-    <Compile Include="3rdParty\Encryption\NoEncryption.cs" />
-    <Compile Include="3rdParty\Encryption\TwofishBase.cs" />
-    <Compile Include="3rdParty\Encryption\TwofishEncryption.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\AlternativeElement.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CharacterSetElement.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\CombineElement.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Element.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\Matcher.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExp.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RegExpException.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Node.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Parser.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserCreationException.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ParserLogException.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Production.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPattern.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternAlternative.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\ProductionPatternElement.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\RecursiveDescentParser.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Token.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\Tokenizer.cs" />
-    <Compile Include="3rdParty\Grammatica\PerCederberg.Grammatica.Parser\TokenPattern.cs" />
-    <Compile Include="3rdParty\JMBucknall.Containers\PriorityQueue.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\AbstractXDCReadPolicy.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\Convert.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\DefaultXDCReadPolicy.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\FileSystemProxy.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\IXmlDocCommentReadPolicy.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\XmlDocCommentDirectoryElement.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\XmlDocCommentDirectoryElementCollection.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\XmlDocCommentNames.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\XmlDocCommentReader.cs" />
-    <Compile Include="3rdParty\Jolt.XmlDocCommentReader\XmlDocCommentReaderSettings.cs" />
     <Compile Include="CompiledScripts\CompiledSpeechDef.cs" />
     <Compile Include="CompiledScripts\XmlDocComments.cs" />
     <Compile Include="LocalisationExtensions.cs" />
@@ -285,13 +241,6 @@
     <Compile Include="WeakRefDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="3rdParty\Encryption\COPYING" />
-    <None Include="3rdParty\Encryption\README" />
-    <None Include="3rdParty\Grammatica\LICENSE-GPL.txt" />
-    <None Include="3rdParty\Grammatica\LICENSE.txt" />
-    <None Include="3rdParty\Grammatica\notice.txt" />
-    <None Include="3rdParty\Grammatica\README.txt" />
-    <None Include="3rdParty\JMBucknall.Containers\notice.txt" />
     <None Include="LScript\generate.bat" />
     <None Include="LScript\LScript_strict.grammar" />
     <None Include="App.config" />
@@ -305,6 +254,10 @@
     <ProjectReference Include="..\Communication\SteamEngine.Communication.csproj">
       <Project>{42DC5FFC-D58D-48B2-8035-3123D4F0A84F}</Project>
       <Name>SteamEngine.Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\SteamEngine.ThirdParty.csproj">
+      <Project>{9fdf32c0-aa76-4020-ba7e-d3ae7f49e5f6}</Project>
+      <Name>SteamEngine.ThirdParty</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
