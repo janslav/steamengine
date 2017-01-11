@@ -12,7 +12,7 @@ namespace SteamEngine.Networking {
 	/// <summary>
 	/// Summary description for TwofishBase.
 	/// </summary>
-	internal class TwofishBase {
+	public class TwofishBase {
 		public enum EncryptionDirection {
 			Encrypting,
 			Decrypting

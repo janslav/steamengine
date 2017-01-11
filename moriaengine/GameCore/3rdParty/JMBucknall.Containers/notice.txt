@@ -1,3 +1,0 @@
-In SteamEngine, this class is not directly used, 
-but it is/was used as a "template" for implementing of the priority queue which Timers are stored in.
--tart

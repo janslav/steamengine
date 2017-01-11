@@ -55,7 +55,7 @@ namespace PerCederberg.Grammatica.Parser {
 		/**
 		 * The child nodes.
 		 */
-		internal ArrayList children;
+		public ArrayList children;
 
 		/**
 		 * Creates a new production node.

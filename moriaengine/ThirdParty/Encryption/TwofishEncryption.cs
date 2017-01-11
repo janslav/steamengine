@@ -9,7 +9,7 @@ namespace SteamEngine.Networking {
 	/// <summary>
 	/// Summary description for TwofishEncryption.
 	/// </summary>
-	internal class TwofishEncryption : TwofishBase, ICryptoTransform {
+	public class TwofishEncryption : TwofishBase, ICryptoTransform {
 		public TwofishEncryption(int keyLen, ref byte[] key, ref byte[] iv, CipherMode cMode, EncryptionDirection direction) {
 			// convert our key into an array of ints
 			for (int i = 0; i < key.Length / 4; i++) {
