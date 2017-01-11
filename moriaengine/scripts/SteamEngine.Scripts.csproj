@@ -6,7 +6,7 @@
     <ProjectGuid>{C70C4C3E-FEC0-47BB-BB30-608951B723D5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>SteamEngine.CompiledScripts</RootNamespace>
-    <ScriptsAssemblyNumber>ytrd</ScriptsAssemblyNumber>
+    <ScriptsAssemblyNumber>VS</ScriptsAssemblyNumber>
     <AssemblyName>SteamEngine.CompiledScripts.$(ScriptsAssemblyNumber)</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -756,7 +756,6 @@
     <None Include="map.steam" />
     <None Include="readme.txt" />
     <None Include="referencedAssemblies.txt" />
-    <None Include="scriptSources.Generated.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\SteamEngine.Common.csproj">

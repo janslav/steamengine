@@ -6,7 +6,7 @@
     <ProjectGuid>{36CC1B5F-5F1B-406D-AE88-2DC3762CBDB5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>SteamEngine.Generated</RootNamespace>
-    <ScriptsAssemblyNumber>1</ScriptsAssemblyNumber>
+    <ScriptsAssemblyNumber>VS</ScriptsAssemblyNumber>
     <AssemblyName>SteamEngine.Generated.$(ScriptsAssemblyNumber)</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

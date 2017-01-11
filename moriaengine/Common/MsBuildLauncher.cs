@@ -31,16 +31,14 @@ namespace SteamEngine.Common {
 		public static string Compile(string seRootPath, BuildType build, string targetTask, int? scriptAssemblyNumber = null) {
 			var slnPath = Path.Combine(seRootPath, slnName);
 			var globalProperties = new Dictionary<string, string>();
-			var buildRequest = new BuildRequestData(slnPath, globalProperties, null, new[] { targetTask }, null);
-			var pc = new ProjectCollection();
-			pc.SetGlobalProperty("Configuration", build.ToString());
+			globalProperties["Configuration"] = build.ToString();
 			if (scriptAssemblyNumber.HasValue) {
-				pc.SetGlobalProperty("ScriptsAssemblyNumber", scriptAssemblyNumber.ToString());
+				globalProperties["ScriptsAssemblyNumber"] = scriptAssemblyNumber.ToString();
 			}
+			var buildRequest = new BuildRequestData(slnPath, globalProperties, null, new[] { targetTask }, null);
+			var buildParameters = new BuildParameters(new ProjectCollection()) { Loggers = new[] { new MsBuildLogger()  } };
 
-			var buildParameters = new BuildParameters(pc) { Loggers = new[] { new MsBuildLogger()  } };
 			var result = BuildManager.DefaultBuildManager.Build(buildParameters, buildRequest);
-
 			if (result.OverallResult == BuildResultCode.Success) {
 				var compiledFilePath = result.ResultsByTarget[targetTask].Items[0].ItemSpec;
 				if (File.Exists(compiledFilePath)) {

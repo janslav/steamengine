@@ -16,30 +16,30 @@
 */
 
 using System;
+using System.IO;
 using System.Reflection;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 
 	internal static class CompilerInvoker {
-		internal static CompScriptFileCollection compiledScripts;//CompScriptFileCollection instances
-																 //all types of Steamengine namespace, regardless if from scripts or core. 
+		internal static CompiledScriptFileCollection compiledScripts;//CompiledScriptFileCollection instances
+																	 //all types of Steamengine namespace, regardless if from scripts or core. 
+
+		private static int compilationNumber;
 
 		//removes all non-core references
 		//internal static void UnLoadScripts() {
 		//    compiledScripts = null;
 		//}
 
-		internal static bool SourcesHaveChanged {
-			get {
-				return compiledScripts.GetChangedFiles().Count > 0;
-			}
+		internal static bool FindIfSourcesHaveChanged() {
+			return compiledScripts.GetChangedFiles().Count > 0;
 		}
 
-		private static int compilationNumber;
 
 		internal static bool CompileScripts(bool firstCompiling) {
-			using (StopWatch.StartAndDisplay("Compiling...")) {
+			using (StopWatch.StartAndDisplay("Compiling scripts...")) {
 				bool success = true;
 
 				if (firstCompiling) {
@@ -65,10 +65,12 @@ namespace SteamEngine.CompiledScripts {
 		private static bool CompileScriptsUsingMsBuild() {
 			try {
 				var file = MsBuildLauncher.Compile(".", Build.Type, "SteamEngine_Scripts", compilationNumber);
-				var fileCollection = new CompScriptFileCollection(Globals.ScriptsPath, ".cs");
-				fileCollection.assembly = Assembly.LoadFile(file);
+				var fileCollection = new CompiledScriptFileCollection(Globals.ScriptsPath, ".cs") {
+					assembly = Assembly.LoadFile(file)
+				};
+				fileCollection.GetAllFiles();
 				compiledScripts = fileCollection;
-				Console.WriteLine("Done compiling C# scripts.");
+				Console.WriteLine($"Done compiling C# scripts. ({Path.GetFileName(file)})");
 				return true;
 			} catch (Exception e) {
 				Logger.WriteError(e);
