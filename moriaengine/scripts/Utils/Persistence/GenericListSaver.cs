@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -81,18 +82,17 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static Type ParseType(PropsLine pl) {
-			Type elemType = ClassManager.GetType(pl.Value);
-			if (elemType == null) {
-				elemType = Type.GetType(pl.Value, false, true);
-			}
+			Type elemType = (ClassManager.GetType(pl.Value)
+				?? Type.GetType(pl.Value, throwOnError: false, ignoreCase: true))
+				?? AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(pl.Value, throwOnError: false, ignoreCase: true)).First(t => t != null);
+
 			if (elemType == null) {
 				throw new SEException("Element type not recognised.");
 			}
 			return elemType;
 		}
 
-		public static string GetTypeName(Type type)
-		{
+		public static string GetTypeName(Type type) {
 			if (ClassManager.GetType(type.Name) == type) {//steamengine class
 				return type.Name;
 			}
