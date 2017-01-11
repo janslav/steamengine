@@ -740,6 +740,7 @@
     <None Include="Optional\StorageBoxes\storageBoxes.def" />
     <None Include="Optional\Treasures\treasures.ct" />
     <None Include="Optional\Treasures\treasures.def" />
+    <None Include="packages.config" />
     <None Include="Temporary\publicTest.scp" />
     <None Include="Temporary\Temporary.scp" />
     <None Include="Tests\CharacterConnectionStateInvariants.scp" />
@@ -811,6 +812,10 @@
     <VisualStudio />
   </ProjectExtensions>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="MySql.Data, Version=1.0.9.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -825,10 +830,6 @@
       <HintPath>..\bin\Zip.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Optional\PlayerVendor\playerVendor.scp" />
