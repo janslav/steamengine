@@ -45,7 +45,7 @@ namespace SteamEngine {
 			foreach (AbstractScript gs in byDefname.Values.ToList()) {
 				gs.Unregister();
 			}
-			Contract.Ensures(byDefname.Count == 0, "byDefname.Count > 0 after UnloadAll");
+			Sanity.IfTrueThrow(byDefname.Count != 0, "byDefname.Count > 0 after UnloadAll");
 		}
 
 		//register with static dictionaries and lists. 

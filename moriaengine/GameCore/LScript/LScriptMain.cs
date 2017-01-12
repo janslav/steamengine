@@ -76,6 +76,9 @@ namespace SteamEngine.LScript {
 					lstr.Append(LogStr.FileLine(filename, curline)).Append(pe.GetErrorMessage());
 				}
 				throw new SEException(lstr.ToLogStr());
+			} catch (RecursionTooDeepException rtde) {
+				newSnippetRunner.lastRunException = rtde;
+				throw rtde; // we really do want to rethrow it, so that its useless stack is lost.
 			} catch (Exception e) {
 				newSnippetRunner.lastRunException = e;
 				throw;
@@ -113,6 +116,9 @@ namespace SteamEngine.LScript {
 					//Logger.WriteError(WorldSaver.currentfile, curline, pe.GetErrorMessage());
 				}
 				throw new SEException(lstr);
+			} catch (RecursionTooDeepException rtde) {
+				snippetRunner.lastRunException = rtde;
+				throw rtde; // we really do want to rethrow it, so that its useless stack is lost.
 			} catch (Exception e) {
 				snippetRunner.lastRunException = e;
 				throw;
@@ -164,6 +170,8 @@ namespace SteamEngine.LScript {
 					int line = pe.GetLine() + startLine;
 					Logger.WriteError(parent.filename, line, pe);
 				}
+			} catch (RecursionTooDeepException) {
+				Logger.WriteError(parent.filename, startLine, "Recursion too deep while parsing.");
 			} catch (Exception e) {
 				Logger.WriteError(parent.filename, startLine, e);
 			}
@@ -228,7 +236,7 @@ namespace SteamEngine.LScript {
 						return OpNode_Lazy_Expression.Construct(parent, code, true);
 
 					case StrictConstants.DOTTED_EXPRESSION_CHAIN:
-						return OpNode_Lazy_ExpressionChain.Construct(parent, code); 
+						return OpNode_Lazy_ExpressionChain.Construct(parent, code);
 
 					case StrictConstants.CODE_BODY_PARENS:
 					case StrictConstants.SIMPLE_CODE_BODY_PARENS:
@@ -343,7 +351,7 @@ namespace SteamEngine.LScript {
 
 				case StrictConstants.DOTTED_EXPRESSION_CHAIN:
 					return OpNode_Lazy_ExpressionChain.Construct(parent, code);
-					
+
 				case StrictConstants.STRING:
 				case StrictConstants.SIMPLE_EXPRESSION:
 					return OpNode_Lazy_Expression.Construct(parent, code);
@@ -427,8 +435,7 @@ namespace SteamEngine.LScript {
 			}
 		}
 
-		internal static string GetFirstTokenString(Node node)
-		{
+		internal static string GetFirstTokenString(Node node) {
 			if (node.GetChildCount() > 0) {
 				return GetFirstTokenString(node.GetChildAt(0));
 			}

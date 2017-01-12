@@ -65,6 +65,7 @@
     <Compile Include="Grammatica\PerCederberg.Grammatica.Parser.RE\RepeatElement.cs" />
     <Compile Include="Grammatica\PerCederberg.Grammatica.Parser.RE\StringElement.cs" />
     <Compile Include="Grammatica\PerCederberg.Grammatica.Parser\Analyzer.cs" />
+    <Compile Include="Grammatica\PerCederberg.Grammatica.Parser\RecursionTooDeepException.cs" />
     <Compile Include="Grammatica\PerCederberg.Grammatica.Parser\LookAheadSet.cs" />
     <Compile Include="Grammatica\PerCederberg.Grammatica.Parser\Node.cs" />
     <Compile Include="Grammatica\PerCederberg.Grammatica.Parser\ParseException.cs" />

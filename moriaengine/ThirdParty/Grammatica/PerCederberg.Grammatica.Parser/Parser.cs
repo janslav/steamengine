@@ -97,6 +97,8 @@ namespace PerCederberg.Grammatica.Parser {
 		 */
 		private int errorRecovery = -1;
 
+		private int recursionDepth;
+
 		/**
 		 * Creates a new parser.
 		 * 
@@ -379,6 +381,12 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @param node           the parse tree node
 		 */
 		internal void EnterNode(Node node) {
+			this.recursionDepth++;
+			// this is an arbitrary number. Adjust to your convenience.
+			if (this.recursionDepth > 80) {
+				throw new RecursionTooDeepException("Parsing recursion too deep.");
+			}
+
 			if (!node.IsHidden() && errorRecovery < 0) {
 				try {
 					analyzer.Enter(node);
@@ -400,6 +408,8 @@ namespace PerCederberg.Grammatica.Parser {
 		 *         null if no parse tree should be created
 		 */
 		internal Node ExitNode(Node node) {
+			this.recursionDepth--;
+
 			if (!node.IsHidden() && errorRecovery < 0) {
 				try {
 					return analyzer.Exit(node);
