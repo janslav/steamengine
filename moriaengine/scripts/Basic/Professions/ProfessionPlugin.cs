@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class ProfessionPluginDef {
 	}
 
-	public class ProfessionPluginLoc : CompiledLocStringCollection {
+	public class ProfessionPluginLoc : CompiledLocStringCollection<ProfessionPluginLoc> {
 		public string YouCantCastThis = "You can't cast this spell, being {0} of profession.";
 	}
 }

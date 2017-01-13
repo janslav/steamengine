@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class AnatomyLoc : CompiledLocStringCollection {
+	public class AnatomyLoc : CompiledLocStringCollection<AnatomyLoc> {
 		internal readonly string TargetWho = "Koho chceš zkoumat?";
 		internal readonly string TargetOnlyHuman = "Zamìøuj pouze osoby!";
 		internal readonly string ACanceled = "Anatomie byla pøerušena.";

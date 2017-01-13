@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class HiddenHelperPluginDef {
 	}
 
-	public class HidingLoc : CompiledLocStringCollection {
+	public class HidingLoc : CompiledLocStringCollection<HidingLoc> {
 		internal readonly string HidingAborted = "Hiding aborted.";
 	}
 }

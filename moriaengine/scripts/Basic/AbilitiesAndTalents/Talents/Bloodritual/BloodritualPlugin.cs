@@ -49,10 +49,10 @@ namespace SteamEngine.CompiledScripts {
 	public partial class BloodritualPluginDef {
 	}
 
-	public class BloodritualLoc : CompiledLocStringCollection {
+	public class BloodritualLoc : CompiledLocStringCollection<BloodritualLoc> {
 		// TODO doplnit hlasky
 		//public string BloodritualActivated = "";
 		//public string BloodritualDeactivated = "";
 		//public string StatsTooLowToActivate = "";
-	}
+}
 }

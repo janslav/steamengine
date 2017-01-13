@@ -39,8 +39,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class CompiledLocDenyResult<T> : DenyResult where T : CompiledLocStringCollection {
-		private string entryName;
+	public class CompiledLocDenyResult<T> : DenyResult where T : CompiledLocStringCollection<T> {
+		private readonly string entryName;
 
 		public CompiledLocDenyResult(string entryName) {
 			this.entryName = entryName;
@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void SendDenyMessage(AbstractCharacter ch, GameState state, TcpConnection<GameState> conn) {
 			if (ch != null) {
-				CompiledLocStringCollection loc = Loc<T>.Get(ch.Language);
+				CompiledLocStringCollection<T> loc = Loc<T>.Get(ch.Language);
 				string msg = loc.GetEntry(this.entryName);
 				if (!string.IsNullOrEmpty(msg)) {
 					PacketSequences.SendSystemMessage(conn, msg, -1);

@@ -19,7 +19,7 @@ using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
 
-	public class ResListLoc : CompiledLocStringCollection {
+	public class ResListLoc : CompiledLocStringCollection<ResListLoc> {
 		public string NotEnoughItems = "Máš málo {0}";
 		public string NotEnoughItemsOfType = "Máš málo pøedmìtù typu {0}";
 		public string SkillTooLow = "Umení {0} ovládáš pøíliš špatnì";

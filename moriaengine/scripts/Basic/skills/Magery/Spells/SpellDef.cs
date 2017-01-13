@@ -978,7 +978,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class SpellDefLoc : CompiledLocStringCollection {
+	public class SpellDefLoc : CompiledLocStringCollection<SpellDefLoc> {
 		internal string TargetResistedSpell = "Cíl odolal kouzlu!";
 		internal string ForbiddenMagicIn = "Zde je zakázáno kouzlit";
 		internal string ForbiddenMagicOut = "Odtud je zakázáno kouzlit";

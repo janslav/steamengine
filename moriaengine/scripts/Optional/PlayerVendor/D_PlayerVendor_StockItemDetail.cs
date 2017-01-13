@@ -301,7 +301,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class Loc_D_PlayerVendor_StockItemDetail : CompiledLocStringCollection {
+	public class Loc_D_PlayerVendor_StockItemDetail : CompiledLocStringCollection<Loc_D_PlayerVendor_StockItemDetail> {
 		public string Label_Price = "Cena";
 		public string Label_Color = "Barva";
 		public string Label_Change = "Zmìnit";

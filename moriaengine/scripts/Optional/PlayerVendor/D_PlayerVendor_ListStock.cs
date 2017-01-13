@@ -385,7 +385,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class Loc_PlayerVendor_ListStock : CompiledLocStringCollection {
+	public class Loc_PlayerVendor_ListStock : CompiledLocStringCollection<Loc_PlayerVendor_ListStock> {
 		public string Buy = "kup";
 		public string Description = "Název zboží";
 		public string PriceInGp = "Cena (gp)";

@@ -95,7 +95,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class RecallRuneDef {
 	}
 
-	public class RecallRuneLoc : CompiledLocStringCollection {
+	public class RecallRuneLoc : CompiledLocStringCollection<RecallRuneLoc> {
 		public string anUnknownDestination = "an unknown destination";
 		public string target = "Target";
 

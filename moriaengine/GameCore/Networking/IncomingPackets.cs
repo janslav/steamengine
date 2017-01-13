@@ -1520,7 +1520,7 @@ namespace SteamEngine.Networking {
 	}
 
 
-	internal class IncomingPacketsLoc : CompiledLocStringCollection {
+	internal class IncomingPacketsLoc : CompiledLocStringCollection<IncomingPacketsLoc> {
 		public string NotANumber = "'{0}' is not a number!";
 		public string MaxAccCharsReached = "You already have the maximum number of characters in your account.";
 		public string IllegalCharsInName = "Illegal name - Contains something other than letters and spaces.";

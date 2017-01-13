@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state = clicker.GameState;
 			if (state != null) {
 				PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(clicker.Language);
-				string msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(CultureInfo.InvariantCulture) + 
+				string msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(CultureInfo.InvariantCulture) +
 					Environment.NewLine +
 					loc.Power + ": " + this.poisonPower.ToString(CultureInfo.InvariantCulture);
 				PacketSequences.SendOverheadMessageFrom(state.Conn, (Thing) this.Cont, msg, -1);
@@ -112,11 +112,11 @@ namespace SteamEngine.CompiledScripts {
 			if (previous != null) {
 				Sanity.IfTrueThrow(previous == this, "previous == this");
 				Sanity.IfTrueThrow(previous.poisonType != this.poisonType, "previous.poisonType != this.poisonType");
-				
+
 				//the new potion and the old one are summed up, their power averaged.
 				int prevDoses = previous.poisonDoses;
 				int newDoses = prevDoses + projectilesPerPotion;
-				previous.poisonPower = (previous.poisonPower * prevDoses + 
+				previous.poisonPower = (previous.poisonPower * prevDoses +
 					this.poisonPower * projectilesPerPotion) / newDoses;
 				previous.poisonTickCount = (previous.poisonTickCount * prevDoses +
 					this.poisonTickCount * projectilesPerPotion) / newDoses;
@@ -285,7 +285,7 @@ namespace SteamEngine.CompiledScripts {
 			new PoisonedItemPluginDef("p_poisoned_item", "C# scripts", -1).Register();
 	}
 
-	public class PoisonedItemLoc : CompiledLocStringCollection {
+	public class PoisonedItemLoc : CompiledLocStringCollection<PoisonedItemLoc> {
 		public string DosesLeft = "Poison Doses";
 		public string Power = "Poison Power";
 	}

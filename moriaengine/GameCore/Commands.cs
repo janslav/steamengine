@@ -346,7 +346,7 @@ namespace SteamEngine {
 		}
 	}
 
-	internal class CommandLoc : CompiledLocStringCollection {
+	internal class CommandLoc : CompiledLocStringCollection<CommandLoc> {
 		public string XCommandPrompt = "Command who or what?";
 		public string CommandFailed = "Command '{0}' failed - {1}";
 		public string WrongCommandArgument = "Wrong argument for that method";

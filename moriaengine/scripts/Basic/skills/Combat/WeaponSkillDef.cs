@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class WeaponSkillDefLoc : CompiledLocStringCollection {
+	public class WeaponSkillDefLoc : CompiledLocStringCollection<WeaponSkillDefLoc> {
 		internal string YouHaveNoAmmo = "Nem� st�elivo.";
 	}
 }

@@ -166,7 +166,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	internal class ContainerLoc : CompiledLocStringCollection {
+	internal class ContainerLoc : CompiledLocStringCollection <ContainerLoc>{
 		internal string itemsGenitiv = "items";
 		internal string stonesGenitiv = "stones";
 	}

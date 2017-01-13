@@ -62,9 +62,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
-			//get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
+															   //get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
 			double[] itemStrokes = iDefToMake.Strokes; //always 2-item array
-			//compute the actual strokes count to make the selected item for "self" char
+													   //compute the actual strokes count to make the selected item for "self" char
 			int strokes = (int) Math.Round(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes));
 			//check the Success now / TODO> item difficulty
 			skillSeqArgs.Success = this.CheckSuccess(self, iDefToMake.Difficulty);
@@ -265,7 +265,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	internal class CraftSkillsLoc : CompiledLocStringCollection {
+	internal class CraftSkillsLoc : CompiledLocStringCollection<CraftSkillsLoc> {
 		public string ResourcesLackingButContinue = "Not enough resources to make {0}, continuing with other items.";
 		public string ResourcesLackingAndFinish = "Not enough resources to make {0}, crafting is finished.";
 		public string ItemMakingFailed = "You have failed to make {0} and lost some of the resources";

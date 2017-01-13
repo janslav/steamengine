@@ -11,7 +11,7 @@ namespace SteamEngine {
 		/// <typeparam name="TLoc">Loc object type</typeparam>
 		/// <param name="src">The src object.</param>
 		/// <param name="msgSelector">The message selector, typically just a lambda returning the desired field values.</param>
-		public static void WriteLineLoc<TLoc>(this ISrc src, Func<TLoc, string> msgSelector) where TLoc : CompiledLocStringCollection {
+		public static void WriteLineLoc<TLoc>(this ISrc src, Func<TLoc, string> msgSelector) where TLoc : CompiledLocStringCollection<TLoc> {
 
 			var loc = Loc<TLoc>.Get(src.Language);
 
@@ -27,7 +27,7 @@ namespace SteamEngine {
 		/// <param name="src">The src object.</param>
 		/// <param name="msgSelector">The message selector, typically just a lambda returning the desired field values.</param>
 		/// <param name="formatArgs">The format args.</param>
-		public static void WriteLineLoc<TLoc>(this ISrc src, Func<TLoc, string> msgSelector, params object[] formatArgs) where TLoc : CompiledLocStringCollection {
+		public static void WriteLineLoc<TLoc>(this ISrc src, Func<TLoc, string> msgSelector, params object[] formatArgs) where TLoc : CompiledLocStringCollection<TLoc> {
 
 			var loc = Loc<TLoc>.Get(src.Language);
 

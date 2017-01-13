@@ -2564,7 +2564,7 @@ namespace SteamEngine.CompiledScripts {
 			new CompiledLocDenyResult<CharacterLoc>("TargetIsInsubst");
 	}
 
-	public class CharacterLoc : CompiledLocStringCollection {
+	public class CharacterLoc : CompiledLocStringCollection<CharacterLoc> {
 		public string TargetIsDead = "The target is dead.";
 		public string TargetIsInsubst = "The target is insubstantial.";
 	}

@@ -201,14 +201,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class PoisoningLoc : CompiledLocStringCollection {
+	public class PoisoningLoc : CompiledLocStringCollection<PoisoningLoc> {
 		public string CantPoisonThisWeapon = "It's impossible to poison this weapon";
 		public string CantPoisonThisProjectile = "It's impossible to poison this weapon projectile";
 		public string CantPoisonThat = "It's impossible to poison that. You can only poison infectious weapons or weapon projectiles.";
 		public string ProjectilesHaveDifferentPoisond = "These projectiles are already poisoned with a different poison.";
 		public string AllProjectilesPoisoned = "All of the projectiles are already poisoned.";
 	}
-
 }
 
 //502137	Select the poison you wish to use

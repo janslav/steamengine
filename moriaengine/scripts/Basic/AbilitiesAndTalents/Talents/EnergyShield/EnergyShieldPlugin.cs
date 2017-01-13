@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class EnergyShieldPluginDef {
 	}
 
-	public class EnergyShieldLoc : CompiledLocStringCollection {
+	public class EnergyShieldLoc : CompiledLocStringCollection<EnergyShieldLoc> {
 		public string cantTeleport = "Bìhem trvání kouzla Energy shield nemùžeš používat teleportaèní kouzla";
 		public string cantMove = "Bìhem trvání kouzla Energy shield se nemùžeš pohybovat";
 		public string shieldWasted = "Tvùj Energy shield se vyèerpal";

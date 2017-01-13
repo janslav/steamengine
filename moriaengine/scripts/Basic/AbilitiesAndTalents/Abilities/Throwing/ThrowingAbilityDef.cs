@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 			new CompiledLocDenyResult<AbilityDefLoc>("onlyWorksWhenFighting");
 	}
 
-	public class ThrowingLoc : CompiledLocStringCollection {
+	public class ThrowingLoc : CompiledLocStringCollection<ThrowingLoc> {
 		public string youNeedThrowingKnife = "Nemáš žádný házecí nùž.";
 		public string onlyWorksWhenFighting = "Házecí nože lze použít jen bìhem boje.";
 	}

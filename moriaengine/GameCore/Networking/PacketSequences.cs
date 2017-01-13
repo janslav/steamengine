@@ -458,7 +458,7 @@ namespace SteamEngine.Networking {
 		}
 	}
 
-	internal class PacketSequencesLoc : CompiledLocStringCollection {
+	internal class PacketSequencesLoc : CompiledLocStringCollection<PacketSequencesLoc> {
 		public string WelcomeToShard = "Welcome to {0}.";
 	}
 }

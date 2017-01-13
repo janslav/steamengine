@@ -16,62 +16,26 @@
 */
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace SteamEngine.Common {
 
 	public class NumberedLocStringCollection : LocStringCollection {
-		string defname;
-		string assemblyName;
-		List<string> entriesByNumber = new List<string>();
-		ReadOnlyCollection<string> entriesReadonly;
+		public NumberedLocStringCollection(string defname, string assemblyName, ICollection<string> strings, Language language)
+			: base(language, assemblyName, defname, GetEntriesFromList(strings)) {
 
-		public NumberedLocStringCollection(string defname, string assemblyName,
-			IList<string> strings, Language language) {
-
-			this.defname = defname;
-			this.assemblyName = assemblyName;
-
-			this.entriesReadonly = new ReadOnlyCollection<string>(this.entriesByNumber);
-
-			this.Init(GetEntriesFromList(strings), language);
-		}
-		
-		private static IEnumerable<KeyValuePair<string, string>> GetEntriesFromList(IList<string> strings) {
-			for (int i = 0, n = strings.Count; i < n; i++) {
-				yield return new KeyValuePair<string, string>(
-					i.ToString(CultureInfo.InvariantCulture),
-					strings[i]);
+			var list = strings.ToList();
+			for (int i = 0, n = list.Count; i < n; i++) {
+				list[i] = this.GetEntry(i.ToString());
 			}
+			this.Entries = list;
 		}
 
-		protected override void ProtectedSetEntry(string entryName, string entry) {
-			base.ProtectedSetEntry(entryName, entry);
-			int index = ConvertTools.ParseInt32(entryName);
-			
-			while (this.entriesByNumber.Count <= index) {
-				this.entriesByNumber.Add(null);
-			}
-			this.entriesByNumber[index] = entry;
+		private static IEnumerable<KeyValuePair<string, string>> GetEntriesFromList(IEnumerable<string> strings) {
+			return strings.Select((s, i) => new KeyValuePair<string, string>(i.ToString(CultureInfo.InvariantCulture), s));
 		}
 
-		public override string Defname {
-			get {
-				return this.defname;
-			}
-		}
-
-		public override string AssemblyName {
-			get {
-				return this.assemblyName;
-			}
-		}
-
-		public ReadOnlyCollection<string> Entries {
-			get {
-				return this.entriesReadonly;
-			}
-		}
+		public IReadOnlyCollection<string> Entries { get; }
 	}
 }

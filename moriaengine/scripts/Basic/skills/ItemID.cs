@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 			return TargetResult.Done;
 		}
 	}
-	public class ItemIdLoc : CompiledLocStringCollection {
+	public class ItemIdLoc : CompiledLocStringCollection<ItemIdLoc> {
 		internal readonly string TargetWhat = "Co chceš identifikovat?";
 		internal readonly string ICanceled = "Identifikace pøedmìtu pøerušena.";
 		internal readonly string IFailed = "Identifikace pøedmìtu se nezdaøila.";

@@ -430,7 +430,7 @@ namespace SteamEngine.CompiledScripts {
 			new CompiledLocDenyResult<AbilityDefLoc>("NotAllowedToHaveAbility"); //other reason why not allow to have the ability (e.g. wrong profession etc.)
 	}
 
-	public class AbilityDefLoc : CompiledLocStringCollection {
+	public class AbilityDefLoc : CompiledLocStringCollection<AbilityDefLoc> {
 		public string AbilityActivated = "Abilita {0} aktivována.";
 		public string YouDontHaveThisAbility = "O této abilitì nevíš vùbec nic.";
 		public string NotYetCooledDown = "Abilitu nelze použít tak brzy po pøedchozím použití.";
