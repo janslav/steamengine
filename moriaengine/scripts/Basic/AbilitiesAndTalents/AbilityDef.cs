@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Return enumerable containing all abilities (copying the values from the main dictionary)</summary>
 		//public static Dictionary<string,AbilityDef>.ValueCollection AllAbilities {
-		public static ICollection<AbilityDef> AllAbilities {
+		public static IEnumerable<AbilityDef> AllAbilities {
 			get {
 				return AllIndexedDefs;
 			}

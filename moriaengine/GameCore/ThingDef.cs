@@ -20,7 +20,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Regions;
 
@@ -62,8 +64,8 @@ namespace SteamEngine {
 		//private static AbstractItemDef[] itemModelDefs = new AbstractItemDef[MaxItemModels];
 		//private static AbstractCharacterDef[] charModelDefs = new AbstractCharacterDef[MaxCharModels];
 
-		private static ConcurrentDictionary<int, AbstractItemDef> itemModelDefs = new ConcurrentDictionary<int, AbstractItemDef>();
-		private static ConcurrentDictionary<int, AbstractCharacterDef> charModelDefs = new ConcurrentDictionary<int, AbstractCharacterDef>();
+		private static ShieldedDictNc<int, AbstractItemDef> itemModelDefs = new ShieldedDictNc<int, AbstractItemDef>();
+		private static ShieldedDictNc<int, AbstractCharacterDef> charModelDefs = new ShieldedDictNc<int, AbstractCharacterDef>();
 		private static int highestItemModel;
 		private static int highestCharModel;
 
@@ -154,8 +156,7 @@ namespace SteamEngine {
 		}
 
 		public virtual int Height {
-			get
-			{
+			get {
 				if (this.height.IsDefaultCodedValue) {
 					return Map.PersonHeight;
 				}
@@ -166,8 +167,7 @@ namespace SteamEngine {
 			}
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			if (this.model.CurrentValue == null) {
 				return this.Name + ": " + this.Defname + "//" + this.Altdefname + " (null model!)";
 			}
@@ -469,18 +469,20 @@ namespace SteamEngine {
 			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x", CultureInfo.InvariantCulture) + ")");
 			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x", CultureInfo.InvariantCulture) + ")");
 
-			int count = AllScriptsByDefname.Count;
+			var allScripts = AllScripts;
+			int count = allScripts.Count;
+
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
 				int a = 0;
 				int countPerCent = count / 200;
-				foreach (AbstractScript td in AllScripts) {
+				foreach (var td in allScripts) {
 					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
 					}
-					AbstractItemDef idef = td as AbstractItemDef;
+					var idef = td as AbstractItemDef;
 					if (idef != null) {
 						try {
-							AbstractItemDef dupeItem = idef.DupeItem;
+							var dupeItem = idef.DupeItem;
 							if (dupeItem != null) {
 								dupeItem.AddToDupeList(idef);
 							}
@@ -497,7 +499,6 @@ namespace SteamEngine {
 						} catch (Exception e) {
 							Logger.WriteWarning(e);
 						}
-
 					}
 					a++;
 				}
@@ -508,7 +509,7 @@ namespace SteamEngine {
 		internal new static void ForgetAll() {
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
-			//thingDefTypesByName.Clear();
+											 //thingDefTypesByName.Clear();
 			thingDefCtors.Clear();
 
 			itemModelDefs.Clear();

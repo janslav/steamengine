@@ -823,11 +823,12 @@
             For fully safe enumerating, please use <see cref="T:Shielded.ShieldedDict`2"/>.
             </summary>
         </member>
-        <member name="M:Shielded.ShieldedDictNc`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}},System.Object)">
+        <member name="M:Shielded.ShieldedDictNc`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}},System.Collections.Generic.IEqualityComparer{`0},System.Object)">
             <summary>
-            Initializes a new instance with the given initial contents.
+            Initializes a new instance with the given initial contents and comparer implementation.
             </summary>
             <param name="items">Initial items.</param>
+            <param name="comparer">The System.Collections.Generic.IEqualityComparer{TKey} implementation to use when comparing keys.</param>
             <param name="owner">If this is given, then in WhenCommitting subscriptions
             this shielded will report its owner instead of itself.</param>
         </member>

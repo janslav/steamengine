@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts {
 			try {
 				var file = MsBuildLauncher.Compile(".", Build.Type, "SteamEngine_Generated", compilationNumber);
 				generatedAssembly = Assembly.LoadFile(file); ;
-				Console.WriteLine("Done compiling Generated C# scripts.");
+				Console.WriteLine($"Done compiling Generated C# scripts. ({Path.GetFileName(file)})");
 				return true;
 			} catch (Exception e) {
 				Logger.WriteError(e);
@@ -145,8 +145,7 @@ namespace SteamEngine.CompiledScripts {
 		//        }
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public static CodeExpression GenerateSimpleLoadExpression(Type dataType, CodeExpression inputStringExpression)
-		{
+		public static CodeExpression GenerateSimpleLoadExpression(Type dataType, CodeExpression inputStringExpression) {
 			if (dataType == typeof(string)) {
 				return new CodeCastExpression(
 					typeof(string),
@@ -208,8 +207,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public static CodeExpression GenerateDelayedLoadExpression(Type dataType, CodeExpression inputObjectExpression)
-		{
+		public static CodeExpression GenerateDelayedLoadExpression(Type dataType, CodeExpression inputObjectExpression) {
 			if (dataType == typeof(object)) {
 				return inputObjectExpression;
 			}

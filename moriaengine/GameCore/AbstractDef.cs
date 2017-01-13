@@ -21,8 +21,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
@@ -138,7 +140,7 @@ namespace SteamEngine {
 
 			if (fv == null) {//that means it's not in scripts
 				Match m = TagHolder.tagRE.Match(fieldName);
-				if (m.Success) {	//If the name begins with 'tag.'
+				if (m.Success) {    //If the name begins with 'tag.'
 					string tagName = m.Groups["name"].Value;
 					TagKey tk = TagKey.Acquire(tagName);
 					tagName = "tag." + tagName;
@@ -245,16 +247,18 @@ namespace SteamEngine {
 			Logger.WriteDebug("Saving defs.");
 			output.WriteComment("Defs");
 
-			foreach (AbstractScript script in AllScripts) {
+			var all = AllScripts;
+
+			foreach (AbstractScript script in all) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					def.alreadySaved = false;
 				}
 			}
-			int count = AllScripts.Count;
+			int count = all.Count;
 			int a = 0;
 			int countPerCent = count / 200;
-			foreach (AbstractScript script in AllScripts) {
+			foreach (AbstractScript script in all) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					if ((a % countPerCent) == 0) {
@@ -407,8 +411,7 @@ namespace SteamEngine {
 			}
 
 			//check if it isn't another type or duplicity			
-			if (def != null)
-			{
+			if (def != null) {
 				if (def.GetType() != type) {
 					throw new OverrideNotAllowedException("You can not change the class of a Def while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
@@ -481,15 +484,21 @@ namespace SteamEngine {
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
 		public override AbstractScript Register() {
-			try {
-				if (!string.IsNullOrEmpty(this.altdefname)) {
-					var previous = AllScriptsByDefname.GetOrAdd(this.altdefname, this);
-					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
+			if (!string.IsNullOrEmpty(this.altdefname)) {
+				Shield.InTransaction(() => {
+					try {
+						AbstractScript previous;
+						if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+							if (previous != this) {
+								throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
+							}
+						} else {
+							AllScriptsByDefname.Add(this.altdefname, this);
+						}
+					} finally {
+						base.Register();
 					}
-				}
-			} finally {
-				base.Register();
+				});
 			}
 			return this;
 		}
@@ -499,16 +508,16 @@ namespace SteamEngine {
 		protected override void Unregister() {
 			try {
 				if (!string.IsNullOrEmpty(this.altdefname)) {
-
-					AbstractScript previous;
-					if (AllScriptsByDefname.TryRemove(this.altdefname, out previous)) {
-						if (previous != this) {
-							if (!AllScriptsByDefname.TryAdd(this.altdefname, previous)) {
-								throw new FatalException("Parallel loading fucked up.");
+					Shield.InTransaction(() => {
+						AbstractScript previous;
+						if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+							if (previous != this) {
+								throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
+							} else {
+								AllScriptsByDefname.Remove(this.altdefname);
 							}
-							throw new SEException("previous != this when unregistering AbstractScript '" + this.altdefname + "'");
 						}
-					}
+					});
 				}
 			} finally {
 				base.Unregister();
@@ -541,7 +550,7 @@ namespace SteamEngine {
 		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
 			Match m = TagHolder.tagRE.Match(param);
 			FieldValue fieldValue;
-			if (m.Success) {	//If the name begins with 'tag.'
+			if (m.Success) {    //If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
 				TagKey tk = TagKey.Acquire(tagName);
 				fieldValue = (FieldValue) this.fieldValues[tk];
@@ -573,7 +582,6 @@ namespace SteamEngine {
 		}
 
 		internal static void LoadingFinished() {
-
 			//load postponed lines. That are those which are not initialised by the start of the loading.
 			//this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
 			//this way, for example ProfessionDef definition can list skills and abilities
@@ -625,13 +633,14 @@ namespace SteamEngine {
 		/// </remarks>
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void ResolveAll() {
-			int count = AllScripts.Count;
+			var all = AllScripts;
+			int count = all.Count;
 			Logger.WriteDebug("Resolving " + count + " defs");
 
 			DateTime before = DateTime.Now;
 			int a = 0;
 			int countPerCent = count / 100;
-			foreach (AbstractScript script in AllScripts) {
+			foreach (var script in all) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
 					if ((a % countPerCent) == 0) {
