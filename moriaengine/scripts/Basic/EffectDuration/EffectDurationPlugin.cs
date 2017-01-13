@@ -155,7 +155,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class EffectDurationPluginDef {
 	}
 
-	public class EffectDurationLoc : CompiledLocStringCollection {
+	public class EffectDurationLoc : CompiledLocStringCollection<EffectDurationLoc> {
 		public string AbilityDeactivated = "Ability '{0}' deactivated.";
 
 		public string AbilityEffectEnded = "Effect of ability '{0}' ended.";

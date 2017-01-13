@@ -58,6 +58,7 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="HighPerformanceTimer.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="Localisation\Loc.cs" />
     <Compile Include="MsBuildLogger.cs" />
     <Compile Include="MsBuildLauncher.cs" />
     <Compile Include="NantLauncher.cs" />

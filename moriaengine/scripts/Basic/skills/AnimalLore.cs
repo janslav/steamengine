@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class AnimalLoreLoc : CompiledLocStringCollection {
+	public class AnimalLoreLoc : CompiledLocStringCollection<AnimalLoreLoc> {
 		internal readonly string TargetWho = "Co chceš zkoumat?";
 		internal readonly string TargetOnlyAnimals = "Zamìøuj pouze zvìø!";
 		internal readonly string ACanceled = "Animal Lore bylo pøerušeno.";

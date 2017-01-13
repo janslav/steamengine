@@ -274,7 +274,7 @@ namespace SteamEngine.CompiledScripts {
 		//}
 	}
 
-	public class GmCommandsLoc : CompiledLocStringCollection {
+	public class GmCommandsLoc : CompiledLocStringCollection<GmCommandsLoc> {
 		public string GMModeOn = "GM mode on (Plevel {0}).";
 		public string GMModeOff = "GM mode off (Plevel 1).";
 		public string InsubstOn = "Flag_Insubst on (you're invisible and players can not interact with you)";

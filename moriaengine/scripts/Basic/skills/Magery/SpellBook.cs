@@ -188,7 +188,7 @@ namespace SteamEngine.CompiledScripts {
 			new DenyResult_ClilocSysMessage(500207); //The spellbook must be in your backpack (and not in a container within) to open.
 	}
 
-	public class SpellBookLoc : CompiledLocStringCollection {
+	public class SpellBookLoc : CompiledLocStringCollection<SpellBookLoc> {
 		internal readonly string TargetBookToEmpty = "Ze které knihy chceš vysypat svitky?";
 	}
 }

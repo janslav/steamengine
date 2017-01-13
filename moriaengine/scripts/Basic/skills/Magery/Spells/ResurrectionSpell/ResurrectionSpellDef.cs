@@ -20,58 +20,58 @@ using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
-    [ViewableClass]
-    public class ResurrectionSpellDef : SpellDef {
+	[ViewableClass]
+	public class ResurrectionSpellDef : SpellDef {
 
-        public ResurrectionSpellDef(string defname, string filename, int headerLine)
-            : base(defname, filename, headerLine) {
-        }
+		public ResurrectionSpellDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+		}
 
-        protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
-            base.On_EffectChar(target, spellEffectArgs);
+		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
+			base.On_EffectChar(target, spellEffectArgs);
 
-            if (target.Flag_Dead) {
-                target.Resurrect();
-            } else {
-                spellEffectArgs.Caster.ClilocSysMessage(501041); // Target is not dead.
-            }
+			if (target.Flag_Dead) {
+				target.Resurrect();
+			} else {
+				spellEffectArgs.Caster.ClilocSysMessage(501041); // Target is not dead.
+			}
 
-        }
-        protected override void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
-            base.On_EffectItem(target, spellEffectArgs);
+		}
+		protected override void On_EffectItem(Item target, SpellEffectArgs spellEffectArgs) {
+			base.On_EffectItem(target, spellEffectArgs);
 
-            
 
-            int range = this.EffectRange;
-            Character owner;
-            Character caster = spellEffectArgs.Caster;
-            Corpse corp = target as Corpse;
 
-            if (corp != null) {
-                if (corp.Owner != null) {
-                    owner = corp.Owner;
-                    if (owner.Flag_Dead) {
-                        if (owner.CanReach(corp).Allow) {
-                            owner.Resurrect(corp);
-                        } else {
-                            caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).GhostCantReachTheBody);
-                        }
-                    } else {
-                        caster.ClilocSysMessage(501041); // Target is not dead.
-                    }
-                } else {
-                    caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ThisIsntPlayersBody);
-                }
-            } else {
-                caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ThisIsntBody);
+			int range = this.EffectRange;
+			Character owner;
+			Character caster = spellEffectArgs.Caster;
+			Corpse corp = target as Corpse;
 
-            }
-        }
-    }
-    public class ResurrectionLoc : CompiledLocStringCollection {
+			if (corp != null) {
+				if (corp.Owner != null) {
+					owner = corp.Owner;
+					if (owner.Flag_Dead) {
+						if (owner.CanReach(corp).Allow) {
+							owner.Resurrect(corp);
+						} else {
+							caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).GhostCantReachTheBody);
+						}
+					} else {
+						caster.ClilocSysMessage(501041); // Target is not dead.
+					}
+				} else {
+					caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ThisIsntPlayersBody);
+				}
+			} else {
+				caster.WriteLine(Loc<ResurrectionLoc>.Get(caster.Language).ThisIsntBody);
+
+			}
+		}
+	}
+	public class ResurrectionLoc : CompiledLocStringCollection<ResurrectionLoc> {
 		public string ThisIsntBody = "Toto není tìlo!";
 		public string ThisIsntPlayersBody = "Toto není tìlo hráèské postavy.";
-        //internal readonly string ResurrectionPlayerIsntDead = "Hráè toho tìla není mrtvý.";
-        public string GhostCantReachTheBody = "Duch nedosáhne na své tìlo.";
-    }
+		//internal readonly string ResurrectionPlayerIsntDead = "Hráè toho tìla není mrtvý.";
+		public string GhostCantReachTheBody = "Duch nedosáhne na své tìlo.";
+	}
 }

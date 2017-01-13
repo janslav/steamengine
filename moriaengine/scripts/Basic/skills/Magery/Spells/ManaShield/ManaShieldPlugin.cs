@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class ManaShieldPluginDef {
 	}
 
-	public class ManaShieldLoc : CompiledLocStringCollection {
+	public class ManaShieldLoc : CompiledLocStringCollection<ManaShieldLoc> {
 		public string cantMeditateWithManaShield = "Soustøedit se zároveò na meditaci i mana shield není v lidských silách.";
 		public string shieldSavedYou = "Mana shield tì uchránil pøed zranìním";
 		public string shieldSavedYouPartially = "Mana shield tì èásteènì ochránil pøed zranìním";

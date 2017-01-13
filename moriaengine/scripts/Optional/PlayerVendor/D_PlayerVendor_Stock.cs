@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class Loc_PlayerVendor_Stock : CompiledLocStringCollection {
+	public class Loc_PlayerVendor_Stock : CompiledLocStringCollection<Loc_PlayerVendor_Stock> {
 		public string Header_Item = "Na prodej: {0} {1}";
 		public string Header_Char = "Na prodej: {0}";
 		public string Label_Price = "Cena";

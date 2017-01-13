@@ -131,7 +131,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class HealingLoc : CompiledLocStringCollection {
+	public class HealingLoc : CompiledLocStringCollection<HealingLoc> {
 		internal readonly string YoureAtMaxHitpoints = "Jsi zcela zdráv!";
 		internal readonly string TargetIsAtMaxHitpoints = "{0} je zcela zdráv!";
 		internal readonly string YoureStartingToHealTarget = "Zaèínáš léèit {0}.";

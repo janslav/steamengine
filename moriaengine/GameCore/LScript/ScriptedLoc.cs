@@ -1,43 +1,25 @@
 using System.Collections.Generic;
+using System.Linq;
 using SteamEngine.Common;
 
 namespace SteamEngine.LScript {
 
 	public class ScriptedLocStringCollection : LocStringCollection, IUnloadable {
-		private string defname;
-		private bool unloaded;
-
-		private ScriptedLocStringCollection(string defname) {
-			this.defname = defname;
-		}
-
-		public override string AssemblyName {
-			get {
-				return "LScript";
-			}
-		}
-
-		public override string Defname {
-			get {
-				return this.defname;
-			}
+		public ScriptedLocStringCollection(Language language, string assemblyName, string defname, IEnumerable<KeyValuePair<string, string>> entriesByName)
+			: base(language, assemblyName, defname, entriesByName) {
 		}
 
 		public void Unload() {
 			LocManager.UnregisterLoc(this);
-			this.unloaded = true;
+			this.IsUnloaded = true;
 		}
 
-		public bool IsUnloaded {
-			get {
-				return this.unloaded;
-			}
-		}
+		public bool IsUnloaded { get; private set; }
 
 		internal static IUnloadable Load(PropsSection section) {
 			string defname = section.HeaderName;
 
-			LocStringCollection oldLoc = LocManager.GetLoc(defname, Language.Default);
+			var oldLoc = LocManager.GetLoc(defname, Language.Default);
 			if (oldLoc != null) {
 				Logger.WriteError(section.Filename, section.HeaderLine, "ScriptedLoc " + LogStr.Ident(defname) + " defined multiple times. Ignoring");
 				return null;
@@ -47,8 +29,8 @@ namespace SteamEngine.LScript {
 			IUnloadable[] langs = new IUnloadable[n];
 
 			for (int i = 0; i < n; i++) {
-				ScriptedLocStringCollection newLoc = new ScriptedLocStringCollection(defname);
-				newLoc.Init(GetEntriesFromSection(section), (Language)i);
+				ScriptedLocStringCollection newLoc = new ScriptedLocStringCollection((Language) i, assemblyName: "LScript", defname: defname,
+					entriesByName: section.PropsLines.Select(line => new KeyValuePair<string, string>(line.Name, line.Value)));
 				langs[i] = newLoc;
 			}
 
@@ -58,16 +40,10 @@ namespace SteamEngine.LScript {
 
 			return new UnloadableGroup(langs);
 		}
-
-		private static IEnumerable<KeyValuePair<string, string>> GetEntriesFromSection(PropsSection section) {
-			foreach (PropsLine line in section.PropsLines) {
-				yield return new KeyValuePair<string, string>(line.Name, line.Value);
-			}
-		}
 	}
 
 	public class UnloadableGroup : IUnloadable {
-		IUnloadable[] array;
+		readonly IUnloadable[] array;
 
 		public UnloadableGroup(params IUnloadable[] array) {
 			this.array = array;

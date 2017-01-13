@@ -225,7 +225,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class BandageSkillLoc : CompiledLocStringCollection {
+	public class BandageSkillLoc : CompiledLocStringCollection<BandageSkillLoc> {
 		internal readonly string SelectHealingTarget = "Koho chceš léèit?";
 		internal readonly string CantHealItems = "Pøedmìty nelze léèit.";
 		internal readonly string YouHaveNoBandages = "Nemáš u sebe bandáže!";

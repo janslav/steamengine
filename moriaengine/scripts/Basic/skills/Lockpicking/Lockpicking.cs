@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class LockpickLoc : CompiledLocStringCollection {
+	public class LockpickLoc : CompiledLocStringCollection<LockpickLoc> {
 		public string cantUseLockpick = "Na tohle nelze paklíè použít.";
 		public string whatToUseLockOn = "Na co chceš použít paklíè?";
 		public string abort = "Odemykání pøerušeno.";

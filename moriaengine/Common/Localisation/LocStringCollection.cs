@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SteamEngine.Common {
@@ -16,66 +17,49 @@ namespace SteamEngine.Common {
 		public static readonly Regex valueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		private Dictionary<string, string> entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-		private Language language;
+		private readonly Dictionary<string, string> entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-		public string GetEntry(string entryName) {
-			string value;
-			if (this.entriesByName.TryGetValue(entryName, out value)) {
-				return value;
-			}
-			return defaultText;
+		protected LocStringCollection(Language language, string assemblyName, string defname, 
+			IEnumerable<KeyValuePair<string, string>> entriesByName) {
+			this.Language = language;
+			this.Defname = defname;
+			this.AssemblyName = assemblyName;
+
+			this.entriesByName = entriesByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
+
+			LocManager.RegisterLoc(this);
 		}
 
-		protected virtual void ProtectedSetEntry(string entryName, string entry) {
-			if (this.entriesByName.ContainsKey(entryName)) {
-				this.entriesByName[entryName] = String.Intern(entry); ;
-			}
+		protected LocStringCollection(Language language, string assemblyName, string defname) {
+			this.Language = language;
+			this.Defname = defname;
+			this.AssemblyName = assemblyName;
+
+			this.entriesByName = this.GetEntriesFromCode().ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
+
+			LocManager.RegisterLoc(this);
 		}
 
-		public bool HasEntry(string entryName) {
-			return this.entriesByName.ContainsKey(entryName);
+		protected virtual IEnumerable<KeyValuePair<string, string>> GetEntriesFromCode()
+		{
+			throw new NotImplementedException();
 		}
 
-		public Language Language {
-			get {
-				return this.language;
-			}
-		}
+		public string Defname { get; }
 
-		public abstract string AssemblyName {
-			get;
-		}
+		public Language Language { get; }
 
-		public abstract string Defname {
-			get;
-		}
+		public string AssemblyName { get; }
 
-		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-		public IEnumerator<KeyValuePair<string, string>> GetEnumerator() {
-			return this.entriesByName.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() {
-			return this.entriesByName.GetEnumerator();
-		}
-
-		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "entriesByName"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "language"), SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-		protected internal virtual void Init(IEnumerable<KeyValuePair<string, string>> entriesByName, Language language) {
-			this.entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			Dictionary<string, string> helperList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			foreach (KeyValuePair<string, string> pair in entriesByName) {
-				this.entriesByName.Add(pair.Key, pair.Value);
-				helperList.Add(pair.Key, pair.Value);
-			}
-
-			this.language = language;
+		public static Dictionary<string, string> LoadEntriesFromLanguageFile(Language language, string assemblyName, string defname,
+			IEnumerable<KeyValuePair<string, string>> entriesFromCode) {
+			var result = entriesFromCode.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
+			var helperList = new Dictionary<string,string>(result, StringComparer.OrdinalIgnoreCase);
 
 			string path = Tools.CombineMultiplePaths(".", servLocDir,
 				Enum.GetName(typeof(Language), language),
-				this.AssemblyName,
-				String.Concat(this.Defname, ".txt"));
-
+				assemblyName,
+				String.Concat(defname, ".txt"));
 
 			FileInfo file = new FileInfo(path);
 			if (file.Exists) {
@@ -93,9 +77,9 @@ namespace SteamEngine.Common {
 						if (m.Success) {
 							GroupCollection gc = m.Groups;
 							string name = gc["name"].Value;
-							if (this.HasEntry(name)) {
+							if (result.ContainsKey(name)) {
 								if (helperList.ContainsKey(name)) {
-									this.ProtectedSetEntry(name, gc["value"].Value);
+									result[name] = gc["value"].Value;
 									helperList.Remove(name);
 								} else {
 									Logger.WriteWarning(path, lineNum, "Duplicate value name '" + name + "'. Ignoring.");
@@ -110,9 +94,8 @@ namespace SteamEngine.Common {
 				}
 			}
 
-
 			//lines that are on the class but aren't in the text file, we append them to the file
-			if ((helperList.Count > 0)) {
+			if (helperList.Count > 0) {
 				Tools.EnsureDirectory(Path.GetDirectoryName(path));
 				using (StreamWriter writer = new StreamWriter(file.Open(FileMode.Append, FileAccess.Write))) {
 					foreach (KeyValuePair<string, string> pair in helperList) {
@@ -121,12 +104,33 @@ namespace SteamEngine.Common {
 				}
 			}
 
-			LocManager.RegisterLoc(this);
+			return result;
+		}
+
+		public string GetEntry(string entryName) {
+			string value;
+			if (this.entriesByName.TryGetValue(entryName, out value)) {
+				return value;
+			}
+			return defaultText;
+		}
+
+		public bool HasEntry(string entryName) {
+			return this.entriesByName.ContainsKey(entryName);
+		}
+
+		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+		public IEnumerator<KeyValuePair<string, string>> GetEnumerator() {
+			return this.entriesByName.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() {
+			return this.entriesByName.GetEnumerator();
 		}
 
 		public override string ToString() {
 			return string.Concat(this.Defname,
-				" (", Enum.GetName(typeof(Language), this.language), ")");
+				" (", Enum.GetName(typeof(Language), this.Language), ")");
 		}
 	}
 }

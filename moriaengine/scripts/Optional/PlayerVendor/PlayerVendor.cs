@@ -388,7 +388,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 	}
 
-	public class PlayerVendorLoc : CompiledLocStringCollection {
+	public class PlayerVendorLoc : CompiledLocStringCollection<PlayerVendorLoc> {
 		public string YouCantStockMoney = "Nemùžeš prodávat hotovost";
 		public string StockedContainerTooFull = "Nemùžeš prodávat kontejner s více jak 500ks zboží";
 

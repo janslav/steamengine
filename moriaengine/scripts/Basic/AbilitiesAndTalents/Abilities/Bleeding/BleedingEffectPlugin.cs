@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	public class BleedingLoc : CompiledLocStringCollection {
+	public class BleedingLoc : CompiledLocStringCollection<BleedingLoc> {
 		internal readonly string YoureBleeding = "Krvácíš!";
 		internal readonly string YourTargetIsBleeding = "{0} krvácí!";
 	}
