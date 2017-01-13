@@ -20,13 +20,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
 namespace SteamEngine {
 	public abstract class AbstractScript : IUnloadable {
 
-		private static readonly ConcurrentDictionary<string, AbstractScript> byDefname = new ConcurrentDictionary<string, AbstractScript>(StringComparer.OrdinalIgnoreCase);
+		private static readonly ShieldedDictNc<string, AbstractScript> byDefname =
+			new ShieldedDictNc<string, AbstractScript>(comparer: StringComparer.OrdinalIgnoreCase);
 
 		private string defname;
 		private bool unloaded;
@@ -42,10 +44,12 @@ namespace SteamEngine {
 		}
 
 		public static void ForgetAll() {
-			foreach (AbstractScript gs in byDefname.Values.ToList()) {
-				gs.Unregister();
-			}
-			Sanity.IfTrueThrow(byDefname.Count != 0, "byDefname.Count > 0 after UnloadAll");
+			Shield.InTransaction(() => {
+				foreach (AbstractScript gs in byDefname.Values.ToList()) {
+					gs.Unregister();
+				}
+			});
+			Sanity.IfTrueThrow(byDefname.Any(), "byDefname.Count > 0 after UnloadAll");
 		}
 
 		//register with static dictionaries and lists. 
@@ -53,10 +57,16 @@ namespace SteamEngine {
 		//Returns self for easier usage 
 		public virtual AbstractScript Register() {
 			if (!string.IsNullOrEmpty(this.defname)) {
-				var previous = byDefname.GetOrAdd(this.defname, this);
-				if (previous != this) {
-					throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
-				}
+				Shield.InTransaction(() => {
+					AbstractScript previous;
+					if (byDefname.TryGetValue(this.defname, out previous)) {
+						if (previous != this) {
+							throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
+						}
+					} else {
+						byDefname.Add(this.defname, this);
+					}
+				});
 			}
 			return this;
 		}
@@ -65,40 +75,42 @@ namespace SteamEngine {
 		//Can be called multiple times without harm
 		protected virtual void Unregister() {
 			if (!string.IsNullOrEmpty(this.defname)) {
-				AbstractScript previous;
-				if (byDefname.TryRemove(this.defname, out previous)) {
-					if (previous != this) {
-						if (!byDefname.TryAdd(this.defname, previous)) {
-							throw new FatalException("Parallel loading fucked up.");
+				Shield.InTransaction(() => {
+					AbstractScript previous;
+					if (byDefname.TryGetValue(this.defname, out previous)) {
+						if (previous != this) {
+							throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
+						} else {
+							byDefname.Remove(this.defname);
 						}
-						throw new SEException("previous != this when unregistering AbstractScript '" + this.defname + "'");
 					}
-				}
+				});
 			}
 		}
 
-		internal static ConcurrentDictionary<string, AbstractScript> AllScriptsByDefname {
+		internal static ShieldedDictNc<string, AbstractScript> AllScriptsByDefname {
 			get {
+				Shield.AssertInTransaction();
 				return byDefname;
 			}
 		}
 
-		public static ICollection<AbstractScript> AllScripts {
+		public static IReadOnlyCollection<AbstractScript> AllScripts {
 			get {
-				return byDefname.Values;
+				return Shield.InTransaction(() => byDefname.Values.ToList());
 			}
 		}
 
-		protected AbstractScript()
-		{
+		protected AbstractScript() {
+			Shield.AssertInTransaction();
 			this.defname = this.InternalFirstGetDefname();
 			if (byDefname.ContainsKey(this.defname)) {
 				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname) + " already exists!");
 			}
 		}
 
-		protected AbstractScript(string defname)
-		{
+		protected AbstractScript(string defname) {
+			Shield.AssertInTransaction();
 			if (String.IsNullOrEmpty(defname)) {
 				this.defname = this.InternalFirstGetDefname();
 			} else {

@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-		public static ICollection<SpellDef> AllSpellDefs {
+		public static IEnumerable<SpellDef> AllSpellDefs {
 			get {
 				return AllIndexedDefs;
 			}

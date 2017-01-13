@@ -19,11 +19,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Shielded;
 using SteamEngine.Common;
 
 namespace SteamEngine {
 	public abstract class ScriptHolder {
-		private static ConcurrentDictionary<string, ScriptHolder> functionsByName = new ConcurrentDictionary<string, ScriptHolder>(StringComparer.OrdinalIgnoreCase);
+		private static readonly ShieldedDictNc<string, ScriptHolder> functionsByName =
+			new ShieldedDictNc<string, ScriptHolder>(comparer: StringComparer.OrdinalIgnoreCase);
 
 		private readonly string name;
 		internal bool unloaded;
@@ -60,13 +62,19 @@ namespace SteamEngine {
 		}
 
 		protected internal void RegisterAsFunction() {
-			if (!functionsByName.TryAdd(this.name, this)) {
-				throw new ServerException("ScriptHolder '" + this.name + "' already exists; Cannot create a new one with the same name.");
-			}
+			Shield.InTransaction(() => {
+				if (functionsByName.ContainsKey(this.name)) {
+					throw new ServerException("ScriptHolder '" + this.name +
+											  "' already exists; Cannot create a new one with the same name.");
+				}
+				functionsByName.Add(this.name, this);
+			});
 		}
 
 		internal static void ForgetAllFunctions() {
-			functionsByName.Clear();
+			Shield.InTransaction(() => {
+				functionsByName.Clear();
+			});
 		}
 
 		/// <summary>Return enumerable containing all functions</summary>
@@ -105,8 +113,7 @@ namespace SteamEngine {
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-		public string GetDecoratedName()
-		{
+		public string GetDecoratedName() {
 			if (this.contTriggerGroup == null) {
 				return this.name;
 			}

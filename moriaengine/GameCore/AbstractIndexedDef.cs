@@ -19,6 +19,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using Shielded;
 
 namespace SteamEngine {
 
@@ -27,9 +29,9 @@ namespace SteamEngine {
 		where TDef : AbstractIndexedDef<TDef, TIndex> {
 
 		//for string indices, be case insensitive
-		private static ConcurrentDictionary<TIndex, TDef> byIndex = (typeof(TIndex) == typeof(string)) ?
-			new ConcurrentDictionary<TIndex, TDef>((IEqualityComparer<TIndex>) StringComparer.OrdinalIgnoreCase) :
-			new ConcurrentDictionary<TIndex, TDef>();
+		private static ShieldedDictNc<TIndex, TDef> byIndex = (typeof(TIndex) == typeof(string)) ?
+			new ShieldedDictNc<TIndex, TDef>(comparer: (IEqualityComparer<TIndex>) StringComparer.OrdinalIgnoreCase) :
+			new ShieldedDictNc<TIndex, TDef>();
 
 		private TIndex index;
 
@@ -54,11 +56,11 @@ namespace SteamEngine {
 
 		public static int IndexedCount {
 			get {
-				return byIndex.Count;
+				return byIndex.Count();
 			}
 		}
 
-		public static ICollection<TDef> AllIndexedDefs {
+		public static IEnumerable<TDef> AllIndexedDefs {
 			get {
 				return byIndex.Values;
 			}
@@ -66,12 +68,14 @@ namespace SteamEngine {
 
 		public override AbstractScript Register() {
 			try {
-
-				TDef previous = byIndex.GetOrAdd(this.index, (TDef) this);
-				if (previous != this) {
-					throw new SEException("previous != this when registering AbstractIndexedDef '" + this.index + "'");
+				TDef previous;
+				if (byIndex.TryGetValue(this.index, out previous)) {
+					if (previous != this) {
+						throw new SEException("previous != this when registering AbstractIndexedDef '" + this.index + "'");
+					}
+				} else {
+					byIndex.Add(this.index, (TDef) this);
 				}
-
 			} finally {
 				base.Register();
 			}
@@ -80,17 +84,14 @@ namespace SteamEngine {
 
 		protected override void Unregister() {
 			try {
-
 				TDef previous;
-				if (byIndex.TryRemove(this.index, out previous)) {
+				if (byIndex.TryGetValue(this.index, out previous)) {
 					if (previous != this) {
-						if (!byIndex.TryAdd(this.index, previous)) {
-							throw new FatalException("Parallel loading fucked up.");
-						}
-						throw new SEException("previous != this when unregistering AbstractScript '" + this.index + "'");
+						throw new SEException("previous != this when registering AbstractIndexedDef '" + this.index + "'");
+					} else {
+						byIndex.Remove(this.index);
 					}
 				}
-
 			} finally {
 				base.Unregister();
 			}

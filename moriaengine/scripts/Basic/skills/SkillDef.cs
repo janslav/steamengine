@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 			return (SkillDef) GetById((int) name);
 		}
 
-		public static ICollection<AbstractSkillDef> AllSkillDefs {
+		public static IEnumerable<AbstractSkillDef> AllSkillDefs {
 			get {
 				return AllIndexedDefs;
 			}

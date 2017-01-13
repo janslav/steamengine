@@ -18,13 +18,15 @@
 using System;
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Linq;
+using Shielded;
 using SteamEngine.Common;
 
 namespace SteamEngine {
 	public abstract class AbstractSkillDef : AbstractIndexedDef<AbstractSkillDef, int> /*TriggerGroupHolder*/ {
 
 		//string(defname)-Skilldef pairs
-		private static ConcurrentDictionary<string, AbstractSkillDef> byKey = new ConcurrentDictionary<string, AbstractSkillDef>(StringComparer.OrdinalIgnoreCase);
+		private static ShieldedDictNc<string, AbstractSkillDef> byKey = new ShieldedDictNc<string, AbstractSkillDef>(comparer: StringComparer.OrdinalIgnoreCase);
 		//string(key)-Skilldef pairs
 		//private static List<AbstractSkillDef> byId = new List<AbstractSkillDef>();
 		//Skilldef instances by their ID
@@ -104,10 +106,14 @@ namespace SteamEngine {
 
 		public override AbstractScript Register() {
 			try {
-				string key = this.Key;
-				var previous = byKey.GetOrAdd(key, this);
-				if (previous != this) {
-					throw new SEException("previous != this when registering AbstractSkillDef '" + key + "'");
+				AbstractSkillDef previous;
+				var k = this.Key;
+				if (byKey.TryGetValue(k, out previous)) {
+					if (previous != this) {
+						throw new SEException("previous != this when registering AbstractScript '" + k + "'");
+					}
+				} else {
+					byKey.Add(k, this);
 				}
 
 			} finally {
@@ -118,15 +124,13 @@ namespace SteamEngine {
 
 		protected override void Unregister() {
 			try {
-				string key = this.Key;
-
+				string k = this.Key;
 				AbstractSkillDef previous;
-				if (byKey.TryRemove(key, out previous)) {
+				if (byKey.TryGetValue(k, out previous)) {
 					if (previous != this) {
-						if (!byKey.TryAdd(key, previous)) {
-							throw new FatalException("Parallel loading fucked up.");
-						}
-						throw new SEException("previous != this when unregistering AbstractSkillDef '" + key + "'");
+						throw new SEException("previous != this when registering AbstractScript '" + k + "'");
+					} else {
+						byKey.Remove(k);
 					}
 				}
 
@@ -163,7 +167,7 @@ namespace SteamEngine {
 		internal new static void ForgetAll() {
 			AbstractScript.ForgetAll(); //just to be sure
 
-			Sanity.IfTrueThrow(byKey.Count > 0, "byKey.Count > 0 after AbstractScript.ForgetAll");
+			Sanity.IfTrueThrow(byKey.Any(), "byKey.Count > 0 after AbstractScript.ForgetAll");
 
 			//byId.Clear();
 			//skillDefCtorsByName.Clear();
