@@ -22,8 +22,8 @@ using System.Linq;
 namespace SteamEngine.Common {
 
 	public class NumberedLocStringCollection : LocStringCollection {
-		public NumberedLocStringCollection(string defname, string assemblyName, ICollection<string> strings, Language language)
-			: base(language, assemblyName, defname, GetEntriesFromList(strings)) {
+		public NumberedLocStringCollection(string defname, string assemblyName, Language language, ICollection<string> strings)
+			: base(defname, assemblyName, language, GetEntriesFromList(strings)) {
 
 			var list = strings.ToList();
 			for (int i = 0, n = list.Count; i < n; i++) {

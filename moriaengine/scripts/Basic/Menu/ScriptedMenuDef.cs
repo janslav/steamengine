@@ -52,8 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			this.choiceLists = new NumberedLocStringCollection[langCount];
 			string locdefname = "loc_" + ps.HeaderName;
 			for (int i = 0; i < langCount; i++) {
-				this.choiceLists[i] = new NumberedLocStringCollection(locdefname, "LScript",
-					locEntries, (Language) i);
+				this.choiceLists[i] = new NumberedLocStringCollection(locdefname, "LScript", (Language) i, locEntries);
 			}
 		}
 
