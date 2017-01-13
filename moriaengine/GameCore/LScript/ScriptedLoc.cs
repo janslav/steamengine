@@ -5,8 +5,8 @@ using SteamEngine.Common;
 namespace SteamEngine.LScript {
 
 	public class ScriptedLocStringCollection : LocStringCollection, IUnloadable {
-		public ScriptedLocStringCollection(Language language, string assemblyName, string defname, IEnumerable<KeyValuePair<string, string>> entriesByName)
-			: base(language, assemblyName, defname, entriesByName) {
+		public ScriptedLocStringCollection(string defname, string assemblyName, Language language, IEnumerable<KeyValuePair<string, string>> entriesFromCode)
+			: base(defname, assemblyName, language, entriesFromCode) {
 		}
 
 		public void Unload() {
@@ -17,11 +17,9 @@ namespace SteamEngine.LScript {
 		public bool IsUnloaded { get; private set; }
 
 		internal static IUnloadable Load(PropsSection section) {
-			string defname = section.HeaderName;
-
-			var oldLoc = LocManager.GetLoc(defname, Language.Default);
+			var oldLoc = LocManager.GetLoc(section.HeaderName, Language.Default);
 			if (oldLoc != null) {
-				Logger.WriteError(section.Filename, section.HeaderLine, "ScriptedLoc " + LogStr.Ident(defname) + " defined multiple times. Ignoring");
+				Logger.WriteError(section.Filename, section.HeaderLine, "ScriptedLoc " + LogStr.Ident(section.HeaderName) + " defined multiple times. Ignoring");
 				return null;
 			}
 
@@ -29,8 +27,8 @@ namespace SteamEngine.LScript {
 			IUnloadable[] langs = new IUnloadable[n];
 
 			for (int i = 0; i < n; i++) {
-				ScriptedLocStringCollection newLoc = new ScriptedLocStringCollection((Language) i, assemblyName: "LScript", defname: defname,
-					entriesByName: section.PropsLines.Select(line => new KeyValuePair<string, string>(line.Name, line.Value)));
+				var newLoc = new ScriptedLocStringCollection(defname: section.HeaderName, assemblyName: "LScript", language: (Language) i,
+					entriesFromCode: section.PropsLines.Select(line => new KeyValuePair<string, string>(line.Name, line.Value)));
 				langs[i] = newLoc;
 			}
 

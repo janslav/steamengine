@@ -17,15 +17,14 @@ namespace SteamEngine.Common {
 		public static readonly Regex valueRE = new Regex(@"^\s*(?<name>.*?)((\s*=\s*)|(\s+))(?<value>.*?)\s*(//(?<comment>.*))?$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		private readonly Dictionary<string, string> entriesByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		private readonly Dictionary<string, string> entriesByName;
 
-		protected LocStringCollection(Language language, string assemblyName, string defname, 
-			IEnumerable<KeyValuePair<string, string>> entriesByName) {
+		protected LocStringCollection(string defname, string assemblyName, Language language, IEnumerable<KeyValuePair<string, string>> entriesFromCode) {
 			this.Language = language;
 			this.Defname = defname;
 			this.AssemblyName = assemblyName;
 
-			this.entriesByName = entriesByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
+			this.entriesByName = this.LoadEntriesFromLanguageFile(entriesFromCode);
 
 			LocManager.RegisterLoc(this);
 		}
@@ -35,14 +34,9 @@ namespace SteamEngine.Common {
 			this.Defname = defname;
 			this.AssemblyName = assemblyName;
 
-			this.entriesByName = this.GetEntriesFromCode().ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
+			this.entriesByName = this.LoadEntriesFromLanguageFile(this.GetEntriesFromCode());
 
 			LocManager.RegisterLoc(this);
-		}
-
-		protected virtual IEnumerable<KeyValuePair<string, string>> GetEntriesFromCode()
-		{
-			throw new NotImplementedException();
 		}
 
 		public string Defname { get; }
@@ -51,15 +45,18 @@ namespace SteamEngine.Common {
 
 		public string AssemblyName { get; }
 
-		public static Dictionary<string, string> LoadEntriesFromLanguageFile(Language language, string assemblyName, string defname,
-			IEnumerable<KeyValuePair<string, string>> entriesFromCode) {
+		protected virtual IEnumerable<KeyValuePair<string, string>> GetEntriesFromCode() {
+			throw new NotImplementedException();
+		}
+
+		public Dictionary<string, string> LoadEntriesFromLanguageFile(IEnumerable<KeyValuePair<string, string>> entriesFromCode) {
 			var result = entriesFromCode.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
 			var helperList = new Dictionary<string,string>(result, StringComparer.OrdinalIgnoreCase);
 
 			string path = Tools.CombineMultiplePaths(".", servLocDir,
-				Enum.GetName(typeof(Language), language),
-				assemblyName,
-				String.Concat(defname, ".txt"));
+				Enum.GetName(typeof(Language), this.Language),
+				this.AssemblyName,
+				String.Concat(this.Defname, ".txt"));
 
 			FileInfo file = new FileInfo(path);
 			if (file.Exists) {
