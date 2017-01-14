@@ -484,9 +484,10 @@ namespace SteamEngine {
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
 		public override AbstractScript Register() {
-			if (!string.IsNullOrEmpty(this.altdefname)) {
-				Shield.InTransaction(() => {
-					try {
+			try {
+				if (!string.IsNullOrEmpty(this.altdefname)) {
+					Shield.InTransaction(() => {
+
 						AbstractScript previous;
 						if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
 							if (previous != this) {
@@ -495,10 +496,11 @@ namespace SteamEngine {
 						} else {
 							AllScriptsByDefname.Add(this.altdefname, this);
 						}
-					} finally {
-						base.Register();
-					}
-				});
+
+					});
+				}
+			} finally {
+				base.Register();
 			}
 			return this;
 		}
