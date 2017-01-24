@@ -150,6 +150,8 @@ namespace SteamEngine {
 					fv.CurrentValue = resolvedObject;
 				} catch (FatalException) {
 					throw;
+				} catch (TransException) {
+					throw;
 				} catch (Exception e) {
 					Logger.WriteWarning(filename, line, e);
 				}
@@ -286,6 +288,8 @@ namespace SteamEngine {
 						output.WriteValue(fv.Name, fv.CurrentValue);
 					}
 				} catch (FatalException) {
+					throw;
+				} catch (TransException) {
 					throw;
 				} catch (Exception e) {
 					Logger.WriteWarning(e);//this should not actually happen, I hope :)
@@ -531,6 +535,8 @@ namespace SteamEngine {
 					}
 				} catch (FatalException) {
 					throw;
+				} catch (TransException) {
+					throw;
 				} catch (Exception ex) {
 					Logger.WriteWarning(ps.Filename, p.Line, ex);
 				}
@@ -592,6 +598,8 @@ namespace SteamEngine {
 						this.LoadScriptLine(this.filename, p.Line, p.Name.ToLowerInvariant(), p.Value));
 				} catch (FatalException) {
 					throw;
+				} catch (TransException) {
+					throw;
 				} catch (Exception ex) {
 					Logger.WriteWarning(this.filename, p.Line, ex);
 				}
@@ -604,6 +612,8 @@ namespace SteamEngine {
 			try {
 				Shield.InTransaction(this.On_AfterLoadFromScripts);
 			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
 				throw;
 			} catch (SEException se) {
 				se.TryAddFileLineInfo(this.filename, this.headerLine);
@@ -642,6 +652,8 @@ namespace SteamEngine {
 							try {
 								fv.ResolveTemporaryState();
 							} catch (FatalException) {
+								throw;
+							} catch (TransException) {
 								throw;
 							} catch (Exception e) {
 								Logger.WriteWarning(e);

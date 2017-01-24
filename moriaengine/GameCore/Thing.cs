@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
@@ -103,7 +104,7 @@ namespace SteamEngine {
 				foreach (Thing t in things) {
 					try {
 						t.On_AfterLoad();
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
 
@@ -628,7 +629,7 @@ namespace SteamEngine {
 			//now load the rest of the properties
 			try {
 				constructed.On_Load(input);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 			constructed.LoadSectionLines(input);
 			if (constructed.IsChar) loadedCharacters++;
@@ -760,7 +761,7 @@ namespace SteamEngine {
 			output.WriteValue("createdat", this.createdAt);
 			try {
 				this.On_Save(output);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			base.Save(output);//tagholder save
 		}
 
@@ -881,7 +882,7 @@ namespace SteamEngine {
 			this.TryTrigger(TriggerKey.destroy, null);
 			try {
 				this.On_Destroy();
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		//method:On_Destroy
@@ -915,7 +916,7 @@ namespace SteamEngine {
 						//@aosClick on thing did not return 1
 						try {
 							this.On_AosClick(clicker, clickerState, clickerConn);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -944,7 +945,7 @@ namespace SteamEngine {
 							//@click on item did not return 1
 							try {
 								this.On_Click(clicker, clickerState, clickerConn);
-							} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+							} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 						}
 					}
 				}
@@ -1000,18 +1001,18 @@ namespace SteamEngine {
 					dclicker.TryTrigger(TriggerKey.itemDClick, sa);
 					try {
 						dclicker.On_ItemDClick((AbstractItem) this);
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				} else {
 					dclicker.TryTrigger(TriggerKey.charDClick, sa);
 					try {
 						dclicker.On_CharDClick((AbstractCharacter) this);
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 
 				this.TryTrigger(TriggerKey.dClick, sa);
 				try {
 					this.On_DClick(dclicker);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			}
 		}
 
@@ -1024,14 +1025,14 @@ namespace SteamEngine {
 				if (result != TriggerResult.Cancel) {
 					try {
 						result = dclicker.On_DenyItemDClick(denyArgs);
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			} else {
 				result = dclicker.TryCancellableTrigger(TriggerKey.denyItemDClick, denyArgs);
 				if (result != TriggerResult.Cancel) {
 					try {
 						result = dclicker.On_DenyCharDClick(denyArgs);
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
 
@@ -1040,7 +1041,7 @@ namespace SteamEngine {
 				if (result != TriggerResult.Cancel) {
 					try {
 						this.On_DenyDClick(denyArgs);
-					} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+					} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				}
 			}
 			return denyArgs.Result;
@@ -1167,7 +1168,7 @@ namespace SteamEngine {
 			this.TryTrigger(TriggerKey.buildAosToolTips, new ScriptArgs(toolTips, language));
 			try {
 				this.On_BuildAosToolTips(toolTips, language);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 			toolTips.InitDone(this);
 

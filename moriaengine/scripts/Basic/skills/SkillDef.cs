@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
@@ -208,7 +209,7 @@ namespace SteamEngine.CompiledScripts {
 			character.TryTrigger(tkSkillChange, sa);
 			try {
 				character.On_SkillChange(skill, oldModifiedValue);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		internal TriggerResult Trigger_Select(SkillSequenceArgs skillSeqArgs) {
@@ -221,13 +222,13 @@ namespace SteamEngine.CompiledScripts {
 			if (result != TriggerResult.Cancel) {
 				try {
 					result = self.On_SkillSelect(skillSeqArgs);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (result != TriggerResult.Cancel) {
 					result = this.TryCancellableTrigger(self, tkSelect, skillSeqArgs.scriptArgs);
 					if (result != TriggerResult.Cancel) {
 						try {
 							result = this.On_Select(skillSeqArgs);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -240,13 +241,13 @@ namespace SteamEngine.CompiledScripts {
 			if (result != TriggerResult.Cancel) {
 				try {
 					result = self.On_SkillStart(skillSeqArgs);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (result != TriggerResult.Cancel) {
 					result = this.TryCancellableTrigger(self, tkStart, skillSeqArgs.scriptArgs);
 					if (result != TriggerResult.Cancel) {
 						try {
 							result = this.On_Start(skillSeqArgs);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -259,13 +260,13 @@ namespace SteamEngine.CompiledScripts {
 			if (result != TriggerResult.Cancel) {
 				try {
 					result = self.On_SkillStroke(skillSeqArgs);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (result != TriggerResult.Cancel) {
 					result = this.TryCancellableTrigger(self, tkStroke, skillSeqArgs.scriptArgs);
 					if (result != TriggerResult.Cancel) {
 						try {
 							result = this.On_Stroke(skillSeqArgs);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -278,13 +279,13 @@ namespace SteamEngine.CompiledScripts {
 			if (result != TriggerResult.Cancel) {
 				try {
 					result = self.On_SkillFail(skillSeqArgs);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (result != TriggerResult.Cancel) {
 					result = this.TryCancellableTrigger(self, tkFail, skillSeqArgs.scriptArgs);
 					if (result != TriggerResult.Cancel) {
 						try {
 							this.On_Fail(skillSeqArgs);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -296,13 +297,13 @@ namespace SteamEngine.CompiledScripts {
 			if (result != TriggerResult.Cancel) {
 				try {
 					result = self.On_SkillSuccess(skillSeqArgs);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (result != TriggerResult.Cancel) {
 					result = this.TryCancellableTrigger(self, tkSuccess, skillSeqArgs.scriptArgs);
 					if (result != TriggerResult.Cancel) {
 						try {
 							this.On_Success(skillSeqArgs);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -313,11 +314,11 @@ namespace SteamEngine.CompiledScripts {
 			self.TryCancellableTrigger(tkSkillAbort, skillSeqArgs.scriptArgs);
 			try {
 				self.On_SkillAbort(skillSeqArgs);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 			this.TryCancellableTrigger(self, tkAbort, skillSeqArgs.scriptArgs);
 			try {
 				this.On_Abort(skillSeqArgs);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		/// <summary>This method implements the Select phase of the skill.</summary>

@@ -18,6 +18,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Regions;
@@ -87,6 +88,8 @@ namespace SteamEngine.CompiledScripts {
 				try {
 					return DynamicMultiItemComponentDescription.Parse(this.args);
 				} catch (FatalException) {
+					throw;
+				} catch (TransException) {
 					throw;
 				} catch (Exception ex) {
 					Logger.WriteWarning(this.filename, this.line, ex);

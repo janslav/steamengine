@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
@@ -164,6 +165,8 @@ namespace SteamEngine {
 								copier = PopDelayedCopier();
 								copier.Run();
 							} catch (FatalException) {
+								throw;
+							} catch (TransException) {
 								throw;
 							} catch (Exception e) {
 								Logger.WriteError("While deep-copying object " + copier.copyFrom, e);

@@ -16,6 +16,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 
@@ -69,13 +70,13 @@ namespace SteamEngine.CompiledScripts {
 			if (triggerResult != TriggerResult.Cancel) {
 				try {
 					triggerResult = user.On_DenyOpenDoor(args);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (triggerResult != TriggerResult.Cancel) {
 					triggerResult = this.TryCancellableTrigger(tkDenyOpen, args);
 					if (triggerResult != TriggerResult.Cancel) {
 						try {
 							this.On_DenyOpen(args);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -96,13 +97,13 @@ namespace SteamEngine.CompiledScripts {
 			if (triggerResult != TriggerResult.Cancel) {
 				try {
 					triggerResult = user.On_DenyCloseDoor(args);
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				if (triggerResult != TriggerResult.Cancel) {
 					triggerResult = this.TryCancellableTrigger(tkDenyClose, args);
 					if (triggerResult != TriggerResult.Cancel) {
 						try {
 							this.On_DenyClose(args);
-						} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 					}
 				}
 			}
@@ -159,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 
 				try {
 					this.On_Open();
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				this.TryTrigger(tkOpen, null);
 			}
 		}
@@ -204,7 +205,7 @@ namespace SteamEngine.CompiledScripts {
 
 				try {
 					this.On_Close();
-				} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+				} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 				this.TryTrigger(tkClose, null);
 			}
 		}

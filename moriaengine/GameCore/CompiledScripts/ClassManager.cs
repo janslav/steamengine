@@ -264,6 +264,8 @@ namespace SteamEngine.CompiledScripts {
 					Shield.InTransaction(() => InitClass(type));
 				} catch (FatalException) {
 					throw;
+				} catch (TransException) {
+					throw;
 				} catch (Exception e) {
 					Logger.WriteError(assemblyName, Tools.TypeToString(type), e);
 					success = false;
@@ -376,6 +378,8 @@ namespace SteamEngine.CompiledScripts {
 						try {
 							m.Invoke(null, null);
 						} catch (FatalException) {
+							throw;
+						} catch (TransException) {
 							throw;
 						} catch (Exception e) {
 							Logger.WriteError(type.Name, m.Name, e);

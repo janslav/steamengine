@@ -151,6 +151,10 @@ namespace SteamEngine {
 				var valueDefaultValue = this.GetFittingValueImpl();
 				this.shieldedState.Modify((ref State s) => s.defaultImpl = valueDefaultValue);
 				valueDefaultValue.Value = retVal;
+			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
+				throw;
 			} catch (SEException sex) {
 				sex.TryAddFileLineInfo(tempVi.filename, tempVi.line);
 				throw;

@@ -96,6 +96,8 @@ namespace SteamEngine {
 				return this.Run(self, sa);
 			} catch (FatalException) {
 				throw;
+			} catch (TransException) {
+				throw;
 			} catch (Exception e) {
 				this.Error(e);
 			}

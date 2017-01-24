@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Shielded;
 
 namespace SteamEngine.Common {
 
@@ -162,6 +163,8 @@ namespace SteamEngine.Common {
 				retVal = ConvertTo(type, obj);
 				return true;
 			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
 				throw;
 			} catch (Exception) {
 				retVal = null;
@@ -754,6 +757,8 @@ namespace SteamEngine.Common {
 				retVal = ToInt32(input);
 				return true;
 			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
 				throw;
 			} catch (Exception) {
 				retVal = 0;

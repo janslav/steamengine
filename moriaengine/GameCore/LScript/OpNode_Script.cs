@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using PerCederberg.Grammatica.Parser;
+using Shielded;
 
 namespace SteamEngine.LScript {
 
@@ -196,6 +197,8 @@ namespace SteamEngine.LScript {
 			try {
 				return this.con.Value;
 			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while getting value of Constant '" + this.con.Name + "'",

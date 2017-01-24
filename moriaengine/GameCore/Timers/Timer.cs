@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -105,6 +106,8 @@ namespace SteamEngine.Timers {
 									timer.OnTimeout();
 								}
 							} catch (FatalException) {
+								throw;
+							} catch (TransException) {
 								throw;
 							} catch (Exception e) {
 								Logger.WriteError(e);
