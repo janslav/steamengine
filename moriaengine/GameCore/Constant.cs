@@ -132,17 +132,16 @@ namespace SteamEngine {
 		}
 
 		public static Constant Set(string name, object newValue) {
-			return Shield.InTransaction(() => {
-				Constant constant;
-				if (!allConstantsByName.TryGetValue(name, out constant)) {
-					constant = new Constant(name, newValue);
-					allConstantsByName.Add(name, constant);
-				} else {
-					constant.Set(newValue);
-				}
+			Shield.AssertInTransaction();
+			Constant constant;
+			if (!allConstantsByName.TryGetValue(name, out constant)) {
+				constant = new Constant(name, newValue);
+				allConstantsByName.Add(name, constant);
+			} else {
+				constant.Set(newValue);
+			}
 
-				return constant;
-			});
+			return constant;
 		}
 
 		public static Constant GetByName(string name) {
@@ -156,6 +155,8 @@ namespace SteamEngine {
 		}
 
 		internal static Constant[] Load(PropsSection input) {
+			Shield.AssertInTransaction();
+
 			List<Constant> list = new List<Constant>();
 			string line;
 			int linenum = input.HeaderLine;
@@ -184,19 +185,17 @@ namespace SteamEngine {
 
 				Constant d = null;
 				try {
-					Shield.InTransaction(() => {
-						if (!allConstantsByName.TryGetValue(name, out d)) {
-							d = new Constant(name, null);
-							allConstantsByName.Add(name, d);
+					if (!allConstantsByName.TryGetValue(name, out d)) {
+						d = new Constant(name, null);
+						allConstantsByName.Add(name, d);
+					} else {
+						if (d.unloaded) {
+							d.unloaded = false;
 						} else {
-							if (d.unloaded) {
-								d.unloaded = false;
-							} else {
-								throw new SEException(input.Filename, linenum,
-									"Constant " + LogStr.Ident(name) + " defined multiple times. Ignoring");
-							}
+							throw new SEException(input.Filename, linenum,
+								"Constant " + LogStr.Ident(name) + " defined multiple times. Ignoring");
 						}
-					});
+					}
 				} catch (SEException e) {
 					Logger.WriteError(e);
 					continue;
@@ -291,7 +290,8 @@ namespace SteamEngine {
 		}
 
 		internal static void ForgetAll() {
-			Shield.InTransaction(() => allConstantsByName.Clear());
+			Shield.AssertInTransaction();
+			allConstantsByName.Clear();
 		}
 
 		public void Unload() {

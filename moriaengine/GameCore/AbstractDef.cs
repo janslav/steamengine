@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Shielded;
@@ -31,7 +32,7 @@ using SteamEngine.Persistence;
 namespace SteamEngine {
 	public abstract class AbstractDef : AbstractScript, ITagHolder {
 		static int uids;
-		private int uid;
+		private readonly int uid;
 
 		private readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase); //not dictionary because keys are both strings and tagkeys
 		private readonly string filename;
@@ -40,17 +41,9 @@ namespace SteamEngine {
 		private bool alreadySaved;
 
 		#region Accessors
-		public string Filename {
-			get {
-				return this.filename;
-			}
-		}
+		public string Filename => this.filename;
 
-		public int HeaderLine {
-			get {
-				return this.headerLine;
-			}
-		}
+		public int HeaderLine => this.headerLine;
 
 		public override string ToString() {
 			//zobrazovat budeme radsi napred defname a pak udaj o typu (v dialozich se to totiz casto nevejde)
@@ -305,16 +298,17 @@ namespace SteamEngine {
 		#endregion Saving
 
 		#region Loading from scripts
-		private static readonly Type[] ConstructorParamTypes = { typeof(string), typeof(string), typeof(int) };
+		private static readonly Type[] constructorParamTypes = { typeof(string), typeof(string), typeof(int) };
 
-		private static Dictionary<string, ConstructorInfo> constructorsByTypeName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
+		private static readonly ShieldedDictNc<string, ConstructorInfo> constructorsByTypeName =
+			new ShieldedDictNc<string, ConstructorInfo>(comparer: StringComparer.OrdinalIgnoreCase);
 
 		public delegate void DefnameParser(PropsSection section, out string defname, out string altdefname);
 
-		private static Dictionary<Type, DefnameParser> defnameParsersByType_Registered = new Dictionary<Type, DefnameParser>();
-		private static Dictionary<Type, DefnameParser> defnameParsersByType_Inferred = new Dictionary<Type, DefnameParser>();
+		private static readonly ShieldedDictNc<Type, DefnameParser> registeredDefnameParsersByType = new ShieldedDictNc<Type, DefnameParser>();
+		private static readonly ShieldedDictNc<Type, DefnameParser> inferredDefnameParsersByType = new ShieldedDictNc<Type, DefnameParser>();
 
-		private List<PropsLine> postponedLines;
+		private readonly ShieldedSeqNc<PropsLine> postponedLines = new ShieldedSeqNc<PropsLine>();
 
 		public static Type GetDefTypeByName(string name) {
 			ConstructorInfo ctor;
@@ -325,29 +319,29 @@ namespace SteamEngine {
 		}
 
 		public static void RegisterDefnameParser<T>(DefnameParser parserMethod) where T : AbstractDef {
-			defnameParsersByType_Registered.Add(typeof(T), parserMethod); //throws in case of duplicity
-			defnameParsersByType_Inferred.Clear();
+			registeredDefnameParsersByType.Add(typeof(T), parserMethod); //throws in case of duplicity
+			inferredDefnameParsersByType.Clear();
 		}
 
 		private static DefnameParser GetDefnameParser(Type defType) {
 			DefnameParser parserMethod;
 
-			if (defnameParsersByType_Inferred.TryGetValue(defType, out parserMethod)) {
+			if (inferredDefnameParsersByType.TryGetValue(defType, out parserMethod)) {
 				return parserMethod;
 			}
 
 			//lazy initialisation. We're looking for the according parser
 			Type type = defType;
 			while (type != typeof(AbstractDef)) {
-				if (defnameParsersByType_Registered.TryGetValue(type, out parserMethod)) {
-					defnameParsersByType_Inferred.Add(defType, parserMethod);
+				if (registeredDefnameParsersByType.TryGetValue(type, out parserMethod)) {
+					inferredDefnameParsersByType.Add(defType, parserMethod);
 					return parserMethod;
 				}
 				type = type.BaseType;
 			}
 
 			parserMethod = DefaultDefnameParser;
-			defnameParsersByType_Inferred.Add(defType, parserMethod);
+			inferredDefnameParsersByType.Add(defType, parserMethod);
 			return parserMethod;
 		}
 
@@ -357,12 +351,15 @@ namespace SteamEngine {
 		}
 
 		public static bool RegisterSubtype(Type defType) {
+			Shield.AssertInTransaction();
 			if (!defType.IsAbstract) {
 				ConstructorInfo ci;
-				if (constructorsByTypeName.TryGetValue(defType.Name, out ci)) { //we have already a Def type named like that
-					throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) + " in the register of AbstractDef classes.");
+				if (constructorsByTypeName.TryGetValue(defType.Name, out ci)) {
+					//we have already a Def type named like that
+					throw new OverrideNotAllowedException("Trying to overwrite class " + LogStr.Ident(ci.DeclaringType) +
+															" in the register of AbstractDef classes.");
 				}
-				ci = defType.GetConstructor(ConstructorParamTypes);
+				ci = defType.GetConstructor(constructorParamTypes);
 				if (ci != null) {
 					constructorsByTypeName[defType.Name] = MemberWrapper.GetWrapperFor(ci);
 
@@ -385,6 +382,7 @@ namespace SteamEngine {
 		}
 
 		public static IUnloadable LoadFromScripts(PropsSection input) {
+			Shield.AssertInTransaction();
 			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
 			string typeName = input.HeaderType;
 			ConstructorInfo constructor = constructorsByTypeName[typeName];
@@ -403,16 +401,18 @@ namespace SteamEngine {
 						def = defByAltdefname;
 						defByAltdefname = null;
 					} else if (defByAltdefname != def) {
-						throw new OverrideNotAllowedException("Header defname '" + defname + "' and alternate defname '" + altdefname + "' identify two different objects: "
-							+ "'" + def + "' and '" + defByAltdefname + "'. Ignoring.");
+						throw new OverrideNotAllowedException("Header defname '" + defname + "' and alternate defname '" + altdefname +
+															  "' identify two different objects: "
+															  + "'" + def + "' and '" + defByAltdefname + "'. Ignoring.");
 					}
 				}
 			}
 
-			//check if it isn't another type or duplicity			
+			//check if it isn't another type or duplicity
 			if (def != null) {
 				if (def.GetType() != type) {
-					throw new OverrideNotAllowedException("You can not change the class of a Def while resync. You have to recompile or restart to achieve that. Ignoring.");
+					throw new OverrideNotAllowedException(
+						"You can not change the class of a Def while resync. You have to recompile or restart to achieve that. Ignoring.");
 				}
 				if (!def.IsUnloaded) {
 					throw new OverrideNotAllowedException(def + " defined multiple times.");
@@ -445,14 +445,14 @@ namespace SteamEngine {
 			defname = section.HeaderName.ToLowerInvariant();
 
 			bool defnameIsNum;
-			defname = DeNumerizeDefname(typeName, defname, out defnameIsNum);
+			defname = DenumerizeDefname(typeName, defname, out defnameIsNum);
 
 			altdefname = null;
 			PropsLine defnameLine = section.TryPopPropsLine("defname");
 			if (defnameLine != null) {
 				altdefname = defnameLine.Value;
 				bool altdefnameIsNum;
-				altdefname = DeNumerizeDefname(typeName, altdefname, out altdefnameIsNum);
+				altdefname = DenumerizeDefname(typeName, altdefname, out altdefnameIsNum);
 
 				if (string.Equals(defname, altdefname, StringComparison.OrdinalIgnoreCase)) {
 					Logger.WriteWarning("Defname redundantly specified for " + section.HeaderType + " " + LogStr.Ident(defname) + ".");
@@ -468,7 +468,7 @@ namespace SteamEngine {
 			}
 		}
 
-		private static string DeNumerizeDefname(string typeName, string defname, out bool isNumeric) {
+		private static string DenumerizeDefname(string typeName, string defname, out bool isNumeric) {
 			int defnum;
 			isNumeric = false;
 			if (ConvertTools.TryParseInt32(defname, out defnum)) {
@@ -483,46 +483,39 @@ namespace SteamEngine {
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
 		public override AbstractScript Register() {
-			try {
-				if (!string.IsNullOrEmpty(this.altdefname)) {
-					Shield.InTransaction(() => {
+			Shield.AssertInTransaction();
 
-						AbstractScript previous;
-						if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
-							if (previous != this) {
-								throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
-							}
-						} else {
-							AllScriptsByDefname.Add(this.altdefname, this);
-						}
-
-					});
+			if (!string.IsNullOrEmpty(this.altdefname)) {
+				AbstractScript previous;
+				if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+					if (previous != this) {
+						throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
+					}
+				} else {
+					AllScriptsByDefname.Add(this.altdefname, this);
 				}
-			} finally {
-				base.Register();
 			}
-			return this;
+
+			return base.Register();
 		}
 
 		//unregister from static dictionaries and lists. 
 		//Can be called multiple times without harm
 		protected override void Unregister() {
-			try {
-				if (!string.IsNullOrEmpty(this.altdefname)) {
-					Shield.InTransaction(() => {
-						AbstractScript previous;
-						if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
-							if (previous != this) {
-								throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
-							} else {
-								AllScriptsByDefname.Remove(this.altdefname);
-							}
-						}
-					});
+			Shield.AssertInTransaction();
+
+			if (!string.IsNullOrEmpty(this.altdefname)) {
+				AbstractScript previous;
+				if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+					if (previous != this) {
+						throw new SEException("previous != this when unregistering AbstractScript '" + this.altdefname + "'. Should not happen.");
+					} else {
+						AllScriptsByDefname.Remove(this.altdefname);
+					}
 				}
-			} finally {
-				base.Unregister();
 			}
+
+			base.Unregister();
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
@@ -534,9 +527,6 @@ namespace SteamEngine {
 					if (name.StartsWith("tag.") || (this.fieldValues.ContainsKey(name))) {
 						this.LoadScriptLine(ps.Filename, p.Line, name, p.Value);
 					} else {
-						if (this.postponedLines == null) {
-							this.postponedLines = new List<PropsLine>();
-						}
 						this.postponedLines.Add(p);
 					}
 				} catch (FatalException) {
@@ -596,23 +586,23 @@ namespace SteamEngine {
 		}
 
 		private void LoadPostponedScriptLines() {
-			if (this.postponedLines != null) {
-				foreach (PropsLine p in this.postponedLines) {
-					try {
-						this.LoadScriptLine(this.filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
-					} catch (FatalException) {
-						throw;
-					} catch (Exception ex) {
-						Logger.WriteWarning(this.filename, p.Line, ex);
-					}
+			foreach (var p in Shield.InTransaction(() => this.postponedLines.ToList())) {
+				try {
+					Shield.InTransaction(() =>
+						this.LoadScriptLine(this.filename, p.Line, p.Name.ToLowerInvariant(), p.Value));
+				} catch (FatalException) {
+					throw;
+				} catch (Exception ex) {
+					Logger.WriteWarning(this.filename, p.Line, ex);
 				}
-				this.postponedLines = null;
 			}
+			Shield.InTransaction(() =>
+				this.postponedLines.Clear());
 		}
 
 		private void Trigger_AfterLoadFromScripts() {
 			try {
-				this.On_AfterLoadFromScripts();
+				Shield.InTransaction(this.On_AfterLoadFromScripts);
 			} catch (FatalException) {
 				throw;
 			} catch (SEException se) {
@@ -684,11 +674,11 @@ namespace SteamEngine {
 			constructorsByTypeName.Clear();//we assume that inside core there are no non-abstract defs
 
 			//only leave the defnameParsers defined in core (like AbstractSkillDef and ThingDef probably? :)
-			defnameParsersByType_Inferred.Clear();
+			inferredDefnameParsersByType.Clear();
 
-			foreach (Type t in new List<Type>(defnameParsersByType_Registered.Keys)) {
+			foreach (Type t in new List<Type>(registeredDefnameParsersByType.Keys)) {
 				if (t.Assembly != ClassManager.CoreAssembly) { //not in core
-					defnameParsersByType_Registered.Remove(t);
+					registeredDefnameParsersByType.Remove(t);
 				}
 			}
 		}

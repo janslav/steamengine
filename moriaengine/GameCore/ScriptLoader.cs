@@ -173,8 +173,7 @@ namespace SteamEngine {
 			if (file.Exists) //this may not be true on rare circumstances (basically, delete script and recompile) not gonna do any better fix
 			{
 				using (StreamReader stream = file.OpenText()) {
-					foreach (var script in PropsFileParser.Load(file.FullName, stream, StartsAsScript, false).SelectMany(LoadSection))
-					{
+					foreach (var script in PropsFileParser.Load(file.FullName, stream, StartsAsScript, false).SelectMany(LoadSection)) {
 						yield return script;
 					}
 				}
@@ -294,20 +293,19 @@ namespace SteamEngine {
 		}
 
 		public static void RegisterScriptType(string name, LoadSection deleg, bool startAsScript) {
-			Shield.InTransaction(() => {
-				RegisteredScript scp;
-				if (!scriptTypesByName.TryGetValue(name, out scp)) {
-					scp = new RegisteredScript(deleg, startAsScript);
-					scriptTypesByName.Add(name, scp);
-				} else {
-					if (scp.deleg.Method != deleg.Method) {
-						throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(scp) +
-															  ") registered for handling the section name " + LogStr.Ident(name));
-					}
-					scp.startAsScript = scp.startAsScript || startAsScript;
-					//if any wants true, it stays true. This is here because of AbstractDef and TemplateDef... yeah not exactly clean
+			Shield.AssertInTransaction();
+			RegisteredScript scp;
+			if (!scriptTypesByName.TryGetValue(name, out scp)) {
+				scp = new RegisteredScript(deleg, startAsScript);
+				scriptTypesByName.Add(name, scp);
+			} else {
+				if (scp.deleg.Method != deleg.Method) {
+					throw new OverrideNotAllowedException("There is already a script section loader (" + LogStr.Ident(scp) +
+														  ") registered for handling the section name " + LogStr.Ident(name));
 				}
-			});
+				scp.startAsScript = scp.startAsScript || startAsScript;
+				//if any wants true, it stays true. This is here because of AbstractDef and TemplateDef... yeah not exactly clean
+			}
 		}
 
 		public static void RegisterScriptType(string[] names, LoadSection deleg, bool startAsScript) {
@@ -328,19 +326,18 @@ namespace SteamEngine {
 
 		//forgets stuff that come from scripts.
 		internal static void ForgetScripts() {
-			Shield.InTransaction(() => {
-				allFiles.Clear();
+			Shield.AssertInTransaction();
+			allFiles.Clear();
 
-				Assembly coreAssembly = ClassManager.CoreAssembly;
+			Assembly coreAssembly = ClassManager.CoreAssembly;
 
-				var origScripts = scriptTypesByName.ToArray();
-				scriptTypesByName.Clear();
-				foreach (KeyValuePair<string, RegisteredScript> pair in origScripts) {
-					if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly) {
-						scriptTypesByName[pair.Key] = pair.Value;
-					}
+			var origScripts = scriptTypesByName.ToArray();
+			scriptTypesByName.Clear();
+			foreach (KeyValuePair<string, RegisteredScript> pair in origScripts) {
+				if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly) {
+					scriptTypesByName[pair.Key] = pair.Value;
 				}
-			});
+			}
 		}
 	}
 }

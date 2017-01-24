@@ -75,15 +75,14 @@ namespace SteamEngine {
 		}
 
 		public static void RegisterParser(IFieldValueParser parser) {
-			Shield.InTransaction(() => {
-				Type t = parser.HandledType;
-				foreach (Type knownType in parsers.Keys) {
-					if (t.IsAssignableFrom(knownType) || knownType.IsAssignableFrom(t)) {
-						throw new SEException(parser + " is incompatible with " + parsers[knownType] + " as FieldValue parser");
-					}
+			Shield.AssertInTransaction();
+			Type t = parser.HandledType;
+			foreach (Type knownType in parsers.Keys) {
+				if (t.IsAssignableFrom(knownType) || knownType.IsAssignableFrom(t)) {
+					throw new SEException(parser + " is incompatible with " + parsers[knownType] + " as FieldValue parser");
 				}
-				parsers[t] = parser;
-			});
+			}
+			parsers[t] = parser;
 		}
 
 		public static IFieldValueParser GetParserFor(Type type) {
@@ -95,15 +94,15 @@ namespace SteamEngine {
 		}
 
 		internal static void ForgetScripts() {
-			Shield.InTransaction(() => parsers.Clear());
+			Shield.AssertInTransaction();
+			parsers.Clear();
 		}
 
 		public void Unload() {
-			Shield.InTransaction(() => {
-				if (this.shieldedState.Value.isChangedManually) {
-					this.shieldedState.Modify((ref State s) => s.unloaded = true);
-				}
-			});
+			Shield.AssertInTransaction();
+			if (this.shieldedState.Value.isChangedManually) {
+				this.shieldedState.Modify((ref State s) => s.unloaded = true);
+			}
 		}
 
 		public bool IsUnloaded => this.shieldedState.Value.unloaded;
@@ -117,53 +116,52 @@ namespace SteamEngine {
 		public string Name => this.name;
 
 		internal void ResolveTemporaryState() {
-			Shield.InTransaction(() => {
-				var tempVi = this.shieldedState.Value.defaultImpl as TemporaryValueImpl;
-				if (tempVi == null)
-					return;
-				try {
-					string value = tempVi.valueString;
-					object retVal = null;
-					if (value != null) {
-						if (value.Length > 0) {
-							if ((this.fvType == FieldValueType.Typed) && (this.type.IsArray)) {
+			Shield.AssertInTransaction();
+			var tempVi = this.shieldedState.Value.defaultImpl as TemporaryValueImpl;
+			if (tempVi == null)
+				return;
+			try {
+				string value = tempVi.valueString;
+				object retVal = null;
+				if (value != null) {
+					if (value.Length > 0) {
+						if ((this.fvType == FieldValueType.Typed) && (this.type.IsArray)) {
 
-								if (this.type.GetArrayRank() > 1) {
-									throw new SEException("Can't use a multirank array in a FieldValue");
-								}
-								string[] sourceArray = Utility.SplitSphereString(value, false); //
-								Type elemType = this.type.GetElementType();
-								int n = sourceArray.Length;
-								Array resultArray = Array.CreateInstance(elemType, n);
-
-								for (int i = 0; i < n; i++) {
-									resultArray.SetValue(ConvertTools.ConvertTo(elemType, this.ResolveSingleValue(tempVi, sourceArray[i], null)), i);
-								}
-
-								retVal = resultArray;
-							} else {
-								retVal = this.ResolveSingleValue(tempVi, value, retVal);
+							if (this.type.GetArrayRank() > 1) {
+								throw new SEException("Can't use a multirank array in a FieldValue");
 							}
+							string[] sourceArray = Utility.SplitSphereString(value, false); //
+							Type elemType = this.type.GetElementType();
+							int n = sourceArray.Length;
+							Array resultArray = Array.CreateInstance(elemType, n);
+
+							for (int i = 0; i < n; i++) {
+								resultArray.SetValue(ConvertTools.ConvertTo(elemType, this.ResolveSingleValue(tempVi, sourceArray[i], null)), i);
+							}
+
+							retVal = resultArray;
 						} else {
-							retVal = "";
+							retVal = this.ResolveSingleValue(tempVi, value, retVal);
 						}
+					} else {
+						retVal = "";
 					}
-
-					var valueDefaultValue = this.GetFittingValueImpl();
-					this.shieldedState.Modify((ref State s) => s.defaultImpl = valueDefaultValue);
-					valueDefaultValue.Value = retVal;
-				} catch (SEException sex) {
-					sex.TryAddFileLineInfo(tempVi.filename, tempVi.line);
-					throw;
-				} catch (Exception e) {
-					throw new SEException(tempVi.filename, tempVi.line, e);
 				}
 
-				if (!this.shieldedState.Value.isChangedManually) {
-					//we were already resynced...the loaded value should not change
-					this.shieldedState.Modify((ref State s) => s.currentImpl = s.defaultImpl.Clone());
-				}
-			});
+				var valueDefaultValue = this.GetFittingValueImpl();
+				this.shieldedState.Modify((ref State s) => s.defaultImpl = valueDefaultValue);
+				valueDefaultValue.Value = retVal;
+			} catch (SEException sex) {
+				sex.TryAddFileLineInfo(tempVi.filename, tempVi.line);
+				throw;
+			} catch (Exception e) {
+				throw new SEException(tempVi.filename, tempVi.line, e);
+			}
+
+			if (!this.shieldedState.Value.isChangedManually) {
+				//we were already resynced...the loaded value should not change
+				this.shieldedState.Modify((ref State s) => s.currentImpl = s.defaultImpl.Clone());
+			}
 		}
 
 		private object ResolveSingleValue(TemporaryValueImpl tempVI, string value, object retVal) {
@@ -330,51 +328,48 @@ namespace SteamEngine {
 		}
 
 		private void SetFromCode(object value) {
-			Shield.InTransaction(() => {
+			Shield.AssertInTransaction();
 
-				var state = this.shieldedState.Value;
-				Sanity.IfTrueThrow(state.isChangedManually || state.unloaded, "SetFromCode after change/unload? This should never happen.");
+			var state = this.shieldedState.Value;
+			Sanity.IfTrueThrow(state.isChangedManually || state.unloaded, "SetFromCode after change/unload? This should never happen.");
 
-				this.shieldedState.Modify((ref State s) => {
-					s.defaultImpl = this.GetFittingValueImpl();
-					s.defaultImpl.Value = value;
-					s.currentImpl = s.defaultImpl.Clone();
-					s.unloaded = false;
-				});
+			this.shieldedState.Modify((ref State s) => {
+				s.defaultImpl = this.GetFittingValueImpl();
+				s.defaultImpl.Value = value;
+				s.currentImpl = s.defaultImpl.Clone();
+				s.unloaded = false;
 			});
 		}
 
 		public void SetFromScripts(string filename, int line, string value) {
-			Shield.InTransaction(() => {
-				this.shieldedState.Modify((ref State s) => {
-					if (s.isChangedManually) {
-						s.defaultImpl = new TemporaryValueImpl(filename, line, this, value);
-					} else {
-						s.currentImpl = new TemporaryValueImpl(filename, line, this, value);
-						s.defaultImpl = new TemporaryValueImpl(filename, line, this, value);
-					}
+			Shield.AssertInTransaction();
+			this.shieldedState.Modify((ref State s) => {
+				if (s.isChangedManually) {
+					s.defaultImpl = new TemporaryValueImpl(filename, line, this, value);
+				} else {
+					s.currentImpl = new TemporaryValueImpl(filename, line, this, value);
+					s.defaultImpl = new TemporaryValueImpl(filename, line, this, value);
+				}
 
-					s.isSetFromScripts = true;
-					s.unloaded = false;
-				});
+				s.isSetFromScripts = true;
+				s.unloaded = false;
 			});
 		}
 
 		internal bool ShouldBeSaved() {
-			return Shield.InTransaction(() => {
-				var state = this.shieldedState.Value;
-				if (state.unloaded) {
-					return false;
-				}
-				if (state.isChangedManually) {
-					//it was loaded/changed , so it should be also saved :)
-					return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
-				}
-				if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
-					return false; //unresolved, no need of touching
-				}
+			Shield.AssertInTransaction();
+			var state = this.shieldedState.Value;
+			if (state.unloaded) {
+				return false;
+			}
+			if (state.isChangedManually) {
+				//it was loaded/changed , so it should be also saved :)
 				return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
-			});
+			}
+			if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
+				return false; //unresolved, no need of touching
+			}
+			return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
 		}
 
 		private static bool CurrentAndDefaultEquals(object a, object b) {
@@ -400,43 +395,39 @@ namespace SteamEngine {
 		/// <summary>If true, it has not been set from scripts nor from saves nor manually</summary>
 		public bool IsDefaultCodedValue {
 			get {
-				return Shield.InTransaction(() => {
-					var state = this.shieldedState.Value;
-					if (state.isSetFromScripts || state.isChangedManually) {
-						return false;
-					}
-					if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
-						return false; //unresolved, no need of touching
-					}
-					return true;
-				});
+				Shield.AssertInTransaction();
+				var state = this.shieldedState.Value;
+				if (state.isSetFromScripts || state.isChangedManually) {
+					return false;
+				}
+				if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
+					return false; //unresolved, no need of touching
+				}
+				return true;
 			}
 		}
 
 		public object CurrentValue {
 			get {
-				return Shield.InTransaction(() => {
-					this.ThrowIfUnloaded();
-					return this.shieldedState.Value.currentImpl.Value;
-				});
+				Shield.AssertInTransaction();
+				this.ThrowIfUnloaded();
+				return this.shieldedState.Value.currentImpl.Value;
 			}
 			set {
-				Shield.InTransaction(() => {
-					this.shieldedState.Modify((ref State s) => {
-						s.currentImpl.Value = value;
-						s.unloaded = false;
-						s.isChangedManually = true;
-					});
+				Shield.AssertInTransaction();
+				this.shieldedState.Modify((ref State s) => {
+					s.currentImpl.Value = value;
+					s.unloaded = false;
+					s.isChangedManually = true;
 				});
 			}
 		}
 
 		public object DefaultValue {
 			get {
-				return Shield.InTransaction(() => {
-					this.ThrowIfUnloaded();
-					return this.shieldedState.Value.defaultImpl.Value;
-				});
+				Shield.AssertInTransaction();
+				this.ThrowIfUnloaded();
+				return this.shieldedState.Value.defaultImpl.Value;
 			}
 		}
 
