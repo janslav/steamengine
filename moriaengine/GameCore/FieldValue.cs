@@ -100,9 +100,11 @@ namespace SteamEngine {
 		}
 
 		public void Unload() {
-			if (this.shieldedState.Value.isChangedManually) {
-				this.shieldedState.Modify((ref State s) => s.unloaded = true);
-			}
+			Shield.InTransaction(() => {
+				if (this.shieldedState.Value.isChangedManually) {
+					this.shieldedState.Modify((ref State s) => s.unloaded = true);
+				}
+			});
 		}
 
 		public bool IsUnloaded => this.shieldedState.Value.unloaded;
@@ -160,7 +162,7 @@ namespace SteamEngine {
 
 				if (!this.shieldedState.Value.isChangedManually) {
 					//we were already resynced...the loaded value should not change
-					this.shieldedState.Modify((ref State s) => s.currentImpl = this.shieldedState.Value.defaultImpl.Clone());
+					this.shieldedState.Modify((ref State s) => s.currentImpl = s.defaultImpl.Clone());
 				}
 			});
 		}
@@ -329,10 +331,11 @@ namespace SteamEngine {
 		}
 
 		private void SetFromCode(object value) {
-			var state = this.shieldedState.Value;
-			Sanity.IfTrueThrow(state.isChangedManually || state.unloaded, "SetFromCode after change/unload? This should never happen.");
-
 			Shield.InTransaction(() => {
+
+				var state = this.shieldedState.Value;
+				Sanity.IfTrueThrow(state.isChangedManually || state.unloaded, "SetFromCode after change/unload? This should never happen.");
+
 				this.shieldedState.Modify((ref State s) => {
 					s.defaultImpl = this.GetFittingValueImpl();
 					s.defaultImpl.Value = value;
@@ -359,17 +362,20 @@ namespace SteamEngine {
 		}
 
 		internal bool ShouldBeSaved() {
-			var state = this.shieldedState.Value;
-			if (state.unloaded) {
-				return false;
-			}
-			if (state.isChangedManually) {//it was loaded/changed , so it should be also saved :)
+			return Shield.InTransaction(() => {
+				var state = this.shieldedState.Value;
+				if (state.unloaded) {
+					return false;
+				}
+				if (state.isChangedManually) {
+					//it was loaded/changed , so it should be also saved :)
+					return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
+				}
+				if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
+					return false; //unresolved, no need of touching
+				}
 				return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
-			}
-			if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
-				return false;//unresolved, no need of touching
-			}
-			return !CurrentAndDefaultEquals(this.CurrentValue, this.DefaultValue);
+			});
 		}
 
 		private static bool CurrentAndDefaultEquals(object a, object b) {
@@ -395,14 +401,16 @@ namespace SteamEngine {
 		/// <summary>If true, it has not been set from scripts nor from saves nor manually</summary>
 		public bool IsDefaultCodedValue {
 			get {
-				var state = this.shieldedState.Value;
-				if (state.isSetFromScripts || state.isChangedManually) {
-					return false;
-				}
-				if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
-					return false; //unresolved, no need of touching
-				}
-				return true;
+				return Shield.InTransaction(() => {
+					var state = this.shieldedState.Value;
+					if (state.isSetFromScripts || state.isChangedManually) {
+						return false;
+					}
+					if ((state.currentImpl is TemporaryValueImpl) && (state.defaultImpl is TemporaryValueImpl)) {
+						return false; //unresolved, no need of touching
+					}
+					return true;
+				});
 			}
 		}
 
@@ -454,6 +462,7 @@ namespace SteamEngine {
 
 			internal override object Value {
 				get {
+					Shield.AssertInTransaction();
 					this.holder.ResolveTemporaryState();
 					if (this.holder.shieldedState.Value.currentImpl == this) {
 						return this.holder.CurrentValue;
@@ -461,6 +470,7 @@ namespace SteamEngine {
 					return this.holder.DefaultValue;
 				}
 				set {
+					Shield.AssertInTransaction();
 					if (this.holder.shieldedState.Value.currentImpl == this) {
 						this.holder.ResolveTemporaryState();
 						this.holder.CurrentValue = value;
@@ -502,6 +512,7 @@ namespace SteamEngine {
 
 			internal override object Value {
 				get {
+					Shield.AssertInTransaction();
 					var state = this.shieldedState.Value;
 					if (state.thingDef == null) {
 						return state.model;
@@ -557,19 +568,6 @@ namespace SteamEngine {
 				return obj;
 			}
 
-			private static object ConvertSingleValue(Type type, object value) {
-				string valueAsString = value as string;
-				if (typeof(AbstractScript).IsAssignableFrom(type) && valueAsString != null) {
-					valueAsString = valueAsString.Trim();
-					valueAsString = valueAsString.TrimStart('#');
-					AbstractScript script = AbstractScript.GetByDefname(valueAsString);
-					if (script != null) {
-						return script;
-					}
-				}
-				return GetInternStringIfPossible(ConvertTools.ConvertTo(type, value)); //ConvertTo will throw exception if impossible
-			}
-
 			internal override object Value {
 				get {
 					return this.val.Value;
@@ -605,6 +603,19 @@ namespace SteamEngine {
 					}
 					this.val.Value = ConvertSingleValue(this.type, value);
 				}
+			}
+
+			private static object ConvertSingleValue(Type type, object value) {
+				string valueAsString = value as string;
+				if (typeof(AbstractScript).IsAssignableFrom(type) && valueAsString != null) {
+					valueAsString = valueAsString.Trim();
+					valueAsString = valueAsString.TrimStart('#');
+					AbstractScript script = AbstractScript.GetByDefname(valueAsString);
+					if (script != null) {
+						return script;
+					}
+				}
+				return GetInternStringIfPossible(ConvertTools.ConvertTo(type, value)); //ConvertTo will throw exception if impossible
 			}
 		}
 
