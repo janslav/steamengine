@@ -409,12 +409,12 @@ namespace SteamEngine {
 
 		public object CurrentValue {
 			get {
-				Shield.AssertInTransaction();
 				this.ThrowIfUnloaded();
+				this.ResolveTemporaryState();
 				return this.shieldedState.Value.currentImpl.Value;
 			}
 			set {
-				Shield.AssertInTransaction();
+				this.ResolveTemporaryState();
 				this.shieldedState.Modify((ref State s) => {
 					s.currentImpl.Value = value;
 					s.unloaded = false;
@@ -425,8 +425,8 @@ namespace SteamEngine {
 
 		public object DefaultValue {
 			get {
-				Shield.AssertInTransaction();
 				this.ThrowIfUnloaded();
+				this.ResolveTemporaryState();
 				return this.shieldedState.Value.defaultImpl.Value;
 			}
 		}
@@ -451,26 +451,15 @@ namespace SteamEngine {
 			}
 
 			internal override FieldValueImpl Clone() {
-				throw new SEException("this is not supposed to be cloned");
+				throw new InvalidOperationException("Should never be called.");
 			}
 
 			internal override object Value {
 				get {
-					Shield.AssertInTransaction();
-					this.holder.ResolveTemporaryState();
-					if (this.holder.shieldedState.Value.currentImpl == this) {
-						return this.holder.CurrentValue;
-					}
-					return this.holder.DefaultValue;
+					throw new InvalidOperationException("Should never be called.");
 				}
 				set {
-					Shield.AssertInTransaction();
-					if (this.holder.shieldedState.Value.currentImpl == this) {
-						this.holder.ResolveTemporaryState();
-						this.holder.CurrentValue = value;
-						return;
-					}
-					throw new SEException("Invalid TemporaryValueImpl instance, it's holder is not holding it, or something is setting defaultvalue. This should not happen.");
+					throw new InvalidOperationException("Should never be called.");
 				}
 			}
 		}
