@@ -42,11 +42,10 @@ namespace SteamEngine {
 		}
 
 		public static void ForgetAll() {
-			Shield.InTransaction(() => {
-				foreach (AbstractScript gs in byDefname.Values.ToList()) {
-					gs.Unregister();
-				}
-			});
+			Shield.AssertInTransaction();
+			foreach (AbstractScript gs in byDefname.Values.ToList()) {
+				gs.Unregister();
+			}
 			Sanity.IfTrueThrow(byDefname.Any(), "byDefname.Count > 0 after UnloadAll");
 		}
 
@@ -54,17 +53,17 @@ namespace SteamEngine {
 		//Can be called multiple times without harm
 		//Returns self for easier usage 
 		public virtual AbstractScript Register() {
+			Shield.AssertInTransaction();
+
 			if (!string.IsNullOrEmpty(this.defname)) {
-				Shield.InTransaction(() => {
-					AbstractScript previous;
-					if (byDefname.TryGetValue(this.defname, out previous)) {
-						if (previous != this) {
-							throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
-						}
-					} else {
-						byDefname.Add(this.defname, this);
+				AbstractScript previous;
+				if (byDefname.TryGetValue(this.defname, out previous)) {
+					if (previous != this) {
+						throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
 					}
-				});
+				} else {
+					byDefname.Add(this.defname, this);
+				}
 			}
 			return this;
 		}
@@ -72,17 +71,16 @@ namespace SteamEngine {
 		//unregister from static dictionaries and lists. 
 		//Can be called multiple times without harm
 		protected virtual void Unregister() {
+			Shield.AssertInTransaction();
 			if (!string.IsNullOrEmpty(this.defname)) {
-				Shield.InTransaction(() => {
-					AbstractScript previous;
-					if (byDefname.TryGetValue(this.defname, out previous)) {
-						if (previous != this) {
-							throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
-						} else {
-							byDefname.Remove(this.defname);
-						}
+				AbstractScript previous;
+				if (byDefname.TryGetValue(this.defname, out previous)) {
+					if (previous != this) {
+						throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
+					} else {
+						byDefname.Remove(this.defname);
 					}
-				});
+				}
 			}
 		}
 

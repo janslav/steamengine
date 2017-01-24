@@ -26,34 +26,32 @@ namespace SteamEngine.Common {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void RegisterLoc(LocStringCollection newLoc) {
-			var dict = loadedLanguages[(int) newLoc.Language];
+			Shield.AssertInTransaction();
 
-			Shield.InTransaction(() => {
-				LocStringCollection previous;
-				if (dict.TryGetValue(newLoc.Defname, out previous)) {
-					if (previous != newLoc) {
-						throw new SEException("Loc instance '" + newLoc.Defname + "' already exists");
-					}
-				} else {
-					dict.Add(newLoc.Defname, newLoc);
+			var dict = loadedLanguages[(int) newLoc.Language];
+			LocStringCollection previous;
+			if (dict.TryGetValue(newLoc.Defname, out previous)) {
+				if (previous != newLoc) {
+					throw new SEException("Loc instance '" + newLoc.Defname + "' already exists");
 				}
-			});
+			} else {
+				dict.Add(newLoc.Defname, newLoc);
+			}
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void UnregisterLoc(LocStringCollection newLoc) {
-			var dict = loadedLanguages[(int) newLoc.Language];
+			Shield.AssertInTransaction();
 
-			Shield.InTransaction(() => {
-				LocStringCollection previous;
-				if (dict.TryGetValue(newLoc.Defname, out previous)) {
-					if (previous != newLoc) {
-						throw new SEException("Loc instance '" + newLoc.Defname + "' was not registered.");
-					}
-				} else {
-					dict.Remove(newLoc.Defname);
+			var dict = loadedLanguages[(int) newLoc.Language];
+			LocStringCollection previous;
+			if (dict.TryGetValue(newLoc.Defname, out previous)) {
+				if (previous != newLoc) {
+					throw new SEException("Loc instance '" + newLoc.Defname + "' was not registered.");
 				}
-			});
+			} else {
+				dict.Remove(newLoc.Defname);
+			}
 		}
 
 		public static LocStringCollection GetLoc(string defname, Language language) {
@@ -91,33 +89,31 @@ namespace SteamEngine.Common {
 		}
 
 		public static void ForgetInstancesFromAssembly(Assembly assemblyBeingUnloaded) {
-			Shield.InTransaction(() => {
-				//we copy the list first, because we're going to remove some entries in a foreach loop
-				var allLocCollections = loadedLanguages[(int) Language.Default].Values.ToList();
+			Shield.AssertInTransaction();
+			//we copy the list first, because we're going to remove some entries in a foreach loop
+			var allLocCollections = loadedLanguages[(int) Language.Default].Values.ToList();
 
-				foreach (var locCollection in allLocCollections) {
-					if (locCollection.GetType().Assembly == assemblyBeingUnloaded) {
-						foreach (var langDict in loadedLanguages) {
-							langDict.Remove(locCollection.Defname);
-						}
+			foreach (var locCollection in allLocCollections) {
+				if (locCollection.GetType().Assembly == assemblyBeingUnloaded) {
+					foreach (var langDict in loadedLanguages) {
+						langDict.Remove(locCollection.Defname);
 					}
 				}
-			});
+			}
 		}
 
 		public static void ForgetInstancesOfType(Type type) {
-			Shield.InTransaction(() => {
-				//we copy the list first, because we're going to remove some entries in a foreach loop
-				var allLocCollections = loadedLanguages[(int) Language.Default].Values.ToList();
+			Shield.AssertInTransaction();
+			//we copy the list first, because we're going to remove some entries in a foreach loop
+			var allLocCollections = loadedLanguages[(int) Language.Default].Values.ToList();
 
-				foreach (var locCollection in allLocCollections) {
-					if (locCollection.GetType() == type) {
-						foreach (var langDict in loadedLanguages) {
-							langDict.Remove(locCollection.Defname);
-						}
+			foreach (var locCollection in allLocCollections) {
+				if (locCollection.GetType() == type) {
+					foreach (var langDict in loadedLanguages) {
+						langDict.Remove(locCollection.Defname);
 					}
 				}
-			});
+			}
 		}
 	}
 }

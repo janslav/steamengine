@@ -480,10 +480,12 @@ namespace SteamEngine {
 					var idef = td as AbstractItemDef;
 					if (idef != null) {
 						try {
-							var dupeItem = idef.DupeItem;
-							if (dupeItem != null) {
-								dupeItem.AddToDupeList(idef);
-							}
+							Shield.InTransaction(() => {
+								var dupeItem = idef.DupeItem;
+								if (dupeItem != null) {
+									dupeItem.AddToDupeList(idef);
+								}
+							});
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {
@@ -491,7 +493,9 @@ namespace SteamEngine {
 						}
 
 						try {
-							idef.multiData = MultiData.GetByModel(idef.Model);
+							Shield.InTransaction(() => {
+								idef.multiData = MultiData.GetByModel(idef.Model);
+							});
 						} catch (FatalException) {
 							throw;
 						} catch (Exception e) {

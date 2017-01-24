@@ -61,19 +61,17 @@ namespace SteamEngine {
 		}
 
 		protected internal void RegisterAsFunction() {
-			Shield.InTransaction(() => {
-				if (functionsByName.ContainsKey(this.name)) {
-					throw new ServerException("ScriptHolder '" + this.name +
-											  "' already exists; Cannot create a new one with the same name.");
-				}
-				functionsByName.Add(this.name, this);
-			});
+			Shield.AssertInTransaction();
+			if (functionsByName.ContainsKey(this.name)) {
+				throw new ServerException("ScriptHolder '" + this.name +
+										  "' already exists; Cannot create a new one with the same name.");
+			}
+			functionsByName.Add(this.name, this);
 		}
 
 		internal static void ForgetAllFunctions() {
-			Shield.InTransaction(() => {
-				functionsByName.Clear();
-			});
+			Shield.AssertInTransaction();
+			functionsByName.Clear();
 		}
 
 		/// <summary>Return enumerable containing all functions</summary>
