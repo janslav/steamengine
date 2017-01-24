@@ -1,5 +1,3 @@
-using System;
-
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 
 	public class LoginKey {

@@ -15,8 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
-
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Dialog listing all characters of the account</summary>
