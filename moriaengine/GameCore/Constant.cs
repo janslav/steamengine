@@ -320,7 +320,7 @@ namespace SteamEngine {
 				this.value = value;
 				string asString = value as string;
 				if (asString != null) {
-					this.value = String.Intern(asString);
+					this.value = string.Intern(asString);
 				}
 			}
 

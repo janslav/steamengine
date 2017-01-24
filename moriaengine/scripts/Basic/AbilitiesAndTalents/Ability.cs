@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 			if (this.modification == 0) {
 				return this.realPoints.ToString();
 			}
-			return String.Concat(this.RealPoints.ToString(), ", ", this.modification.ToString());
+			return string.Concat(this.RealPoints.ToString(), ", ", this.modification.ToString());
 		}
 
 		internal bool LoadSavedString(string p) {

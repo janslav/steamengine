@@ -230,7 +230,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>C# based @activate trigger method</summary>
 		protected virtual void On_Activate(Character chr, Ability ab) {
-			chr.SysMessage(String.Format(CultureInfo.InvariantCulture,
+			chr.SysMessage(string.Format(CultureInfo.InvariantCulture,
 				Loc<AbilityDefLoc>.Get(chr.Language).AbilityActivated,
 				ab.Def.Name));
 		}

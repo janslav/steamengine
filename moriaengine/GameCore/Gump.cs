@@ -160,13 +160,13 @@ namespace SteamEngine {
 		}
 
 		public override string ToString() {
-			return String.Format(CultureInfo.InvariantCulture,
+			return string.Format(CultureInfo.InvariantCulture,
 				"{0} {1} (uid {2})",
 				Tools.TypeToString(this.GetType()), this.def.Defname, this.uid);
 		}
 
 		private void AddElement(string[] arr) {
-			this.layout.Append("{").Append(String.Join(" ", arr)).Append("}");
+			this.layout.Append("{").Append(string.Join(" ", arr)).Append("}");
 		}
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "focus"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "cont")]

@@ -37,12 +37,12 @@ namespace SteamEngine {
 			return this.uid;
 		}
 
-		public override bool Equals(Object obj) {
+		public override bool Equals(object obj) {
 			return this == obj;
 		}
 
 		public override string ToString() {
-			return String.Concat("Console dummy(acc='", this.Account, "')");
+			return string.Concat("Console dummy(acc='", this.Account, "')");
 		}
 
 		public byte Plevel {

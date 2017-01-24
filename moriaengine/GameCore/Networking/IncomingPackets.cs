@@ -796,7 +796,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 			if (this.args.gender < 0 || this.args.gender > 1) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalGender,
 					this.args.gender));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -804,7 +804,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 			if (this.args.SkinColor < 0x3ea || this.args.SkinColor > 0x422) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalSkinColor,
 					this.args.SkinColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -814,7 +814,7 @@ namespace SteamEngine.Networking {
 			if (this.args.HairStyle == 0) {
 			} else if (this.args.HairStyle < 0x203B || this.args.HairStyle > 0x204A ||
 					   (this.args.HairStyle > 0x203D && this.args.HairStyle < 0x2044)) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalHairStyle,
 					this.args.HairStyle));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -822,7 +822,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 			if (this.args.HairColor < 0x44e || this.args.HairColor > 0x4ad) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalHairColor,
 					this.args.HairColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -831,7 +831,7 @@ namespace SteamEngine.Networking {
 			}
 			if (this.args.FacialHair == 0) {
 			} else if (this.args.FacialHair < 0x203E || this.args.FacialHair > 0x204D || (this.args.FacialHair > 0x2041 && this.args.FacialHair < 0x204B)) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialhair,
 					this.args.FacialHair));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -840,7 +840,7 @@ namespace SteamEngine.Networking {
 			}
 			if (this.args.FacialHairColor == 0) {
 			} else if (this.args.FacialHairColor < 0x44e || this.args.FacialHairColor > 0x4ad) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalFacialHairColor,
 					this.args.FacialHairColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -848,7 +848,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 			if (this.args.ShirtColor < 0x02 || this.args.ShirtColor > 0x3e9) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalShirtColor,
 					this.args.ShirtColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -856,7 +856,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 			if (this.args.PantsColor < 0x02 || this.args.PantsColor > 0x3e9) {
-				state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+				state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 					Loc<IncomingPacketsLoc>.Get(state.Language).IllegalPantsColor,
 					this.args.PantsColor));
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -1464,7 +1464,7 @@ namespace SteamEngine.Networking {
 							if (ConvertTools.TryParseDecimal(rt.Text, out number)) {
 								responseNumbers[i] = new ResponseNumber(rt.Id, number);
 							} else {
-								state.WriteLine(String.Format(CultureInfo.InvariantCulture, 
+								state.WriteLine(string.Format(CultureInfo.InvariantCulture, 
 									Loc<IncomingPacketsLoc>.Get(state.Language).NotANumber,
 									rt.Text));
 								SendGumpBack(conn, state, gi, this.responseTexts);

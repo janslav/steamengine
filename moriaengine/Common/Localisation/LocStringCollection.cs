@@ -56,7 +56,7 @@ namespace SteamEngine.Common {
 			string path = Tools.CombineMultiplePaths(".", servLocDir,
 				Enum.GetName(typeof(Language), this.Language),
 				this.AssemblyName,
-				String.Concat(this.Defname, ".txt"));
+				string.Concat(this.Defname, ".txt"));
 
 			FileInfo file = new FileInfo(path);
 			if (file.Exists) {
@@ -66,7 +66,7 @@ namespace SteamEngine.Common {
 					while ((line = reader.ReadLine()) != null) {
 						lineNum++;
 						line = line.Trim();
-						if (String.IsNullOrEmpty(line) || line.StartsWith("//") || line.StartsWith("#")) {
+						if (string.IsNullOrEmpty(line) || line.StartsWith("//") || line.StartsWith("#")) {
 							continue;
 						}
 

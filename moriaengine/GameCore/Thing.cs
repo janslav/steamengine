@@ -1077,7 +1077,7 @@ namespace SteamEngine {
 			return this.uid;
 		}
 
-		public override bool Equals(Object obj) {
+		public override bool Equals(object obj) {
 			return ReferenceEquals(this, obj);
 		}
 

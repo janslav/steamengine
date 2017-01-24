@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 			if ((!player.IsGM) && skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
 				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
 				if (!this.profession.AllowedSpells.Contains(spell)) {
-					player.RedMessage(String.Format(CultureInfo.InvariantCulture,
+					player.RedMessage(string.Format(CultureInfo.InvariantCulture,
 						Loc<ProfessionPluginLoc>.Get(player.Language).YouCantCastThis,
 						this.profession.Name));
 

@@ -584,7 +584,7 @@ namespace SteamEngine {
 									throw new SEException("Can't use a multirank array in a FieldValue");
 								}
 								sourceArray = (Array) value;
-							} else if (value is String) {
+							} else if (value is string) {
 								sourceArray = Utility.SplitSphereString((string) value, false); //
 							} else {
 								sourceArray = new[] { value }; //just wrap it in a 1-element array, gets converted in the next step
@@ -644,9 +644,9 @@ namespace SteamEngine {
 				}
 				set {
 					Shield.AssertInTransaction();
-					string asString = value as String;
+					string asString = value as string;
 					if (asString != null) {
-						this.obj.Value = String.Intern(asString);
+						this.obj.Value = string.Intern(asString);
 					} else {
 						this.obj.Value = value;
 					}

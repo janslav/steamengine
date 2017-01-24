@@ -33,7 +33,7 @@ namespace SteamEngine {
 		private static Dictionary<string, AbstractAccount> accounts = new Dictionary<string, AbstractAccount>(StringComparer.OrdinalIgnoreCase);
 
 		//private string _password = null;	//http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/cpconensuringdataintegritywithhashcodes.asp
-		private Byte[] passwordHash;
+		private byte[] passwordHash;
 		private string password;
 
 		/// private uid representation.
@@ -468,7 +468,7 @@ namespace SteamEngine {
 			return this.name.GetHashCode();
 		}
 
-		public override bool Equals(Object obj) {
+		public override bool Equals(object obj) {
 			return ReferenceEquals(this, obj);
 		}
 
@@ -617,17 +617,17 @@ namespace SteamEngine {
 			return false;
 		}
 
-		private static Byte[] DecodeEncodedHash(string encodedHash) {
+		private static byte[] DecodeEncodedHash(string encodedHash) {
 			//decode it back to the hash
 			return Convert.FromBase64String(encodedHash);
 		}
 
-		private static string EncodeHashToString(Byte[] decodedHash) {
+		private static string EncodeHashToString(byte[] decodedHash) {
 			//encode it into a string which we can write to a text save if necessary
 			return Convert.ToBase64String(decodedHash);
 		}
 
-		private static bool TestHash(Byte[] original, Byte[] test) {
+		private static bool TestHash(byte[] original, byte[] test) {
 			if (original.Length == test.Length) {
 				for (int a = 0; a < original.Length; a++) {
 					if (original[a] != test[a]) return false;

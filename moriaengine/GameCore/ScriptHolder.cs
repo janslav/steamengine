@@ -41,7 +41,7 @@ namespace SteamEngine {
 		}
 
 		protected ScriptHolder(string name) {
-			if (String.IsNullOrEmpty(name)) {
+			if (string.IsNullOrEmpty(name)) {
 				this.name = this.InternalFirstGetName();
 			}
 			this.name = name;

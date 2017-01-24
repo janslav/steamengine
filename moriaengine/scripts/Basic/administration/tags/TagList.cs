@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
 			TagHolder th = (TagHolder) args.GetTag(holderTK); //z koho budeme tagy brat?
-			List<KeyValuePair<TagKey, Object>> tagList = args.GetTag(tagListTK) as List<KeyValuePair<TagKey, Object>>;
+			List<KeyValuePair<TagKey, object>> tagList = args.GetTag(tagListTK) as List<KeyValuePair<TagKey, object>>;
 			if (tagList == null) {
 				//vzit seznam tagu dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//projet seznam v ramci daneho rozsahu indexu
 			int rowCntr = 0;
 			for (int i = firstiVal; i < imax; i++) {
-				KeyValuePair<TagKey, Object> de = tagList[i];
+				KeyValuePair<TagKey, object> de = tagList[i];
 
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(10 + (3 * i)).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(de.Key.Name).Build();
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			//seznam tagu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<KeyValuePair<TagKey, Object>> tagList = (List<KeyValuePair<TagKey, Object>>) args.GetTag(tagListTK);
+			List<KeyValuePair<TagKey, object>> tagList = (List<KeyValuePair<TagKey, object>>) args.GetTag(tagListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tagList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 4: //uložit pripadne zmeny
 						//projdeme dostupny seznam tagu na strance a u tech editovatelnych zkoukneme zmeny
 						for (int i = firstOnPage; i < imax; i++) {
-							KeyValuePair<TagKey, Object> de = tagList[i];
+							KeyValuePair<TagKey, object> de = tagList[i];
 							if (ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {
 								//jen editovatelne primo (ostatni jsou editovatelne jen pres info dialog)
 								string oldValue = ObjectSaver.Save(de.Value);
@@ -175,7 +175,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				int row = (gr.PressedButton - 10) / 3;
 				int buttNo = (gr.PressedButton - 10) % 3;
 				TagHolder tagOwner = (TagHolder) args.GetTag(holderTK); //z koho budeme tagy brat?
-				KeyValuePair<TagKey, Object> de = tagList[row];
+				KeyValuePair<TagKey, object> de = tagList[row];
 				switch (buttNo) {
 					case 0: //smazat						
 						tagOwner.RemoveTag(de.Key);
@@ -191,9 +191,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		/// <summary>Retreives the list of all tags the given TagHolder has</summary>
-		private List<KeyValuePair<TagKey, Object>> ListifyTags(IEnumerable<KeyValuePair<TagKey, Object>> tags, string criteria) {
-			List<KeyValuePair<TagKey, Object>> tagsList = new List<KeyValuePair<TagKey, Object>>();
-			foreach (KeyValuePair<TagKey, Object> entry in tags) {
+		private List<KeyValuePair<TagKey, object>> ListifyTags(IEnumerable<KeyValuePair<TagKey, object>> tags, string criteria) {
+			List<KeyValuePair<TagKey, object>> tagsList = new List<KeyValuePair<TagKey, object>>();
+			foreach (KeyValuePair<TagKey, object> entry in tags) {
 				//entry in this hashtable is TagKey and its object value
 				if (criteria == null || criteria.Equals("")) {
 					tagsList.Add(entry);//bereme vse
@@ -226,7 +226,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	}
 
 	/// <summary>Comparer for sorting tag dictionary entries by tags name asc</summary>
-	public class TagsComparer : IComparer<KeyValuePair<TagKey, Object>> {
+	public class TagsComparer : IComparer<KeyValuePair<TagKey, object>> {
 		public static readonly TagsComparer instance = new TagsComparer();
 
 		private TagsComparer() {
@@ -235,7 +235,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		//we have to make sure that we are sorting a list of DictionaryEntries which are tags
 		//otherwise this will crash on some ClassCastException -)
-		public int Compare(KeyValuePair<TagKey, Object> x, KeyValuePair<TagKey, Object> y) {
+		public int Compare(KeyValuePair<TagKey, object> x, KeyValuePair<TagKey, object> y) {
 			TagKey a = x.Key;
 			TagKey b = y.Key;
 			return StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name);

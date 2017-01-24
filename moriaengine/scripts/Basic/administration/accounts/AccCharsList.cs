@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(target.Account.Name));
 			} else {
-				string accName = (String) text.Argv[0];
+				string accName = (string) text.Argv[0];
 				//overime zda existuje (uz ted)
 				AbstractAccount acc = AbstractAccount.GetByName(accName);
 				if (acc == null) {

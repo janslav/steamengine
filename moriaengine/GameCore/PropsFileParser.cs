@@ -69,7 +69,7 @@ namespace SteamEngine {
 					if (displayPercentage) {
 						long currentPercentage = (stream.BaseStream.Position * 100) / streamLen;
 						if (currentPercentage > lastSentPercentage) {
-							Logger.SetTitle(String.Concat("Loading ", fileNameToDisplay, ": ", currentPercentage.ToString(CultureInfo.InvariantCulture), "%"));
+							Logger.SetTitle(string.Concat("Loading ", fileNameToDisplay, ": ", currentPercentage.ToString(CultureInfo.InvariantCulture), "%"));
 							lastSentPercentage = currentPercentage;
 						}
 					}

@@ -408,7 +408,7 @@ namespace PerCederberg.Grammatica.Parser {
 			LookAheadSet follow;
 			LookAheadSet conflicts;
 			LookAheadSet previous = new LookAheadSet(0);
-			String location;
+			string location;
 			int length = 1;
 
 			// Check trivial cases
@@ -492,7 +492,7 @@ namespace PerCederberg.Grammatica.Parser {
 				throw new ParserCreationException(
 					ParserCreationException.ErrorType.INFINITE_LOOP,
 					pattern.GetName(),
-					(String) null);
+					(string) null);
 			}
 
 			// Find pattern look-ahead
@@ -607,7 +607,7 @@ namespace PerCederberg.Grammatica.Parser {
 			}
 
 			// Handle element repetitions
-			if (elem.GetMaxCount() == Int32.MaxValue) {
+			if (elem.GetMaxCount() == int.MaxValue) {
 				first = first.CreateRepetitive();
 			}
 			max = elem.GetMaxCount();

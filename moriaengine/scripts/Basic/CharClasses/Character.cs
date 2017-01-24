@@ -1754,7 +1754,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override string PaperdollName {
 			get {
-				if (!String.IsNullOrEmpty(this.title)) {
+				if (!string.IsNullOrEmpty(this.title)) {
 					return string.Concat(this.Name, ", ", this.title);
 				}
 				return this.Name;
@@ -1908,10 +1908,10 @@ namespace SteamEngine.CompiledScripts {
 				foreach (object o in this.skillsabilities.Values) {
 					Ability a = o as Ability;
 					if (a != null) {
-						output.WriteLine(String.Concat(a.Def.PrettyDefname, "=", a.GetSaveString()));
+						output.WriteLine(string.Concat(a.Def.PrettyDefname, "=", a.GetSaveString()));
 					} else {
 						Skill s = (Skill) o;
-						output.WriteLine(String.Concat(s.Def.PrettyDefname, "=", s.GetSaveString()));
+						output.WriteLine(string.Concat(s.Def.PrettyDefname, "=", s.GetSaveString()));
 					}
 				}
 			}

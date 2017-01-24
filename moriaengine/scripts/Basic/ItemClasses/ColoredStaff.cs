@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts {
 		public void ShowMana(Player self) {
 			if (self != null) {
 				double staffMaxMana = this.CalculateMaxMana(self);
-				Globals.SrcWriteLine(String.Concat(
+				Globals.SrcWriteLine(string.Concat(
 					Loc<ColoredStaffLoc>.Get(self.Language).manaInStaff, ": ",
 					this.mana.ToString(), "/", 
 					staffMaxMana.ToString()));
@@ -128,7 +128,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_BuildAosToolTips(opc, language);
 
 			opc.AddNameColonValue(Loc<ColoredStaffLoc>.Get(language).manaInStaff,
-				String.Concat(this.mana.ToString(), "/", this.TypeDef.MaxMana.ToString()));
+				string.Concat(this.mana.ToString(), "/", this.TypeDef.MaxMana.ToString()));
 		}
 	}
 

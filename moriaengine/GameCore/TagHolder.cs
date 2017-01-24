@@ -193,12 +193,12 @@ namespace SteamEngine {
 
 		#region Tags
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate"), SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-		public IEnumerable<KeyValuePair<TagKey, Object>> GetAllTags() {
+		public IEnumerable<KeyValuePair<TagKey, object>> GetAllTags() {
 			if (this.tags != null) {
 				foreach (DictionaryEntry entry in this.tags) {
 					TagKey tk = entry.Key as TagKey;
 					if (tk != null) {
-						yield return new KeyValuePair<TagKey, Object>(tk, entry.Value);
+						yield return new KeyValuePair<TagKey, object>(tk, entry.Value);
 					}
 				}
 			}

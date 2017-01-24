@@ -117,7 +117,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 			this.elem = elem;
 			this.min = min;
 			if (max <= 0) {
-				this.max = Int32.MaxValue;
+				this.max = int.MaxValue;
 			} else {
 				this.max = max;
 			}

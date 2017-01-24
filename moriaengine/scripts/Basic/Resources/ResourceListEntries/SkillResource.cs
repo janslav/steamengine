@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override string GetResourceMissingMessage(Language language) {
-			return String.Format(CultureInfo.InvariantCulture,
+			return string.Format(CultureInfo.InvariantCulture,
 				Loc<ResListLoc>.Get(language).SkillTooLow, this.skillDef.Key);
 		}
 

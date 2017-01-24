@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 			if (connection != null)
 				connection.Close();
 
-			string connStr = String.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
+			string connStr = string.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
 				config.server, config.user, config.password, config.dbName);
 
 			Logger.WriteDebug("Connecting to MySql server at " + config.server);
@@ -86,9 +86,9 @@ namespace SteamEngine.CompiledScripts {
 		[SaveableData("IPAddress")]
 		public IPAddress server = IPAddress.Loopback;
 		[SaveableData("root")]
-		public String user = "root";
+		public string user = "root";
 		[SaveableData("password")]
-		public String password = "";
+		public string password = "";
 		[SaveableData("use DB")]
 		public bool useDb = false;
 		[SaveableData("DB Name")]

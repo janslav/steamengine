@@ -184,7 +184,7 @@ namespace SteamEngine.RemoteConsole {
 		private void reconnectingTimer_Tick(object sender, EventArgs e) {
 			this.reconnectingTimer.Stop();
 
-			Console.WriteLine(String.Concat("Reconnecting to ", 
+			Console.WriteLine(string.Concat("Reconnecting to ", 
 				this.epsBeingReconnected.UserName,  "@", this.epsBeingReconnected.Address, ":" ,
 				this.epsBeingReconnected.Port.ToString(CultureInfo.InvariantCulture)));
 			ConsoleClient.Connect(this.epsBeingReconnected);

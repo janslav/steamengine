@@ -63,15 +63,15 @@ namespace SteamEngine.Converter {
 
 		public void Set(string key, string value, string comment) {
 			if (string.IsNullOrEmpty(comment)) {
-				this.writtenData.Add(String.Format("{0} = {1}", key, value));
+				this.writtenData.Add(string.Format("{0} = {1}", key, value));
 			} else {
-				this.writtenData.Add(String.Format("{0} = {1} //{2} ", key, value, comment));
+				this.writtenData.Add(string.Format("{0} = {1} //{2} ", key, value, comment));
 			}
 		}
 
 		public virtual void Dump(TextWriter writer) {
 			writer.WriteLine();
-			string header = String.Concat("[", this.headerType, " ", this.headerName, "]");
+			string header = string.Concat("[", this.headerType, " ", this.headerName, "]");
 
 			if (this.origData.HeaderComment.Length > 0) {
 				header = header + " //" + this.origData.HeaderComment;
@@ -175,7 +175,7 @@ namespace SteamEngine.Converter {
 			string value;
 			Match ma = ConvertTools.stringRE.Match(line.Value);
 			if (ma.Success) {
-				value = String.Intern(ma.Groups["value"].Value);
+				value = string.Intern(ma.Groups["value"].Value);
 			} else {
 				value = line.Value;
 			}

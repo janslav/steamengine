@@ -140,7 +140,7 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @param info           the additional error information
 		 */
 		public ParserCreationException(ErrorType type,
-									   String info)
+									   string info)
 			: this(type, null, info) {
 		}
 
@@ -152,8 +152,8 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @param info           the additional error information
 		 */
 		public ParserCreationException(ErrorType type,
-									   String name,
-									   String info)
+									   string name,
+									   string info)
 			: this(type, name, info, null) {
 		}
 
@@ -166,8 +166,8 @@ namespace PerCederberg.Grammatica.Parser {
 		 * @param details        the error details list
 		 */
 		public ParserCreationException(ErrorType type,
-									   String name,
-									   String info,
+									   string name,
+									   string info,
 									   ArrayList details) {
 
 			this.type = type;

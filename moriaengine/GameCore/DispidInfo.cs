@@ -156,8 +156,8 @@ namespace SteamEngine {
 			}
 
 			ParseName(name, out this.singularName, out this.pluralName);
-			this.singularName = String.Intern(this.singularName);
-			this.pluralName = String.Intern(this.pluralName);
+			this.singularName = string.Intern(this.singularName);
+			this.pluralName = string.Intern(this.pluralName);
 
 			this.id = array.Count;
 			array.Add(this);

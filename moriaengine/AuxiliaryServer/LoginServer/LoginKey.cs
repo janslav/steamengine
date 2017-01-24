@@ -52,7 +52,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 			get { return this.name; }
 		}
 
-		public LoginKey(String name, long key1, long key2) {
+		public LoginKey(string name, long key1, long key2) {
 			this.key1 = key1;
 			this.key2 = key2;
 			this.name = name;

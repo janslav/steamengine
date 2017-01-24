@@ -131,7 +131,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {//resources consumed or we are GM or no resources needed, create the item and place it to the pre-defined (or default) location
 					Item newItem = (Item) iDefToMake.Create(self.ReceivingContainer);
 					//self.ClilocSysMessage(500638);//You create the item and put it in your backpack.
-					self.SysMessage(String.Format(
+					self.SysMessage(string.Format(
 								Loc<CraftSkillsLoc>.Get(self.Language).ItemMadeAndPutInRecCont,
 								iDefToMake.Name, self.ReceivingContainer.Name));
 					this.DoSuccess(skillSeqArgs, newItem);
@@ -179,7 +179,7 @@ namespace SteamEngine.CompiledScripts {
 			if (canMake && hasMaterial) {
 				//lost some resources. if some of resources/material was missing then nothing happened...
 				iDefToMake.Resources.ConsumeSomeResources(self, ResourcesLocality.Backpack);
-				self.SysMessage(String.Format(
+				self.SysMessage(string.Format(
 						Loc<CraftSkillsLoc>.Get(self.Language).ItemMakingFailed,
 						iDefToMake.Name));
 			}

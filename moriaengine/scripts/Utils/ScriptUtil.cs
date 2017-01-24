@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void ListScripts(string args) {
-			string testString = String.Concat(args);
+			string testString = string.Concat(args);
 			Globals.SrcWriteLine("Listing scripts containing string '<testString>' in their defname:");
 
 			Regex re = new Regex(testString);

@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.modification == 0) {
 					return this.realValue.ToString();
 				}
-				return String.Concat(this.realValue.ToString(), ", ", this.modification.ToString());
+				return string.Concat(this.realValue.ToString(), ", ", this.modification.ToString());
 			}
 			string lockStr;
 			switch (this.lockType) {
@@ -165,7 +165,7 @@ namespace SteamEngine.CompiledScripts {
 				default:
 					throw new SEException("this.lockType != Up | Down | Locked");
 			}
-			return String.Concat(this.realValue.ToString(), ", ",
+			return string.Concat(this.realValue.ToString(), ", ",
 				this.modification.ToString(), ", ",
 				lockStr);
 		}

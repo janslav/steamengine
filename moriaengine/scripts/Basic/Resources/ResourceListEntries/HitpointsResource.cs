@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		/// <summary>Try parsing given String as ItemResource</summary>
-		public static bool TryParse(String definition, double number, bool asPercentage, out IResourceListEntry resource) {
+		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
 			if ("Hits".Equals(definition, StringComparison.OrdinalIgnoreCase) ||
 					"Hitpoints".Equals(definition, StringComparison.OrdinalIgnoreCase)) {
 				resource = new StatHitsResource(number, asPercentage);
@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		/// <summary>String from which the resource could be parsed again, used for saving</summary>
-		public override String ParsableString {
+		public override string ParsableString {
 			get {
 				return "hits";
 			}
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			return (newOne is StatHitsResource);
 		}
 
-		public override String GetResourceMissingMessage(Language language) {
+		public override string GetResourceMissingMessage(Language language) {
 			return Loc<ResListLoc>.Get(language).HitsTooLow;
 		}
 

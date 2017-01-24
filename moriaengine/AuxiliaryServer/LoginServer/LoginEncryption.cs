@@ -6,7 +6,7 @@ using Buffer = SteamEngine.Communication.Buffer;
 
 namespace SteamEngine.AuxiliaryServer.LoginServer {
 	public class LoginEncryption : IEncryption {
-		private String name;
+		private string name;
 		private uint key1;
 		private uint key2;
 		private uint table1;

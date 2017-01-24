@@ -111,7 +111,7 @@ namespace SteamEngine {
 
 		protected AbstractScript(string defname) {
 			Shield.AssertInTransaction();
-			if (String.IsNullOrEmpty(defname)) {
+			if (string.IsNullOrEmpty(defname)) {
 				this.defname = this.InternalFirstGetDefname();
 			} else {
 				this.defname = defname;

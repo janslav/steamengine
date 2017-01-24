@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 					if (target == self) {
 						self.WriteLine(Loc<HealingLoc>.Get(self.Language).YoureAtMaxHitpoints);
 					} else {
-						self.WriteLine(String.Format(CultureInfo.InvariantCulture,
+						self.WriteLine(string.Format(CultureInfo.InvariantCulture,
 							Loc<HealingLoc>.Get(self.Language).TargetIsAtMaxHitpoints, target.Name));
 					}
 					return TriggerResult.Cancel;
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 				if (targetChar == self) {
 					self.WriteLine(Loc<HealingLoc>.Get(self.Language).YoureStartingToHealYourself);
 				} else {
-					self.WriteLine(String.Format(CultureInfo.InvariantCulture,
+					self.WriteLine(string.Format(CultureInfo.InvariantCulture,
 						Loc<HealingLoc>.Get(self.Language).YoureStartingToHealTarget, targetChar.Name));
 				}
 				skillSeqArgs.Tool.Consume(1);
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 				self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingFailed);
 
 				if (targetChar != self) {
-					targetChar.WriteLine(String.Format(CultureInfo.InvariantCulture,
+					targetChar.WriteLine(string.Format(CultureInfo.InvariantCulture,
 						Loc<HealingLoc>.Get(targetChar.Language).HealerFailedToHealYou, self.Name));
 				}
 			} else {

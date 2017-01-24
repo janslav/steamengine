@@ -146,7 +146,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(target.Account));
 			} else {
-				string accName = (String) text.Argv[0];
+				string accName = (string) text.Argv[0];
 				AbstractAccount acc = AbstractAccount.GetByName(accName);
 				if (acc == null) {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + accName + " neexistuje!", (int) Hues.Red);

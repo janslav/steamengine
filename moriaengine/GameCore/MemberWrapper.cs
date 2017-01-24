@@ -330,19 +330,19 @@ namespace SteamEngine {
 			//	object[] parameters, System.Globalization.CultureInfo ignored3)'
 
 			private static Type[] invokeParamTypes1 = {
-				typeof(BindingFlags), typeof(Binder), typeof(Object[]), typeof(CultureInfo)};
+				typeof(BindingFlags), typeof(Binder), typeof(object[]), typeof(CultureInfo)};
 
 			//Invoke(object ignored1, System.Reflection.BindingFlags ignored2, System.Reflection.Binder ignored3, 
 			//	object[] parameters, System.Globalization.CultureInfo ignored4)'
 
 			private static Type[] invokeParamTypes2 = {
-				typeof(Object), typeof(BindingFlags), typeof(Binder), typeof(Object[]), typeof(CultureInfo)};
+				typeof(object), typeof(BindingFlags), typeof(Binder), typeof(object[]), typeof(CultureInfo)};
 
 			private static void EmitInvokeMethod(ConstructorInfo constructor, TypeBuilder tb,
 					Type[] invokeParamTypes, int paramsAt) {
 
 				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
-					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(Object), invokeParamTypes);
+					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(object), invokeParamTypes);
 				ILGenerator il = mb.GetILGenerator();
 
 				EmitPushParams(il, constructor.GetParameters(), paramsAt);
@@ -421,17 +421,17 @@ namespace SteamEngine {
 			}
 
 			private static Type[] setParamTypes = {
-				typeof(Object), typeof(Object), typeof(BindingFlags), typeof(Binder), typeof(CultureInfo)};
+				typeof(object), typeof(object), typeof(BindingFlags), typeof(Binder), typeof(CultureInfo)};
 
 			//method: GetValue
 			//returns value of a field of an instance. 
 			//For static fields, the instance parameter is ignored (should be null). 
 			//public abstract object GetValue(object obj);
-			private static Type[] getParamTypes = { typeof(Object) };
+			private static Type[] getParamTypes = { typeof(object) };
 
 			[SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int32.ToString")]
 			private static string GetWrapperClassNameFor(FieldInfo fi) {
-				return EscapeTypeName(String.Concat(
+				return EscapeTypeName(string.Concat(
 					fi.DeclaringType.Name, "_", fi.Name, "_", (count++).ToString()));
 			}
 
@@ -582,13 +582,13 @@ namespace SteamEngine {
 			//		object[] pars, System.Globalization.CultureInfo ignored3);
 
 			private static Type[] invokeParamTypes = {
-				typeof(Object), typeof(BindingFlags), typeof(Binder), typeof(Object[]), typeof(CultureInfo)};
+				typeof(object), typeof(BindingFlags), typeof(Binder), typeof(object[]), typeof(CultureInfo)};
 
 			internal static MethodWrapper SpitAndInstantiateWrapperFor(MethodInfo method) {
 				TypeBuilder tb = module.DefineType(GetWrapperClassNameFor(method),
 					TypeAttributes.NotPublic, typeof(MethodWrapper));
 				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
-					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(Object), invokeParamTypes);
+					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(object), invokeParamTypes);
 				ILGenerator il = mb.GetILGenerator();
 
 				Type declaringType = method.DeclaringType;

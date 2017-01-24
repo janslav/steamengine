@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			Point4D point = null;
 			if (value.GetType().IsAssignableFrom(typeof(Point4D))) {
 				point = (Point4D) value;
-			} else if (value is String) {
+			} else if (value is string) {
 				point = (Point4D) ObjectSaver.Load((string) value);
 			}
 			if (reg.ContainsPoint(point)) {

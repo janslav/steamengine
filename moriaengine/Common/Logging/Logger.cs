@@ -481,7 +481,7 @@ namespace SteamEngine.Common {
 			if (stackTrace != null) {
 				return ErrText(stackTrace);
 			}
-			return ErrText(String.Concat(data));
+			return ErrText(string.Concat(data));
 		}
 
 		private static LogStr ErrText(LogStr data) {
@@ -698,7 +698,7 @@ namespace SteamEngine.Common {
 
 		public override void WriteLine(string value) {
 			lock (lockObject) {
-				string printline = String.Concat(DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), ": ", indentation, value);
+				string printline = string.Concat(DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), ": ", indentation, value);
 				console.WriteLine(printline);
 				if (OnConsoleWriteLine != null) {
 					OnConsoleWriteLine(printline);

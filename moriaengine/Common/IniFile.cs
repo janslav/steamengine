@@ -310,7 +310,7 @@ namespace SteamEngine.Common {
 		}
 
 		public override string ToString() {
-			return String.Concat("[", this.name, "]");
+			return string.Concat("[", this.name, "]");
 		}
 	}
 
@@ -363,7 +363,7 @@ namespace SteamEngine.Common {
 		}
 
 		public override string ToString() {
-			return String.Concat(this.name, " = ", this.valueString);
+			return string.Concat(this.name, " = ", this.valueString);
 		}
 	}
 

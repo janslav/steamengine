@@ -89,7 +89,7 @@ namespace SteamEngine {
 			}
 
 			public int GetHashCode(WeakRefDictionaryKeyEntry entry) {
-				Object key = entry.weakKey.Target;
+				object key = entry.weakKey.Target;
 				if (key != null) {
 					return key.GetHashCode();
 				}

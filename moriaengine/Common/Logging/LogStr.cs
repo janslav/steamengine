@@ -34,7 +34,7 @@ namespace SteamEngine.Common {
 
 		static LogStr() {
 			for (int i = 0, n = prefixStrings.Length; i < n; i++) {
-				prefixStrings[i] = String.Concat(LogStrBase.separatorString, LogStrBase.styleString, i.ToString(CultureInfo.InvariantCulture), LogStrBase.separatorString);
+				prefixStrings[i] = string.Concat(LogStrBase.separatorString, LogStrBase.styleString, i.ToString(CultureInfo.InvariantCulture), LogStrBase.separatorString);
 			}
 		}
 
@@ -112,7 +112,7 @@ namespace SteamEngine.Common {
 
 		public static LogStr Raw(object obj) {
 			string str = Tools.ObjToString(obj);
-			return new LogStr(str, String.Concat(obj));
+			return new LogStr(str, string.Concat(obj));
 		}
 		public static LogStr Warning(object obj) {
 			string str = Tools.ObjToString(obj);
@@ -213,20 +213,20 @@ namespace SteamEngine.Common {
 		}
 		public static LogStr Concat(LogStr arg0, LogStr arg1) {
 			return new LogStr(
-				String.Concat(arg0.rawString, arg1.rawString),
-				String.Concat(arg0.niceString, arg1.niceString));
+				string.Concat(arg0.rawString, arg1.rawString),
+				string.Concat(arg0.niceString, arg1.niceString));
 		}
 
 		public static LogStr Concat(LogStr arg0, LogStr arg1, LogStr arg2) {
 			return new LogStr(
-				String.Concat(arg0.rawString, arg1.rawString, arg2.rawString),
-				String.Concat(arg0.niceString, arg1.niceString, arg2.niceString));
+				string.Concat(arg0.rawString, arg1.rawString, arg2.rawString),
+				string.Concat(arg0.niceString, arg1.niceString, arg2.niceString));
 		}
 
 		public static LogStr Concat(LogStr arg0, LogStr arg1, LogStr arg2, LogStr arg3) {
 			return new LogStr(
-				String.Concat(arg0.rawString, arg1.rawString, arg2.rawString, arg3.rawString),
-				String.Concat(arg0.niceString, arg1.niceString, arg2.niceString, arg3.niceString));
+				string.Concat(arg0.rawString, arg1.rawString, arg2.rawString, arg3.rawString),
+				string.Concat(arg0.niceString, arg1.niceString, arg2.niceString, arg3.niceString));
 		}
 
 		public static LogStr Concat(params LogStr[] args) {
@@ -239,8 +239,8 @@ namespace SteamEngine.Common {
 			}
 
 			return new LogStr(
-				String.Concat(rawstrings),
-				String.Concat(nicestrings));
+				string.Concat(rawstrings),
+				string.Concat(nicestrings));
 		}
 
 		public static string GetStyleStartPrefix(LogStyles style) {
@@ -301,7 +301,7 @@ namespace SteamEngine.Common {
 				this.Append(ls);
 				return this;
 			}
-			this.Append(String.Concat(str));
+			this.Append(string.Concat(str));
 			return this;
 		}
 

@@ -86,7 +86,7 @@ namespace SteamEngine.LScript {
 			for (int i = 0; i < argsCount; i++) {
 				results[i] = this.args[i].Run(vars);
 			}
-			string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+			string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 			vars.returned = true;
 			return resultString;
 		}

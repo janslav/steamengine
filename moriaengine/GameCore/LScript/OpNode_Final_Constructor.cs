@@ -240,7 +240,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				return this.ctor.Invoke(BindingFlags.Default, null, new object[] { resultString }, null);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
@@ -256,7 +256,7 @@ namespace SteamEngine.LScript {
 		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				return this.ctor.Invoke(new object[] { resultString });
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);

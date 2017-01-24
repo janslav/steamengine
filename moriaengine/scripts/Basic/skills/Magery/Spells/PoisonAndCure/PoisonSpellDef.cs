@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public class PoisonSpellDef : DurableCharEffectSpellDef {
-		public PoisonSpellDef(String defname, String filename, Int32 headerLine)
+		public PoisonSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
 

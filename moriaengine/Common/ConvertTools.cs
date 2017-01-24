@@ -123,10 +123,10 @@ namespace SteamEngine.Common {
 			if ((objectType == type) || (type.IsAssignableFrom(objectType))) {
 				return obj;
 			}
-			if (type.Equals(typeof(String))) {
+			if (type.Equals(typeof(string))) {
 				return ToString(obj);
 			}
-			if (type.Equals(typeof(Boolean))) {
+			if (type.Equals(typeof(bool))) {
 				return ToBoolean(obj);
 			}
 			if (type.IsEnum) {
@@ -421,54 +421,54 @@ namespace SteamEngine.Common {
 					string toConvert = m.Groups["value"].Value;
 					switch (typeCode) {
 						case TypeCode.Byte:
-							return Byte.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return byte.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.Int16:
-							return Int16.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return short.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.Int32:
-							return Int32.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return int.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.Int64:
-							return Int64.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return long.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.SByte:
-							return SByte.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return sbyte.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.UInt16:
-							return UInt16.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return ushort.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.UInt32:
-							return UInt32.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return uint.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.UInt64:
-							return UInt64.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.Decimal:
-							return (Decimal) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return (decimal) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.Double:
-							return (Double) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return (double) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						case TypeCode.Single:
-							return (Single) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
+							return (float) ulong.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 					}
 				}
 			}
 
 			switch (typeCode) {
 				case TypeCode.Byte:
-					return Byte.Parse(input, NumberStyles.Integer, invariantCulture);
+					return byte.Parse(input, NumberStyles.Integer, invariantCulture);
 				case TypeCode.Decimal:
-					return Decimal.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+					return decimal.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 				case TypeCode.Double:
-					return Double.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+					return double.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 				case TypeCode.Int16:
-					return Int16.Parse(input, NumberStyles.Integer, invariantCulture);
+					return short.Parse(input, NumberStyles.Integer, invariantCulture);
 				case TypeCode.Int32:
-					return Int32.Parse(input, NumberStyles.Integer, invariantCulture);
+					return int.Parse(input, NumberStyles.Integer, invariantCulture);
 				case TypeCode.Int64:
-					return Int64.Parse(input, NumberStyles.Integer, invariantCulture);
+					return long.Parse(input, NumberStyles.Integer, invariantCulture);
 				case TypeCode.Single:
-					return Single.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+					return float.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 				case TypeCode.SByte:
-					return SByte.Parse(input, NumberStyles.Integer, invariantCulture);
+					return sbyte.Parse(input, NumberStyles.Integer, invariantCulture);
 				case TypeCode.UInt16:
-					return UInt16.Parse(input, NumberStyles.Integer, invariantCulture);
+					return ushort.Parse(input, NumberStyles.Integer, invariantCulture);
 				case TypeCode.UInt32:
-					return UInt32.Parse(input, NumberStyles.Integer, invariantCulture);
+					return uint.Parse(input, NumberStyles.Integer, invariantCulture);
 				case TypeCode.UInt64:
-					return UInt64.Parse(input, NumberStyles.Integer, invariantCulture);
+					return ulong.Parse(input, NumberStyles.Integer, invariantCulture);
 			}
 			throw new SEException("typeCode out of range");
 		}
@@ -532,19 +532,19 @@ namespace SteamEngine.Common {
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToDouble(o, invariantCulture);
 			}
-			return Double.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+			return double.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 		}
 
-		public static bool TryParseDouble(string input, out Double retVal) {
+		public static bool TryParseDouble(string input, out double retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToDouble(o, invariantCulture);
 				return true;
 			}
-			return Double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
+			return double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
 		}
 
-		public static Double ToDouble(object input) {
+		public static double ToDouble(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToDouble(o, invariantCulture);
@@ -554,24 +554,24 @@ namespace SteamEngine.Common {
 		#endregion Double
 
 		#region Single (float)
-		public static Single ParseSingle(string input) {
+		public static float ParseSingle(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToSingle(o, invariantCulture);
 			}
-			return Single.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+			return float.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 		}
 
-		public static bool TryParseSingle(string input, out Single retVal) {
+		public static bool TryParseSingle(string input, out float retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToSingle(o, invariantCulture);
 				return true;
 			}
-			return Single.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
+			return float.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
 		}
 
-		public static Single ToSingle(object input) {
+		public static float ToSingle(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToSingle(o, invariantCulture);
@@ -581,24 +581,24 @@ namespace SteamEngine.Common {
 		#endregion Single
 
 		#region Decimal (decimal)
-		public static Decimal ParseDecimal(string input) {
+		public static decimal ParseDecimal(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToDecimal(o, invariantCulture);
 			}
-			return Decimal.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
+			return decimal.Parse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture);
 		}
 
-		public static bool TryParseDecimal(string input, out Decimal retVal) {
+		public static bool TryParseDecimal(string input, out decimal retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToDecimal(o, invariantCulture);
 				return true;
 			}
-			return Decimal.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
+			return decimal.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, invariantCulture, out retVal);
 		}
 
-		public static Decimal ToDecimal(object input) {
+		public static decimal ToDecimal(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToDecimal(o, invariantCulture);
@@ -613,19 +613,19 @@ namespace SteamEngine.Common {
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToByte(o, invariantCulture);
 			}
-			return Byte.Parse(input, NumberStyles.Integer, invariantCulture);
+			return byte.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
-		public static bool TryParseByte(string input, out Byte retVal) {
+		public static bool TryParseByte(string input, out byte retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToByte(o, invariantCulture);
 				return true;
 			}
-			return Byte.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return byte.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
-		public static Byte ToByte(object input) {
+		public static byte ToByte(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToByte(o, invariantCulture);
@@ -641,21 +641,21 @@ namespace SteamEngine.Common {
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToSByte(o, invariantCulture);
 			}
-			return SByte.Parse(input, NumberStyles.Integer, invariantCulture);
+			return sbyte.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
 		[CLSCompliant(false)]
-		public static bool TryParseSByte(string input, out SByte retVal) {
+		public static bool TryParseSByte(string input, out sbyte retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToSByte(o, invariantCulture);
 				return true;
 			}
-			return SByte.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return sbyte.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
 		[CLSCompliant(false)]
-		public static SByte ToSByte(object input) {
+		public static sbyte ToSByte(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToSByte(o, invariantCulture);
@@ -665,24 +665,24 @@ namespace SteamEngine.Common {
 		#endregion SByte
 
 		#region Int16 (short)
-		public static Int16 ParseInt16(string input) {
+		public static short ParseInt16(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToInt16(o, invariantCulture);
 			}
-			return Int16.Parse(input, NumberStyles.Integer, invariantCulture);
+			return short.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
-		public static bool TryParseInt16(string input, out Int16 retVal) {
+		public static bool TryParseInt16(string input, out short retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToInt16(o, invariantCulture);
 				return true;
 			}
-			return Int16.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return short.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
-		public static Int16 ToInt16(object input) {
+		public static short ToInt16(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToInt16(o, invariantCulture);
@@ -693,26 +693,26 @@ namespace SteamEngine.Common {
 
 		#region UInt16 (ushort)
 		[CLSCompliant(false)]
-		public static UInt16 ParseUInt16(string input) {
+		public static ushort ParseUInt16(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToUInt16(o, invariantCulture);
 			}
-			return UInt16.Parse(input, NumberStyles.Integer, invariantCulture);
+			return ushort.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
 		[CLSCompliant(false)]
-		public static bool TryParseUInt16(string input, out UInt16 retVal) {
+		public static bool TryParseUInt16(string input, out ushort retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToUInt16(o, invariantCulture);
 				return true;
 			}
-			return UInt16.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return ushort.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
 		[CLSCompliant(false)]
-		public static UInt16 ToUInt16(object input) {
+		public static ushort ToUInt16(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToUInt16(o, invariantCulture);
@@ -722,24 +722,24 @@ namespace SteamEngine.Common {
 		#endregion UInt16
 
 		#region Int32 (int)
-		public static Int32 ParseInt32(string input) {
+		public static int ParseInt32(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToInt32(o, invariantCulture);
 			}
-			return Int32.Parse(input, NumberStyles.Integer, invariantCulture);
+			return int.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
-		public static bool TryParseInt32(string input, out Int32 retVal) {
+		public static bool TryParseInt32(string input, out int retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToInt32(o, invariantCulture);
 				return true;
 			}
-			return Int32.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return int.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
-		public static Int32 ToInt32(object input) {
+		public static int ToInt32(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToInt32(o, invariantCulture);
@@ -765,26 +765,26 @@ namespace SteamEngine.Common {
 
 		#region UInt32 (uint)
 		[CLSCompliant(false)]
-		public static UInt32 ParseUInt32(string input) {
+		public static uint ParseUInt32(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToUInt32(o, invariantCulture);
 			}
-			return UInt32.Parse(input, NumberStyles.Integer, invariantCulture);
+			return uint.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
 		[CLSCompliant(false)]
-		public static bool TryParseUInt32(string input, out UInt32 retVal) {
+		public static bool TryParseUInt32(string input, out uint retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToUInt32(o, invariantCulture);
 				return true;
 			}
-			return UInt32.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return uint.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
 		[CLSCompliant(false)]
-		public static UInt32 ToUInt32(object input) {
+		public static uint ToUInt32(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToUInt32(o, invariantCulture);
@@ -794,24 +794,24 @@ namespace SteamEngine.Common {
 		#endregion UInt32
 
 		#region Int64 (long)
-		public static Int64 ParseInt64(string input) {
+		public static long ParseInt64(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToInt64(o, invariantCulture);
 			}
-			return Int64.Parse(input, NumberStyles.Integer, invariantCulture);
+			return long.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
-		public static bool TryParseInt64(string input, out Int64 retVal) {
+		public static bool TryParseInt64(string input, out long retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToInt64(o, invariantCulture);
 				return true;
 			}
-			return Int64.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return long.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
-		public static Int64 ToInt64(object input) {
+		public static long ToInt64(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToInt64(o, invariantCulture);
@@ -822,26 +822,26 @@ namespace SteamEngine.Common {
 
 		#region UInt64 (ulong)
 		[CLSCompliant(false)]
-		public static UInt64 ParseUInt64(string input) {
+		public static ulong ParseUInt64(string input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToUInt64(o, invariantCulture);
 			}
-			return UInt64.Parse(input, NumberStyles.Integer, invariantCulture);
+			return ulong.Parse(input, NumberStyles.Integer, invariantCulture);
 		}
 
 		[CLSCompliant(false)]
-		public static bool TryParseUInt64(string input, out UInt64 retVal) {
+		public static bool TryParseUInt64(string input, out ulong retVal) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				retVal = Convert.ToUInt64(o, invariantCulture);
 				return true;
 			}
-			return UInt64.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
+			return ulong.TryParse(input, NumberStyles.Integer, invariantCulture, out retVal);
 		}
 
 		[CLSCompliant(false)]
-		public static UInt64 ToUInt64(object input) {
+		public static ulong ToUInt64(object input) {
 			object o;
 			if (TryParseSphereHex(input, out o)) {
 				return Convert.ToUInt64(o, invariantCulture);

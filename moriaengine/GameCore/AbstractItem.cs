@@ -408,7 +408,7 @@ namespace SteamEngine {
 			set {
 				this.InvalidateAosToolTips();
 				if (!string.IsNullOrEmpty(value)) {
-					this.name = String.Intern(value);
+					this.name = string.Intern(value);
 				} else {
 					this.name = null;
 				}
@@ -560,7 +560,7 @@ namespace SteamEngine {
 					break;
 
 				case "name":
-					this.name = String.Intern(ConvertTools.LoadSimpleQuotedString(valueString));
+					this.name = string.Intern(ConvertTools.LoadSimpleQuotedString(valueString));
 					break;
 				case "amount":
 					this.amount = ConvertTools.ParseInt32(valueString);
