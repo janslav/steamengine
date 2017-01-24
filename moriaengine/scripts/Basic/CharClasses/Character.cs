@@ -17,6 +17,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections.Generic;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
@@ -140,7 +141,7 @@ namespace SteamEngine.CompiledScripts {
 			this.TryTrigger(warModeChangeTK, null);
 			try {
 				this.On_WarModeChange();
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		public bool Flag_GreenHealthBar {
@@ -1209,7 +1210,7 @@ namespace SteamEngine.CompiledScripts {
 			this.TryTrigger(deathTK, new ScriptArgs(killedBy));
 			try {
 				this.On_Death(killedBy);
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		/// <summary>Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo</summary>

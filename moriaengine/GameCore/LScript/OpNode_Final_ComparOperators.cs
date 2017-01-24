@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using PerCederberg.Grammatica.Parser;
+using Shielded;
 
 namespace SteamEngine.LScript {
 	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
@@ -120,6 +121,8 @@ namespace SteamEngine.LScript {
 				throw;
 			} catch (FatalException) {
 				throw;
+			} catch (TransException) {
+				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating != operator",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
@@ -132,6 +135,8 @@ namespace SteamEngine.LScript {
 			} catch (InterpreterException) {
 				throw;
 			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
 				throw;
 			} catch (Exception e) {
 				throw new InterpreterException("Exception while evaluating != operator",

@@ -23,6 +23,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 
@@ -347,6 +348,8 @@ namespace SteamEngine.Persistence {
 					PopDelayedSaver().Run(writer);
 
 				} catch (FatalException) {
+					throw;
+				} catch (TransException) {
 					throw;
 				} catch (Exception e) {
 					Logger.WriteError(e);
@@ -674,6 +677,8 @@ namespace SteamEngine.Persistence {
 					}
 				} catch (FatalException) {
 					throw;
+				} catch (TransException) {
+					throw;
 				} catch (SEException sex) {
 					//if it already contains exception location, do not display another one
 					if (sex.NiceMessage.NiceString.StartsWith("(" + LogStr.GetStyleStartPrefix(LogStyles.FileLine))) {
@@ -774,6 +779,8 @@ namespace SteamEngine.Persistence {
 					loader = PopDelayedLoader();
 					loader.Run();
 				} catch (FatalException) {
+					throw;
+				} catch (TransException) {
 					throw;
 				} catch (Exception e) {
 					Logger.WriteError(loader.filename, loader.line, e);

@@ -20,6 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.LScript;
 using SteamEngine.Networking;
@@ -183,6 +184,8 @@ namespace SteamEngine {
 							scriptHolder = LScriptMain.GetNewSnippetRunner("<command>", 0, code);
 						} catch (FatalException) {
 							throw;
+						} catch (TransException) {
+							throw;
 						} catch (Exception e) {
 							LogCommand(commandSrc, code, false, e);
 							return;
@@ -301,6 +304,8 @@ namespace SteamEngine {
 						errText = "";
 						return true;
 					} catch (FatalException) {
+						throw;
+					} catch (TransException) {
 						throw;
 					} catch (Exception e) {
 						Logger.WriteError(e);

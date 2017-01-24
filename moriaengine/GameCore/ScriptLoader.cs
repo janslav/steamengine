@@ -236,6 +236,8 @@ namespace SteamEngine {
 					}
 				} catch (FatalException) {
 					throw;
+				} catch (TransException) {
+					throw;
 				} catch (Exception e) {
 					Logger.WriteError(section.Filename, section.HeaderLine, e);
 					return Enumerable.Empty<IUnloadable>();

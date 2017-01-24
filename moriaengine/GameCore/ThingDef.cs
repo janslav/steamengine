@@ -260,7 +260,7 @@ namespace SteamEngine {
 			createdThing.TryTrigger(TriggerKey.create, null);
 			try {
 				createdThing.On_Create();
-			} catch (FatalException) { throw; } catch (Exception e) { Logger.WriteError(e); }
+			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 		}
 
 		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
@@ -488,6 +488,8 @@ namespace SteamEngine {
 							});
 						} catch (FatalException) {
 							throw;
+						} catch (TransException) {
+							throw;
 						} catch (Exception e) {
 							Logger.WriteWarning(e);
 						}
@@ -497,6 +499,8 @@ namespace SteamEngine {
 								idef.multiData = MultiData.GetByModel(idef.Model);
 							});
 						} catch (FatalException) {
+							throw;
+						} catch (TransException) {
 							throw;
 						} catch (Exception e) {
 							Logger.WriteWarning(e);

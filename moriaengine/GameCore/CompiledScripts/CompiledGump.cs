@@ -17,6 +17,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Shielded;
 using SteamEngine.Common;
 
 namespace SteamEngine.CompiledScripts {
@@ -73,6 +74,8 @@ namespace SteamEngine.CompiledScripts {
 					return gi;
 				}
 			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
 				throw;
 			} catch (Exception e) {
 				Logger.WriteError(e);
@@ -362,6 +365,8 @@ namespace SteamEngine.CompiledScripts {
 			try {
 				gdef.OnResponse(this, new GumpResponse(pressedButton, selectedSwitches, responseTexts, responseNumbers), this.InputArgs);
 			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
 				throw;
 			} catch (Exception e) {
 				Logger.WriteError(e);

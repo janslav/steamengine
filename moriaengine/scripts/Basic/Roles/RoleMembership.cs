@@ -16,6 +16,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 
@@ -63,12 +64,16 @@ namespace SteamEngine.CompiledScripts {
 							this.LoadLine(input.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 						} catch (FatalException) {
 							throw;
+						} catch (TransException) {
+							throw;
 						} catch (Exception ex) {
 							Logger.WriteWarning(input.Filename, p.Line, ex);
 						}
 					}
 
 				} catch (FatalException) {
+					throw;
+				} catch (TransException) {
 					throw;
 				} catch (SEException sex) {
 					sex.TryAddFileLineInfo(input.Filename, currentLineNumber);

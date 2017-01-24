@@ -176,8 +176,6 @@ namespace SteamEngine.Persistence {
 				Logger.WriteWarning("No proper save files or backups found; Starting with a blank worldfile, no accounts, etc. The first account to log in will be set as admin.");
 				MainClass.ClearWorld();
 				TriggerGroup.ReAddGlobals();
-			} catch (FatalException) {
-				throw;
 			} catch (Exception e) {
 				Logger.WriteCritical(e);
 				Logger.WriteCritical("Loading failed.");
