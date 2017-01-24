@@ -415,8 +415,10 @@ namespace SteamEngine {
 
 		public object CurrentValue {
 			get {
-				this.ThrowIfUnloaded();
-				return Shield.InTransaction(() => this.shieldedState.Value.currentImpl.Value);
+				return Shield.InTransaction(() => {
+					this.ThrowIfUnloaded();
+					return this.shieldedState.Value.currentImpl.Value;
+				});
 			}
 			set {
 				Shield.InTransaction(() => {
@@ -431,8 +433,10 @@ namespace SteamEngine {
 
 		public object DefaultValue {
 			get {
-				this.ThrowIfUnloaded();
-				return Shield.InTransaction(() => this.shieldedState.Value.defaultImpl.Value);
+				return Shield.InTransaction(() => {
+					this.ThrowIfUnloaded();
+					return this.shieldedState.Value.defaultImpl.Value;
+				});
 			}
 		}
 
