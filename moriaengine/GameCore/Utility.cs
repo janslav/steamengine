@@ -81,7 +81,7 @@ namespace SteamEngine {
 		public static string Capitalize(string s) {
 			if (s == null) throw new SanityCheckException("Capitalize was called on a null string.");
 			if (s.Length > 1) {
-				s = Char.ToUpper(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
+				s = char.ToUpper(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
 			} else if (s.Length == 1) {
 				s = s.ToUpper(CultureInfo.InvariantCulture);
 			}
@@ -95,7 +95,7 @@ namespace SteamEngine {
 		public static string Uncapitalize(string s) {
 			if (s == null) throw new SanityCheckException("Uncapitalize was called on a null string.");
 			if (s.Length > 1) {
-				s = Char.ToLower(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
+				s = char.ToLower(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
 			} else if (s.Length == 1) {
 				s = s.ToLowerInvariant();
 			}

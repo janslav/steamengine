@@ -431,7 +431,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 					str = ReadChar().ToString() +
 						  ReadChar().ToString();
 					try {
-						value = Int32.Parse(str,
+						value = int.Parse(str,
 											NumberStyles.AllowHexSpecifier);
 						return new StringElement((char) value);
 					} catch (FormatException) {
@@ -446,7 +446,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 						  ReadChar().ToString() +
 						  ReadChar().ToString();
 					try {
-						value = Int32.Parse(str,
+						value = int.Parse(str,
 											NumberStyles.AllowHexSpecifier);
 						return new StringElement((char) value);
 					} catch (FormatException) {
@@ -516,7 +516,7 @@ namespace PerCederberg.Grammatica.Parser.RE {
 					pos,
 					pattern);
 			}
-			return Int32.Parse(buf.ToString());
+			return int.Parse(buf.ToString());
 		}
 
 		/**

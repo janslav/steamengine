@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Click(clicker, clickerState, clickerConn);
 			Language language = clickerState.Language;
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
-				String.Concat(this.potionsCount.ToString(), " potions"),
+				string.Concat(this.potionsCount.ToString(), " potions"),
 				0);
 		}
 	}

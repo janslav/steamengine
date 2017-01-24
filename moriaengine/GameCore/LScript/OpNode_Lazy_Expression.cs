@@ -250,7 +250,7 @@ namespace SteamEngine.LScript {
 			}
 
 			if (haveBaseInstance) {
-				if (!String.IsNullOrEmpty(this.classOrNamespaceName)) {
+				if (!string.IsNullOrEmpty(this.classOrNamespaceName)) {
 					//noArgs
 					if (!this.isClass) {
 						string className = this.classOrNamespaceName + "." + this.name;

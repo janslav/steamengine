@@ -61,7 +61,7 @@ namespace SteamEngine {
 			return this.name;
 		}
 
-		public sealed override bool Equals(Object obj) {
+		public sealed override bool Equals(object obj) {
 			return ReferenceEquals(this, obj);
 		}
 

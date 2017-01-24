@@ -394,7 +394,7 @@ namespace SteamEngine.CompiledScripts {
 
 			internal GeneratedInstance GetParentGI() {
 				Type nearestParent = this.type.BaseType;
-				while (nearestParent != typeof(Object)) {
+				while (nearestParent != typeof(object)) {
 					GeneratedInstance parentGI = null;
 					if (generatedClasses.TryGetValue(nearestParent, out parentGI)) { //check if parental class has also a GeneratedInstance
 						//direct parent has no generated view class, try another parent

@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 			if (acc != null) {
 				if (acc.PLevel < acc.MaxPLevel) {
 					acc.PLevel = acc.MaxPLevel;
-					Globals.SrcWriteLine(String.Format(
+					Globals.SrcWriteLine(string.Format(
 						Loc<GmCommandsLoc>.Get(Globals.SrcLanguage).GMModeOn,
 						acc.PLevel));
 				} else {

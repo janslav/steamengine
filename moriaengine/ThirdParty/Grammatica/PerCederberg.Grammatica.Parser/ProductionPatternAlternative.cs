@@ -194,8 +194,8 @@ namespace PerCederberg.Grammatica.Parser {
 
 			for (int i = 0; i < elements.Count; i++) {
 				elem = (ProductionPatternElement) elements[i];
-				if (elem.GetMaxCount() >= Int32.MaxValue) {
-					return Int32.MaxValue;
+				if (elem.GetMaxCount() >= int.MaxValue) {
+					return int.MaxValue;
 				} else {
 					max += elem.GetMaxCount();
 				}

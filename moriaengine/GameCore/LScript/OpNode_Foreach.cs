@@ -106,7 +106,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return String.Concat("Foreach (", this.localName, " in ", this.enumerableNode, ")",
+			return string.Concat("Foreach (", this.localName, " in ", this.enumerableNode, ")",
 				Environment.NewLine, this.blockNode, Environment.NewLine, "endforeach");
 		}
 	}

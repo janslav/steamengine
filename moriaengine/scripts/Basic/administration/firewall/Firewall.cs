@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 			return entries;
 		}
 
-		public static void AddBlockedIP(IPAddress ip, String reason, AbstractAccount blockedBy) {
+		public static void AddBlockedIP(IPAddress ip, string reason, AbstractAccount blockedBy) {
 			if (IsBlockedIP(ip)) {
 				Globals.SrcWriteLine("The IP " + ip + " is already blocked.");
 				return;
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 			Globals.SrcWriteLine("The IP '" + ip + "' has been blocked.");
 		}
 
-		public static void AddBlockedIP(String ip, String reason, AbstractAccount blockedBy) {
+		public static void AddBlockedIP(string ip, string reason, AbstractAccount blockedBy) {
 			AddBlockedIP(IPAddress.Parse(ip), reason, blockedBy);
 		}
 
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 			Globals.SrcWriteLine("The IP " + ip + " has been unblocked.");
 		}
 
-		public static void RemoveBlockedIP(String ip) {
+		public static void RemoveBlockedIP(string ip) {
 			RemoveBlockedIP(IPAddress.Parse(ip));
 		}
 
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		public static bool IsBlockedIP(String IP) {
+		public static bool IsBlockedIP(string IP) {
 			return IsBlockedIP(IPAddress.Parse(IP));
 		}
 
@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public static void AddBlockedIPRange(IPAddress lowerBound, IPAddress upperBound, String reason, AbstractAccount blockedBy) {
+		public static void AddBlockedIPRange(IPAddress lowerBound, IPAddress upperBound, string reason, AbstractAccount blockedBy) {
 			if (CompareIPs(lowerBound, upperBound) == 0) {
 				AddBlockedIP(lowerBound, reason, blockedBy);
 			} else {
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public static void AddBlockedIPRange(String lowerBound, String upperBound, String reason, AbstractAccount blockedBy) {
+		public static void AddBlockedIPRange(string lowerBound, string upperBound, string reason, AbstractAccount blockedBy) {
 			AddBlockedIPRange(IPAddress.Parse(lowerBound), IPAddress.Parse(upperBound), reason, blockedBy);
 		}
 
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 			Globals.SrcWriteLine("IP range not found");
 		}
 
-		public static void RemoveBlockedIPRange(String fromIP, String toIP) {
+		public static void RemoveBlockedIPRange(string fromIP, string toIP) {
 			RemoveBlockedIPRange(IPAddress.Parse(fromIP), IPAddress.Parse(toIP));
 		}
 
@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private IPAddress lowerBound;
 		private IPAddress upperBound;
-		private String reason;
+		private string reason;
 		private AbstractAccount blockedBy;
 
 		public IPAddress LowerBound {

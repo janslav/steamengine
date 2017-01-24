@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 
 	public class TimerPluginDef : PluginDef {
 
-		public TimerPluginDef(String defname, String filename, Int32 headerLine)
+		public TimerPluginDef(string defname, string filename, int headerLine)
 			:
 				base(defname, filename, headerLine) {
 		}

@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 			self.RedMessage(Loc<BleedingLoc>.Get(self.Language).YoureBleeding);
 
 			Character attacker = this.SourceThing as Character;
-			self.GreenMessage(String.Format(CultureInfo.InvariantCulture,
+			self.GreenMessage(string.Format(CultureInfo.InvariantCulture,
 				Loc<BleedingLoc>.Get(self.Language).YourTargetIsBleeding, self.Name));
 
 

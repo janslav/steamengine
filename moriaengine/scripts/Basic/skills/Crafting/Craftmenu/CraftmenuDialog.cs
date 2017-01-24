@@ -320,7 +320,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Craftmenu(self);
 			} else if ((sklDef = args.Argv[0] as CraftingSkillDef) != null) { //check if the parameter was a skill name
 				Craftmenu(self, sklDef);
-			} else if ((skillName = args.Argv[0] as String) != null) {
+			} else if ((skillName = args.Argv[0] as string) != null) {
 				Craftmenu(self, skillName);
 			} else if (ConvertTools.TryConvertToInt32(args.Argv[0], out skillId)) {
 				Craftmenu(self, (SkillName) skillId);

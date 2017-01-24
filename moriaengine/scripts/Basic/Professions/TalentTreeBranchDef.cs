@@ -152,7 +152,7 @@ namespace SteamEngine.CompiledScripts {
 
 				string resListFieldName = talentDependencyPrefix + abilityName;
 				if (len > 3) {
-					string reconstructedResList = String.Join(", ", preparsed, 3, len - 3);
+					string reconstructedResList = string.Join(", ", preparsed, 3, len - 3);
 					this.InitOrSetFieldValue<ResourcesList>(filename, line, resListFieldName, reconstructedResList);
 				} else if (!this.HasFieldValue(resListFieldName)) {
 					this.InitTypedField(resListFieldName, null, typeof(ResourcesList));

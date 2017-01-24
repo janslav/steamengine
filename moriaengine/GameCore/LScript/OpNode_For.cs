@@ -132,7 +132,7 @@ namespace SteamEngine.LScript {
 		}
 
 		public override string ToString() {
-			return String.Concat("For (", this.localName, ", ", this.leftBoundNode, ", ", this.rightBoundNode, ")",
+			return string.Concat("For (", this.localName, ", ", this.leftBoundNode, ", ", this.rightBoundNode, ")",
 				Environment.NewLine, this.blockNode, Environment.NewLine, "endfor");
 		}
 	}

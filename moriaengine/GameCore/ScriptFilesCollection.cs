@@ -175,7 +175,7 @@ namespace SteamEngine {
 
 		private bool IsAvoidedDirectory(DirectoryInfo di) {
 			foreach (string avoid in this.avoided) {
-				if (String.Compare(di.Name, avoid, true, CultureInfo.InvariantCulture) == 0) { //ignore case
+				if (string.Compare(di.Name, avoid, true, CultureInfo.InvariantCulture) == 0) { //ignore case
 					return true;	//skip this folder
 				}
 			}

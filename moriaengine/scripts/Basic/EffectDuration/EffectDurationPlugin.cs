@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 		protected virtual void EffectEndedMessage(Character cont) {
 			if ((this.flags & EffectFlag.FromAbility) == EffectFlag.FromAbility) {
 				if (cont == this.sourceThing) { //my own ability
-					cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
+					cont.SysMessage(string.Format(CultureInfo.InvariantCulture,
 						Loc<EffectDurationLoc>.Get(cont.Language).AbilityDeactivated,
 						this.EffectName));
 				} else {
@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts {
 					} else {
 						msg = Loc<EffectDurationLoc>.Get(cont.Language).AbilityEffectEnded;
 					}
-					cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
+					cont.SysMessage(string.Format(CultureInfo.InvariantCulture,
 						msg, this.EffectName));
 				}
 			} else if ((this.flags & (EffectFlag.FromSpellBook | EffectFlag.FromSpellScroll)) != EffectFlag.None) {
@@ -141,10 +141,10 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					msg = Loc<EffectDurationLoc>.Get(cont.Language).SpellEffecEnded;
 				}
-				cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
+				cont.SysMessage(string.Format(CultureInfo.InvariantCulture,
 						msg, this.EffectName));
 			} else {
-				cont.SysMessage(String.Format(CultureInfo.InvariantCulture,
+				cont.SysMessage(string.Format(CultureInfo.InvariantCulture,
 						Loc<EffectDurationLoc>.Get(cont.Language).UnspecifiedEffectEnded,
 						this.EffectName));
 			}

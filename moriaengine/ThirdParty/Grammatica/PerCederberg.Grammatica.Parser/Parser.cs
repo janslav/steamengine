@@ -638,9 +638,9 @@ namespace PerCederberg.Grammatica.Parser {
 			}
 			if (min == 0 && max == 1) {
 				buffer.Append("]");
-			} else if (min == 0 && max == Int32.MaxValue) {
+			} else if (min == 0 && max == int.MaxValue) {
 				buffer.Append("*");
-			} else if (min == 1 && max == Int32.MaxValue) {
+			} else if (min == 1 && max == int.MaxValue) {
 				buffer.Append("+");
 			} else if (min != 1 || max != 1) {
 				buffer.Append("{");

@@ -89,10 +89,10 @@ namespace SteamEngine.LScript {
 		public override string ToString()
 		{
 			if (this.arg == null) {
-				return String.Format(CultureInfo.InvariantCulture, 
+				return string.Format(CultureInfo.InvariantCulture, 
 					"(ArrayList)[{0}]", this.index);
 			}
-			return String.Format(CultureInfo.InvariantCulture, 
+			return string.Format(CultureInfo.InvariantCulture, 
 				"(ArrayList)[{0}] = {1}", this.index, this.arg);
 		}
 	}

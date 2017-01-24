@@ -30,10 +30,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
 			object[] argsArray = args.GetArgsArray();
-			minX = String.Concat(argsArray[0]);
-			minY = String.Concat(argsArray[1]);
-			maxX = String.Concat(argsArray[2]);
-			maxY = String.Concat(argsArray[3]);
+			minX = string.Concat(argsArray[0]);
+			minY = string.Concat(argsArray[1]);
+			maxX = string.Concat(argsArray[2]);
+			maxY = string.Concat(argsArray[3]);
 
 			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
 			//pozadi    

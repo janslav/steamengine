@@ -160,7 +160,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				this.field.SetValue(oSelf, resultString);
 				return null;
 			} catch (Exception e) {
@@ -171,7 +171,7 @@ namespace SteamEngine.LScript {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				this.field.SetValue(vars.self, resultString);
 				return null;
 			} catch (Exception e) {

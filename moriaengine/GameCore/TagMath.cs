@@ -63,7 +63,7 @@ namespace SteamEngine {
 		public static string SGetTagNotNull(TagHolder from, TagKey which) {
 			string retVal = SGetTag(from, which);
 			if (retVal == null) {
-				return String.Empty; //return "" instead of null
+				return string.Empty; //return "" instead of null
 			}
 			return retVal;
 		}

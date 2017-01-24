@@ -249,7 +249,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				return this.method.Invoke(oSelf, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;
@@ -264,7 +264,7 @@ namespace SteamEngine.LScript {
 		public object TryRun(ScriptVars vars, object[] results) {
 			//Console.WriteLine("OpNode_MethodWrapper results: "+Tools.ObjToString(results));
 			try {
-				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				return this.method.Invoke(vars.self, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;

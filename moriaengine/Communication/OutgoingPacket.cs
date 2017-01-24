@@ -114,19 +114,19 @@ namespace SteamEngine.Communication {
 		        That writes "foo" in unicode, which takes 6 bytes, so numBytes would be 6.
 		*/
 		protected void EncodeBigEndianUnicodeString(string value) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			int len = value.Length;
 			this.SeekFromCurrent(Encoding.BigEndianUnicode.GetBytes(value, 0, len, this.buffer, this.position));
 		}
 
 		protected void EncodeLittleEndianUnicodeString(string value) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			int len = value.Length;
 			this.SeekFromCurrent(Encoding.Unicode.GetBytes(value, 0, len, this.buffer, this.position));
 		}
 
 		protected void EncodeLittleEndianUnicodeStringWithLen(string value) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			int bytesCount = Encoding.Unicode.GetBytes(value, 0, value.Length, this.buffer, this.position + 2);
 			this.EncodeUShort((ushort) bytesCount);
 			this.SeekFromCurrent(bytesCount);
@@ -139,7 +139,7 @@ namespace SteamEngine.Communication {
 		    to fill up the space.
 		*/
 		protected void EncodeBigEndianUnicodeString(string value, int maxlen) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			int len = Math.Min(value.Length, maxlen);
 			int written = Encoding.BigEndianUnicode.GetBytes(value, 0, len, this.buffer, this.position);
 			this.SeekFromCurrent(written);
@@ -147,7 +147,7 @@ namespace SteamEngine.Communication {
 		}
 
 		protected void EncodeLittleEndianUnicodeString(string value, int maxlen) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			int len = Math.Min(value.Length, maxlen);
 			int written = Encoding.Unicode.GetBytes(value, 0, (maxlen > len ? len : maxlen), this.buffer, this.position);
 			this.SeekFromCurrent(written);
@@ -155,13 +155,13 @@ namespace SteamEngine.Communication {
 		}
 
 		protected void EncodeASCIIStringTerminated(string value) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			this.SeekFromCurrent(Encoding.ASCII.GetBytes(value, 0, value.Length, this.buffer, this.position));
 			this.EncodeByte(0);
 		}
 
 		protected void EncodeASCIIString(string value, int maxlen) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			int len = Math.Min(value.Length, maxlen);
 			int written = Encoding.ASCII.GetBytes(value, 0, len, this.buffer, this.position);
 			this.SeekFromCurrent(written);
@@ -169,7 +169,7 @@ namespace SteamEngine.Communication {
 		}
 
 		protected void EncodeASCIIStringWithLenByte(string value) {
-			value = String.Concat(value);
+			value = string.Concat(value);
 			int len = value.Length;
 			this.EncodeByte((byte) len);
 			Encoding.ASCII.GetBytes(value, 0, len, this.buffer, this.position);

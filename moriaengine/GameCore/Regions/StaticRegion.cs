@@ -178,7 +178,7 @@ namespace SteamEngine.Regions {
 		public override void LoadLine(string filename, int line, string valueName, string valueString) {
 			switch (valueName) {
 				case "name":
-					this.name = String.Intern(ConvertTools.LoadSimpleQuotedString(valueString));
+					this.name = string.Intern(ConvertTools.LoadSimpleQuotedString(valueString));
 					break;
 				default:
 					base.LoadLine(filename, line, valueName, valueString);
@@ -523,7 +523,7 @@ namespace SteamEngine.Regions {
 			set {
 				this.ThrowIfDeleted();
 				byName.Remove(this.name);
-				this.name = String.Intern(value);
+				this.name = string.Intern(value);
 				if (this != voidRegion) {
 					byName[value] = this;
 				}
@@ -540,7 +540,7 @@ namespace SteamEngine.Regions {
 					throw new OverrideNotAllowedException("Region with defname " + LogStr.Ident(value) + " already exists.");
 				}
 				this.ThrowIfDeleted();
-				value = String.Intern(value);
+				value = string.Intern(value);
 				base.Defname = value;
 				if (this != voidRegion) {
 					byDefname[value] = this;

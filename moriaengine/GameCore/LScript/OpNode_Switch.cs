@@ -207,7 +207,7 @@ namespace SteamEngine.LScript {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object value = String.Concat(this.switchNode.Run(vars));
+			object value = string.Concat(this.switchNode.Run(vars));
 			OpNode node = (OpNode) this.cases[value];
 			if (node != nullOpNodeInstance) {
 				if (node == null) {

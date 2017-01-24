@@ -200,7 +200,7 @@ namespace SteamEngine.LScript {
 			} finally {
 				vars.self = oSelf;
 			}
-			string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+			string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 
 			try {
 				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
@@ -224,7 +224,7 @@ namespace SteamEngine.LScript {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = String.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
 				MethodTimer timer = new MethodTimer(this.method, new object[] { resultString });
 				timer.DueInSeconds = seconds;

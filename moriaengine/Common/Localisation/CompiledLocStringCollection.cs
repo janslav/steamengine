@@ -22,7 +22,7 @@ namespace SteamEngine.Common {
 		private void SetFieldsFromContents() {
 			foreach (var fi in typeof(T).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 				if (fi.FieldType == typeof(string) && !fi.DeclaringType.IsAbstract) {
-					fi.SetValue(this, String.Intern(this.GetEntry(fi.Name)));
+					fi.SetValue(this, string.Intern(this.GetEntry(fi.Name)));
 				}
 			}
 		}

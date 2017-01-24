@@ -352,7 +352,7 @@ namespace Jolt {
 		/// </exception>
 		private static string ResolveDocCommentsLocation(Assembly assembly, XmlDocCommentDirectoryElementCollection directories, IFile fileProxy) {
 			string assemblyFileName = assembly.GetName().Name;
-			string xmlDocCommentsFilename = String.Concat(assemblyFileName, XmlFileExtension);
+			string xmlDocCommentsFilename = string.Concat(assemblyFileName, XmlFileExtension);
 
 			var names = directories.Cast<XmlDocCommentDirectoryElement>().Select(e => e.Name).ToList();
 			names.Insert(0, Path.GetDirectoryName(assembly.Location));

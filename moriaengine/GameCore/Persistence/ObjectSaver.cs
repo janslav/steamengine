@@ -288,7 +288,7 @@ namespace SteamEngine.Persistence {
 			if (ConvertTools.IsNumberType(t)) {
 				return ((IConvertible) value).ToString(CultureInfo.InvariantCulture.NumberFormat);
 			}
-			if (t.Equals(typeof(String))) {
+			if (t.Equals(typeof(string))) {
 				string stringAsSingleLine = Tools.EscapeNewlines((string) value);
 				return "\"" + stringAsSingleLine + "\""; //returns the string in ""
 			}
@@ -358,7 +358,7 @@ namespace SteamEngine.Persistence {
 		/// <summary>Find out if the specified type is known to be saveable by the ObjectSaver class.</summary>
 		public static bool IsSaveableType(Type t) {
 			if (ConvertTools.IsNumberType(t)) {
-			} else if (t.Equals(typeof(String))) {
+			} else if (t.Equals(typeof(string))) {
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {
@@ -372,7 +372,7 @@ namespace SteamEngine.Persistence {
 
 		public static bool IsSimpleSaveableType(Type t) {
 			if (ConvertTools.IsNumberType(t)) {
-			} else if (t.Equals(typeof(String))) {
+			} else if (t.Equals(typeof(string))) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {
 			} else {
@@ -384,7 +384,7 @@ namespace SteamEngine.Persistence {
 		/// <summary>Types that are either simple or have their coordinator for saving</summary>
 		public static bool IsSimpleSaveableOrCoordinated(Type t) {
 			if (ConvertTools.IsNumberType(t)) {
-			} else if (t.Equals(typeof(String))) {
+			} else if (t.Equals(typeof(string))) {
 			} else if (typeof(AbstractScript).IsAssignableFrom(t)) {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {

@@ -98,12 +98,12 @@ namespace SteamEngine.CompiledScripts {
 
 			pl.craftingOrder.SelectionQueue.Dequeue(); //remove the item from the queue
 			if (pl.craftingOrder.SelectionQueue.Count > 0) { //still something to be made
-				cont.SysMessage(String.Format(
+				cont.SysMessage(string.Format(
 					Loc<CraftSkillsLoc>.Get(cont.Language).ResourcesLackingButContinue,
 					iDefToMake.Name));
 				pl.StartCrafting(); //start again with next item(s)
 			} else {
-				cont.SysMessage(String.Format(
+				cont.SysMessage(string.Format(
 					Loc<CraftSkillsLoc>.Get(cont.Language).ResourcesLackingAndFinish,
 					iDefToMake.Name));
 				pl.Delete(); //same as calling "uninstall plugin"

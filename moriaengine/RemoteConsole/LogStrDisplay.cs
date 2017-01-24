@@ -42,7 +42,7 @@ namespace SteamEngine.RemoteConsole {
 
 			string exe, args;
 			if (Settings.GetCommandLineForExt(ext, out exe, out args)) {
-				args = String.Format(args, filename, line);
+				args = string.Format(args, filename, line);
 				Process.Start(exe, args);
 			} else {
 				Process.Start(filename);
@@ -100,7 +100,7 @@ namespace SteamEngine.RemoteConsole {
 					string rtf = this.txtBox.SelectedRtf;
 					this.contractedTexts.Add(rtf);
 					this.txtBox.SelectedText = " ";
-					this.txtBox.InsertLink(contractedSign, String.Concat(this.contractedTexts.Count - 1));
+					this.txtBox.InsertLink(contractedSign, string.Concat(this.contractedTexts.Count - 1));
 					this.txtBox.AppendText(Environment.NewLine);
 				}
 			}

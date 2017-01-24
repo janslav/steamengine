@@ -132,7 +132,7 @@ namespace SteamEngine {
 					errText = string.Concat(err);
 				}
 				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. ERR: " + errText);
-				commandSrc.WriteLine(String.Format(CultureInfo.InvariantCulture,
+				commandSrc.WriteLine(string.Format(CultureInfo.InvariantCulture,
 					Loc<CommandLoc>.Get(commandSrc.Language).CommandFailed,
 					command, errText));
 			}
@@ -176,7 +176,7 @@ namespace SteamEngine {
 					bool success = SimpleCommandParser.TryRunSnippet(commandSrc, self, code, out errText);
 					LogCommand(commandSrc, code, success, errText);
 				} else {
-					string codeAsKey = String.Concat(self == null ? typeof(void).FullName : self.GetType().FullName, code);
+					string codeAsKey = string.Concat(self == null ? typeof(void).FullName : self.GetType().FullName, code);
 					LScriptHolder scriptHolder;
 					if (!gmCommandsCache.TryGetValue(codeAsKey, out scriptHolder)) {
 						try {
@@ -309,7 +309,7 @@ namespace SteamEngine {
 				} else if (nameMatched) {
 					errText = Loc<CommandLoc>.Get(commandSrc.Language).WrongCommandArgument;
 				} else {
-					errText = String.Format(CultureInfo.InvariantCulture,
+					errText = string.Format(CultureInfo.InvariantCulture,
 						Loc<CommandLoc>.Get(commandSrc.Language).UnknownCommand,
 						name);
 				}

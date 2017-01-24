@@ -160,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Click(clicker, clickerState, clickerConn);
 			Language language = clickerState.Language;
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
-				String.Concat(this.Count.ToString(), " ", Loc<ContainerLoc>.Get(language).itemsGenitiv, ", ",
+				string.Concat(this.Count.ToString(), " ", Loc<ContainerLoc>.Get(language).itemsGenitiv, ", ",
 				this.Weight.ToString(), " ", Loc<ContainerLoc>.Get(language).stonesGenitiv),
 				0);
 		}

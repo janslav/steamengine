@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//we will store it in the special dictionary
 			if (!prefixTypes.TryGetValue(t, out valuePrefix)) {
 				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
-				if (t.IsEnum || ConvertTools.IsNumberType(t) || t.Equals(typeof(String))
+				if (t.IsEnum || ConvertTools.IsNumberType(t) || t.Equals(typeof(string))
 					|| typeof(Region).IsAssignableFrom(t) || value == Globals.Instance) {
 				} else if (typeof(Thing).IsAssignableFrom(t)) {
 					valuePrefix = "#";
@@ -165,7 +165,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (ConvertTools.IsNumberType(t)) {
 				return "(Num)";
 			}
-			if (t.Equals(typeof(String))) {
+			if (t.Equals(typeof(string))) {
 				return "(Str)";
 			}
 			if (typeof(Region).IsAssignableFrom(t)) {

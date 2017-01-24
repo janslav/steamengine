@@ -1056,7 +1056,7 @@ namespace SteamEngine.RemoteConsole {
 
 				// Append the bits to the RTF string
 				for (int i = 0; i < _buffer.Length; ++i) {
-					_rtf.Append(String.Format("{0:X2}", _buffer[i]));
+					_rtf.Append(string.Format("{0:X2}", _buffer[i]));
 				}
 
 				return _rtf.ToString();
@@ -1274,15 +1274,15 @@ namespace SteamEngine.RemoteConsole {
 		#endregion
 
 		#region CHARFORMAT2 Flags
-		private const UInt32 CFE_BOLD = 0x0001;
-		private const UInt32 CFE_ITALIC = 0x0002;
-		private const UInt32 CFE_UNDERLINE = 0x0004;
-		private const UInt32 CFE_STRIKEOUT = 0x0008;
-		private const UInt32 CFE_PROTECTED = 0x0010;
-		private const UInt32 CFE_LINK = 0x0020;
-		private const UInt32 CFE_AUTOCOLOR = 0x40000000;
-		private const UInt32 CFE_SUBSCRIPT = 0x00010000;		/* Superscript and subscript are */
-		private const UInt32 CFE_SUPERSCRIPT = 0x00020000;		/*  mutually exclusive			 */
+		private const uint CFE_BOLD = 0x0001;
+		private const uint CFE_ITALIC = 0x0002;
+		private const uint CFE_UNDERLINE = 0x0004;
+		private const uint CFE_STRIKEOUT = 0x0008;
+		private const uint CFE_PROTECTED = 0x0010;
+		private const uint CFE_LINK = 0x0020;
+		private const uint CFE_AUTOCOLOR = 0x40000000;
+		private const uint CFE_SUBSCRIPT = 0x00010000;		/* Superscript and subscript are */
+		private const uint CFE_SUPERSCRIPT = 0x00020000;		/*  mutually exclusive			 */
 
 		private const int CFM_SMALLCAPS = 0x0040;		/* (*)	*/
 		private const int CFM_ALLCAPS = 0x0080;			/* Displayed by 3.0	*/
@@ -1305,19 +1305,19 @@ namespace SteamEngine.RemoteConsole {
 		private const int CFM_REVAUTHOR = 0x00008000;
 
 
-		private const UInt32 CFM_BOLD = 0x00000001;
-		private const UInt32 CFM_ITALIC = 0x00000002;
-		private const UInt32 CFM_UNDERLINE = 0x00000004;
-		private const UInt32 CFM_STRIKEOUT = 0x00000008;
-		private const UInt32 CFM_PROTECTED = 0x00000010;
-		private const UInt32 CFM_LINK = 0x00000020;
-		private const UInt32 CFM_SIZE = 0x80000000;
-		private const UInt32 CFM_COLOR = 0x40000000;
-		private const UInt32 CFM_FACE = 0x20000000;
-		private const UInt32 CFM_OFFSET = 0x10000000;
-		private const UInt32 CFM_CHARSET = 0x08000000;
-		private const UInt32 CFM_SUBSCRIPT = CFE_SUBSCRIPT | CFE_SUPERSCRIPT;
-		private const UInt32 CFM_SUPERSCRIPT = CFM_SUBSCRIPT;
+		private const uint CFM_BOLD = 0x00000001;
+		private const uint CFM_ITALIC = 0x00000002;
+		private const uint CFM_UNDERLINE = 0x00000004;
+		private const uint CFM_STRIKEOUT = 0x00000008;
+		private const uint CFM_PROTECTED = 0x00000010;
+		private const uint CFM_LINK = 0x00000020;
+		private const uint CFM_SIZE = 0x80000000;
+		private const uint CFM_COLOR = 0x40000000;
+		private const uint CFM_FACE = 0x20000000;
+		private const uint CFM_OFFSET = 0x10000000;
+		private const uint CFM_CHARSET = 0x08000000;
+		private const uint CFM_SUBSCRIPT = CFE_SUBSCRIPT | CFE_SUPERSCRIPT;
+		private const uint CFM_SUPERSCRIPT = CFM_SUBSCRIPT;
 
 		private const byte CFU_UNDERLINENONE = 0x00000000;
 		private const byte CFU_UNDERLINE = 0x00000001;
@@ -1400,7 +1400,7 @@ namespace SteamEngine.RemoteConsole {
 			this.SetSelectionStyle(CFM_LINK, link ? CFE_LINK : 0);
 		}
 
-		private void SetSelectionStyle(UInt32 mask, UInt32 effect) {
+		private void SetSelectionStyle(uint mask, uint effect) {
 			CHARFORMAT2 cf = new CHARFORMAT2();
 			cf.cbSize = Marshal.SizeOf(cf);
 			cf.dwMask = mask;
