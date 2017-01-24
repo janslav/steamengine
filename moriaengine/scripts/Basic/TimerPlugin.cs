@@ -15,7 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using SteamEngine.Persistence;
 using SteamEngine.Timers;
 

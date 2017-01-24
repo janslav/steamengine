@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using EQATEC.Profiler;
 using Shielded;
@@ -481,7 +480,7 @@ namespace SteamEngine {
 			}
 		}
 
-		private class ModelValueImpl : FieldValueImpl {
+		private sealed class ModelValueImpl : FieldValueImpl {
 
 			private readonly Shielded<State> shieldedState;
 
@@ -619,7 +618,7 @@ namespace SteamEngine {
 			}
 		}
 
-		private class TypelessValueImpl : FieldValueImpl {
+		private sealed class TypelessValueImpl : FieldValueImpl {
 			private readonly Shielded<object> obj;
 
 			//resolving constructor
@@ -654,7 +653,7 @@ namespace SteamEngine {
 			}
 		}
 
-		private class ThingDefValueImpl : TypedValueImpl {
+		private sealed class ThingDefValueImpl : TypedValueImpl {
 			//resolving constructor
 			[SkipInstrumentation]
 			internal ThingDefValueImpl(Type type)
@@ -662,7 +661,7 @@ namespace SteamEngine {
 			}
 
 			[SkipInstrumentation]
-			protected ThingDefValueImpl(ThingDefValueImpl copyFrom)
+			private ThingDefValueImpl(ThingDefValueImpl copyFrom)
 				: base(copyFrom) {
 			}
 

@@ -31,7 +31,6 @@
  * Copyright (c) 2003 Per Cederberg. All rights reserved.
  */
 
-using System;
 using System.Collections;
 
 namespace PerCederberg.Grammatica.Parser {

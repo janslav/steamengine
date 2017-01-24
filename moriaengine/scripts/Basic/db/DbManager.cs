@@ -15,7 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System;
 using System.Data;
 using System.Net;
 using MySql.Data.MySqlClient;
