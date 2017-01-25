@@ -28,11 +28,11 @@ namespace SteamEngine {
 		where TDef : AbstractIndexedDef<TDef, TIndex> {
 
 		//for string indices, be case insensitive
-		private static ShieldedDictNc<TIndex, TDef> byIndex = (typeof(TIndex) == typeof(string)) ?
+		private static readonly ShieldedDictNc<TIndex, TDef> byIndex = (typeof(TIndex) == typeof(string)) ?
 			new ShieldedDictNc<TIndex, TDef>(comparer: (IEqualityComparer<TIndex>) StringComparer.OrdinalIgnoreCase) :
 			new ShieldedDictNc<TIndex, TDef>();
 
-		private TIndex index;
+		private readonly Shielded<TIndex> shieldedIndex = new Shielded<TIndex>();
 
 		protected AbstractIndexedDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -46,54 +46,55 @@ namespace SteamEngine {
 
 		public TIndex DefIndex {
 			get {
-				return this.index;
+				return this.shieldedIndex.Value;
 			}
 			protected set {
-				this.index = value;
+				this.shieldedIndex.Value = value;
 			}
 		}
 
 		public static int IndexedCount {
 			get {
+				Shield.AssertInTransaction();
 				return byIndex.Count();
 			}
 		}
 
 		public static IEnumerable<TDef> AllIndexedDefs {
 			get {
+				Shield.AssertInTransaction();
 				return byIndex.Values;
 			}
 		}
 
 		public override AbstractScript Register() {
-			try {
-				TDef previous;
-				if (byIndex.TryGetValue(this.index, out previous)) {
-					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractIndexedDef '" + this.index + "'");
-					}
-				} else {
-					byIndex.Add(this.index, (TDef) this);
+			Shield.AssertInTransaction();
+
+			TDef previous;
+			var index = this.DefIndex;
+			if (byIndex.TryGetValue(index, out previous)) {
+				if (previous != this) {
+					throw new SEException("previous != this when registering AbstractIndexedDef '" + index + "'");
 				}
-			} finally {
-				base.Register();
+			} else {
+				byIndex.Add(index, (TDef) this);
 			}
-			return this;
+			return base.Register();
 		}
 
 		protected override void Unregister() {
-			try {
-				TDef previous;
-				if (byIndex.TryGetValue(this.index, out previous)) {
-					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractIndexedDef '" + this.index + "'");
-					} else {
-						byIndex.Remove(this.index);
-					}
+			Shield.AssertInTransaction();
+
+			TDef previous;
+			var index = this.DefIndex;
+			if (byIndex.TryGetValue(index, out previous)) {
+				if (previous != this) {
+					throw new SEException("previous != this when registering AbstractIndexedDef '" + index + "'");
+				} else {
+					byIndex.Remove(index);
 				}
-			} finally {
-				base.Unregister();
 			}
+			base.Unregister();
 		}
 	}
 }
