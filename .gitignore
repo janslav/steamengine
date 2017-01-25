@@ -1,0 +1,26 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/build
+/AuxiliaryServer/obj
+*.suo
+/Common/bin
+/Common/obj
+/Communication/bin
+/Communication/obj
+/GameCore/obj
+/Generated/obj
+*.log
+/SphereShardConverter/obj
+/Tests
+/ThirdParty/obj
+/steamengine.ini
+/RemoteConsole/obj
+/ProcessRestarter/obj
+/Generated
+/scripts/obj
+*.Generated.cs
+/packages/SharpZipLib*
+/packages/SharpSvn*
+/packages/FluentAssertions*
