@@ -42,9 +42,9 @@ namespace SteamEngine {
 		}
 
 		public static void ForgetAll() {
-			Shield.AssertInTransaction();
-			foreach (AbstractScript gs in byDefname.Values.ToList()) {
-				gs.Unregister();
+			foreach (AbstractScript gs in AllScripts) {
+				Shield.InTransaction(() =>
+					gs.Unregister());
 			}
 			Sanity.IfTrueThrow(byDefname.Any(), "byDefname.Count > 0 after UnloadAll");
 		}

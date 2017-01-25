@@ -34,10 +34,13 @@ namespace SteamEngine {
 		static int uids;
 		private readonly int uid;
 
-		private readonly Hashtable fieldValues = new Hashtable(StringComparer.OrdinalIgnoreCase); //not dictionary because keys are both strings and tagkeys
+		//keys are both strings and tagkeys
+		private readonly ShieldedDictNc<object, FieldValue> fieldValues =
+			new ShieldedDictNc<object, FieldValue>(comparer: new GenericComparerDecorator(StringComparer.OrdinalIgnoreCase));
+
 		private readonly string filename;
 		private readonly int headerLine;
-		private string altdefname;
+		private readonly Shielded<string> altdefname = new Shielded<string>();
 		private bool alreadySaved;
 
 		#region Accessors
@@ -47,11 +50,11 @@ namespace SteamEngine {
 
 		public override string ToString() {
 			//zobrazovat budeme radsi napred defname a pak udaj o typu (v dialozich se to totiz casto nevejde)
-			if (string.IsNullOrEmpty(this.altdefname) || string.IsNullOrEmpty(this.Defname)) {
+			if (string.IsNullOrEmpty(this.Altdefname) || string.IsNullOrEmpty(this.Defname)) {
 				return string.Concat("[", this.PrettyDefname, " : ", Tools.TypeToString(this.GetType()), "]");
 				//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.PrettyDefname, "]");
 			}
-			return string.Concat("[", this.Defname, "/", this.altdefname, " : ", Tools.TypeToString(this.GetType()), "]");
+			return string.Concat("[", this.Defname, "/", this.Altdefname, " : ", Tools.TypeToString(this.GetType()), "]");
 			//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.altdefname, "]");
 		}
 
@@ -63,11 +66,12 @@ namespace SteamEngine {
 
 		public string Altdefname {
 			get {
-				return this.altdefname;
+				return this.altdefname.Value;
 			}
 			protected set {
+				Shield.AssertInTransaction();
 				this.Unregister();
-				this.altdefname = value;
+				this.altdefname.Value = value;
 				this.Register();
 			}
 		}
@@ -76,8 +80,9 @@ namespace SteamEngine {
 			get {
 				//from the two available defnames (like c_0x190 and c_man) it returns the more understandable (c_man)
 				if (this.Defname.IndexOf("_0x") > 0) {
-					if (this.altdefname != null) {
-						return this.altdefname;
+					var alt = this.Altdefname;
+					if (alt != null) {
+						return alt;
 					}
 				}
 				return this.Defname;
@@ -99,6 +104,7 @@ namespace SteamEngine {
 
 		#region Loading from saves
 		internal static void LoadSectionFromSaves(PropsSection input) {
+			Shield.AssertInTransaction();
 			//todo: a way to load new defs (or just regions)
 
 			string typeName = input.HeaderType;
@@ -127,10 +133,11 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void LoadField_Delayed(object resolvedObject, string filename, int line, object args) {
+			Shield.AssertInTransaction();
 			string fieldName = (string) args;
-			FieldValue fv = (FieldValue) this.fieldValues[fieldName];
+			FieldValue fv;
 
-			if (fv == null) {//that means it's not in scripts
+			if (!this.fieldValues.TryGetValue(fieldName, out fv)) {//that means it's not in scripts
 				Match m = TagHolder.tagRE.Match(fieldName);
 				if (m.Success) {    //If the name begins with 'tag.'
 					string tagName = m.Groups["name"].Value;
@@ -161,11 +168,13 @@ namespace SteamEngine {
 
 		#region FieldValue methods
 		protected FieldValue InitTypedField(string name, object value, Type type) {
+			Shield.AssertInTransaction();
 			if (typeof(ThingDef).IsAssignableFrom(type)) {
 				return this.InitThingDefField(name, value, type);
 			}
-			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
-			if (fieldValue == null) {
+
+			FieldValue fieldValue;
+			if (!this.fieldValues.TryGetValue(name, out fieldValue)) {
 				fieldValue = new FieldValue(name, FieldValueType.Typed, type, value);
 				this.fieldValues[name] = fieldValue;
 			} else {
@@ -175,8 +184,9 @@ namespace SteamEngine {
 		}
 
 		protected FieldValue InitThingDefField(string name, object value, Type type) {
-			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
-			if (fieldValue == null) {
+			Shield.AssertInTransaction();
+			FieldValue fieldValue;
+			if (!this.fieldValues.TryGetValue(name, out fieldValue)) {
 				fieldValue = new FieldValue(name, FieldValueType.ThingDefType, type, value);
 				this.fieldValues[name] = fieldValue;
 			} else {
@@ -186,8 +196,9 @@ namespace SteamEngine {
 		}
 
 		protected FieldValue InitModelField(string name, object value) {
-			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
-			if (fieldValue == null) {
+			Shield.AssertInTransaction();
+			FieldValue fieldValue;
+			if (!this.fieldValues.TryGetValue(name, out fieldValue)) {
 				fieldValue = new FieldValue(name, FieldValueType.Model, null, value);
 				this.fieldValues[name] = fieldValue;
 			} else {
@@ -197,8 +208,9 @@ namespace SteamEngine {
 		}
 
 		protected FieldValue InitTypelessField(string name, object value) {
-			FieldValue fieldValue = (FieldValue) this.fieldValues[name];
-			if (fieldValue == null) {
+			Shield.AssertInTransaction();
+			FieldValue fieldValue;
+			if (!this.fieldValues.TryGetValue(name, out fieldValue)) {
 				fieldValue = new FieldValue(name, FieldValueType.Typeless, null, value);
 				this.fieldValues[name] = fieldValue;
 			} else {
@@ -216,20 +228,21 @@ namespace SteamEngine {
 		//}
 
 		protected virtual void SetCurrentFieldValue(string name, object value) {
+			Shield.AssertInTransaction();
 			((FieldValue) this.fieldValues[name]).CurrentValue = value;
 		}
 
 		protected object GetDefaultFieldValue(string name) {
-			FieldValue fv = (FieldValue) this.fieldValues[name];
-			if (fv != null) {
+			FieldValue fv;
+			if (this.fieldValues.TryGetValue(name, out fv)) {
 				return fv.DefaultValue;
 			}
 			return null;
 		}
 
 		protected object GetCurrentFieldValue(string name) {
-			FieldValue fv = (FieldValue) this.fieldValues[name];
-			if (fv != null) {
+			FieldValue fv;
+			if (this.fieldValues.TryGetValue(name, out fv)) {
 				return fv.CurrentValue;
 			}
 			return null;
@@ -272,13 +285,15 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Save(SaveStream output) {
+			Shield.AssertInTransaction();
+
 			bool headerWritten = false;
-			foreach (DictionaryEntry entry in this.fieldValues) {
-				if (entry.Key is TagKey) {//so that tags dont get written twice
+			foreach (var entry in this.fieldValues) {
+				if (entry.Key is TagKey) { //so that tags dont get written twice
 					continue;
 				}
 				try {
-					FieldValue fv = (FieldValue) entry.Value;
+					var fv = entry.Value;
 					if (fv.ShouldBeSaved()) {
 						if (!headerWritten) {
 							output.WriteLine();
@@ -315,6 +330,7 @@ namespace SteamEngine {
 		private readonly ShieldedSeqNc<PropsLine> postponedLines = new ShieldedSeqNc<PropsLine>();
 
 		public static Type GetDefTypeByName(string name) {
+			Shield.AssertInTransaction();
 			ConstructorInfo ctor;
 			if (constructorsByTypeName.TryGetValue(name, out ctor)) {
 				return ctor.DeclaringType;
@@ -323,11 +339,13 @@ namespace SteamEngine {
 		}
 
 		public static void RegisterDefnameParser<T>(DefnameParser parserMethod) where T : AbstractDef {
+			Shield.AssertInTransaction();
 			registeredDefnameParsersByType.Add(typeof(T), parserMethod); //throws in case of duplicity
 			inferredDefnameParsersByType.Clear();
 		}
 
 		private static DefnameParser GetDefnameParser(Type defType) {
+			Shield.AssertInTransaction();
 			DefnameParser parserMethod;
 
 			if (inferredDefnameParsersByType.TryGetValue(defType, out parserMethod)) {
@@ -435,7 +453,7 @@ namespace SteamEngine {
 			}
 
 			constructed.InternalSetDefname(defname);
-			constructed.altdefname = altdefname;
+			constructed.altdefname.Value = altdefname;
 
 			constructed.LoadScriptLines(input);
 
@@ -489,14 +507,15 @@ namespace SteamEngine {
 		public override AbstractScript Register() {
 			Shield.AssertInTransaction();
 
-			if (!string.IsNullOrEmpty(this.altdefname)) {
+			var alt = this.Altdefname;
+			if (!string.IsNullOrEmpty(alt)) {
 				AbstractScript previous;
-				if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+				if (AllScriptsByDefname.TryGetValue(alt, out previous)) {
 					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractScript '" + this.altdefname + "'");
+						throw new SEException("previous != this when registering AbstractScript '" + alt + "'");
 					}
 				} else {
-					AllScriptsByDefname.Add(this.altdefname, this);
+					AllScriptsByDefname.Add(alt, this);
 				}
 			}
 
@@ -508,13 +527,14 @@ namespace SteamEngine {
 		protected override void Unregister() {
 			Shield.AssertInTransaction();
 
-			if (!string.IsNullOrEmpty(this.altdefname)) {
+			var alt = this.Altdefname;
+			if (!string.IsNullOrEmpty(alt)) {
 				AbstractScript previous;
-				if (AllScriptsByDefname.TryGetValue(this.altdefname, out previous)) {
+				if (AllScriptsByDefname.TryGetValue(alt, out previous)) {
 					if (previous != this) {
-						throw new SEException("previous != this when unregistering AbstractScript '" + this.altdefname + "'. Should not happen.");
+						throw new SEException("previous != this when unregistering AbstractScript '" + alt + "'. Should not happen.");
 					} else {
-						AllScriptsByDefname.Remove(this.altdefname);
+						AllScriptsByDefname.Remove(alt);
 					}
 				}
 			}
@@ -545,13 +565,15 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename")]
 		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
+			Shield.AssertInTransaction();
+
 			Match m = TagHolder.tagRE.Match(param);
 			FieldValue fieldValue;
 			if (m.Success) {    //If the name begins with 'tag.'
 				string tagName = m.Groups["name"].Value;
 				TagKey tk = TagKey.Acquire(tagName);
-				fieldValue = (FieldValue) this.fieldValues[tk];
-				if (fieldValue == null) {
+
+				if (!this.fieldValues.TryGetValue(tk, out fieldValue)) {
 					tagName = "tag." + tagName;
 					fieldValue = new FieldValue(tagName, FieldValueType.Typeless, null, filename, line, args);
 					this.fieldValues[tk] = fieldValue;
@@ -569,8 +591,7 @@ namespace SteamEngine {
 					return;
 				//axis props are ignored. Or shouldnt they? :)
 				default:
-					fieldValue = (FieldValue) this.fieldValues[param];
-					if (fieldValue != null) {
+					if (this.fieldValues.TryGetValue(param, out fieldValue)) {
 						fieldValue.SetFromScripts(filename, line, args);
 						return;
 					}
@@ -579,9 +600,9 @@ namespace SteamEngine {
 		}
 
 		internal static void LoadingFinished() {
-			//load postponed lines. That are those which are not initialised by the start of the loading.
-			//this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
-			//this way, for example ProfessionDef definition can list skills and abilities
+			// load postponed lines. That are those which are not initialised by the start of the loading.
+			// this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
+			// this way, for example ProfessionDef definition can list skills and abilities
 			foreach (AbstractScript script in AllScripts) {
 				AbstractDef def = script as AbstractDef;
 				if (def != null) {
@@ -639,29 +660,31 @@ namespace SteamEngine {
 			Logger.WriteDebug("Resolving " + count + " defs");
 
 			DateTime before = DateTime.Now;
-			int a = 0;
+			var a = new Shielded<int>();
 			int countPerCent = count / 100;
 			foreach (var script in all) {
-				AbstractDef def = script as AbstractDef;
-				if (def != null) {
-					if ((a % countPerCent) == 0) {
-						Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
-					}
-					if (!def.IsUnloaded) {//those should have already stated what's the problem :)
-						foreach (FieldValue fv in def.fieldValues.Values) {
-							try {
-								fv.ResolveTemporaryState();
-							} catch (FatalException) {
-								throw;
-							} catch (TransException) {
-								throw;
-							} catch (Exception e) {
-								Logger.WriteWarning(e);
+				Shield.InTransaction(() => {
+					AbstractDef def = script as AbstractDef;
+					if (def != null) {
+						if ((a.Value % countPerCent) == 0) {
+							Logger.SetTitle("Resolving def field values: " + ((a.Value * 100) / count) + " %");
+						}
+						if (!def.IsUnloaded) { //those should have already stated what's the problem :)
+							foreach (FieldValue fv in def.fieldValues.Values) {
+								try {
+									fv.ResolveTemporaryState();
+								} catch (FatalException) {
+									throw;
+								} catch (TransException) {
+									throw;
+								} catch (Exception e) {
+									Logger.WriteWarning(e);
+								}
 							}
 						}
+						a.Value++;
 					}
-					a++;
-				}
+				});
 			}
 			DateTime after = DateTime.Now;
 			Logger.WriteDebug("...took " + (after - before));
@@ -669,7 +692,9 @@ namespace SteamEngine {
 		}
 
 		public override void Unload() {
-			foreach (FieldValue fv in this.fieldValues.Values) {
+			Shield.AssertInTransaction();
+
+			foreach (FieldValue fv in this.fieldValues.Values.ToList()) {
 				fv.Unload();
 			}
 
@@ -681,33 +706,38 @@ namespace SteamEngine {
 
 		//unloads instances that come from scripts.
 		internal static void ForgetScripts() {
-			ForgetAll(); //just to be sure - unregister everything. Should be called by Main anyway
+			ForgetAll(); //just to be sure - unregister everything. Should have been be called by Main anyway at this point
 
-			constructorsByTypeName.Clear();//we assume that inside core there are no non-abstract defs
+			Shield.InTransaction(() => {
+				constructorsByTypeName.Clear(); //we assume that inside core there are no non-abstract defs
 
-			//only leave the defnameParsers defined in core (like AbstractSkillDef and ThingDef probably? :)
-			inferredDefnameParsersByType.Clear();
+				//only leave the defnameParsers defined in core (like AbstractSkillDef and ThingDef probably? :)
+				inferredDefnameParsersByType.Clear();
 
-			foreach (Type t in new List<Type>(registeredDefnameParsersByType.Keys)) {
-				if (t.Assembly != ClassManager.CoreAssembly) { //not in core
-					registeredDefnameParsersByType.Remove(t);
+				foreach (var t in registeredDefnameParsersByType.Keys.ToList()) {
+					if (t.Assembly != ClassManager.CoreAssembly) {
+						//not in core
+						registeredDefnameParsersByType.Remove(t);
+					}
 				}
-			}
+			});
 		}
 		#endregion Loading from scripts
 
 		#region ITagHolder methods
 		public object GetTag(TagKey tk) {
-			FieldValue fv = (FieldValue) this.fieldValues[tk];
-			if (fv != null) {
+			FieldValue fv;
+			if (this.fieldValues.TryGetValue(tk, out fv)) {
 				return fv.CurrentValue;
 			}
 			return null;
 		}
 
 		public void SetTag(TagKey tk, object value) {
-			FieldValue fv = (FieldValue) this.fieldValues[tk];
-			if (fv == null) {
+			Shield.AssertInTransaction();
+
+			FieldValue fv;
+			if (!this.fieldValues.TryGetValue(tk, out fv)) {
 				string tagName = "tag." + tk;
 				fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
 				this.fieldValues[tk] = fv;
@@ -717,24 +747,44 @@ namespace SteamEngine {
 		}
 
 		public bool HasTag(TagKey tk) {
-			return (this.fieldValues.ContainsKey(tk));
+			return this.fieldValues.ContainsKey(tk);
 		}
 
 		public void RemoveTag(TagKey tk) {
-			FieldValue fv = (FieldValue) this.fieldValues[tk];
-			if (fv != null) {
+			Shield.AssertInTransaction();
+
+			FieldValue fv;
+			if (this.fieldValues.TryGetValue(tk, out fv)) {
 				fv.CurrentValue = null;
 			}
 		}
 
 		public void ClearTags() {
-			foreach (DictionaryEntry entry in this.fieldValues) {
+			Shield.AssertInTransaction();
+
+			foreach (var entry in this.fieldValues) {
 				if (entry.Key is TagKey) {
-					FieldValue fv = (FieldValue) entry.Value;
-					fv.CurrentValue = null;
+					entry.Value.CurrentValue = null;
 				}
 			}
 		}
+
+		public class GenericComparerDecorator : IEqualityComparer<object> {
+			private readonly IEqualityComparer nonGeneriComparer;
+
+			public GenericComparerDecorator(IEqualityComparer nonGeneriComparer) {
+				this.nonGeneriComparer = nonGeneriComparer;
+			}
+
+			bool IEqualityComparer<object>.Equals(object x, object y) {
+				return this.nonGeneriComparer.Equals(x, y);
+			}
+
+			int IEqualityComparer<object>.GetHashCode(object obj) {
+				return this.nonGeneriComparer.GetHashCode(obj);
+			}
+		}
+
 		#endregion ITagHolder methods
 	}
 }
