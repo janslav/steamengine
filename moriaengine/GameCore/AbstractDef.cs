@@ -40,7 +40,7 @@ namespace SteamEngine {
 
 		private readonly string filename;
 		private readonly int headerLine;
-		private readonly Shielded<string> altdefname = new Shielded<string>();
+		private readonly Shielded<string> shieldedAltDefname = new Shielded<string>();
 		private bool alreadySaved;
 
 		#region Accessors
@@ -55,7 +55,7 @@ namespace SteamEngine {
 				//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.PrettyDefname, "]");
 			}
 			return string.Concat("[", this.Defname, "/", this.Altdefname, " : ", Tools.TypeToString(this.GetType()), "]");
-			//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.altdefname, "]");
+			//return string.Concat("[", Tools.TypeToString(this.GetType()), " ", this.Defname, "/", this.shieldedAltDefname, "]");
 		}
 
 		public string Filepos {
@@ -66,12 +66,12 @@ namespace SteamEngine {
 
 		public string Altdefname {
 			get {
-				return this.altdefname.Value;
+				return this.shieldedAltDefname.Value;
 			}
 			protected set {
 				Shield.AssertInTransaction();
 				this.Unregister();
-				this.altdefname.Value = value;
+				this.shieldedAltDefname.Value = value;
 				this.Register();
 			}
 		}
@@ -453,7 +453,7 @@ namespace SteamEngine {
 			}
 
 			constructed.InternalSetDefname(defname);
-			constructed.altdefname.Value = altdefname;
+			constructed.shieldedAltDefname.Value = altdefname;
 
 			constructed.LoadScriptLines(input);
 
