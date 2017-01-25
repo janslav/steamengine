@@ -16,17 +16,18 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
+using Shielded;
 using SteamEngine.Common;
 
-//using SteamEngine.PScript;
 
 namespace SteamEngine {
 	public abstract class AbstractDefTriggerGroupHolder : AbstractDef, ITriggerGroupHolder {
 
 		//attention! this class does not (yet?) use the prevNode field on TGListNode, cos we don't need it here.
-		internal PluginHolder.TGListNode firstTGListNode; //linked list of triggergroup references
+		private readonly ShieldedSeqNc<TriggerGroup> triggerGroups = new ShieldedSeqNc<TriggerGroup>(); //linked list of triggergroup references
 
-		private static List<TGResolver> tgResolvers = new List<TGResolver>();
+		private static readonly ShieldedSeqNc<DelayedResolver> delayedLoaders = new ShieldedSeqNc<DelayedResolver>();
 
 		protected AbstractDefTriggerGroupHolder(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -34,6 +35,8 @@ namespace SteamEngine {
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
+			Shield.AssertInTransaction();
+
 			switch (param) {
 				case "event":
 				case "tevent":
@@ -44,7 +47,7 @@ namespace SteamEngine {
 				case "triggergroup":
 				case "triggergroups":
 					//case "resources"://in sphere, resources are the same like events... is it gonna be that way too in SE? NO!
-					tgResolvers.Add(new TGResolver(this, args, filename, line));
+					delayedLoaders.Add(new DelayedResolver(this, args, filename, line));
 					break;
 				default:
 					base.LoadScriptLine(filename, line, param, args);//the AbstractDef Loadline
@@ -52,13 +55,14 @@ namespace SteamEngine {
 			}
 		}
 
-		//This is necessary, since when our ThingDef are being made, not all scripts may have been loaded yet. -SL
-		private class TGResolver {
-			AbstractDefTriggerGroupHolder cont;
-			string filename, tgName;
-			int line;
+		// This is necessary, since when our ThingDef are being made, not all scripts may have been loaded yet. -SL
+		private class DelayedResolver {
+			private readonly AbstractDefTriggerGroupHolder cont;
+			private readonly string filename;
+			private readonly string tgName;
+			private readonly int line;
 
-			internal TGResolver(AbstractDefTriggerGroupHolder cont, string tgName, string filename, int line) {
+			internal DelayedResolver(AbstractDefTriggerGroupHolder cont, string tgName, string filename, int line) {
 				this.cont = cont;
 				this.tgName = tgName;
 				this.filename = filename;
@@ -66,8 +70,8 @@ namespace SteamEngine {
 			}
 
 			internal void Resolve() {
-				if (this.tgName != "0") {	//"0" means nothing
-					TriggerGroup tg = TriggerGroup.GetByDefname(this.tgName);
+				if (this.tgName != "0") {   //"0" means nothing
+					var tg = TriggerGroup.GetByDefname(this.tgName);
 					if (tg == null) {
 						Logger.WriteWarning(LogStr.FileLine(this.filename, this.line) + "'" + LogStr.Ident(this.tgName) + "' is not a valid TriggerGroup (Event/Type).");
 					} else {
@@ -78,89 +82,46 @@ namespace SteamEngine {
 		}
 
 		internal new static void LoadingFinished() {
-			foreach (TGResolver resolver in tgResolvers) {
-				resolver.Resolve();
+			foreach (var loader in Shield.InTransaction(delayedLoaders.ToList)) {
+				Shield.InTransaction(loader.Resolve);
 			}
-			tgResolvers = new List<TGResolver>();
+
+			Shield.InTransaction(delayedLoaders.Clear);
 		}
 
 		public void AddTriggerGroup(TriggerGroup tg) {
+			Shield.AssertInTransaction();
 			if (tg == null) return;
-			if (this.firstTGListNode == null) {
-				this.firstTGListNode = new PluginHolder.TGListNode(tg);
-			} else {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				while (true) {
-					if (curNode.storedTG == tg) {
-						return;// false;//we already have it
-					}
-					if (curNode.nextNode == null) {
-						curNode.nextNode = new PluginHolder.TGListNode(tg);
-						return;
-					}
-					curNode = curNode.nextNode;
-				}
-				//return true;//we had to add it
+
+			if (!this.triggerGroups.Contains(tg)) {
+				this.triggerGroups.Add(tg);
 			}
 		}
 
 		public IEnumerable<TriggerGroup> GetAllTriggerGroups() {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					yield return curNode.storedTG;
-					curNode = curNode.nextNode;
-				} while (curNode != null);
-			}
+			Shield.AssertInTransaction();
+			return this.triggerGroups;
 		}
 
 		public void RemoveTriggerGroup(TriggerGroup tg) {
+			Shield.AssertInTransaction();
 			if (tg == null) return;
-			if (this.firstTGListNode != null) {
-				if (this.firstTGListNode.storedTG == tg) {
-					this.firstTGListNode = this.firstTGListNode.nextNode;
-					return;
-				}
-				PluginHolder.TGListNode lastNode = this.firstTGListNode;
-				PluginHolder.TGListNode curNode = lastNode.nextNode;
-				while (curNode != null) {
-					if (curNode.storedTG == tg) {
-						lastNode.nextNode = curNode.nextNode;
-						return;
-					}
-					lastNode = curNode;
-					curNode = curNode.nextNode;
-				}
-				//return false;//we didnt have it, so we didnt do anything
-			}
+			this.triggerGroups.Remove(tg);
 		}
 
 		public bool HasTriggerGroup(TriggerGroup tg) {
 			if (tg == null) return false;
-			PluginHolder.TGListNode curNode = this.firstTGListNode;
-			do {
-				if (curNode.storedTG == tg) {
-					return true;
-				}
-				curNode = curNode.nextNode;
-			} while (curNode != null);
-			return false;
+			return this.triggerGroups.Contains(tg);
 		}
 
 		public void ClearTriggerGroups() {
-			this.firstTGListNode = null;
+			Shield.AssertInTransaction();
+			this.triggerGroups.Clear();
 		}
 
 
 		public override void Unload() {
-			//if (firstTGListNode != null) {
-			//    PluginHolder.TGListNode curNode = firstTGListNode;
-			//    do {
-			//        curNode.storedTG.Unload();
-			//        curNode = curNode.nextNode;
-			//    } while (curNode != null);
-			//}
-			this.firstTGListNode = null;
+			this.ClearTriggerGroups();
 			base.Unload();
 		}
 
@@ -170,22 +131,16 @@ namespace SteamEngine {
 		/// <param name="tk">The TriggerKey for the trigger to call.</param>
 		/// <param name="sa">The arguments (other than argv) for sphere scripts</param>
 		public virtual void Trigger(TriggerKey tk, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					curNode.storedTG.Run(this, tk, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.triggerGroups) {
+				tg.Run(this, tk, sa);
 			}
 		}
 
 		public virtual void TryTrigger(TriggerKey tk, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					curNode.storedTG.TryRun(this, tk, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.triggerGroups) {
+				tg.TryRun(this, tk, sa);
 			}
 		}
 
@@ -196,32 +151,27 @@ namespace SteamEngine {
 		/// <param name="sa">Arguments for scripts (argn, args, argo, argn1, argn2, etc). Can be null.</param>
 		/// <returns>TriggerResult.Cancel if any called trigger scripts returned 1, TriggerResult.Continue otherwise.</returns>
 		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					if (TagMath.Is1(curNode.storedTG.Run(this, tk, sa))) {
-						return TriggerResult.Cancel;
-					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.triggerGroups) {
+				if (TagMath.Is1(tg.Run(this, tk, sa))) {
+					return TriggerResult.Cancel;
+				}
 			}
 			return TriggerResult.Continue;
 		}
 
 		public virtual TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					if (TagMath.Is1(curNode.storedTG.TryRun(this, tk, sa))) {
-						return TriggerResult.Cancel;
-					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.triggerGroups) {
+				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
+					return TriggerResult.Cancel;
+				}
 			}
 			return TriggerResult.Continue;
 		}
 
 		public void Trigger(TriggerKey tk, params object[] scriptArguments) {
+			Shield.AssertInTransaction();
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				this.Trigger(tk, new ScriptArgs(scriptArguments));
 			} else {
@@ -229,8 +179,8 @@ namespace SteamEngine {
 			}
 		}
 
-		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments)
-		{
+		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
+			Shield.AssertInTransaction();
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				return this.CancellableTrigger(tk, new ScriptArgs(scriptArguments));
 			}

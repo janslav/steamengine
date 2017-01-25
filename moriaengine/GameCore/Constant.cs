@@ -229,7 +229,7 @@ namespace SteamEngine {
 
 		/// <summary>This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True</summary>
 		public static void ResolveAll() {
-			var allConstans = Shield.InTransaction(() => allConstantsByName.Values.ToList());
+			var allConstans = Shield.InTransaction(allConstantsByName.Values.ToList);
 			var count = allConstans.Count;
 			Logger.WriteDebug("Resolving " + count + " constants");
 			DateTime before = DateTime.Now;

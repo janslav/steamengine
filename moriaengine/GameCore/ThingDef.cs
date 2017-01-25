@@ -273,51 +273,39 @@ namespace SteamEngine {
 
 		#region TriggerGroupHolder helper methods
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					curNode.storedTG.Run(self, td, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.GetAllTriggerGroups()) {
+				tg.Run(self, td, sa);
 			}
 		}
 
 		internal void TryTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					curNode.storedTG.TryRun(self, td, sa);
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.GetAllTriggerGroups()) {
+				tg.TryRun(self, td, sa);
 			}
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					object retVal = curNode.storedTG.Run(self, td, sa);
-					if (TagMath.Is1(retVal)) {
-						return TriggerResult.Cancel;
-					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.GetAllTriggerGroups()) {
+				var retVal = tg.Run(self, td, sa);
+				if (TagMath.Is1(retVal)) {
+					return TriggerResult.Cancel;
+				}
 			}
 			return TriggerResult.Continue;
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			if (this.firstTGListNode != null) {
-				PluginHolder.TGListNode curNode = this.firstTGListNode;
-				do {
-					object retVal = curNode.storedTG.TryRun(self, td, sa);
-					if (TagMath.Is1(retVal)) {
-						return TriggerResult.Cancel;
-					}
-					curNode = curNode.nextNode;
-				} while (curNode != null);
+			Shield.AssertInTransaction();
+			foreach (var tg in this.GetAllTriggerGroups()) {
+				var retVal = tg.TryRun(self, td, sa);
+				if (TagMath.Is1(retVal)) {
+					return TriggerResult.Cancel;
+				}
 			}
 			return TriggerResult.Continue;
 		}

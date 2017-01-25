@@ -613,7 +613,7 @@ namespace SteamEngine {
 		}
 
 		private void LoadPostponedScriptLines() {
-			foreach (var p in Shield.InTransaction(() => this.postponedLines.ToList())) {
+			foreach (var p in Shield.InTransaction(this.postponedLines.ToList)) {
 				try {
 					Shield.InTransaction(() =>
 						this.LoadScriptLine(this.filename, p.Line, p.Name.ToLowerInvariant(), p.Value));
@@ -625,8 +625,7 @@ namespace SteamEngine {
 					Logger.WriteWarning(this.filename, p.Line, ex);
 				}
 			}
-			Shield.InTransaction(() =>
-				this.postponedLines.Clear());
+			Shield.InTransaction(this.postponedLines.Clear);
 		}
 
 		private void Trigger_AfterLoadFromScripts() {
