@@ -28,8 +28,8 @@ namespace SteamEngine {
 		private static readonly ShieldedDictNc<string, AbstractScript> byDefname =
 			new ShieldedDictNc<string, AbstractScript>(comparer: StringComparer.OrdinalIgnoreCase);
 
-		private string defname;
-		private bool unloaded;
+		private readonly Shielded<string> shieldedDefname = new Shielded<string>();
+		private readonly Shielded<bool> shieldedUnloaded = new Shielded<bool>();
 
 		public static void Bootstrap() {
 			ClassManager.RegisterSupplySubclassInstances<AbstractScript>(null, false, false);
@@ -55,14 +55,15 @@ namespace SteamEngine {
 		public virtual AbstractScript Register() {
 			Shield.AssertInTransaction();
 
-			if (!string.IsNullOrEmpty(this.defname)) {
+			var defname = this.Defname;
+			if (!string.IsNullOrEmpty(defname)) {
 				AbstractScript previous;
-				if (byDefname.TryGetValue(this.defname, out previous)) {
+				if (byDefname.TryGetValue(defname, out previous)) {
 					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
+						throw new SEException("previous != this when registering AbstractScript '" + defname + "'");
 					}
 				} else {
-					byDefname.Add(this.defname, this);
+					byDefname.Add(defname, this);
 				}
 			}
 			return this;
@@ -72,13 +73,14 @@ namespace SteamEngine {
 		//Can be called multiple times without harm
 		protected virtual void Unregister() {
 			Shield.AssertInTransaction();
-			if (!string.IsNullOrEmpty(this.defname)) {
+			var defname = this.Defname;
+			if (!string.IsNullOrEmpty(defname)) {
 				AbstractScript previous;
-				if (byDefname.TryGetValue(this.defname, out previous)) {
+				if (byDefname.TryGetValue(defname, out previous)) {
 					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractScript '" + this.defname + "'");
+						throw new SEException("previous != this when registering AbstractScript '" + defname + "'");
 					} else {
-						byDefname.Remove(this.defname);
+						byDefname.Remove(defname);
 					}
 				}
 			}
@@ -99,57 +101,49 @@ namespace SteamEngine {
 
 		protected AbstractScript() {
 			Shield.AssertInTransaction();
-			this.defname = this.InternalFirstGetDefname();
-			if (byDefname.ContainsKey(this.defname)) {
-				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname) + " already exists!");
+			this.shieldedDefname.Value = this.InternalFirstGetDefname();
+			if (byDefname.ContainsKey(this.shieldedDefname.Value)) {
+				throw new SEException("AbstractScript called " + LogStr.Ident(this.shieldedDefname.Value) + " already exists!");
 			}
 		}
 
 		protected AbstractScript(string defname) {
 			Shield.AssertInTransaction();
 			if (string.IsNullOrEmpty(defname)) {
-				this.defname = this.InternalFirstGetDefname();
+				this.shieldedDefname.Value = this.InternalFirstGetDefname();
 			} else {
-				this.defname = defname;
+				this.shieldedDefname.Value = defname;
 			}
-			if (byDefname.ContainsKey(this.defname)) {
-				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname) + " already exists!");
+			if (byDefname.ContainsKey(this.shieldedDefname.Value)) {
+				throw new SEException("AbstractScript called " + LogStr.Ident(this.shieldedDefname.Value) + " already exists!");
 			}
 		}
 
 		public virtual void Unload() {
-			this.unloaded = true;
+			this.shieldedUnloaded.Value = true;
 		}
 
 		public virtual void UnUnload() {
-			this.unloaded = false;
+			this.shieldedUnloaded.Value = false;
 		}
 
 		public bool IsUnloaded {
 			get {
-				return this.unloaded;
+				return this.shieldedUnloaded.Value;
 			}
 		}
 
 		internal void InternalSetDefname(string value) {
-			this.defname = value;
+			this.shieldedDefname.Value = value;
 		}
 
-		public string Defname {
-			get {
-				return this.defname;
-			}
-		}
+		public string Defname => this.shieldedDefname.Value;
 
-		public virtual string PrettyDefname {
-			get {
-				return this.defname;
-			}
-		}
+		public virtual string PrettyDefname => this.shieldedDefname.Value;
 
 		protected void ThrowIfUnloaded() {
-			if (this.unloaded) {
-				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(this.defname) + "' is unloaded.");
+			if (this.shieldedUnloaded.Value) {
+				throw new UnloadedException("The " + Tools.TypeToString(this.GetType()) + " '" + LogStr.Ident(this.Defname) + "' is unloaded.");
 			}
 		}
 
