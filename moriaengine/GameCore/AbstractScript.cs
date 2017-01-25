@@ -95,7 +95,7 @@ namespace SteamEngine {
 
 		public static IReadOnlyCollection<AbstractScript> AllScripts {
 			get {
-				return Shield.InTransaction(() => byDefname.Values.ToList());
+				return Shield.InTransaction(byDefname.Values.ToList);
 			}
 		}
 
