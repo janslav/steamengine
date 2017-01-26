@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using SteamEngine.LScript;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;
 
@@ -31,7 +30,7 @@ namespace SteamEngine.CompiledScripts.Utils {
 			}
 
 			comparers = new[] {
-				new LScriptComparer<T>(sortByExpression, 1), 
+				new LScriptComparer<T>(sortByExpression, 1),
 				new LScriptComparer<T>(sortByExpression, -1)};
 
 

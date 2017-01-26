@@ -1,6 +1,5 @@
 using System;
 using SteamEngine.Common;
-using SteamEngine.LScript;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Scripting.Objects;
@@ -28,8 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public abstract class AbstractInputDef : CompiledGumpDef {
 		protected static readonly TagKey inputParamsTK = TagKey.Acquire("_input_params_");
 
-		public AbstractInputDef()
-		{
+		public AbstractInputDef() {
 		}
 
 		public AbstractInputDef(string defname)
@@ -88,11 +86,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
 			switch (gr.PressedButton) {
 				case 0: //exit or rightclick
-					//znovuzavolat pripadny predchozi dialog
+						//znovuzavolat pripadny predchozi dialog
 					DialogStacking.ShowPreviousDialog(gi);
 					break;
 				case 1: //OK
-					//pass the call with the input value
+						//pass the call with the input value
 					string inputVal = gr.GetTextResponse(1);
 					this.Response((Character) gi.Cont, gi.Focus, inputVal);
 					//a zavolat predchozi dialog
@@ -124,8 +122,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			AbstractScript def = AbstractScript.GetByDefname(defname);
 
 			ScriptedInputDialogDef id = def as ScriptedInputDialogDef;
-			if (id == null)
-			{
+			if (id == null) {
 				if (def != null) {//it isnt ScriptedInputDialogDef
 					throw new OverrideNotAllowedException("ScriptedInputDialogDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
 				}

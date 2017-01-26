@@ -20,7 +20,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine.LScript;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Scripting.Objects;

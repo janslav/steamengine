@@ -17,7 +17,6 @@
 
 using System.Collections.Generic;
 using SteamEngine.Common;
-using SteamEngine.LScript;
 using SteamEngine.Networking;
 using SteamEngine.Scripting.Interpretation;
 
