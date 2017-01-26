@@ -3,6 +3,7 @@ using System.Collections;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SteamEngine.Common;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Timers;
 
@@ -30,8 +31,6 @@ namespace SteamEngine.Tests {
 			}
 		}
 
-		public static LScriptTesterObject testObj = new LScriptTesterObject();
-
 		//temporary for direct launching while writing the tests
 		//public void def__RunLScriptTests(TagHolder ignored) {
 		//	RunLScriptTests();
@@ -39,69 +38,70 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void TestCallingMethods() {
+			var testObj = new LScriptTesterObject();
 
 			//Logger.Show("TestSuite", "Running ");
 
 
 			//calling methods
-			TestSnippet(1, "TestMethod_NoParams", "calling zero param method without caller ()");
-			TestSnippet(1, "TestMethod_NoParams()", "calling zero param method with ()");
-			TestSnippet(0, "TestMethod_NoParams=", typeof(SEException), "calling zero param method with =");
-			TestSnippet(0, "TestMethod_NoParams 186",
-				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments",
-				"calling zero param method with an argument after whitespace");
-			TestSnippet(0, "TestMethod_NoParams(786)",
+			TestSnippet(testObj, 1, "TestMethod_NoParams", "calling zero param method without caller ()");
+			TestSnippet(testObj, 1, "TestMethod_NoParams()", "calling zero param method with ()");
+			TestSnippet(testObj, 0, "TestMethod_NoParams=", typeof(SEException), "calling zero param method with =");
+			//TestSnippet(0, "TestMethod_NoParams 186",
+			//	"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments",
+			//	"calling zero param method with an argument after whitespace");
+			TestSnippet(testObj, 0, "TestMethod_NoParams(786)",
 				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments",
 				"calling zero param method with an argument in ()");
-			TestSnippet(0, "TestMethod_NoParams =74123",
+			TestSnippet(testObj, 0, "TestMethod_NoParams =74123",
 				"Class member (method/property/field/constructor) 'TestMethod_NoParams' is getting wrong arguments",
 				"calling zero param method with an argument after =");
 
-			TestSnippet(3789, "TestMethod_OneParam 3789", "calling one param method without parens");
-			TestSnippet(7893, "TestMethod_OneParam(7893)", "calling one param method with parens, syntax 1");
-			TestSnippet(7893, "TestMethod_OneParam (7893)", "calling one param method with parens, syntax 2");
-			TestSnippet(7893, "TestMethod_OneParam ( 7893 )", "calling one param method with parens, syntax 3");
-			TestSnippet(7893, "TestMethod_OneParam( 7893)", "calling one param method with parens, syntax 4");
-			TestSnippet(7893, "TestMethod_OneParam(7893 )", "calling one param method with parens, syntax 5");
-			TestSnippet(8492, "TestMethod_OneParam=8492", "calling one param method with =, syntax 1");
-			TestSnippet(8492, "TestMethod_OneParam= 8492", "calling one param method with =, syntax 2");
-			TestSnippet(8492, "TestMethod_OneParam =8492", "calling one param method with =, syntax 3");
-			TestSnippet(8492, "TestMethod_OneParam = 8492", "calling one param method with =, syntax 4");
-			TestSnippet(0x2195, "TestMethod_OneParam 02195", "calling one param method without parens, hexa without xX");
-			TestSnippet(0x2195, "TestMethod_OneParam 0x2195", "calling one param method without parens, hexa without x");
-			TestSnippet(1.2195, "TestMethod_OneParam 1.2195",
+			TestSnippet(testObj, 3789, "TestMethod_OneParam 3789", "calling one param method without parens");
+			TestSnippet(testObj, 7893, "TestMethod_OneParam(7893)", "calling one param method with parens, syntax 1");
+			TestSnippet(testObj, 7893, "TestMethod_OneParam (7893)", "calling one param method with parens, syntax 2");
+			TestSnippet(testObj, 7893, "TestMethod_OneParam ( 7893 )", "calling one param method with parens, syntax 3");
+			TestSnippet(testObj, 7893, "TestMethod_OneParam( 7893)", "calling one param method with parens, syntax 4");
+			TestSnippet(testObj, 7893, "TestMethod_OneParam(7893 )", "calling one param method with parens, syntax 5");
+			TestSnippet(testObj, 8492, "TestMethod_OneParam=8492", "calling one param method with =, syntax 1");
+			TestSnippet(testObj, 8492, "TestMethod_OneParam= 8492", "calling one param method with =, syntax 2");
+			TestSnippet(testObj, 8492, "TestMethod_OneParam =8492", "calling one param method with =, syntax 3");
+			TestSnippet(testObj, 8492, "TestMethod_OneParam = 8492", "calling one param method with =, syntax 4");
+			TestSnippet(testObj, 0x2195, "TestMethod_OneParam 02195", "calling one param method without parens, hexa without xX");
+			TestSnippet(testObj, 0x2195, "TestMethod_OneParam 0x2195", "calling one param method without parens, hexa without x");
+			TestSnippet(testObj, 1.2195, "TestMethod_OneParam 1.2195",
 				"calling one param method without parens, decimal number with leading number");
-			TestSnippet(0.2195, "TestMethod_OneParam .2195",
+			TestSnippet(testObj, 0.2195, "TestMethod_OneParam .2195",
 				"calling one param method without parens, decimal number without leading number");
 
-			TestSnippet(0, "TestMethod_OneParam",
-				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments",
-				"calling one param method without parens and without any parameter");
-			TestSnippet(0, "TestMethod_OneParam()",
+			//TestSnippet(0, "TestMethod_OneParam",
+			//	"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments",
+			//	"calling one param method without parens and without any parameter");
+			TestSnippet(testObj, 0, "TestMethod_OneParam()",
 				"Class member (method/property/field/constructor) 'TestMethod_OneParam' is getting wrong arguments",
 				"calling one param method with parens without any argument");
 
-			TestSnippet(1, "TestMethod_OneStringParam gfdyushgd",
+			TestSnippet(testObj, 1, "TestMethod_OneStringParam gfdyushgd",
 				"calling one string param method without parens");
-			TestSnippet(1, "TestMethod_OneStringParam(gfdyushgd)",
+			TestSnippet(testObj, 1, "TestMethod_OneStringParam(gfdyushgd)",
 				"calling one string param method with parens");
-			TestSnippet(1, "TestMethod_OneStringParam=gfdyushgd",
+			TestSnippet(testObj, 1, "TestMethod_OneStringParam=gfdyushgd",
 				"calling one string param method with =");
 
-			TestSnippet(1, "TestMethod_OneStringParam gf gfds hgf456 fd",
+			TestSnippet(testObj, 1, "TestMethod_OneStringParam gf gfds hgf456 fd",
 				"calling one string param method without parens with multiple params");
-			TestSnippet(1, "TestMethod_OneStringParam(gf gfds 7hgf456 fd)",
+			TestSnippet(testObj, 1, "TestMethod_OneStringParam(gf gfds 7hgf456 fd)",
 				"calling one string param method with parens with multiple params");
-			TestSnippet(1, "TestMethod_OneStringParam=gf gfds 7hgf456 fd",
+			TestSnippet(testObj, 1, "TestMethod_OneStringParam=gf gfds 7hgf456 fd",
 				"calling one string param method with = with multiple params");
 
-			TestSnippet(2, "TestMethod_NoParams;TestMethod_NoParams", "calling two expressions in a row, syntax 1");
-			TestSnippet(2, "TestMethod_NoParams; TestMethod_NoParams", "calling two expressions in a row, syntax 2");
-			TestSnippet(2, "TestMethod_NoParams ;TestMethod_NoParams", "calling two expressions in a row, syntax 3");
-			TestSnippet(2, "TestMethod_NoParams ; TestMethod_NoParams", "calling two expressions in a row, syntax 4");
+			//TestSnippet(testObj, 2, "TestMethod_NoParams;TestMethod_NoParams", "calling two expressions in a row, syntax 1");
+			//TestSnippet(testObj, 2, "TestMethod_NoParams; TestMethod_NoParams", "calling two expressions in a row, syntax 2");
+			TestSnippet(testObj, 2, "TestMethod_NoParams ;TestMethod_NoParams", "calling two expressions in a row, syntax 3");
+			TestSnippet(testObj, 2, "TestMethod_NoParams ; TestMethod_NoParams", "calling two expressions in a row, syntax 4");
 
 			Exception exception;
-			TestSnippet(Globals.Port, "return Globals.port", "dotted expression");
+			TestSnippet(testObj, Globals.Port, "return Globals.port", "dotted expression");
 			Sanity.IfTrueThrow(!Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList())", out exception), "[]"),
 				"dotted expression: method and constructor witn no params"); //this could outcome false if someone changed the ObjToString method...
 			Sanity.IfTrueThrow(!Equals(LScriptMain.TryRunSnippet(testObj, "return Tools.ObjToString(System.Collections.ArrayList(0))", out exception), "[]"),
@@ -115,6 +115,8 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void TestReturningValue() {
+			var testObj = new LScriptTesterObject();
+
 			//returning value
 			Sanity.IfTrueThrow(5 != Convert.ToInt32(LScriptMain.RunSnippet(testObj, "return 5")), "Error while return integer");
 			Sanity.IfTrueThrow(
@@ -156,6 +158,8 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void TestOperators() {
+			var testObj = new LScriptTesterObject();
+
 			//these will be a bit difficult... :\
 			//TestSnippet(+1, "TestMethod_OneParam +1", "integer unary '+' without parens");
 			//TestSnippet(-1, "TestMethod_OneParam -1", "integer unary '-' without parens");
@@ -164,86 +168,92 @@ namespace SteamEngine.Tests {
 			//Sanity.IfTrueThrow(!SteamEngine.Timers.TimerKey.Get("testtimerkey").Equals(LScript.RunSnippet(testObj, "return %testtimerkey")), "timerkey");
 			//Sanity.IfTrueThrow(!SteamEngine.Timers.TriggerKey.Get("testtriggerkey").Equals(LScript.RunSnippet(testObj, "return @testtriggerkey ")), "triggerkey");
 
-			TestSnippet(1, "TestMethod_OneParam(+1)", "integer unary '+' with parens");
-			TestSnippet(1, "TestMethod_OneParam=+1", "integer unary '+' with =");
-			TestSnippet(-1, "TestMethod_OneParam(-1)", "integer unary '-' with parens");
-			TestSnippet(-1, "TestMethod_OneParam=-1", "integer unary '-' with =");
-			TestSnippet(564, "TestMethod_OneParam(+GetInteger())", "general expression unary '+' with parens");
-			TestSnippet(564, "TestMethod_OneParam=+GetInteger()", "general expression unary '+' with =");
-			TestSnippet(-564, "TestMethod_OneParam(-GetInteger())", "general expression unary '-' with parens");
-			TestSnippet(-564, "TestMethod_OneParam=-GetInteger()", "general expression unary '-' with =");
+			TestSnippet(testObj, 1, "TestMethod_OneParam(+1)", "integer unary '+' with parens");
+			TestSnippet(testObj, 1, "TestMethod_OneParam=+1", "integer unary '+' with =");
+			TestSnippet(testObj, -1, "TestMethod_OneParam(-1)", "integer unary '-' with parens");
+			TestSnippet(testObj, -1, "TestMethod_OneParam=-1", "integer unary '-' with =");
+			TestSnippet(testObj, 564, "TestMethod_OneParam(+GetInteger())", "general expression unary '+' with parens");
+			TestSnippet(testObj, 564, "TestMethod_OneParam=+GetInteger()", "general expression unary '+' with =");
+			TestSnippet(testObj, -564, "TestMethod_OneParam(-GetInteger())", "general expression unary '-' with parens");
+			TestSnippet(testObj, -564, "TestMethod_OneParam=-GetInteger()", "general expression unary '-' with =");
 
-			TestSnippet(56 + 7, "TestMethod_OneParam 56+7", "integer binary '+' without parens");
-			TestSnippet(56 + 7, "TestMethod_OneParam(56+7)", "integer binary '+' with parens");
-			TestSnippet(56 + 7, "TestMethod_OneParam=56+7", "integer binary '+' with =");
-			TestSnippet(56 - 7, "TestMethod_OneParam 56-7", "integer binary '-' without parens");
-			TestSnippet(56 - 7, "TestMethod_OneParam(56-7)", "integer binary '-' with parens");
-			TestSnippet(56 - 7, "TestMethod_OneParam=56-7", "integer binary '-' with =");
-			TestSnippet(56 * 7, "TestMethod_OneParam 56*7", "integer binary '*' without parens");
-			TestSnippet(56 * 7, "TestMethod_OneParam(56*7)", "integer binary '*' with parens");
-			TestSnippet(56 * 7, "TestMethod_OneParam=56*7", "integer binary '*' with =");
-			TestSnippet(56 / 7, "TestMethod_OneParam 56/7", "integer binary '/' without parens");
-			TestSnippet(56 / 7, "TestMethod_OneParam(56/7)", "integer binary '/' with parens");
-			TestSnippet(56 / 7, "TestMethod_OneParam=56/7", "integer binary '/' with =");
+			TestSnippet(testObj, 56 + 7, "TestMethod_OneParam 56+7", "integer binary '+' without parens");
+			TestSnippet(testObj, 56 + 7, "TestMethod_OneParam(56+7)", "integer binary '+' with parens");
+			TestSnippet(testObj, 56 + 7, "TestMethod_OneParam=56+7", "integer binary '+' with =");
+			TestSnippet(testObj, 56 - 7, "TestMethod_OneParam 56-7", "integer binary '-' without parens");
+			TestSnippet(testObj, 56 - 7, "TestMethod_OneParam(56-7)", "integer binary '-' with parens");
+			TestSnippet(testObj, 56 - 7, "TestMethod_OneParam=56-7", "integer binary '-' with =");
+			TestSnippet(testObj, 56 * 7, "TestMethod_OneParam 56*7", "integer binary '*' without parens");
+			TestSnippet(testObj, 56 * 7, "TestMethod_OneParam(56*7)", "integer binary '*' with parens");
+			TestSnippet(testObj, 56 * 7, "TestMethod_OneParam=56*7", "integer binary '*' with =");
+			TestSnippet(testObj, 56 / 7, "TestMethod_OneParam 56/7", "integer binary '/' without parens");
+			TestSnippet(testObj, 56 / 7, "TestMethod_OneParam(56/7)", "integer binary '/' with parens");
+			TestSnippet(testObj, 56 / 7, "TestMethod_OneParam=56/7", "integer binary '/' with =");
 
-			TestSnippet(double.PositiveInfinity, "TestMethod_OneParam(56/0)", "division by zero");
+			TestSnippet(testObj, double.PositiveInfinity, "TestMethod_OneParam(56/0)", "division by zero");
 		}
 
 		[TestMethod]
 		public void TestVariables() {
+			var testObj = new LScriptTesterObject();
 
-			TestSnippet(1, "arg testlocal 1; TestMethod_OneParam arg testlocal", "ARG/LOCAL, syntax 1");
-			TestSnippet(2, "arg testlocal = 2; TestMethod_OneParam arg testlocal", "ARG/LOCAL, syntax 2");
-			TestSnippet(3, "arg.testlocal 3; TestMethod_OneParam arg.testlocal", "ARG/LOCAL, syntax 3");
-			TestSnippet(4, "arg.testlocal = 4; TestMethod_OneParam arg.testlocal", "ARG/LOCAL, syntax 4");
-			TestSnippet(5, "arg(testlocal,5); TestMethod_OneParam arg(testlocal)", "ARG/LOCAL, syntax 5");
-			TestSnippet(6, "arg(testlocal, 6); TestMethod_OneParam arg(testlocal)", "ARG/LOCAL, syntax 6");
-			TestSnippet(1, "local testlocal 1; TestMethod_OneParam local testlocal", "ARG/LOCAL, syntax 7");
-			TestSnippet(2, "local testlocal = 2; TestMethod_OneParam local testlocal", "ARG/LOCAL, syntax 8");
-			TestSnippet(3, "local.testlocal 3; TestMethod_OneParam local.testlocal", "ARG/LOCAL, syntax 9");
-			TestSnippet(4, "local.testlocal = 4; TestMethod_OneParam local.testlocal", "ARG/LOCAL, syntax 10");
-			TestSnippet(5, "local(testlocal,5); TestMethod_OneParam local(testlocal)", "ARG/LOCAL, syntax 11");
-			TestSnippet(6, "local(testlocal, 6); TestMethod_OneParam local(testlocal)", "ARG/LOCAL, syntax 12");
+			TestSnippet(testObj, 1, "arg testlocal 1; TestMethod_OneParam arg testlocal", "ARG/LOCAL, syntax 1");
+			TestSnippet(testObj, 2, "arg testlocal = 2; TestMethod_OneParam arg testlocal", "ARG/LOCAL, syntax 2");
+			TestSnippet(testObj, 3, "arg.testlocal 3; TestMethod_OneParam arg.testlocal", "ARG/LOCAL, syntax 3");
+			TestSnippet(testObj, 4, "arg.testlocal = 4; TestMethod_OneParam arg.testlocal", "ARG/LOCAL, syntax 4");
+			TestSnippet(testObj, 5, "arg(testlocal,5); TestMethod_OneParam arg(testlocal)", "ARG/LOCAL, syntax 5");
+			TestSnippet(testObj, 6, "arg(testlocal, 6); TestMethod_OneParam arg(testlocal)", "ARG/LOCAL, syntax 6");
+			TestSnippet(testObj, 1, "local testlocal 1; TestMethod_OneParam local testlocal", "ARG/LOCAL, syntax 7");
+			TestSnippet(testObj, 2, "local testlocal = 2; TestMethod_OneParam local testlocal", "ARG/LOCAL, syntax 8");
+			TestSnippet(testObj, 3, "local.testlocal 3; TestMethod_OneParam local.testlocal", "ARG/LOCAL, syntax 9");
+			TestSnippet(testObj, 4, "local.testlocal = 4; TestMethod_OneParam local.testlocal", "ARG/LOCAL, syntax 10");
+			TestSnippet(testObj, 5, "local(testlocal,5); TestMethod_OneParam local(testlocal)", "ARG/LOCAL, syntax 11");
+			TestSnippet(testObj, 6, "local(testlocal, 6); TestMethod_OneParam local(testlocal)", "ARG/LOCAL, syntax 12");
 
-			TestSnippet(1, "var testvariable 1; TestMethod_OneParam var testvariable", "VAR, syntax 1");
-			TestSnippet(2, "var testvariable = 2; TestMethod_OneParam var testvariable", "VAR, syntax 2");
-			TestSnippet(3, "var.testvariable 3; TestMethod_OneParam var.testvariable", "VAR, syntax 3");
-			TestSnippet(4, "var.testvariable = 4; TestMethod_OneParam var.testvariable", "VAR, syntax 4");
-			TestSnippet(5, "var(testvariable,5); TestMethod_OneParam var(testvariable)", "VAR, syntax 5");
-			TestSnippet(6, "var(testvariable, 6); TestMethod_OneParam var(testvariable)", "VAR, syntax 6");
+			TestSnippet(testObj, 1, "var testvariable 1; TestMethod_OneParam var testvariable", "VAR, syntax 1");
+			TestSnippet(testObj, 2, "var testvariable = 2; TestMethod_OneParam var testvariable", "VAR, syntax 2");
+			TestSnippet(testObj, 3, "var.testvariable 3; TestMethod_OneParam var.testvariable", "VAR, syntax 3");
+			TestSnippet(testObj, 4, "var.testvariable = 4; TestMethod_OneParam var.testvariable", "VAR, syntax 4");
+			TestSnippet(testObj, 5, "var(testvariable,5); TestMethod_OneParam var(testvariable)", "VAR, syntax 5");
+			TestSnippet(testObj, 6, "var(testvariable, 6); TestMethod_OneParam var(testvariable)", "VAR, syntax 6");
 
-			TestSnippet(1, "tag testtag 1; TestMethod_OneParam tag testtag", "TAG, syntax 1");
-			TestSnippet(2, "tag testtag = 2; TestMethod_OneParam tag testtag", "TAG, syntax 2");
-			TestSnippet(3, "tag.testtag 3; TestMethod_OneParam tag.testtag", "TAG, syntax 3");
-			TestSnippet(4, "tag.testtag = 4; TestMethod_OneParam tag.testtag", "TAG, syntax 4");
-			TestSnippet(5, "tag(testtag,5); TestMethod_OneParam tag(testtag)", "TAG, syntax 5");
-			TestSnippet(6, "tag(testtag, 6); TestMethod_OneParam tag(testtag)", "TAG, syntax 6");
+			TestSnippet(testObj, 1, "tag testtag 1; TestMethod_OneParam tag testtag", "TAG, syntax 1");
+			TestSnippet(testObj, 2, "tag testtag = 2; TestMethod_OneParam tag testtag", "TAG, syntax 2");
+			TestSnippet(testObj, 3, "tag.testtag 3; TestMethod_OneParam tag.testtag", "TAG, syntax 3");
+			TestSnippet(testObj, 4, "tag.testtag = 4; TestMethod_OneParam tag.testtag", "TAG, syntax 4");
+			TestSnippet(testObj, 5, "tag(testtag,5); TestMethod_OneParam tag(testtag)", "TAG, syntax 5");
+			TestSnippet(testObj, 6, "tag(testtag, 6); TestMethod_OneParam tag(testtag)", "TAG, syntax 6");
 		}
 
 		[TestMethod]
 		public void TestOverloading() {
+			var testObj = new LScriptTesterObject();
+
+			//fails because ClassManager is not initialized. Oh well.
 
 			//ambiguity test
-			TestSnippet(5, "TestMethod_IPointParam(Point4D(1,2,3,4))", "ambiguity test 1");
-			TestSnippet(6, "TestMethod_IPointParam(Point3D(1,2,3))", "ambiguity test 2");
-			TestSnippet(7, "TestMethod_IPointParam(Point2D(1,2))", "ambiguity test 3");
+			TestSnippet(testObj, 5, "TestMethod_IPointParam(Point4D(1,2,3,4))", "ambiguity test 1");
+			TestSnippet(testObj, 6, "TestMethod_IPointParam(Point3D(1,2,3))", "ambiguity test 2");
+			TestSnippet(testObj, 7, "TestMethod_IPointParam(Point2D(1,2))", "ambiguity test 3");
 
-			TestSnippet(2, "TestMethod_PointAndIpointParam(Point4D(1,2,3,4))", "ambiguity test 4");
-			TestSnippet(3, "TestMethod_PointAndIpointParam(Point3D(1,2,3))", "ambiguity test 5");
-			TestSnippet(4, "TestMethod_PointAndIpointParam(Point2D(1,2))", "ambiguity test 6");
+			TestSnippet(testObj, 2, "TestMethod_PointAndIpointParam(Point4D(1,2,3,4))", "ambiguity test 4");
+			TestSnippet(testObj, 3, "TestMethod_PointAndIpointParam(Point3D(1,2,3))", "ambiguity test 5");
+			TestSnippet(testObj, 4, "TestMethod_PointAndIpointParam(Point2D(1,2))", "ambiguity test 6");
 
-			TestSnippet(5, "TestMethod_IPointParam(LScriptTesterIPoint4D())", "ambiguity test 7");
-			TestSnippet(5, "TestMethod_PointAndIpointParam(LScriptTesterIPoint4D())", "ambiguity test 8");
+			TestSnippet(testObj, 5, "TestMethod_IPointParam(LScriptTesterIPoint4D())", "ambiguity test 7");
+			TestSnippet(testObj, 5, "TestMethod_PointAndIpointParam(LScriptTesterIPoint4D())", "ambiguity test 8");
 		}
 
 		[TestMethod]
 		public void TestSpecialLiterals() {
+			var testObj = new LScriptTesterObject();
 
 			Sanity.IfTrueThrow(!TimerKey.Acquire("testtimerkey").Equals(LScriptMain.RunSnippet(testObj, "return(%testtimerkey)")), "timerkey");
 			Sanity.IfTrueThrow(!TriggerKey.Acquire("testtriggerkey").Equals(LScriptMain.RunSnippet(testObj, "return(@testtriggerkey)")), "triggerkey");
 		}
 
-		private static void TestSnippet(double difference, string script, Type expectedException, string errormessage) {
+		private static void TestSnippet(LScriptTesterObject testObj, double difference, string script, Type expectedException, string errormessage) {
+			testObj.currentCounter = 0;
 			try {
 				LScriptMain.RunSnippet(testObj, script);
 			} catch (Exception e) {
@@ -261,7 +271,8 @@ namespace SteamEngine.Tests {
 			throw new SanityCheckException("Error while " + errormessage + ": Expected exception was not thrown.");
 		}
 
-		private static void TestSnippet(double difference, string script, string expectedExcString, string errormessage) {
+		private static void TestSnippet(LScriptTesterObject testObj, double difference, string script, string expectedExcString, string errormessage) {
+			testObj.currentCounter = 0;
 			if ((expectedExcString != null) && (expectedExcString.Length == 0)) {
 				expectedExcString = null;
 			}
@@ -282,7 +293,8 @@ namespace SteamEngine.Tests {
 			testObj.CheckCounter(difference, errormessage);
 		}
 
-		private static void TestSnippet(double difference, string script, string errormessage) {
+		private static void TestSnippet(LScriptTesterObject testObj, double difference, string script, string errormessage) {
+			testObj.currentCounter = 0;
 			try {
 				LScriptMain.RunSnippet(testObj, script);
 			} catch (Exception e) {
@@ -330,7 +342,6 @@ namespace SteamEngine.Tests {
 
 		public class LScriptTesterObject : PluginHolder {
 			public double currentCounter;
-			public double lastCounter;
 
 			private void Incr() {
 				this.currentCounter++;
@@ -340,10 +351,8 @@ namespace SteamEngine.Tests {
 				this.currentCounter += difference;
 			}
 
-			internal void CheckCounter(double difference, string failureMessage) {
-				double shouldbe = this.lastCounter + difference;
-				Sanity.IfTrueThrow(shouldbe != this.currentCounter, "Error while " + failureMessage);
-				this.lastCounter = this.currentCounter;
+			internal void CheckCounter(double expected, string failureMessage) {
+				Sanity.IfTrueThrow(expected != this.currentCounter, $"Error while '{failureMessage}'. expected:{expected} != actual:{this.currentCounter}");
 			}
 
 			public void TestMethod_NoParams() {

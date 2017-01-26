@@ -337,8 +337,12 @@ namespace SteamEngine.Scripting.Interpretation {
 					return OpNode_Lazy_ExpressionChain.Construct(parent, code);
 
 				case StrictConstants.STRING:
+					return OpNode_Lazy_Expression.Construct(parent, code, mustEval: false);
+
 				case StrictConstants.SIMPLE_EXPRESSION:
-					return OpNode_Lazy_Expression.Construct(parent, code);
+					// when the expression is just a word followed by space, it can be left un-evaled, otherwise its a method call/assignment
+					var isWhiteSpaceAssigner = StrictConstants.WHITE_SPACE_ASSIGNER == (StrictConstants) code.GetChildAt(1).GetId();
+					return OpNode_Lazy_Expression.Construct(parent, code, mustEval: !isWhiteSpaceAssigner);
 
 				case StrictConstants.RANDOM_EXPRESSION:
 					return OpNode_Lazy_RandomExpression.Construct(parent, code);
