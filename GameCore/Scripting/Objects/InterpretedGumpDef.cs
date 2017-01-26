@@ -176,21 +176,23 @@ namespace SteamEngine.Scripting.Objects {
 			} else {
 				instance.InputArgs = new DialogArgs(); //prepare the empty DialogArgs object (no params)
 			}
+
+			Exception exception;
 			if (this.textsScript != null) {
-				this.textsScript.TryRun(focus, sa);
-				if (!this.textsScript.lastRunSuccesful) {
+				this.textsScript.TryRun(focus, sa, out exception);
+				if (exception != null) {
 					return null;
 				}
 			}
 
-			this.layoutScript.TryRun(focus, sa);
+			this.layoutScript.TryRun(focus, sa, out exception);
 
 			InterpretedGump returnedInstance = sa.Argv[0] as InterpretedGump;
 			if (returnedInstance == null) {
 				returnedInstance = instance;
 			}
 
-			if (this.layoutScript.lastRunSuccesful) {
+			if (exception != null) {
 				returnedInstance.FinishCompilingPacketData(focus, sendTo);
 				return returnedInstance;
 			}
@@ -203,12 +205,12 @@ namespace SteamEngine.Scripting.Objects {
 					ResponseTrigger rt = this.responseTriggers[i];
 					if (rt.IsInBounds(pressedButton)) {
 						ScriptArgs sa = new ScriptArgs(
-							instance,							//0
-							instance.Cont,						//1
-							pressedButton,						//2
-							new ArgTxtHolder(returnedTexts),	//3
-							new ArgChkHolder(selectedSwitches),	//4
-							new ArgNumHolder(responseNumbers)	//5
+							instance,                           //0
+							instance.Cont,                      //1
+							pressedButton,                      //2
+							new ArgTxtHolder(returnedTexts),    //3
+							new ArgChkHolder(selectedSwitches), //4
+							new ArgNumHolder(responseNumbers)   //5
 						);
 						rt.script.TryRun(instance.Focus, sa);
 						return;

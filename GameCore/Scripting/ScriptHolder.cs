@@ -31,9 +31,6 @@ namespace SteamEngine.Scripting {
 		internal bool unloaded;
 		internal TriggerGroup contTriggerGroup;
 
-		internal bool lastRunSuccesful;
-		internal Exception lastRunException;
-
 		public static ScriptHolder GetFunction(string name) {
 			ScriptHolder sh;
 			functionsByName.TryGetValue(name, out sh);
@@ -51,11 +48,7 @@ namespace SteamEngine.Scripting {
 			this.name = this.InternalFirstGetName();
 		}
 
-		public string Name {
-			get {
-				return this.name;
-			}
-		}
+		public string Name => this.name;
 
 		protected virtual string InternalFirstGetName() {
 			throw new SEException("This should not happen");
@@ -92,8 +85,9 @@ namespace SteamEngine.Scripting {
 			return this.Run(self, new ScriptArgs(args));
 		}
 
-		public object TryRun(object self, ScriptArgs sa) {
+		public object TryRun(object self, ScriptArgs sa, out Exception exception) {
 			try {
+				exception = null;
 				return this.Run(self, sa);
 			} catch (FatalException) {
 				throw;
@@ -101,8 +95,9 @@ namespace SteamEngine.Scripting {
 				throw;
 			} catch (Exception e) {
 				this.Error(e);
+				exception = e;
+				return null;
 			}
-			return null;
 		}
 
 		public object TryRun(object self, params object[] args) {

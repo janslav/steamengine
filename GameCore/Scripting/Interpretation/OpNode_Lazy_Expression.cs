@@ -42,7 +42,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		private bool isClass;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			return Construct(parent, code, false);
+			return Construct(parent, code, mustEval: false);
 		}
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, bool mustEval) {

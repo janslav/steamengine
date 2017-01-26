@@ -272,9 +272,9 @@ namespace SteamEngine.Scripting.Objects {
 				this.implementation = new NormalConstant(retVal);
 			} else {
 				string statement = string.Concat("return ", value);
-				retVal = LScriptMain.TryRunSnippet(
-					this.filename, this.line, Globals.Instance, statement);
-				if (!LScriptMain.LastSnippetSuccess) {
+				Exception exception;
+				retVal = LScriptMain.TryRunSnippet(this.filename, this.line, Globals.Instance, statement, out exception);
+				if (exception != null) {
 					this.unloaded = true;
 					Logger.WriteWarning(this.filename, this.line, "No value was set on this (" + this + "): It is now unloaded!");
 				} else {

@@ -32,24 +32,12 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal static LScriptHolder snippetRunner = new LScriptHolder();
 
-		public static Exception LastSnippetException {
-			get {
-				return snippetRunner.lastRunException;
-			}
-		}
-
-		public static bool LastSnippetSuccess {
-			get {
-				return snippetRunner.lastRunSuccesful;
-			}
-		}
-
 		public static object RunSnippet(TagHolder self, string script) {
 			return RunSnippet("<snippet>", 0, self, script);
 		}
 
-		public static object TryRunSnippet(TagHolder self, string script) {
-			return TryRunSnippet("<snippet>", 0, self, script);
+		public static object TryRunSnippet(TagHolder self, string script, out Exception exception) {
+			return TryRunSnippet("<snippet>", 0, self, script, out exception);
 		}
 
 		public static LScriptHolder GetNewSnippetRunner(string filename, int line, string script) {
@@ -63,10 +51,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				using (StringReader reader = new StringReader(script)) {
 					newSnippetRunner.code = Compile(newSnippetRunner, reader, line);
 				}
-				newSnippetRunner.lastRunSuccesful = true;
 				return newSnippetRunner;
 			} catch (ParserLogException ple) {
-				newSnippetRunner.lastRunException = ple;
 				LogStrBuilder lstr = new LogStrBuilder();
 				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
 					ParseException pe = ple.GetError(i);
@@ -78,11 +64,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 				throw new SEException(lstr.ToLogStr());
 			} catch (RecursionTooDeepException rtde) {
-				newSnippetRunner.lastRunException = rtde;
 				throw rtde; // we really do want to rethrow it, so that its useless stack is lost.
-			} catch (Exception e) {
-				newSnippetRunner.lastRunException = e;
-				throw;
 			}
 		}
 
@@ -95,16 +77,13 @@ namespace SteamEngine.Scripting.Interpretation {
 			snippetRunner.line = line;
 			snippetRunner.containsRandom = false;
 			//snippetRunner.registerNames.Clear();
-			snippetRunner.lastRunSuccesful = false;
 			try {
 				using (StringReader reader = new StringReader(script)) {
 					snippetRunner.code = Compile(snippetRunner, reader, line);
 				}
 				object retVal = snippetRunner.code.Run(new ScriptVars(null, self, snippetRunner.LocalVarsCount));
-				snippetRunner.lastRunSuccesful = true;
 				return retVal;
 			} catch (ParserLogException ple) {
-				snippetRunner.lastRunException = ple;
 				LogStr lstr = (LogStr) "";
 				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
 					ParseException pe = ple.GetError(i);
@@ -118,16 +97,13 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 				throw new SEException(lstr);
 			} catch (RecursionTooDeepException rtde) {
-				snippetRunner.lastRunException = rtde;
 				throw rtde; // we really do want to rethrow it, so that its useless stack is lost.
-			} catch (Exception e) {
-				snippetRunner.lastRunException = e;
-				throw;
 			}
 		}
 
-		public static object TryRunSnippet(string filename, int line, TagHolder self, string script) {
+		public static object TryRunSnippet(string filename, int line, TagHolder self, string script, out Exception exception) {
 			try {
+				exception = null;
 				return RunSnippet(filename, line, self, script);
 			} catch (FatalException) {
 				throw;
@@ -139,10 +115,13 @@ namespace SteamEngine.Scripting.Interpretation {
 				} else {
 					Logger.WriteError(filename, line, sex);
 				}
+				exception = sex;
+				return null;
 			} catch (Exception e) {
 				Logger.WriteError(filename, line, e);
+				exception = e;
+				return null;
 			}
-			return null;
 		}
 
 		internal static LScriptHolder LoadAsFunction(TriggerSection input) {
@@ -238,7 +217,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				switch ((StrictConstants) code.GetId()) {
 					case StrictConstants.STRING:
 					case StrictConstants.SIMPLE_EXPRESSION:
-						return OpNode_Lazy_Expression.Construct(parent, code, true);
+						return OpNode_Lazy_Expression.Construct(parent, code, mustEval: true);
 
 					case StrictConstants.DOTTED_EXPRESSION_CHAIN:
 						return OpNode_Lazy_ExpressionChain.Construct(parent, code);

@@ -193,7 +193,8 @@ namespace SteamEngine {
 						}
 					}
 
-					scriptHolder.TryRun(self, (ScriptArgs) null);
+					Exception exception;
+					scriptHolder.TryRun(self, (ScriptArgs) null, out exception);
 
 					//if the command does nothing, consider it an error
 					if ((scriptHolder.code is OpNode_Constant) || (scriptHolder.code is OpNode_This) || (scriptHolder.code is OpNode_Object)) {
@@ -202,12 +203,12 @@ namespace SteamEngine {
 						return;
 					}
 
-					if (scriptHolder.lastRunSuccesful) {
+					if (exception == null) {
 						gmCommandsCache[codeAsKey] = scriptHolder;
 					} else {
 						gmCommandsCache.Remove(codeAsKey);
 					}
-					LogCommand(commandSrc, code, scriptHolder.lastRunSuccesful, scriptHolder.lastRunException);
+					LogCommand(commandSrc, code, exception == null, exception);
 				}
 			} finally {
 				commandRunning = false;
@@ -275,17 +276,20 @@ namespace SteamEngine {
 
 				ScriptHolder func = ScriptHolder.GetFunction(name);
 				if (func != null) {
+					Exception exception;
 					if (argIsNumber) {
-						func.TryRun(self, new ScriptArgs(argAsNumber));
+						func.TryRun(self, new ScriptArgs(argAsNumber), out exception);
 					} else {
-						func.TryRun(self, new ScriptArgs(arg));
+						func.TryRun(self, new ScriptArgs(arg), out exception);
 					}
-					if (func.lastRunException != null) {
-						errText = func.lastRunException.Message;
+
+					if (exception != null) {
+						errText = exception.Message;
+						return false;
 					} else {
 						errText = "";
+						return true;
 					}
-					return func.lastRunSuccesful;
 				}
 
 				Type argType;

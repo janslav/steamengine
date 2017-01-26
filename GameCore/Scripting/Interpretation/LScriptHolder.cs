@@ -28,7 +28,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal int line;
 		internal OpNode code;
 		private Dictionary<string, int> localsNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-		
+
 		//internal OpNode nodeToReturn;
 
 		//used by TriggerGroup/GumpDef/templatedef/... loading, and LoadAsFunction here
@@ -47,8 +47,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		//}
 
 		internal LScriptHolder(string filename)
-			: base("temporary")
-		{
+			: base("temporary") {
 			this.filename = filename;
 		}
 
@@ -108,19 +107,12 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (this.unloaded) {
 				throw new UnloadedException("Function/trigger " + LogStr.Ident(this.Name) + " is unloaded, can not be run.");
 			}
-			this.lastRunSuccesful = false;
-			try {
-				ScriptVars sv = new ScriptVars(sa, self, this.localsNames.Count);
-				object retVal = this.code.Run(sv);
-				this.lastRunSuccesful = true;
-				if (sv.returned) {
-					return retVal;
-				}
-				return null;//we should not randomly return the last expression...
-			} catch (Exception e) {
-				this.lastRunException = e;
-				throw;
+			ScriptVars sv = new ScriptVars(sa, self, this.localsNames.Count);
+			object retVal = this.code.Run(sv);
+			if (sv.returned) {
+				return retVal;
 			}
+			return null;//we should not randomly return the last expression...
 		}
 
 		protected sealed override void Error(Exception e) {
