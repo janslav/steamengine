@@ -35,14 +35,14 @@ namespace SteamEngine.Scripting.Interpretation {
 		protected OpNode_Lazy_RandomExpression(IOpNodeHolder parent, string filename, int line, int column, Node origNode)
 			: base(parent, filename, line, column, origNode) {
 
-			this.ParentScriptHolder.containsRandom = true;
+			this.ParentScriptHolder.ContainsRandom = true;
 		}
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_RandomExpression constructed = new OpNode_Lazy_RandomExpression(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
@@ -54,15 +54,15 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (expressions == 2) {
 				constructed.isSimple = true;
 				constructed.values = new OpNode[2];
-				constructed.values[0] = LScriptMain.CompileNode(constructed, code.GetChildAt(1));
-				constructed.values[1] = LScriptMain.CompileNode(constructed, code.GetChildAt(3));
+				constructed.values[0] = LScriptMain.CompileNode(constructed, code.GetChildAt(1), context);
+				constructed.values[1] = LScriptMain.CompileNode(constructed, code.GetChildAt(3), context);
 			} else { // {value odds value odds value odds ... }
 				expressions /= 2;
 				constructed.odds = new OpNode[expressions];
 				constructed.values = new OpNode[expressions];
 				for (int i = 0; i < expressions; i++) {
-					constructed.values[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(1 + i * 4));
-					constructed.odds[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(3 + i * 4));
+					constructed.values[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(1 + i * 4), context);
+					constructed.odds[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(3 + i * 4), context);
 				}
 				constructed.isSimple = false;
 			}

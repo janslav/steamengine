@@ -28,8 +28,6 @@ namespace SteamEngine.Scripting {
 			new ShieldedDictNc<string, ScriptHolder>(comparer: StringComparer.OrdinalIgnoreCase);
 
 		private readonly string name;
-		internal bool unloaded;
-		internal TriggerGroup contTriggerGroup;
 
 		public static ScriptHolder GetFunction(string name) {
 			ScriptHolder sh;
@@ -85,6 +83,19 @@ namespace SteamEngine.Scripting {
 			return this.Run(self, new ScriptArgs(args));
 		}
 
+		public object TryRun(object self, ScriptArgs sa) {
+			try {
+				return this.Run(self, sa);
+			} catch (FatalException) {
+				throw;
+			} catch (TransException) {
+				throw;
+			} catch (Exception e) {
+				this.Error(e);
+				return null;
+			}
+		}
+
 		public object TryRun(object self, ScriptArgs sa, out Exception exception) {
 			try {
 				exception = null;
@@ -108,11 +119,8 @@ namespace SteamEngine.Scripting {
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-		public string GetDecoratedName() {
-			if (this.contTriggerGroup == null) {
-				return this.name;
-			}
-			return this.contTriggerGroup.Defname + ": @" + this.name;
+		public virtual string GetDecoratedName() {
+			return this.name;
 		}
 
 		public virtual bool IsUnloaded {

@@ -173,8 +173,8 @@ namespace SteamEngine {
 		private object ResolveSingleValue(TemporaryValueImpl tempVI, string value, object retVal) {
 			if (!this.ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
 				string statement = string.Concat("return(", value, ")");
-				retVal = LScriptMain.RunSnippet(
-					tempVI.filename, tempVI.line, Globals.Instance, statement);
+				LScriptHolder snippetRunner;
+				retVal = LScriptMain.RunSnippet(tempVI.filename, tempVI.line, Globals.Instance, statement, out snippetRunner);
 			}
 			return retVal;
 		}

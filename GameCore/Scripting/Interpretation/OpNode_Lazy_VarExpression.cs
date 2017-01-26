@@ -27,20 +27,20 @@ namespace SteamEngine.Scripting.Interpretation {
 		private const int ARG = 1;
 		private const int VAR = 2;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node origNode) {
-			int line = origNode.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node origNode, LScriptCompilationContext context) {
+			int line = origNode.GetStartLine() + context.startLine;
 			int column = origNode.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
 			//LScript.DisplayTree(origNode);
 			int type = ResolveTokenType(origNode.GetChildAt(0));
 			int current = 3;
-            List<OpNode> indicesList = new List<OpNode>();
+			List<OpNode> indicesList = new List<OpNode>();
 			OpNode_Lazy_Indexer lastIndex = null;
 			while (OpNode.IsType(origNode.GetChildAt(current), StrictConstants.INDEXER)) {
 				Production indexprod = (Production) origNode.GetChildAt(current);
-				OpNode index = LScriptMain.CompileNode(parent, indexprod.GetChildAt(1));
-				lastIndex = OpNode_Lazy_Indexer.Construct(parent, indexprod.GetChildAt(1), index, null);
+				OpNode index = LScriptMain.CompileNode(parent, indexprod.GetChildAt(1), context);
+				lastIndex = OpNode_Lazy_Indexer.Construct(parent, indexprod.GetChildAt(1), index, null, context);
 				indicesList.Add(lastIndex);
 				current++;
 			}
@@ -49,7 +49,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (lastIndex == null) {
 				argNode = origNode.GetChildAt(current);
 			} else if (origNode.GetChildAt(current) != null) {
-				lastIndex.arg = LScriptMain.CompileNode(lastIndex, origNode.GetChildAt(current));
+				lastIndex.arg = LScriptMain.CompileNode(lastIndex, origNode.GetChildAt(current), context);
 			}
 
 			string name = LScriptMain.GetString(origNode.GetChildAt(2));
@@ -97,7 +97,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (argNode == null) {
 					return ConstructGetNode(type, parent, line, column, origNode, name);
 				}
-				OpNode arg = LScriptMain.CompileNode(parent, argNode);
+				OpNode arg = LScriptMain.CompileNode(parent, argNode, context);
 				switch (type) {
 					case TAG:
 						OpNode_SetTag setTagNode = new OpNode_SetTag(parent, filename, line, column, origNode, name, arg);
@@ -116,11 +116,10 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 			indicesList.Insert(0, ConstructGetNode(type, parent, line, column, origNode, name));
 			OpNode[] chain = indicesList.ToArray();
-			return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, origNode, chain);
+			return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, origNode, chain, context);
 		}
 
-		private static int ResolveTokenType(Node token)
-		{
+		private static int ResolveTokenType(Node token) {
 			if (OpNode.IsType(token, StrictConstants.TAG)) {
 				return TAG;
 			}
@@ -131,7 +130,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static OpNode ConstructGetNode(int type, IOpNodeHolder parent, int line, int column, Node origNode, string name) {
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 			switch (type) {
 				case TAG:
 					return new OpNode_GetTag(parent, filename, line, column, origNode, name);

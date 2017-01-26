@@ -30,23 +30,23 @@ namespace SteamEngine.Scripting.Interpretation {
 		private object[] results;
 		private string formatString;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
 			ArrayList children = ((Production) code).children;
 			object[] nodes = new object[children.Count - 2]; //minus first and last quote
 			for (int i = 1, n = children.Count - 1; i < n; i++) {
 				nodes[i - 1] = children[i];
 			}
-			return ConstructFromArray(parent, code, nodes);
+			return ConstructFromArray(parent, code, nodes, context);
 		}
 
 		//nw when I look at it, I'm quite sure this could be yet optimised :)
-		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, object[] nodes) {
+		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, object[] nodes, LScriptCompilationContext context) {
 			//the nodes can be both OpNodes or Nodes (parser nodes), but nothing else
 			bool isConstant = true;
-			int line = code.GetStartLine() + LScriptMain.startLine;
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_QuotedString constructed = new OpNode_Lazy_QuotedString(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			ArrayList nodesList = new ArrayList();
 			for (int i = 0, n = nodes.Length; i < n; i++) {
@@ -57,7 +57,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					Node node = (Node) nodeAsObject;
 					if ((IsType(node, StrictConstants.STRONG_EVAL_EXPRESSION))
 							|| (IsType(node, StrictConstants.EVAL_EXPRESSION))) {
-						nodesList.Add(LScriptMain.CompileNode(constructed, node));
+						nodesList.Add(LScriptMain.CompileNode(constructed, node, context));
 						isConstant = false;
 					} else {
 						nodesList.Add(nodeAsObject);

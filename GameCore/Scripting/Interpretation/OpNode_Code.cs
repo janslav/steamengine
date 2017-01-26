@@ -25,14 +25,14 @@ namespace SteamEngine.Scripting.Interpretation {
 	public static class OpNode_Code {
 		//accepts Code, SimpleCode
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
 			Production prod = (Production) code;
-			return Construct(parent, prod.children);
+			return Construct(parent, prod.children, context);
 		}
 
-		private static OpNode Construct(IOpNodeHolder parent, ArrayList children) {
+		private static OpNode Construct(IOpNodeHolder parent, ArrayList children, LScriptCompilationContext context) {
 			if (children.Count == 1) {
-				return LScriptMain.CompileNode(parent, (Node) children[0]);
+				return LScriptMain.CompileNode(parent, (Node) children[0], context);
 			}
 
 			int highestPriority = -1;
@@ -57,18 +57,18 @@ namespace SteamEngine.Scripting.Interpretation {
 			OpNode_Lazy_BinOperator constructed = null;
 			Node operatorNode = (Node) children[opIndex];
 			if (OpNode.IsType(operatorNode, StrictConstants.OP_AND)) {
-				constructed = new OpNode_LogicalAnd(parent, operatorNode);
+				constructed = new OpNode_LogicalAnd(parent, operatorNode, context);
 			} else if (OpNode.IsType(operatorNode, StrictConstants.OP_OR)) {
-				constructed = new OpNode_LogicalOr(parent, operatorNode);
+				constructed = new OpNode_LogicalOr(parent, operatorNode, context);
 			} else {
 				//Console.WriteLine("BinOperator type: "+operatorNode);
-				constructed = OpNode_Lazy_BinOperator.Construct(parent, operatorNode);
+				constructed = OpNode_Lazy_BinOperator.Construct(parent, operatorNode, context);
 			}
 
 			ArrayList listLeft = children.GetRange(0, opIndex);
 			ArrayList listRight = children.GetRange(opIndex + 1, children.Count - opIndex - 1);
-			constructed.left = Construct(constructed, listLeft);
-			constructed.right = Construct(constructed, listRight);
+			constructed.left = Construct(constructed, listLeft, context);
+			constructed.right = Construct(constructed, listRight, context);
 
 			return constructed;
 		}

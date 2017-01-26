@@ -33,13 +33,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		private object leftResult;
 		private object rightResult;
 
-		internal static OpNode_Lazy_BinOperator Construct(IOpNodeHolder parent, Node code) {
-			return new OpNode_Lazy_BinOperator(parent, code);
+		internal static OpNode_Lazy_BinOperator Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			return new OpNode_Lazy_BinOperator(parent, code, context);
 		}
 
-		internal OpNode_Lazy_BinOperator(IOpNodeHolder parent, Node code)
+		internal OpNode_Lazy_BinOperator(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
 			:
-			base(parent, LScriptMain.GetParentScriptHolder(parent).filename, code.GetStartLine() + LScriptMain.startLine,
+			base(parent, LScriptMain.GetParentScriptHolder(parent).Filename, code.GetStartLine() + context.startLine,
 			code.GetStartColumn(), code) {
 		}
 
@@ -65,16 +65,16 @@ namespace SteamEngine.Scripting.Interpretation {
 				switch (opString) {
 					case ("+"):
 						if (this.OperandsAreNumbers()) {
-							newNode = new OpNode_AddOperator(this.parent, this.OrigNode);
+							newNode = new OpNode_AddOperator(this.parent, this.OrigNode, vars.compilationContext);
 						} else if ((this.leftResult is string) || (this.rightResult is string)) {
-							newNode = new OpNode_ConcatOperator(this.parent, this.OrigNode);
+							newNode = new OpNode_ConcatOperator(this.parent, this.OrigNode, vars.compilationContext);
 						} else {
 							newNode = this.FindOperatorMethod("op_Addition");
 						}
 						break;
 					case ("-"):
 						if (this.OperandsAreNumbers()) {
-							newNode = new OpNode_SubOperator(this.parent, this.OrigNode);
+							newNode = new OpNode_SubOperator(this.parent, this.OrigNode, vars.compilationContext);
 						} else {
 							newNode = this.FindOperatorMethod("op_Subtraction");
 						}
@@ -82,9 +82,9 @@ namespace SteamEngine.Scripting.Interpretation {
 					case ("/"):
 						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
-								newNode = new OpNode_DivOperator_Double(this.parent, this.OrigNode);
+								newNode = new OpNode_DivOperator_Double(this.parent, this.OrigNode, vars.compilationContext);
 							} else {
-								newNode = new OpNode_DivOperator_Int(this.parent, this.OrigNode);
+								newNode = new OpNode_DivOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						} else {
 							newNode = this.FindOperatorMethod("op_Division");
@@ -92,33 +92,33 @@ namespace SteamEngine.Scripting.Interpretation {
 						break;
 					case ("div"):
 						if (this.OperandsAreNumbers()) {
-							newNode = new OpNode_DivOperator_Int(this.parent, this.OrigNode);
+							newNode = new OpNode_DivOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 						}
 						break;
 					case ("*"):
 						if (this.OperandsAreNumbers()) {
-							newNode = new OpNode_MulOperator(this.parent, this.OrigNode);
+							newNode = new OpNode_MulOperator(this.parent, this.OrigNode, vars.compilationContext);
 						} else {
 							newNode = this.FindOperatorMethod("op_Multiply");
 						}
 						break;
 					case ("%"):
 						if (this.OperandsAreNumbers()) {
-							newNode = new OpNode_ModOperator(this.parent, this.OrigNode);
+							newNode = new OpNode_ModOperator(this.parent, this.OrigNode, vars.compilationContext);
 						} else {
 							newNode = this.FindOperatorMethod("op_Modulus");
 						}
 						break;
 					case ("&"):
 						if (this.OperandsAreNumbers()) {
-							newNode = new OpNode_BinaryAndOperator(this.parent, this.OrigNode);
+							newNode = new OpNode_BinaryAndOperator(this.parent, this.OrigNode, vars.compilationContext);
 						} else {
 							newNode = this.FindOperatorMethod("op_BitwiseAnd");
 						}
 						break;
 					case ("|"):
 						if (this.OperandsAreNumbers()) {
-							newNode = new OpNode_BinaryOrOperator(this.parent, this.OrigNode);
+							newNode = new OpNode_BinaryOrOperator(this.parent, this.OrigNode, vars.compilationContext);
 						} else {
 							newNode = this.FindOperatorMethod("op_BitwiseOr");
 						}
@@ -126,37 +126,37 @@ namespace SteamEngine.Scripting.Interpretation {
 					case ("=="):
 						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
-								newNode = new OpNode_EqualityOperator_Double(this.parent, this.OrigNode);
+								newNode = new OpNode_EqualityOperator_Double(this.parent, this.OrigNode, vars.compilationContext);
 							} else {
-								newNode = new OpNode_EqualityOperator_Int(this.parent, this.OrigNode);
+								newNode = new OpNode_EqualityOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						} else {
 							newNode = this.FindOperatorMethod("op_Equality");
 							if (newNode == null) {
-								newNode = new OpNode_EqualsOperator(this.parent, this.OrigNode);
+								newNode = new OpNode_EqualsOperator(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						}
 						break;
 					case ("!="):
 						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
-								newNode = new OpNode_InEqualityOperator_Double(this.parent, this.OrigNode);
+								newNode = new OpNode_InEqualityOperator_Double(this.parent, this.OrigNode, vars.compilationContext);
 							} else {
-								newNode = new OpNode_InEqualityOperator_Int(this.parent, this.OrigNode);
+								newNode = new OpNode_InEqualityOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						} else {
 							newNode = this.FindOperatorMethod("op_Inequality");
 							if (newNode == null) {
-								newNode = new OpNode_EqualsNotOperator(this.parent, this.OrigNode);
+								newNode = new OpNode_EqualsNotOperator(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						}
 						break;
 					case ("<="):
 						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
-								newNode = new OpNode_LessThanOrEqualOperator_Double(this.parent, this.OrigNode);
+								newNode = new OpNode_LessThanOrEqualOperator_Double(this.parent, this.OrigNode, vars.compilationContext);
 							} else {
-								newNode = new OpNode_LessThanOrEqualOperator_Int(this.parent, this.OrigNode);
+								newNode = new OpNode_LessThanOrEqualOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						} else {
 							newNode = this.FindOperatorMethod("op_LessThanOrEqual");
@@ -165,9 +165,9 @@ namespace SteamEngine.Scripting.Interpretation {
 					case (">="):
 						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
-								newNode = new OpNode_GreaterThanOrEqualOperator_Double(this.parent, this.OrigNode);
+								newNode = new OpNode_GreaterThanOrEqualOperator_Double(this.parent, this.OrigNode, vars.compilationContext);
 							} else {
-								newNode = new OpNode_GreaterThanOrEqualOperator_Int(this.parent, this.OrigNode);
+								newNode = new OpNode_GreaterThanOrEqualOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						} else {
 							newNode = this.FindOperatorMethod("op_GreaterThanOrEqual");
@@ -176,9 +176,9 @@ namespace SteamEngine.Scripting.Interpretation {
 					case ("<"):
 						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
-								newNode = new OpNode_LessThanOperator_Double(this.parent, this.OrigNode);
+								newNode = new OpNode_LessThanOperator_Double(this.parent, this.OrigNode, vars.compilationContext);
 							} else {
-								newNode = new OpNode_LessThanOperator_Int(this.parent, this.OrigNode);
+								newNode = new OpNode_LessThanOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						} else {
 							newNode = this.FindOperatorMethod("op_LessThan");
@@ -187,9 +187,9 @@ namespace SteamEngine.Scripting.Interpretation {
 					case (">"):
 						if (this.OperandsAreNumbers()) {
 							if (Globals.ScriptFloats) {
-								newNode = new OpNode_GreaterThanOperator_Double(this.parent, this.OrigNode);
+								newNode = new OpNode_GreaterThanOperator_Double(this.parent, this.OrigNode, vars.compilationContext);
 							} else {
-								newNode = new OpNode_GreaterThanOperator_Int(this.parent, this.OrigNode);
+								newNode = new OpNode_GreaterThanOperator_Int(this.parent, this.OrigNode, vars.compilationContext);
 							}
 						} else {
 							newNode = this.FindOperatorMethod("op_GreaterThan");
@@ -208,7 +208,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 					OpNode newNodeAsON = (OpNode) newNode;
 					this.ReplaceSelf(newNodeAsON);
-					retVal = newNode.TryRun(vars, new[] {this.leftResult, this.rightResult });
+					retVal = newNode.TryRun(vars, new[] { this.leftResult, this.rightResult });
 					if ((this.left is OpNode_Object) && (this.right is OpNode_Object)) {
 						//both operands are constant -> result is also constant
 						OpNode constNode = OpNode_Object.Construct(this.parent, retVal);
@@ -216,11 +216,11 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 					return retVal;
 				}
-				throw new SEException(string.Format(CultureInfo.InvariantCulture, 
+				throw new SEException(string.Format(CultureInfo.InvariantCulture,
 					"Operator {0} is not applicable to these operands(type {1} and {2}).",
 					opString,
 					(this.leftResult == null ? "<null>" : Tools.TypeToString(this.leftResult.GetType())),
-					(this.rightResult == null ? "<null>" :  Tools.TypeToString(this.rightResult.GetType()))));
+					(this.rightResult == null ? "<null>" : Tools.TypeToString(this.rightResult.GetType()))));
 			} catch (InterpreterException) {
 				throw;
 			} catch (Exception e) {
@@ -242,8 +242,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			return ((ConvertTools.IsNumberType(this.leftResult.GetType())) && (ConvertTools.IsNumberType(this.rightResult.GetType())));
 		}
 
-		private OpNode_MethodWrapper FindOperatorMethod(string methodName)
-		{
+		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
 			if (this.leftResult == null) {
 				if (this.rightResult == null) {
 					return null;

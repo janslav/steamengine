@@ -22,8 +22,8 @@ namespace SteamEngine.Scripting.Interpretation {
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_ConcatOperator : OpNode_Lazy_BinOperator, ITriable {
 		//gets created from OpNode
-		internal OpNode_ConcatOperator(IOpNodeHolder parent, Node code)
-			: base(parent, code) {
+		internal OpNode_ConcatOperator(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
+			: base(parent, code, context) {
 		}
 
 		internal override object Run(ScriptVars vars) {

@@ -29,11 +29,11 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode enumerableNode;
 		private OpNode blockNode;//can be null
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Foreach constructed = new OpNode_Foreach(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
@@ -42,9 +42,9 @@ namespace SteamEngine.Scripting.Interpretation {
 			string localName = GetLocalName(headProd.GetChildAt(0));
 			constructed.localName = localName;
 			constructed.localIndex = constructed.ParentScriptHolder.GetLocalVarIndex(localName);
-			constructed.enumerableNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2), true);
+			constructed.enumerableNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2), true, context);
 			if (mainProd.GetChildCount() == 6) {//has the Script node inside?
-				constructed.blockNode = LScriptMain.CompileNode(constructed, mainProd.GetChildAt(3), true);
+				constructed.blockNode = LScriptMain.CompileNode(constructed, mainProd.GetChildAt(3), true, context);
 			}
 			return constructed;
 		}

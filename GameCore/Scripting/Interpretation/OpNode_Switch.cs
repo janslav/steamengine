@@ -54,34 +54,34 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal static readonly NullOpNode nullOpNodeInstance = new NullOpNode();
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
 			//LScript.DisplayTree(code);
 
-			Production switchProd = (Production)code;
+			Production switchProd = (Production) code;
 			int caseBlocksCount = switchProd.GetChildCount() - 4;
 			if (caseBlocksCount == 0) {//we just run the expression
-				return LScriptMain.CompileNode(parent, switchProd.GetChildAt(1));
+				return LScriptMain.CompileNode(parent, switchProd.GetChildAt(1), context);
 			}
-			OpNode switchNode = LScriptMain.CompileNode(parent, switchProd.GetChildAt(1));//the parent here is fake, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+			OpNode switchNode = LScriptMain.CompileNode(parent, switchProd.GetChildAt(1), context);//the parent here is fake, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 			OpNode defaultNode = null;
 			ArrayList tempCases = new ArrayList();
 			Hashtable cases = new Hashtable(StringComparer.OrdinalIgnoreCase);
 			bool isString = false;
 			bool isInteger = false;
 			for (int i = 0; i < caseBlocksCount; i++) {
-				Production caseProd = (Production)switchProd.GetChildAt(i + 3);
+				Production caseProd = (Production) switchProd.GetChildAt(i + 3);
 				Node caseValue = caseProd.GetChildAt(1);
 				object key = null;
 				bool isDefault = false;
 				if (IsType(caseValue, StrictConstants.DEFAULT)) {//default
 					isDefault = true;
 				} else {
-					OpNode caseValueNode = LScriptMain.CompileNode(new TempParent(filename), caseValue);//the parent here is fake, it doesn't matter tho.
-					key = caseValueNode.Run(new ScriptVars(null, new object(), 0));
+					OpNode caseValueNode = LScriptMain.CompileNode(new TempParent(filename), caseValue, context);//the parent here is fake, it doesn't matter tho.
+					key = caseValueNode.Run(new ScriptVars(null, new object(), 0, context));
 					try {
 						key = ConvertTools.ToInt32(key);
 						isInteger = true;
@@ -93,14 +93,14 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 					if (key == null) {
 						throw new InterpreterException("The expression in a Case must be either convertible to an integer, or a string.",
-							caseProd.GetStartLine() + LScriptMain.startLine, caseProd.GetStartColumn(),
+							caseProd.GetStartLine() + context.startLine, caseProd.GetStartColumn(),
 							filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 					}
 				}
 				if (caseProd.GetChildCount() > 3) {
 					OpNode caseCode = null;
 					if (caseProd.GetChildCount() == 6) {//has script
-						caseCode = LScriptMain.CompileNode(parent, caseProd.GetChildAt(3));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+						caseCode = LScriptMain.CompileNode(parent, caseProd.GetChildAt(3), context);//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 					} else {
 						caseCode = nullOpNodeInstance;
 					}
@@ -145,7 +145,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 			foreach (DictionaryEntry entry in cases) {
 				if (entry.Value != null) {
-					((OpNode)entry.Value).parent = constructed;
+					((OpNode) entry.Value).parent = constructed;
 				}
 			}
 			return constructed;

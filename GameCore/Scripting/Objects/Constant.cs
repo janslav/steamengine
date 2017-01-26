@@ -273,15 +273,15 @@ namespace SteamEngine.Scripting.Objects {
 			} else {
 				string statement = string.Concat("return ", value);
 				Exception exception;
-				retVal = LScriptMain.TryRunSnippet(this.filename, this.line, Globals.Instance, statement, out exception);
+				LScriptHolder snippetRunner;
+				retVal = LScriptMain.TryRunSnippet(this.filename, this.line, Globals.Instance, statement, out exception, out snippetRunner);
 				if (exception != null) {
 					this.unloaded = true;
 					Logger.WriteWarning(this.filename, this.line, "No value was set on this (" + this + "): It is now unloaded!");
 				} else {
 					this.unloaded = false;
-					if (LScriptMain.snippetRunner.ContainsRandomExpression) {
-						this.implementation = new LScriptHolderConstant(LScriptMain.snippetRunner);
-						LScriptMain.snippetRunner = new LScriptHolder();//a bit hackish, yes. sssssh
+					if (snippetRunner.ContainsRandomExpression) {
+						this.implementation = new LScriptHolderConstant(snippetRunner);
 					} else {
 						this.implementation = new NormalConstant(retVal);
 					}

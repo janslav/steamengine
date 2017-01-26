@@ -32,20 +32,19 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		private object result;
 
-		internal static OpNode_Lazy_UnOperator Construct(IOpNodeHolder parent, Node code) {
-			return new OpNode_Lazy_UnOperator(parent, code);
+		internal static OpNode_Lazy_UnOperator Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			return new OpNode_Lazy_UnOperator(parent, code, context);
 		}
 
-		internal OpNode_Lazy_UnOperator(IOpNodeHolder parent, Node code)
-			:
-				base(parent, LScriptMain.GetParentScriptHolder(parent).filename, code.GetStartLine() + LScriptMain.startLine, code.GetStartColumn(), code) {
+		internal OpNode_Lazy_UnOperator(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
+			: base(parent, LScriptMain.GetParentScriptHolder(parent).Filename, code.GetStartLine() + context.startLine, code.GetStartColumn(), code) {
 
 			if (code.GetChildCount() == 3) {
 				this.operatorNode = code.GetChildAt(1);
-				this.obj = LScriptMain.CompileNode(this, code.GetChildAt(2));
+				this.obj = LScriptMain.CompileNode(this, code.GetChildAt(2), context);
 			} else if (code.GetChildCount() == 2) {
 				this.operatorNode = code.GetChildAt(0);
-				this.obj = LScriptMain.CompileNode(this, code.GetChildAt(1));
+				this.obj = LScriptMain.CompileNode(this, code.GetChildAt(1), context);
 			} else {
 				throw new SEException("Wrong number of child nodes. This should not happen.");
 			}
@@ -81,7 +80,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					break;
 				case ("-"):
 					if (ConvertTools.IsNumberType(this.result.GetType())) {
-						newNode = new OpNode_MinusOperator(this.parent, this.OrigNode);
+						newNode = new OpNode_MinusOperator(this.parent, this.OrigNode, vars.compilationContext);
 					} else {
 						newNode = this.FindOperatorMethod("op_UnaryNegation");
 					}
@@ -91,11 +90,11 @@ namespace SteamEngine.Scripting.Interpretation {
 					} else {
 						newNode = this.FindOperatorMethod("op_LogicalNot");
 					}
-					newNode = new OpNode_NotOperator(this.parent, this.OrigNode);
+					newNode = new OpNode_NotOperator(this.parent, this.OrigNode, vars.compilationContext);
 					break;
 				case ("~"):
 					if (ConvertTools.IsNumberType(this.result.GetType())) {
-						newNode = new OpNode_BitComplementOperator(this.parent, this.OrigNode);
+						newNode = new OpNode_BitComplementOperator(this.parent, this.OrigNode, vars.compilationContext);
 					} else {
 						newNode = this.FindOperatorMethod("op_OnesComplement");
 					}
@@ -112,7 +111,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 				OpNode newNodeAsOpNode = (OpNode) newNode;
 				this.ReplaceSelf(newNodeAsOpNode);
-				retVal = newNode.TryRun(vars, new[] {this.result });
+				retVal = newNode.TryRun(vars, new[] { this.result });
 				if (this.obj is OpNode_Object) {
 					//operand is constant -> result is also constant
 					OpNode constNode = OpNode_Object.Construct(this.parent, retVal);
@@ -124,10 +123,9 @@ namespace SteamEngine.Scripting.Interpretation {
 				this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 		}
 
-		private OpNode_MethodWrapper FindOperatorMethod(string methodName)
-		{
+		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
 			if (this.result != null) {
-                List<MethodInfo> matches = new List<MethodInfo>();
+				List<MethodInfo> matches = new List<MethodInfo>();
 
 				Type type = this.result.GetType();
 				MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);

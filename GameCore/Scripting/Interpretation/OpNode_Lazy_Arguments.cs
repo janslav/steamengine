@@ -29,10 +29,10 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal OpNode nodeIndex;
 		internal int intIndex;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int curLine = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int curLine = code.GetStartLine() + context.startLine;
 			int curCol = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
 			//LScript.DisplayTree(code);
 
@@ -48,7 +48,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 			if (IsType(firstNode, StrictConstants.ARGV)) {
 				indexNode = code.GetChildAt(2);
-				indexOpNode = LScriptMain.CompileNode(parent, indexNode);//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+				indexOpNode = LScriptMain.CompileNode(parent, indexNode, context);//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 				current = 4;
 			} else if (HasNumberAttached(firstNode)) {
 				constantIndex = GetIndex(LScriptMain.GetString(firstNode).Trim());
@@ -73,8 +73,8 @@ namespace SteamEngine.Scripting.Interpretation {
 			OpNode_Lazy_Indexer lastIndex = null;
 			while (IsType(code.GetChildAt(current), StrictConstants.INDEXER)) {
 				Production indexprod = (Production) code.GetChildAt(current);
-				OpNode index = LScriptMain.CompileNode(parent, indexprod.GetChildAt(1));//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
-				lastIndex = OpNode_Lazy_Indexer.Construct(parent, indexprod.GetChildAt(1), index, null);
+				OpNode index = LScriptMain.CompileNode(parent, indexprod.GetChildAt(1), context);//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+				lastIndex = OpNode_Lazy_Indexer.Construct(parent, indexprod.GetChildAt(1), index, null, context);
 				indicesList.Add(lastIndex);
 				current++;
 			}
@@ -83,9 +83,9 @@ namespace SteamEngine.Scripting.Interpretation {
 			Node argNode = code.GetChildAt(current);
 			if (argNode != null) {
 				if (lastIndex == null) {
-					argOpNode = LScriptMain.CompileNode(parent, argNode);//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+					argOpNode = LScriptMain.CompileNode(parent, argNode, context);//the parent here is false, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 				} else if (code.GetChildAt(current) != null) {
-					lastIndex.arg = LScriptMain.CompileNode(lastIndex, argNode);
+					lastIndex.arg = LScriptMain.CompileNode(lastIndex, argNode, context);
 				}
 			}
 
@@ -96,7 +96,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					constantIndex = Convert.ToInt32(retVal);
 					indexOpNode = null;
 				} else {
-					Logger.WriteWarning(filename, indexNode.GetStartLine() + LScriptMain.startLine, "ARGV needs a number as it's indexer, '" + constIndexOpNode.obj + "' is not a number.");
+					Logger.WriteWarning(filename, indexNode.GetStartLine() + context.startLine, "ARGV needs a number as it's indexer, '" + constIndexOpNode.obj + "' is not a number.");
 				}
 			}
 
@@ -118,7 +118,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (indicesList.Count > 0) {
 				indicesList.Insert(0, newNode);
 				OpNode[] chain = indicesList.ToArray();
-				return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, code, chain);
+				return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, code, chain, context);
 			}
 			return newNode;
 		}

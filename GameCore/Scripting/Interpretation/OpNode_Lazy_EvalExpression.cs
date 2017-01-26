@@ -24,18 +24,18 @@ namespace SteamEngine.Scripting.Interpretation {
 		//accepts EvalExpression, StrongEvalExpression
 		private OpNode arg;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_EvalExpression constructed = new OpNode_Lazy_EvalExpression(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//todo ?
 
 			if (IsType(code, StrictConstants.STRONG_EVAL_EXPRESSION)) {
-				constructed.arg = LScriptMain.CompileNode(constructed, code.GetChildAt(2), true);
+				constructed.arg = LScriptMain.CompileNode(constructed, code.GetChildAt(2), true, context);
 			} else {
-				constructed.arg = LScriptMain.CompileNode(constructed, code.GetChildAt(1), true);
+				constructed.arg = LScriptMain.CompileNode(constructed, code.GetChildAt(1), true, context);
 			}
 
 			if (constructed.arg is OpNode_Object) {
@@ -49,8 +49,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			: base(parent, filename, line, column, origNode) {
 		}
 
-		public void Replace(OpNode oldNode, OpNode newNode)
-		{
+		public void Replace(OpNode oldNode, OpNode newNode) {
 			if (this.arg != oldNode) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}

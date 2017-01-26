@@ -197,7 +197,7 @@ namespace SteamEngine {
 					scriptHolder.TryRun(self, (ScriptArgs) null, out exception);
 
 					//if the command does nothing, consider it an error
-					if ((scriptHolder.code is OpNode_Constant) || (scriptHolder.code is OpNode_This) || (scriptHolder.code is OpNode_Object)) {
+					if ((scriptHolder.Code is OpNode_Constant) || (scriptHolder.Code is OpNode_This) || (scriptHolder.Code is OpNode_Object)) {
 						string errText = Loc<CommandLoc>.Get(commandSrc.Language).CommandDoesNothing;
 						LogCommand(commandSrc, code, false, errText);
 						return;

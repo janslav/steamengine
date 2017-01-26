@@ -28,29 +28,22 @@ using SteamEngine.Timers;
 namespace SteamEngine.Scripting.Interpretation {
 
 	public static class LScriptMain {
-		internal static int startLine;
-
-		internal static LScriptHolder snippetRunner = new LScriptHolder();
-
 		public static object RunSnippet(TagHolder self, string script) {
-			return RunSnippet("<snippet>", 0, self, script);
+			LScriptHolder snippetRunner;
+			return RunSnippet("<snippet>", 0, self, script, out snippetRunner);
 		}
 
 		public static object TryRunSnippet(TagHolder self, string script, out Exception exception) {
-			return TryRunSnippet("<snippet>", 0, self, script, out exception);
+			LScriptHolder snippetRunner;
+			return TryRunSnippet("<snippet>", 0, self, script, out exception, out snippetRunner);
 		}
 
 		public static LScriptHolder GetNewSnippetRunner(string filename, int line, string script) {
-			//Logger.WriteDebug("GetNewSnippetRunner("+script+")");
-
 			script += Environment.NewLine;
 			LScriptHolder newSnippetRunner = new LScriptHolder();
-			newSnippetRunner.filename = filename;
-			newSnippetRunner.line = line;
+
 			try {
-				using (StringReader reader = new StringReader(script)) {
-					newSnippetRunner.code = Compile(newSnippetRunner, reader, line);
-				}
+				newSnippetRunner.SetMetadataAndCompile(inputFilename: filename, inputStartLine: line, inputCode: script);
 				return newSnippetRunner;
 			} catch (ParserLogException ple) {
 				LogStrBuilder lstr = new LogStrBuilder();
@@ -68,43 +61,19 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 		}
 
-		public static object RunSnippet(string filename, int line, TagHolder self, string script) {
-			//Console.WriteLine("running snippet "+script);
+		public static object RunSnippet(string filename, int line, TagHolder self, string script, out LScriptHolder snippetRunner) {
 			script += Environment.NewLine;
-			//snippetRunner = new LScriptHolder();
-			//WorldSaver.currentfile = filename;
-			snippetRunner.filename = filename;
-			snippetRunner.line = line;
-			snippetRunner.containsRandom = false;
-			//snippetRunner.registerNames.Clear();
-			try {
-				using (StringReader reader = new StringReader(script)) {
-					snippetRunner.code = Compile(snippetRunner, reader, line);
-				}
-				object retVal = snippetRunner.code.Run(new ScriptVars(null, self, snippetRunner.LocalVarsCount));
-				return retVal;
-			} catch (ParserLogException ple) {
-				LogStr lstr = (LogStr) "";
-				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
-					ParseException pe = ple.GetError(i);
-					int curline = pe.GetLine() + line;
-					if (i > 0) {
-						lstr = lstr + Environment.NewLine;
-					}
-					lstr = lstr + LogStr.FileLine(filename, curline)
-						+ pe.GetErrorMessage();
-					//Logger.WriteError(WorldSaver.currentfile, curline, pe.GetErrorMessage());
-				}
-				throw new SEException(lstr);
-			} catch (RecursionTooDeepException rtde) {
-				throw rtde; // we really do want to rethrow it, so that its useless stack is lost.
-			}
+
+			snippetRunner = new LScriptHolder();
+			return snippetRunner.RunAsSnippet(filename: filename, line: line, self: self, script: script);
 		}
 
-		public static object TryRunSnippet(string filename, int line, TagHolder self, string script, out Exception exception) {
+		public static object TryRunSnippet(string filename, int line, TagHolder self, string script, out Exception exception, out LScriptHolder snippetRunner) {
+			Shield.AssertInTransaction();
+
 			try {
 				exception = null;
-				return RunSnippet(filename, line, self, script);
+				return RunSnippet(filename, line, self, script, out snippetRunner);
 			} catch (FatalException) {
 				throw;
 			} catch (TransException) {
@@ -115,24 +84,28 @@ namespace SteamEngine.Scripting.Interpretation {
 				} else {
 					Logger.WriteError(filename, line, sex);
 				}
+				snippetRunner = null;
 				exception = sex;
 				return null;
 			} catch (Exception e) {
 				Logger.WriteError(filename, line, e);
+				snippetRunner = null;
 				exception = e;
 				return null;
 			}
 		}
 
 		internal static LScriptHolder LoadAsFunction(TriggerSection input) {
+			Shield.AssertInTransaction();
+
 			string name = input.TriggerName;
 			LScriptHolder sc = ScriptHolder.GetFunction(name) as LScriptHolder;
 			if (sc == null) {
 				sc = new LScriptHolder(input);
 				sc.RegisterAsFunction();
 			} else {
-				if (sc.unloaded) {
-					sc.Compile(input);
+				if (sc.IsUnloaded) {
+					sc.TrySetMetadataAndCompile(input);
 				} else {
 					throw new ScriptException("Function " + LogStr.Ident(name) + " already exists!");
 				}
@@ -152,33 +125,31 @@ namespace SteamEngine.Scripting.Interpretation {
 				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
 					ParseException pe = ple.GetError(i);
 					int line = pe.GetLine() + startLine;
-					Logger.WriteError(parent.filename, line, pe);
+					Logger.WriteError(parent.Filename, line, pe);
 				}
 			} catch (RecursionTooDeepException) {
-				Logger.WriteError(parent.filename, startLine, "Recursion too deep while parsing.");
+				Logger.WriteError(parent.Filename, startLine, "Recursion too deep while parsing.");
 			} catch (Exception e) {
-				Logger.WriteError(parent.filename, startLine, e);
+				Logger.WriteError(parent.Filename, startLine, e);
 			}
 			return null;
 		}
 
 		internal static OpNode Compile(LScriptHolder parent, TextReader stream, int startLine) {
-			LScriptMain.startLine = startLine;
 			Parser parser = new LScriptParser(stream);
 			//Parser parser = new LScriptParser(stream, new DebugAnalyzer());
 
 			Node node = null;
 			node = parser.Parse();
-			indent = "";
 			Analyzer analyzer = new LScriptAnalyzer();
 			node = analyzer.Analyze(node);
 			//DisplayTree(node);
-			OpNode finishedNode = CompileNode(parent, node);
+			OpNode finishedNode = CompileNode(parent, node, new LScriptCompilationContext());
 			return finishedNode;
 		}
 
 		[SkipInstrumentation]
-		internal static OpNode CompileNode(IOpNodeHolder parent, Node code, bool mustEval) {
+		internal static OpNode CompileNode(IOpNodeHolder parent, Node code, bool mustEval, LScriptCompilationContext context) {
 			switch ((StrictConstants) code.GetId()) {
 				case StrictConstants.STRONG_EVAL_EXPRESSION:
 				case StrictConstants.EVAL_EXPRESSION:
@@ -210,66 +181,68 @@ namespace SteamEngine.Scripting.Interpretation {
 				case StrictConstants.SWITCH_BLOCK:
 				case StrictConstants.RANDOM_EXPRESSION:
 				case StrictConstants.TYPE_OF_EXPRESSION:
-					return CompileNode(parent, code);
+					return CompileNode(parent, code, context);
 			}
 
 			if (mustEval) {
 				switch ((StrictConstants) code.GetId()) {
 					case StrictConstants.STRING:
 					case StrictConstants.SIMPLE_EXPRESSION:
-						return OpNode_Lazy_Expression.Construct(parent, code, mustEval: true);
+						return OpNode_Lazy_Expression.Construct(parent, code, mustEval: true, context: context);
 
 					case StrictConstants.DOTTED_EXPRESSION_CHAIN:
-						return OpNode_Lazy_ExpressionChain.Construct(parent, code);
+						return OpNode_Lazy_ExpressionChain.Construct(parent, code, context);
 
 					case StrictConstants.CODE_BODY_PARENS:
 					case StrictConstants.SIMPLE_CODE_BODY_PARENS:
-						return CompileNode(parent, code.GetChildAt(1), true);
+						return CompileNode(parent, code.GetChildAt(1), true, context);
 
 					case StrictConstants.SCRIPT_LINE:
 						if (code.GetChildCount() > 1) {
-							return CompileNode(parent, code.GetChildAt(0));
+							return CompileNode(parent, code.GetChildAt(0), context);
 						}
 						return OpNode_Object.Construct(parent, (object) null);
 				}
 
 
-				throw new InterpreterException("Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) + "'(Node type " + LogStr.Ident(code.ToString()) + ") in an invalid way.",
-					startLine + code.GetStartLine(), code.GetStartColumn(),
-					GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName());
+				throw new InterpreterException(
+					"Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) +
+					"'(Node type " + LogStr.Ident(code.ToString()) + ") in an invalid way.",
+					context.startLine + code.GetStartLine(), code.GetStartColumn(),
+					GetParentScriptHolder(parent).Filename, GetParentScriptHolder(parent).GetDecoratedName());
 			}
-			return CompileNode(parent, code);
+			return CompileNode(parent, code, context);
 		}
 
-		internal static OpNode CompileNode(IOpNodeHolder parent, Node code) {
+		internal static OpNode CompileNode(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
 			//Console.WriteLine("compiling "+GetString(code));
 			switch ((StrictConstants) code.GetId()) {
 				case StrictConstants.IF_BLOCK:
-					return OpNode_If.Construct(parent, code);
+					return OpNode_If.Construct(parent, code, context);
 
 				case StrictConstants.WHILE_BLOCK:
-					return OpNode_While.Construct(parent, code);
+					return OpNode_While.Construct(parent, code, context);
 
 				case StrictConstants.FOREACH_BLOCK:
-					return OpNode_Foreach.Construct(parent, code);
+					return OpNode_Foreach.Construct(parent, code, context);
 
 				case StrictConstants.FOR_BLOCK:
-					return OpNode_For.Construct(parent, code);
+					return OpNode_For.Construct(parent, code, context);
 
 				case StrictConstants.SWITCH_BLOCK:
-					return OpNode_Switch.Construct(parent, code);
+					return OpNode_Switch.Construct(parent, code, context);
 
 				case StrictConstants.WHITESPACE:
 #if DEBUG
-					Logger.WriteWarning(GetParentScriptHolder(parent).filename,
-						code.GetStartLine() + startLine, "Void code.");
+					Logger.WriteWarning(GetParentScriptHolder(parent).Filename,
+						code.GetStartLine() + context.startLine, "Void code.");
 #endif
 					return OpNode_Object.Construct(parent, (object) null);
 
 				case StrictConstants.COMEOL:
 #if DEBUG
-					Logger.WriteWarning(GetParentScriptHolder(parent).filename,
-						code.GetStartLine() + startLine, "Void code.");
+					Logger.WriteWarning(GetParentScriptHolder(parent).Filename,
+						code.GetStartLine() + context.startLine, "Void code.");
 #endif
 					return OpNode_Object.Construct(parent, (object) null);
 
@@ -294,67 +267,67 @@ namespace SteamEngine.Scripting.Interpretation {
 				case StrictConstants.ARGVN:
 				case StrictConstants.ARGON:
 				case StrictConstants.ARGUMENT:
-					return OpNode_Argument.Construct(parent, code);
+					return OpNode_Argument.Construct(parent, code, context);
 
 				case StrictConstants.SCRIPT:
-					return OpNode_Script.Construct(parent, code);
+					return OpNode_Script.Construct(parent, code, context);
 
 				case StrictConstants.CODE:
-					return OpNode_Code.Construct(parent, code);
+					return OpNode_Code.Construct(parent, code, context);
 
 				case StrictConstants.CODE_BODY:
-					return OpNode_Lazy_UnOperator.Construct(parent, code);
+					return OpNode_Lazy_UnOperator.Construct(parent, code, context);
 
 				case StrictConstants.CODE_BODY_PARENS:
-					return CompileNode(parent, code.GetChildAt(1));
+					return CompileNode(parent, code.GetChildAt(1), context);
 
 				case StrictConstants.SIMPLE_CODE:
-					return OpNode_Code.Construct(parent, code);
+					return OpNode_Code.Construct(parent, code, context);
 
 				case StrictConstants.SIMPLE_CODE_BODY:
-					return OpNode_Lazy_UnOperator.Construct(parent, code);
+					return OpNode_Lazy_UnOperator.Construct(parent, code, context);
 
 				case StrictConstants.SIMPLE_CODE_BODY_PARENS:
-					return CompileNode(parent, code.GetChildAt(1));
+					return CompileNode(parent, code.GetChildAt(1), context);
 
 				case StrictConstants.EVAL_WORD_EXPRESSION:
-					return CompileNode(parent, code.GetChildAt(1), true);
+					return CompileNode(parent, code.GetChildAt(1), true, context);
 
 				case StrictConstants.QUOTED_STRING:
-					return OpNode_Lazy_QuotedString.Construct(parent, code);
+					return OpNode_Lazy_QuotedString.Construct(parent, code, context);
 
 				case StrictConstants.SCRIPT_LINE:
 					if (code.GetChildCount() > 1) {
-						return CompileNode(parent, code.GetChildAt(0));
+						return CompileNode(parent, code.GetChildAt(0), context);
 					}
 					return OpNode_Object.Construct(parent, (object) null);
 
 				case StrictConstants.STRONG_EVAL_EXPRESSION:
 				case StrictConstants.EVAL_EXPRESSION:
-					return OpNode_Lazy_EvalExpression.Construct(parent, code);
+					return OpNode_Lazy_EvalExpression.Construct(parent, code, context);
 
 				case StrictConstants.DOTTED_EXPRESSION_CHAIN:
-					return OpNode_Lazy_ExpressionChain.Construct(parent, code);
+					return OpNode_Lazy_ExpressionChain.Construct(parent, code, context);
 
 				case StrictConstants.STRING:
-					return OpNode_Lazy_Expression.Construct(parent, code, mustEval: false);
+					return OpNode_Lazy_Expression.Construct(parent, code, mustEval: false, context: context);
 
 				case StrictConstants.SIMPLE_EXPRESSION:
 					// when the expression is just a word followed by space, it can be left un-evaled, otherwise its a method call/assignment
 					var isWhiteSpaceAssigner = StrictConstants.WHITE_SPACE_ASSIGNER == (StrictConstants) code.GetChildAt(1).GetId();
-					return OpNode_Lazy_Expression.Construct(parent, code, mustEval: !isWhiteSpaceAssigner);
+					return OpNode_Lazy_Expression.Construct(parent, code, mustEval: !isWhiteSpaceAssigner, context: context);
 
 				case StrictConstants.RANDOM_EXPRESSION:
-					return OpNode_Lazy_RandomExpression.Construct(parent, code);
+					return OpNode_Lazy_RandomExpression.Construct(parent, code, context);
 
 				case StrictConstants.VAR_EXPRESSION:
-					return OpNode_Lazy_VarExpression.Construct(parent, code);
+					return OpNode_Lazy_VarExpression.Construct(parent, code, context);
 
 				case StrictConstants.ADD_TIMER_EXPRESSION:
-					return OpNode_Lazy_AddTimer.Construct(parent, code);
+					return OpNode_Lazy_AddTimer.Construct(parent, code, context);
 
 				case StrictConstants.TYPE_OF_EXPRESSION:
-					return OpNode_Typeof.Construct(parent, code);
+					return OpNode_Typeof.Construct(parent, code, context);
 
 				case StrictConstants.INTEGER:
 					long i;
@@ -362,10 +335,10 @@ namespace SteamEngine.Scripting.Interpretation {
 						i = ConvertTools.ParseInt64(((Token) code).GetImage());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing integer",
-							startLine + code.GetStartLine(), code.GetStartColumn(),
-							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
+							context.startLine + code.GetStartLine(), code.GetStartColumn(),
+							GetParentScriptHolder(parent).Filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
-					if ((i <= int.MaxValue) && (i >= int.MinValue)) {
+					if ((i <= Int32.MaxValue) && (i >= Int32.MinValue)) {
 						return OpNode_Object.Construct(parent, (int) i);
 					}
 					return OpNode_Object.Construct(parent, i);
@@ -376,10 +349,10 @@ namespace SteamEngine.Scripting.Interpretation {
 						h = ConvertTools.ParseUInt64(((Token) code).GetImage().Trim());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing hexadecimal integer",
-							startLine + code.GetStartLine(), code.GetStartColumn(),
-							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
+							context.startLine + code.GetStartLine(), code.GetStartColumn(),
+							GetParentScriptHolder(parent).Filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
-					if ((h <= uint.MaxValue) && (h >= uint.MinValue)) {
+					if ((h <= UInt32.MaxValue) && (h >= UInt32.MinValue)) {
 						return OpNode_Object.Construct(parent, (uint) h);
 					}
 					return OpNode_Object.Construct(parent, h);
@@ -390,15 +363,17 @@ namespace SteamEngine.Scripting.Interpretation {
 						d = ConvertTools.ParseDouble(((Token) code).GetImage());
 					} catch (Exception e) {
 						throw new InterpreterException("Exception while parsing decimal number",
-							startLine + code.GetStartLine(), code.GetStartColumn(),
-							GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
+							context.startLine + code.GetStartLine(), code.GetStartColumn(),
+							GetParentScriptHolder(parent).Filename, GetParentScriptHolder(parent).GetDecoratedName(), e);
 					}
 					return OpNode_Object.Construct(parent, d);
 			}
 
-			throw new InterpreterException("Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) + "'(Node type " + LogStr.Ident(code.ToString()) + ")  in an invalid way.",
-				startLine + code.GetStartLine(), code.GetStartColumn(),
-				GetParentScriptHolder(parent).filename, GetParentScriptHolder(parent).GetDecoratedName());
+			throw new InterpreterException(
+				"Uncompilable node. If you see this message you have probably used expression '" + LogStr.Number(GetString(code)) +
+				"'(Node type " + LogStr.Ident(code.ToString()) + ")  in an invalid way.",
+				context.startLine + code.GetStartLine(), code.GetStartColumn(),
+				GetParentScriptHolder(parent).Filename, GetParentScriptHolder(parent).GetDecoratedName());
 		}
 
 		internal static LScriptHolder GetParentScriptHolder(IOpNodeHolder holder) {
@@ -409,17 +384,15 @@ namespace SteamEngine.Scripting.Interpretation {
 			return (LScriptHolder) holder;
 		}
 
-		private static string indent;
-
 		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-		internal static void DisplayTree(Node node) {
-			Console.WriteLine(indent + node + " : " + GetString(node));
+		internal static void DisplayTree(Node node, LScriptCompilationContext context) {
+			Console.WriteLine(context.indent + node + " : " + GetString(node));
 			//Console.WriteLine(indent+node);
 			for (int i = 0, n = node.GetChildCount(); i < n; i++) {
 				Node child = node.GetChildAt(i);
-				indent += "    ";
-				DisplayTree(child);
-				indent = indent.Substring(0, indent.Length - 4);
+				context.indent += "    ";
+				DisplayTree(child, context);
+				context.indent = context.indent.Substring(0, context.indent.Length - 4);
 			}
 		}
 

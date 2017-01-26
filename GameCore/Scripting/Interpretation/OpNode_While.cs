@@ -28,21 +28,21 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode condition;
 		private OpNode code;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_While constructed = new OpNode_While(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
 			Production whileProduction = (Production) code;
 			Node conditionNode = whileProduction.GetChildAt(1);
-			constructed.condition = LScriptMain.CompileNode(constructed, conditionNode, true);
+			constructed.condition = LScriptMain.CompileNode(constructed, conditionNode, true, context);
 
 			Node codeNode = whileProduction.GetChildAt(3);
 			if (!IsType(conditionNode, StrictConstants.ENDWHILE)) {
-				constructed.code = LScriptMain.CompileNode(constructed, codeNode, true);
+				constructed.code = LScriptMain.CompileNode(constructed, codeNode, true, context);
 			}
 			return constructed;
 		}

@@ -35,7 +35,7 @@ namespace SteamEngine.Scripting.Objects {
 			if (this.triggers.TryGetValue(tk, out sd)) {
 				return sd.Run(self, sa);
 			}
-			return null;	//This triggerGroup does not contain that trigger
+			return null;    //This triggerGroup does not contain that trigger
 		}
 
 		//does not throw the exceptions - all triggers are run, regardless of their errorness
@@ -45,19 +45,18 @@ namespace SteamEngine.Scripting.Objects {
 			if (this.triggers.TryGetValue(tk, out sd)) {
 				return sd.TryRun(self, sa);
 			}
-			return null;	//This triggerGroup does not contain that trigger
+			return null;    //This triggerGroup does not contain that trigger
 		}
 
-		private void AddTrigger(ScriptHolder sd) {
-			string name = sd.Name;
+		private void AddTrigger(ScriptHolder scriptHolder) {
+			string name = scriptHolder.Name;
 			//Console.WriteLine("Adding trigger {0} to tg {1}", name, this);
 			TriggerKey tk = TriggerKey.Acquire(name);
 			if (this.triggers.ContainsKey(tk)) {
 				Logger.WriteError("Attempted to declare triggers of the same name (" + LogStr.Ident(name) + ") in trigger-group " + LogStr.Ident(this.Defname) + "!");
 				return;
 			}
-			sd.contTriggerGroup = this;
-			this.triggers[tk] = sd;
+			this.triggers[tk] = scriptHolder;
 		}
 
 		public override string ToString() {
@@ -88,8 +87,8 @@ namespace SteamEngine.Scripting.Objects {
 		public static TriggerGroup Load(PropsSection input) {
 			InterpretedTriggerGroup group = GetNewOrCleared(input.HeaderName);
 			for (int i = 0, n = input.TriggerCount; i < n; i++) {
-				ScriptHolder sc = new LScriptHolder(input.GetTrigger(i));
-				if (!sc.unloaded) {//in case the compilation failed, we do not add the trigger
+				var sc = new LScriptHolder(input.GetTrigger(i), contTriggerGroupName: input.HeaderName);
+				if (!sc.IsUnloaded) {//in case the compilation failed, we do not add the trigger
 					group.AddTrigger(sc);
 				}
 			}

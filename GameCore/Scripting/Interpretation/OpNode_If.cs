@@ -39,30 +39,30 @@ namespace SteamEngine.Scripting.Interpretation {
 		//	elseBlock
 
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_If constructed = new OpNode_If(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
 			Production ifProduction = (Production) code;
-            List<OpNode> conditionsList = new List<OpNode>();
-            List<OpNode> blocksList = new List<OpNode>();
+			List<OpNode> conditionsList = new List<OpNode>();
+			List<OpNode> blocksList = new List<OpNode>();
 			int n = code.GetChildCount();
 			for (int i = 0; i < n; i++) {
 				Node node = ifProduction.GetChildAt(i);
 				if ((IsType(node, StrictConstants.IF_BEGIN)) || (IsType(node, StrictConstants.ELSE_IF_BLOCK))) {
 					Production prod = (Production) node;//type IF_BEGIN or ELSE_IF_BLOCK, which are in this context equal
-					//skipping IF / ELSEIF
+														//skipping IF / ELSEIF
 					Node condition = prod.GetChildAt(1);
-					OpNode condNode = LScriptMain.CompileNode(constructed, condition, true);
+					OpNode condNode = LScriptMain.CompileNode(constructed, condition, true, context);
 					conditionsList.Add(condNode);
 					//skipping EOL
 					if (prod.GetChildCount() == 4) {
 						Node block = prod.GetChildAt(3);
-						blocksList.Add(LScriptMain.CompileNode(constructed, block, true));
+						blocksList.Add(LScriptMain.CompileNode(constructed, block, true, context));
 					} else {
 						blocksList.Add(null);
 					}
@@ -77,11 +77,11 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (IsType(elseNode, StrictConstants.ELSE_BLOCK)) {
 				Production elseProd = (Production) elseNode;
 				Node elseCode = elseProd.GetChildAt(2);
-				constructed.elseBlock = LScriptMain.CompileNode(constructed, elseCode, true);
+				constructed.elseBlock = LScriptMain.CompileNode(constructed, elseCode, true, context);
 			}
 
-            constructed.blocks = blocksList.ToArray();
-            constructed.conditions = conditionsList.ToArray();
+			constructed.blocks = blocksList.ToArray();
+			constructed.conditions = conditionsList.ToArray();
 
 			return constructed;
 		}

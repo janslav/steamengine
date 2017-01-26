@@ -24,8 +24,8 @@ namespace SteamEngine.Scripting.Interpretation {
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_LogicalAnd : OpNode_Lazy_BinOperator {
 		//gets created from OpNode
-		internal OpNode_LogicalAnd(IOpNodeHolder parent, Node code)
-			: base(parent, code) {
+		internal OpNode_LogicalAnd(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
+			: base(parent, code, context) {
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -55,8 +55,8 @@ namespace SteamEngine.Scripting.Interpretation {
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_LogicalOr : OpNode_Lazy_BinOperator {
 		//gets created from OpNode
-		internal OpNode_LogicalOr(IOpNodeHolder parent, Node code)
-			: base(parent, code) {
+		internal OpNode_LogicalOr(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
+			: base(parent, code, context) {
 		}
 
 		internal override object Run(ScriptVars vars) {

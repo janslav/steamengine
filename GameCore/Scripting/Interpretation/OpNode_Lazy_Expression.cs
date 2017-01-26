@@ -41,10 +41,10 @@ namespace SteamEngine.Scripting.Interpretation {
 		private string classOrNamespaceName = "";
 		private bool isClass;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code, bool mustEval) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, bool mustEval, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 			OpNode_Lazy_Expression constructed = new OpNode_Lazy_Expression(
 				parent, filename, line, column, code);
 
@@ -91,7 +91,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				int current = 1;
 				Node caller = code.GetChildAt(current);
 				if (IsType(caller, StrictConstants.CALLER)) {
-					constructed.GetArgsFrom(caller);
+					constructed.GetArgsFrom(caller, context);
 					current++;
 				}
 
@@ -103,17 +103,17 @@ namespace SteamEngine.Scripting.Interpretation {
 						indexer.AddChild(((Production) code).PopChildAt(current + 1));
 						//this is last one, because assigner being next means there are no nodes anymore
 					}
-					indexersList.Add(OpNode_Lazy_Indexer.Construct(constructed, indexer));
+					indexersList.Add(OpNode_Lazy_Indexer.Construct(constructed, indexer, context));
 					current++;
 				}
 
 				Node assigner = code.GetChildAt(current);
 				if (IsAssigner(assigner)) {
 					if (constructed.args == null) {
-						constructed.GetArgsFrom(assigner);
+						constructed.GetArgsFrom(assigner, context);
 					} else {
 						throw new InterpreterException("This expression is invalid : 'identifier(...) = ... '",
-							LScriptMain.startLine + assigner.GetStartLine(), assigner.GetStartColumn(),
+							context.startLine + assigner.GetStartLine(), assigner.GetStartColumn(),
 							filename, LScriptMain.GetParentScriptHolder(parent).GetDecoratedName());
 						//this could also (maybe?) be a parser error, but I wasn`t yet able to make the grammar that way :)
 						//for the scripter is it irrelevant - it`s anyway an error at "compile" time.
@@ -127,7 +127,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					for (int i = 0, n = indexersList.Count; i < n; i++) {
 						chain[i + 1] = indexersList[i];
 					}
-					return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, code, chain);
+					return OpNode_Lazy_ExpressionChain.ConstructFromArray(parent, code, chain, context);
 				}
 				return constructed;
 			}
@@ -135,7 +135,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		protected void GetArgsFrom(Node caller) {
+		protected void GetArgsFrom(Node caller, LScriptCompilationContext context) {
 			//caller / assigner
 			Node arg = caller.GetChildAt(1); //ArgsList or just one expression
 			//skipped the caller`s first token - "(" / "=" / " "
@@ -154,7 +154,7 @@ namespace SteamEngine.Scripting.Interpretation {
 						sb.Append(LScriptMain.GetString(separator));
 					}
 					Node node = arg.GetChildAt(i);
-					argsList.Add(LScriptMain.CompileNode(this, node));
+					argsList.Add(LScriptMain.CompileNode(this, node, context));
 				}
                 this.args = argsList.ToArray();
 
@@ -162,7 +162,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				((Production) arg).children.CopyTo(stringTokens);
 				this.formatString = sb.ToString();
 			} else {
-				OpNode compiled = LScriptMain.CompileNode(this, arg);
+				OpNode compiled = LScriptMain.CompileNode(this, arg, context);
 				this.args = new[] { compiled };
 				this.formatString = "{0}";
 			}

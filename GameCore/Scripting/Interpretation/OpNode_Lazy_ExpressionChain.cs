@@ -27,11 +27,11 @@ namespace SteamEngine.Scripting.Interpretation {
 		//accepts DottedExpressionChain
 		private OpNode[] chain; //expression1.expression2.exp....
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			OpNode_Is opnodeIs = null;
 
@@ -40,13 +40,13 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (i > 0) {
 					Node dotOrIsNode = code.GetChildAt(i - 1);//DOT or OP_IS
 					if (IsType(dotOrIsNode, StrictConstants.OP_IS)) {
-						opnodeIs = OpNode_Is.Construct(parent, code, i);
+						opnodeIs = OpNode_Is.Construct(parent, code, i, context);
 						break;
 					}
 				}
 
 				Node node = code.GetChildAt(i);
-				argsList.Add(LScriptMain.CompileNode(constructed, node, true));//mustEval always true
+				argsList.Add(LScriptMain.CompileNode(constructed, node, true, context));//mustEval always true
 			}
 			//in case that one of the members of the chain is also ExpressionChain (a new chain of indexers or something like that)...
 			//in fact this wont happen in 99% cases, but we want perfectness :)
@@ -54,7 +54,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			for (int i = 0, n = argsList.Count; i < n; i++) {
 				OpNode node = argsList[i];
 				OpNode_Lazy_ExpressionChain nodeAsExpChain = node as OpNode_Lazy_ExpressionChain;
-				if (nodeAsExpChain != null) {					
+				if (nodeAsExpChain != null) {
 					for (int ii = 0, nn = nodeAsExpChain.chain.Length; ii < nn; ii++) {
 						finalArgsList.Add(nodeAsExpChain.chain[ii]);
 					}
@@ -76,12 +76,12 @@ namespace SteamEngine.Scripting.Interpretation {
 			return constructed;
 		}
 
-		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, OpNode[] chain) {
+		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, OpNode[] chain, LScriptCompilationContext context) {
 			//the chain was already made by Lazy_Expression - chain of indexers
-			int line = code.GetStartLine() + LScriptMain.startLine;
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 			constructed.chain = chain;
 			foreach (OpNode opNode in chain) {
 				opNode.parent = constructed;
@@ -104,7 +104,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal override object Run(ScriptVars vars) {
 			object oSelf = vars.self;
 			try {
-				for (int i = 0; i < this.chain.Length; ) {
+				for (int i = 0; i < this.chain.Length;) {
 					try {
 						vars.self = this.chain[i].Run(vars);
 						i++;

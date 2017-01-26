@@ -28,13 +28,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		private Type type;
 		internal OpNode opNode;
 
-		internal static OpNode_Is Construct(IOpNodeHolder parent, Node code, int typeNameFromIndex) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode_Is Construct(IOpNodeHolder parent, Node code, int typeNameFromIndex, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
 			OpNode_Is constructed = new OpNode_Is(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
@@ -85,10 +85,10 @@ namespace SteamEngine.Scripting.Interpretation {
 
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public static class OpNode_Typeof {
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
 			int n = code.GetChildCount();
 			if (OpNode.IsType(code.GetChildAt(1), StrictConstants.LEFT_PAREN)) {

@@ -30,11 +30,11 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode rightBoundNode;
 		private OpNode blockNode;//can be null
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_For constructed = new OpNode_For(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 			constructed.localName = "localName";
@@ -46,12 +46,12 @@ namespace SteamEngine.Scripting.Interpretation {
 			constructed.localIndex = constructed.ParentScriptHolder.GetLocalVarIndex(localName);
 
 
-			constructed.leftBoundNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2));
-			constructed.rightBoundNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(4));
+			constructed.leftBoundNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2), context);
+			constructed.rightBoundNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(4), context);
 
 
 			if (mainProd.GetChildCount() == 6) {//has the Script node inside?
-				constructed.blockNode = LScriptMain.CompileNode(constructed, mainProd.GetChildAt(3), true);
+				constructed.blockNode = LScriptMain.CompileNode(constructed, mainProd.GetChildAt(3), true, context);
 			}
 			return constructed;
 		}

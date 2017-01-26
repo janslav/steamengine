@@ -29,29 +29,29 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode index;
 		internal OpNode arg;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_Indexer constructed = new OpNode_Lazy_Indexer(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 			//skipped "["
-			constructed.index = LScriptMain.CompileNode(constructed, code.GetChildAt(1));
+			constructed.index = LScriptMain.CompileNode(constructed, code.GetChildAt(1), context);
 			//skipped "]"
 			if (IsAssigner(code.GetChildAt(3))) {
 				Node assigner = code.GetChildAt(3);
-				constructed.arg = LScriptMain.CompileNode(constructed, assigner.GetChildAt(1));
+				constructed.arg = LScriptMain.CompileNode(constructed, assigner.GetChildAt(1), context);
 			}
 			//LScript.DisplayTree(code);			
 			return constructed;
 		}
 
-		internal static OpNode_Lazy_Indexer Construct(IOpNodeHolder parent, Node code, OpNode index, OpNode arg) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode_Lazy_Indexer Construct(IOpNodeHolder parent, Node code, OpNode index, OpNode arg, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
 			OpNode_Lazy_Indexer constructed = new OpNode_Lazy_Indexer(
-				parent, LScriptMain.GetParentScriptHolder(parent).filename, line, column, code);
+				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 			constructed.index = index;
 			if (index != null) {
 				index.parent = constructed;

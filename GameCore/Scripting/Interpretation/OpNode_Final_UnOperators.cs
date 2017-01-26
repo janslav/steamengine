@@ -24,8 +24,8 @@ using SteamEngine.Common;
 namespace SteamEngine.Scripting.Interpretation {
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_NotOperator : OpNode_Lazy_UnOperator, ITriable { // !
-		internal OpNode_NotOperator(IOpNodeHolder parent, Node code)
-			: base(parent, code) {
+		internal OpNode_NotOperator(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
+			: base(parent, code, context) {
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -50,8 +50,8 @@ namespace SteamEngine.Scripting.Interpretation {
 
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_BitComplementOperator : OpNode_Lazy_UnOperator, ITriable { // ~
-		internal OpNode_BitComplementOperator(IOpNodeHolder parent, Node code)
-			: base(parent, code) {
+		internal OpNode_BitComplementOperator(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
+			: base(parent, code, context) {
 		}
 
 		internal override object Run(ScriptVars vars) {
@@ -76,8 +76,8 @@ namespace SteamEngine.Scripting.Interpretation {
 
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	internal class OpNode_MinusOperator : OpNode_Lazy_UnOperator, ITriable { // ~
-		internal OpNode_MinusOperator(IOpNodeHolder parent, Node code)
-			: base(parent, code) {
+		internal OpNode_MinusOperator(IOpNodeHolder parent, Node code, LScriptCompilationContext context)
+			: base(parent, code, context) {
 		}
 
 		internal override object Run(ScriptVars vars) {

@@ -17,24 +17,41 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text;
+using PerCederberg.Grammatica.Parser;
+using Shielded;
 using SteamEngine.Common;
 
 //using PerCederberg.Grammatica.Parser;
 
 namespace SteamEngine.Scripting.Interpretation {
 	public class LScriptHolder : ScriptHolder, IOpNodeHolder, IUnloadable {
-		internal string filename = "<default>";
-		internal int line;
-		internal OpNode code;
-		private Dictionary<string, int> localsNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+		private readonly Shielded<State> shieldedState = new Shielded<State>(initial: new State {
+			filename = "<default>",
+			localsNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+		});
+
+		struct State {
+			internal string filename;
+			internal int line;
+			internal OpNode code;
+			internal bool unloaded;
+			internal bool containsRandom;
+			internal Dictionary<string, int> localsNames;
+		}
+
+		private readonly string contTriggerGroupName;
 
 		//internal OpNode nodeToReturn;
 
 		//used by TriggerGroup/GumpDef/templatedef/... loading, and LoadAsFunction here
-		public LScriptHolder(TriggerSection input)
+		public LScriptHolder(TriggerSection input, string contTriggerGroupName = null)
 			: base(input.TriggerName) {
-			this.Compile(input);
+			this.TrySetMetadataAndCompile(input);
+			this.contTriggerGroupName = contTriggerGroupName;
 		}
 
 		//a little hack for gump response triggers.
@@ -48,67 +65,119 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal LScriptHolder(string filename)
 			: base("temporary") {
-			this.filename = filename;
+			this.shieldedState.Modify((ref State s) => s.filename = filename);
 		}
 
 		internal LScriptHolder()
 			: base("temporary") {
 		}
 
+		internal int LocalVarsCount => this.shieldedState.Value.localsNames.Count;
+
+		public bool ContainsRandomExpression => this.ContainsRandom;
+
+		public sealed override bool IsUnloaded => this.shieldedState.Value.unloaded;
+
+		public sealed override string Description => this.Filename + "(L" + this.Line + ")";
+
+		public string Filename => this.shieldedState.Value.filename;
+
+		public int Line => this.shieldedState.Value.line;
+
+		internal OpNode Code => this.shieldedState.Value.code;
+
+		internal bool ContainsRandom {
+			get { return this.shieldedState.Value.containsRandom; }
+			set { this.shieldedState.Modify((ref State s) => s.containsRandom = value); }
+		}
+
 		void IOpNodeHolder.Replace(OpNode oldNode, OpNode newNode) {
-			if (this.code == oldNode) {
-				this.code = newNode;
+			Shield.AssertInTransaction();
+			if (this.Code == oldNode) {
+				this.shieldedState.Modify((ref State s) => s.code = newNode);
 			} else {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
 		}
 
 		internal int GetLocalVarIndex(string name) {
+			Shield.AssertInTransaction();
 			int index;
-			if (!this.localsNames.TryGetValue(name, out index)) {
-				index = this.localsNames.Count;
-				this.localsNames[name] = index;
+			if (!this.shieldedState.Value.localsNames.TryGetValue(name, out index)) {
+				this.shieldedState.Modify((ref State s) => {
+					index = s.localsNames.Count;
+					s.localsNames[name] = index;
+				});
 			}
 			return index;
 		}
 
 		internal bool ContainsLocalVarName(string name) {
-			return this.localsNames.ContainsKey(name);
+			Shield.AssertInTransaction();
+			return this.shieldedState.Value.localsNames.ContainsKey(name);
 		}
 
-		internal int LocalVarsCount {
-			get {
-				return this.localsNames.Count;
-			}
+		internal void TrySetMetadataAndCompile(TriggerSection input) {
+			this.shieldedState.Modify((ref State s) => {
+				s.filename = input.Filename;
+				s.line = input.StartLine;
+				var stringBuilder = input.Code.ToString();
+
+				using (StringReader reader = new StringReader(stringBuilder)) {
+					s.code = LScriptMain.TryCompile(this, reader, input.StartLine);
+				}
+				s.unloaded = (this.Code == null);
+				//Logger.WriteDebug("the code is: "+code);
+			});
 		}
 
-		internal bool containsRandom;
-		public bool ContainsRandomExpression {
-			get {
-				return this.containsRandom;
-			}
+		internal void SetMetadataAndCompile(string inputFilename, int inputStartLine, string inputCode) {
+			this.shieldedState.Modify((ref State s) => {
+				s.filename = inputFilename;
+				s.line = inputStartLine;
+				var stringBuilder = inputCode;
+
+				using (StringReader reader = new StringReader(stringBuilder)) {
+					s.code = LScriptMain.Compile(this, reader, inputStartLine);
+				}
+				s.unloaded = (this.Code == null);
+				//Logger.WriteDebug("the code is: "+code);
+			});
 		}
 
-		internal void Compile(TriggerSection input) {
-			this.filename = input.Filename;
-			this.line = input.StartLine;
-			//if (registerNames == null) {//else it got already created by the constructor
-			//	registerNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
-			//}
-			//Console.WriteLine("compiling text "+input.code);
-			using (StringReader reader = new StringReader(input.Code.ToString())) {
-				this.code = LScriptMain.TryCompile(this, reader, input.StartLine);
+		internal object RunAsSnippet(string filename, int line, TagHolder self, string script) {
+			try {
+				this.SetMetadataAndCompile(inputFilename: filename, inputStartLine: line, inputCode: script);
+
+				object retVal = this.Code.Run(
+					new ScriptVars(null, self, this.LocalVarsCount, new LScriptCompilationContext { startLine = line }));
+				return retVal;
+			} catch (ParserLogException ple) {
+				LogStr lstr = (LogStr) "";
+				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
+					ParseException pe = ple.GetError(i);
+					int curline = pe.GetLine() + line;
+					if (i > 0) {
+						lstr = lstr + Environment.NewLine;
+					}
+					lstr = lstr + LogStr.FileLine(filename, curline)
+						   + pe.GetErrorMessage();
+					//Logger.WriteError(WorldSaver.currentfile, curline, pe.GetErrorMessage());
+				}
+				throw new SEException(lstr);
+			} catch (RecursionTooDeepException rtde) {
+				throw rtde; // we really do want to rethrow it, so that its useless stack is lost.
 			}
-			this.unloaded = (this.code == null);
-			//Logger.WriteDebug("the code is: "+code);
 		}
 
 		public sealed override object Run(object self, ScriptArgs sa) {
-			if (this.unloaded) {
+			Shield.AssertInTransaction();
+			var state = this.shieldedState.Value;
+			if (state.unloaded) {
 				throw new UnloadedException("Function/trigger " + LogStr.Ident(this.Name) + " is unloaded, can not be run.");
 			}
-			ScriptVars sv = new ScriptVars(sa, self, this.localsNames.Count);
-			object retVal = this.code.Run(sv);
+			ScriptVars sv = new ScriptVars(sa, self, this.LocalVarsCount, new LScriptCompilationContext { startLine = state.line });
+			object retVal = state.code.Run(sv);
 			if (sv.returned) {
 				return retVal;
 			}
@@ -116,32 +185,29 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		protected sealed override void Error(Exception e) {
-			Logger.WriteError(this.filename, this.line, e);
+			Logger.WriteError(this.Filename, this.Line, e);
 		}
 
 		public void Unload() {
-			this.code = null;
-			this.localsNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-			this.unloaded = true;
+			this.shieldedState.Modify((ref State s) => {
+				s.code = null;
+				s.localsNames.Clear();
+				s.unloaded = true;
+			});
 		}
 
-		public sealed override bool IsUnloaded {
-			get {
-				return this.unloaded;
+		public override string GetDecoratedName() {
+			if (string.IsNullOrWhiteSpace(this.contTriggerGroupName)) {
+				return this.Name;
 			}
+			return this.contTriggerGroupName + ": @" + this.Name;
 		}
-
-		public sealed override string Description {
-			get {
-				return this.filename + "(L" + this.line + ")";
-			}
-		}
-
 	}
 
 	public class ScriptVars {
 		internal ScriptArgs scriptArgs;
 		internal object self;
+		internal readonly LScriptCompilationContext compilationContext;
 		internal object[] localVars;
 		internal bool returned;
 		internal readonly object defaultObject;
@@ -149,13 +215,19 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		//private static int uids;
 
-		internal ScriptVars(ScriptArgs scriptArgs, object self, int capacity) {
+		internal ScriptVars(ScriptArgs scriptArgs, object self, int capacity, LScriptCompilationContext compilationContext) {
 			this.scriptArgs = scriptArgs;
 			this.self = self;
+			this.compilationContext = compilationContext;
 			//this.uid = uids++;
 			this.defaultObject = self;
 			this.localVars = new object[capacity];
 			//this.returned = false;
 		}
+	}
+
+	public class LScriptCompilationContext {
+		public int startLine;
+		public string indent = "";
 	}
 }

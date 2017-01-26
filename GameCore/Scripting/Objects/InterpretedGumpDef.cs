@@ -55,7 +55,7 @@ namespace SteamEngine.Scripting.Objects {
 					throw new SEException("GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
 				}
 				LScriptHolder sc = new LScriptHolder(input.GetTrigger(0));
-				if (sc.unloaded) {//in case the compilation failed (syntax error)
+				if (sc.IsUnloaded) {//in case the compilation failed (syntax error)
 					sgd.Unload(); //IsUnloaded = true;
 					return null;
 				}
@@ -92,7 +92,7 @@ namespace SteamEngine.Scripting.Objects {
 						}
 						trigger.Code = modifiedCode;
 						LScriptHolder sc = new LScriptHolder(trigger);
-						if (sc.unloaded) {//in case the compilation failed (syntax error)
+						if (sc.IsUnloaded) {//in case the compilation failed (syntax error)
 							sgd.Unload(); //IsUnloaded = true;
 							return null;
 						}

@@ -38,10 +38,10 @@ namespace SteamEngine.Scripting.Interpretation {
 		protected string formatString;
 		private object[] results;
 
-		internal static OpNode Construct(IOpNodeHolder parent, Node code) {
-			int line = code.GetStartLine() + LScriptMain.startLine;
+		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
+			int line = code.GetStartLine() + context.startLine;
 			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).filename;
+			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 			OpNode_Lazy_AddTimer constructed;
 
 			Production body = (Production) code.GetChildAt(2);
@@ -58,9 +58,9 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			Node timerKeyNode = body.GetChildAt(0);
 			constructed.name = TimerKey.Acquire(((Token) timerKeyNode.GetChildAt(timerKeyNode.GetChildCount() - 1)).GetImage());
-			constructed.secondsNode = LScriptMain.CompileNode(constructed, body.GetChildAt(2));
+			constructed.secondsNode = LScriptMain.CompileNode(constructed, body.GetChildAt(2), context);
 			if (body.GetChildCount() > 5) {
-				constructed.GetArgsFrom(body.GetChildAt(6));
+				constructed.GetArgsFrom(body.GetChildAt(6), context);
 			} else {
 				constructed.args = new OpNode[0];
 				constructed.str = OpNode_Object.Construct(constructed, "");
@@ -131,7 +131,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				//}
 
-runit:	//I know that goto is usually considered dirty, but I find this case quite suitable for it...
+				runit:  //I know that goto is usually considered dirty, but I find this case quite suitable for it...
 				if (resolver != null) {
 					this.results = resolver.results;
 					MemberResolver.ReturnInstance(resolver);
@@ -197,10 +197,10 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 			return true;
 		}
 
-		private void GetArgsFrom(Node arg) {
+		private void GetArgsFrom(Node arg, LScriptCompilationContext context) {
 			//caller / assigner
 			if (IsType(arg, StrictConstants.ARGS_LIST)) {
-                List<OpNode> argsList = new List<OpNode>();
+				List<OpNode> argsList = new List<OpNode>();
 				//ArrayList stringList = new ArrayList();
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0, n = arg.GetChildCount(); i < n; i += 2) { //step 2 - skipping argsseparators
@@ -210,19 +210,18 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 						sb.Append(LScriptMain.GetString(separator));
 					}
 					Node node = arg.GetChildAt(i);
-					argsList.Add(LScriptMain.CompileNode(this, node));
+					argsList.Add(LScriptMain.CompileNode(this, node, context));
 				}
 				this.args = argsList.ToArray();
 
 				object[] stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);
-				this.str = OpNode_Lazy_QuotedString.ConstructFromArray(
-					this, arg, stringTokens);
+				this.str = OpNode_Lazy_QuotedString.ConstructFromArray(this, arg, stringTokens, context);
 				this.formatString = sb.ToString();
 			} else {
-				OpNode compiled = LScriptMain.CompileNode(this, arg);
+				OpNode compiled = LScriptMain.CompileNode(this, arg, context);
 				this.args = new[] { compiled };
-				this.str = OpNode_ToString.Construct(this, arg);
+				this.str = OpNode_ToString.Construct(this, arg, context);
 				this.formatString = "{0}";
 			}
 		}
