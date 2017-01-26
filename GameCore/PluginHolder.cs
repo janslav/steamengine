@@ -21,6 +21,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine {
 	public interface ITriggerGroupHolder {

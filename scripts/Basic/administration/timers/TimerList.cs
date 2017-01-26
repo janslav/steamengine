@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using SteamEngine.Scripting;
+using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
 using SteamEngine.Timers;
 

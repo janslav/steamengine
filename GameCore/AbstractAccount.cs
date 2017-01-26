@@ -25,6 +25,7 @@ using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine {
 	public abstract class AbstractAccount : PluginHolder {

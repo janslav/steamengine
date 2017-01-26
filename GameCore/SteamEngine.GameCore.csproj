@@ -55,11 +55,14 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Scripting\Objects\CompiledGump.cs" />
     <Compile Include="Scripting\Objects\CompiledSpeechDef.cs" />
     <Compile Include="Scripting\Compilation\XmlDocComments.cs" />
     <Compile Include="LocalisationExtensions.cs" />
-    <Compile Include="Scripting\Objects\ScriptedSpeechDef.cs" />
-    <Compile Include="SpeechDef.cs" />
+    <Compile Include="Scripting\Objects\Gump.cs" />
+    <Compile Include="Scripting\Objects\InterpretedGump.cs" />
+    <Compile Include="Scripting\Objects\InterpretedSpeechDef.cs" />
+    <Compile Include="Scripting\Objects\SpeechDef.cs" />
     <Compile Include="AI\AI.cs" />
     <Compile Include="AI\PathFinder.cs" />
     <Compile Include="AuxServerPipe\AuxServerPipeClient.cs" />
@@ -76,8 +79,8 @@
     <Compile Include="Scripting\Compilation\ClassTemplates\ThingDefTemplate.cs" />
     <Compile Include="Scripting\Compilation\ClassTemplates\ThingTemplate.cs" />
     <Compile Include="Scripting\Compilation\ClassManager.cs" />
-    <Compile Include="Scripting\Objects\CompiledGump.cs" />
-    <Compile Include="Scripting\Objects\CompiledScriptHolder.cs" />
+    <Compile Include="Scripting\Objects\CompiledGumpDef.cs" />
+    <Compile Include="Scripting\Compilation\CompiledScriptHolder.cs" />
     <Compile Include="Scripting\Objects\CompiledTriggerGroup.cs" />
     <Compile Include="Scripting\Compilation\CompilerInvoker.cs" />
     <Compile Include="Scripting\Compilation\GeneratedCodeUtil.cs" />
@@ -130,9 +133,9 @@
     <Compile Include="Scripting\Interpretation\OpNode_Switch.cs" />
     <Compile Include="Scripting\Interpretation\OpNode_TypeOf.cs" />
     <Compile Include="Scripting\Interpretation\OpNode_While.cs" />
-    <Compile Include="Scripting\Objects\ScriptedGumpDef.cs" />
-    <Compile Include="Scripting\Objects\ScriptedLoc.cs" />
-    <Compile Include="Scripting\Objects\ScriptedTriggerGroup.cs" />
+    <Compile Include="Scripting\Objects\InterpretedGumpDef.cs" />
+    <Compile Include="Scripting\Objects\InterpretedLocStringCollection.cs" />
+    <Compile Include="Scripting\Objects\InterpretedTriggerGroup.cs" />
     <Compile Include="Scripting\Interpretation\StrictAnalyzer.cs" />
     <Compile Include="Scripting\Interpretation\StrictConstants.cs" />
     <Compile Include="Scripting\Interpretation\StrictParser.cs" />
@@ -203,7 +206,7 @@
     <Compile Include="FastWalk.cs" />
     <Compile Include="FieldValue.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Scripting\Objects\Gump.cs" />
+    <Compile Include="Scripting\Objects\GumpDef.cs" />
     <Compile Include="LayerNames.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MemberWrapper.cs" />
@@ -234,7 +237,7 @@
     <Compile Include="ThingLinkedList.cs" />
     <Compile Include="ThingManipulationTriggers.cs" />
     <Compile Include="UoData\TileData.cs" />
-    <Compile Include="TriggerGroup.cs" />
+    <Compile Include="Scripting\Objects\TriggerGroup.cs" />
     <Compile Include="TriggerKey.cs" />
     <Compile Include="UIDArray.cs" />
     <Compile Include="Utility.cs" />

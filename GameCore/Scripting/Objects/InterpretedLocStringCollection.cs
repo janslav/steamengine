@@ -4,8 +4,8 @@ using SteamEngine.Common;
 
 namespace SteamEngine.Scripting.Objects {
 
-	public class ScriptedLocStringCollection : LocStringCollection, IUnloadable {
-		public ScriptedLocStringCollection(string defname, string assemblyName, Language language, IEnumerable<KeyValuePair<string, string>> entriesFromCode)
+	public class InterpretedLocStringCollection : LocStringCollection, IUnloadable {
+		public InterpretedLocStringCollection(string defname, string assemblyName, Language language, IEnumerable<KeyValuePair<string, string>> entriesFromCode)
 			: base(defname, assemblyName, language, entriesFromCode) {
 		}
 
@@ -27,7 +27,7 @@ namespace SteamEngine.Scripting.Objects {
 			IUnloadable[] langs = new IUnloadable[n];
 
 			for (int i = 0; i < n; i++) {
-				var newLoc = new ScriptedLocStringCollection(defname: section.HeaderName, assemblyName: "LScript", language: (Language) i,
+				var newLoc = new InterpretedLocStringCollection(defname: section.HeaderName, assemblyName: "LScript", language: (Language) i,
 					entriesFromCode: section.PropsLines.Select(line => new KeyValuePair<string, string>(line.Name, line.Value)));
 				langs[i] = newLoc;
 			}

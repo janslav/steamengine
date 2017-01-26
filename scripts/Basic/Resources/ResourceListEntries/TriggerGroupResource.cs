@@ -17,6 +17,7 @@
 
 using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	/// <summary>

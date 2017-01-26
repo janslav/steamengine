@@ -22,9 +22,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Shielded;
 using SteamEngine.Common;
-using SteamEngine.Scripting.Compilation;
 
-namespace SteamEngine.Scripting.Objects {
+namespace SteamEngine.Scripting.Compilation {
 	public abstract class CompiledScriptHolder : ScriptHolder {
 		private string desc;
 

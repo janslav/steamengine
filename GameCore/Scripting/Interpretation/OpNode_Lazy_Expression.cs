@@ -417,11 +417,11 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			//a little hack for gumps - to make possible to use dialog layout methods without the "argo."
 			if ((vars.self == vars.defaultObject) && (vars.scriptArgs != null) && (vars.scriptArgs.Argv.Length > 0)) {
-				ScriptedGump sgi = vars.scriptArgs.Argv[0] as ScriptedGump;
+				InterpretedGump sgi = vars.scriptArgs.Argv[0] as InterpretedGump;
 				if (sgi != null) {
-					if (ScriptedGump.IsMethodName(this.name)) {
+					if (InterpretedGump.IsMethodName(this.name)) {
 						desc = null;
-						memberNameMatched = resolver.Resolve(typeof(ScriptedGump), BindingFlags.Instance, MemberTypes.Method, out desc);
+						memberNameMatched = resolver.Resolve(typeof(InterpretedGump), BindingFlags.Instance, MemberTypes.Method, out desc);
 						this.ResolveAsClassMember(desc, out finalOpNode);
 						if (finalOpNode != null) {
 							OpNode_MethodWrapper onmw = (OpNode_MethodWrapper) finalOpNode;

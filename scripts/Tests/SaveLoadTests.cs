@@ -16,6 +16,7 @@
 */
 
 using System.Collections;
+using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {

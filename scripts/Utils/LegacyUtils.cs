@@ -4,6 +4,7 @@ using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
 using SteamEngine.Scripting;
+using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {

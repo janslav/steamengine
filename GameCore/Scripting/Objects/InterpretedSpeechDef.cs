@@ -23,8 +23,6 @@ using SteamEngine.Common;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Scripting.Objects {
-
-
 	public class ScriptedSpeech : AbstractSpeech {
 		private static readonly Dictionary<string, Regex> regexes = new Dictionary<string, Regex>(StringComparer.OrdinalIgnoreCase);
 		//pattern(string) - Regex pairs

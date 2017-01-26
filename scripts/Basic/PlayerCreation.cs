@@ -16,6 +16,7 @@
  */
 
 using SteamEngine.Networking;
+using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {

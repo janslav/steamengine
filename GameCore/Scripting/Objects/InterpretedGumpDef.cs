@@ -26,28 +26,28 @@ using SteamEngine.Scripting.Interpretation;
 namespace SteamEngine.Scripting.Objects {
 
 	//this is the class that gets instantiated for every LScript DIALOG/GUMP script
-	public sealed class ScriptedGumpDef : GumpDef {
+	public sealed class InterpretedGumpDef : GumpDef {
 		private LScriptHolder layoutScript;
 		private LScriptHolder textsScript;
 		private ResponseTrigger[] responseTriggers;
 
-		private ScriptedGumpDef(string name)
+		private InterpretedGumpDef(string name)
 			: base(name) {
 		}
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal static ScriptedGumpDef Load(PropsSection input) {
+		internal static InterpretedGumpDef Load(PropsSection input) {
 			string[] headers = input.HeaderName.Split(new[] { ' ', '\t' }, 2);
 			string name = headers[0];//d_something
 			GumpDef gump = GetByDefname(name);
-			ScriptedGumpDef sgd;
+			InterpretedGumpDef sgd;
 			if (gump != null) {
-				sgd = gump as ScriptedGumpDef;
+				sgd = gump as InterpretedGumpDef;
 				if (sgd == null) {//is not scripted, so can not be overriden
 					throw new SEException(LogStr.FileLine(input.Filename, input.HeaderLine) + "GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
 				}
 			} else {
-				sgd = new ScriptedGumpDef(name);
+				sgd = new InterpretedGumpDef(name);
 				sgd.Register();
 			}
 			if (headers.Length == 1) {//layout section
@@ -141,7 +141,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		internal static void LoadingFinished() {
 			foreach (AbstractScript script in AllScripts) {
-				ScriptedGumpDef sgd = script as ScriptedGumpDef;
+				InterpretedGumpDef sgd = script as InterpretedGumpDef;
 				if (sgd != null) {
 					sgd.CheckValidity();
 				}
@@ -169,7 +169,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			this.ThrowIfUnloaded();
-			ScriptedGump instance = new ScriptedGump(this);
+			InterpretedGump instance = new InterpretedGump(this);
 			ScriptArgs sa = new ScriptArgs(instance, sendTo); //instance and recipient are stored everytime
 			if (args != null) {
 				instance.InputArgs = args; //store the Dialog Args to the instance				
@@ -185,7 +185,7 @@ namespace SteamEngine.Scripting.Objects {
 
 			this.layoutScript.TryRun(focus, sa);
 
-			ScriptedGump returnedInstance = sa.Argv[0] as ScriptedGump;
+			InterpretedGump returnedInstance = sa.Argv[0] as InterpretedGump;
 			if (returnedInstance == null) {
 				returnedInstance = instance;
 			}
@@ -197,7 +197,7 @@ namespace SteamEngine.Scripting.Objects {
 			return null;
 		}
 
-		internal void OnResponse(ScriptedGump instance, int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
+		internal void OnResponse(InterpretedGump instance, int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
 			if (this.responseTriggers != null) {
 				for (int i = 0, n = this.responseTriggers.Length; i < n; i++) {
 					ResponseTrigger rt = this.responseTriggers[i];
@@ -233,7 +233,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override string ToString() {
-			return "ScriptedGumpDef " + this.Defname;
+			return "InterpretedGumpDef " + this.Defname;
 		}
 	}
 
@@ -290,212 +290,6 @@ namespace SteamEngine.Scripting.Objects {
 				}
 				return 0;
 			}
-		}
-	}
-
-	public class ScriptedGump : Gump {
-		protected internal ScriptedGump(ScriptedGumpDef def)
-			: base(def) {
-		}
-
-		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
-			ScriptedGumpDef sdef = (ScriptedGumpDef) this.Def;
-			sdef.OnResponse(this, pressedButton, selectedSwitches, responseTexts, responseNumbers);
-		}
-
-		public void CheckerTrans(int x, int y, int width, int height) {
-			this.AddCheckerTrans(x, y, width, height);
-		}
-
-		public void CheckerTrans() {
-			this.AddCheckerTrans();
-		}
-
-		public void ResizePic(int x, int y, int gumpId, int width, int height) {
-			this.AddResizePic(x, y, gumpId, width, height);
-		}
-
-		public void Button(int x, int y, int downGumpId, int upGumpId, bool isTrigger, int pageId, int triggerId) {
-			this.AddButton(x, y, downGumpId, upGumpId, isTrigger, pageId, triggerId);
-		}
-
-		public void Group(int groupId) {
-			this.AddGroup(groupId);
-		}
-
-		public void HtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			this.AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
-		}
-
-		//public void HTMLGump(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable) {
-		//    builder.AddHTMLGump(x, y, width, height, textId, hasBoundBox!=0, isScrollable!=0);
-		//}
-		//99z+ interface
-		public void HtmlGumpA(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			this.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
-		}
-		//public void HTMLGumpA(int x, int y, int width, int height, string text, int hasBoundBox, int isScrollable) {
-		//    builder.AddHTMLGump(x, y, width, height, text, hasBoundBox!=0, isScrollable!=0);
-		//}
-		//55ir interface
-		public void DhtmlGump(int x, int y, int width, int height, string text, bool hasBoundBox, bool isScrollable) {
-			this.AddHtmlGump(x, y, width, height, text, hasBoundBox, isScrollable);
-		}
-		//public void DHTMLGump(int x, int y, int width, int height, string text, int hasBoundBox, int isScrollable) {
-		//    builder.AddHTMLGump(x, y, width, height, text, hasBoundBox!=0, isScrollable!=0);
-		//}
-
-		public void XmfhtmlGump(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable) {
-			this.AddXmfhtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
-		}
-		//public void XMFHTMLGump(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable) {
-		//    builder.AddXMFHTMLGump(x, y, width, height, textId, hasBoundBox!=0, isScrollable!=0);
-		//}
-
-		public void XmfhtmlGumpColor(int x, int y, int width, int height, int textId, bool hasBoundBox, bool isScrollable, int hue) {
-			this.AddXmfhtmlGumpColor(x, y, width, height, textId, hasBoundBox, isScrollable, hue);
-		}
-		//public void XMFHTMLGumpColor(int x, int y, int width, int height, int textId, int hasBoundBox, int isScrollable, int hue) {
-		//    builder.AddXMFHTMLGumpColor(x, y, width, height, textId, hasBoundBox!=0, isScrollable!=0, hue);
-		//}
-
-		public void CheckBox(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
-			this.AddCheckBox(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
-		}
-		//public void CheckBox(int x, int y, int uncheckedGumpId, int checkedGumpId, int isChecked, int id) {
-		//    builder.AddCheckBox(x, y, uncheckedGumpId, checkedGumpId, isChecked!=0, id);
-		//}
-
-		public void TilePic(int x, int y, int tileId) {
-			this.AddTilePic(x, y, tileId);
-		}
-
-		public void TilePicHue(int x, int y, int tileId, int hue) {
-			this.AddTilePicHue(x, y, tileId, hue);
-		}
-
-		public void GumpPicTiled(int x, int y, int width, int height, int gumpId) {
-			this.AddGumpPicTiled(x, y, width, height, gumpId);
-		}
-
-		public void Text(int x, int y, int hue, int textId) {
-			this.AddText(x, y, hue, textId);
-		}
-		//99z+ interface
-		public void TextA(int x, int y, int hue, string text) {
-			this.AddText(x, y, hue, text);
-		}
-		//55ir+ interface. why can the idiots not unite? :P
-		public void DText(int x, int y, int hue, string text) {
-			this.AddText(x, y, hue, text);
-		}
-
-		public void CroppedText(int x, int y, int width, int height, int hue, int textId) {
-			this.AddCroppedText(x, y, width, height, hue, textId);
-		}
-
-		public void CroppedTextA(int x, int y, int width, int height, int hue, string textId) {
-			this.AddCroppedText(x, y, width, height, hue, textId);
-		}
-
-		public void DCroppedText(int x, int y, int width, int height, int hue, string textId) {
-			this.AddCroppedText(x, y, width, height, hue, textId);
-		}
-
-		public void Page(int pageId) {
-			this.AddPage(pageId);
-		}
-
-		public void Radio(int x, int y, int uncheckedGumpId, int checkedGumpId, bool isChecked, int id) {
-			this.AddRadio(x, y, uncheckedGumpId, checkedGumpId, isChecked, id);
-		}
-		public void Radio(int x, int y, int uncheckedGumpId, int checkedGumpId, int isChecked, int id) {
-			this.AddRadio(x, y, uncheckedGumpId, checkedGumpId, isChecked != 0, id);
-		}
-
-		public void TextEntry(int x, int y, int widthPix, int height, int hue, int id, int textId) {
-			this.AddTextEntry(x, y, widthPix, height, hue, id, textId);
-		}
-		//99z+ interface
-		public void TextEntryA(int x, int y, int widthPix, int height, int hue, int id, string text) {
-			this.AddTextEntry(x, y, widthPix, height, hue, id, text);
-		}
-		//55ir interface
-		public void DTextEntry(int x, int y, int widthPix, int widthChars, int hue, int id, string text) {
-			this.AddTextEntry(x, y, widthPix, widthChars, hue, id, text);
-		}
-
-		public void NumberEntry(int x, int y, int widthPix, int height, int hue, int id, int textId) {
-			this.AddNumberEntry(x, y, widthPix, height, hue, id, textId);
-		}
-		//hypothetical 99z+ interface
-		public void NumberEntryA(int x, int y, int widthPix, int height, int hue, int id, decimal text) {
-			this.AddNumberEntry(x, y, widthPix, height, hue, id, text);
-		}
-		//hypothetical 55ir interface
-		public void DNumberEntry(int x, int y, int widthPix, int widthChars, int hue, int id, decimal text) {
-			this.AddNumberEntry(x, y, widthPix, widthChars, hue, id, text);
-		}
-
-		public int AddString(string text) {
-			return this.AddTextLine(text);
-		}
-
-		public void SetLocation(int x, int y) {
-			this.X = x;
-			this.Y = y;
-		}
-
-		public void NoClose() {
-			this.closable = false;
-		}
-
-		public void NoMove() {
-			this.movable = false;
-		}
-
-		public void NoDispose() {
-			this.disposable = false;
-		}
-
-		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-		internal static bool IsMethodName(string name) {//used in OpNode_Lazy_Expresion for a little hack
-			switch (name.ToLowerInvariant()) {
-				case "checkertrans":
-				case "resizepic":
-				case "button":
-				case "group":
-				case "htmlgump":
-				case "htmlgumpa":
-				case "dhtmlgump":
-				case "xmfhtmlgump":
-				case "xmfhtmlgumpcolor":
-				case "checkbox":
-				case "tilepic":
-				case "tilepichue":
-				case "gumppictiled":
-				case "text":
-				case "texta":
-				case "dtext":
-				case "croppedtext":
-				case "croppedtexta":
-				case "dcroppedtext":
-				case "page":
-				case "radio":
-				case "textentry":
-				case "textentrya":
-				case "dtextentry":
-				case "numberentry":
-				case "numberentrya":
-				case "dnumberentry":
-				case "setlocation":
-				case "noclose":
-				case "nomove":
-				case "nodispose":
-				case "addstring":
-					return true;
-			}
-			return false;
 		}
 	}
 }

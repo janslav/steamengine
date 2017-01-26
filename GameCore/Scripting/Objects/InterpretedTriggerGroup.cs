@@ -21,10 +21,10 @@ using SteamEngine.Common;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Scripting.Objects {
-	public sealed class ScriptedTriggerGroup : TriggerGroup {
+	public sealed class InterpretedTriggerGroup : TriggerGroup {
 		private Dictionary<TriggerKey, ScriptHolder> triggers = new Dictionary<TriggerKey, ScriptHolder>();
 
-		private ScriptedTriggerGroup(string defname)
+		private InterpretedTriggerGroup(string defname)
 			: base(defname) {
 		}
 
@@ -68,15 +68,15 @@ namespace SteamEngine.Scripting.Objects {
 			return AbstractScript.GetByDefname(name) as TriggerGroup;
 		}
 
-		private static ScriptedTriggerGroup GetNewOrCleared(string defname) {
+		private static InterpretedTriggerGroup GetNewOrCleared(string defname) {
 			TriggerGroup tg = GetByDefname(defname);
 			if (tg == null) {
-				ScriptedTriggerGroup stg = new ScriptedTriggerGroup(defname);
+				InterpretedTriggerGroup stg = new InterpretedTriggerGroup(defname);
 				stg.Register();
 				return stg;
 			}
 			if (tg.IsUnloaded) {
-				return (ScriptedTriggerGroup) tg;
+				return (InterpretedTriggerGroup) tg;
 			}
 			throw new OverrideNotAllowedException("TriggerGroup " + LogStr.Ident(defname) + " defined multiple times.");
 		}
@@ -86,7 +86,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static TriggerGroup Load(PropsSection input) {
-			ScriptedTriggerGroup group = GetNewOrCleared(input.HeaderName);
+			InterpretedTriggerGroup group = GetNewOrCleared(input.HeaderName);
 			for (int i = 0, n = input.TriggerCount; i < n; i++) {
 				ScriptHolder sc = new LScriptHolder(input.GetTrigger(i));
 				if (!sc.unloaded) {//in case the compilation failed, we do not add the trigger

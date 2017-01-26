@@ -25,8 +25,6 @@ using SteamEngine.Common;
 using SteamEngine.Regions;
 using SteamEngine.UoData;
 
-//using SteamEngine.PScript;
-
 namespace SteamEngine.Scripting.Objects {
 
 	public interface IThingFactory {
@@ -438,7 +436,7 @@ namespace SteamEngine.Scripting.Objects {
 			//now do load the trigger code. 
 			if (ps.TriggerCount > 0) {
 				ps.HeaderName = "t__" + defname + "__";
-				this.defaultTriggerGroup = ScriptedTriggerGroup.Load(ps);
+				this.defaultTriggerGroup = InterpretedTriggerGroup.Load(ps);
 				this.AddTriggerGroup(this.defaultTriggerGroup);
 			}
 		}

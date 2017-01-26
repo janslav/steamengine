@@ -52,7 +52,7 @@ namespace SteamEngine.Scripting {
 			using (StopWatch.StartAndDisplay("Loading " + LogStr.Number(files.Count) + " *.def and *.scp script files. (" + LogStr.Number(lengthSum) + " bytes)...")) {
 
 				ThingDef.StartingLoading();
-				ScriptedTriggerGroup.StartingLoading();
+				InterpretedTriggerGroup.StartingLoading();
 				Constant.StartingLoading();
 				Map.StartingLoading();
 				//ObjectSaver.StartingLoading();
@@ -96,14 +96,14 @@ namespace SteamEngine.Scripting {
 
 				Constant.LoadingFinished();
 				ThingDef.LoadingFinished();
-				ScriptedTriggerGroup.LoadingFinished();
+				InterpretedTriggerGroup.LoadingFinished();
 				Map.LoadingFinished();
 				//ObjectSaver.LoadingFinished();
 				AbstractSkillDef.LoadingFinished();
 				AbstractDef.LoadingFinished();
 
 				AbstractDefTriggerGroupHolder.LoadingFinished();
-				ScriptedGumpDef.LoadingFinished();
+				InterpretedGumpDef.LoadingFinished();
 
 				if (Globals.ResolveEverythingAtStart) {
 					Constant.ResolveAll();
@@ -145,7 +145,7 @@ namespace SteamEngine.Scripting {
 				AbstractDef.LoadingFinished();
 
 				AbstractDefTriggerGroupHolder.LoadingFinished();
-				ScriptedGumpDef.LoadingFinished();
+				InterpretedGumpDef.LoadingFinished();
 				//foreach (Thing t in Thing.AllThings) {
 				//    t.region = null;
 				//}
@@ -200,7 +200,7 @@ namespace SteamEngine.Scripting {
 						case "triggergroup":
 						case "events":
 						case "event":
-							return new[] { ScriptedTriggerGroup.Load(section) };
+							return new[] { InterpretedTriggerGroup.Load(section) };
 						case "defname":
 						case "defnames":
 						case "constants":
@@ -217,10 +217,10 @@ namespace SteamEngine.Scripting {
 						case "scriptedlocstringcollection":
 						case "locstringcollection":
 						case "locstrings":
-							return new[] { ScriptedLocStringCollection.Load(section) };
+							return new[] { InterpretedLocStringCollection.Load(section) };
 						case "dialog":
 						case "gump":
-							IUnloadable gump = ScriptedGumpDef.Load(section);
+							IUnloadable gump = InterpretedGumpDef.Load(section);
 							if (gump != null) {
 								//it could have been a "subsection" of dialog, i.e. TEXT or BUTTON part
 								return new[] { gump };
@@ -283,7 +283,7 @@ namespace SteamEngine.Scripting {
 					LoadFile(sf);
 
 					AbstractDefTriggerGroupHolder.LoadingFinished();
-					ScriptedGumpDef.LoadingFinished();
+					InterpretedGumpDef.LoadingFinished();
 
 					Globals.UnPauseServerTime();
 					PacketSequences.BroadCast("Script loading finished.");

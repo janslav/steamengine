@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Scripting {
 	public abstract class ScriptHolder {

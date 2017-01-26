@@ -385,7 +385,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (ps.TriggerCount > 0) {
 				ps.HeaderName = "t__" + this.Defname + "__";
-				this.scriptedTriggers = ScriptedTriggerGroup.Load(ps);
+				this.scriptedTriggers = InterpretedTriggerGroup.Load(ps);
 			}
 		}
 

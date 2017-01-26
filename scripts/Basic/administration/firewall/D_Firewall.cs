@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {

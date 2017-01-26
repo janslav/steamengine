@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
 using SteamEngine.Scripting;
+using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
