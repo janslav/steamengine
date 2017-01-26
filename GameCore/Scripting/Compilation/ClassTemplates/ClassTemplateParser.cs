@@ -25,6 +25,10 @@ using System.Text.RegularExpressions;
 using Microsoft.CSharp;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Persistence;
+using SteamEngine.Regions;
+using SteamEngine.Scripting.Objects;
+using SteamEngine.Timers;
 
 namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 	internal static class ClassTemplateParser {
@@ -175,14 +179,17 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		private static CodeCompileUnit CreateCompileUnit() {
 			CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
 			CodeNamespace codeNamespace = new CodeNamespace("SteamEngine.CompiledScripts");
+			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(AbstractScript).Namespace));
+			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(MainClass).Namespace));
+			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(Timer).Namespace));
+			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(WorldSaver).Namespace));
+			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(Tools).Namespace));
+			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(Region).Namespace));
+			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(ScriptHolder).Namespace));
+
 			codeNamespace.Imports.Add(new CodeNamespaceImport("System"));
 			codeNamespace.Imports.Add(new CodeNamespaceImport("System.Collections"));
 			codeNamespace.Imports.Add(new CodeNamespaceImport("System.Collections.Generic"));
-			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine"));
-			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Timers"));
-			//codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Packets"));
-			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Persistence"));
-			codeNamespace.Imports.Add(new CodeNamespaceImport("SteamEngine.Common"));
 			codeCompileUnit.Namespaces.Add(codeNamespace);
 			return codeCompileUnit;
 		}
