@@ -439,7 +439,6 @@
     <Compile Include="Tests\CompoundDialog.cs" />
     <Compile Include="Tests\d_test.cs" />
     <Compile Include="Tests\InputDefTest.cs" />
-    <Compile Include="Tests\LScriptTest.cs" />
     <Compile Include="Tests\MemberWrapperTests.cs" />
     <Compile Include="Tests\SaveLoadTests.cs" />
     <Compile Include="Tests\SettingsTest.cs" />
