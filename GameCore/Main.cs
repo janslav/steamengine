@@ -43,43 +43,6 @@ namespace SteamEngine {
 			get { return exitTokenSource.Token; }
 		}
 
-		//public static bool nativeConsole = false;
-
-		//private static Queue nativeCommands=null;
-
-		//internal static ConsConn winConsole;
-
-		//method: winConsoleCommand
-		//caled by the wincosole via reflection
-		//public static void winConsoleCommand(string data) {
-		//    if (RunLevelManager.RunLevel == RunLevel.Running || RunLevelManager.RunLevel == RunLevel.AwaitingRetry) {
-		//        if (nativeConsole && nativeCommands!=null) {
-		//            lock (nativeCommands.SyncRoot) {
-		//                nativeCommands.Enqueue(data);
-		//            }
-		//        } else {
-		//            Logger.WriteWarning("SteamEngine.MainClass.winConsoleCommand() method called, even if SteamEngine is not runnig under native console!");
-		//        }
-		//    }
-		//}
-
-		//method: WinStart
-		//invoked instead of the Main() by the Winconsole if the server is run as console
-		//as the argument it gets Methodinfo of a method that sends its string argument to the console
-		//this also creates a ConsConn instance with an fake acc with admin plevel to represent the console
-		//public static void WinStart(object consSend) {
-		//    //this is run if the server is started by the WinConsole
-		//    try {
-		//        nativeCommands=new Queue();
-		//        nativeConsole=true;
-		//        winConsole=new ConsConn((StringToSend) consSend);
-		//    } catch (Exception e) {
-		//        Console.WriteLine (e);
-		//        return;
-		//    }
-		//    SteamMain();
-		//}
-
 		public static void Main() {
 			SteamMain();
 		}
@@ -96,11 +59,6 @@ namespace SteamEngine {
 					RunLevelManager.SetDead();
 					return;
 				}
-
-				//Thread t = new Thread(Cycle);
-				//t.IsBackground = true;
-				//t.Name = "Main cycle thread";
-				//t.Start();lk
 
 				Console.WriteLine("Init done.");
 
