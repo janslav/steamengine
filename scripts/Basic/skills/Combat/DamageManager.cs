@@ -18,6 +18,7 @@
 using System;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Scripting;
 
 namespace SteamEngine.CompiledScripts {
 

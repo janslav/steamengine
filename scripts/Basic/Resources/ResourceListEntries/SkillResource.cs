@@ -18,6 +18,7 @@
 using System;
 using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	/// <summary>Resource as SkillDef</summary>

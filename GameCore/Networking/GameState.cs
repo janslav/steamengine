@@ -24,6 +24,9 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Regions;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
+using SteamEngine.UoData;
 
 namespace SteamEngine.Networking {
 

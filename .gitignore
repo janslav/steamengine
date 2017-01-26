@@ -25,3 +25,4 @@
 /packages/SharpSvn*
 /packages/FluentAssertions*
 *.user
+/SphereShardConverter/bin

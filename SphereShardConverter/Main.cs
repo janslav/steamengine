@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using SteamEngine.Common;
+using SteamEngine.UoData;
 
 namespace SteamEngine.Converter {
 

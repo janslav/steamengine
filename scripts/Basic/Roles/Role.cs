@@ -21,6 +21,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]

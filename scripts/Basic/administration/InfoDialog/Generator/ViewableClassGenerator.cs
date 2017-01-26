@@ -23,6 +23,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting.Compilation;
 
 namespace SteamEngine.CompiledScripts {
 	internal sealed class ViewableClassGenerator : ISteamCSCodeGenerator {

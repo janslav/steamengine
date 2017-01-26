@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
 
 namespace SteamEngine {
 	public interface ITriggerGroupHolder {

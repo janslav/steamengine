@@ -18,6 +18,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
+using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
 

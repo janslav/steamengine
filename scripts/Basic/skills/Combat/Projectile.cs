@@ -19,6 +19,7 @@ using System;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Scripting;
 
 namespace SteamEngine.CompiledScripts {
 

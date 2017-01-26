@@ -25,7 +25,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Shielded;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
+using SteamEngine.Scripting.Compilation;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Persistence {
 

@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.Scripting.Objects;
+
 namespace SteamEngine.CompiledScripts {
 	public static class SoundCalculator {
 		public const int NoSound = (int) SoundNames.None;

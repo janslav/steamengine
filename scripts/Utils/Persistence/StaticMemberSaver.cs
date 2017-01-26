@@ -5,6 +5,8 @@ using System.Reflection;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting.Compilation;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 

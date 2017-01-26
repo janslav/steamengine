@@ -19,6 +19,7 @@ using System;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]

@@ -24,6 +24,9 @@ using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
+using SteamEngine.UoData;
 
 namespace SteamEngine.CompiledScripts {
 

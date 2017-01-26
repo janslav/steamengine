@@ -19,6 +19,8 @@ using System;
 using SteamEngine.Common;
 using SteamEngine.LScript;
 using SteamEngine.Networking;
+using SteamEngine.Scripting.Interpretation;
+using SteamEngine.UoData;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class ScriptedTargetDef : AbstractTargetDef {

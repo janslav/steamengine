@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Class used to manage and create all necessarities for various Info dialogs.</summary>

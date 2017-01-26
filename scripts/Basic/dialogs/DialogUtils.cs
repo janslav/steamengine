@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using SteamEngine.CompiledScripts.Utils;
+using SteamEngine.Scripting.Objects;
+
 /*
 	This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

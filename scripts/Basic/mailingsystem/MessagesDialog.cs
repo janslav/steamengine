@@ -18,6 +18,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog that will display the list of clients delayed messages</summary>

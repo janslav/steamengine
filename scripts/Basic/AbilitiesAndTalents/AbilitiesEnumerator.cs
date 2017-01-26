@@ -18,6 +18,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	/// <summary>This class will be used fo iterating over the character's abilities</summary>

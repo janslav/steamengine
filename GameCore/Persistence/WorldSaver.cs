@@ -22,6 +22,8 @@ using System.IO;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 using SteamEngine.Timers;
 
 namespace SteamEngine.Persistence {

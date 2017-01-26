@@ -24,6 +24,8 @@ using System.Runtime.InteropServices;
 using ICSharpCode.SharpZipLib.Zip;
 //using OrganicBit.Zip;
 using SteamEngine.Common;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 using ZipEntry = ICSharpCode.SharpZipLib.Zip.ZipEntry;
 
 //using ICSharpCode.SharpZipLib.Zip;

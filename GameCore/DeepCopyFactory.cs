@@ -20,9 +20,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Compilation;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine {
 

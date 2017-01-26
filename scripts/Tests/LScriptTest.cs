@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using SteamEngine.Common;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Timers;
 
 namespace SteamEngine.LScript {

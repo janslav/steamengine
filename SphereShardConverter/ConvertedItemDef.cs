@@ -21,6 +21,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
+using SteamEngine.UoData;
 
 namespace SteamEngine.Converter {
 	public class ConvertedItemDef : ConvertedThingDef {

@@ -17,6 +17,7 @@
 
 using System.Reflection;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	public class MemberWrapperTests {

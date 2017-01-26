@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	public static class ScriptUtil {

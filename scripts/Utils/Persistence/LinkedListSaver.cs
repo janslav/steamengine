@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting.Compilation;
 
 namespace SteamEngine.CompiledScripts {
 

@@ -16,6 +16,8 @@
 */
 
 
+using SteamEngine.UoData;
+
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Item), "Item")]
 	public static class ItemDescriptor {

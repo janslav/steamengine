@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	public class E_CommandsAuthorization_Global : CompiledTriggerGroup {

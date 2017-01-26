@@ -18,6 +18,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 

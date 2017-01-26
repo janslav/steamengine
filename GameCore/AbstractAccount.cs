@@ -24,6 +24,7 @@ using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
 
 namespace SteamEngine {
 	public abstract class AbstractAccount : PluginHolder {

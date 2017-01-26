@@ -18,6 +18,8 @@
 using System;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 //using MySql.Data.MySqlClient;
 

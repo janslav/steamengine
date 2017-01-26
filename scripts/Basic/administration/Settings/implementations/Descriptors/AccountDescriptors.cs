@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.Scripting.Objects;
+
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(AbstractAccount), "Account",
 		new[] { "blocked", "Characters" }

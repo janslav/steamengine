@@ -1,4 +1,6 @@
 
+using SteamEngine.Scripting.Objects;
+
 namespace SteamEngine.CompiledScripts {
 
 	/// <summary>Generic-based store for singleton AbstractScript descendants, for easy access in C# scripts.</summary>

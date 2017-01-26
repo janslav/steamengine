@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using SteamEngine.Networking;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Class encapsulating stacking an recalling dialogs</summary>

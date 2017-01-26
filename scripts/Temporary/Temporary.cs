@@ -2,6 +2,7 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	public static class SomeScript {

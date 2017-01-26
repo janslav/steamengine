@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting.Objects;
 
 /* TO DO !:
  * ? Exceptions in getters of TreasureChest's private fields ? // dunno whether it should be there or not

@@ -25,6 +25,8 @@ using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 #if MSWIN
 using Microsoft.Win32;  //for RegistryKey
 #endif

@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 
 namespace SteamEngine {

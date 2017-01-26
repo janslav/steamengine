@@ -115,7 +115,7 @@ namespace SteamEngine {
 		InvalidAccountCredentials = 3,
 		CommunicationsProblem = 4
 	}
-	//Used by AnimRequest (search on it, it was in Temporary at the time this comment was written, but might have
+	//Used by AnimRequest (search on it, it was in NotImplementedPackets at the time this comment was written, but might have
 	//been implemented since then) - Actually, just search on RequestableAnims.
 	//-SL
 	public enum RequestableAnim {

@@ -22,12 +22,14 @@ using System.Reflection;
 using System.Threading;
 using SteamEngine.AuxServerPipe;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
-using SteamEngine.CompiledScripts.ClassTemplates;
-using SteamEngine.LScript;
 using SteamEngine.Networking;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Compilation;
+using SteamEngine.Scripting.Compilation.ClassTemplates;
+using SteamEngine.Scripting.Objects;
+using SteamEngine.UoData;
 using Timer = SteamEngine.Timers.Timer;
 
 namespace SteamEngine {

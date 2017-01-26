@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using SteamEngine.Common;
+using SteamEngine.UoData;
 
 namespace SteamEngine.Regions {
 	public partial class Map {

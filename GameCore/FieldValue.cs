@@ -22,8 +22,10 @@ using System.Text.RegularExpressions;
 using EQATEC.Profiler;
 using Shielded;
 using SteamEngine.Common;
-using SteamEngine.CompiledScripts;
-using SteamEngine.LScript;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Compilation;
+using SteamEngine.Scripting.Interpretation;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine {
 	public enum FieldValueType : byte {

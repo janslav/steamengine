@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	/// <summary>Def listing fields necessary for all professions. Actual profession-related active code is in ProfessionPlugin class</summary>

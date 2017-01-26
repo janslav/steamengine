@@ -16,6 +16,7 @@
 */
 
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	public class t_mortar : CompiledTriggerGroup {

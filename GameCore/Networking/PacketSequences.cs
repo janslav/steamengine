@@ -22,6 +22,7 @@ using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Regions;
 using SteamEngine.Timers;
+using SteamEngine.UoData;
 
 namespace SteamEngine.Networking {
 	public static class PacketSequences {

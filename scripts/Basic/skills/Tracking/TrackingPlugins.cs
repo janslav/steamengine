@@ -22,6 +22,7 @@ using SteamEngine.Communication.TCP;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
 using SteamEngine.Regions;
+using SteamEngine.Scripting;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]

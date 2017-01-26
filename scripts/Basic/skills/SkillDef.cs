@@ -21,6 +21,8 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {

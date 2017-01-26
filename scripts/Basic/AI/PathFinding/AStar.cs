@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {

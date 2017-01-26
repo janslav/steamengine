@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
 
 namespace SteamEngine.Regions {
 

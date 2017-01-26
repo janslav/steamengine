@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts.Dialogs {

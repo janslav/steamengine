@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine {
 	public abstract class PluginDef : AbstractDef {

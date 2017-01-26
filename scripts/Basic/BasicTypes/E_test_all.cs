@@ -17,6 +17,8 @@
 
 using System;
 using SteamEngine.Common;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class e_test_all_generic : CompiledTriggerGroup {

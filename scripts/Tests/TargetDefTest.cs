@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.UoData;
+
 namespace SteamEngine.CompiledScripts {
 
 	public class Targ_Test_Compiled : CompiledTargetDef {

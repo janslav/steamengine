@@ -22,8 +22,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
-using SteamEngine.CompiledScripts;
 using SteamEngine.Networking;
+using SteamEngine.Scripting.Objects;
+using SteamEngine.UoData;
 
 namespace SteamEngine.Regions {
 

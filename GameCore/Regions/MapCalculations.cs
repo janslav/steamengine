@@ -18,8 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using SteamEngine.UoData;
 
-namespace SteamEngine {
+namespace SteamEngine.Regions
+{
 	public interface IMovementSettings {
 		bool CanCrossLand {
 			get;
@@ -40,12 +42,9 @@ namespace SteamEngine {
 			get;
 		} //max positive difference in 1 step
 	}
-}
 
-namespace SteamEngine.Regions {
-
-	//I think the movement implementation is important enough to move it into another 
-	//file even though it's still the Map class
+//I think the movement implementation is important enough to move it into another 
+//file even though it's still the Map class
 	public partial class Map {
 
 		public const int PersonHeight = 16;
@@ -371,7 +370,7 @@ namespace SteamEngine.Regions {
 
 				if ((flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
 					if (ignoreDoors && ((flags & TileFlag.Door) != 0
-							|| model == 0x692 || model == 0x846 || model == 0x873 || (model >= 0x6F5 && model <= 0x6F6)))
+					                    || model == 0x692 || model == 0x846 || model == 0x873 || (model >= 0x6F5 && model <= 0x6F6)))
 						//^^^^ ve standartnich tiledata.mul nemaj tyhle modely flag_door i kdyz sou to dvere
 						continue;
 
@@ -419,8 +418,8 @@ namespace SteamEngine.Regions {
 				bool isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
 				bool isLava = t_lava.IsTypeOfMapTile(landTile);
 				if ((canSwim && isWater) ||
-						(canCrossLava && isLava) ||
-						(canFly)) {
+				    (canCrossLava && isLava) ||
+				    (canFly)) {
 					landBlocks = false;
 				}
 			}
@@ -450,9 +449,9 @@ namespace SteamEngine.Regions {
 				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if ((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable
-						(canSwim && staticIsWater) || //je to voda a my umime plavat
-						(canCrossLava && staticIsLava) || //je to lava a nam nevadi
-						(canFly)) {//umime litat a tak nam nevadi nic
+				    (canSwim && staticIsWater) || //je to voda a my umime plavat
+				    (canCrossLava && staticIsLava) || //je to lava a nam nevadi
+				    (canFly)) {//umime litat a tak nam nevadi nic
 
 					if (!canFly && !canCrossLand && !staticIsWater && !staticIsLava)
 						continue;//neumime chodit/litat a neni to voda/lava (he?)
@@ -504,9 +503,9 @@ namespace SteamEngine.Regions {
 				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if (/*item.Flag_NeverMovable && */((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable && !Movable
-						(canSwim && itemIsWater) || //je to voda a my umime plavat
-						(canCrossLava && itemIsLava) || //je to lava a nam nevadi
-						(canFly))) {//umime litat a tak nam nevadi nic
+				                                   (canSwim && itemIsWater) || //je to voda a my umime plavat
+				                                   (canCrossLava && itemIsLava) || //je to lava a nam nevadi
+				                                   (canFly))) {//umime litat a tak nam nevadi nic
 
 					if (!canFly && !canCrossLand && !itemIsWater && !itemIsLava)
 						continue;//neumime chodit/litat a neni to voda/lava (he?)
@@ -596,8 +595,8 @@ namespace SteamEngine.Regions {
 				bool isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
 				bool isLava = t_lava.IsTypeOfMapTile(landTile);
 				if ((canSwim && isWater) ||
-						(canCrossLava && isLava) ||
-						(canFly)) {
+				    (canCrossLava && isLava) ||
+				    (canFly)) {
 					landBlocks = false;
 				}
 			}
@@ -631,12 +630,12 @@ namespace SteamEngine.Regions {
 				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if ((!isSet || calcTop >= zCenter) &&
-						((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
-							(canSwim && staticIsWater) || //je to voda a my umime plavat
-							(canCrossLava && staticIsLava) || //je to lava a nam nevadi
-							(canFly) //umime litat a tak nam nevadi nic
-							)
-						&& pointZ >= calcTop) {
+				    ((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
+				     (canSwim && staticIsWater) || //je to voda a my umime plavat
+				     (canCrossLava && staticIsLava) || //je to lava a nam nevadi
+				     (canFly) //umime litat a tak nam nevadi nic
+				    )
+				    && pointZ >= calcTop) {
 
 					if (!canFly && !canCrossLand && !staticIsWater && !staticIsLava)
 						continue;//neumime chodit/litat a neni to voda/lava (he?)
@@ -664,12 +663,12 @@ namespace SteamEngine.Regions {
 				int calcTop = item.Z + idi.CalcHeight;
 
 				if ((!isSet || calcTop >= zCenter) &&
-						((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
-							(canSwim && itemIsWater) || //je to voda a my umime plavat
-							(canCrossLava && itemIsLava) || //je to lava a nam nevadi
-							(canFly) //umime litat a tak nam nevadi nic
-							)
-						&& pointZ >= calcTop) {
+				    ((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
+				     (canSwim && itemIsWater) || //je to voda a my umime plavat
+				     (canCrossLava && itemIsLava) || //je to lava a nam nevadi
+				     (canFly) //umime litat a tak nam nevadi nic
+				    )
+				    && pointZ >= calcTop) {
 
 					if (!canFly && !canCrossLand && !itemIsWater && !itemIsLava)
 						continue;//neumime chodit/litat a neni to voda/lava (he?)
@@ -754,7 +753,7 @@ namespace SteamEngine.Regions {
 			int x = point.X;
 			int y = point.Y;
 			//if (this.IsValidPos(x, y)) {
-				return this.GetTileZ(x, y);
+			return this.GetTileZ(x, y);
 			//}
 			//return oldZ;
 		}

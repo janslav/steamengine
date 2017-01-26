@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using SteamEngine.Common;
+using SteamEngine.UoData;
 
 namespace SteamEngine.Regions {
 

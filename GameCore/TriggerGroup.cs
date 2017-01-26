@@ -17,7 +17,9 @@
 
 using System;
 using System.Text.RegularExpressions;
-using SteamEngine.CompiledScripts;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Compilation;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine {
 	public abstract class TriggerGroup : AbstractScript {

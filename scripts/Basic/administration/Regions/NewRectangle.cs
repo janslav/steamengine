@@ -16,6 +16,7 @@
 */
 
 using System.Collections.Generic;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog for creating a new region rectangle</summary>

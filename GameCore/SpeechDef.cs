@@ -16,7 +16,10 @@
 */
 
 
-namespace SteamEngine.CompiledScripts {
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
+
+namespace SteamEngine {
 
 	public abstract class AbstractSpeech : TriggerGroup {
 		protected AbstractSpeech()

@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.Scripting.Objects;
+
 namespace SteamEngine.CompiledScripts {
 
 	public class t_switch : CompiledTriggerGroup {

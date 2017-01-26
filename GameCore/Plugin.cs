@@ -20,6 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
 
 namespace SteamEngine {
 	public abstract class Plugin : TagHolder {

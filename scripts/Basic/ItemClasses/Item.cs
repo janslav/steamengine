@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using SteamEngine.Communication.TCP;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
+using SteamEngine.Scripting.Objects;
+using SteamEngine.UoData;
 
 namespace SteamEngine.CompiledScripts {
 

@@ -17,6 +17,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Persistence;
+using SteamEngine.Scripting;
 
 namespace SteamEngine.Timers {
 

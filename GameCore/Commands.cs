@@ -22,8 +22,9 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Shielded;
 using SteamEngine.Common;
-using SteamEngine.LScript;
 using SteamEngine.Networking;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine {
 	public static class Commands {

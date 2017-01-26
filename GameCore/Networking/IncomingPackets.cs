@@ -23,6 +23,8 @@ using System.Net;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Networking {
 	public abstract class GameIncomingPacket : IncomingPacket<TcpConnection<GameState>, GameState, IPEndPoint> {
@@ -1252,15 +1254,15 @@ namespace SteamEngine.Networking {
 					}
 					break;
 				case 0x58: //opendoor
-					Temporary.OpenDoorMacroRequest(state.CharacterNotNull);
+					NotImplementedPackets.OpenDoorMacroRequest(state.CharacterNotNull);
 					return;
 				case 0x7c: //anim
 					switch (this.actionStr) {
 						case "bow":
-							Temporary.AnimRequest(state.CharacterNotNull, RequestableAnim.Bow);
+							NotImplementedPackets.AnimRequest(state.CharacterNotNull, RequestableAnim.Bow);
 							return;
 						case "salute":
-							Temporary.AnimRequest(state.CharacterNotNull, RequestableAnim.Salute);
+							NotImplementedPackets.AnimRequest(state.CharacterNotNull, RequestableAnim.Salute);
 							return;
 					}
 					break;

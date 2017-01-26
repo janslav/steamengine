@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SteamEngine.LScript;
+using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Tests {
 	[TestClass]

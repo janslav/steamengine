@@ -22,6 +22,7 @@ using System.Globalization;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Networking {
 

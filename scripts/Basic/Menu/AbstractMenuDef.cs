@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 

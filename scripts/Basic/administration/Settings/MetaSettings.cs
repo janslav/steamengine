@@ -16,6 +16,9 @@
 */
 
 
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
+
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Extend this class in order to obtain a new Category to the settings dialog</summary>
 	public abstract class SettingsMetaCategory {

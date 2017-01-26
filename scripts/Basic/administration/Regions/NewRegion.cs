@@ -18,6 +18,8 @@
 using System.Collections.Generic;
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog for creating a new region</summary>

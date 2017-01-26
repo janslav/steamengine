@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Wrapper class used to manage and create dialogs easily.</summary>

@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using SteamEngine.Regions;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog listing all regions and enabling us to edit them</summary>

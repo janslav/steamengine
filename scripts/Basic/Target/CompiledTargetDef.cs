@@ -18,6 +18,7 @@
 using System;
 using System.Reflection;
 using SteamEngine.Networking;
+using SteamEngine.UoData;
 
 namespace SteamEngine.CompiledScripts {
 

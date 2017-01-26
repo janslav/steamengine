@@ -17,6 +17,7 @@
 
 using System;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 using SteamEngine.Timers;
 
 namespace SteamEngine.CompiledScripts {

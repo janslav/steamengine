@@ -23,6 +23,7 @@ using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Networking {
 	[SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]

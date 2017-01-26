@@ -16,6 +16,7 @@
 */
 
 using System;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 

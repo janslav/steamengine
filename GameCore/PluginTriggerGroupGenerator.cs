@@ -22,8 +22,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Compilation;
+using SteamEngine.Scripting.Objects;
 
-namespace SteamEngine.CompiledScripts {
+namespace SteamEngine {
 	internal sealed class PluginTriggerGroupGenerator : ISteamCSCodeGenerator {
 		static List<Type> pluginTGs = new List<Type>();
 

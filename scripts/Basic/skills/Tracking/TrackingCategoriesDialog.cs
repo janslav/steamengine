@@ -15,6 +15,8 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using SteamEngine.Scripting.Objects;
+
 namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Dialog that will display possible categories of characters to track (NPC's, Animals, Players)</summary>

@@ -16,6 +16,8 @@
 */
 
 
+using SteamEngine.Scripting.Objects;
+
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog zobrazující informace a vysvìtlivky symbolù pro nastavení</summary>
 	public class D_Settings_Help : CompiledGumpDef {

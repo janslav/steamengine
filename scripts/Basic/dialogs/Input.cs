@@ -1,6 +1,10 @@
 using System;
 using SteamEngine.Common;
 using SteamEngine.LScript;
+using SteamEngine.Scripting;
+using SteamEngine.Scripting.Interpretation;
+using SteamEngine.Scripting.Objects;
+
 /*
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

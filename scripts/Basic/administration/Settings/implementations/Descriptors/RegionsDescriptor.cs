@@ -17,6 +17,7 @@
 
 using SteamEngine.Persistence;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(Region), "Region",

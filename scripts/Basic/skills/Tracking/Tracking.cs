@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Regions;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
