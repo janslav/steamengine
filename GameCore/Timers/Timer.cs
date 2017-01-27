@@ -64,7 +64,7 @@ namespace SteamEngine.Timers {
 
 		private static void ProcessChanges() {
 			while (changes.Count > 0) {
-				Timer timer = changes.Dequeue();
+				var timer = changes.Dequeue();
 				lock (timer) {
 					timer.isInChangesQueue = false;
 
@@ -84,14 +84,14 @@ namespace SteamEngine.Timers {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ProcessTimingOut() {
-			TimeSpan now = Globals.TimeAsSpan;
+			var now = Globals.TimeAsSpan;
 			while (priorityQueue.Count > 0) {
-				Timer timer = priorityQueue.Peek();
+				var timer = priorityQueue.Peek();
 				//Console.WriteLine("TimingOut timer "+timer);
 
 				if (timer.fireAt < now) {
 					timer = priorityQueue.Dequeue();
-					TimeSpan fireAt = timer.fireAt;
+					var fireAt = timer.fireAt;
 					if ((!timer.isInChangesQueue) && (!timer.isDeleted)) {
 						lock (timer) {
 							if (timer.period >= TimeSpan.Zero) {
@@ -132,7 +132,7 @@ namespace SteamEngine.Timers {
 		/// <remarks>Specify negative one (-1) second (or any other negative number) to disable periodic signaling.</remarks>
 		public TimeSpan PeriodSpan {
 			get {
-				TimeSpan p = this.period;
+				var p = this.period;
 				if (p < TimeSpan.Zero) {
 					return negativeOneSecond;
 				}
@@ -154,7 +154,7 @@ namespace SteamEngine.Timers {
 		/// <remarks>Specify negative one (-1) second (or any other negative TimeSpan) to disable periodic signaling.</remarks>
 		public double PeriodInSeconds {
 			get {
-				TimeSpan p = this.period;
+				var p = this.period;
 				if (p < TimeSpan.Zero) {
 					return -1;
 				}

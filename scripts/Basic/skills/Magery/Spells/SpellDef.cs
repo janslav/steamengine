@@ -177,7 +177,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Difficulty {
 			get {
-				object current = this.difficulty.CurrentValue;
+				var current = this.difficulty.CurrentValue;
 				if ((current == null) || Convert.ToInt32(current) < 0) {
 					//TODO extract from requirement ResList
 					return 0;
@@ -232,10 +232,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public string GetRuneWords() {
 			if (this.runeWords == null) {
-				string runes = this.Runes.ToLowerInvariant();
-				int n = runes.Length;
-				string[] arr = new string[n];
-				for (int i = 0; i < n; i++) {
+				var runes = this.Runes.ToLowerInvariant();
+				var n = runes.Length;
+				var arr = new string[n];
+				for (var i = 0; i < n; i++) {
 					arr[i] = this.GetRuneWord(runes[i]);
 				}
 				this.runeWords = string.Join(" ", arr);
@@ -321,7 +321,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			defname = "spell_" + spellId.ToString(CultureInfo.InvariantCulture);
 
-			PropsLine defnameLine = section.TryPopPropsLine("defname");
+			var defnameLine = section.TryPopPropsLine("defname");
 			if (defnameLine != null) {
 				altdefname = ConvertTools.LoadSimpleQuotedString(defnameLine.Value);
 
@@ -382,7 +382,7 @@ namespace SteamEngine.CompiledScripts {
 		internal void Trigger_Select(SkillSequenceArgs mageryArgs) {
 			//Checked so far: death, book on self
 			//TODO: Check zones, frozen?, hypnoform?, cooldown?
-			Character caster = mageryArgs.Self;
+			var caster = mageryArgs.Self;
 			//ResourcesList req = this.Requirements;
 			//if (req != null) {
 			//    if (!req.HasResourcesPresent(
@@ -392,7 +392,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 
-			SpellFlag flags = this.Flags;
+			var flags = this.Flags;
 			if ((flags & SpellFlag.AlwaysTargetSelf) == SpellFlag.AlwaysTargetSelf) {
 				if (!this.CheckPermissionIncoming(caster, caster)) {
 					return;
@@ -403,7 +403,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			if ((flags & SpellFlag.CanTargetAnything) != SpellFlag.None) {
 				if (mageryArgs.Target1 == null) {//if not null, it already has a target
-					Player self = caster as Player;
+					var self = caster as Player;
 					if (self != null) {
 						self.Target(SingletonScript<SpellTargetDef>.Instance, mageryArgs);
 						return;
@@ -433,7 +433,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal void Trigger_Success(SkillSequenceArgs mageryArgs) {
 			//target visibility/distance/LOS and self being alive checked in magery stroke
-			Character caster = mageryArgs.Self;
+			var caster = mageryArgs.Self;
 
 			if (!this.CheckPermissionOutgoing(caster)) {
 				return;
@@ -449,15 +449,15 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			SpellFlag flags = this.Flags;
-			IPoint3D target = mageryArgs.Target1;
+			var flags = this.Flags;
+			var target = mageryArgs.Target1;
 
-			IPoint3D targetTopPoint = target.TopPoint;
-			Point4D targetTop = targetTopPoint as Point4D; //sound is done after the effect, whereas the object could be already deleted. So we use this to preserve the position
+			var targetTopPoint = target.TopPoint;
+			var targetTop = targetTopPoint as Point4D; //sound is done after the effect, whereas the object could be already deleted. So we use this to preserve the position
 			if (targetTop == null) {
 				targetTop = new Point4D(targetTopPoint, caster.M);
 			}
-			bool isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
+			var isArea = (flags & SpellFlag.IsAreaSpell) == SpellFlag.IsAreaSpell;
 			SpellEffectArgs sea = null;
 
 			EffectFlag effectFlag;
@@ -473,8 +473,8 @@ namespace SteamEngine.CompiledScripts {
 				effectFlag |= EffectFlag.HarmfulEffect;
 			}
 
-			bool singleEffectDone = false;
-			Character targetAsChar = target as Character;
+			var singleEffectDone = false;
+			var targetAsChar = target as Character;
 			if (targetAsChar != null) {
 				if ((flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar) {
 					singleEffectDone = true;
@@ -485,7 +485,7 @@ namespace SteamEngine.CompiledScripts {
 					this.MakeSound(targetTop);
 				}
 			} else {
-				Item targetAsItem = target as Item;
+				var targetAsItem = target as Item;
 				if (targetAsItem != null) {
 					if ((flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem) {
 						singleEffectDone = true;
@@ -515,15 +515,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (isArea) {
-				bool canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
-				bool canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
+				var canEffectItem = (flags & SpellFlag.CanEffectItem) == SpellFlag.CanEffectItem;
+				var canEffectChar = (flags & SpellFlag.CanEffectChar) == SpellFlag.CanEffectChar;
 				if (canEffectItem || canEffectChar) {
-					foreach (Thing t in caster.GetMap().GetThingsInRange(targetTop.X, targetTop.Y, this.EffectRange)) {
+					foreach (var t in caster.GetMap().GetThingsInRange(targetTop.X, targetTop.Y, this.EffectRange)) {
 						if (t == target) { //already done
 							continue;
 						}
 						targetTop = new Point4D(t.TopPoint); //make a sound at least once 
-						Character ch = t as Character;
+						var ch = t as Character;
 						if (ch != null) {
 							if (canEffectChar) {
 								this.GetSpellPowerAgainstChar(caster, target, ch, effectFlag, ref sea);
@@ -546,7 +546,7 @@ namespace SteamEngine.CompiledScripts {
 								}
 							}
 						} else if (canEffectItem) {
-							Item i = t as Item;
+							var i = t as Item;
 							if (i != null) {
 								this.GetSpellPowerAgainstNonChar(caster, target, i, effectFlag, ref sea);
 								if (this.CheckSpellPowerWithMessage(sea)) {
@@ -569,9 +569,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private bool CheckSpellPowerWithMessage(SpellEffectArgs sea) {
-			SpellFlag flags = this.Flags;
+			var flags = this.Flags;
 			if ((flags & SpellFlag.CanEffectDeadChar) != SpellFlag.CanEffectDeadChar) {
-				Character targetAsChar = sea.CurrentTarget as Character;
+				var targetAsChar = sea.CurrentTarget as Character;
 				if ((targetAsChar != null) && (targetAsChar.Flag_Dead)) {
 					sea.Caster.ClilocSysMessage(501857); // This spell won't work on that!
 					return false;
@@ -580,11 +580,11 @@ namespace SteamEngine.CompiledScripts {
 
 			if ((flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
 				if (sea.SpellPower < 1) {
-					GameState casterState = sea.Caster.GameState;
+					var casterState = sea.Caster.GameState;
 					if (casterState != null) {
 						casterState.WriteLine(Loc<SpellDefLoc>.Get(casterState.Language).TargetResistedSpell);
 					}
-					Character targetAsChar = sea.CurrentTarget as Character;
+					var targetAsChar = sea.CurrentTarget as Character;
 					if (targetAsChar != null) {
 						targetAsChar.ClilocSysMessage(501783); // You feel yourself resisting magical energy.
 					}
@@ -596,7 +596,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private void GetSpellPowerAgainstChar(Character caster, IPoint3D mainTarget, Character currentTarget, EffectFlag effectFlag, ref SpellEffectArgs sea) {
 			int spellPower;
-			SpellFlag flags = this.Flags;
+			var flags = this.Flags;
 			if ((flags & SpellFlag.UseMindPower) == SpellFlag.UseMindPower) {
 				int mindDef;
 				if (caster.IsPlayerForCombat) {
@@ -629,7 +629,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void GetSpellPowerAgainstNonChar(Character caster, IPoint3D target, IPoint3D currentTarget, EffectFlag effectFlag, ref SpellEffectArgs sea) {
-			int spellPower = caster.GetSkill(SkillName.Magery);
+			var spellPower = caster.GetSkill(SkillName.Magery);
 			if (sea == null) {
 				sea = SpellEffectArgs.Acquire(caster, target, currentTarget, this, spellPower, effectFlag);
 			} else {
@@ -643,7 +643,7 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			Character caster = spellEffectArgs.Caster;
+			var caster = spellEffectArgs.Caster;
 			var result = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -672,7 +672,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!this.CheckPermissionIncoming(spellEffectArgs.Caster, target)) {
 				return;
 			}
-			Character caster = spellEffectArgs.Caster;
+			var caster = spellEffectArgs.Caster;
 			var result = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -702,7 +702,7 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			Character caster = spellEffectArgs.Caster;
+			var caster = spellEffectArgs.Caster;
 			var result = caster.TryCancellableTrigger(tkCauseSpellEffect, spellEffectArgs.scriptArgs);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -725,11 +725,11 @@ namespace SteamEngine.CompiledScripts {
 			RegionFlags.NoHarmfulMagicIn | RegionFlags.NoMagicIn | RegionFlags.NoTeleportingIn;
 
 		internal bool CheckPermissionOutgoing(Character caster) {
-			FlaggedRegion region = caster.Region as FlaggedRegion;
+			var region = caster.Region as FlaggedRegion;
 			if (region != null) {
-				RegionFlags regionFlags = region.Flags;
+				var regionFlags = region.Flags;
 				if ((regionFlags & anyAntiMagicOut) != RegionFlags.Zero) { //there are some antimagic flags, let's check them out
-					SpellFlag spellFlag = this.Flags;
+					var spellFlag = this.Flags;
 					if ((regionFlags & RegionFlags.NoMagicOut) == RegionFlags.NoMagicOut) {
 						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenMagicOut);
 						return false;
@@ -750,11 +750,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal bool CheckPermissionIncoming(Character caster, IPoint3D target) {
-			FlaggedRegion targetRegion = caster.GetMap().GetRegionFor(target) as FlaggedRegion;
+			var targetRegion = caster.GetMap().GetRegionFor(target) as FlaggedRegion;
 			if (targetRegion != null) {
-				RegionFlags regionFlags = targetRegion.Flags;
+				var regionFlags = targetRegion.Flags;
 				if ((regionFlags & anyAntiMagicIn) != RegionFlags.Zero) { //there are some antimagic flags, let's check them out
-					SpellFlag spellFlag = this.Flags;
+					var spellFlag = this.Flags;
 					if ((regionFlags & RegionFlags.NoMagicIn) == RegionFlags.NoMagicIn) {
 						caster.RedMessage(Loc<SpellDefLoc>.Get(caster.Language).ForbiddenMagicIn);
 						return false;
@@ -791,7 +791,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void MakeSound(IPoint4D place) {
-			int sound = (int) this.Sound;
+			var sound = (int) this.Sound;
 			if (sound != -1) {
 				PacketSequences.SendSound(place, sound, Globals.MaxUpdateRange);
 			}
@@ -800,7 +800,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Methods for usage outside normal magery sequence
 		public void EffectChar(Character caster, Character target, EffectFlag sourceType) {
-			SpellFlag flags = this.Flags;
+			var flags = this.Flags;
 			if ((flags & SpellFlag.IsBeneficial) == SpellFlag.IsBeneficial) {
 				sourceType &= ~EffectFlag.HarmfulEffect;
 				sourceType |= EffectFlag.BeneficialEffect;
@@ -839,7 +839,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SpellEffectArgs Acquire(Character caster, IPoint3D mainTarget, IPoint3D currentTarget, SpellDef spellDef, int spellPower, EffectFlag effectFlag) {
-			SpellEffectArgs retVal = new SpellEffectArgs();
+			var retVal = new SpellEffectArgs();
 			retVal.caster = caster;
 			retVal.mainTarget = mainTarget;
 			retVal.currentTarget = currentTarget;
@@ -896,7 +896,7 @@ namespace SteamEngine.CompiledScripts {
 		public CharRelation CasterToMainTargetRelation {
 			get {
 				if (!this.relationFoundOut) {
-					Character targetAsChar = this.mainTarget as Character;
+					var targetAsChar = this.mainTarget as Character;
 					if (targetAsChar != null) {
 						this.relation = Notoriety.GetCharRelation(this.caster, targetAsChar);
 					} else {
@@ -932,9 +932,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TargetResult On_TargonGround(Player caster, IPoint3D targetted, object parameter) {
-			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
-			SpellDef spell = (SpellDef) mageryArgs.Param1;
-			SpellFlag flags = spell.Flags;
+			var mageryArgs = (SkillSequenceArgs) parameter;
+			var spell = (SpellDef) mageryArgs.Param1;
+			var flags = spell.Flags;
 
 			if ((flags & SpellFlag.CanTargetGround) == SpellFlag.CanTargetGround) {
 				if (((flags & SpellFlag.TargetCanMove) != SpellFlag.TargetCanMove) && targetted is Thing) {
@@ -966,8 +966,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private TargetResult TargonNonGround(Player caster, IPoint3D targetted, object parameter, SpellFlag targetSF) {
-			SkillSequenceArgs mageryArgs = (SkillSequenceArgs) parameter;
-			SpellDef spell = (SpellDef) mageryArgs.Param1;
+			var mageryArgs = (SkillSequenceArgs) parameter;
+			var spell = (SpellDef) mageryArgs.Param1;
 
 			if ((spell.Flags & targetSF) == targetSF) {
 				if (!spell.CheckPermissionIncoming(caster, targetted)) {

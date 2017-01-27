@@ -29,7 +29,7 @@ namespace SteamEngine.Common {
 		internal abstract void Clear();
 
 		public static void ClearAll() {
-			foreach (PoolBase pool in allPools) {
+			foreach (var pool in allPools) {
 				pool.Clear();
 			}
 		}
@@ -46,7 +46,7 @@ namespace SteamEngine.Common {
 		}
 
 		internal override void Release(Poolable p) {
-			T instance = (T) p;
+			var instance = (T) p;
 			lock (pool) {
 				//Sanity.IfTrueThrow(queue.Contains(instance), "Pool.Release: '" + p.ToString() + "' already in queue. This should not happen");
 				queue.Enqueue(instance);
@@ -62,11 +62,11 @@ namespace SteamEngine.Common {
 		public static T Acquire() {
 			lock (pool) {
 				if (queue.Count > 0) {
-					T instance = queue.Dequeue();
+					var instance = queue.Dequeue();
 					instance.Reset();
 					return instance;
 				} else {
-					T instance = new T();
+					var instance = new T();
 					instance.myPool = pool;
 					return instance;
 				}

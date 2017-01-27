@@ -39,7 +39,7 @@ namespace SteamEngine {
 		}
 
 		public void SendDenyMessage(AbstractCharacter ch) {
-			GameState state = ch.GameState;
+			var state = ch.GameState;
 			if (state != null) {
 				this.SendDenyMessage(ch, state, state.Conn);
 			}

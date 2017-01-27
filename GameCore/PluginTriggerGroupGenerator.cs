@@ -45,18 +45,18 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
-				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+				var codeCompileUnit = new CodeCompileUnit();
 				if (pluginTGs.Count > 0) {
 					Logger.WriteDebug("Generating PluginTriggergroups");
 
-					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+					var ns = new CodeNamespace("SteamEngine.CompiledScripts");
 					codeCompileUnit.Namespaces.Add(ns);
 
-					foreach (Type decoratedClass in pluginTGs) {
+					foreach (var decoratedClass in pluginTGs) {
 						try {
-							GeneratedInstance gi = new GeneratedInstance(decoratedClass);
+							var gi = new GeneratedInstance(decoratedClass);
 							if (gi.triggerMethods.Count > 0) {
-								CodeTypeDeclaration ctd = gi.GetGeneratedType();
+								var ctd = gi.GetGeneratedType();
 								ns.Types.Add(ctd);
 							}
 						} catch (FatalException) {
@@ -95,7 +95,7 @@ namespace SteamEngine {
 			Type pluginType;
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclaration = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_" + this.pluginType.Name);
+				var codeTypeDeclaration = new CodeTypeDeclaration("GeneratedPluginTriggerGroup_" + this.pluginType.Name);
 				codeTypeDeclaration.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclaration.BaseTypes.Add(typeof(PluginDef.PluginTriggerGroup));
 				codeTypeDeclaration.IsClass = true;
@@ -108,12 +108,12 @@ namespace SteamEngine {
 
 			internal GeneratedInstance(Type pluginType) {
 				this.pluginType = pluginType;
-				MemberTypes memberType = MemberTypes.Method;		//Only find methods.
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public;
+				var memberType = MemberTypes.Method;		//Only find methods.
+				var bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public;
 
-				MemberInfo[] mis = pluginType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
-				foreach (MemberInfo m in mis) {
-					MethodInfo mi = m as MethodInfo;
+				var mis = pluginType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
+				foreach (var m in mis) {
+					var mi = m as MethodInfo;
 					if (mi != null) {
 						this.triggerMethods.Add(mi);
 					}
@@ -121,7 +121,7 @@ namespace SteamEngine {
 			}
 
 			private CodeMemberMethod GenerateRunMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
+				var retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				retVal.Name = "Run";
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(Plugin), "self"));
@@ -137,8 +137,8 @@ namespace SteamEngine {
 					retVal.Statements.Add(new CodeSnippetStatement("#pragma warning restore 168"));
 
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.Uid) {"));
-					foreach (MethodInfo mi in this.triggerMethods) {
-						TriggerKey tk = TriggerKey.Acquire(mi.Name.Substring(3));
+					foreach (var mi in this.triggerMethods) {
+						var tk = TriggerKey.Acquire(mi.Name.Substring(3));
 						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.Uid + "): //" + tk.Name));
 						retVal.Statements.AddRange(
 							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
@@ -159,7 +159,7 @@ namespace SteamEngine {
 
 
 			private CodeMemberMethod GenerateBootstrapMethod(string typeName) {
-				CodeMemberMethod retVal = new CodeMemberMethod();
+				var retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Static;
 				retVal.Name = "Bootstrap";
 
@@ -176,7 +176,7 @@ namespace SteamEngine {
 
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s = ((string) filterCriteria).ToLowerInvariant();
+				var s = ((string) filterCriteria).ToLowerInvariant();
 				return m.Name.ToLowerInvariant().StartsWith(s);
 			}
 		}

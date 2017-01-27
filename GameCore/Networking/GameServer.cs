@@ -88,12 +88,12 @@ namespace SteamEngine.Networking {
 		public static void SendToClientsWhoCanSee(Thing thing, OutgoingPacket outPacket) {
 			PacketGroup pg = null;
 
-			AbstractItem asItem = thing as AbstractItem;
+			var asItem = thing as AbstractItem;
 			if (asItem != null) {
-				AbstractItem contAsItem = asItem.Cont as AbstractItem;
+				var contAsItem = asItem.Cont as AbstractItem;
 				if (contAsItem != null) {
-					foreach (AbstractCharacter viewer in OpenedContainers.GetViewers(contAsItem)) {
-						GameState state = viewer.GameState;
+					foreach (var viewer in OpenedContainers.GetViewers(contAsItem)) {
+						var state = viewer.GameState;
 						if (state != null) {
 							if (pg == null) {
 								pg = PacketGroup.AcquireMultiUsePG();
@@ -106,7 +106,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 
-			foreach (TcpConnection<GameState> conn in thing.TopObj().GetMap().GetConnectionsWhoCanSee(thing)) {
+			foreach (var conn in thing.TopObj().GetMap().GetConnectionsWhoCanSee(thing)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);
@@ -124,7 +124,7 @@ namespace SteamEngine.Networking {
 		public static void SendToClientsWhoCanSee(AbstractCharacter ch, OutgoingPacket outPacket) {
 			PacketGroup pg = null;
 
-			foreach (TcpConnection<GameState> conn in ch.GetMap().GetConnectionsWhoCanSee(ch)) {
+			foreach (var conn in ch.GetMap().GetConnectionsWhoCanSee(ch)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);
@@ -141,10 +141,10 @@ namespace SteamEngine.Networking {
 		public static void SendToClientsWhoCanSee(AbstractItem item, OutgoingPacket outPacket) {
 			PacketGroup pg = null;
 
-			AbstractItem contAsItem = item.Cont as AbstractItem;
+			var contAsItem = item.Cont as AbstractItem;
 			if (contAsItem != null) {
-				foreach (AbstractCharacter viewer in OpenedContainers.GetViewers(contAsItem)) {
-					GameState state = viewer.GameState;
+				foreach (var viewer in OpenedContainers.GetViewers(contAsItem)) {
+					var state = viewer.GameState;
 					if (state != null) {
 						if (pg == null) {
 							pg = PacketGroup.AcquireMultiUsePG();
@@ -155,7 +155,7 @@ namespace SteamEngine.Networking {
 				}
 				return;
 			}
-			foreach (TcpConnection<GameState> conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
+			foreach (var conn in item.GetMap().GetConnectionsWhoCanSee(item)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);
@@ -174,7 +174,7 @@ namespace SteamEngine.Networking {
 			point = point.TopPoint;
 			PacketGroup pg = null;
 
-			foreach (TcpConnection<GameState> conn in point.GetMap().GetConnectionsInRange(point.X, point.Y, range)) {
+			foreach (var conn in point.GetMap().GetConnectionsInRange(point.X, point.Y, range)) {
 				if (pg == null) {
 					pg = PacketGroup.AcquireMultiUsePG();
 					pg.AddPacket(outPacket);
@@ -190,19 +190,19 @@ namespace SteamEngine.Networking {
 		}
 
 		internal static void BackupLinksToCharacters() {
-			foreach (GameState state in clients) {
+			foreach (var state in clients) {
 				state.BackupLinksToCharacters();
 			}
 		}
 
 		internal static void ReLinkCharacters() {
-			foreach (GameState state in clients) {
+			foreach (var state in clients) {
 				state.RelinkCharacter();
 			}
 		}
 
 		internal static void RemoveBackupLinks() {
-			foreach (GameState state in clients) {
+			foreach (var state in clients) {
 				state.RemoveBackupLinks();
 			}
 		}

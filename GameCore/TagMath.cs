@@ -30,7 +30,7 @@ namespace SteamEngine {
 		}
 
 		protected override bool ToBoolImpl(object arg) {
-			IDeletable deletable = arg as IDeletable;
+			var deletable = arg as IDeletable;
 			if (deletable != null) {
 				return !deletable.IsDeleted;
 			}
@@ -42,16 +42,16 @@ namespace SteamEngine {
 		/// </summary>
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string SGetTag(TagHolder from, TagKey which) {
-			object tagValue = from.GetTag(which);
+			var tagValue = from.GetTag(which);
 			if (tagValue == null) {
 				return null; //return null
 			}
 
-			IConvertible convertibleVal = tagValue as IConvertible;
+			var convertibleVal = tagValue as IConvertible;
 			if (convertibleVal != null) {
 				return convertibleVal.ToString(CultureInfo.InvariantCulture);
 			}
-			IFormattable formattableVal = tagValue as IFormattable;
+			var formattableVal = tagValue as IFormattable;
 			if (formattableVal != null) {
 				return formattableVal.ToString(null, CultureInfo.InvariantCulture);
 			}
@@ -61,7 +61,7 @@ namespace SteamEngine {
 
 		/// <summary>Try to obtain a string tag value - not 'toString' but regular string instance</summary>
 		public static string SGetTagNotNull(TagHolder from, TagKey which) {
-			string retVal = SGetTag(from, which);
+			var retVal = SGetTag(from, which);
 			if (retVal == null) {
 				return string.Empty; //return "" instead of null
 			}
@@ -88,7 +88,7 @@ namespace SteamEngine {
 		}
 
 		public static string TimeSpanToString(TimeSpan ts, string format) {
-			DateTime dt = DateTime.MinValue.Add(ts);
+			var dt = DateTime.MinValue.Add(ts);
 			return dt.ToString(format, CultureInfo.InvariantCulture);
 		}
 

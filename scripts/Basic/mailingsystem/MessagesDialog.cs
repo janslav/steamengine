@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Display the list of the messages</summary>
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			List<DelayedMsg> messagesList = (List<DelayedMsg>) args.GetTag(msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
+			var messagesList = (List<DelayedMsg>) args.GetTag(msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
 			if (messagesList == null) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
@@ -40,12 +40,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args.SetTag(msgsListTK, messagesList); //ulozime mezi parametry dialogu
 			}
 
-			int unreadCnt = MsgsBoard.CountUnread((Character) sendTo);
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
+			var unreadCnt = MsgsBoard.CountUnread((Character) sendTo);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, messagesList.Count);
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, messagesList.Count);
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
+			var dialogHandler = new ImprovedDialog(gi);
 			//pozadi    
 			dialogHandler.CreateBackground(800);
 			dialogHandler.SetLocation(40, 30);
@@ -86,10 +86,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				DelayedMsg msg = messagesList[i];
-				Hues msgColor = msg.color;
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var msg = messagesList[i];
+				var msgColor = msg.color;
 				dialogHandler.LastTable[rowCntr, 0] = GUTAText.Builder.Text(msg.time.ToString()).Hue(msgColor).Build();//cas odeslani
 				dialogHandler.LastTable[rowCntr, 1] = GUTAText.Builder.Text(msg.sender == null ? MsgsBoard.NO_SENDER : msg.sender.Name).Hue(msgColor).Build(); //odesilatel
 				dialogHandler.LastTable[rowCntr, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((2 * i) + 10).Build(); //èíst
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam zprav z kontextu (mohl jiz byt trideny apd.)
-			ArrayList messagesList = (ArrayList) args.GetTag(msgsListTK);
+			var messagesList = (ArrayList) args.GetTag(msgsListTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch (gr.PressedButton) {
 					case 0: //exit
@@ -148,9 +148,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, messagesList.Count, 1)) {//kliknuto na paging?
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (gr.PressedButton - 10) / 2;
-				int buttNum = (gr.PressedButton - 10) % 2;
-				DelayedMsg msg = (DelayedMsg) messagesList[row];
+				var row = (gr.PressedButton - 10) / 2;
+				var buttNum = (gr.PressedButton - 10) % 2;
+				var msg = (DelayedMsg) messagesList[row];
 				switch (buttNum) {
 					case 0: //èíst
 						if (!msg.read) {
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							msg.color = msg.color + 3;//trosku ztmavit barvu
 						}
 						//zobrazit tex zprávy (první parametr je nadpis, druhý je zobrazný text)
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("Text zprávy", msg.text));
+						var newGi = gi.Cont.Dialog(SingletonScript<D_Display_Text>.Instance, new DialogArgs("Text zprávy", msg.text));
 						//stacknout messageslist pro navrat
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
@@ -175,7 +175,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void Messages(AbstractCharacter sender, ScriptArgs args) {
 			//ten poslendi null - misto pro seznam messagi
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			if (args.Args.Length == 0) {
 				newArgs.SetTag(msgsSortingTK, SortingCriteria.TimeAsc);
 				sender.Dialog(SingletonScript<D_DelayedMessages>.Instance, newArgs);//default sorting, beginning from the first message

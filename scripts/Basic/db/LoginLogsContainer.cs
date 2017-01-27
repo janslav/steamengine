@@ -45,8 +45,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void GameLogin(GameState state) {
-				AbstractCharacter ch = state.Character;
-				AbstractAccount acc = state.Account;
+				var ch = state.Character;
+				var acc = state.Account;
 				Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogin");
 				Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
 				this.AddLine(acc.Name, state.Conn.EndPoint.ToString(), ch.Name, ch.Uid.ToString(), "1",
@@ -55,8 +55,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void GameLogout(GameState state) {
-				AbstractCharacter ch = state.Character;
-				AbstractAccount acc = state.Account;
+				var ch = state.Character;
+				var acc = state.Account;
 				Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogout");
 				Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
 				this.AddLine(acc.Name, state.Conn.EndPoint.ToString(), ch.Name, ch.Uid.ToString(), "0",
@@ -65,8 +65,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void ItemMove(GameState state) {
-				AbstractCharacter ch = state.Character;
-				AbstractAccount acc = state.Account;
+				var ch = state.Character;
+				var acc = state.Account;
 				Sanity.IfTrueThrow(ch == null, "CurCharacter can't be null in LoginLogsContainer.GameLogin");
 				Sanity.IfTrueThrow(acc == null, "Account can't be null in LoginLogsContainer.GameLogin");
 				this.AddLine(acc.Name, state.Conn.EndPoint.ToString(), ch.Name, ch.Uid.ToString(), "1",
@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public class E_DbMethods_Global : CompiledTriggerGroup {
 			public void On_AfterSave(Globals ignored1, ScriptArgs sa) {
-				bool success = Convert.ToBoolean(sa.Argv[1]);
+				var success = Convert.ToBoolean(sa.Argv[1]);
 				if (success) {
 					SendPending();
 				}

@@ -35,9 +35,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static Material[] materials = InitMaterials();
 
 		private static Material[] InitMaterials() {
-			int n = Tools.GetEnumLength<Material>();
-			Material[] retVal = new Material[n];
-			for (int i = 0; i < n; i++) {
+			var n = Tools.GetEnumLength<Material>();
+			var retVal = new Material[n];
+			for (var i = 0; i < n; i++) {
 				retVal[i] = (Material) i;
 			}
 			return retVal;
@@ -67,40 +67,40 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			where BaseType : ItemDef
 			where ColoredType : ItemDef, BaseType, IObjectWithMaterial {
 
-			Dictionary<int, BaseType> dict = new Dictionary<int, BaseType>();
-			foreach (AbstractScript script in AbstractScript.AllScripts) {
-				ColoredType def = script as ColoredType;
+			var dict = new Dictionary<int, BaseType>();
+			foreach (var script in AbstractScript.AllScripts) {
+				var def = script as ColoredType;
 				if (def != null) {
-					BaseType baseDef = (BaseType) ThingDef.FindItemDef(def.Model);
+					var baseDef = (BaseType) ThingDef.FindItemDef(def.Model);
 					if (baseDef == null) {
 						throw new SEException("No baseDef for '" + def + "' ?!");
 					}
 					dict[def.Model] = baseDef;
 				}
 			}
-			int n = dict.Count;
-			BaseType[] retVal = new BaseType[n];
+			var n = dict.Count;
+			var retVal = new BaseType[n];
 			dict.Values.CopyTo(retVal, 0);
 			return retVal;
 		}
 
 		/// <summary>Returns a collection of basic itemdefs for all colored armors of given type</summary>
 		public static ICollection<WearableDef> GetBasicArmors(WearableType type) {
-			WearableDef[] arrOfType = basicArmors[(int) type];
+			var arrOfType = basicArmors[(int) type];
 
 			if (arrOfType == null) {
-				Dictionary<int, WearableDef> dict = new Dictionary<int, WearableDef>();
-				foreach (AbstractScript script in AbstractScript.AllScripts) {
-					ColoredArmorDef def = script as ColoredArmorDef;
+				var dict = new Dictionary<int, WearableDef>();
+				foreach (var script in AbstractScript.AllScripts) {
+					var def = script as ColoredArmorDef;
 					if ((def != null) && (def.WearableType == type)) {
-						WearableDef baseDef = (WearableDef) ThingDef.FindItemDef(def.Model);
+						var baseDef = (WearableDef) ThingDef.FindItemDef(def.Model);
 						if (baseDef == null) {
 							throw new SEException("No baseDef for '" + def + "' ?!");
 						}
 						dict[def.Model] = baseDef;
 					}
 				}
-				int n = dict.Count;
+				var n = dict.Count;
 				arrOfType = new WearableDef[n];
 				dict.Values.CopyTo(arrOfType, 0);
 				basicArmors[(int) type] = arrOfType;
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		private static T GetColoredObject<T>(int model, Material material) where T : ItemDef, IObjectWithMaterial {
-			Dictionary<int, ItemDef> dict = coloredItems[(int) material];
+			var dict = coloredItems[(int) material];
 			if (dict == null) {
 				dict = new Dictionary<int, ItemDef>();
 				coloredItems[(int) material] = dict;
@@ -131,8 +131,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			ItemDef retVal;
 			if (!dict.TryGetValue(model, out retVal)) {
-				foreach (AbstractScript script in AbstractScript.AllScripts) {
-					T def = script as T;
+				foreach (var script in AbstractScript.AllScripts) {
+					var def = script as T;
 					if ((def != null) && (def.Model == model) && (def.Material == material)) {
 						//if (retVal == null) {
 						retVal = def;
@@ -150,7 +150,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 
 		public static ColoredArmorDef GetColoredArmor(int model, Material material, WearableType type) {
-			Dictionary<int, ColoredArmorDef[]> dict = coloredArmors[(int) material];
+			var dict = coloredArmors[(int) material];
 			if (dict == null) {
 				dict = new Dictionary<int, ColoredArmorDef[]>();
 				coloredArmors[(int) material] = dict;
@@ -159,8 +159,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			ColoredArmorDef[] retVal;
 			if (!dict.TryGetValue(model, out retVal)) {
 				retVal = new ColoredArmorDef[Tools.GetEnumLength<WearableType>()]; //most will be empty but we don't care. Probably only ring/chain stuff will have 2 entries cos they share the same models
-				foreach (AbstractScript script in AbstractScript.AllScripts) {
-					ColoredArmorDef def = script as ColoredArmorDef;
+				foreach (var script in AbstractScript.AllScripts) {
+					var def = script as ColoredArmorDef;
 					if ((def != null) && (def.Model == model) && (def.Material == material)) {
 						if (retVal[(int) def.WearableType] == null) {
 							retVal[(int) def.WearableType] = def;

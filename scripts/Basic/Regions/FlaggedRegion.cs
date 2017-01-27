@@ -75,7 +75,7 @@ namespace SteamEngine.Regions {
 				if ((this.flags & RegionFlags.Underground) == RegionFlags.Underground) {
 					return true;
 				}
-				FlaggedRegion parentAsFlagged = this.Parent as FlaggedRegion;
+				var parentAsFlagged = this.Parent as FlaggedRegion;
 				if (parentAsFlagged != null) {
 					return parentAsFlagged.Flag_Underground;
 				}
@@ -92,7 +92,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public override TriggerResult On_Enter(AbstractCharacter ch, bool forced) {
-			Player asPlayer = ch as Player;
+			var asPlayer = ch as Player;
 			if (asPlayer != null) {
 				asPlayer.SendGlobalLightLevel(LightAndWeather.GetLightIn(this));
 			}
@@ -101,10 +101,10 @@ namespace SteamEngine.Regions {
 		}
 
 		public override TriggerResult On_Exit(AbstractCharacter ch, bool forced) {
-			Player asPlayer = ch as Player;
+			var asPlayer = ch as Player;
 			if (asPlayer != null) {
 				//we're exiting this one, hence "re-entering" the parent
-				FlaggedRegion parentAsFlagged = this.Parent as FlaggedRegion;
+				var parentAsFlagged = this.Parent as FlaggedRegion;
 				if (parentAsFlagged != null) {
 					asPlayer.SendGlobalLightLevel(LightAndWeather.GetLightIn(parentAsFlagged));
 				}

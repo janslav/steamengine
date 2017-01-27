@@ -15,10 +15,10 @@ namespace SteamEngine.CompiledScripts {
 		//public static SkillDef defHealing = SkillDef.ById(SkillName.Healing);
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Thing target = skillSeqArgs.Target1 as Thing;
+			var self = skillSeqArgs.Self;
+			var target = skillSeqArgs.Target1 as Thing;
 
-			Character targetChar = target as Character;
+			var targetChar = target as Character;
 			if (targetChar != null) {
 				//pokud ma cil maximum zivotu,a nekrvaci
 				if ((targetChar.Hits >= targetChar.MaxHits) && (!BleedingEffectPluginDef.IsBleeding(targetChar))) {
@@ -45,10 +45,10 @@ namespace SteamEngine.CompiledScripts {
 
 
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Thing target = skillSeqArgs.Target1 as Thing;
+			var self = skillSeqArgs.Self;
+			var target = skillSeqArgs.Target1 as Thing;
 
-			Character targetChar = target as Character;
+			var targetChar = target as Character;
 
 			if (targetChar != null) {
 				if (targetChar == self) {
@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(200));
 
@@ -74,10 +74,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Thing target = skillSeqArgs.Target1 as Thing;
+			var self = skillSeqArgs.Self;
+			var target = skillSeqArgs.Target1 as Thing;
 
-			Character targetChar = target as Character;
+			var targetChar = target as Character;
 			if (targetChar != null) {
 				// TODO? Vytvorit vzorec pro maximum a minimum pridanych HP
 
@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 				//tell the target hes been healed?
 
 
-				Item usedBandages = skillSeqArgs.Tool;
+				var usedBandages = skillSeqArgs.Tool;
 				if ((usedBandages != null) && (usedBandages.Type == SingletonScript<t_bandage_blood>.Instance)) {
 					AddCleanBandage(self);
 				} else {
@@ -109,10 +109,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Thing target = skillSeqArgs.Target1 as Thing;
+			var self = skillSeqArgs.Self;
+			var target = skillSeqArgs.Target1 as Thing;
 
-			Character targetChar = skillSeqArgs.Target1 as Character;
+			var targetChar = skillSeqArgs.Target1 as Character;
 			if (targetChar != null) {
 				self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingFailed);
 
@@ -126,7 +126,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.WriteLine(Loc<HealingLoc>.Get(self.Language).HealingAborted);
 		}
 	}

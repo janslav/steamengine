@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public static class ScriptedAccountDescriptor {
 		[Button("Account notes")]
 		public static void AccNotes(object target) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);
 			newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_AccountNotes>.Instance, newArgs);
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("New account note")]
 		public static void NewAccNote(object target) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(D_New_AccountNote.isCrimeTK, false);//je to trest(true) nebo jen poznamka(false)?
 			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);//account
 			Globals.SrcCharacter.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Account crimes")]
 		public static void AccCrimes(object target) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);
 			newArgs.SetTag(D_AccountNotes.issuesSortingTK, SortingCriteria.TimeDesc);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_AccountCrimes>.Instance, newArgs);
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("New account crime")]
 		public static void NewAccCrime(object target) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(D_New_AccountNote.isCrimeTK, true);//je to trest(true) nebo jen poznamka(false)?
 			newArgs.SetTag(D_AccountNotes.accountTK, (AbstractAccount) target);//account			
 			Globals.SrcCharacter.Dialog(SingletonScript<D_New_AccountNote>.Instance, newArgs);

@@ -152,10 +152,10 @@ namespace SteamEngine.Scripting.Objects {
 		internal static Constant[] Load(PropsSection input) {
 			SeShield.AssertInTransaction();
 
-			List<Constant> list = new List<Constant>();
+			var list = new List<Constant>();
 			string line;
-			int linenum = input.HeaderLine;
-			StringReader reader = new StringReader(input.GetTrigger(0).Code.ToString());
+			var linenum = input.HeaderLine;
+			var reader = new StringReader(input.GetTrigger(0).Code.ToString());
 			while ((line = reader.ReadLine()) != null) {
 				linenum++;
 				line = line.Trim();
@@ -163,10 +163,10 @@ namespace SteamEngine.Scripting.Objects {
 					continue;
 				}
 				string name, value;
-				int spaceAt = line.IndexOf(" ");
-				int tabAt = line.IndexOf("\t");
-				int equalityAt = line.IndexOf("=");
-				int delimiterAt = MinPositive(spaceAt, tabAt, equalityAt);
+				var spaceAt = line.IndexOf(" ");
+				var tabAt = line.IndexOf("\t");
+				var equalityAt = line.IndexOf("=");
+				var delimiterAt = MinPositive(spaceAt, tabAt, equalityAt);
 				if ((delimiterAt == -1) || (delimiterAt >= line.Length)) {
 					name = Utility.Uncomment(line);
 					value = "";
@@ -212,8 +212,8 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private static int MinPositive(params int[] numbers) {
-			int result = int.MaxValue;
-			foreach (int num in numbers) {
+			var result = int.MaxValue;
+			foreach (var num in numbers) {
 				if ((num > 0) && (num < result)) {
 					result = num;
 				}
@@ -230,9 +230,9 @@ namespace SteamEngine.Scripting.Objects {
 			var allConstans = SeShield.InTransaction(allConstantsByName.Values.ToList);
 			var count = allConstans.Count;
 			Logger.WriteDebug("Resolving " + count + " constants");
-			DateTime before = DateTime.Now;
-			int a = 0;
-			int countPerCent = count / 200;
+			var before = DateTime.Now;
+			var a = 0;
+			var countPerCent = count / 200;
 			foreach (var constant in allConstans) {
 				if ((a % countPerCent) == 0) {
 					Logger.SetTitle("Resolving Constants: " + ((a * 100) / count) + " %");
@@ -240,14 +240,14 @@ namespace SteamEngine.Scripting.Objects {
 				constant.ResolveTemporaryState();
 				a++;
 			}
-			DateTime after = DateTime.Now;
+			var after = DateTime.Now;
 			Logger.WriteDebug("...took " + (after - before));
 			Logger.SetTitle("");
 		}
 
 		private void ResolveTemporaryState() {
 			if (!this.IsUnloaded) { //those should have already stated what's the problem :)
-				TemporaryValue tv = this.shieldedState.Value.implementation as TemporaryValue;
+				var tv = this.shieldedState.Value.implementation as TemporaryValue;
 				if (tv != null) {
 					this.ResolveValueFromScript(tv.str);
 				}
@@ -274,7 +274,7 @@ namespace SteamEngine.Scripting.Objects {
 				} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
 					s.implementation = new NormalConstant(retVal);
 				} else {
-					string statement = string.Concat("return ", value);
+					var statement = string.Concat("return ", value);
 					Exception exception;
 					LScriptHolder snippetRunner;
 					retVal = LScriptMain.TryRunSnippet(s.filename, s.line, Globals.Instance, statement, out exception,
@@ -316,7 +316,7 @@ namespace SteamEngine.Scripting.Objects {
 		private sealed class NormalConstant : ConstantValue {
 			internal NormalConstant(object value) {
 				this.Value = value;
-				string asString = value as string;
+				var asString = value as string;
 				if (asString != null) {
 					this.Value = string.Intern(asString);
 				}

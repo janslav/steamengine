@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			if (!this.CheckPrerequisities(skillSeqArgs)) {
 				return TriggerResult.Cancel;
@@ -64,11 +64,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			self.ClilocSysMessage(501851);//You enter a meditative trance.
-			MeditationPlugin mpl = (MeditationPlugin) MeditationPlugin.defInstance.Create();
-			double effect = this.GetEffectForChar(self);
+			var mpl = (MeditationPlugin) MeditationPlugin.defInstance.Create();
+			var effect = this.GetEffectForChar(self);
 			effect += effect * MeditationBonusDef.EffectPower * self.GetAbility(MeditationBonusDef);
 			mpl.additionalManaRegenSpeed = effect;
 			self.AddPlugin(MeditationPlugin.meditationPluginKey, mpl);
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 		/// should be cancelled or true if we can continue
 		/// </summary>
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {
 				return false;//no message needed, it's been already sent in the called method
 			}

@@ -28,9 +28,9 @@ namespace SteamEngine.CompiledScripts {
 		public CompiledTargetDef()
 			: base(null, "Target.cs", -1) {
 
-			Type type = this.GetType();
-			MethodInfo[] methods = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-			foreach (MethodInfo mi in methods) {
+			var type = this.GetType();
+			var methods = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			foreach (var mi in methods) {
 				if (mi.Name.Equals("On_TargonGround")) {
 					this.allowGround = true;
 					break;
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected sealed override void On_Targon(GameState state, IPoint3D getback, object parameter) {
-			Player self = state.Character as Player;
+			var self = state.Character as Player;
 			if (self != null) {
 				if (TargetResult.RestartTargetting == this.On_TargonPoint(self, getback, parameter)) {
 					this.On_Start(self, parameter);
@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected sealed override void On_TargonCancel(GameState state, object parameter) {
-			Player self = state.Character as Player;
+			var self = state.Character as Player;
 			if (self != null) {
 				this.On_TargonCancel(self, parameter);
 			}
@@ -72,11 +72,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected virtual TargetResult On_TargonPoint(Player self, IPoint3D targetted, object parameter) {
-			Thing thing = targetted as Thing;
+			var thing = targetted as Thing;
 			if (thing != null) {
 				return this.On_TargonThing(self, thing, parameter);
 			}
-			AbstractInternalItem s = targetted as AbstractInternalItem;
+			var s = targetted as AbstractInternalItem;
 			if (s != null) {
 				return this.On_TargonStatic(self, s, parameter);
 			}
@@ -84,11 +84,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected virtual TargetResult On_TargonThing(Player self, Thing targetted, object parameter) {
-			Character ch = targetted as Character;
+			var ch = targetted as Character;
 			if (ch != null) {
 				return this.On_TargonChar(self, ch, parameter);
 			}
-			Item item = targetted as Item;
+			var item = targetted as Item;
 			if (item != null) {
 				return this.On_TargonItem(self, item, parameter);
 			}

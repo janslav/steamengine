@@ -42,7 +42,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
 				vars.localVars[this.registerIndex] = this.arg.Run(vars);

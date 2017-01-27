@@ -161,7 +161,7 @@ namespace SteamEngine.Networking {
 				return;
 			}
 
-			AbstractCharacter ch = this.account.GetLingeringCharacter();
+			var ch = this.account.GetLingeringCharacter();
 			if (ch == null) {//if we've already a lingering char on this acc, we ignore the selection and login the lingering one
 				//otherwise, find the one in slot
 				ch = this.account.GetCharacterInSlot(charSlot);
@@ -181,7 +181,7 @@ namespace SteamEngine.Networking {
 
 				//PreparedPacketGroups.SendClientVersionQuery(this.conn);
 
-				PacketSequences.DelayedLoginTimer timer = new PacketSequences.DelayedLoginTimer(ch);
+				var timer = new PacketSequences.DelayedLoginTimer(ch);
 				timer.DueInSeconds = 0;
 				timer.PeriodInSeconds = 0.5;
 			} else {
@@ -250,10 +250,10 @@ namespace SteamEngine.Networking {
 
 		public void SyncUpdateRange() {
 			if (this.character != null) {
-				int oldUpdateRange = this.lastSentUpdateRange;
+				var oldUpdateRange = this.lastSentUpdateRange;
 				this.RecalcUpdateRange();
 				if (oldUpdateRange != this.lastSentUpdateRange) {
-					ClientViewRangeOutPacket packet = Pool<ClientViewRangeOutPacket>.Acquire();
+					var packet = Pool<ClientViewRangeOutPacket>.Acquire();
 					packet.Prepare(this.lastSentUpdateRange);
 					this.conn.SendSinglePacket(packet);
 
@@ -267,7 +267,7 @@ namespace SteamEngine.Networking {
 		}
 
 		private void RecalcUpdateRange() {
-			int visionRange = this.character.VisionRange;
+			var visionRange = this.character.VisionRange;
 			if (visionRange <= this.requestedUpdateRange) {
 				if (visionRange < 0) {
 					this.lastSentUpdateRange = 0;
@@ -302,7 +302,7 @@ namespace SteamEngine.Networking {
 			this.targonDeleg = targonDeleg;
 			this.targonCancelDeleg = targonCancelDeleg;
 			this.targonParameters = targonParameters;
-			GiveBoatOrHousePlacementViewOutPacket packet = Pool<GiveBoatOrHousePlacementViewOutPacket>.Acquire();
+			var packet = Pool<GiveBoatOrHousePlacementViewOutPacket>.Acquire();
 			packet.Prepare(model);
 			this.conn.SendSinglePacket(packet);
 		}
@@ -310,13 +310,13 @@ namespace SteamEngine.Networking {
 		internal void HandleTarget(bool targGround, uint targetUid, ushort x, ushort y, sbyte z, ushort model) {
 			Logger.WriteDebug("HandleTarget: TG=" + targGround + " uid=" + targetUid + " x=" + x + " y=" + y + " z=" + z + " dispId=" + model);
 			//figure out what it is
-			object parameter = this.targonParameters;
+			var parameter = this.targonParameters;
 			this.targonParameters = null;
-			OnTargonCancel targonCancel = this.targonCancelDeleg;
+			var targonCancel = this.targonCancelDeleg;
 			this.targonCancelDeleg = null;
-			OnTargon targ = this.targonDeleg;
+			var targ = this.targonDeleg;
 			this.targonDeleg = null;
-			AbstractCharacter self = this.CharacterNotNull;
+			var self = this.CharacterNotNull;
 
 			if (x == 0xffff && y == 0xffff && targetUid == 0 && z == 0 && model == 0) {
 				//cancel
@@ -327,7 +327,7 @@ namespace SteamEngine.Networking {
 			}
 			if (targ != null) {
 				if (!targGround) {
-					Thing thing = Thing.UidGetThing(targetUid);
+					var thing = Thing.UidGetThing(targetUid);
 					if (thing != null) {
 						if (self.CanSeeForUpdate(thing).Allow) {
 							targ(this, thing, parameter);
@@ -336,20 +336,20 @@ namespace SteamEngine.Networking {
 					}
 				} else {
 					if (model == 0) {
-						Point4D point = new Point4D(x, y, z, self.M);
+						var point = new Point4D(x, y, z, self.M);
 						if (self.CanSeeCoordinates(point)) {
 							targ(this, point, parameter);
 							return;
 						}
 					} else {
 						if (self.CanSeeCoordinates(x, y, self.M)) {
-							Map map = self.GetMap();
-							StaticItem sta = map.GetStatic(x, y, z, model);
+							var map = self.GetMap();
+							var sta = map.GetStatic(x, y, z, model);
 							if (sta != null) {
 								targ(this, sta, parameter);
 								return;
 							}
-							MultiItemComponent mic = map.GetMultiComponent(x, y, z, model);
+							var mic = map.GetMultiComponent(x, y, z, model);
 							if (mic != null) {
 								targ(this, mic, parameter);
 								return;
@@ -372,17 +372,17 @@ namespace SteamEngine.Networking {
 		}
 
 		public void Menu(IEnumerable<string> allTexts, MenuRespose response, MenuCancel cancel, object parameter) {
-			int menuUid = this.PrepareMenu(response, cancel, parameter);
+			var menuUid = this.PrepareMenu(response, cancel, parameter);
 
-			OpenDialogBoxPacket packet = Pool<OpenDialogBoxPacket>.Acquire();
+			var packet = Pool<OpenDialogBoxPacket>.Acquire();
 			packet.Prepare(menuUid, allTexts);
 			this.conn.SendSinglePacket(packet);
 		}
 
 		public void Menu(string header, IEnumerable<string> choices, MenuRespose response, MenuCancel cancel, object parameter) {
-			int menuUid = this.PrepareMenu(response, cancel, parameter);
+			var menuUid = this.PrepareMenu(response, cancel, parameter);
 
-			OpenDialogBoxPacket packet = Pool<OpenDialogBoxPacket>.Acquire();
+			var packet = Pool<OpenDialogBoxPacket>.Acquire();
 			packet.Prepare(menuUid, header, choices);
 			this.conn.SendSinglePacket(packet);
 		}
@@ -443,7 +443,7 @@ namespace SteamEngine.Networking {
 
 		internal void SentGump(Gump gi) {
 			this.gumpInstancesByUid[gi.Uid] = gi;
-			GumpDef thisGump = gi.Def;
+			var thisGump = gi.Def;
 			LinkedList<Gump> instancesOfThisGump;
 			if (!this.gumpInstancesByGump.TryGetValue(thisGump, out instancesOfThisGump)) {
 				instancesOfThisGump = new LinkedList<Gump>();
@@ -465,7 +465,7 @@ namespace SteamEngine.Networking {
 			if (this.gumpInstancesByUid.TryGetValue(gumpInstanceUid, out gi)) {
 				this.gumpInstancesByUid.Remove(gumpInstanceUid);
 
-				GumpDef gd = gi.Def;
+				var gd = gi.Def;
 				LinkedList<Gump> list;
 				if (this.gumpInstancesByGump.TryGetValue(gd, out list)) {
 					list.Remove(gi);
@@ -492,7 +492,7 @@ namespace SteamEngine.Networking {
 
 		internal void RelinkCharacter() {
 			if (this.charBackupUid != -1) {
-				AbstractCharacter newChar = Thing.UidGetCharacter(this.charBackupUid);
+				var newChar = Thing.UidGetCharacter(this.charBackupUid);
 				if (newChar == null) {
 					this.conn.Close("Character lost while recompiling...?");
 				} else {
@@ -518,7 +518,7 @@ namespace SteamEngine.Networking {
 
 		public void SendPersonalLightLevel(int personalLight) {
 			if (personalLight != this.lastSentPersonalLightLevel) {
-				PersonalLightLevelOutPacket packet = Pool<PersonalLightLevelOutPacket>.Acquire();
+				var packet = Pool<PersonalLightLevelOutPacket>.Acquire();
 				packet.Prepare(this.CharacterNotNull.FlaggedUid, personalLight);
 				this.conn.SendSinglePacket(packet);
 				this.lastSentPersonalLightLevel = personalLight;
@@ -579,7 +579,7 @@ namespace SteamEngine.Networking {
 
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("Client (uid=");
+			var sb = new StringBuilder("Client (uid=");
 			sb.Append(this.uid);
 			if (this.account != null) {
 				sb.Append(", acc='").Append(this.account.Name).Append("'");

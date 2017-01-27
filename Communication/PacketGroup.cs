@@ -71,7 +71,7 @@ namespace SteamEngine.Communication {
 		}
 
 		public T AcquirePacket<T>() where T : OutgoingPacket, new() {
-			T packet = Pool<T>.Acquire();
+			var packet = Pool<T>.Acquire();
 			this.AddPacket(packet);
 			return packet;
 		}
@@ -86,7 +86,7 @@ namespace SteamEngine.Communication {
 			if (this.uncompressedLen < Buffer.bufferLen / 2) {
 
 				//write the other group's packet to our buffer
-				foreach (OutgoingPacket packet in addedGroup.packets) {
+				foreach (var packet in addedGroup.packets) {
 					this.packets.Add(packet);
 					this.uncompressedLen += packet.Write(this.uncompressed.bytes, this.uncompressedLen);
 				}
@@ -99,8 +99,8 @@ namespace SteamEngine.Communication {
 			if (!this.isWritten) {
 				this.uncompressed = Pool<Buffer>.Acquire();
 
-				int position = 0;
-				foreach (OutgoingPacket packet in this.packets) {
+				var position = 0;
+				foreach (var packet in this.packets) {
 					position += packet.Write(this.uncompressed.bytes, position);
 				}
 
@@ -134,13 +134,13 @@ namespace SteamEngine.Communication {
 			}
 
 			if (this.type == PacketGroupType.Free) {
-				Buffer newCompressed = new Buffer(this.compressedLen);
+				var newCompressed = new Buffer(this.compressedLen);
 				System.Buffer.BlockCopy(this.compressed.bytes, 0, newCompressed.bytes, 0, this.compressedLen);
 
 				this.compressed.Dispose();
 				this.compressed = null;
 
-				foreach (OutgoingPacket packet in this.packets) {
+				foreach (var packet in this.packets) {
 					packet.Dispose();
 				}
 				this.packets.Clear();
@@ -188,7 +188,7 @@ namespace SteamEngine.Communication {
 				this.uncompressed = null;
 			}
 
-			foreach (OutgoingPacket packet in this.packets) {
+			foreach (var packet in this.packets) {
 				packet.Dispose();
 			}
 			//this.packets.Clear();
@@ -197,19 +197,19 @@ namespace SteamEngine.Communication {
 		}
 
 		public static PacketGroup CreateFreePG() {
-			PacketGroup pg = new PacketGroup();
+			var pg = new PacketGroup();
 			pg.SetType(PacketGroupType.Free);
 			return pg;
 		}
 
 		public static PacketGroup AcquireMultiUsePG() {
-			PacketGroup pg = new PacketGroup();
+			var pg = new PacketGroup();
 			pg.SetType(PacketGroupType.MultiUse);
 			return pg;
 		}
 
 		public static PacketGroup AcquireSingleUsePG() {
-			PacketGroup pg = new PacketGroup();
+			var pg = new PacketGroup();
 			pg.SetType(PacketGroupType.SingleUse);
 			return pg;
 		}
@@ -221,9 +221,9 @@ namespace SteamEngine.Communication {
 		}
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("PacketGroup (");
+			var sb = new StringBuilder("PacketGroup (");
 			sb.Append(this.packets.Count).Append(" packets - ");
-			foreach (OutgoingPacket p in this.packets) {
+			foreach (var p in this.packets) {
 				sb.Append(p).Append(", ");
 			}
 			sb.Length -= 2;

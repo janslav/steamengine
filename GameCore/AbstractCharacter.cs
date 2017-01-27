@@ -236,7 +236,7 @@ namespace SteamEngine {
 				return (byte) (this.directionAndFlags & DirectionAndFlag.DirectionMask);
 			}
 			set {
-				DirectionAndFlag newValue = (this.directionAndFlags & ~DirectionAndFlag.DirectionMask) | ((DirectionAndFlag) value & DirectionAndFlag.DirectionMask);
+				var newValue = (this.directionAndFlags & ~DirectionAndFlag.DirectionMask) | ((DirectionAndFlag) value & DirectionAndFlag.DirectionMask);
 				if (this.directionAndFlags != newValue) {
 					CharSyncQueue.AboutToChangeDirection(this, false);
 					this.directionAndFlags = newValue;
@@ -344,7 +344,7 @@ namespace SteamEngine {
 		}
 
 		private void SetFlag_Disconnected(bool value) {
-			DirectionAndFlag newValue = (value ? (this.directionAndFlags | DirectionAndFlag.DirFlagDisconnected) : (this.directionAndFlags & ~DirectionAndFlag.DirFlagDisconnected));
+			var newValue = (value ? (this.directionAndFlags | DirectionAndFlag.DirFlagDisconnected) : (this.directionAndFlags & ~DirectionAndFlag.DirFlagDisconnected));
 
 			if (this.directionAndFlags != newValue) {
 				CharSyncQueue.AboutToChangeVisibility(this);
@@ -415,7 +415,7 @@ namespace SteamEngine {
 
 		//Called by GameConn
 		internal bool TryLogIn() {
-			bool success = this.Trigger_LogIn() != TriggerResult.Cancel;
+			var success = this.Trigger_LogIn() != TriggerResult.Cancel;
 			if (success) {
 				this.SetFlag_Disconnected(false);
 			}
@@ -466,7 +466,7 @@ namespace SteamEngine {
 			if (!this.Def.Name.Equals(this.name)) {
 				output.WriteValue("name", this.name);
 			}
-			DirectionAndFlag flagsToSave = this.directionAndFlags;
+			var flagsToSave = this.directionAndFlags;
 			if (this.IsPlayer) {
 				flagsToSave = flagsToSave | DirectionAndFlag.DirFlagDisconnected;//add the Disconnected flag, makes no sense to save a person "connected"
 			}
@@ -479,7 +479,7 @@ namespace SteamEngine {
 		//For loading.
 		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member"), SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
 		public void LoadAccount_Delayed(object resolvedObject, string filename, int line) {
-			AbstractAccount acc = (AbstractAccount) resolvedObject;
+			var acc = (AbstractAccount) resolvedObject;
 
 			int slot;
 			if (acc.AttachCharacter(this, out slot)) {
@@ -533,14 +533,14 @@ namespace SteamEngine {
 		//ISrc implementation
 		public byte Plevel {
 			get {
-				AbstractAccount a = this.Account;
+				var a = this.Account;
 				if (a != null) {
 					return a.PLevel;
 				}
 				return 0;
 			}
 			set {
-				AbstractAccount a = this.Account;
+				var a = this.Account;
 				if (a != null) {
 					a.PLevel = value;
 				}//else ?
@@ -549,7 +549,7 @@ namespace SteamEngine {
 
 		public byte MaxPlevel {
 			get {
-				AbstractAccount a = this.Account;
+				var a = this.Account;
 				if (a != null) {
 					return a.MaxPLevel;
 				}
@@ -579,7 +579,7 @@ namespace SteamEngine {
 
 		public Language Language {
 			get {
-				GameState state = this.GameState;
+				var state = this.GameState;
 				if (state != null) {
 					return state.Language;
 				}
@@ -593,55 +593,55 @@ namespace SteamEngine {
 		}
 
 		public void SysMessage(string arg) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendSystemMessage(state.Conn, arg, -1);
 			}
 		}
 
 		public void SysMessage(string arg, int color) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendSystemMessage(state.Conn, arg, color);
 			}
 		}
 
 		public void ClilocSysMessage(int msg) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, "");
 			}
 		}
 
 		public void ClilocSysMessage(int msg, string args) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, args);
 			}
 		}
 		public void ClilocSysMessage(int msg, params string[] args) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, -1, args);
 			}
 		}
 
 		public void ClilocSysMessage(int msg, int color) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, "");
 			}
 		}
 
 		public void ClilocSysMessage(int msg, int color, string args) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, args);
 			}
 		}
 
 		public void ClilocSysMessage(int msg, int color, params string[] args) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PacketSequences.SendClilocSysMessage(state.Conn, msg, color, args);
 			}
@@ -693,12 +693,12 @@ namespace SteamEngine {
 			dir = dir & Direction.Mask;
 
 			if (this.Direction == dir) { //no dir change = step forward
-				Point4D oldPoint = new Point4D(this.point4d);
+				var oldPoint = new Point4D(this.point4d);
 
-				Map map = this.GetMap();
+				var map = this.GetMap();
 				int newZ, newY, newX;
 
-				bool canMoveEverywhere = (this.IsPlayer && this.Plevel >= Globals.PlevelOfGM);
+				var canMoveEverywhere = (this.IsPlayer && this.Plevel >= Globals.PlevelOfGM);
 				if (!map.CheckMovement(oldPoint, this.MovementSettings, dir, canMoveEverywhere, out newX, out newY, out newZ)) {
 					return false;
 				}
@@ -708,8 +708,8 @@ namespace SteamEngine {
 				}
 
 				//should we really be asking regions, even for npcs? -tar
-				Region oldRegion = this.Region;
-				Region newRegion = map.GetRegionFor(newX, newY);
+				var oldRegion = this.Region;
+				var newRegion = map.GetRegionFor(newX, newY);
 				if (oldRegion != newRegion) {
 					if (!Region.TryExitAndEnter(oldRegion, newRegion, this)) {
 						return false;
@@ -741,14 +741,14 @@ namespace SteamEngine {
 		internal sealed override void SetPosImpl(int x, int y, int z, byte m) {
 			if (Map.IsValidPos(x, y, m)) {
 				CharSyncQueue.AboutToChangePosition(this, MovementType.Teleporting);
-				Point4D oldP = this.P();
+				var oldP = this.P();
 				Region oldRegion;
 				if (Map.IsValidPos(oldP)) {
 					oldRegion = Map.GetMap(oldP.M).GetRegionFor(oldP.X, oldP.Y);
 				} else {
 					oldRegion = StaticRegion.WorldRegion;
 				}
-				Region newRegion = Map.GetMap(m).GetRegionFor(x, y);
+				var newRegion = Map.GetMap(m).GetRegionFor(x, y);
 				if (oldRegion != newRegion) {
 					Region.ExitAndEnter(oldRegion, newRegion, this);//forced exit & enter
 				}
@@ -761,7 +761,7 @@ namespace SteamEngine {
 
 		private void ChangedP(Point4D oldP, MovementType movementType) {
 			Map.ChangedP(this, oldP);
-			AbstractCharacter self = this;
+			var self = this;
 			if (self != null) {
 				self.Trigger_NewPosition(oldP, movementType);
 			}
@@ -784,7 +784,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool IsStandingOn(AbstractItem i) {
-			int zdiff = Math.Abs(i.Z - this.Z);
+			var zdiff = Math.Abs(i.Z - this.Z);
 			return (this.X == i.X && this.Y == i.Y && zdiff >= 0 && zdiff <= i.Height);
 		}
 
@@ -801,7 +801,7 @@ namespace SteamEngine {
 				this.On_NewPosition(oldP);
 			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-			foreach (AbstractItem itm in this.GetMap().GetItemsInRange(this.X, this.Y, 0)) {
+			foreach (var itm in this.GetMap().GetItemsInRange(this.X, this.Y, 0)) {
 				if (this.IsStandingOn(itm)) {
 					itm.Trigger_Step(this, false, movementType);
 				}
@@ -819,12 +819,12 @@ namespace SteamEngine {
 
 		#region Gump/Dialog sending
 		public Gump SendGump(Thing focus, GumpDef gumpDef, DialogArgs args) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				Gump instance = gumpDef.InternalConstruct(focus, this, args);
+				var instance = gumpDef.InternalConstruct(focus, this, args);
 				if (instance != null) {
 					state.SentGump(instance);
-					SendGumpMenuDialogPacket p = Pool<SendGumpMenuDialogPacket>.Acquire();
+					var p = Pool<SendGumpMenuDialogPacket>.Acquire();
 					p.Prepare(instance);
 					state.Conn.SendSinglePacket(p);
 					return instance;
@@ -838,18 +838,18 @@ namespace SteamEngine {
 		}
 
 		public void DialogClose(int gumpUid, int buttonId) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				CloseGenericGumpOutPacket p = Pool<CloseGenericGumpOutPacket>.Acquire();
+				var p = Pool<CloseGenericGumpOutPacket>.Acquire();
 				p.Prepare(gumpUid, buttonId);
 				state.Conn.SendSinglePacket(p);
 			}
 		}
 
 		public void DialogClose(GumpDef def, int buttonId) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				foreach (Gump gi in state.FindGumpInstances(def)) {
+				foreach (var gi in state.FindGumpInstances(def)) {
 					this.DialogClose(gi.Uid, buttonId);
 				}
 			}
@@ -859,7 +859,7 @@ namespace SteamEngine {
 		/// Looks into the dialogs dictionary and finds out whether the specified one is opened (visible) or not
 		/// </summary>
 		public bool HasOpenedDialog(GumpDef def) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				if (state.FindGumpInstances(def).Count != 0) {
 					//nasli jsme otevrenou instanci tohoto gumpu
@@ -902,7 +902,7 @@ namespace SteamEngine {
 
 		public void ShowPaperdollTo(AbstractCharacter viewer) {
 			if (viewer != null) {
-				GameState state = viewer.GameState;
+				var state = viewer.GameState;
 				if (state != null) {
 					this.ShowPaperdollTo(viewer, state, state.Conn);
 				}
@@ -910,18 +910,18 @@ namespace SteamEngine {
 		}
 
 		public void ShowPaperdollTo(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
-			bool canEquip = true;
+			var canEquip = true;
 			if (viewer != this) {
 				canEquip = viewer.CanEquipItemsOn(this);
 			}
-			OpenPaperdollOutPacket packet = Pool<OpenPaperdollOutPacket>.Acquire();
+			var packet = Pool<OpenPaperdollOutPacket>.Acquire();
 			packet.Prepare(this, canEquip);
 			viewerConn.SendSinglePacket(packet);
 
 			if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
-				Language language = viewerState.Language;
+				var language = viewerState.Language;
 				foreach (AbstractItem equipped in this.VisibleEquip) {
-					AosToolTips toolTips = equipped.GetAosToolTips(language);
+					var toolTips = equipped.GetAosToolTips(language);
 					if (toolTips != null) {
 						toolTips.SendIdPacket(viewerState, viewerConn);
 					}
@@ -953,7 +953,7 @@ namespace SteamEngine {
 		//this method fires the [speech] triggers
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal SpeechResult Trigger_Hear(SpeechArgs sa) {
-			SpeechResult result = (SpeechResult) this.TryCancellableTrigger(TriggerKey.hear, sa);
+			var result = (SpeechResult) this.TryCancellableTrigger(TriggerKey.hear, sa);
 
 			if (SpeechResult.ActedUponExclusively != result) {
 				try {
@@ -973,7 +973,7 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult Trigger_Say(string speech, SpeechType type, int[] keywords) {
 			if (this.IsPlayer) {
-				ScriptArgs sa = new ScriptArgs(speech, type, keywords);
+				var sa = new ScriptArgs(speech, type, keywords);
 				if (TriggerResult.Cancel != this.TryCancellableTrigger(TriggerKey.say, sa)) {
 					try {
 						return this.On_Say(speech, type, keywords);
@@ -992,7 +992,7 @@ namespace SteamEngine {
 		#region Status, skills, stats
 		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void ShowStatusBarTo(AbstractCharacter viewer, TcpConnection<GameState> viewerConn) {
-			StatusBarInfoOutPacket packet = Pool<StatusBarInfoOutPacket>.Acquire();
+			var packet = Pool<StatusBarInfoOutPacket>.Acquire();
 
 			if (this == viewer) {
 				packet.Prepare(this, StatusBarType.Me);
@@ -1007,7 +1007,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public void ShowSkillsTo(TcpConnection<GameState> viewerConn, GameState viewerState) {
-			SendSkillsOutPacket packet = Pool<SendSkillsOutPacket>.Acquire();
+			var packet = Pool<SendSkillsOutPacket>.Acquire();
 			packet.PrepareAllSkillsUpdate(this.Skills, viewerState.Version.DisplaySkillCaps);
 			viewerConn.SendSinglePacket(packet);
 		}
@@ -1077,9 +1077,9 @@ namespace SteamEngine {
 		}
 
 		public void Resync() {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
+				var conn = state.Conn;
 
 				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
 
@@ -1097,7 +1097,7 @@ namespace SteamEngine {
 
 				this.SendNearbyStuffTo(state, conn);
 
-				foreach (AbstractItem con in OpenedContainers.GetOpenedContainers(this)) {
+				foreach (var con in OpenedContainers.GetOpenedContainers(this)) {
 					if (!con.IsEmpty) {
 						PacketSequences.SendContainerContentsWithPropertiesTo(this, state, conn, con);
 					}
@@ -1106,40 +1106,40 @@ namespace SteamEngine {
 		}
 
 		public void SendNearbyStuff() {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
+				var conn = state.Conn;
 				this.SendNearbyStuffTo(state, conn);
 			}
 		}
 
 		private void SendNearbyStuffTo(GameState state, TcpConnection<GameState> conn) {
-			ImmutableRectangle rect = new ImmutableRectangle(this, this.UpdateRange);
-			Map map = this.GetMap();
+			var rect = new ImmutableRectangle(this, this.UpdateRange);
+			var map = this.GetMap();
 
-			foreach (Thing t in map.GetThingsInRectangle(rect)) {
+			foreach (var t in map.GetThingsInRectangle(rect)) {
 				this.ProcessSendNearbyThing(state, conn, t);
 			}
 
 			if (state.AllShow) {
-				foreach (Thing thing in map.GetDisconnectsInRectangle(rect)) {
+				foreach (var thing in map.GetDisconnectsInRectangle(rect)) {
 					this.ProcessSendNearbyThing(state, conn, thing);
 				}
 			}
 		}
 
 		private void ProcessSendNearbyThing(GameState state, TcpConnection<GameState> conn, Thing t) {
-			AbstractItem item = t as AbstractItem;
+			var item = t as AbstractItem;
 			if (item != null) {
 				if (this.CanSeeForUpdate(item).Allow) {
 					item.GetOnGroundUpdater().SendTo(this, state, conn);
 					PacketSequences.TrySendPropertiesTo(state, conn, item);
 				}
 			} else {
-				AbstractCharacter ch = (AbstractCharacter) t;
+				var ch = (AbstractCharacter) t;
 				if ((this != ch) && this.CanSeeForUpdate(ch).Allow) {
 					PacketSequences.SendCharInfoWithPropertiesTo(this, state, conn, ch);
-					UpdateCurrentHealthOutPacket packet = Pool<UpdateCurrentHealthOutPacket>.Acquire();
+					var packet = Pool<UpdateCurrentHealthOutPacket>.Acquire();
 					packet.Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, false);
 					conn.SendSinglePacket(packet);
 				}
@@ -1171,9 +1171,9 @@ namespace SteamEngine {
 		}
 
 		internal sealed override void Trigger_Destroy() {
-			AbstractAccount acc = this.Account;
+			var acc = this.Account;
 			if (acc != null) {
-				GameState state = acc.GameState;
+				var state = acc.GameState;
 				if ((state != null) && (state.Character == this)) {
 					state.Conn.Close("Character being deleted");
 				}
@@ -1181,7 +1181,7 @@ namespace SteamEngine {
 				acc.DetachCharacter(this);
 			}
 
-			foreach (AbstractItem i in this) {
+			foreach (var i in this) {
 				i.InternalDeleteNoRFV();//no updates, because it will disappear entirely
 			}
 
@@ -1199,7 +1199,7 @@ namespace SteamEngine {
 
 		public void EmptyCont() {
 			this.ThrowIfDeleted();
-			foreach (AbstractItem i in this) {
+			foreach (var i in this) {
 				i.InternalDelete();
 			}
 		}
@@ -1242,7 +1242,7 @@ namespace SteamEngine {
 		}
 
 		public void Anim(int animId, int numAnims, bool backwards, bool undo, byte frameDelay) {
-			CharacterAnimationOutPacket p = Pool<CharacterAnimationOutPacket>.Acquire();
+			var p = Pool<CharacterAnimationOutPacket>.Acquire();
 			p.Prepare(this, animId, numAnims, backwards, undo, frameDelay);
 			GameServer.SendToClientsWhoCanSee(this, p);
 		}
@@ -1256,7 +1256,7 @@ namespace SteamEngine {
 		}
 
 		public void CancelTarget() {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				PreparedPacketGroups.SendCancelTargettingCursor(state.Conn);
 			}
@@ -1288,7 +1288,7 @@ namespace SteamEngine {
 
 		public int InvisibleCount {
 			get {
-				int count = 0;
+				var count = 0;
 				if (this.invisibleLayers != null) {
 					count = this.invisibleLayers.count;
 				}

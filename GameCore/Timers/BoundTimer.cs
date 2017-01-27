@@ -23,7 +23,7 @@ namespace SteamEngine.Timers {
 		internal WeakReference contRef = new WeakReference(null);
 
 		protected sealed override void OnTimeout() {
-			TagHolder cont = this.Cont;
+			var cont = this.Cont;
 			if (cont != null) {
 				if ((this.PeriodInSeconds < 0) && (this.DueInSeconds < 0)) {
 					this.DeleteFrom(cont);
@@ -38,7 +38,7 @@ namespace SteamEngine.Timers {
 
 		public TagHolder Cont {
 			get {
-				TagHolder c = this.contRef.Target as TagHolder;
+				var c = this.contRef.Target as TagHolder;
 				if (c == null || c.IsDeleted) {
 					return null;
 				}
@@ -47,7 +47,7 @@ namespace SteamEngine.Timers {
 		}
 
 		public sealed override void Delete() {
-			TagHolder c = this.Cont;
+			var c = this.Cont;
 			this.DeleteFrom(c);
 		}
 

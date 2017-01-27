@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Returns a copy of the list of clients delayed messages (for sorting e.g.)</summary>
 		public static List<DelayedMsg> GetClientsMessages(Character whose) {
 			//get the client messages (empty list if no messages present)
-			List<DelayedMsg> list = GetMessages(whose);
+			var list = GetMessages(whose);
 			//if the list is empty, return it now, else make a copy of the messages list
 			if (list.Count == 0) {
 				return list;
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Private utility method returning the characters list of messages</summary>
 		private static List<DelayedMsg> GetMessages(Character whose) {
-			List<DelayedMsg> retList = (List<DelayedMsg>) whose.GetTag(tkDelayedMsgs);
+			var retList = (List<DelayedMsg>) whose.GetTag(tkDelayedMsgs);
 			if (retList == null) { // no messages previously posted
 				retList = new List<DelayedMsg>();
 				whose.SetTag(tkDelayedMsgs, retList);
@@ -108,8 +108,8 @@ namespace SteamEngine.CompiledScripts {
 		/// 'read/display detail' button
 		/// </summary>
 		public static int CountUnread(List<DelayedMsg> msgs) {
-			int counter = 0;
-			foreach (DelayedMsg msg in msgs) {
+			var counter = 0;
+			foreach (var msg in msgs) {
 				if (!msg.read) {
 					counter++;
 				}
@@ -181,8 +181,8 @@ namespace SteamEngine.CompiledScripts {
 	class MsgsSenderComparator : IComparer<DelayedMsg> {
 		public int Compare(DelayedMsg a, DelayedMsg b) {
 			//if sender was not specified, consider the message as from "System"
-			string name1 = (a.sender == null) ? MsgsBoard.NO_SENDER : a.sender.Name;
-			string name2 = (b.sender == null) ? MsgsBoard.NO_SENDER : b.sender.Name;
+			var name1 = (a.sender == null) ? MsgsBoard.NO_SENDER : a.sender.Name;
+			var name2 = (b.sender == null) ? MsgsBoard.NO_SENDER : b.sender.Name;
 
 			return name1.CompareTo(name2);
 		}

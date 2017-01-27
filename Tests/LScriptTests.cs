@@ -276,7 +276,7 @@ namespace SteamEngine.Tests {
 			if ((expectedExcString != null) && (expectedExcString.Length == 0)) {
 				expectedExcString = null;
 			}
-			bool wasException = false;
+			var wasException = false;
 			try {
 				LScriptMain.RunSnippet(testObj, script);
 			} catch (Exception e) {

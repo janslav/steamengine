@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectChar(target, spellEffectArgs);
 
-			EffectFlag effectFlag = spellEffectArgs.EffectFlag;
+			var effectFlag = spellEffectArgs.EffectFlag;
 			PluginKey key;
 			if ((effectFlag & EffectFlag.FromPotion) == EffectFlag.FromPotion) {
 				key = this.EffectPluginKey_Potion;
@@ -101,11 +101,11 @@ namespace SteamEngine.CompiledScripts {
 
 			target.DeletePlugin(key);
 
-			Plugin plugin = this.EffectPluginDef.Create();
+			var plugin = this.EffectPluginDef.Create();
 
-			EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
+			var durationPlugin = plugin as EffectDurationPlugin;
 			if (durationPlugin != null) {
-				int spellPower = spellEffectArgs.SpellPower;
+				var spellPower = spellEffectArgs.SpellPower;
 				durationPlugin.Init(spellEffectArgs.Caster, effectFlag, this.GetEffectForValue(spellPower), 
 					TimeSpan.FromSeconds(this.GetDurationForValue(spellPower)), this);
 			}

@@ -20,7 +20,7 @@ namespace SteamEngine.RemoteConsole {
 
 		private void txtCommandLine_KeyPress(object sender, KeyPressEventArgs e) {
 			if (e.KeyChar == '\r') {
-				string cmd = this.txtCommandLine.Text;
+				var cmd = this.txtCommandLine.Text;
 				this.txtCommandLine.Items.Remove(cmd);
 
 				//if (txtCommandLine.Items.Count>maxCmdHistory)
@@ -53,10 +53,10 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void AddButtonsFromIni(string iniSectionName) {
-			IniFile ini = new IniFile(Settings.iniFileName);
-			IniFileSection section = ini.GetNewOrParsedSection(iniSectionName);
-			foreach (IniFileValueLine line in section.Lines) {
-				Button button = new Button();
+			var ini = new IniFile(Settings.iniFileName);
+			var section = ini.GetNewOrParsedSection(iniSectionName);
+			foreach (var line in section.Lines) {
+				var button = new Button();
 				button.Text = line.Name;
 				button.Tag = line.GetValue<string>();
 				button.Click += this.btnCommand_Click;
@@ -67,8 +67,8 @@ namespace SteamEngine.RemoteConsole {
 
 
 		private void btnCommand_Click(object sender, EventArgs e) {
-			Button button = (Button) sender;
-			string cmd = (string) button.Tag;
+			var button = (Button) sender;
+			var cmd = (string) button.Tag;
 
 			ConsoleClient.SendCommand(this.id, cmd);
 		}

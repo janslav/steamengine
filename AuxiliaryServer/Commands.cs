@@ -20,13 +20,13 @@ namespace SteamEngine.AuxiliaryServer {
 					return;
 				case "svnupdate":
 					VersionControl.SvnUpdateProject(".");
-					foreach (IGameServerSetup game in Settings.KnownGameServersList) {
+					foreach (var game in Settings.KnownGameServersList) {
 						game.SvnUpdate(state);
 					}
 					return;
 				case "svncleanup":
 					VersionControl.SvnCleanUpProject(".");
-					foreach (IGameServerSetup game in Settings.KnownGameServersList) {
+					foreach (var game in Settings.KnownGameServersList) {
 						game.SvnCleanup(state);
 					}
 					return;
@@ -51,10 +51,10 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		private static void DisplayProcesses(ConsoleClient state) {
-			StringBuilder message = new StringBuilder("Relevant running processes on ").AppendLine(Environment.MachineName);
-			foreach (Process prc in Process.GetProcesses()) {
+			var message = new StringBuilder("Relevant running processes on ").AppendLine(Environment.MachineName);
+			foreach (var prc in Process.GetProcesses()) {
 				try {
-					string file = prc.MainModule.FileName;
+					var file = prc.MainModule.FileName;
 
 					if (file.Contains(SphereServerSetup.sphereExeName) ||
 							file.ToLowerInvariant().Contains("steamengine")) {
@@ -79,7 +79,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			public override void StartProcess(string file) {
-				ProcessStartInfo psi = new ProcessStartInfo(file);
+				var psi = new ProcessStartInfo(file);
 #if DEBUG
 				psi.Arguments = string.Concat("\"", Process.GetCurrentProcess().MainModule.FileName, "\" \"", "Debug_AuxiliaryServer.bat", "\"");
 #elif SANE

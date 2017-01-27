@@ -106,7 +106,7 @@ namespace SteamEngine.Scripting.Objects {
 		protected override void Unregister() {
 			SeShield.AssertInTransaction();
 
-			string k = this.Key;
+			var k = this.Key;
 			AbstractSkillDef previous;
 			if (allSkillDefsByKey.TryGetValue(k, out previous)) {
 				if (previous != this) {
@@ -131,7 +131,7 @@ namespace SteamEngine.Scripting.Objects {
 			}
 			defname = "skill_" + skillId.ToString(CultureInfo.InvariantCulture);
 
-			PropsLine defnameLine = section.TryPopPropsLine("defname");
+			var defnameLine = section.TryPopPropsLine("defname");
 			if (defnameLine != null) {
 				altdefname = ConvertTools.LoadSimpleQuotedString(defnameLine.Value);
 

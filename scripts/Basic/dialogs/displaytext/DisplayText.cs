@@ -37,14 +37,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.label = string.Concat(args[0]); //the gump's label
 			this.dispText = string.Concat(args[1]); //the text to be displayed
 
-			object hue = args.GetTag(textHueTK);
+			var hue = args.GetTag(textHueTK);
 			if (hue != null) {
 				this.textColor = (Hues) Convert.ToInt32(hue); //barva titulku volitelna
 			} else {
 				this.textColor = Hues.HeadlineColor; //normalni nadpisek
 			}
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
+			var dialogHandler = new ImprovedDialog(gi);
 			//create the background GUTAMatrix and set its size an transparency            
 			dialogHandler.CreateBackground(400);
 			dialogHandler.SetLocation(400, 300);
@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void ShowError(Thing self, ScriptArgs args) {
 			if (args != null && args.Args.Length != 1) {
-				DialogArgs newArgs = new DialogArgs("CHYBA", args.Argv[0]);
+				var newArgs = new DialogArgs("CHYBA", args.Argv[0]);
 				newArgs.SetTag(textHueTK, Hues.Red);
 				self.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 			} else {
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Obdoba show erroru použitlená jendoduše z C# - vraci GumpInstanci (napriklad pro stacknuti)</summary>
 		public static Gump ShowError(string text) {
-			DialogArgs newArgs = new DialogArgs("CHYBA", text);
+			var newArgs = new DialogArgs("CHYBA", text);
 			newArgs.SetTag(textHueTK, Hues.Red);
 			return Globals.SrcCharacter.Dialog(SingletonScript<D_Display_Text>.Instance, newArgs);
 		}

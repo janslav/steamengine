@@ -10,7 +10,7 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void TrivialParallelismFails() {
-			int a = 0;
+			var a = 0;
 
 			Parallel.For(0, n, (_) => {
 				a++;

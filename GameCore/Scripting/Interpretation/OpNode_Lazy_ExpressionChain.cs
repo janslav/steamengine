@@ -28,32 +28,32 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode[] chain; //expression1.expression2.exp....
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Lazy_ExpressionChain(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			OpNode_Is opnodeIs = null;
 
-			List<OpNode> argsList = new List<OpNode>();
+			var argsList = new List<OpNode>();
 			for (int i = 0, n = code.GetChildCount(); i < n; i += 2) {//step is 2, we are skipping dots
 				if (i > 0) {
-					Node dotOrIsNode = code.GetChildAt(i - 1);//DOT or OP_IS
+					var dotOrIsNode = code.GetChildAt(i - 1);//DOT or OP_IS
 					if (IsType(dotOrIsNode, StrictConstants.OP_IS)) {
 						opnodeIs = OpNode_Is.Construct(parent, code, i, context);
 						break;
 					}
 				}
 
-				Node node = code.GetChildAt(i);
+				var node = code.GetChildAt(i);
 				argsList.Add(LScriptMain.CompileNode(constructed, node, true, context));//mustEval always true
 			}
 			//in case that one of the members of the chain is also ExpressionChain (a new chain of indexers or something like that)...
 			//in fact this wont happen in 99% cases, but we want perfectness :)
-			List<OpNode> finalArgsList = new List<OpNode>();
+			var finalArgsList = new List<OpNode>();
 			for (int i = 0, n = argsList.Count; i < n; i++) {
-				OpNode node = argsList[i];
-				OpNode_Lazy_ExpressionChain nodeAsExpChain = node as OpNode_Lazy_ExpressionChain;
+				var node = argsList[i];
+				var nodeAsExpChain = node as OpNode_Lazy_ExpressionChain;
 				if (nodeAsExpChain != null) {
 					for (int ii = 0, nn = nodeAsExpChain.chain.Length; ii < nn; ii++) {
 						finalArgsList.Add(nodeAsExpChain.chain[ii]);
@@ -62,9 +62,9 @@ namespace SteamEngine.Scripting.Interpretation {
 					finalArgsList.Add(argsList[i]);
 				}
 			}
-			OpNode[] array = finalArgsList.ToArray();
+			var array = finalArgsList.ToArray();
 			constructed.chain = array;
-			foreach (OpNode opNode in constructed.chain) {
+			foreach (var opNode in constructed.chain) {
 				opNode.parent = constructed;
 			}
 
@@ -78,12 +78,12 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, OpNode[] chain, LScriptCompilationContext context) {
 			//the chain was already made by Lazy_Expression - chain of indexers
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Lazy_ExpressionChain constructed = new OpNode_Lazy_ExpressionChain(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Lazy_ExpressionChain(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 			constructed.chain = chain;
-			foreach (OpNode opNode in chain) {
+			foreach (var opNode in chain) {
 				opNode.parent = constructed;
 			}
 			return constructed;
@@ -94,7 +94,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.chain, oldNode);
+			var index = Array.IndexOf(this.chain, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -102,9 +102,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			try {
-				for (int i = 0; i < this.chain.Length;) {
+				for (var i = 0; i < this.chain.Length;) {
 					try {
 						vars.self = this.chain[i].Run(vars);
 						i++;
@@ -123,7 +123,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder();
+			var str = new StringBuilder();
 			for (int i = 0, n = this.chain.Length; i < n; i++) {
 				str.Append(this.chain[i]).Append(".");
 			}
@@ -131,7 +131,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private void ChainExceptIndex(int index) {
-			OpNode[] newChain = new OpNode[this.chain.Length - 1];
+			var newChain = new OpNode[this.chain.Length - 1];
 			for (int i = 0, j = 0, n = this.chain.Length; i < n; i++) {
 				if (i != index) {
 					newChain[j] = this.chain[i];

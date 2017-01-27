@@ -71,7 +71,7 @@ namespace SteamEngine.Regions {
 		#region Saving/Loading/Manipulating
 		[LoadSection]
 		public StaticRegion(PropsSection input) {
-			string defName = input.HeaderName;
+			var defName = input.HeaderName;
 
 			if (!byDefname.ContainsKey(defName)) {
 				//byDefname[defName] = this;
@@ -104,7 +104,7 @@ namespace SteamEngine.Regions {
 				output.WriteComment("Static Regions");
 				output.WriteLine();
 
-				foreach (StaticRegion region in AllRegions) {
+				foreach (var region in AllRegions) {
 					region.SaveWithHeader(output);
 				}
 
@@ -123,7 +123,7 @@ namespace SteamEngine.Regions {
 
 					ResolveRegionsHierarchy();
 
-					foreach (StaticRegion region in AllRegions) {
+					foreach (var region in AllRegions) {
 						byName[region.Name] = region;
 					}
 
@@ -200,7 +200,7 @@ namespace SteamEngine.Regions {
 			if (!this.HasSameMapplane(this.Parent)) {
 				throw new SEException("Region " + this + " has as parent set " + this.Parent + ", which is on another mapplane.");
 			}
-			int parentIndex = ((StaticRegion) this.Parent).SetHierarchyIndex(tempList);
+			var parentIndex = ((StaticRegion) this.Parent).SetHierarchyIndex(tempList);
 			this.HierarchyIndex = parentIndex + 1;
 			highestHierarchyIndex = Math.Max(highestHierarchyIndex, this.HierarchyIndex);
 			tempList.Remove(this);
@@ -217,10 +217,10 @@ namespace SteamEngine.Regions {
 
 		/// <summary>Useful when editing regions - we need to manipulate with their rectangles which can be done only in inactivated state</summary>
 		private static void InactivateAll() {
-			foreach (Map map in Map.AllMaps) {
+			foreach (var map in Map.AllMaps) {
 				map.InactivateRegions(false); //false - omit dynamic regions from clearing
 			}
-			foreach (StaticRegion reg in AllRegions) {
+			foreach (var reg in AllRegions) {
 				reg.inactivated = true; //inactivate
 			}
 		}
@@ -232,8 +232,8 @@ namespace SteamEngine.Regions {
 		/// </summary>
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ActivateAll() {
-			List<StaticRegion> activeRegs = new List<StaticRegion>();
-			foreach (StaticRegion reg in AllRegions) {
+			var activeRegs = new List<StaticRegion>();
+			foreach (var reg in AllRegions) {
 				if (reg.canBeActivated) {
 					activeRegs.Add(reg);
 				}
@@ -259,16 +259,16 @@ namespace SteamEngine.Regions {
 				Logger.WriteCritical("Regions reloading failed!", e);
 				//ClearAll(); dont ClearAll it here - this would delete all regions !! (rather we will allow the user to fix his errors)
 			}
-			foreach (StaticRegion reg in activeRegs) {
+			foreach (var reg in activeRegs) {
 				reg.inactivated = false; //activate the activated regions
 			}
 		}
 
 		/// <summary>Take the regions from the given list and set their rectangles to every mapplane</summary>
 		private static void InitRectanglesToMaps(IEnumerable<StaticRegion> regionList) {
-			List<StaticRegion>[] regionsByMapplane = new List<StaticRegion>[0x100];
-			foreach (StaticRegion region in regionList) {
-				List<StaticRegion> list = regionsByMapplane[region.Mapplane];
+			var regionsByMapplane = new List<StaticRegion>[0x100];
+			foreach (var region in regionList) {
+				var list = regionsByMapplane[region.Mapplane];
 				if (list == null) {
 					list = new List<StaticRegion>();
 					regionsByMapplane[region.Mapplane] = list;
@@ -278,9 +278,9 @@ namespace SteamEngine.Regions {
 				}
 			}
 			for (int i = 0, n = regionsByMapplane.Length; i < n; i++) {
-				List<StaticRegion> list = regionsByMapplane[i];
+				var list = regionsByMapplane[i];
 				if (list != null) {
-					Map map = Map.GetMap((byte) i);
+					var map = Map.GetMap((byte) i);
 					map.ActivateRegions(list);
 				}
 			}
@@ -288,7 +288,7 @@ namespace SteamEngine.Regions {
 
 		/// <summary>Check if all regions (except for the world region) have parents set</summary>
 		private static void ResolveParents() {
-			foreach (StaticRegion region in AllRegions) {
+			foreach (var region in AllRegions) {
 				//(pri opakovanem reloadu - napr. po editaci regionu uz je worldregion nasetovan
 				//a tudiz by tento kus kodu skoncil tou vyjimkou =>uprava pred vyjimkou
 				if (region.Parent == null) {
@@ -311,15 +311,15 @@ namespace SteamEngine.Regions {
 
 		/// <summary>Itearate through all regions and set their hierarchy indices</summary>
 		private static void ResolveRegionsHierarchy() {
-			LinkedList<StaticRegion> tempList = new LinkedList<StaticRegion>(AllRegions);//copy list of all regions
-			int lastCount = -1;
+			var tempList = new LinkedList<StaticRegion>(AllRegions);//copy list of all regions
+			var lastCount = -1;
 			while (tempList.Count > 0) {
 				if (lastCount == tempList.Count) {
 					//this will probably never happen
 					throw new SEException("Region hierarchy not completely resolvable.");
 				}
 				lastCount = tempList.Count;
-				StaticRegion r = tempList.Last.Value;
+				var r = tempList.Last.Value;
 				r.SetHierarchyIndex(tempList);
 			}
 		}
@@ -358,8 +358,8 @@ namespace SteamEngine.Regions {
 		/// </summary>
 		[SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
 		public static List<StaticRegion> FindByString(string criteria) {
-			List<StaticRegion> regList = new List<StaticRegion>();
-			foreach (StaticRegion reg in AllRegions) {
+			var regList = new List<StaticRegion>();
+			foreach (var reg in AllRegions) {
 				if (string.IsNullOrEmpty(criteria)) {
 					regList.Add(reg);//bereme vse
 				} else if (reg.Name.ToUpper(CultureInfo.InvariantCulture).Contains(
@@ -400,7 +400,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private bool CheckHasAllRectanglesIn(StaticRegion other) {
-			bool retState = true;
+			var retState = true;
 			for (int i = 0, n = this.rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = this.rectangles[i];
 				if (!other.ContainsRectangle(rect)) {
@@ -412,7 +412,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private bool CheckHasNoRectanglesIn(StaticRegion other) {
-			bool retState = true;
+			var retState = true;
 			for (int i = 0, n = this.rectangles.Count; i < n; i++) {
 				ImmutableRectangle rect = this.rectangles[i];
 				if (other.ContainsRectanglePartly(rect)) {
@@ -425,8 +425,8 @@ namespace SteamEngine.Regions {
 
 		public static void CheckAllRegions() {
 			int i = 0, n = byDefname.Count;
-			int countPerCent = n / 200;
-			foreach (StaticRegion region in byDefname.Values) {
+			var countPerCent = n / 200;
+			foreach (var region in byDefname.Values) {
 				if ((i % countPerCent) == 0) {
 					Logger.SetTitle("Checking regions: " + ((i * 100) / n) + " %");
 				}
@@ -437,13 +437,13 @@ namespace SteamEngine.Regions {
 		}
 
 		private bool CheckConflictsAndWarn() {
-			bool retState = true;
+			var retState = true;
 			if (this.Parent != null) {
 				if (!this.CheckHasAllRectanglesIn((StaticRegion) this.Parent)) {
 					retState = false; //problem
 				}
 			}
-			foreach (StaticRegion other in byDefname.Values) {
+			foreach (var other in byDefname.Values) {
 				//Console.WriteLine("CheckConflictsAndWarn for "+this+" and "+other);
 				if ((other != this) && this.HasSameMapplane(other)) {
 					if (other.HierarchyIndex == this.HierarchyIndex) {
@@ -462,8 +462,8 @@ namespace SteamEngine.Regions {
 		/// </summary>
 		[SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
 		public static List<StaticRegion> FindRegionsChildren(StaticRegion parent) {
-			List<StaticRegion> retList = new List<StaticRegion>();
-			foreach (StaticRegion stReg in AllRegions) {
+			var retList = new List<StaticRegion>();
+			foreach (var stReg in AllRegions) {
 				if (stReg.Parent == parent) {
 					retList.Add(stReg);
 				}
@@ -477,9 +477,9 @@ namespace SteamEngine.Regions {
 		/// </summary>
 		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool SetRectangles<T>(IList<T> list) where T : AbstractRectangle {
-			bool result = true;
-			RegionRectangle[] newArr = new RegionRectangle[list.Count];
-			for (int i = 0; i < list.Count; i++) {
+			var result = true;
+			var newArr = new RegionRectangle[list.Count];
+			for (var i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
 				newArr[i] = new RegionRectangle(list[i], this);
 			}
@@ -563,10 +563,10 @@ namespace SteamEngine.Regions {
 				throw new SEException("Attempted to delete the 'void region'");
 			}
 			//najdeme deti a prepojime je na parenta
-			List<StaticRegion> children = FindRegionsChildren(this);
+			var children = FindRegionsChildren(this);
 			InactivateAll(); //unload regions - it 'locks' them for every usage except for rectangles operations			
 			try {
-				foreach (StaticRegion child in children) {
+				foreach (var child in children) {
 					child.Parent = this.Parent; //reset parents!
 					if (child is StaticRegion) {
 						//if child is StaticRegion), make it activable - we dont care for DynamicRegions etc				

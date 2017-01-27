@@ -26,13 +26,13 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly string ALL_CHARS = "all";
 
 		public static List<AccountNote> GetNotes(ScriptedAccount acc, SortingCriteria sortBy) {
-			List<AccountNote> notes = acc.AccNotes;
+			var notes = acc.AccNotes;
 			NotesListSort(notes, sortBy); //sort, if necessary
 			return notes;
 		}
 
 		public static List<AccountCrime> GetCrimes(ScriptedAccount acc, SortingCriteria sortBy) {
-			List<AccountCrime> crimes = acc.AccCrimes;
+			var crimes = acc.AccCrimes;
 			NotesListSort(crimes, sortBy); //sort, if necessary
 			return crimes;
 		}
@@ -95,8 +95,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Compare(T x, T y) {
 			//check if we have the reffered character, otherwise return "all" - the note or crime is related to the whole account
-			string refXName = (x.referredChar != null ? x.referredChar.Name : "all");
-			string refYName = (y.referredChar != null ? y.referredChar.Name : "all");
+			var refXName = (x.referredChar != null ? x.referredChar.Name : "all");
+			var refYName = (y.referredChar != null ? y.referredChar.Name : "all");
 			return StringComparer.OrdinalIgnoreCase.Compare(refXName, refYName);
 		}
 	}
@@ -123,8 +123,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int Compare(T x, T y) {
-			AccountCrime a = (AccountCrime) (AccountNote) x;
-			AccountCrime b = (AccountCrime) (AccountNote) y;
+			var a = (AccountCrime) (AccountNote) x;
+			var b = (AccountCrime) (AccountNote) y;
 			return a.isAFK.CompareTo(b.isAFK);
 		}
 	}

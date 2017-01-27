@@ -102,8 +102,8 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Takes the regions rectagles and makes a list of MutableRectangles for usage (copies the immutable ones)</summary>
 		public static List<MutableRectangle> TakeRectsFromRegion(Region reg) {
-			List<MutableRectangle> retList = new List<MutableRectangle>();
-			foreach (ImmutableRectangle regRect in reg.Rectangles) {
+			var retList = new List<MutableRectangle>();
+			foreach (var regRect in reg.Rectangles) {
 				retList.Add(new MutableRectangle(regRect));
 			}
 			return retList;

@@ -19,9 +19,9 @@ namespace SteamEngine.AuxiliaryServer {
 
 		protected override string GetFilepath() {
 			//DateTime.Now.GetDateTimeFormats()[4]
-			DateTime dtnow = DateTime.Now;
-			CultureInfo ci = CultureInfo.InvariantCulture;
-			string filename = string.Concat("SteamEngine.AuxiliaryServer.",
+			var dtnow = DateTime.Now;
+			var ci = CultureInfo.InvariantCulture;
+			var filename = string.Concat("SteamEngine.AuxiliaryServer.",
 				dtnow.Year.ToString("0000", ci), "-", dtnow.Month.ToString("00", ci), "-", dtnow.Day.ToString("00", ci), ".log");
 			return Path.Combine(Settings.LogPath, filename);
 		}

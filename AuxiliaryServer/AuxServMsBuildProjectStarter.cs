@@ -34,7 +34,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public virtual void StartProcess(string file) {
-			ProcessStartInfo psi = new ProcessStartInfo(file) {
+			var psi = new ProcessStartInfo(file) {
 				WindowStyle = ProcessWindowStyle.Minimized
 			};
 			Process.Start(psi);

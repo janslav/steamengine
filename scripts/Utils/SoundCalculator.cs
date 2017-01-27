@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayAngerSound(Character self) {
-			int sound = self.TypeDef.AngerSound;
+			var sound = self.TypeDef.AngerSound;
 			if (sound == NoSound) {
 				sound = self.CharModelInfo.charDef.AngerSound;
 			}
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayIdleSound(Character self) {
-			int sound = self.TypeDef.IdleSound;
+			var sound = self.TypeDef.IdleSound;
 			if (sound == NoSound) {
 				sound = self.CharModelInfo.charDef.IdleSound;
 			}
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayMissSound(Character self) {
-			int sound = NoSound;
+			var sound = NoSound;
 			switch (self.WeaponType) {
 				case WeaponType.OneHandSword:
 				case WeaponType.OneHandAxe:
@@ -72,8 +72,8 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayAttackSound(Character self) {
-			CharModelInfo cmi = self.CharModelInfo;
-			int sound = NoSound;
+			var cmi = self.CharModelInfo;
+			var sound = NoSound;
 			if ((cmi.charAnimType & CharAnimType.Human) == CharAnimType.Human) {
 				switch (self.WeaponType) {
 					case WeaponType.OneHandAxe:
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayHurtSound(Character self) {
-			int sound = self.TypeDef.HurtSound;
+			var sound = self.TypeDef.HurtSound;
 			if (sound == NoSound) {
 				sound = self.CharModelInfo.charDef.HurtSound;
 			}
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void PlayDeathSound(Character self) {
-			CharModelInfo cmi = self.CharModelInfo;
+			var cmi = self.CharModelInfo;
 			int sound;
 			if ((cmi.charAnimType & CharAnimType.Human) == CharAnimType.Human) {
 				if (cmi.isFemale) {

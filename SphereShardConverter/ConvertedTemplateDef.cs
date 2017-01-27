@@ -39,18 +39,18 @@ namespace SteamEngine.Converter {
 		}
 
 		public override void SecondStage() {
-			StringWriter writer = new StringWriter();
-			StringReader reader = new StringReader(this.origData.GetTrigger(0).Code.ToString());
+			var writer = new StringWriter();
+			var reader = new StringReader(this.origData.GetTrigger(0).Code.ToString());
 			string line;
-			int linenum = this.origData.HeaderLine;
+			var linenum = this.origData.HeaderLine;
 			while ((line = reader.ReadLine()) != null) {
 				linenum++;
-				Match m = LocStringCollection.valueRE.Match(line);
+				var m = LocStringCollection.valueRE.Match(line);
 				if (m.Success) {
-					GroupCollection gc = m.Groups;
-					string name = gc["name"].Value;
-					string value = gc["value"].Value;
-					string comment = gc["comment"].Value;
+					var gc = m.Groups;
+					var name = gc["name"].Value;
+					var value = gc["value"].Value;
+					var comment = gc["comment"].Value;
 
 					switch (name.ToLowerInvariant()) {
 						case "defname":
@@ -81,12 +81,12 @@ namespace SteamEngine.Converter {
 			reader = new StringReader(writer.GetStringBuilder().ToString());
 			writer = new StringWriter();
 			while ((line = reader.ReadLine()) != null) {
-				Match m = LocStringCollection.valueRE.Match(line);
+				var m = LocStringCollection.valueRE.Match(line);
 				if (m.Success) {
-					GroupCollection gc = m.Groups;
-					string name = gc["name"].Value;
-					string value = gc["value"].Value;
-					string comment = gc["comment"].Value;
+					var gc = m.Groups;
+					var name = gc["name"].Value;
+					var value = gc["value"].Value;
+					var comment = gc["comment"].Value;
 
 					switch (name.ToLowerInvariant()) {
 						case "item":
@@ -103,7 +103,7 @@ namespace SteamEngine.Converter {
 
 		internal static string FixRandomExpression(string input) {
 			while (true) {
-				string temp = Regex.Replace(input, @"{(?<prefix>.*?)(?<first>[a-zA-Z0-9_-]+)\s+(?<second>[a-zA-Z0-9_-]+)(?<postfix>.*?)}",
+				var temp = Regex.Replace(input, @"{(?<prefix>.*?)(?<first>[a-zA-Z0-9_-]+)\s+(?<second>[a-zA-Z0-9_-]+)(?<postfix>.*?)}",
 					"{${prefix}${first}, ${second}${postfix}}");
 				if (temp.Equals(input)) {
 					break;

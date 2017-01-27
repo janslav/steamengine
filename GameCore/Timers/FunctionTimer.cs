@@ -37,7 +37,7 @@ namespace SteamEngine.Timers {
 		public object[] args;
 
 		protected override void OnTimeout(TagHolder cont) {
-			ScriptArgs sa = new ScriptArgs(this.formatString, this.args);
+			var sa = new ScriptArgs(this.formatString, this.args);
 			this.function.TryRun(cont, sa);
 		}
 

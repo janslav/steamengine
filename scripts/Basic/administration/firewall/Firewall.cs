@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 		private static List<FirewallEntry> blockedIPRangeEntries = new List<FirewallEntry>();
 
 		public static List<FirewallEntry> GetAllEntries() {
-			List<FirewallEntry> entries = new List<FirewallEntry>(blockedIPRangeEntries);
+			var entries = new List<FirewallEntry>(blockedIPRangeEntries);
 			entries.AddRange(blockedIPEntries.Values);
 			return entries;
 		}
@@ -78,7 +78,7 @@ namespace SteamEngine.CompiledScripts {
 				return true;
 			}
 
-			foreach (FirewallEntry bire in blockedIPRangeEntries) {
+			foreach (var bire in blockedIPRangeEntries) {
 				if (IsIPInRange(ip, bire.LowerBound, bire.UpperBound)) {
 					return true;
 				}
@@ -92,10 +92,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void ShowBlockedIPs() {
-			foreach (FirewallEntry bie in blockedIPEntries.Values) {
+			foreach (var bie in blockedIPEntries.Values) {
 				Globals.SrcWriteLine("Blocked IP: " + bie.LowerBound + " Reason: " + bie.Reason + " Blocked by: " + bie.BlockedBy);
 			}
-			foreach (FirewallEntry bire in blockedIPRangeEntries) {
+			foreach (var bire in blockedIPRangeEntries) {
 				Globals.SrcWriteLine("Blocked IPRange from: " + bire.LowerBound + " to: " + bire.UpperBound + " Reason: " + bire.Reason + " Blocked by: " + bire.BlockedBy);
 			}
 		}
@@ -114,7 +114,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public static void RemoveBlockedIPRange(IPAddress lowerBound, IPAddress upperBound) {
-			foreach (FirewallEntry bipe in blockedIPRangeEntries) {
+			foreach (var bipe in blockedIPRangeEntries) {
 				if ((bipe.LowerBound.Equals(lowerBound)) && (bipe.UpperBound.Equals(upperBound))) {
 					blockedIPRangeEntries.Remove(bipe);
 					Globals.SrcWriteLine("IP range: " + bipe.LowerBound + "-" + bipe.UpperBound + " has been unblocked.");
@@ -194,8 +194,8 @@ namespace SteamEngine.CompiledScripts {
 		#region Persistence
 		[LoadSection]
 		public static FirewallEntry Load(PropsSection section) {
-			IPAddress lowerBound = (IPAddress) ObjectSaver.OptimizedLoad_SimpleType(section.PopPropsLine("lowerBound").Value, typeof(IPAddress));
-			IPAddress upperBound = lowerBound;
+			var lowerBound = (IPAddress) ObjectSaver.OptimizedLoad_SimpleType(section.PopPropsLine("lowerBound").Value, typeof(IPAddress));
+			var upperBound = lowerBound;
 			var upperBoundLine = section.TryPopPropsLine("upperBound");
 			if (upperBoundLine != null) {
 				upperBound = (IPAddress) ObjectSaver.OptimizedLoad_SimpleType(upperBoundLine.Value, typeof(IPAddress));
@@ -207,7 +207,7 @@ namespace SteamEngine.CompiledScripts {
 				reason = (string) ObjectSaver.OptimizedLoad_String(reasonLine.Value);
 			}
 
-			FirewallEntry retVal = new FirewallEntry(lowerBound, upperBound, reason, null);
+			var retVal = new FirewallEntry(lowerBound, upperBound, reason, null);
 
 			var blockedByLine = section.TryPopPropsLine("blockedBy");
 			if (blockedByLine != null) {

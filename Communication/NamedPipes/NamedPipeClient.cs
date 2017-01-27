@@ -53,11 +53,11 @@ namespace SteamEngine.Communication.NamedPipes {
 
 		public NamedPipeConnection<TState> Connect(string pipeName) {
 
-			NamedPipeClientStream pipe = new NamedPipeClientStream(".", pipeName,
+			var pipe = new NamedPipeClientStream(".", pipeName,
 				PipeDirection.InOut, PipeOptions.Asynchronous);
 			pipe.Connect();
 
-			NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();
+			var newConn = Pool<NamedPipeConnection<TState>>.Acquire();
 			newConn.SetFields(pipeName, pipe);
 			this.InitNewConnection(newConn);
 

@@ -21,9 +21,9 @@ namespace SteamEngine.CompiledScripts {
 			if (Party.AreInOneParty(viewer, self)) {
 				return HighlightColor.Yellow;
 			}
-			Guild viewerGuild = Guild.GetGuild(viewer);
+			var viewerGuild = Guild.GetGuild(viewer);
 			if (viewerGuild != null) {
-				Guild myGuild = Guild.GetGuild(self);
+				var myGuild = Guild.GetGuild(self);
 				if (myGuild == viewerGuild) {
 					return HighlightColor.Allied;
 				}

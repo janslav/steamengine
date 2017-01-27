@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static bool HasProfession(Character ch, ProfessionDef prof) {
 			if (prof != null) {
-				Player asPlayer = ch as Player;
+				var asPlayer = ch as Player;
 				if (asPlayer != null) {
 					if (asPlayer.Profession == prof) {
 						return true;

@@ -60,9 +60,9 @@ namespace SteamEngine.Networking {
 
 		protected override void ProcessQueue() {
 			while (this.queue.Count > 0) {
-				AbstractItem item = this.queue.Dequeue();
+				var item = this.queue.Dequeue();
 				if ((item != null) && (!item.IsDeleted)) {
-					ItemSyncFlags syncFlags = item.SyncFlags;
+					var syncFlags = item.SyncFlags;
 					item.SyncFlags = ItemSyncFlags.None;
 
 					if ((syncFlags & (ItemSyncFlags.Resend | ItemSyncFlags.ItemUpdate)) != ItemSyncFlags.None) { //no difference between update and resend. Maybe one day we will discover something :)
@@ -77,7 +77,7 @@ namespace SteamEngine.Networking {
 		private void SetFlagsOnItem(AbstractItem item, ItemSyncFlags flags) {
 			Sanity.IfTrueThrow(flags == ItemSyncFlags.None, "flags == SyncFlags.None");
 
-			ItemSyncFlags itemSyncFlags = item.SyncFlags;
+			var itemSyncFlags = item.SyncFlags;
 			if (itemSyncFlags == ItemSyncFlags.None) {
 				this.queue.Enqueue(item);
 				this.autoResetEvent.Set();
@@ -96,21 +96,21 @@ namespace SteamEngine.Networking {
 		private static void SendItemPropertiesOnly(AbstractItem item) {
 			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItemProperties " + item);
 			IEnumerable<AbstractCharacter> enumerator;
-			AbstractItem contAsItem = item.Cont as AbstractItem;
+			var contAsItem = item.Cont as AbstractItem;
 			if (contAsItem != null) {
 				enumerator = OpenedContainers.GetViewers(contAsItem);
 			} else {
-				Thing top = item.TopObj();
+				var top = item.TopObj();
 				enumerator = top.GetMap().GetPlayersInRange(top.X, top.Y, Globals.MaxUpdateRange);
 			}
 
 			AosToolTips[] toolTipsArray = null;
-			foreach (AbstractCharacter player in enumerator) {
-				GameState state = player.GameState;
+			foreach (var player in enumerator) {
+				var state = player.GameState;
 				if (state != null) {
-					TcpConnection<GameState> conn = state.Conn;
+					var conn = state.Conn;
 					if (state.Version.AosToolTips) {
-						Language language = state.Language;
+						var language = state.Language;
 						AosToolTips toolTips = null;
 						if (toolTipsArray != null) {
 							toolTips = toolTipsArray[(int) language];
@@ -136,10 +136,10 @@ namespace SteamEngine.Networking {
 		private static void UpdateItemAndProperties(AbstractItem item) {
 			Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessItem " + item);
 
-			bool propertiesExist = true;
-			bool isOnGround = item.IsOnGround;
-			bool isEquippedAndVisible = false;
-			bool isInContainer = false;
+			var propertiesExist = true;
+			var isOnGround = item.IsOnGround;
+			var isEquippedAndVisible = false;
+			var isInContainer = false;
 			if (!isOnGround) {
 				isEquippedAndVisible = item.IsEquipped;
 				if (isEquippedAndVisible) {
@@ -156,20 +156,20 @@ namespace SteamEngine.Networking {
 				AosToolTips[] toolTipsArray = null;
 
 				IEnumerable<AbstractCharacter> enumerator;
-				AbstractItem contAsItem = item.Cont as AbstractItem;
+				var contAsItem = item.Cont as AbstractItem;
 				if (contAsItem != null) {
 					enumerator = OpenedContainers.GetViewers(contAsItem);
 					//checkPreviousVisibility = false;
 				} else {
-					Thing newMapPoint = item.TopObj();
-					Map newMap = newMapPoint.GetMap();
+					var newMapPoint = item.TopObj();
+					var newMap = newMapPoint.GetMap();
 					enumerator = newMap.GetPlayersInRange(newMapPoint.X, newMapPoint.Y, Globals.MaxUpdateRange);
 				}
 
-				foreach (AbstractCharacter viewer in enumerator) {
-					GameState state = viewer.GameState;
+				foreach (var viewer in enumerator) {
+					var state = viewer.GameState;
 					if (state != null) {
-						TcpConnection<GameState> conn = state.Conn;
+						var conn = state.Conn;
 
 						if (viewer.CanSeeForUpdate(item).Allow) {
 							if (isOnGround) {
@@ -190,7 +190,7 @@ namespace SteamEngine.Networking {
 
 							if (propertiesExist) {
 								if (Globals.UseAosToolTips && state.Version.AosToolTips) {
-									Language language = state.Language;
+									var language = state.Language;
 									AosToolTips toolTips = null;
 									if (toolTipsArray != null) {
 										toolTips = toolTipsArray[(int) language];

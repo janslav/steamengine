@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 		//skillParam2: spell param (summoned creature def?)
 
 		public static void TryCastSpellFromBook(Character ch, int spellid) {
-			SpellDef sd = SpellDef.GetById(spellid);
+			var sd = SpellDef.GetById(spellid);
 			if (sd != null) {
 				TryCastSpellFromBook(ch, sd);
 			} else {
@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void TryCastSpellFromBook(Character ch, SpellDef spellDef) {
 			Sanity.IfTrueThrow(spellDef == null, "spellDef == null");
 
-			SpellBook book = ch.FindLayer(1) as SpellBook;
+			var book = ch.FindLayer(1) as SpellBook;
 			if (book != null) {
 				if (!book.HasSpell(spellDef)) {
 					book = null;
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			if (book != null) {
-				SkillSequenceArgs magery = SkillSequenceArgs.Acquire(ch, SkillName.Magery, book, spellDef);
+				var magery = SkillSequenceArgs.Acquire(ch, SkillName.Magery, book, spellDef);
 				magery.PhaseSelect();
 			} else {
 				ch.ClilocSysMessage(500015); // You do not have that spell!
@@ -67,9 +67,9 @@ namespace SteamEngine.CompiledScripts {
 			Sanity.IfTrueThrow(scroll == null, "scroll == null");
 
 			if (scroll.TopObj() == ch) {
-				SpellDef spellDef = scroll.SpellDef;
+				var spellDef = scroll.SpellDef;
 				if (spellDef != null) {
-					SkillSequenceArgs magery = SkillSequenceArgs.Acquire(ch, SkillName.Magery, scroll, spellDef);
+					var magery = SkillSequenceArgs.Acquire(ch, SkillName.Magery, scroll, spellDef);
 					magery.PhaseSelect();
 				} else {
 					ch.ClilocMessage(502345); // This spell has been temporarily disabled.
@@ -84,11 +84,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+			var self = skillSeqArgs.Self;
+			var spell = (SpellDef) skillSeqArgs.Param1;
 
 			if (skillSeqArgs.Tool != null) {
-				SpellBook book = skillSeqArgs.Tool as SpellBook;
+				var book = skillSeqArgs.Tool as SpellBook;
 				if (book != null) {
 					if ((book.TopObj() == self) && book.HasSpell(spell)) {
 						spell.Trigger_Select(skillSeqArgs);
@@ -96,7 +96,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 
-				SpellScroll scroll = skillSeqArgs.Tool as SpellScroll;
+				var scroll = skillSeqArgs.Tool as SpellScroll;
 				if (scroll != null) {
 					spell.Trigger_Select(skillSeqArgs);
 					return TriggerResult.Cancel; //cancel here, the rest of Select is being done by SpellDef
@@ -108,24 +108,24 @@ namespace SteamEngine.CompiledScripts {
 
 		//checking and consuming resources
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (self.CanInteractWithMessage(skillSeqArgs.Target1)) {
-				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+				var spell = (SpellDef) skillSeqArgs.Param1;
 
-				bool isFromScroll = skillSeqArgs.Tool is SpellScroll;
+				var isFromScroll = skillSeqArgs.Tool is SpellScroll;
 
-				int manaUse = spell.GetManaUse(isFromScroll);
+				var manaUse = spell.GetManaUse(isFromScroll);
 				int mana = self.Mana;
 				if (mana >= manaUse) {
 					if (!isFromScroll) {
-						ResourcesList req = spell.Requirements;
+						var req = spell.Requirements;
 						IResourceListEntry missingItem;
 						if ((req != null) && (!req.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingItem))) {
 							self.SysMessage(missingItem.GetResourceMissingMessage(self.Language));
 							return TriggerResult.Cancel; ;
 						}
 
-						ResourcesList res = spell.Resources;
+						var res = spell.Resources;
 						if ((res != null) && (!res.ConsumeResourcesOnce(self, ResourcesLocality.Backpack, out missingItem))) {
 							self.SysMessage(missingItem.GetResourceMissingMessage(self.Language));
 							return TriggerResult.Cancel; ;
@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts {
 					self.AbortSkill();
 					skillSeqArgs.DelayInSeconds = spell.CastTime;
 					skillSeqArgs.DelayStroke();
-					string runeWords = spell.GetRuneWords();
+					var runeWords = spell.GetRuneWords();
 					if (!string.IsNullOrEmpty(runeWords)) {
 						self.Speech(runeWords, 0, SpeechType.Spell, -1, ClientFont.Unified, null, null);
 					}
@@ -158,13 +158,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+			var self = skillSeqArgs.Self;
+			var spell = (SpellDef) skillSeqArgs.Param1;
 
 			bool isFromScroll;
-			Item tool = skillSeqArgs.Tool;
+			var tool = skillSeqArgs.Tool;
 			if (tool != null) {
-				SpellBook book = skillSeqArgs.Tool as SpellBook;
+				var book = skillSeqArgs.Tool as SpellBook;
 				if (book != null) {
 					isFromScroll = false;
 					if (book.IsDeleted || (book.TopObj() != self)) {
@@ -194,7 +194,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+			var spell = (SpellDef) skillSeqArgs.Param1;
 			spell.Trigger_Success(skillSeqArgs);
 		}
 

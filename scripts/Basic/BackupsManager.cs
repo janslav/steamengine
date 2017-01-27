@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_BeforeSave(Globals ignored, ScriptArgs sa) {
-			string path = string.Concat(sa.Argv[0]);
+			var path = string.Concat(sa.Argv[0]);
 			if (this.pathManager != null) {
 				path = this.pathManager.GetSavingPath(path);
 			}
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_AfterSave(Globals ignored, ScriptArgs sa) {
-			bool success = Convert.ToBoolean(sa.Argv[1]);
+			var success = Convert.ToBoolean(sa.Argv[1]);
 			if (success) {
 				if (this.fileManager != null) {
 					this.fileManager.FinishSaving();
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//can be called more than once, when the particular load doesn't work
 		public void On_BeforeLoad(Globals ignored, ScriptArgs sa) {
-			string path = string.Concat(sa.Argv[0]);
+			var path = string.Concat(sa.Argv[0]);
 			if (this.pathManager != null) {
 				path = this.pathManager.GetLoadingPath(path, this.loadAttempts, out this.isLastLoadPossibility);
 			}
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_AfterLoad(Globals ignored, ScriptArgs sa) {
-			bool success = Convert.ToBoolean(sa.Argv[1]);
+			var success = Convert.ToBoolean(sa.Argv[1]);
 			if (success) {
 				if (this.fileManager != null) {
 					this.fileManager.FinishLoading();
@@ -202,8 +202,8 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public string GetSavingPath(string defaultPath) {
-				DateTime now = DateTime.Now;
-				string path = Tools.CombineMultiplePaths(
+				var now = DateTime.Now;
+				var path = Tools.CombineMultiplePaths(
 					defaultPath, now.ToString(DateFormat), now.ToString(TimeFormat));
 				Tools.EnsureDirectory(path);
 
@@ -211,10 +211,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void SavingFinished(string path) {
-				Backup nowList = new Backup(path, DateTime.Now);//a bit unexact, because the folder was founded before the save etc, but who cares now...
+				var nowList = new Backup(path, DateTime.Now);//a bit unexact, because the folder was founded before the save etc, but who cares now...
 				if (this.sortedByTime.Count > 1) {
-					int index = this.sortedByTime.Count - 1;
-					Backup wasLast = this.sortedByTime[index];
+					var index = this.sortedByTime.Count - 1;
+					var wasLast = this.sortedByTime[index];
 					wasLast.SetSpan(this.sortedByTime[index - 1], nowList);
 					this.sortedBySpan.Add(wasLast);
 				}
@@ -238,13 +238,13 @@ namespace SteamEngine.CompiledScripts {
 					return;
 				}
 
-				double lowestPriority = double.MaxValue;
+				var lowestPriority = double.MaxValue;
 				Backup lowestPriorityBackup = null;
 
-				TimeSpan firstToLast = this.lastTime - this.firstTime;
+				var firstToLast = this.lastTime - this.firstTime;
 				for (int i = 0, n = this.sortedBySpan.Count; i < n; i++) {
-					Backup b = this.sortedBySpan[i];
-					TimeSpan fromFirst = b.time - this.firstTime;
+					var b = this.sortedBySpan[i];
+					var fromFirst = b.time - this.firstTime;
 					double priority;
 					checked {
 						priority = ((double) fromFirst.Ticks / firstToLast.Ticks) * b.span.Ticks;
@@ -258,7 +258,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private void RemoveBackup(Backup toRemove) {
-				int index = this.sortedByTime.IndexOf(toRemove);
+				var index = this.sortedByTime.IndexOf(toRemove);
 				this.sortedBySpan.Remove(toRemove);
 				if ((index > 1) && (index < this.sortedBySpan.Count - 2)) {
 					this.ResetSpanAtIndex(index - 1);
@@ -275,9 +275,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			private void ResetSpanAtIndex(int i) {
-				Backup prev = this.sortedByTime[i - 1];
-				Backup next = this.sortedByTime[i + 1];
-				Backup cur = this.sortedByTime[i];
+				var prev = this.sortedByTime[i - 1];
+				var next = this.sortedByTime[i + 1];
+				var cur = this.sortedByTime[i];
 				cur.SetSpan(prev, next);
 			}
 
@@ -287,7 +287,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.sortedByTime.Count == 0) {
 					throw new SEException("No previous backup folder found.");
 				}
-				int index = this.sortedByTime.Count - (1 + attempt);
+				var index = this.sortedByTime.Count - (1 + attempt);
 				isLast = false;
 				if (index == 0) {
 					isLast = true;
@@ -305,7 +305,7 @@ namespace SteamEngine.CompiledScripts {
 				if (!this.sizeValid) {
 					this.size = 0;
 					for (int i = 0, n = this.sortedByTime.Count; i < n; i++) {
-						Backup b = this.sortedByTime[i];
+						var b = this.sortedByTime[i];
 						this.size += b.Size;
 					}
 					this.sizeValid = true;
@@ -316,13 +316,13 @@ namespace SteamEngine.CompiledScripts {
 			{
 				if (this.maxSavesSize < 0) {//disk free space limit
 #if MSWIN
-					string deviceName = Path.GetPathRoot(Path.GetFullPath(path));
+					var deviceName = Path.GetPathRoot(Path.GetFullPath(path));
 					deviceName = deviceName.Substring(0, deviceName.Length - 1);
 					//System.Management.
-					ManagementObject disk = new ManagementObject(
+					var disk = new ManagementObject(
 						"win32_logicaldisk.deviceid=\"" + deviceName + "\"");
 					disk.Get();
-					long bytesFree = Convert.ToInt64(disk["FreeSpace"]);
+					var bytesFree = Convert.ToInt64(disk["FreeSpace"]);
 					return (bytesFree < (-this.maxSavesSize));
 #else
 
@@ -354,15 +354,15 @@ namespace SteamEngine.CompiledScripts {
 				if (this.sortedByTime == null) {
 					this.sortedByTime = new List<Backup>();
 					this.sortedBySpan = new List<Backup>();
-					DirectoryInfo rootDir = new DirectoryInfo(rootPath);
-					foreach (DirectoryInfo subdir in rootDir.GetDirectories()) {
+					var rootDir = new DirectoryInfo(rootPath);
+					foreach (var subdir in rootDir.GetDirectories()) {
 						try {
-							DateTime date = DateTime.Parse(subdir.Name, dtfi);
-							foreach (DirectoryInfo savedir in subdir.GetDirectories()) {
+							var date = DateTime.Parse(subdir.Name, dtfi);
+							foreach (var savedir in subdir.GetDirectories()) {
 								try {
-									TimeSpan time = DateTime.Parse(savedir.Name, dtfi) - DateTime.Today;
-									DateTime dateTime = date + time;
-									Backup b = new Backup(savedir, dateTime);
+									var time = DateTime.Parse(savedir.Name, dtfi) - DateTime.Today;
+									var dateTime = date + time;
+									var b = new Backup(savedir, dateTime);
 									this.sortedByTime.Add(b);
 								} catch (Exception) { }//unkown dir
 							}
@@ -371,9 +371,9 @@ namespace SteamEngine.CompiledScripts {
 
 					this.sortedByTime.Sort(Backup.timeComparerInstance);
 					for (int i = 1, n = this.sortedByTime.Count - 1; i < n; i++) {//without the first and last one
-						Backup prev = this.sortedByTime[i - 1];
-						Backup next = this.sortedByTime[i + 1];
-						Backup cur = this.sortedByTime[i];
+						var prev = this.sortedByTime[i - 1];
+						var next = this.sortedByTime[i + 1];
+						var cur = this.sortedByTime[i];
 						cur.SetSpan(prev, next);
 						this.sortedBySpan.Add(cur);
 					}
@@ -421,7 +421,7 @@ namespace SteamEngine.CompiledScripts {
 
 				private static long GetSizeOfDir(DirectoryInfo dir) {
 					long sizeSoFar = 0;
-					foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
+					foreach (var entry in dir.GetFileSystemInfos()) {
 						if ((entry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
 							sizeSoFar += GetSizeOfDir((DirectoryInfo) entry);
 						} else {
@@ -450,10 +450,10 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				internal void Delete() {
-					string oneup = Path.Combine(this.pathInfo.FullName, "..");
+					var oneup = Path.Combine(this.pathInfo.FullName, "..");
 					this.pathInfo.Delete(true);
 
-					DirectoryInfo dayDir = new DirectoryInfo(oneup);
+					var dayDir = new DirectoryInfo(oneup);
 					if (dayDir.Exists) {
 						if (dayDir.GetFileSystemInfos().Length == 0) {
 							dayDir.Delete();
@@ -472,7 +472,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public TextWriter GetSaveStream(string name) {
-				string fileName = Path.Combine(this.path, name + ".sav");
+				var fileName = Path.Combine(this.path, name + ".sav");
 				Console.WriteLine("Saving to " + LogStr.File(fileName));
 				return new StreamWriter(File.Create(fileName));
 			}
@@ -485,7 +485,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public StreamReader GetLoadStream(string name) {
-				string fileName = Path.Combine(this.path, name + ".sav");
+				var fileName = Path.Combine(this.path, name + ".sav");
 				Console.WriteLine("Loading " + LogStr.File(fileName));
 				//throw new Exception("test exc from GetLoadStream");
 
@@ -508,7 +508,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void StartSaving(string path) {
-				string zipFileName = Path.Combine(path, "backup.zip");
+				var zipFileName = Path.Combine(path, "backup.zip");
 				Console.WriteLine("Saving to " + LogStr.File(zipFileName));
 				this.zipWriter = new ZipOutputStream(File.Create(zipFileName));
 				this.zipWriter.SetLevel(this.compression);
@@ -520,12 +520,12 @@ namespace SteamEngine.CompiledScripts {
 					this.zipWriter.CloseEntry();
 				}
 
-				ZipEntry entry = new ZipEntry(name + ".sav");
+				var entry = new ZipEntry(name + ".sav");
 				entry.DateTime = DateTime.Now;
 				this.zipWriter.PutNextEntry(entry);
 				this.openEntry = true;
 
-				StreamWriter sw = new StreamWriter(this.zipWriter);
+				var sw = new StreamWriter(this.zipWriter);
 				sw.AutoFlush = true;
 				return sw;
 			}
@@ -538,7 +538,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void StartLoading(string path) {
-				string zipFileName = Path.Combine(path, "backup.zip");
+				var zipFileName = Path.Combine(path, "backup.zip");
 				Console.WriteLine("Loading " + LogStr.File(zipFileName));
 				this.zipReader = new ZipInputStream(File.OpenRead(zipFileName));
 			}

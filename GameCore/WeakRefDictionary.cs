@@ -21,9 +21,9 @@ namespace SteamEngine {
 		internal static List<WeakReference> allCaches = new List<WeakReference>();
 
 		public static void PurgeAll() {
-			List<WeakReference> aliveCaches = new List<WeakReference>(allCaches.Count);
-			foreach (WeakReference weakCache in allCaches) {
-				IPurgable cache = weakCache.Target as IPurgable;
+			var aliveCaches = new List<WeakReference>(allCaches.Count);
+			foreach (var weakCache in allCaches) {
+				var cache = weakCache.Target as IPurgable;
 				if (cache != null) {
 					cache.Purge();
 					aliveCaches.Add(weakCache);
@@ -68,10 +68,10 @@ namespace SteamEngine {
 			}
 
 			public bool Equals(WeakRefDictionaryKeyEntry entryA, WeakRefDictionaryKeyEntry entryB) {
-				TKey keyA = (TKey) entryA.weakKey.Target;
-				TKey keyB = (TKey) entryB.weakKey.Target;
+				var keyA = (TKey) entryA.weakKey.Target;
+				var keyB = (TKey) entryB.weakKey.Target;
 				if ((keyA != null) && (keyB != null)) {
-					IDeletable deletable = keyA as IDeletable;
+					var deletable = keyA as IDeletable;
 					if (deletable != null) {
 						if (deletable.IsDeleted) {
 							return false;
@@ -89,7 +89,7 @@ namespace SteamEngine {
 			}
 
 			public int GetHashCode(WeakRefDictionaryKeyEntry entry) {
-				object key = entry.weakKey.Target;
+				var key = entry.weakKey.Target;
 				if (key != null) {
 					return key.GetHashCode();
 				}
@@ -100,24 +100,24 @@ namespace SteamEngine {
 		#region IPurgable Members
 		/// <summary>Clears out the entries where either the key or the value have become deleted (if they're IDeletable) or have been memory-collected</summary>
 		public void Purge() {
-			List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>> aliveEntries = new List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>>(this.dict.Count);
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
+			var aliveEntries = new List<KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference>>(this.dict.Count);
+			foreach (var pair in this.dict) {
 				if (this.IsAlive(pair.Key.weakKey) && this.IsAlive(pair.Value)) {
 					aliveEntries.Add(pair);
 				}
 			}
 			if (aliveEntries.Count < this.dict.Count) { //something was deleted, we must rebuild
 				this.dict.Clear();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in aliveEntries) {
+				foreach (var pair in aliveEntries) {
 					this.dict.Add(pair.Key, pair.Value);
 				}
 			}
 		}
 
 		private bool IsAlive(WeakReference weak) {
-			object o = weak.Target;
+			var o = weak.Target;
 			if (o != null) {
-				IDeletable deletable = o as IDeletable;
+				var deletable = o as IDeletable;
 				if (deletable != null) {
 					if (deletable.IsDeleted) {
 						return false;
@@ -155,7 +155,7 @@ namespace SteamEngine {
 			if (this.dict.TryGetValue(new WeakRefDictionaryKeyEntry(key), out weakWal)) {
 				value = (TValue) weakWal.Target;
 				if (value != null) {
-					IDeletable deletable = value as IDeletable;
+					var deletable = value as IDeletable;
 					if (deletable != null) {
 						if (deletable.IsDeleted) {
 							return false;
@@ -169,10 +169,10 @@ namespace SteamEngine {
 
 		public TValue this[TKey key] {
 			get {
-				WeakReference weakWal = this.dict[new WeakRefDictionaryKeyEntry(key)];
-				TValue value = (TValue) weakWal.Target;
+				var weakWal = this.dict[new WeakRefDictionaryKeyEntry(key)];
+				var value = (TValue) weakWal.Target;
 				if (value != null) {
-					IDeletable deletable = value as IDeletable;
+					var deletable = value as IDeletable;
 					if (deletable != null) {
 						if (deletable.IsDeleted) {
 							return default(TValue);
@@ -238,7 +238,7 @@ namespace SteamEngine {
 
 			public void CopyTo(TKey[] array, int arrayIndex) {
 				this.cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
+				foreach (var pair in this.cache.dict) {
 					array[arrayIndex] = (TKey) pair.Key.weakKey.Target;
 					arrayIndex++;
 				}
@@ -258,14 +258,14 @@ namespace SteamEngine {
 
 			public IEnumerator<TKey> GetEnumerator() {
 				this.cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
+				foreach (var pair in this.cache.dict) {
 					yield return (TKey) pair.Key.weakKey.Target;
 				}
 			}
 
 			IEnumerator IEnumerable.GetEnumerator() {
 				this.cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
+				foreach (var pair in this.cache.dict) {
 					yield return pair.Key.weakKey.Target;
 				}
 			}
@@ -296,7 +296,7 @@ namespace SteamEngine {
 
 			public void CopyTo(TValue[] array, int arrayIndex) {
 				this.cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
+				foreach (var pair in this.cache.dict) {
 					array[arrayIndex] = (TValue) pair.Value.Target;
 					arrayIndex++;
 				}
@@ -316,14 +316,14 @@ namespace SteamEngine {
 
 			public IEnumerator<TValue> GetEnumerator() {
 				this.cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
+				foreach (var pair in this.cache.dict) {
 					yield return (TValue) pair.Value.Target;
 				}
 			}
 
 			IEnumerator IEnumerable.GetEnumerator() {
 				this.cache.Purge();
-				foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.cache.dict) {
+				foreach (var pair in this.cache.dict) {
 					yield return pair.Value.Target;
 				}
 			}
@@ -347,7 +347,7 @@ namespace SteamEngine {
 
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
 			this.Purge();
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
+			foreach (var pair in this.dict) {
 				array[arrayIndex] = new KeyValuePair<TKey, TValue>(
 					(TKey) pair.Key.weakKey.Target, (TValue) pair.Value.Target);
 				checked {
@@ -379,7 +379,7 @@ namespace SteamEngine {
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
 			this.Purge();
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
+			foreach (var pair in this.dict) {
 				yield return new KeyValuePair<TKey, TValue>(
 					(TKey) pair.Key.weakKey.Target, (TValue) pair.Value.Target);
 			}
@@ -391,7 +391,7 @@ namespace SteamEngine {
 
 		IEnumerator IEnumerable.GetEnumerator() {
 			this.Purge();
-			foreach (KeyValuePair<WeakRefDictionaryKeyEntry, WeakReference> pair in this.dict) {
+			foreach (var pair in this.dict) {
 				yield return new KeyValuePair<TKey, TValue>(
 					(TKey) pair.Key.weakKey.Target, (TValue) pair.Value.Target);
 			}

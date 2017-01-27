@@ -40,8 +40,8 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Character self = skillSeqArgs.Self;
-			Container cnt = (Container) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var cnt = (Container) skillSeqArgs.Target1;
 			if (self.CanReachWithMessage(cnt)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, 800);
 				return TriggerResult.Continue;
@@ -50,11 +50,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Container cnt = (Container) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var cnt = (Container) skillSeqArgs.Target1;
 			self.SysMessage("Vidíš do batohu osoby " + cnt.TopObj().Name + ".");
 			cnt.OpenTo(self);
-			SnoopingPlugin sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
+			var sb = self.GetPlugin(snoopedPluginKey) as SnoopingPlugin;
 			if (sb == null) {
 				sb = (SnoopingPlugin) self.AddNewPlugin(snoopedPluginKey, SnoopingPlugin.defInstance);
 			}
@@ -63,10 +63,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character victim = (Character) (((Container) skillSeqArgs.Target1).TopObj());
+			var self = skillSeqArgs.Self;
+			var victim = (Character) (((Container) skillSeqArgs.Target1).TopObj());
 			self.ClilocSysMessage(500210); // You failed to peek into the container. 
-			int ran = Globals.dice.Next(4);
+			var ran = Globals.dice.Next(4);
 			switch (ran) {
 				case 3: //fatal failure
 					victim.SysMessage(self.Name + " se ti pokusil otevøít batoh.");
@@ -94,15 +94,15 @@ namespace SteamEngine.CompiledScripts {
 		public static int duration = 180;
 
 		public TriggerResult On_DenyPickupItem(DenyPickupArgs args) {
-			Container conta = args.ManipulatedItem.Cont as Container;
+			var conta = args.ManipulatedItem.Cont as Container;
 			Sanity.IfTrueThrow(conta == null, "args.ManipulatedItem.Cont == null");
 
 			if (this.Contains(conta)) {
-				Character thief = args.PickingChar as Character;
+				var thief = args.PickingChar as Character;
 
-				SkillSequenceArgs stealing = SkillSequenceArgs.Acquire(thief, SkillName.Stealing, args.ManipulatedItem, null, null, null, null);
+				var stealing = SkillSequenceArgs.Acquire(thief, SkillName.Stealing, args.ManipulatedItem, null, null, null, null);
 				stealing.PhaseSelect();
-				bool success = stealing.Success;
+				var success = stealing.Success;
 				//stealing.Dispose();
 
 				if (!success) {
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Timer() {
-			foreach (Container cont in this.snoopedBackpacks) {
+			foreach (var cont in this.snoopedBackpacks) {
 				if (OpenedContainers.HasContainerOpen((Character) this.Cont, cont).Allow) {
 					this.Timer = duration;
 					return;

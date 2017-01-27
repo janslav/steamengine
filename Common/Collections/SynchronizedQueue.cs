@@ -58,7 +58,7 @@ namespace SteamEngine {
 				if (this.count == 0) {
 					throw new SEException("count == 0");
 				}
-				T t = this.array[this.headindex];
+				var t = this.array[this.headindex];
 				this.array[this.headindex] = default(T);
 				this.headindex = ((this.headindex + 1) % this.array.Length);
 				this.count--;
@@ -87,7 +87,7 @@ namespace SteamEngine {
 		}
 
 		private void Grow() {
-			T[] newArray = new T[this.array.Length * 2 + 1];
+			var newArray = new T[this.array.Length * 2 + 1];
 			if (this.count > 0) {
 				if (this.headindex < this.tailindex) {
 					Array.Copy(this.array, this.headindex, newArray, 0, this.count);

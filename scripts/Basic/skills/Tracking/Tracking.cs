@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!this.CheckPrerequisities(skillSeqArgs)) {
 				return TriggerResult.Cancel; //finish now
 			}
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.ClilocSysMessage(1011350);//What do you wish to track?
 			self.Dialog(self, SingletonScript<D_Tracking_Categories>.Instance, new DialogArgs(skillSeqArgs));
 			return TriggerResult.Cancel; //stop it, other triggers will be run from the tracking dialog
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			if (!this.CheckPrerequisities(skillSeqArgs)) {
 				return TriggerResult.Cancel;
@@ -91,16 +91,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			CharacterTypes charType = (CharacterTypes) skillSeqArgs.Param1;
-			TimeSpan now = Globals.TimeAsSpan;
+			var self = skillSeqArgs.Self;
+			var charType = (CharacterTypes) skillSeqArgs.Param1;
+			var now = Globals.TimeAsSpan;
 
 			if (charType == CharacterTypes.Players) {//tracking Players
-				ImmutableRectangle playerRect = this.GetPlayerTrackingArea(self);
-				TimeSpan maxAge = this.GetMaxFootstepsAge(self);
+				var playerRect = this.GetPlayerTrackingArea(self);
+				var maxAge = this.GetMaxFootstepsAge(self);
 				switch ((TrackingEnums) skillSeqArgs.Param2) {
 					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
-						List<AbstractCharacter> charsAround = ScriptSector.GetCharactersInRectangle(playerRect, now, maxAge, self.M);
+						var charsAround = ScriptSector.GetCharactersInRectangle(playerRect, now, maxAge, self.M);
 
 						//check if tracking is possible (with message)
 						//i.e. too many chars or none at all
@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts {
 						self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, charsAround));
 						break;
 					case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
-						Character trackedChar = (Character) skillSeqArgs.Target1;
+						var trackedChar = (Character) skillSeqArgs.Target1;
 
 						//and forward the tracking management to the special plugin
 						PlayerTrackingPlugin.InstallOnChar(self, trackedChar, playerRect, maxAge, this.GetMaxSafeSteps(self));
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts {
 						break;
 				}
 			} else {//tracking animals, monsters or NPCs
-				ImmutableRectangle npcRect = this.GetNPCTrackingArea(self);
+				var npcRect = this.GetNPCTrackingArea(self);
 				switch ((TrackingEnums) skillSeqArgs.Param2) {
 					case TrackingEnums.Phase_Characters_Seek: //we will look for chars around
 						List<AbstractCharacter> trackables = null;
@@ -160,9 +160,9 @@ namespace SteamEngine.CompiledScripts {
 						self.Dialog(self, SingletonScript<D_Tracking_Characters>.Instance, new DialogArgs(skillSeqArgs, trackables));
 						break;
 					case TrackingEnums.Phase_Character_Track: //we will try to display the chars path
-						Character charToTrack = (Character) skillSeqArgs.Target1;
+						var charToTrack = (Character) skillSeqArgs.Target1;
 
-						NPCTrackingPlugin npctpl = (NPCTrackingPlugin) NPCTrackingPlugin.defInstance.Create();
+						var npctpl = (NPCTrackingPlugin) NPCTrackingPlugin.defInstance.Create();
 						npctpl.maxAllowedDist = this.GetNPCMaxRange(self); //maximal distance before the tracked character disappears...						
 						npctpl.safeSteps = this.GetMaxSafeSteps(self); //number of safe steps
 						npctpl.whoToTrack = charToTrack;
@@ -187,7 +187,7 @@ namespace SteamEngine.CompiledScripts {
 		/// should be cancelled or true if we can continue
 		/// </summary>
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {
 				return false;//no message needed, it's been already sent in the called method
 			}
@@ -200,7 +200,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//check if there isn't too much or none chars to track, return true if impossible
 		private bool CheckTrackImpossible(SkillSequenceArgs ssa, int charsAroundCount, CharacterTypes charType) {
-			Character self = ssa.Self;
+			var self = ssa.Self;
 			if (charsAroundCount == 0) {
 				switch (charType) {
 					case CharacterTypes.Animals:

@@ -31,17 +31,17 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode blockNode;//can be null
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_For constructed = new OpNode_For(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_For(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 			constructed.localName = "localName";
 
-			Production mainProd = (Production) code;
-			Production headProd = GetHeaderCode(mainProd.GetChildAt(1));//FOR_HEADER_CODE or FOR_HEADER_IN_PARENS
-			string localName = GetLocalName(headProd.GetChildAt(0));
+			var mainProd = (Production) code;
+			var headProd = GetHeaderCode(mainProd.GetChildAt(1));//FOR_HEADER_CODE or FOR_HEADER_IN_PARENS
+			var localName = GetLocalName(headProd.GetChildAt(0));
 			constructed.localName = localName;
 			constructed.localIndex = constructed.ParentScriptHolder.GetLocalVarIndex(localName);
 
@@ -57,7 +57,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static string GetLocalName(Node node) {
-			Token asToken = node as Token;
+			var asToken = node as Token;
 			if (asToken != null) {
 				return asToken.GetImage().Trim();
 			}
@@ -100,8 +100,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		{
 			if (this.blockNode != null) {
 				try {
-					int leftBound = Convert.ToInt32(this.leftBoundNode.Run(vars), CultureInfo.InvariantCulture);
-					int rightBound = Convert.ToInt32(this.rightBoundNode.Run(vars), CultureInfo.InvariantCulture);
+					var leftBound = Convert.ToInt32(this.leftBoundNode.Run(vars), CultureInfo.InvariantCulture);
+					var rightBound = Convert.ToInt32(this.rightBoundNode.Run(vars), CultureInfo.InvariantCulture);
 					int step;
 					if (leftBound < rightBound) {
 						step = 1;

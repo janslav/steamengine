@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Sorting method: Sorting criteria available are nameUp, accountUp, timeUp</summary>
 		public static ArrayList GetSortedBy(SortingCriteria criterion) {
-			ArrayList pages = new ArrayList(gmPages.Values);
+			var pages = new ArrayList(gmPages.Values);
 			switch (criterion) {
 				case SortingCriteria.NameAsc:
 					pages.Sort(GMPageNameComparator.instance);
@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Find all available GMs that are online and notify them of the new page.</summary>
 		private static void NotifyOnlineGMs(AbstractCharacter sender) {
-			bool isGMOnline = false;
+			var isGMOnline = false;
 			foreach (Character plr in GameServer.GetAllPlayers()) {
 				if (plr.IsGM) {
 					plr.SysMessage("Prisla nova page. Pocet nevyrizenych pagi: " + CountUnresolved());
@@ -97,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Return the number of unresolved pages  - that means count all pages that have not been replied (or deleted :) )</summary>
 		public static int CountUnresolved() {
-			int counter = 0;
+			var counter = 0;
 			foreach (GMPageEntry page in gmPages.Values) {
 				if (!page.replied) {
 					counter++;
@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts {
 				sender.SysMessage("Odmitnuta prazdna page");
 				return;
 			}
-			GMPageEntry newPage = new GMPageEntry(sender, text.Args);
+			var newPage = new GMPageEntry(sender, text.Args);
 			AddNewPage(newPage);
 			sender.SysMessage("GMPage byla uspesne prijata a zarazena na " + CountUnresolved() + ". misto v seznamu");
 			NotifyOnlineGMs(sender);
@@ -166,8 +166,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int Compare(object a, object b) {
-			string name1 = ((GMPageEntry) a).sender.Name;
-			string name2 = ((GMPageEntry) b).sender.Name;
+			var name1 = ((GMPageEntry) a).sender.Name;
+			var name2 = ((GMPageEntry) b).sender.Name;
 
 			return name1.CompareTo(name2);
 		}
@@ -181,8 +181,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int Compare(object a, object b) {
-			DateTime time1 = ((GMPageEntry) a).time;
-			DateTime time2 = ((GMPageEntry) b).time;
+			var time1 = ((GMPageEntry) a).time;
+			var time2 = ((GMPageEntry) b).time;
 
 			return time1.CompareTo(time2);
 		}
@@ -196,8 +196,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int Compare(object a, object b) {
-			string acc1 = ((GMPageEntry) a).sender.Account.Name;
-			string acc2 = ((GMPageEntry) b).sender.Account.Name;
+			var acc1 = ((GMPageEntry) a).sender.Account.Name;
+			var acc2 = ((GMPageEntry) b).sender.Account.Name;
 
 			return acc1.CompareTo(acc2);
 		}

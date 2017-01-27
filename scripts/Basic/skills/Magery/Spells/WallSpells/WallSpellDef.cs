@@ -71,34 +71,34 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_EffectGround(IPoint3D target, SpellEffectArgs spellEffectArgs) {
 			base.On_EffectGround(target, spellEffectArgs);
 
-			Character caster = spellEffectArgs.Caster;
-			int targetX = target.X;
-			int targetY = target.Y;
-			int targetZ = target.Z;
-			Map map = caster.GetMap();
+			var caster = spellEffectArgs.Caster;
+			var targetX = target.X;
+			var targetY = target.Y;
+			var targetZ = target.Z;
+			var map = caster.GetMap();
 
-			int dx = (caster.X - targetX);
-			int dy = (caster.Y - targetY);
+			var dx = (caster.X - targetX);
+			var dy = (caster.Y - targetY);
 
-			int ax = Math.Abs(dx);
-			int ay = Math.Abs(dy);
+			var ax = Math.Abs(dx);
+			var ay = Math.Abs(dy);
 
-			int spellPower = spellEffectArgs.SpellPower;
-			double durationSecs = this.GetDurationForValue(caster.GetSkill(SkillName.Magery)); 
+			var spellPower = spellEffectArgs.SpellPower;
+			var durationSecs = this.GetDurationForValue(caster.GetSkill(SkillName.Magery)); 
 			//Magery used instead of spellpower, because the power is designed for use for the field effect, not for it's duration
 			durationSecs += durationSecs * caster.GetAbility(FieldDurationBonusDef) * FieldDurationBonusDef.EffectPower;
 			//applied ability bonus
-			TimeSpan durationSpan = TimeSpan.FromSeconds(durationSecs);
+			var durationSpan = TimeSpan.FromSeconds(durationSecs);
 
 			if (ay > ax) {
-				ItemDef wallDef = this.ItemDefWestEast;
+				var wallDef = this.ItemDefWestEast;
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX - 2, targetY, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX - 1, targetY, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX + 1, targetY, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX + 2, targetY, targetZ, map);
 			} else {
-				ItemDef wallDef = this.ItemDefNorthSouth;
+				var wallDef = this.ItemDefNorthSouth;
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY - 2, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY - 1, targetZ, map);
 				InitWallItem(spellEffectArgs, wallDef, spellPower, durationSpan, targetX, targetY, targetZ, map);
@@ -109,8 +109,8 @@ namespace SteamEngine.CompiledScripts {
 
 		private static void InitWallItem(SpellEffectArgs spellEffectArgs, ItemDef wallDef, int spellPower, TimeSpan duration, int x, int y, int z, Map map) {
 			if (SpellEffectItem.CheckPositionForItem(x, y, ref z, map, wallDef.Height, true)) {
-				Thing t = wallDef.Create((ushort) x, (ushort) y, (sbyte) z, map.M);
-				SpellEffectItem asWallitem = t as SpellEffectItem;
+				var t = wallDef.Create((ushort) x, (ushort) y, (sbyte) z, map.M);
+				var asWallitem = t as SpellEffectItem;
 				if (asWallitem != null) {
 					asWallitem.Init(spellPower, duration, true);
 				}

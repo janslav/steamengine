@@ -59,14 +59,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public double Timer {
 			get {
-				BoundTimer timer = this.GetTimer(timerKey);
+				var timer = this.GetTimer(timerKey);
 				if (timer != null) {
 					return timer.DueInSeconds;
 				}
 				return -1;
 			}
 			set {
-				BoundTimer timer = this.GetTimer(timerKey);
+				var timer = this.GetTimer(timerKey);
 				if (timer == null) {
 					timer = new PluginTimer();
 					this.AddTimer(timerKey, timer);

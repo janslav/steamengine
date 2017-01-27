@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		internal static PoisonedItemPlugin Acquire(PoisonPotion potion) {
-			PoisonedItemPlugin plugin = (PoisonedItemPlugin) PoisonedItemPluginDef.instance.Create();
+			var plugin = (PoisonedItemPlugin) PoisonedItemPluginDef.instance.Create();
 			plugin.poisonTickCount = potion.PoisonTickCount;
 			plugin.poisonPower = potion.PoisonPower;
 			plugin.poisonType = potion.PoisonType;
@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 				this.Delete();
 				return;
 			}
-			PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(language);
+			var loc = Loc<PoisonedItemLoc>.Get(language);
 			opc.AddNameColonValue(loc.DosesLeft, this.poisonDoses.ToString(CultureInfo.InvariantCulture));
 			opc.AddNameColonValue(loc.Power, this.poisonPower.ToString(CultureInfo.InvariantCulture));
 		}
@@ -95,10 +95,10 @@ namespace SteamEngine.CompiledScripts {
 				this.Delete();
 				return;
 			}
-			GameState state = clicker.GameState;
+			var state = clicker.GameState;
 			if (state != null) {
-				PoisonedItemLoc loc = Loc<PoisonedItemLoc>.Get(clicker.Language);
-				string msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(CultureInfo.InvariantCulture) +
+				var loc = Loc<PoisonedItemLoc>.Get(clicker.Language);
+				var msg = loc.DosesLeft + ": " + this.poisonDoses.ToString(CultureInfo.InvariantCulture) +
 					Environment.NewLine +
 					loc.Power + ": " + this.poisonPower.ToString(CultureInfo.InvariantCulture);
 				PacketSequences.SendOverheadMessageFrom(state.Conn, (Thing) this.Cont, msg, -1);
@@ -109,14 +109,14 @@ namespace SteamEngine.CompiledScripts {
 			this.poisonDoses = projectilesPerPotion;
 			this.poisonPower *= projectile.PoisoningEfficiency;
 
-			PoisonedItemPlugin previous = projectile.GetPlugin(poisonPK) as PoisonedItemPlugin;
+			var previous = projectile.GetPlugin(poisonPK) as PoisonedItemPlugin;
 			if (previous != null) {
 				Sanity.IfTrueThrow(previous == this, "previous == this");
 				Sanity.IfTrueThrow(previous.poisonType != this.poisonType, "previous.poisonType != this.poisonType");
 
 				//the new potion and the old one are summed up, their power averaged.
-				int prevDoses = previous.poisonDoses;
-				int newDoses = prevDoses + projectilesPerPotion;
+				var prevDoses = previous.poisonDoses;
+				var newDoses = prevDoses + projectilesPerPotion;
 				previous.poisonPower = (previous.poisonPower * prevDoses +
 					this.poisonPower * projectilesPerPotion) / newDoses;
 				previous.poisonTickCount = (previous.poisonTickCount * prevDoses +
@@ -139,9 +139,9 @@ namespace SteamEngine.CompiledScripts {
 
 		//there's a chance this weapon/projectile is in use already. If not, the TG will harmlessly uninstall itself soon.
 		public void On_Assign() {
-			Thing thing = this.Cont as Thing;
+			var thing = this.Cont as Thing;
 			if (thing != null) {
-				Character topChar = thing.TopObj() as Character;
+				var topChar = thing.TopObj() as Character;
 				if (topChar != null) {
 					this.InstallCharacterTG(topChar);
 				}
@@ -190,13 +190,13 @@ namespace SteamEngine.CompiledScripts {
 		//we have been split from leftOverStack (in other words, leftOverStack is now an exact copy of us, only with correctly set amounts)
 		public void On_SplitFromStack(Item leftOverStack) {
 			if (leftOverStack is Projectile) {
-				PoisonedItemPlugin original = (PoisonedItemPlugin) leftOverStack.GetPlugin(poisonPK);
+				var original = (PoisonedItemPlugin) leftOverStack.GetPlugin(poisonPK);
 				Sanity.IfTrueThrow(original.Def != this.Def, "original.Def != this.Def");
 				Sanity.IfTrueThrow(original.poisonDoses != this.poisonDoses, "original.poisonDoses != this.poisonDoses");
 				Sanity.IfTrueThrow(original.poisonPower != this.poisonPower, "original.poisonPower != this.poisonPower");
 				Sanity.IfTrueThrow(original.poisonType != this.poisonType, "original.poisonType != this.poisonType");
 
-				int newDoses = original.poisonDoses - leftOverStack.Amount;
+				var newDoses = original.poisonDoses - leftOverStack.Amount;
 				if (newDoses > 0) {
 					original.poisonDoses -= newDoses;
 					this.poisonDoses = newDoses;
@@ -212,7 +212,7 @@ namespace SteamEngine.CompiledScripts {
 		public virtual TriggerResult On_StackOnItem(ItemStackArgs args) {
 			Sanity.IfTrueThrow(this.Cont != args.ManipulatedItem, "this != args.ManipulatedItem");
 
-			PoisonedItemPlugin otherPoison = args.WaitingStack.GetPlugin(poisonPK) as PoisonedItemPlugin;
+			var otherPoison = args.WaitingStack.GetPlugin(poisonPK) as PoisonedItemPlugin;
 			if (otherPoison == null) {
 				//no poison on the waitingstack, we transfer there
 
@@ -227,12 +227,12 @@ namespace SteamEngine.CompiledScripts {
 		public virtual TriggerResult On_ItemStackOn(ItemStackArgs args) {
 			Sanity.IfTrueThrow(this.Cont != args.WaitingStack, "this != args.WaitingStack");
 
-			PoisonedItemPlugin otherPoison = args.ManipulatedItem.GetPlugin(poisonPK) as PoisonedItemPlugin;
+			var otherPoison = args.ManipulatedItem.GetPlugin(poisonPK) as PoisonedItemPlugin;
 			if ((otherPoison != null) && (otherPoison.poisonType == this.poisonType)) {
 				//the new potion and the old one are summed up, their power averaged.
 
-				int otherDoses = otherPoison.poisonDoses;
-				int summedDoses = otherDoses + this.poisonDoses;
+				var otherDoses = otherPoison.poisonDoses;
+				var summedDoses = otherDoses + this.poisonDoses;
 				this.poisonPower = (otherPoison.poisonPower * otherDoses +
 					this.poisonPower * this.poisonDoses) / summedDoses;
 				this.poisonTickCount = (otherPoison.poisonTickCount * otherDoses +
@@ -255,15 +255,15 @@ namespace SteamEngine.CompiledScripts {
 	public class E_Poisoned_Weapon_User : CompiledTriggerGroup {
 		public void On_AfterSwing(Character self, WeaponSwingArgs swingArgs) {
 			if (swingArgs.FinalDamage > 0) { //or maybe we don't really care? 
-				bool poisonUsed = false;
-				PoisonedItemPlugin poison = self.Weapon.GetPlugin(PoisonedItemPlugin.poisonPK) as PoisonedItemPlugin;
+				var poisonUsed = false;
+				var poison = self.Weapon.GetPlugin(PoisonedItemPlugin.poisonPK) as PoisonedItemPlugin;
 				if (poison != null) {
 					poison.Apply(self, swingArgs.defender, EffectFlag.HarmfulEffect | EffectFlag.FromPotion);
 					poison.WipeSingleDoseFromWeapon();
 					poisonUsed = true;
 				}
 
-				Projectile projectile = self.WeaponProjectile;
+				var projectile = self.WeaponProjectile;
 				if (projectile != null) {
 					poison = projectile.GetPlugin(PoisonedItemPlugin.poisonPK) as PoisonedItemPlugin;
 					if (poison != null) {

@@ -54,8 +54,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character target = (Character) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var target = (Character) skillSeqArgs.Target1;
 			self.AbortSkill(); //abort previous skill
 
 			WeaponSkillTargetTrackerPlugin.InstallTargetTracker(target, self);
@@ -69,19 +69,19 @@ namespace SteamEngine.CompiledScripts {
 		static TimerKey animTk = TimerKey.Acquire("_weaponAnimDelay_");
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character target = (Character) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var target = (Character) skillSeqArgs.Target1;
 			if (!self.CanInteractWith(target).Allow) {
 				WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 				self.AbortSkill();
 				return TriggerResult.Cancel;
 			}
-			int distance = Point2D.GetSimpleDistance(self, target);
-			WeaponSkillPhase phase = (WeaponSkillPhase) Convert.ToInt64(skillSeqArgs.Param1);
+			var distance = Point2D.GetSimpleDistance(self, target);
+			var phase = (WeaponSkillPhase) Convert.ToInt64(skillSeqArgs.Param1);
 			if (phase == WeaponSkillPhase.Drawing) {
 				if (distance <= self.WeaponStrikeStartRange) {
 					skillSeqArgs.Param1 = WeaponSkillPhase.Striking;
-					TimeSpan delay = self.WeaponDelay;
+					var delay = self.WeaponDelay;
 					skillSeqArgs.Param2 = Globals.TimeAsSpan + delay;
 					skillSeqArgs.DelaySpan = delay;
 					skillSeqArgs.DelayStroke();
@@ -92,24 +92,24 @@ namespace SteamEngine.CompiledScripts {
 				if (distance > self.WeaponStrikeStopRange) {
 					self.AbortSkill();
 				} else if (((TimeSpan) skillSeqArgs.Param2) <= Globals.TimeAsSpan) {
-					int range = Math.Min(target.IsPlayerForCombat ? self.WeaponRangeVsP : self.WeaponRangeVsM, self.VisionRange);
+					var range = Math.Min(target.IsPlayerForCombat ? self.WeaponRangeVsP : self.WeaponRangeVsM, self.VisionRange);
 					if (distance <= range) {
-						Projectile projectile = self.WeaponProjectile;
+						var projectile = self.WeaponProjectile;
 						if (projectile != null) {
 							switch (Globals.dice.Next(3)) {
 								case 0://arrow appears on ground
-									Projectile onGround = (Projectile) projectile.Dupe();
+									var onGround = (Projectile) projectile.Dupe();
 									onGround.P(target);
 									onGround.Amount = 1;
 									break;
 								case 1://arrow appears in targets backpack
-									Projectile inPack = (Projectile) projectile.Dupe();
+									var inPack = (Projectile) projectile.Dupe();
 									inPack.Cont = target.Backpack;
 									inPack.Amount = 1;
 									break;
 								//else arrow disappears
 							}
-							int amount = projectile.Amount;
+							var amount = projectile.Amount;
 							if (amount < 2) {
 								projectile.Delete();
 							} else {
@@ -125,7 +125,7 @@ namespace SteamEngine.CompiledScripts {
 							self.Direction = Point2D.GetDirFromTo(self, target);
 						}
 
-						int projectileAnim = self.WeaponProjectileAnim;
+						var projectileAnim = self.WeaponProjectileAnim;
 						if (projectileAnim >= 0) {
 							EffectFactory.EffectFromTo(self, target, projectileAnim, 10, 1, false, false, 0, 0);
 						}
@@ -163,15 +163,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character target = (Character) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var target = (Character) skillSeqArgs.Target1;
 
 			DamageManager.ProcessSwing(self, target);
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character target = (Character) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var target = (Character) skillSeqArgs.Target1;
 
 			target.Trigger_HostileAction(self);
 			SoundCalculator.PlayMissSound(self);
@@ -179,9 +179,9 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
 			//skillSeqArgs.Self.SysMessage("Aborting skill:" + skillSeqArgs.SkillDef.Key);
-			Character target = (Character) skillSeqArgs.Target1;
+			var target = (Character) skillSeqArgs.Target1;
 			if (target != null) {
-				Character self = skillSeqArgs.Self;
+				var self = skillSeqArgs.Self;
 				//WeaponSkillTargetQueuePlugin.RemoveTarget(self, target);
 				WeaponSkillTargetTrackerPlugin.UnInstallTargetTracker(target, self);
 			}

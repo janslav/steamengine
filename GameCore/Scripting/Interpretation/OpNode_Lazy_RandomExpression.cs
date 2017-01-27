@@ -39,14 +39,14 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Lazy_RandomExpression constructed = new OpNode_Lazy_RandomExpression(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Lazy_RandomExpression(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
-			int expressions = (code.GetChildCount() - 1) / 2;
+			var expressions = (code.GetChildCount() - 1) / 2;
 			if ((expressions % 2) != 0) {
 				throw new SEException("Number of subexpressions in RandomExpressions not odd. This should not happen.");
 				//grammar should not let such thing in
@@ -60,7 +60,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				expressions /= 2;
 				constructed.odds = new OpNode[expressions];
 				constructed.values = new OpNode[expressions];
-				for (int i = 0; i < expressions; i++) {
+				for (var i = 0; i < expressions; i++) {
 					constructed.values[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(1 + i * 4), context);
 					constructed.odds[i] = LScriptMain.CompileNode(constructed, code.GetChildAt(3 + i * 4), context);
 				}
@@ -71,7 +71,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.values, oldNode);
+			var index = Array.IndexOf(this.values, oldNode);
 			if (index >= 0) {
 				this.values[index] = newNode;
 				return;
@@ -89,10 +89,10 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal override object Run(ScriptVars vars) {
 			try {
 				if (this.isSimple) {
-					int lVal = Convert.ToInt32(this.values[0].Run(vars), CultureInfo.InvariantCulture);
-					int rVal = Convert.ToInt32(this.values[1].Run(vars), CultureInfo.InvariantCulture);
-					int min = lVal;
-					int max = rVal;
+					var lVal = Convert.ToInt32(this.values[0].Run(vars), CultureInfo.InvariantCulture);
+					var rVal = Convert.ToInt32(this.values[1].Run(vars), CultureInfo.InvariantCulture);
+					var min = lVal;
+					var max = rVal;
 					if (rVal < lVal) {
 						min = rVal;
 						max = lVal;
@@ -113,12 +113,12 @@ namespace SteamEngine.Scripting.Interpretation {
 						return Globals.dice.Next(min, max + 1);
 					}
 				}
-				int pairCount = this.odds.Length;
-				ValueOddsPair[] pairs = new ValueOddsPair[pairCount];
-				bool areConstant = true;
-				int totalOdds = 0;
-				for (int i = 0; i < pairCount; i++) {
-					int o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
+				var pairCount = this.odds.Length;
+				var pairs = new ValueOddsPair[pairCount];
+				var areConstant = true;
+				var totalOdds = 0;
+				for (var i = 0; i < pairCount; i++) {
+					var o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
 					totalOdds += o;
 					pairs[i] = new ValueOddsPair(this.values[i], totalOdds);
 					if (!(this.odds[i] is OpNode_Object)) {
@@ -153,7 +153,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (this.odds == null) {
 				return "{ " + this.values[0] + " " + this.values[1] + " }";
 			}
-			StringBuilder str = new StringBuilder("{");
+			var str = new StringBuilder("{");
 			for (int i = 0, n = this.odds.Length; i < n; i++) {
 				str.Append(this.values[i]).Append(", ").Append(this.odds[i]).Append(", ");
 			}
@@ -162,8 +162,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public static object GetRandomValue(ValueOddsPair[] pairs, int totalOdds) {
-			int num = Globals.dice.Next(0, totalOdds);
-			foreach (ValueOddsPair pair in pairs) {
+			var num = Globals.dice.Next(0, totalOdds);
+			foreach (var pair in pairs) {
 				if (pair.RolledSuccess(num)) {
 					return pair.Value;
 				}

@@ -33,9 +33,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				if (this.spellDef == null) {
-					Dictionary<SpellScrollDef, SpellDef> dict = new Dictionary<SpellScrollDef, SpellDef>();
-					foreach (SpellDef spell in SpellDef.AllSpellDefs) {
-						SpellScrollDef ssd = spell.ScrollItem;
+					var dict = new Dictionary<SpellScrollDef, SpellDef>();
+					foreach (var spell in SpellDef.AllSpellDefs) {
+						var ssd = spell.ScrollItem;
 						if (ssd != null) {
 							dict.Add(ssd, spell); //if there was more than 1 spells using 1 scroll, this line would throw an exception. 
 							//Which is good. That's why we use a dict here. So leave it alone.
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public int SpellId {
 			get {
-				SpellDef def = this.SpellDef;
+				var def = this.SpellDef;
 				if (def != null) {
 					return def.Id;
 				}

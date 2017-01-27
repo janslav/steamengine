@@ -17,8 +17,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static T FindSingletonInstance() {
-			foreach (AbstractScript script in AbstractScript.AllScripts) {
-				T castScript = script as T;
+			foreach (var script in AbstractScript.AllScripts) {
+				var castScript = script as T;
 				if (castScript != null) {
 					if (instance != null) {
 						throw new FatalException(typeof(T) + " is not a singleton script class, you can't use it as such.");

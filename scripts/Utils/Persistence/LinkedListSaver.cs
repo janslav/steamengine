@@ -39,29 +39,29 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Save(object objToSave, SaveStream writer) {
-			ICollection linkedList = (ICollection) objToSave;
-			Type listType = linkedList.GetType();
-			Type memberType = listType.GetGenericArguments()[0];
-			int count = linkedList.Count;
+			var linkedList = (ICollection) objToSave;
+			var listType = linkedList.GetType();
+			var memberType = listType.GetGenericArguments()[0];
+			var count = linkedList.Count;
 			writer.WriteValue("count", count);
 			writer.WriteLine("type=" + memberType.Name);
-			int i = 0;
-			foreach (object o in linkedList) {
+			var i = 0;
+			foreach (var o in linkedList) {
 				writer.WriteValue(i.ToString(), o);
 				i++;
 			}
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.HeaderLine;
+			var currentLineNumber = input.HeaderLine;
 			try {
-				PropsLine countLine = input.PopPropsLine("count");
+				var countLine = input.PopPropsLine("count");
 				currentLineNumber = countLine.Line;
-				int count = int.Parse(countLine.Value);
+				var count = int.Parse(countLine.Value);
 
-				PropsLine pl = input.PopPropsLine("type");
+				var pl = input.PopPropsLine("type");
 				currentLineNumber = pl.Line;
-				Type elemType = ClassManager.GetType(pl.Value);
+				var elemType = ClassManager.GetType(pl.Value);
 				if (elemType == null) {
 					elemType = Type.GetType(pl.Value, false, true);
 				}
@@ -69,13 +69,13 @@ namespace SteamEngine.CompiledScripts {
 					throw new SEException("Generic LinkedList element type not recognised.");
 				}
 
-				Type typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);
-				object linkedList = Activator.CreateInstance(typeOfList);
-				Type typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
-				IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, linkedList, count);
+				var typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);
+				var linkedList = Activator.CreateInstance(typeOfList);
+				var typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
+				var linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, linkedList, count);
 
-				for (int i = 0; i < count; i++) {
-					PropsLine valueLine = input.PopPropsLine(i.ToString());
+				for (var i = 0; i < count; i++) {
+					var valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
 					ObjectSaver.Load(valueLine.Value, linkedListWrapper.DelayedLoad_Value, input.Filename, valueLine.Line, i);
 				}
@@ -116,14 +116,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public void DelayedCopy_Value(object o, object index) {
-				int i = (int) index;
+				var i = (int) index;
 				if (!this.loaded[i]) {
 					this.loadedCount++;
 					this.loaded[i] = true;
 				}
 				this.loadedValues[i] = ConvertTools.ConvertTo<T>(o);
 				if (this.loadedCount == this.countToLoad) {
-					foreach (T value in this.loadedValues) {
+					foreach (var value in this.loadedValues) {
 						this.linkedList.AddLast(value);
 					}
 				}
@@ -131,18 +131,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object DeepCopy(object copyFrom) {
-			ICollection copyFromList = (ICollection) copyFrom;
-			int n = copyFromList.Count;
+			var copyFromList = (ICollection) copyFrom;
+			var n = copyFromList.Count;
 
-			Type elemType = copyFrom.GetType().GetGenericArguments()[0];
-			Type typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);
-			ICollection newList = (ICollection) Activator.CreateInstance(typeOfList, n);
+			var elemType = copyFrom.GetType().GetGenericArguments()[0];
+			var typeOfList = typeof(LinkedList<>).MakeGenericType(elemType);
+			var newList = (ICollection) Activator.CreateInstance(typeOfList, n);
 
-			Type typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
-			IHelper linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, newList);
+			var typeOfWrapper = typeof(LinkedListWrapper<>).MakeGenericType(elemType);
+			var linkedListWrapper = (IHelper) Activator.CreateInstance(typeOfWrapper, newList);
 
-			int i = 0;
-			foreach (object o in copyFromList) {
+			var i = 0;
+			foreach (var o in copyFromList) {
 				DeepCopyFactory.GetCopyDelayed(o, linkedListWrapper.DelayedCopy_Value, i);
 				i++;
 			}

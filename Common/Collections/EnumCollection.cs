@@ -38,18 +38,18 @@ namespace SteamEngine.Common {
 		private static EnumItem<T>[] allItems;
 
 		static EnumItem() {
-			T[] allValues = (T[]) Enum.GetValues(typeof(T));
+			var allValues = (T[]) Enum.GetValues(typeof(T));
 
-			int n = allValues.Length;
+			var n = allValues.Length;
 			allItems = new EnumItem<T>[n];
 
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				allItems[i] = new EnumItem<T>(allValues[i]);
 			}
 		}
 
 		private EnumItem(T item) {
-			Type enumType = typeof(T);
+			var enumType = typeof(T);
 			if (enumType.BaseType != typeof(Enum)) {
 				throw new SEException("T must be of type System.Enum");
 			}
@@ -59,9 +59,9 @@ namespace SteamEngine.Common {
 		}
 
 		private static string GetEnumDescription(T value) {
-			FieldInfo fi = typeof(T).GetField(value.ToString());
+			var fi = typeof(T).GetField(value.ToString());
 
-			DescriptionAttribute[] attributes = (DescriptionAttribute[]) fi.GetCustomAttributes(
+			var attributes = (DescriptionAttribute[]) fi.GetCustomAttributes(
 				typeof(DescriptionAttribute), false);
 
 			if (attributes != null && attributes.Length > 0) {

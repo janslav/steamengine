@@ -30,13 +30,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static readonly TagKey previousItemdefValsTK = TagKey.Acquire("_previous_itemdef_values_");
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(gi);
-			CraftmenuCategory cat = (CraftmenuCategory) args[0]; //this is a CraftmenuCategory for setting
+			var dlg = new ImprovedDialog(gi);
+			var cat = (CraftmenuCategory) args[0]; //this is a CraftmenuCategory for setting
 
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
 
-			int innerWidth = (width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE);
+			var innerWidth = (width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE);
 
 			dlg.CreateBackground(width);
 			dlg.SetLocation(80, 50);
@@ -50,38 +50,38 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			//seznam polozek
-			GUTATable mainTable = new GUTATable();
+			var mainTable = new GUTATable();
 			dlg.AddTable(mainTable);
 			dlg.MakeLastTableTransparent();
 
-			int rowCntr = 0;
+			var rowCntr = 0;
 			//precompute some common values:
-			int catRowHgth = Math.Max(ButtonMetrics.D_BUTTON_HEIGHT, GumpDimensions.Table[(int) GumpIDs.Pouch].Height + 2 * ImprovedDialog.D_ICON_SPACE);
-			int offset = ImprovedDialog.TextLength("Weight:  "); //offset for the weight edit field
-			int wghtLen = ImprovedDialog.TextLength("1000"); //just some number length (4 numbers) for the weight input field
-			string resources = "";
-			string skillmake = "";
-			string weight = "";
-			for (int i = firstiVal; i < imax; i++) { //pojedeme pres polozky kategorie ale jen v danem rozsahu co se vejde...
-				ICraftmenuElement elem = cat.Contents[i];
+			var catRowHgth = Math.Max(ButtonMetrics.D_BUTTON_HEIGHT, GumpDimensions.Table[(int) GumpIDs.Pouch].Height + 2 * ImprovedDialog.D_ICON_SPACE);
+			var offset = ImprovedDialog.TextLength("Weight:  "); //offset for the weight edit field
+			var wghtLen = ImprovedDialog.TextLength("1000"); //just some number length (4 numbers) for the weight input field
+			var resources = "";
+			var skillmake = "";
+			var weight = "";
+			for (var i = firstiVal; i < imax; i++) { //pojedeme pres polozky kategorie ale jen v danem rozsahu co se vejde...
+				var elem = cat.Contents[i];
 				if (elem.IsCategory) { //for category element we will just add a category navigating link to the dlg.
-					GUTARow oneRow = new GUTARow(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 0);
+					var oneRow = new GUTARow(1, ButtonMetrics.D_BUTTON_WIDTH, ImprovedDialog.ICON_WIDTH, 0);
 					mainTable.AddRow(oneRow);
 					oneRow.RowHeight = catRowHgth;
 					oneRow[0, 0] = GUTAButton.Builder.Id(5 * i + 10).Valign(DialogAlignment.Valign_Center).Build();
 					oneRow[0, 1] = GUTAImage.Builder.NamedGump(GumpIDs.Pouch).Build();
 					oneRow[0, 2] = GUTAText.Builder.Text(elem.Name).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 				} else {
-					CraftmenuItem itm = (CraftmenuItem) elem;
-					GUTARow oneRow = new GUTARow(1, ButtonMetrics.D_BUTTON_WIDTH, 80, 0);
+					var itm = (CraftmenuItem) elem;
+					var oneRow = new GUTARow(1, ButtonMetrics.D_BUTTON_WIDTH, 80, 0);
 					oneRow.InTableSeparated = false; //the row with item icon won't be separated from the rest of the item info
 					mainTable.AddRow(oneRow);
-					int itmPicRowHgth = Math.Max(ButtonMetrics.D_BUTTON_HEIGHT, GumpDimensions.Table[itm.itemDef.Model].Height + 2 * ImprovedDialog.D_ICON_SPACE);
+					var itmPicRowHgth = Math.Max(ButtonMetrics.D_BUTTON_HEIGHT, GumpDimensions.Table[itm.itemDef.Model].Height + 2 * ImprovedDialog.D_ICON_SPACE);
 					oneRow.RowHeight = itmPicRowHgth;
 					oneRow[0, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(5 * i + 12).Valign(DialogAlignment.Valign_Top).Build(); //link to the itemdef info...
 					oneRow[0, 1] = GUTAImage.Builder.Gump(itm.itemDef.Model).Color(itm.itemDef.Color).Build();
 					oneRow[0, 2] = GUTAText.Builder.Text(itm.Name + "(" + itm.itemDef.PrettyDefname + ")   defname: " + itm.itemDef.Defname).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
-					GUTARow secRow = new GUTARow(3, ButtonMetrics.D_BUTTON_WIDTH, 80, 0);
+					var secRow = new GUTARow(3, ButtonMetrics.D_BUTTON_WIDTH, 80, 0);
 					secRow.InnerRowsDelimited = true; //lines in the row will be separated
 					mainTable.AddRow(secRow);
 					resources = ObjectSaver.Save(itm.itemDef.Resources);
@@ -113,10 +113,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			CraftmenuCategory cat = (CraftmenuCategory) args[0];
-			int btnNo = gr.PressedButton;
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
+			var cat = (CraftmenuCategory) args[0];
+			var btnNo = gr.PressedButton;
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
 
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
@@ -137,10 +137,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						newGi = gi.Cont.Dialog(SingletonScript<D_Craftmenu>.Instance, new DialogArgs(cat));
 						break;
 					case 3: //store the changes on page
-						for (int i = firstiVal; i < imax; i++) {
+						for (var i = firstiVal; i < imax; i++) {
 
-							ICraftmenuElement elem = cat.Contents[i];
-							CraftmenuItem itm = elem as CraftmenuItem;
+							var elem = cat.Contents[i];
+							var itm = elem as CraftmenuItem;
 							if (itm != null) {//set this item's values (but only for items, leave categories)
 								ResourcesList newRes = null;
 								ResourcesList newSkillmake = null;
@@ -166,9 +166,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, cat.Contents.Count, 1)) {
 			} else {
-				int btnNumber = (btnNo - 10) % 5; //on one line we have numbers 10,11,12,13,14 next line is 15,16,17,18 etc.
-				int line = (btnNo - (10 + btnNumber)) / 5;
-				ICraftmenuElement elem = cat.Contents[line];
+				var btnNumber = (btnNo - 10) % 5; //on one line we have numbers 10,11,12,13,14 next line is 15,16,17,18 etc.
+				var line = (btnNo - (10 + btnNumber)) / 5;
+				var elem = cat.Contents[line];
 				Gump newGi = null;
 				switch (btnNumber) {
 					case 0://show the subcategory contents

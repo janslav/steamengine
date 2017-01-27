@@ -114,7 +114,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		public override Node ExitArgsList(Production argsList) {
 			//Console.WriteLine("ExitArgsList "+LScript.GetString(argsList)+" "+argsList.GetChildCount());
 			if (argsList.GetChildCount() >= 1) {
-				Node subnode = argsList.GetChildAt(argsList.GetChildCount() - 1);
+				var subnode = argsList.GetChildAt(argsList.GetChildCount() - 1);
 				if (subnode.GetChildCount() >= 2) {
 					//2 because it is some string and whitespaceassigner
 					if (HasArgsListAsLast(subnode)) {
@@ -125,12 +125,12 @@ namespace SteamEngine.Scripting.Interpretation {
 						return argsList;
 					}
 
-					Production assigner = (Production) ((Production) subnode).PopChildAt(subnode.GetChildCount() - 1); //is no more needed
+					var assigner = (Production) ((Production) subnode).PopChildAt(subnode.GetChildCount() - 1); //is no more needed
 					argsList.children.AddRange(assigner.children);
-					int lastIndex = argsList.children.Count - 1;
-					Node lastNode = argsList.GetChildAt(lastIndex);
+					var lastIndex = argsList.children.Count - 1;
+					var lastNode = argsList.GetChildAt(lastIndex);
 					if (lastNode.GetId() == (int) StrictConstants.ARGS_LIST) {
-						Production subArgsList = (Production) lastNode;
+						var subArgsList = (Production) lastNode;
 						argsList.children.RemoveAt(lastIndex);
 						argsList.children.AddRange(subArgsList.children);
 					}
@@ -140,7 +140,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static bool HasArgsListAsLast(Node node) {
-			Node lastnode = node.GetChildAt(node.GetChildCount() - 1);
+			var lastnode = node.GetChildAt(node.GetChildCount() - 1);
 			if ((lastnode != null)
 					&& (lastnode.GetId() == (int) StrictConstants.WHITE_SPACE_ASSIGNER)) {
 				//Console.WriteLine("I am "+node);

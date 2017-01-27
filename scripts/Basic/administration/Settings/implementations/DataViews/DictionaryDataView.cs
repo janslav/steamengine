@@ -54,8 +54,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			//iterovat budeme nejpozdeji do doby nez dojdou polozky seznamu
 			//(iterovani mozno byt prerusovano kvuli pagingu i jinde...)
-			int i = 0;
-			foreach (object key in ((IDictionary) target).Keys) {
+			var i = 0;
+			foreach (var key in ((IDictionary) target).Keys) {
 				//jsem-li s pocitadlem konecne nad firstLineIndexem, zacinam vracet fieldy
 				if (i >= firstLineIndex) {
 					yield return new IndexKeyValue(key);
@@ -109,12 +109,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				IDictionary dict = (IDictionary) target;
+				var dict = (IDictionary) target;
 				return dict[this.key]; //null or correct value				
 			}
 
 			public override string GetStringValue(object target) {
-				IDictionary dict = (IDictionary) target;
+				var dict = (IDictionary) target;
 				if (dict[this.key] != null) {
 					return ObjectSaver.Save(dict[this.key]);
 				}
@@ -122,13 +122,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override void SetValue(object target, object value) {
-				IDictionary dict = (IDictionary) target;
+				var dict = (IDictionary) target;
 				dict[this.key] = value;
 			}
 
 			public override void SetStringValue(object target, string value) {
-				IDictionary dict = (IDictionary) target;
-				int n = dict.Count;
+				var dict = (IDictionary) target;
+				var n = dict.Count;
 				dict[this.key] = ObjectSaver.Load(value);
 			}
 		}

@@ -19,11 +19,11 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void btnStart_Click(object sender, EventArgs e) {
-			SendServersToStartPacket.GameServerEntry entry = (SendServersToStartPacket.GameServerEntry)
+			var entry = (SendServersToStartPacket.GameServerEntry)
 				this.gameServerEntryBindingSource.Current;
-			BuildType build = (BuildType) this.ddBuild.SelectedValue;
+			var build = (BuildType) this.ddBuild.SelectedValue;
 
-			RequestStartGameServer packet = Pool<RequestStartGameServer>.Acquire();
+			var packet = Pool<RequestStartGameServer>.Acquire();
 			packet.Prepare(entry.Number, build);
 
 			ConsoleClient.ConnectedInstance.Conn.SendSinglePacket(packet);
@@ -32,7 +32,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void gameServerEntryBindingSource_CurrentChanged(object sender, EventArgs e) {
-			SendServersToStartPacket.GameServerEntry entry = (SendServersToStartPacket.GameServerEntry)
+			var entry = (SendServersToStartPacket.GameServerEntry)
 				this.gameServerEntryBindingSource.Current;
 
 			this.btnStart.Enabled = !entry.Running;

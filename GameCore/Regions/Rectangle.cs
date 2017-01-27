@@ -44,22 +44,22 @@ namespace SteamEngine.Regions {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(AbstractInternalItem p) {
-			int px = p.X;
-			int py = p.Y;
+			var px = p.X;
+			var py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(Thing p) {
-			int px = p.X;
-			int py = p.Y;
+			var px = p.X;
+			var py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(Point2D p) {
-			int px = p.X;
-			int py = p.Y;
+			var px = p.X;
+			var py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
@@ -69,8 +69,8 @@ namespace SteamEngine.Regions {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public bool Contains(IPoint2D p) {
-			int px = p.X;
-			int py = p.Y;
+			var px = p.X;
+			var py = p.Y;
 			return ((this.MinX <= px) && (this.MinY <= py) && (this.MaxX >= px) && (this.MaxY >= py));
 		}
 
@@ -168,10 +168,10 @@ namespace SteamEngine.Regions {
 		}
 
 		public static ImmutableRectangle GetIntersection(ImmutableRectangle a, ImmutableRectangle b) {
-			ushort maxStartX = (ushort) Math.Max(a.minX, b.minX);
-			ushort minEndX = (ushort) Math.Min(a.maxX, b.maxX);
-			ushort maxStartY = (ushort) Math.Max(a.minY, b.minY);
-			ushort minEndY = (ushort) Math.Min(a.maxY, b.maxY);
+			var maxStartX = (ushort) Math.Max(a.minX, b.minX);
+			var minEndX = (ushort) Math.Min(a.maxX, b.maxX);
+			var maxStartY = (ushort) Math.Max(a.minY, b.minY);
+			var minEndY = (ushort) Math.Min(a.maxY, b.maxY);
 			if ((minEndX >= maxStartX) && (minEndY >= maxStartY)) {
 				return new ImmutableRectangle(maxStartX, maxStartY, minEndX, minEndY);
 			}

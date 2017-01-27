@@ -79,19 +79,19 @@ namespace SteamEngine.Scripting.Compilation {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
-				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+				var codeCompileUnit = new CodeCompileUnit();
 				if (compiledSHs.Count > 0) {
 					Logger.WriteDebug("Generating compiled ScriptHolders");
 
-					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+					var ns = new CodeNamespace("SteamEngine.CompiledScripts");
 					codeCompileUnit.Namespaces.Add(ns);
 
 					foreach (MemberInfo mi in compiledSHs) {
 						try {
-							SteamFunctionAttribute sfa = Attribute.GetCustomAttribute(mi, typeof(SteamFunctionAttribute)) as SteamFunctionAttribute;
+							var sfa = Attribute.GetCustomAttribute(mi, typeof(SteamFunctionAttribute)) as SteamFunctionAttribute;
 							if (sfa != null) {
-								GeneratedInstance gi = new GeneratedInstance((MethodInfo) mi, sfa);
-								CodeTypeDeclaration ctd = gi.GetGeneratedType();
+								var gi = new GeneratedInstance((MethodInfo) mi, sfa);
+								var ctd = gi.GetGeneratedType();
 								ns.Types.Add(ctd);
 							}
 						} catch (FatalException) {
@@ -121,12 +121,12 @@ namespace SteamEngine.Scripting.Compilation {
 		}
 
 		internal static CodeStatementCollection GenerateMethodInvocation(MethodInfo method, CodeExpression thisInstance, bool thisAsFirstParam) {
-			CodeStatementCollection retVal = new CodeStatementCollection();
+			var retVal = new CodeStatementCollection();
 			//we have "object self" and "ScriptArgs sa"
 
-			ParameterInfo[] pis = method.GetParameters();
-			int n = pis.Length;
-			CodeExpression[] methodParams = new CodeExpression[n];
+			var pis = method.GetParameters();
+			var n = pis.Length;
+			var methodParams = new CodeExpression[n];
 			if (n > 0) {
 
 				retVal.Add(new CodeAssignStatement(
@@ -135,10 +135,10 @@ namespace SteamEngine.Scripting.Compilation {
 						new CodeArgumentReferenceExpression("sa"),
 						"Argv")));
 
-				int paramOffset = thisAsFirstParam ? 0 : -1;
+				var paramOffset = thisAsFirstParam ? 0 : -1;
 
-				for (int i = 0; i < n; i++) {
-					ParameterInfo pi = pis[i];
+				for (var i = 0; i < n; i++) {
+					var pi = pis[i];
 					if ((i == 0) && thisAsFirstParam) {
 						methodParams[i] = CastParameter(pi,
 								new CodeVariableReferenceExpression("self"));
@@ -152,7 +152,7 @@ namespace SteamEngine.Scripting.Compilation {
 						methodParams[i] = p;
 						break;
 					} else {
-						int index = thisAsFirstParam ? i - 1 : i;
+						var index = thisAsFirstParam ? i - 1 : i;
 						methodParams[i] = CastParameter(pi,
 							new CodeArrayIndexerExpression(
 								new CodeVariableReferenceExpression("argv"),
@@ -161,7 +161,7 @@ namespace SteamEngine.Scripting.Compilation {
 				}
 			}
 
-			CodeMethodInvokeExpression cmie = new CodeMethodInvokeExpression(
+			var cmie = new CodeMethodInvokeExpression(
 					thisInstance,
 					method.Name,
 					methodParams);
@@ -179,11 +179,11 @@ namespace SteamEngine.Scripting.Compilation {
 		}
 
 		private static CodeExpression CastParameter(ParameterInfo pi, CodeExpression input) {
-			Type paramType = pi.ParameterType;
+			var paramType = pi.ParameterType;
 			if (ConvertTools.IsNumberType(paramType) || paramType == typeof(DateTime))
 			{
 				if (paramType.IsEnum) {//Enum.ToObject(type, ConvertTo(Enum.GetUnderlyingType(type), obj));
-					Type enumUnderlyingType = Enum.GetUnderlyingType(paramType);
+					var enumUnderlyingType = Enum.GetUnderlyingType(paramType);
 					return new CodeCastExpression(
 						paramType,
 						GetConvertMethod(enumUnderlyingType, input));
@@ -230,7 +230,7 @@ namespace SteamEngine.Scripting.Compilation {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedScriptHolder_" + this.name);
+				var codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedScriptHolder_" + this.name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(CompiledScriptHolder));
 				codeTypeDeclatarion.IsClass = true;
@@ -241,7 +241,7 @@ namespace SteamEngine.Scripting.Compilation {
 			}
 
 			private CodeMemberMethod GenerateConstructor() {
-				CodeConstructor retVal = new CodeConstructor();
+				var retVal = new CodeConstructor();
 				retVal.Attributes = MemberAttributes.Public;
 				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(this.name));
 				retVal.BaseConstructorArgs.Add(new CodePrimitiveExpression(this.desc));
@@ -252,7 +252,7 @@ namespace SteamEngine.Scripting.Compilation {
 			}
 
 			private CodeMemberMethod GenerateRunMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
+				var retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				retVal.Name = "Run";
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "self"));

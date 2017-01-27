@@ -44,7 +44,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			object result;
 			try {
@@ -139,7 +139,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
 				this.args[index] = newNode;
 				return;
@@ -148,19 +148,19 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = this.args.Length;
-			object[] results = new object[argsCount];
+			var argsCount = this.args.Length;
+			var results = new object[argsCount];
 			try {
-				for (int i = 0; i < argsCount; i++) {
+				for (var i = 0; i < argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				var resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				this.field.SetValue(oSelf, resultString);
 				return null;
 			} catch (Exception e) {
@@ -171,7 +171,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		public object TryRun(ScriptVars vars, object[] results) {
 			try {
-				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				var resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				this.field.SetValue(vars.self, resultString);
 				return null;
 			} catch (Exception e) {
@@ -181,7 +181,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("(");
+			var str = new StringBuilder("(");
 			str.AppendFormat("({0} {1}.{2} = (", this.field.FieldType, this.field.DeclaringType, this.field.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
 				str.Append(this.args[i]).Append(", ");

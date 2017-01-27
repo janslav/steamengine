@@ -28,7 +28,7 @@ namespace SteamEngine.Common {
 		}
 
 		protected override IEnumerable<KeyValuePair<string, string>> GetEntriesFromCode() {
-			foreach (FieldInfo fi in typeof(T).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+			foreach (var fi in typeof(T).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 				if (fi.FieldType == typeof(string) && !fi.DeclaringType.IsAbstract) {
 					yield return new KeyValuePair<string, string>(fi.Name,
 						(string) fi.GetValue(this));
@@ -37,7 +37,7 @@ namespace SteamEngine.Common {
 		}
 
 		private static string GetAssemblyTitle(Assembly assembly) {
-			AssemblyTitleAttribute titleAttr = (AssemblyTitleAttribute) Attribute.GetCustomAttribute(assembly, typeof(AssemblyTitleAttribute));
+			var titleAttr = (AssemblyTitleAttribute) Attribute.GetCustomAttribute(assembly, typeof(AssemblyTitleAttribute));
 			if (titleAttr != null) {
 				return titleAttr.Title;
 			}

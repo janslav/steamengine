@@ -38,8 +38,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
-				Character self = (Character) this.Cont;
-				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+				var self = (Character) this.Cont;
+				var spell = (SpellDef) skillSeqArgs.Param1;
 
 				self.Mana += (short) spell.GetManaUse(skillSeqArgs.Tool is SpellScroll);
 			}

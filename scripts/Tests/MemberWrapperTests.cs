@@ -27,18 +27,18 @@ namespace SteamEngine.CompiledScripts {
 		[RegisterWithRunTests]
 		[SteamFunction]
 		public static void RunMWTests() {
-			ConstructorInfo constructor = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetConstructors()[0]);
-			FieldInfo intFi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetField("intField"));
-			FieldInfo objFi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetField("objField"));
-			MethodInfo instanceMi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetMethod("TestInstanceMethod"));
-			MethodInfo staticMi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetMethod("TestStaticMethod"));
+			var constructor = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetConstructors()[0]);
+			var intFi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetField("intField"));
+			var objFi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetField("objField"));
+			var instanceMi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetMethod("TestInstanceMethod"));
+			var staticMi = MemberWrapper.GetWrapperFor(typeof(MemberWrapperTests).GetMethod("TestStaticMethod"));
 
-			MemberWrapperTests instance = (MemberWrapperTests) constructor.Invoke(
+			var instance = (MemberWrapperTests) constructor.Invoke(
 				new object[] { 5, "test" });
 			Sanity.IfTrueThrow(instance.intField != 5, "while testing constructor invoking (intField = " + instance.intField + ")");
 			Sanity.IfTrueThrow(!"test".Equals(instance.objField), "while testing constructor invoking (objField = " + instance.objField + ")");
 
-			int retVal = (int) instanceMi.Invoke(instance, new object[] { 5 });
+			var retVal = (int) instanceMi.Invoke(instance, new object[] { 5 });
 			Sanity.IfTrueThrow(retVal != 10, "while testing instance method invoking");
 
 			retVal = (int) instanceMi.Invoke(instance, new object[] { 5 });
@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 			Sanity.IfTrueThrow(retVal != 321, "while testing valuetype field invoking");
 
 			objFi.SetValue(instance, "foobar");
-			object o = objFi.GetValue(instance);
+			var o = objFi.GetValue(instance);
 			Sanity.IfTrueThrow(!"foobar".Equals(o), "while testing referencetype field invoking");
 		}
 

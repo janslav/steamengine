@@ -5,7 +5,7 @@ using SteamEngine.Common;
 namespace SteamEngine.AuxiliaryServer.SphereServers {
 	public static class SphereCommands {
 		public static void HandleCommand(ConsoleClient console, SphereServerClient sphere, string cmd) {
-			string[] split = cmd.Split(Tools.whitespaceChars);
+			var split = cmd.Split(Tools.whitespaceChars);
 
 			switch (split[0].ToLowerInvariant()) {
 				case "filter":

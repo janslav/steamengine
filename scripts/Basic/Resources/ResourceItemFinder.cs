@@ -92,14 +92,14 @@ namespace SteamEngine.CompiledScripts {
 		//check all items in the specified item if they are among the reslist items in the specified list
 		//can be called recursively (useful for containers :) )
 		private static void CheckItemsInside(Item itm, ItemCounter[] resCountersList) {
-			IEnumerator<AbstractItem> insideItems = itm.GetEnumerator();
+			var insideItems = itm.GetEnumerator();
 			while (insideItems.MoveNext()) {
-				Item oneItem = (Item) insideItems.Current;
+				var oneItem = (Item) insideItems.Current;
 				CheckByCounters(oneItem, resCountersList);
 			}
 			insideItems.Reset(); //reset the enumerator to the beginning
 			while (insideItems.MoveNext()) {
-				Item oneItem = (Item) insideItems.Current;
+				var oneItem = (Item) insideItems.Current;
 				if (oneItem.IsContainer) {
 					//call recursively searching through the items inside this particular container item
 					CheckItemsInside(oneItem, resCountersList);
@@ -114,8 +114,8 @@ namespace SteamEngine.CompiledScripts {
 			if (itm == null) {
 				return;
 			}
-			bool counterAlreadyFound = false;
-			foreach (ItemCounter resCntr in resCountersList) {
+			var counterAlreadyFound = false;
+			foreach (var resCntr in resCountersList) {
 				if (resCntr.IsCorresponding(itm)) {
 					if (counterAlreadyFound) {
 						//if this happens, it means that the Item corresponds to some ItemsCounter 

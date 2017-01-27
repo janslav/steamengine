@@ -40,9 +40,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
-				object oSelf = vars.self;
+				var oSelf = vars.self;
 				vars.self = vars.defaultObject;
 				try {
 					th.SetTag(this.name, this.arg.Run(vars));
@@ -57,7 +57,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
 				th.SetTag(this.name, results[0]);
 			} else {
@@ -83,7 +83,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
 				return th.GetTag(this.name);
 			}
@@ -92,7 +92,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
 				return th.GetTag(this.name);
 			}
@@ -116,7 +116,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
 				th.RemoveTag(this.name);
 			} else {
@@ -127,7 +127,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
 				th.RemoveTag(this.name);
 			} else {
@@ -153,7 +153,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
 				return th.HasTag(this.name);
 			}
@@ -162,7 +162,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			TagHolder th = vars.self as TagHolder;
+			var th = vars.self as TagHolder;
 			if (th != null) {
 				return th.HasTag(this.name);
 			}

@@ -24,11 +24,11 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void _TestArrSave(TagHolder globals) {
-			ArrayList list = new ArrayList();
-			foreach (Thing t in Thing.AllThings) {
+			var list = new ArrayList();
+			foreach (var t in Thing.AllThings) {
 				list.Add(t as Character);
 			}
-			Thing[] arr = (Thing[]) list.ToArray(typeof(Thing));
+			var arr = (Thing[]) list.ToArray(typeof(Thing));
 
 			globals.SetTag(TagKey.Acquire("_testArrayList"), list);
 			globals.SetTag(TagKey.Acquire("_testArray"), arr);

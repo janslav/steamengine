@@ -31,7 +31,7 @@ namespace SteamEngine.AuxiliaryServer {
 			try {
 				Init();
 
-				Thread t = new Thread(delegate() {
+				var t = new Thread(delegate() {
 					Console.ReadLine();
 					exitTokenSource.Cancel();
 				});

@@ -38,7 +38,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -47,18 +47,18 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			object[] results = new object[this.argsCount];
+			var results = new object[this.argsCount];
 
 			try {
-				for (int i = 0; i < this.argsCount; i++) {
+				for (var i = 0; i < this.argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
-			ScriptArgs sa = new ScriptArgs(this.formatString, results);
+			var sa = new ScriptArgs(this.formatString, results);
 			try {
 				return this.function.Run(oSelf, sa);
 			} catch (InterpreterException ie) {
@@ -68,12 +68,12 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			ScriptArgs sa = new ScriptArgs(this.formatString, results);
+			var sa = new ScriptArgs(this.formatString, results);
 			return this.function.TryRun(vars.self, sa);
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("(");
+			var str = new StringBuilder("(");
 			str.AppendFormat("function {0}(", this.function.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
 				str.Append(this.args[i]).Append(", ");

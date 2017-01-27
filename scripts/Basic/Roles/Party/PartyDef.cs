@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static Party NewParty(Character leader) {
-			Party p = (Party) instance.Create(rkParty);
+			var p = (Party) instance.Create(rkParty);
 			RolesManagement.Assign(leader, p);
 			return p;
 		}

@@ -47,7 +47,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
 			state.SetLoginData(this.accName, this.password);
 
-			bool failed = false;
+			var failed = false;
 			if (Settings.CheckUser(this.accName, this.password)) {
 				state.SetLoggedInToAux(true);
 			} else {
@@ -68,12 +68,12 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			List<int> runningServerIniIDs = new List<int>();
-			foreach (GameServer gsc in GameServersManager.AllIdentifiedGameServers) {
+			var runningServerIniIDs = new List<int>();
+			foreach (var gsc in GameServersManager.AllIdentifiedGameServers) {
 				runningServerIniIDs.Add(gsc.Setup.IniID);
 			}
 
-			SendServersToStartPacket packet = Pool<SendServersToStartPacket>.Acquire();
+			var packet = Pool<SendServersToStartPacket>.Acquire();
 			packet.Prepare(Settings.KnownGameServersList, runningServerIniIDs);
 			conn.SendSinglePacket(packet);
 		}
@@ -91,12 +91,12 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			GameServer cli = GameServersManager.GetInstanceByIniID(this.iniID);
+			var cli = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (cli != null) {
 				state.WriteLine(GameUid.AuxServer, "Server already online, ignoring start command.");
 				//server online, we do nothing
 			} else {
-				IGameServerSetup sett = Settings.KnownGameServersList[this.iniID];
+				var sett = Settings.KnownGameServersList[this.iniID];
 				Sanity.IfTrueThrow((this.iniID != sett.IniID), "Server ini ID number is different from it's index in list");
 
 				sett.StartGameServerProcess(this.build);
@@ -122,7 +122,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 					return;
 				}
 			} else {
-				GameServer cli = GameServersManager.GetInstanceByUid((GameUid) this.id);
+				var cli = GameServersManager.GetInstanceByUid((GameUid) this.id);
 				if (cli != null) {					
 					if (GameServersManager.IsLoggedIn(state, cli)) {
 						cli.SendCommand(state, this.command);

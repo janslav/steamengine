@@ -84,7 +84,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		#region Receieve
 
 		private void BeginReceive() {
-			byte[] buffer = this.receivingBuffer.bytes;
+			var buffer = this.receivingBuffer.bytes;
 
 			this.socket.BeginReceive(buffer, 0,
 				buffer.Length, SocketFlags.None, this.beginReceiveCallback, null);
@@ -93,7 +93,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private void BeginReceieveCallback(IAsyncResult asyncResult) {
 			try {
 				if ((this.socket != null) && (this.socket.Handle != IntPtr.Zero)) {
-					int length = this.socket.EndReceive(asyncResult);
+					var length = this.socket.EndReceive(asyncResult);
 
 					if (length > 0) {
 						//we have new data
@@ -115,7 +115,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		static Regex loggedinRE = new Regex(@"(Login '(?<username>.+?)')|(?<badPass>Bad password for this account\.)|(?<inuse>Account already in use\.)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
 		private void ProcessReceievedData(int length) {
-			StreamReader reader = new StreamReader(new MemoryStream(this.receivingBuffer.bytes, 0, length), Encoding.Default);
+			var reader = new StreamReader(new MemoryStream(this.receivingBuffer.bytes, 0, length), Encoding.Default);
 
 			this.receivingMode(reader);
 		}
@@ -123,7 +123,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private void ModeNotLoggedIn(TextReader reader) {
 			string line;
 			while ((line = reader.ReadLine()) != null) {
-				Match m = loggedinRE.Match(line);
+				var m = loggedinRE.Match(line);
 				if (m.Success) {
 					if (m.Groups["badPass"].Value.Length > 0) {
 						this.state.On_LoginSequenceFinished(LoginResult.BadPassword);
@@ -160,7 +160,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private void ModeCommandReply(TextReader reader) {
 			if (this.commandResponders.Count > 0) {
-				List<string> list = new List<string>();
+				var list = new List<string>();
 				string line;
 				while ((line = reader.ReadLine()) != null) { //timestamped lines are not part of the command response
 					line = line.Trim();
@@ -196,10 +196,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		public void BeginSend(string message) {
 			try {
 				if (this.IsConnected) {
-					Buffer buffer = Pool<Buffer>.Acquire();
+					var buffer = Pool<Buffer>.Acquire();
 
 					message = message + "\n";
-					int len = Encoding.Default.GetBytes(message, 0, message.Length, buffer.bytes, 0);
+					var len = Encoding.Default.GetBytes(message, 0, message.Length, buffer.bytes, 0);
 
 					SocketError err;
 					this.socket.BeginSend(buffer.bytes, 0, len, SocketFlags.None, out err, this.beginSendCallback, buffer);
@@ -214,7 +214,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void BeginSendCallback(IAsyncResult asyncResult) {
-			Buffer toDispose = (Buffer) asyncResult.AsyncState;
+			var toDispose = (Buffer) asyncResult.AsyncState;
 
 			try {
 				SocketError err;

@@ -35,8 +35,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 450;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			Region reg = (Region) args.GetTag(regionTK);
-			List<MutableRectangle> rectList = (List<MutableRectangle>) args.GetTag(rectsListTK);
+			var reg = (Region) args.GetTag(regionTK);
+			var rectList = (List<MutableRectangle>) args.GetTag(rectsListTK);
 			if (rectList == null) {
 				//vezmeme je z regionu
 				rectList = MutableRectangle.TakeRectsFromRegion(reg);
@@ -44,10 +44,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, rectList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, rectList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(25, 25);
@@ -80,9 +80,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				MutableRectangle rect = rectList[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var rect = rectList[i];
 
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + (2 * i)).Build(); //editovat
 				dlg.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(11 + (2 * i)).Build(); //smazat
@@ -108,9 +108,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
-			StaticRegion reg = (StaticRegion) args.GetTag(regionTK);
-			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(rectsListTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var reg = (StaticRegion) args.GetTag(regionTK);
+			var rectsList = (List<MutableRectangle>) args.GetTag(rectsListTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 				switch (gr.PressedButton) {
 					case 0: //exit
@@ -118,9 +118,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 1: //zalozit novy rectangle
 						//nemazat rectangly - budeme do nich ukladat novy						
-						DialogArgs newArgs = new DialogArgs(0, 0, 0, 0);//zakladni souradnice rectanglu
+						var newArgs = new DialogArgs(0, 0, 0, 0);//zakladni souradnice rectanglu
 						newArgs.SetTag(rectsListTK, rectsList); //seznam budeme potrebovat
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, newArgs);
+						var newGi = gi.Cont.Dialog(SingletonScript<D_New_Rectangle>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //ulozit
@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 							//zobrazime info a zmizime (z infa bude navrat k predchozimu dlg neb tento nestackneme)
 							break;
 						} //nekde to neproslo
-						Gump infoGi = D_Display_Text.ShowError("Ukládání rectanglù skonèilo s chybami - viz konzole!");
+						var infoGi = D_Display_Text.ShowError("Ukládání rectanglù skonèilo s chybami - viz konzole!");
 						DialogStacking.EnstackDialog(gi, infoGi); //vlozime dialog do stacku pro navrat						
 						break;
 					//pokud to nekde spadne, tak to uvidime v konzoli - to uz je zavazny problem a nesmi to jen tak projit! (=nechytam vyjimku)
@@ -144,9 +144,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, rectsList.Count, 1)) {//kliknuto na paging?
 			} else {
 				//zjistime si radek a cudlik v nem
-				int row = (gr.PressedButton - 10) / 2;
-				int buttNo = (gr.PressedButton - 10) % 2;
-				MutableRectangle rect = rectsList[row];
+				var row = (gr.PressedButton - 10) / 2;
+				var buttNo = (gr.PressedButton - 10) % 2;
+				var rect = rectsList[row];
 				Gump newGi;
 				switch (buttNo) {
 					case 0: //region rectangle info

@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_DClick(AbstractCharacter ac) {
-			Player p = ac as Player;
+			var p = ac as Player;
 			if (p.IsGM) {
 				this.Dialog(ac, SingletonScript<D_TreasureChest>.Instance);
 			} else {
@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts {
 					}*/
 					int per;
 					//removeGuts of the container so that in the treasure will be just those items I really want to..
-					foreach (TreasureItemEntry tie in this.treasureItems) {
+					foreach (var tie in this.treasureItems) {
 						if (tie.periodic > 0) {
 							per = (int) (this.GetLastopenTimeDifference() /this.cycleTime) * tie.periodic;
 							p.SysMessage("Periode is counted as: " + per);
@@ -83,8 +83,8 @@ namespace SteamEngine.CompiledScripts {
 						} else {
 							per = 1;
 						}
-						for (int i = 0; i < tie.amount; i++) {
-							for (int j = 0; j < per; j++) {	//periodes
+						for (var i = 0; i < tie.amount; i++) {
+							for (var j = 0; j < per; j++) {	//periodes
 								if (tie.chance > 0) {	// zero chance equals 100% chance...
 									if (!(tie.chance > Globals.dice.Next(0, 99))) {	//chance failed
 										continue;
@@ -209,7 +209,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Adds new item into TreasureItem List</summary>
 		public void AddTreasureItem(ItemDef item, int amount, int chance, int periodic) {
 			this.EnsureListItemEntry();
-			TreasureItemEntry newItem = new TreasureItemEntry();
+			var newItem = new TreasureItemEntry();
 			newItem.itemID = item;
 			newItem.amount = amount;
 			newItem.chance = chance;
@@ -241,7 +241,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Adds new item into treasureSpawns List</summary>
 		public void AddTreasureSpawn(CharacterDef charDef, int amount) {
 			this.EnsureListSpawnEntry();
-			TreasureSpawnEntry newSpawn = new TreasureSpawnEntry();
+			var newSpawn = new TreasureSpawnEntry();
 			newSpawn.charDef = charDef;
 			newSpawn.amount = amount;
 			this.treasureSpawns.Add(newSpawn);
@@ -314,8 +314,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_TreasureChest : CompiledGumpDef {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
-			TreasureChest treasure = focus as TreasureChest;
+			var dialogHandler = new ImprovedDialog(gi);
+			var treasure = focus as TreasureChest;
 			treasure.EnsureListItemEntry();
 			treasure.EnsureListSpawnEntry();
 			dialogHandler.CreateBackground(300);
@@ -378,9 +378,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			TreasureChest treasure = (TreasureChest) gi.Focus;
-			Player p = gi.Cont as Player;
-			int button = gr.PressedButton;
+			var treasure = (TreasureChest) gi.Focus;
+			var p = gi.Cont as Player;
+			var button = gr.PressedButton;
 			switch (gr.PressedButton) {
 				case 0:	// cancel
 					p.SysMessage("Nastaveni zustava nezmeneno.");
@@ -458,11 +458,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_TreasureBounty : CompiledGumpDef {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
-			TreasureChest treasure = focus as TreasureChest;
-			List<TreasureItemEntry> trItems = (focus as TreasureChest).TreasureItems;
-			int rowCount = treasure.TreasureItems.Count;
-			int i = 0;
+			var dialogHandler = new ImprovedDialog(gi);
+			var treasure = focus as TreasureChest;
+			var trItems = (focus as TreasureChest).TreasureItems;
+			var rowCount = treasure.TreasureItems.Count;
+			var i = 0;
 			//TreasureChest treasure = focus as TreasureChest;
 			dialogHandler.CreateBackground(500);
 			dialogHandler.SetLocation(70, 50);
@@ -482,7 +482,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			// Second row
 			dialogHandler.AddTable(new GUTATable(rowCount, 220, 70, 70, 80, ButtonMetrics.D_BUTTON_WIDTH));
-			foreach (TreasureItemEntry tie in trItems) {
+			foreach (var tie in trItems) {
 				dialogHandler.LastTable[i, 0] = GUTAInput.Builder.Id((i * 10) + 1).Text(tie.itemID.PrettyDefname).Build();
 				dialogHandler.LastTable[i, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((i * 10) + 2).Text(tie.amount.ToString()).Build();
 				dialogHandler.LastTable[i, 2] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((i * 10) + 3).Text(tie.chance.ToString()).Build();
@@ -501,21 +501,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			Player p = gi.Cont as Player;
-			TreasureChest treasure = (TreasureChest) gi.Focus;
+			var p = gi.Cont as Player;
+			var treasure = (TreasureChest) gi.Focus;
 			switch (gr.PressedButton) {
 				case 0:	//exit
 					p.SysMessage("Nastavení nezmìnìno.");
 					break;
 				default:
-					bool err = false;
+					var err = false;
 					string thisDef;
 					ItemDef thisItem;
-					int ignore = -1;					// variable ignore has assigned a safe value, which garantees that all values will be modified
+					var ignore = -1;					// variable ignore has assigned a safe value, which garantees that all values will be modified
 					if (gr.PressedButton > 2) {	// not OK or add button - i.e. removing button
 						ignore = Convert.ToInt32(gr.PressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
 					}
-					for (int i = 0; i < treasure.TreasureItems.Count; i++) {
+					for (var i = 0; i < treasure.TreasureItems.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
 							thisItem = ThingDef.GetByDefname(thisDef) as ItemDef;
@@ -563,11 +563,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_TreasureSpawns : CompiledGumpDef {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
-			List<TreasureSpawnEntry> trSpawns = ((TreasureChest) focus).TreasureSpawns;
-			TreasureChest treasure = focus as TreasureChest;
-			int rowCount = treasure.TreasureSpawns.Count;
-			int i = 0;
+			var dialogHandler = new ImprovedDialog(gi);
+			var trSpawns = ((TreasureChest) focus).TreasureSpawns;
+			var treasure = focus as TreasureChest;
+			var rowCount = treasure.TreasureSpawns.Count;
+			var i = 0;
 			//TreasureChest treasure = focus as TreasureChest;
 			dialogHandler.CreateBackground(430);
 			dialogHandler.SetLocation(70, 50);
@@ -585,7 +585,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			// Second row
 			dialogHandler.AddTable(new GUTATable(rowCount, 300, 70, ButtonMetrics.D_BUTTON_WIDTH));
-			foreach (TreasureSpawnEntry tse in trSpawns) {
+			foreach (var tse in trSpawns) {
 				dialogHandler.LastTable[i, 0] = GUTAInput.Builder.Id((i * 10) + 1).Text(tse.charDef.PrettyDefname).Build();
 				dialogHandler.LastTable[i, 1] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((i * 10) + 2).Text(tse.amount.ToString()).Build();
 				dialogHandler.LastTable[i, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(10 + i).Build();
@@ -602,21 +602,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			Player p = gi.Cont as Player;
-			TreasureChest treasure = (TreasureChest) gi.Focus;
+			var p = gi.Cont as Player;
+			var treasure = (TreasureChest) gi.Focus;
 			switch (gr.PressedButton) {
 				case 0:	//Cancel
 					p.SysMessage("Nastavení nezmìnìno.");
 					break;
 				default:
-					bool err = false;
+					var err = false;
 					string thisDef;
 					CharacterDef thisChar;
-					int ignore = -1;					// a safe value was assigned to the variable ignore, which garantees that all values will be modified
+					var ignore = -1;					// a safe value was assigned to the variable ignore, which garantees that all values will be modified
 					if (gr.PressedButton > 2) {	// not OK or Add button - i.e. removing button
 						ignore = Convert.ToInt32(gr.PressedButton) - 10;	// item with this index will be removed anyway, so we'll skip it's modifications
 					}
-					for (int i = 0; i < treasure.TreasureSpawns.Count; i++) {
+					for (var i = 0; i < treasure.TreasureSpawns.Count; i++) {
 						if (i != ignore) {
 							thisDef = gr.GetTextResponse(i * 10 + 1);
 							thisChar = ThingDef.GetByDefname(thisDef) as CharacterDef;

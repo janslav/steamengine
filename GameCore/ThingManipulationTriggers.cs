@@ -36,16 +36,16 @@ namespace SteamEngine {
 			if (this.IsPlayer) {
 				throw new SEException("You can not dupe a PC!");
 			}
-			Thing copy = (Thing) DeepCopyFactory.GetCopy(this);
+			var copy = (Thing) DeepCopyFactory.GetCopy(this);
 
-			AbstractItem copyAsItem = copy as AbstractItem;
+			var copyAsItem = copy as AbstractItem;
 			if (copyAsItem != null) {
-				Thing cont = this.Cont;
+				var cont = this.Cont;
 				if (cont == null) {
 					MarkAsLimbo(copyAsItem);
 					copyAsItem.Trigger_EnterRegion(this.point4d.x, this.point4d.y, this.point4d.z, this.point4d.m);
 				} else {
-					AbstractItem contItem = cont as AbstractItem;
+					var contItem = cont as AbstractItem;
 					if (contItem == null) {
 						MarkAsLimbo(copyAsItem);
 						copyAsItem.Trigger_EnterChar((AbstractCharacter) cont, this.point4d.z);
@@ -63,9 +63,9 @@ namespace SteamEngine {
 
 		//duplicating some code here, but hey... who will know ;)
 		private AbstractItem Dupe(Thing cont) {
-			AbstractItem copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
+			var copy = (AbstractItem) DeepCopyFactory.GetCopy(this);
 
-			AbstractItem contItem = cont as AbstractItem;
+			var contItem = cont as AbstractItem;
 			if (contItem == null) {
 				MarkAsLimbo(copy);
 				copy.Trigger_EnterChar((AbstractCharacter) cont, this.point4d.z);
@@ -116,7 +116,7 @@ namespace SteamEngine {
 		public override Thing Cont {
 			get {
 				this.ThrowIfDeleted();
-				ThingLinkedList list = this.contOrTLL as ThingLinkedList;
+				var list = this.contOrTLL as ThingLinkedList;
 				if ((list != null) && (list.ContAsThing != null)) {
 					return list.ContAsThing;
 				}
@@ -128,10 +128,10 @@ namespace SteamEngine {
 					throw new SEException("value is null");
 				}
 
-				AbstractItem contItem = value as AbstractItem;
+				var contItem = value as AbstractItem;
 				if (contItem == null) {
 					if (this.IsEquippable) {
-						int layer = this.Layer;
+						var layer = this.Layer;
 						if (layer > 0) {
 							this.MakeLimbo();
 							this.Trigger_EnterChar((AbstractCharacter) value, layer);
@@ -160,11 +160,11 @@ namespace SteamEngine {
 				this.RemoveFromView();
 				ItemSyncQueue.AboutToChange(this);
 
-				Thing cont = this.Cont;
+				var cont = this.Cont;
 				if (cont == null) {
 					this.Trigger_LeaveGround();
 				} else {
-					AbstractItem contItem = cont as AbstractItem;
+					var contItem = cont as AbstractItem;
 					if (contItem == null) {
 						this.Trigger_LeaveChar((AbstractCharacter) cont);
 					} else {
@@ -179,9 +179,9 @@ namespace SteamEngine {
 		private void Trigger_LeaveItem(AbstractItem cont) {
 			Sanity.IfTrueThrow(cont != this.Cont, "this not in cont.");
 
-			ItemInItemArgs args = new ItemInItemArgs(this, cont);
-			ushort x = this.point4d.x;
-			ushort y = this.point4d.y;
+			var args = new ItemInItemArgs(this, cont);
+			var x = this.point4d.x;
+			var y = this.point4d.y;
 			this.TryTrigger(TriggerKey.leaveItem, args);
 			this.ReturnIntoItemIfNeeded(cont, x, y);
 			try {
@@ -211,7 +211,7 @@ namespace SteamEngine {
 			Sanity.IfTrueThrow(cont != this.Cont, "this not in cont.");
 
 			int layer = this.point4d.z;
-			ItemInCharArgs args = new ItemInCharArgs(this, cont, layer);
+			var args = new ItemInCharArgs(this, cont, layer);
 
 			if (this.IsEquippable && this.Layer == layer) {
 				this.TryTrigger(TriggerKey.unEquip, args);
@@ -261,10 +261,10 @@ namespace SteamEngine {
 			Sanity.IfTrueThrow(this.Cont != null, "this not on ground.");
 
 			if (Map.IsValidPos(this)) {
-				Point4D point = new Point4D(this.point4d);
-				Map map = Map.GetMap(point.M);
-				Region region = map.GetRegionFor(point.X, point.Y);
-				ItemOnGroundArgs args = new ItemOnGroundArgs(this, region, point);
+				var point = new Point4D(this.point4d);
+				var map = Map.GetMap(point.M);
+				var region = map.GetRegionFor(point.X, point.Y);
+				var args = new ItemOnGroundArgs(this, region, point);
 
 				this.TryTrigger(TriggerKey.leaveRegion, args);
 				this.ReturnOnGroundIfNeeded(point);
@@ -305,7 +305,7 @@ namespace SteamEngine {
 			cont.InternalItemEnter(this);
 			this.point4d.SetXY(x, y);
 
-			ItemInItemArgs args = new ItemInItemArgs(this, cont);
+			var args = new ItemInItemArgs(this, cont);
 			this.TryTrigger(TriggerKey.enterItem, args);
 			this.ReturnIntoItemIfNeeded(cont, x, y);
 			try {
@@ -322,7 +322,7 @@ namespace SteamEngine {
 
 		internal void InternalItemEnter(AbstractItem i) {
 			this.InvalidateAosToolTips();
-			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
+			var tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				tll = new ThingLinkedList(this);
 				this.contentsOrComponents = tll;
@@ -337,9 +337,9 @@ namespace SteamEngine {
 			Sanity.IfTrueThrow(!this.IsContainer, "TryStackToAnyInside can only be called on a container");
 			Sanity.IfTrueThrow(toStack.Cont != this, "TryStackToAnyInside parameter item must be in the container it's called on");
 
-			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
+			var tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
-				AbstractItem stackWith = (AbstractItem) tll.firstThing;
+				var stackWith = (AbstractItem) tll.firstThing;
 				while (stackWith != null) {
 					if (stackWith != toStack) {
 						if (this.Trigger_StackInCont(toStack, stackWith)) {
@@ -368,16 +368,16 @@ namespace SteamEngine {
 
 			if (CouldBeStacked(toStack, waitingStack)) {
 				//Amount overflow checking:
-				int tmpAmount = waitingStack.Amount;
+				var tmpAmount = waitingStack.Amount;
 				try {
 					tmpAmount = checked(tmpAmount + toStack.Amount);
 				} catch (OverflowException) {
 					return false;
 				}
 
-				ushort toStackX = toStack.point4d.x;
-				ushort toStackY = toStack.point4d.y;
-				ItemStackArgs args = new ItemStackArgs(toStack, waitingStack);
+				var toStackX = toStack.point4d.x;
+				var toStackY = toStack.point4d.y;
+				var args = new ItemStackArgs(toStack, waitingStack);
 
 				var result = toStack.TryCancellableTrigger(TriggerKey.stackOnItem, args);
 				toStack.ReturnIntoItemIfNeeded(this, toStackX, toStackY);
@@ -414,15 +414,15 @@ namespace SteamEngine {
 			if (CouldBeStacked(toStack, waitingStack)) {
 
 				//Amount overflow checking:
-				int tmpAmount = waitingStack.Amount;
+				var tmpAmount = waitingStack.Amount;
 				try {
 					tmpAmount = checked(tmpAmount + toStack.Amount);
 				} catch (OverflowException) {
 					return false;
 				}
 
-				Point4D toStackPoint = toStack.P();
-				ItemStackArgs args = new ItemStackArgs(toStack, waitingStack);
+				var toStackPoint = toStack.P();
+				var args = new ItemStackArgs(toStack, waitingStack);
 
 				var result = toStack.TryCancellableTrigger(TriggerKey.stackOnItem, args);
 				toStack.ReturnOnGroundIfNeeded(toStackPoint);
@@ -461,7 +461,7 @@ namespace SteamEngine {
 
 			cont.InternalItemEnter(this, layer);
 
-			ItemInCharArgs args = new ItemInCharArgs(this, cont, layer);
+			var args = new ItemInCharArgs(this, cont, layer);
 
 			//do we really want this?
 			if (this.IsEquippable && this.Layer == layer) {
@@ -505,10 +505,10 @@ namespace SteamEngine {
 
 			this.point4d.SetXYZM(x, y, z, m);
 
-			Map map = Map.GetMap(m);
-			Region region = map.GetRegionFor(x, y);
-			Point4D point = new Point4D(x, y, z, m);
-			ItemOnGroundArgs args = new ItemOnGroundArgs(this, region, point);
+			var map = Map.GetMap(m);
+			var region = map.GetRegionFor(x, y);
+			var point = new Point4D(x, y, z, m);
+			var args = new ItemOnGroundArgs(this, region, point);
 			map.Add(this);
 
 			this.TryTrigger(TriggerKey.enterRegion, args);
@@ -595,7 +595,7 @@ namespace SteamEngine {
 			Drop this item on the ground.
 		*/
 		public void Drop() {
-			Thing cont = this.Cont;
+			var cont = this.Cont;
 			if (cont != null) {
 				this.P(cont.TopPoint);
 			}
@@ -605,14 +605,14 @@ namespace SteamEngine {
 		internal sealed override void ItemMakeLimbo(AbstractItem i) {
 			Sanity.IfTrueThrow(this != i.Cont, "i not in this.");
 
-			ThingLinkedList tll = (ThingLinkedList) i.contOrTLL;
+			var tll = (ThingLinkedList) i.contOrTLL;
 			tll.Remove(i);
 			this.InvalidateAosToolTips();//changing Count
 			this.AdjustWeight(-i.Weight);
 		}
 
 		public void MoveInsideContainer(int x, int y) {
-			AbstractItem i = this.Cont as AbstractItem;
+			var i = this.Cont as AbstractItem;
 			if (i != null) {
 				int minX, minY, maxX, maxY;
 				i.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
@@ -636,9 +636,9 @@ namespace SteamEngine {
 		}
 
 		private void MakePositionInContLegal() {
-			AbstractItem i = this.Cont as AbstractItem;
+			var i = this.Cont as AbstractItem;
 			if (i != null) {
-				MutablePoint4D p = this.point4d;
+				var p = this.point4d;
 
 				int minX, minY, maxX, maxY;
 				i.GetContainerGumpBoundaries(out minX, out minY, out maxX, out maxY);
@@ -668,7 +668,7 @@ namespace SteamEngine {
 				return;
 			}
 			if (this.Cont == null) {
-				Thing t = resolvedObj as Thing;
+				var t = resolvedObj as Thing;
 				if (t != null)
 				{
 					if ((t.IsChar) && (this.IsEquippable)) {
@@ -767,7 +767,7 @@ namespace SteamEngine {
 		//should we add reference to the player?
 		internal void Trigger_SplitFromStack(AbstractItem stack) {
 
-			ScriptArgs args = new ScriptArgs(stack);
+			var args = new ScriptArgs(stack);
 			this.TryTrigger(TriggerKey.splitFromStack, args);
 
 			try {
@@ -787,7 +787,7 @@ namespace SteamEngine {
 			if (this.draggingLayer == i) {
 				this.draggingLayer = null;
 			} else {
-				ThingLinkedList tll = (ThingLinkedList) i.contOrTLL;
+				var tll = (ThingLinkedList) i.contOrTLL;
 				tll.Remove(i);
 			}
 
@@ -801,26 +801,26 @@ namespace SteamEngine {
 
 			if (layer != (int) LayerNames.Special) {
 				if ((layer == (int) LayerNames.Hand1) || (layer == (int) LayerNames.Hand2)) {
-					bool twoHanded = i.IsTwoHanded;
-					AbstractItem h1 = this.FindLayer(LayerNames.Hand1);
+					var twoHanded = i.IsTwoHanded;
+					var h1 = this.FindLayer(LayerNames.Hand1);
 					if (h1 != null) {
 						if (twoHanded || (layer == (int) LayerNames.Hand1) || h1.IsTwoHanded) {
-							MutablePoint4D p = this.point4d;
+							var p = this.point4d;
 							h1.P(p.x, p.y, p.z, p.m);
 						}
 					}
-					AbstractItem h2 = this.FindLayer(LayerNames.Hand2);
+					var h2 = this.FindLayer(LayerNames.Hand2);
 					if (h2 != null) {
 						if (twoHanded || (layer == (int) LayerNames.Hand2) || h2.IsTwoHanded) {
-							MutablePoint4D p = this.point4d;
+							var p = this.point4d;
 							h2.P(p.x, p.y, p.z, p.m);
 						}
 					}
 				} else {
 					//unequip what's in there and throw it on ground.
-					AbstractItem prevItem = this.FindLayer(layer);
+					var prevItem = this.FindLayer(layer);
 					if (prevItem != null) {
-						MutablePoint4D p = this.point4d;
+						var p = this.point4d;
 						prevItem.P(p.x, p.y, p.z, p.m);
 					}
 					Sanity.IfTrueThrow(this.FindLayer(layer) != null, "Layer " + layer + " is supposed to be empty after it's contents was removed.");
@@ -855,7 +855,7 @@ namespace SteamEngine {
 		}
 
 		internal void AddLoadedItem(AbstractItem item) {
-			int layer = item.Z;
+			var layer = item.Z;
 			MarkAsLimbo(item);
 			this.InternalItemEnter(item, layer);
 		}
@@ -898,7 +898,7 @@ namespace SteamEngine {
 		}
 
 		public override AbstractItem FindCont(int index) {
-			int counter = 0;
+			var counter = 0;
 			int prevCounter;
 			if (this.visibleLayers != null) {
 				counter = this.visibleLayers.count;
@@ -940,18 +940,18 @@ namespace SteamEngine {
 		/// </summary>
 		/// <returns>True if it is dragging no item after the method passes.</returns>
 		public bool TryGetRidOfDraggedItem() {
-			AbstractItem i = this.draggingLayer;
+			var i = this.draggingLayer;
 			if (i != null) {
-				DenyResult result = this.TryPutItemOnItem(this.GetBackpack());
+				var result = this.TryPutItemOnItem(this.GetBackpack());
 				if (!result.Allow && this.draggingLayer == i) {//can't put item in his own pack? unprobable but possible.
-					GameState state = this.GameState;
+					var state = this.GameState;
 					TcpConnection<GameState> conn = null;
 					if (state != null) {
 						conn = state.Conn;
 						result.SendDenyMessage(this, state, conn);
 					}
 
-					MutablePoint4D point = this.point4d;
+					var point = this.point4d;
 					result = this.TryPutItemOnGround(point.x, point.y, point.z);
 
 					if (!result.Allow && this.draggingLayer == i) {//can't even put item on ground?
@@ -968,7 +968,7 @@ namespace SteamEngine {
 		}
 
 		private void SendMovingItemAnimation(IPoint4D from, IPoint4D to, AbstractItem i) {
-			DraggingOfItemOutPacket p = Pool<DraggingOfItemOutPacket>.Acquire();
+			var p = Pool<DraggingOfItemOutPacket>.Acquire();
 			p.Prepare(from, to, i);
 			GameServer.SendToClientsWhoCanSee(this, p);
 		}
@@ -986,7 +986,7 @@ namespace SteamEngine {
 				return DenyResultMessages.Deny_YouAreAlreadyHoldingAnItem;
 			}
 
-			DenyResult result = this.CanPickup(item);
+			var result = this.CanPickup(item);
 
 			//equip into dragging layer
 			if (result.Allow) {
@@ -1022,9 +1022,9 @@ namespace SteamEngine {
 				oldPoint = null;
 			}
 
-			int amountSum = item.Amount;
+			var amountSum = item.Amount;
 			if (!item.IsEquipped && amountToPick < amountSum) {
-				AbstractItem dupedItem = (AbstractItem) item.Dupe();
+				var dupedItem = (AbstractItem) item.Dupe();
 				dupedItem.Amount = (amountSum - amountToPick);
 				item.Amount = amountToPick;
 				item.Trigger_SplitFromStack(dupedItem);
@@ -1039,7 +1039,7 @@ namespace SteamEngine {
 
 		public DenyResult CanPickup(AbstractItem item) {
 			TriggerResult triggerResult;
-			DenyResult denyResult = this.Trigger_DenyPickupItem(item, out triggerResult);
+			var denyResult = this.Trigger_DenyPickupItem(item, out triggerResult);
 			//default implementation, can be skipped by returning true (cancelling)
 			if (triggerResult != TriggerResult.Cancel && (denyResult.Allow)) {
 				return this.CanReach(item);
@@ -1049,7 +1049,7 @@ namespace SteamEngine {
 
 		private DenyResult Trigger_DenyPickupItem(AbstractItem item, out TriggerResult result) {
 			//@deny triggers
-			DenyPickupArgs args = new DenyPickupArgs(this, item);
+			var args = new DenyPickupArgs(this, item);
 
 			result = this.TryCancellableTrigger(TriggerKey.denyPickupItem, args);
 			if (result != TriggerResult.Cancel) {
@@ -1064,9 +1064,9 @@ namespace SteamEngine {
 						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 						if (result != TriggerResult.Cancel) {
-							Thing c = item.Cont;
+							var c = item.Cont;
 							if (c != null) {
-								AbstractItem contItem = c as AbstractItem;
+								var contItem = c as AbstractItem;
 								if (contItem != null) {
 									result = contItem.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
 									if (result != TriggerResult.Cancel) {
@@ -1075,7 +1075,7 @@ namespace SteamEngine {
 										} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 									}
 								} else {
-									AbstractCharacter contChar = (AbstractCharacter) c;
+									var contChar = (AbstractCharacter) c;
 									result = contChar.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args);
 									if (result != TriggerResult.Cancel) {
 										try {
@@ -1084,8 +1084,8 @@ namespace SteamEngine {
 									}
 								}
 							} else {
-								MutablePoint4D p = item.point4d;
-								Region region = Map.GetMap(p.m).GetRegionFor(p.x, p.y);
+								var p = item.point4d;
+								var region = Map.GetMap(p.m).GetRegionFor(p.x, p.y);
 								region.Trigger_DenyPickupItemFrom(args);
 							}
 						}
@@ -1102,14 +1102,14 @@ namespace SteamEngine {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
 
-			AbstractItem item = this.draggingLayer;
+			var item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + targetCont + "'");
 			}
 			item.ThrowIfDeleted();
 
 			if (targetCont.IsContainer) {
-				DenyPutInItemArgs args = new DenyPutInItemArgs(this, item, targetCont);
+				var args = new DenyPutInItemArgs(this, item, targetCont);
 
 				var result = this.TryCancellableTrigger(TriggerKey.denyPutItemInItem, args);
 				if (result != TriggerResult.Cancel) {
@@ -1134,7 +1134,7 @@ namespace SteamEngine {
 					}
 				}
 
-				DenyResult retVal = args.Result;
+				var retVal = args.Result;
 
 				if (result != TriggerResult.Cancel && (retVal.Allow)) {
 					retVal = OpenedContainers.HasContainerOpen(this, targetCont);
@@ -1163,7 +1163,7 @@ namespace SteamEngine {
 			this.ThrowIfDeleted();
 			targetCont.ThrowIfDeleted();
 
-			AbstractItem item = this.draggingLayer;
+			var item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + targetCont + "'");
 			}
@@ -1205,7 +1205,7 @@ namespace SteamEngine {
 		public DenyResult TryPutItemOnItem(AbstractItem target) {
 			this.ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem item = this.draggingLayer;
+			var item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
@@ -1216,12 +1216,12 @@ namespace SteamEngine {
 				target.GetRandomXYInside(out x, out y);
 				return this.TryPutItemInItem(target, x, y, true);
 			} else {
-				Thing cont = target.Cont;
+				var cont = target.Cont;
 				if (cont != null) {
-					AbstractItem contAsItem = cont as AbstractItem;
+					var contAsItem = cont as AbstractItem;
 					if (contAsItem != null) {
-						MutablePoint4D point = target.point4d;
-						DenyResult result = this.TryPutItemInItem(contAsItem, point.x, point.y, false);
+						var point = target.point4d;
+						var result = this.TryPutItemInItem(contAsItem, point.x, point.y, false);
 						if (result.Allow) {
 							if (!contAsItem.Trigger_StackInCont(item, target)) {
 								//couldn't stack, let's see if there's some script for the stacking
@@ -1235,8 +1235,8 @@ namespace SteamEngine {
 						return DenyResultMessages.Deny_NoMessage;
 					}
 				} else {
-					MutablePoint4D point = target.point4d;
-					DenyResult result = this.TryPutItemOnGround(point.x, point.y, point.z);
+					var point = target.point4d;
+					var result = this.TryPutItemOnGround(point.x, point.y, point.z);
 					if (result.Allow) {
 						if (!AbstractItem.Trigger_StackOnGround(item, target)) {
 							//couldn't stack, let's see if there's some script for the stacking
@@ -1250,7 +1250,7 @@ namespace SteamEngine {
 		}
 
 		private void Trigger_TryPutItemOnItem(AbstractItem target, AbstractItem item) {
-			ItemOnItemArgs args = new ItemOnItemArgs(this, item, target);
+			var args = new ItemOnItemArgs(this, item, target);
 			var result = item.TryCancellableTrigger(TriggerKey.putOnItem, args);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -1271,15 +1271,15 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public DenyResult TryPutItemOnGround(int x, int y, int z) {
 			this.ThrowIfDeleted();
-			AbstractItem item = this.draggingLayer;
+			var item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on ground");
 			}
 			item.ThrowIfDeleted();
 
-			byte m = this.M;
+			var m = this.M;
 			IPoint4D point = new Point4D(x, y, z, m);
-			DenyPutOnGroundArgs args = new DenyPutOnGroundArgs(this, item, point);
+			var args = new DenyPutOnGroundArgs(this, item, point);
 
 			var result = this.TryCancellableTrigger(TriggerKey.denyPutItemOnGround, args);
 			if (result != TriggerResult.Cancel) {
@@ -1294,14 +1294,14 @@ namespace SteamEngine {
 						} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
 						if (result != TriggerResult.Cancel) {
-							Region region = Map.GetMap(m).GetRegionFor(x, y);
+							var region = Map.GetMap(m).GetRegionFor(x, y);
 							result = region.Trigger_DenyPutItemOn(args);
 						}
 					}
 				}
 			}
 
-			DenyResult retVal = args.Result;
+			var retVal = args.Result;
 			point = args.Point.TopPoint;
 
 			//default implementation
@@ -1323,7 +1323,7 @@ namespace SteamEngine {
 		public DenyResult TryPutItemOnChar(AbstractCharacter target) {
 			this.ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem item = this.draggingLayer;
+			var item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
@@ -1332,7 +1332,7 @@ namespace SteamEngine {
 			if (target == this) {
 				return this.TryPutItemOnItem(this.GetBackpack());
 			}
-			ItemOnCharArgs args = new ItemOnCharArgs(this, item, target);
+			var args = new ItemOnCharArgs(this, item, target);
 
 			var result = this.TryCancellableTrigger(TriggerKey.putItemOnChar, args);
 			if (result != TriggerResult.Cancel) {
@@ -1370,26 +1370,26 @@ namespace SteamEngine {
 		public DenyResult TryEquipItemOnChar(AbstractCharacter target) {
 			this.ThrowIfDeleted();
 			target.ThrowIfDeleted();
-			AbstractItem item = this.draggingLayer;
+			var item = this.draggingLayer;
 			if (item == null) {
 				throw new SEException("Character '" + this + "' has no item dragged to drop on '" + target + "'");
 			}
 			item.ThrowIfDeleted();
 
 			if (item.IsEquippable) {
-				int layer = item.Layer;
+				var layer = item.Layer;
 				if ((layer < sentLayers) && (layer > 0)) {
-					bool succeededUnequipping = true;
+					var succeededUnequipping = true;
 					if (layer != (int) LayerNames.Special) {
 						if ((layer == (int) LayerNames.Hand1) || (layer == (int) LayerNames.Hand2)) {
-							bool twoHanded = item.IsTwoHanded;
-							AbstractItem h1 = this.FindLayer(LayerNames.Hand1);
+							var twoHanded = item.IsTwoHanded;
+							var h1 = this.FindLayer(LayerNames.Hand1);
 							if (h1 != null) {
 								if (twoHanded || (layer == (int) LayerNames.Hand1) || h1.IsTwoHanded) {
 									succeededUnequipping = this.TryUnequip(h1);
 								}
 							}
-							AbstractItem h2 = this.FindLayer(LayerNames.Hand2);
+							var h2 = this.FindLayer(LayerNames.Hand2);
 							if (h2 != null) {
 								if (twoHanded || (layer == (int) LayerNames.Hand2) || h2.IsTwoHanded) {
 									succeededUnequipping = succeededUnequipping && this.TryUnequip(h2);
@@ -1397,7 +1397,7 @@ namespace SteamEngine {
 							}
 						} else {
 							//unequip what's in there and throw it on ground.
-							AbstractItem prevItem = this.FindLayer(layer);
+							var prevItem = this.FindLayer(layer);
 							if (prevItem != null) {
 								succeededUnequipping = this.TryUnequip(prevItem);
 							}
@@ -1408,7 +1408,7 @@ namespace SteamEngine {
 						return DenyResultMessages.Deny_YouAreAlreadyHoldingAnItem;
 					}
 
-					DenyEquipArgs args = new DenyEquipArgs(this, item, target, layer);
+					var args = new DenyEquipArgs(this, item, target, layer);
 
 					var result = this.TryCancellableTrigger(TriggerKey.denyEquipOnChar, args);
 					if (result != TriggerResult.Cancel) {
@@ -1433,7 +1433,7 @@ namespace SteamEngine {
 						}
 					}
 
-					DenyResult retVal = args.Result;
+					var retVal = args.Result;
 
 					if (retVal.Allow) {
 						if (this != target) {
@@ -1457,7 +1457,7 @@ namespace SteamEngine {
 		}
 
 		private bool TryUnequip(AbstractItem i) {
-			DenyResult dr = this.TryPickupItem(i, 1);
+			var dr = this.TryPickupItem(i, 1);
 			if (dr.Allow) {
 				return this.TryGetRidOfDraggedItem();
 			}

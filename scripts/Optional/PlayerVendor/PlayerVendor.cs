@@ -236,11 +236,11 @@ namespace SteamEngine.CompiledScripts {
 		/// <param name="description">The description.</param>
 		/// <param name="price">The price.</param>
 		public void StockThingSoldByUnit(Player player, Container units, Container parentCategory, string description, decimal price) {
-			int model = -1;
-			int color = -1;
-			int counter = 0;
+			var model = -1;
+			var color = -1;
+			var counter = 0;
 
-			List<Item> approvedItems = new List<Item>(units.Count);
+			var approvedItems = new List<Item>(units.Count);
 
 			foreach (Item unit in units) {
 				if (player.CanPickup(unit).Allow) {

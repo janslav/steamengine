@@ -29,8 +29,8 @@ namespace SteamEngine.Networking {
 
 		[SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures"), SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		public IncomingPacket<TcpConnection<GameState>, GameState, IPEndPoint> GetPacketImplementation(byte id, TcpConnection<GameState> conn, GameState state, out bool discardAfterReading) {
-			bool isLoggedIn = state.IsLoggedIn;
-			bool hasChar = state.Character != null;
+			var isLoggedIn = state.IsLoggedIn;
+			var hasChar = state.Character != null;
 
 			discardAfterReading = !isLoggedIn || !hasChar;
 			//general rule for most packets: if not logged in completely (i.e. both account and char), discard.

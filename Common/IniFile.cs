@@ -38,9 +38,9 @@ namespace SteamEngine.Common {
 			this.filename = filename;
 
 			if (File.Exists(filename)) {
-				using (StreamReader reader = new StreamReader(filename)) {
+				using (var reader = new StreamReader(filename)) {
 
-					foreach (IniFileSection section in Parse(filename, reader)) {
+					foreach (var section in Parse(filename, reader)) {
 						this.allSections.Add(section);
 						this.sectionsByName[section.Name] = section;
 					}
@@ -55,7 +55,7 @@ namespace SteamEngine.Common {
 		}
 
 		public void WriteToFile() {
-			using (StreamWriter writer = new StreamWriter(this.filename)) {
+			using (var writer = new StreamWriter(this.filename)) {
 				foreach (IIniFilePart section in this.allSections) {
 					section.WriteOut(writer);
 				}
@@ -74,7 +74,7 @@ namespace SteamEngine.Common {
 		}
 
 		public IniFileSection GetNewSection(string sectionName) {
-			IniFileSection section = new IniFileSection(sectionName, verticalLine);
+			var section = new IniFileSection(sectionName, verticalLine);
 			this.allSections.Add(section);
 			this.sectionsByName[section.Name] = section;
 			return section;
@@ -93,7 +93,7 @@ namespace SteamEngine.Common {
 		}
 
 		public IEnumerable<IniFileSection> GetSections(string sectionName) {
-			foreach (IniFileSection section in this.allSections) {
+			foreach (var section in this.allSections) {
 				if (sectionName.Equals(section.Name, StringComparison.OrdinalIgnoreCase)) {
 					yield return section;
 				}
@@ -107,7 +107,7 @@ namespace SteamEngine.Common {
 			if (this.sectionsByName.TryGetValue(section.Name, out oldSection)) {
 				if (oldSection == section) {
 					this.sectionsByName.Remove(section.Name);
-					foreach (IniFileSection s in this.allSections) {
+					foreach (var s in this.allSections) {
 						if (string.Equals(s.Name, section.Name, StringComparison.OrdinalIgnoreCase)) {
 							this.sectionsByName[s.Name] = s;
 							return;
@@ -126,12 +126,12 @@ namespace SteamEngine.Common {
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private static IEnumerable<IniFileSection> Parse(string filename, TextReader stream) {
-			int line = 0;
+			var line = 0;
 			IniFileSection curSection = null;
-			StringBuilder comments = new StringBuilder();
+			var comments = new StringBuilder();
 
 			while (true) {
-				string curLine = stream.ReadLine();
+				var curLine = stream.ReadLine();
 				line++;
 				if (curLine != null) {
 					curLine = curLine.Trim();
@@ -151,12 +151,12 @@ namespace SteamEngine.Common {
 						comments.AppendLine(verticalLine);
 						continue;
 					}
-					Match m = headerRE.Match(curLine);
+					var m = headerRE.Match(curLine);
 					if (m.Success) {
 						if (curSection != null) {//send the last section
 							yield return curSection;
 						}
-						GroupCollection gc = m.Groups;
+						var gc = m.Groups;
 						curSection = new IniFileSection(gc["name"].Value, comments.ToString(), gc["comment"].Value);
 						comments.Length = 0;
 
@@ -165,8 +165,8 @@ namespace SteamEngine.Common {
 					m = valueRE.Match(curLine);
 					if (m.Success) {
 						if (curSection != null) {
-							GroupCollection gc = m.Groups;
-							IniFileValueLine valueLine = new IniFileValueLine(gc["name"].Value, gc["value"].Value,
+							var gc = m.Groups;
+							var valueLine = new IniFileValueLine(gc["name"].Value, gc["value"].Value,
 								comments.ToString(), false, gc["comment"].Value);
 							comments.Length = 0;
 							curSection.SetParsedValue(valueLine);
@@ -233,7 +233,7 @@ namespace SteamEngine.Common {
 		}
 
 		internal void SetParsedValue(IniFileValueLine valueLine) {
-			string valueName = valueLine.name;
+			var valueName = valueLine.name;
 			if (this.props.ContainsKey(valueName)) {
 				Logger.WriteWarning("One section can't have more values of the same name (section [" + this.name + "], value name '" + valueName + "'. Ignoring.");
 				return;
@@ -304,7 +304,7 @@ namespace SteamEngine.Common {
 			stream.WriteLine("]");
 			this.commentNext.WriteOut(stream);
 
-			foreach (IIniFilePart part in this.parts) {
+			foreach (var part in this.parts) {
 				part.WriteOut(stream);
 			}
 		}
@@ -381,7 +381,7 @@ namespace SteamEngine.Common {
 				return;
 			}
 
-			StringReader reader = new StringReader(this.comment);
+			var reader = new StringReader(this.comment);
 
 			string line;
 			while ((line = reader.ReadLine()) != null) {
@@ -390,10 +390,10 @@ namespace SteamEngine.Common {
 					continue;
 				}
 
-				string strOut = "# " + line;
+				var strOut = "# " + line;
 				if (this.wrap) {
 					while (strOut.Length > 80) {
-						int space = strOut.LastIndexOf(' ', 80);
+						var space = strOut.LastIndexOf(' ', 80);
 						if (space > -1) {
 							if (space < 2) {
 								space = strOut.IndexOf(' ', 80);
@@ -401,7 +401,7 @@ namespace SteamEngine.Common {
 									break;
 								}
 							}
-							string s = strOut.Substring(0, space);
+							var s = strOut.Substring(0, space);
 							strOut = "# " + strOut.Substring(space);
 							stream.WriteLine(s);
 

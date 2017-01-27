@@ -161,8 +161,8 @@ namespace SteamEngine.Communication.NamedPipes {
 		}
 
 		private void BeginReceive() {
-			int offset = this.receivedDataLength;
-			byte[] buffer = this.receivingBuffer.bytes;
+			var offset = this.receivedDataLength;
+			var buffer = this.receivingBuffer.bytes;
 
 			this.pipe.BeginRead(buffer, offset,
 				buffer.Length - offset, this.onReceieve, null);
@@ -171,7 +171,7 @@ namespace SteamEngine.Communication.NamedPipes {
 		private void OnReceieve(IAsyncResult asyncResult) {
 			try {
 				if (this.pipe != null) {
-					int length = this.pipe.EndRead(asyncResult);
+					var length = this.pipe.EndRead(asyncResult);
 
 					if (length > 0) {
 						//we have new data, but still possibly have some old data.
@@ -204,7 +204,7 @@ namespace SteamEngine.Communication.NamedPipes {
 		}
 
 		private void OnSend(IAsyncResult asyncResult) {
-			Buffer toDispose = (Buffer) asyncResult.AsyncState;
+			var toDispose = (Buffer) asyncResult.AsyncState;
 
 			try {
 				this.pipe.EndWrite(asyncResult);

@@ -11,13 +11,13 @@ namespace SteamEngine.CompiledScripts.Utils {
 
 		#region Utility methods, for dialogs mostly
 		public static LScriptComparer<T> SortAndGetComparer(T[] list, object comparerOrExpression) {
-			LScriptComparer<T> comparer = AcquireComparer(comparerOrExpression);
+			var comparer = AcquireComparer(comparerOrExpression);
 			Array.Sort(list, comparer);
 			return comparer;
 		}
 
 		public static LScriptComparer<T> SortAndGetComparer(List<T> list, object comparerOrExpression) {
-			LScriptComparer<T> comparer = AcquireComparer(comparerOrExpression);
+			var comparer = AcquireComparer(comparerOrExpression);
 			list.Sort(comparer);
 			return comparer;
 		}
@@ -40,9 +40,9 @@ namespace SteamEngine.CompiledScripts.Utils {
 
 
 		private static LScriptComparer<T> AcquireComparer(object comparerOrExpression) {
-			LScriptComparer<T> comparer = comparerOrExpression as LScriptComparer<T>;
+			var comparer = comparerOrExpression as LScriptComparer<T>;
 			if (comparer == null) {
-				string expression = string.Concat(comparerOrExpression);
+				var expression = string.Concat(comparerOrExpression);
 				comparer = GetComparer(expression, ListSortDirection.Ascending);
 			}
 			return comparer;

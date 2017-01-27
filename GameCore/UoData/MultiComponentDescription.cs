@@ -39,7 +39,7 @@ namespace SteamEngine.UoData
 		public int Flags { get; }
 
 		internal MultiItemComponent Create(int centerX, int centerY, int centerZ, Map map) {
-			MultiItemComponent retVal = new MultiItemComponent(this, this.ItemId, map, this.Flags);
+			var retVal = new MultiItemComponent(this, this.ItemId, map, this.Flags);
 			retVal.SetRelativePos(centerX, centerY, centerZ);
 			return retVal;
 		}

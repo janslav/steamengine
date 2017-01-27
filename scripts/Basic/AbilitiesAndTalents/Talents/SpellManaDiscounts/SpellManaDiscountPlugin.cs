@@ -22,8 +22,8 @@ namespace SteamEngine.CompiledScripts {
 	public partial class SpellManaDiscountPlugin {
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
-				Character self = (Character) this.Cont;
-				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+				var self = (Character) this.Cont;
+				var spell = (SpellDef) skillSeqArgs.Param1;
 				if (spell == this.TypeDef.Spell) {
 					self.Mana += (short) (spell.GetManaUse(skillSeqArgs.Tool is SpellScroll) * this.EffectPower);
 				}

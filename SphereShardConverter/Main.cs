@@ -84,47 +84,47 @@ namespace SteamEngine.Converter {
 
 			try {
 				CreateFolders();
-				string origCurDir = Path.GetFullPath(Directory.GetCurrentDirectory());
+				var origCurDir = Path.GetFullPath(Directory.GetCurrentDirectory());
 				Directory.SetCurrentDirectory(convertPath);
-				List<ConvertedFile> filesList = new List<ConvertedFile>();
+				var filesList = new List<ConvertedFile>();
 				CreateFileList(".", filesList);
 				Directory.SetCurrentDirectory(origCurDir);
 				Console.WriteLine("Converting " + filesList.Count + " Sphere script files.");
 
-				foreach (ConvertedFile file in filesList) {
+				foreach (var file in filesList) {
 					//Logger.WriteDebug("Reading file "+file.origPath);
 					ConvertFile(file);
 				}
 				Console.WriteLine("Files loaded and parsed.");
 
-				foreach (ConvertedFile file in filesList) {
+				foreach (var file in filesList) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
-					foreach (ConvertedDef def in file.defs) {
+					foreach (var def in file.defs) {
 						def.FirstStage();
 					}
 				}
 				InvokeStaticMethodOnDefClasses("FirstStageFinished");
 				Console.WriteLine("First stage finished.");
 
-				foreach (ConvertedFile file in filesList) {
+				foreach (var file in filesList) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
-					foreach (ConvertedDef def in file.defs) {
+					foreach (var def in file.defs) {
 						def.SecondStage();
 					}
 				}
 				InvokeStaticMethodOnDefClasses("SecondStageFinished");
 				Console.WriteLine("Second stage finished.");
 
-				foreach (ConvertedFile file in filesList) {
+				foreach (var file in filesList) {
 					//Logger.WriteDebug("Working on file "+file.origPath);
-					foreach (ConvertedDef def in file.defs) {
+					foreach (var def in file.defs) {
 						def.ThirdStage();
 					}
 				}
 				InvokeStaticMethodOnDefClasses("ThirdStageFinished");
 				Console.WriteLine("Third stage finished.");
 
-				foreach (ConvertedFile mf in filesList) {
+				foreach (var mf in filesList) {
 					mf.Flush();
 				}
 				Console.WriteLine("Files written to disk.");
@@ -136,9 +136,9 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void InvokeStaticMethodOnDefClasses(string methodname) {
-			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes()) {
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
 				if (typeof(ConvertedDef).IsAssignableFrom(type)) {
-					MethodInfo m = type.GetMethod(methodname, BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+					var m = type.GetMethod(methodname, BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
 					if (m != null) {
 						m.Invoke(null, null);
 					}
@@ -149,27 +149,27 @@ namespace SteamEngine.Converter {
 		private static void CreateFileList(string folder, List<ConvertedFile> list) {
 			//Console.WriteLine("converting from folder "+LogStr.File(folder));
 
-			foreach (string subfolder in Directory.GetDirectories(folder)) {
+			foreach (var subfolder in Directory.GetDirectories(folder)) {
 				CreateFileList(subfolder, list);
 			}
 
-			string[] filenames = Directory.GetFiles(folder, "*.scp");
-			foreach (string filename in filenames) {
-				ConvertedFile file = new ConvertedFile(filename);
+			var filenames = Directory.GetFiles(folder, "*.scp");
+			foreach (var filename in filenames) {
+				var file = new ConvertedFile(filename);
 				list.Add(file);
 			}
 		}
 
 		public static void ConvertFile(ConvertedFile convertedFile) {
 
-			using (StreamReader stream = File.OpenText(convertedFile.origPath)) {
-				foreach (PropsSection input in
+			using (var stream = File.OpenText(convertedFile.origPath)) {
+				foreach (var input in
 						PropsFileParser.Load(convertedFile.origPath, stream, StartsAsScript, false)) {
 
 					ConvertedDef cd = null;
 					try {
-						string type = input.HeaderType.ToLowerInvariant();
-						string name = input.HeaderName;
+						var type = input.HeaderType.ToLowerInvariant();
+						var name = input.HeaderName;
 						if ((name == "") && (type == "eof")) {
 							continue;
 						}

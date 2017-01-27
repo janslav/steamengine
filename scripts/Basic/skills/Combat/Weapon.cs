@@ -37,30 +37,30 @@ namespace SteamEngine.CompiledScripts {
 		//at durability 0, attacknumber is halved
 		public double AttackVsM {
 			get {
-				double halved = this.TypeDef.AttackVsM / 2;
+				var halved = this.TypeDef.AttackVsM / 2;
 				return (halved + (((halved * this.Durability) / this.MaxDurability)));
 			}
 		}
 
 		public double AttackVsP {
 			get {
-				double halved = this.TypeDef.AttackVsP / 2;
+				var halved = this.TypeDef.AttackVsP / 2;
 				return (halved + (((halved * this.Durability) / this.MaxDurability)));
 			}
 		}
 
 		public double MindPowerVsM {
 			get {
-				double defValue = this.TypeDef.MindPowerVsM;
-				double bareHands = MagerySettings.instance.bareHandsMindPowerVsM;
+				var defValue = this.TypeDef.MindPowerVsM;
+				var bareHands = MagerySettings.instance.bareHandsMindPowerVsM;
 				return this.CalculateMPDurabilty(defValue, bareHands);
 			}
 		}
 
 		public double MindPowerVsP {
 			get {
-				double defValue = this.TypeDef.MindPowerVsP;
-				double bareHands = MagerySettings.instance.bareHandsMindPowerVsP;
+				var defValue = this.TypeDef.MindPowerVsP;
+				var bareHands = MagerySettings.instance.bareHandsMindPowerVsP;
 				return this.CalculateMPDurabilty(defValue, bareHands);
 			}
 		}
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 		private double CalculateMPDurabilty(double defValue, double bareHands)
 		{
 			if (defValue >= 0) {
-				double halved = (defValue - bareHands) / 2;
+				var halved = (defValue - bareHands) / 2;
 				return bareHands + halved + (((halved * this.Durability) / this.MaxDurability));
 			}
 			return bareHands;

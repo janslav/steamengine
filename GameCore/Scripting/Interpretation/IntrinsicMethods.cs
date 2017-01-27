@@ -67,7 +67,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public static void Show(object o) {
-			string asString = Tools.ObjToString(o);
+			var asString = Tools.ObjToString(o);
 			if (o == null) {
 			} else {
 				Globals.SrcWriteLine(string.Concat(asString,

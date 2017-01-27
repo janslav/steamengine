@@ -56,7 +56,7 @@ namespace SteamEngine {
 
 		//called by ClassManager
 		internal static void RegisterImplementor(IDeepCopyImplementor implementor) {
-			Type type = implementor.HandledType;
+			var type = implementor.HandledType;
 			if (implementors.ContainsKey(type)) {
 				throw new OverrideNotAllowedException("There is already a IDeepCopyImplementor (" + implementors[type] + ") registered for handling the type " + type);
 			}
@@ -137,10 +137,10 @@ namespace SteamEngine {
 		private static object CopyImplementation(object copyFrom) {
 			recursionLevel++;
 
-			bool noException = false;
+			var noException = false;
 			try {
 				IDeepCopyImplementor implementor;
-				Type type = copyFrom.GetType();
+				var type = copyFrom.GetType();
 
 				if (!implementors.TryGetValue(type, out implementor)) {
 					//simplesaveable = immutable.
@@ -152,7 +152,7 @@ namespace SteamEngine {
 					}
 				}
 
-				object copy = implementor.DeepCopy(copyFrom);
+				var copy = implementor.DeepCopy(copyFrom);
 				copies[copyFrom] = copy;
 				noException = true;
 				return copy;
@@ -280,17 +280,17 @@ namespace SteamEngine {
 		}
 
 		private static DelayedCopier PopDelayedCopier() {
-			DelayedCopier dl = firstCopier;
+			var dl = firstCopier;
 			firstCopier = firstCopier.next;//throws nullpointerexc...
 			return dl;
 		}
 
 		internal static void ForgetScripts() {
-			Dictionary<Type, IDeepCopyImplementor> copiedList = new Dictionary<Type, IDeepCopyImplementor>(implementors);
+			var copiedList = new Dictionary<Type, IDeepCopyImplementor>(implementors);
 
-			foreach (KeyValuePair<Type, IDeepCopyImplementor> pair in copiedList) {
+			foreach (var pair in copiedList) {
 
-				IDeepCopyImplementor idci = pair.Value;
+				var idci = pair.Value;
 				if (!(idci is CopyImplementor_UseICloneable)) {
 					implementors.Remove(pair.Key);
 				}

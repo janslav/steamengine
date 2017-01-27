@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts {
 		public static PluginKey pkItemLock = PluginKey.Acquire("_itemLock_");
 
 		public static bool IsLocked(Item i) {
-			ItemLockPlugin plugin = i.GetPlugin(pkItemLock) as ItemLockPlugin;
+			var plugin = i.GetPlugin(pkItemLock) as ItemLockPlugin;
 			if (plugin != null) {
 				if (plugin.isLocked) {
 					return true;

@@ -22,18 +22,18 @@ namespace SteamEngine.UoData {
 	static class SoundMul {
 		public static void Init() {
 			if (Globals.WriteMulDocsFiles) {
-				StreamWriter scr = File.CreateText(Globals.GetMulDocPathFor("Sounds.txt"));
-				string mulFileP = Path.Combine(Globals.MulPath, "sound.mul");
-				string mulFilePI = Path.Combine(Globals.MulPath, "soundidx.mul");
+				var scr = File.CreateText(Globals.GetMulDocPathFor("Sounds.txt"));
+				var mulFileP = Path.Combine(Globals.MulPath, "sound.mul");
+				var mulFilePI = Path.Combine(Globals.MulPath, "soundidx.mul");
 
 				Console.WriteLine("Loading " + LogStr.File("sound.mul") + " and " + LogStr.File("soundidx.mul") + " - sounds info.");
-				int id = 0;
-				string longest = "";
+				var id = 0;
+				var longest = "";
 				if (File.Exists(mulFileP) && File.Exists(mulFilePI)) {
-					FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
-					FileStream mulfsi = new FileStream(mulFilePI, FileMode.Open, FileAccess.Read);
-					BinaryReader mulbr = new BinaryReader(mulfs);
-					BinaryReader mulbri = new BinaryReader(mulfsi);
+					var mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
+					var mulfsi = new FileStream(mulFilePI, FileMode.Open, FileAccess.Read);
+					var mulbr = new BinaryReader(mulfs);
+					var mulbri = new BinaryReader(mulfsi);
 
 					int start;
 					string filenameS;

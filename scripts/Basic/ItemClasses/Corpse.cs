@@ -47,8 +47,8 @@ namespace SteamEngine.CompiledScripts {
 				id = 1070702; //a corpse of ~1_CORPSENAME~
 				argument = this.ownerName;
 			} else {
-				ItemDispidInfo idi = this.TypeDef.DispidInfo;
-				string name = this.Name;
+				var idi = this.TypeDef.DispidInfo;
+				var name = this.Name;
 				if (idi != null) {
 					if (StringComparer.OrdinalIgnoreCase.Equals(name, idi.SingularName)) {
 						argument = null;
@@ -68,7 +68,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//TODO notoriety hue stuff
-			AosToolTips toolTips = this.GetAosToolTips(clicker.Language);
+			var toolTips = this.GetAosToolTips(clicker.Language);
 			PacketSequences.SendClilocNameFrom(clickerConn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
@@ -78,19 +78,19 @@ namespace SteamEngine.CompiledScripts {
 			this.Amount = dieingChar.Model;
 			this.Direction = dieingChar.Direction;
 			this.Color = dieingChar.Color;
-			string name = dieingChar.Name;
+			var name = dieingChar.Name;
 			this.Name = string.Concat("a corpse of ", name);
 			if (dieingChar.IsPlayer) {
 				this.owner = dieingChar;
 				this.ownerName = name;
 			}
-			Item hair = dieingChar.Hair;
+			var hair = dieingChar.Hair;
 			if (hair != null) {
 				this.hairModel = hair.ShortModel;
 				this.hairColor = hair.ShortColor;
 			}
 
-			Item beard = dieingChar.Beard;
+			var beard = dieingChar.Beard;
 			if (beard != null) {
 				this.beardModel = beard.ShortModel;
 				this.beardColor = beard.ShortColor;
@@ -193,7 +193,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override ItemOnGroundUpdater GetOnGroundUpdater() {
-			ItemOnGroundUpdater iogu = ItemOnGroundUpdater.GetFromCache(this);
+			var iogu = ItemOnGroundUpdater.GetFromCache(this);
 			if (iogu == null) {
 				if (this.hasEquippedItems) {
 					iogu = new CorpseOnGroundUpdater(this);
@@ -214,7 +214,7 @@ namespace SteamEngine.CompiledScripts {
 			public override void SendTo(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
 				base.SendTo(viewer, viewerState, viewerConn);
 
-				Corpse corpse = (Corpse) this.ContItem;
+				var corpse = (Corpse) this.ContItem;
 				if (corpse.hasEquippedItems) {
 					if (this.equippedItemsPackets == null) {
 						CorpseEquipInfo hair = null;
@@ -222,7 +222,7 @@ namespace SteamEngine.CompiledScripts {
 
 						if (corpse.equippedItems != null) {
 							List<AbstractItem> toRemove = null;
-							foreach (AbstractItem item in corpse.equippedItems.Values) {
+							foreach (var item in corpse.equippedItems.Values) {
 								if (item.Cont != corpse) {
 									if (toRemove == null) {
 										toRemove = new List<AbstractItem>();
@@ -231,7 +231,7 @@ namespace SteamEngine.CompiledScripts {
 								}
 							}
 							if (toRemove != null) {
-								foreach (AbstractItem noMoreEquipped in toRemove) {
+								foreach (var noMoreEquipped in toRemove) {
 									corpse.equippedItems.Remove(noMoreEquipped);
 								}
 							}
@@ -297,12 +297,12 @@ namespace SteamEngine.CompiledScripts {
 				if (this.hairItemsPackets == null) {
 					this.hairItemsPackets = PacketGroup.CreateFreePG();
 					if (this.hairModel != 0) {
-						CorpseEquipInfo hair = new CorpseEquipInfo(this.hairFakeUid, (int) LayerNames.Hair, this.hairColor, this.hairModel);
+						var hair = new CorpseEquipInfo(this.hairFakeUid, (int) LayerNames.Hair, this.hairColor, this.hairModel);
 						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, hair);
 						this.hasHairItems = true;
 					}
 					if (this.beardModel != 0) {
-						CorpseEquipInfo beard = new CorpseEquipInfo(this.beardFakeUid, (int) LayerNames.Beard, this.beardColor, this.beardModel);
+						var beard = new CorpseEquipInfo(this.beardFakeUid, (int) LayerNames.Beard, this.beardColor, this.beardModel);
 
 						this.hairItemsPackets.AcquirePacket<AddItemToContainerOutPacket>().PrepareItemInCorpse(this.FlaggedUid, beard);
 						this.hasHairItems = true;

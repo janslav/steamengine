@@ -34,7 +34,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		[SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0")]
 		private void LoadSaveAttributes() {
 			foreach (CodeTypeMember member in this.generatedType.Members) {
-				CodeMemberMethod method = member as CodeMemberMethod;
+				var method = member as CodeMemberMethod;
 				if (method != null) {
 					switch (method.Name.ToLowerInvariant()) {
 						case "save":
@@ -51,7 +51,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private void DefaultConstructor() {
-			CodeConstructor constructor = new CodeConstructor();
+			var constructor = new CodeConstructor();
 			constructor.CustomAttributes.Add(new CodeAttributeDeclaration(
 				new CodeTypeReference(typeof(LoadingInitializerAttribute))));
 			constructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;

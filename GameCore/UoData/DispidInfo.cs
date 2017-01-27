@@ -88,7 +88,7 @@ namespace SteamEngine.UoData {
 		}
 
 		public override bool Equals(object obj) {
-			ItemDispidInfo idi = obj as ItemDispidInfo;
+			var idi = obj as ItemDispidInfo;
 			if (idi != null) {
 				return (this.Flags == idi.Flags && this.Weight == idi.Weight && this.Quality == idi.Quality && this.Unknown1 == idi.Unknown1 &&
 						this.MinItemsToDisplayThisArt == idi.MinItemsToDisplayThisArt && this.Quantity == idi.Quantity &&
@@ -118,17 +118,17 @@ namespace SteamEngine.UoData {
 		}
 
 		internal static bool ParseName(string name, out string singular, out string plural) {
-			int percentPos = name.IndexOf("%");
+			var percentPos = name.IndexOf("%");
 			if (percentPos == -1) {
 				singular = name;
 				plural = name;
 			} else {
-				string before = name.Substring(0, percentPos);
-				string singadd = "";
-				string pluradd = "";
-				int percentPos2 = name.IndexOf("%", percentPos + 1);
-				int slashPos = name.IndexOf("/", percentPos + 1);
-				string after = "";
+				var before = name.Substring(0, percentPos);
+				var singadd = "";
+				var pluradd = "";
+				var percentPos2 = name.IndexOf("%", percentPos + 1);
+				var slashPos = name.IndexOf("/", percentPos + 1);
+				var after = "";
 				if (percentPos2 == -1) {	//This is sometimes the case in the tiledata info...
 					pluradd = name.Substring(percentPos + 1);
 				} else if (slashPos == -1 || slashPos > percentPos2) {

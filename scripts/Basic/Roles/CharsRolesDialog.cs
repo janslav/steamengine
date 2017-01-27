@@ -33,21 +33,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam roli
-			List<Role> rlList = args.GetTag(listTK) as List<Role>;
+			var rlList = args.GetTag(listTK) as List<Role>;
 
 			if (rlList == null) {
 				//vzit seznam roli z focusa dle vyhledavaciho kriteria
-				Character whose = (Character) focus;
-				ICollection<Role> rolesSet = RolesManagement.GetCharactersRoles(whose);
+				var whose = (Character) focus;
+				var rolesSet = RolesManagement.GetCharactersRoles(whose);
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				rlList = this.ListifyRoles(rolesSet, TagMath.SGetTag(args, criteriumTK));
 				this.SortRoles(rlList, (SortingCriteria) TagMath.IGetTag(args, sortingTK));
 				args.SetTag(listTK, rlList); //ulozime to do argumentu dialogu				
 			}
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, rlList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, rlList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(70, 70);
@@ -82,9 +82,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				Role rl = rlList[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var rl = rlList[i];
 				//infodialog
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + 2 * i).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(rl.Key.Name).Build();
@@ -103,16 +103,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam roli bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<Role> rlList = (List<Role>) args.GetTag(listTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, rlList.Count);
+			var rlList = (List<Role>) args.GetTag(listTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, rlList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //vyhledat dle zadani
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(criteriumTK, nameCriteria);
 						args.RemoveTag(listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
@@ -142,9 +142,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, rlList.Count, 1)) {//kliknuto na paging?
 			} else {
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (gr.PressedButton - 10) / 2;
-				int buttNum = (gr.PressedButton - 10) % 2;
-				Role rl = rlList[row];
+				var row = (gr.PressedButton - 10) / 2;
+				var buttNum = (gr.PressedButton - 10) % 2;
+				var rl = rlList[row];
 				Gump newGi;
 				switch (buttNum) {
 					case 0: //role info
@@ -161,8 +161,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Retreives the list of all chars roles</summary>
 		private List<Role> ListifyRoles(IEnumerable<Role> roles, string criteria) {
-			List<Role> rlsList = new List<Role>();
-			foreach (Role entry in roles) {
+			var rlsList = new List<Role>();
+			foreach (var entry in roles) {
 				if (criteria == null || criteria.Equals("")) {
 					rlsList.Add(entry);//bereme vse
 				} else if (entry.Key.Name.ToUpper().Contains(criteria.ToUpper())) {
@@ -198,7 +198,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		[SteamFunction]
 		public static void RolesList(Character self, ScriptArgs text) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(sortingTK, SortingCriteria.NameAsc);//trideni
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_CharsRolesList>.Instance, newArgs);

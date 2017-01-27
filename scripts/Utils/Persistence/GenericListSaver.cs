@@ -40,36 +40,36 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Save(object objToSave, SaveStream writer) {
-			IList list = (IList) objToSave;
-			Type listType = list.GetType();
-			Type memberType = listType.GetGenericArguments()[0];
-			int count = list.Count;
+			var list = (IList) objToSave;
+			var listType = list.GetType();
+			var memberType = listType.GetGenericArguments()[0];
+			var count = list.Count;
 			writer.WriteValue("count", count);
 			writer.WriteLine("type=" + GetTypeName(memberType));
-			for (int i = 0; i < count; i++) {
+			for (var i = 0; i < count; i++) {
 				writer.WriteValue(i.ToString(), list[i]);
 			}
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.HeaderLine;
+			var currentLineNumber = input.HeaderLine;
 			try {
-				PropsLine countLine = input.PopPropsLine("count");
+				var countLine = input.PopPropsLine("count");
 				currentLineNumber = countLine.Line;
-				int count = int.Parse(countLine.Value);
+				var count = int.Parse(countLine.Value);
 
-				PropsLine pl = input.PopPropsLine("type");
+				var pl = input.PopPropsLine("type");
 				currentLineNumber = pl.Line;
-				Type elemType = ParseType(pl);
+				var elemType = ParseType(pl);
 
-				Type typeOfList = typeof(List<>).MakeGenericType(elemType);
-				IList list = (IList) Activator.CreateInstance(typeOfList, count);
+				var typeOfList = typeof(List<>).MakeGenericType(elemType);
+				var list = (IList) Activator.CreateInstance(typeOfList, count);
 
-				for (int i = 0; i < count; i++) {
+				for (var i = 0; i < count; i++) {
 					list.Add(null);
-					PropsLine valueLine = input.PopPropsLine(i.ToString());
+					var valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
-					GenericListLoadHelper alip = new GenericListLoadHelper(list, i, elemType);
+					var alip = new GenericListLoadHelper(list, i, elemType);
 					ObjectSaver.Load(valueLine.Value, this.DelayedLoad_Index, input.Filename, valueLine.Line, alip);
 				}
 				return list;
@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static Type ParseType(PropsLine pl) {
-			Type elemType = (ClassManager.GetType(pl.Value)
+			var elemType = (ClassManager.GetType(pl.Value)
 				?? Type.GetType(pl.Value, throwOnError: false, ignoreCase: true))
 				?? AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(pl.Value, throwOnError: false, ignoreCase: true)).First(t => t != null);
 
@@ -104,12 +104,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
-			GenericListLoadHelper alip = (GenericListLoadHelper) param;
+			var alip = (GenericListLoadHelper) param;
 			alip.list[alip.index] = ConvertTools.ConvertTo(alip.elemType, loadedObj);
 		}
 
 		public void DelayedCopy_Index(object loadedObj, object param) {
-			GenericListLoadHelper alip = (GenericListLoadHelper) param;
+			var alip = (GenericListLoadHelper) param;
 			alip.list[alip.index] = ConvertTools.ConvertTo(alip.elemType, loadedObj);
 		}
 
@@ -126,16 +126,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object DeepCopy(object copyFrom) {
-			IList copyFromList = (IList) copyFrom;
-			int n = copyFromList.Count;
+			var copyFromList = (IList) copyFrom;
+			var n = copyFromList.Count;
 
-			Type elemType = copyFrom.GetType().GetGenericArguments()[0];
-			Type typeOfList = typeof(List<>).MakeGenericType(elemType);
-			IList newList = (IList) Activator.CreateInstance(typeOfList, n);
+			var elemType = copyFrom.GetType().GetGenericArguments()[0];
+			var typeOfList = typeof(List<>).MakeGenericType(elemType);
+			var newList = (IList) Activator.CreateInstance(typeOfList, n);
 
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				newList.Add(null);
-				GenericListLoadHelper alip = new GenericListLoadHelper(newList, i, elemType);
+				var alip = new GenericListLoadHelper(newList, i, elemType);
 				DeepCopyFactory.GetCopyDelayed(copyFromList[i], this.DelayedCopy_Index, alip);
 			}
 			return newList;

@@ -62,22 +62,22 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_DenyActivate(DenyAbilityArgs args) {
-			Character self = args.abiliter;
+			var self = args.abiliter;
 			if (GetThrowingKnife(self) == null) {
 				args.Result = DenyMessages_Throwing.Deny_YouNeedThrowingKnife;
 				return;
 			}
 
-			SkillSequenceArgs seq = self.CurrentSkillArgs;
+			var seq = self.CurrentSkillArgs;
 			if ((seq != null) && (seq.SkillDef is WeaponSkillDef)) {
-				Character target = (Character) seq.Target1;
-				int distance = Point2D.GetSimpleDistance(self, target);
-				int range = this.Range + self.WeaponRangeModifier;
+				var target = (Character) seq.Target1;
+				var distance = Point2D.GetSimpleDistance(self, target);
+				var range = this.Range + self.WeaponRangeModifier;
 				if (distance > range) {
 					args.Result = DenyResultMessages.Deny_ThatIsTooFarAway;
 					return;
 				}
-				DenyResult losAndAlive = self.CanInteractWith(target);
+				var losAndAlive = self.CanInteractWith(target);
 				if (!losAndAlive.Allow) {
 					args.Result = losAndAlive;
 					return;
@@ -91,10 +91,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Activate(Character self, Ability ab) {
-			Projectile knife = (Projectile) self.GetTag(throwingKnifeTK); //checked and set in DenyActivate
+			var knife = (Projectile) self.GetTag(throwingKnifeTK); //checked and set in DenyActivate
 
-			Character target = (Character) self.CurrentSkillArgs.Target1; //checked in DenyActivate
-			int distance = Point2D.GetSimpleDistance(self, target);
+			var target = (Character) self.CurrentSkillArgs.Target1; //checked in DenyActivate
+			var distance = Point2D.GetSimpleDistance(self, target);
 
 			//TODO
 
@@ -105,15 +105,15 @@ namespace SteamEngine.CompiledScripts {
 
 		//todo? return specialised knife according to players preset preference
 		public static Projectile GetThrowingKnife(Character self) {
-			Projectile knife = self.GetTag(throwingKnifeTK) as Projectile;
+			var knife = self.GetTag(throwingKnifeTK) as Projectile;
 			if (knife == null) {
 				if (self.CanPickup(knife).Allow) {
 					return knife;
 				}
 			}
 
-			ProjectileDef def = ThrowingKnifeDef;
-			foreach (Item i in self.Backpack.EnumShallow()) {
+			var def = ThrowingKnifeDef;
+			foreach (var i in self.Backpack.EnumShallow()) {
 				knife = i as Projectile;
 				if ((knife != null) && (knife.Def == def)) {
 					if (self.CanPickup(knife).Allow) {

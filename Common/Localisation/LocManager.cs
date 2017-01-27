@@ -15,9 +15,9 @@ namespace SteamEngine.Common {
 		private static readonly ShieldedDictNc<string, LocStringCollection>[] loadedLanguages = InitDictArrays();
 
 		private static ShieldedDictNc<string, LocStringCollection>[] InitDictArrays() {
-			int n = Tools.GetEnumLength<Language>();
+			var n = Tools.GetEnumLength<Language>();
 			var langs = new ShieldedDictNc<string, LocStringCollection>[n];
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				langs[i] = new ShieldedDictNc<string, LocStringCollection>(comparer: StringComparer.InvariantCultureIgnoreCase);
 			}
 

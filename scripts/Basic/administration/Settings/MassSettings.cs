@@ -35,8 +35,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static MassSettings_ByClass() {
 			if (defs == null) {
 				defs = new List<DefType>();
-				foreach (AbstractScript scp in AbstractScript.AllScripts) {
-					DefType def = scp as DefType;
+				foreach (var scp in AbstractScript.AllScripts) {
+					var def = scp as DefType;
 					if (def != null) {
 						defs.Add(def);
 					}
@@ -158,9 +158,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		static MassSettings_ByModel() {
 			if (models == null) {
-				HashSet<int> modelsSet = new HashSet<int>();
-				foreach (AbstractScript scp in AbstractScript.AllScripts) {
-					DefType weap = scp as DefType;
+				var modelsSet = new HashSet<int>();
+				foreach (var scp in AbstractScript.AllScripts) {
+					var weap = scp as DefType;
 					if (weap != null) {
 						modelsSet.Add(weap.Model);
 					}
@@ -170,7 +170,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 
 				models = new ushort[modelsSet.Count];
-				int i = 0;
+				var i = 0;
 				foreach (ushort model in modelsSet) {
 					models[i] = model;
 					i++;
@@ -181,14 +181,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private void InitDefList() {
 			if (this.defs == null) {
-				int n = models.Length;
+				var n = models.Length;
 				this.defs = new List<DefType>[n];
-				for (int i = 0; i < n; i++) {
-					ushort model = models[i];
-					List<DefType> list = new List<DefType>();
+				for (var i = 0; i < n; i++) {
+					var model = models[i];
+					var list = new List<DefType>();
 					this.defs[i] = list;
-					foreach (AbstractScript scp in AbstractScript.AllScripts) {
-						DefType def = scp as DefType;
+					foreach (var scp in AbstractScript.AllScripts) {
+						var def = scp as DefType;
 						if ((def != null) &&
 								(def.Model == model) && this.CheckIfApplies(def)) {
 							list.Add(def);
@@ -197,7 +197,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					if (list.Count == 0) {
 						throw new SEException("Def for model " + model + " not found for mass setting");
 					}
-					foreach (DefType def in list) {
+					foreach (var def in list) {
 						if (def.Defname.StartsWith("i_0x") || def.Defname.StartsWith("c_0x")) {
 							list.Remove(def);
 							list.Insert(0, def);
@@ -230,7 +230,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetName(object target) {
-				DefType def = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index][0];
+				var def = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index][0];
 				return def.Name;
 			}
 
@@ -242,10 +242,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override object GetValue(object target) {
 				//set the fields on all defs to the same value.
-				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index];
-				FieldType value = this.GetValue(defs[0]);
+				var defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index];
+				var value = this.GetValue(defs[0]);
 
-				foreach (DefType def in defs) {
+				foreach (var def in defs) {
 					this.SetValue(def, value);
 				}
 
@@ -253,9 +253,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override void SetValue(object target, object value) {
-				List<DefType> defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index];
+				var defs = ((MassSettings_ByModel<DefType, FieldType>) target).defs[this.index];
 
-				foreach (DefType def in defs) {
+				foreach (var def in defs) {
 					this.SetValue(def, (FieldType) value);
 				}
 			}
@@ -362,16 +362,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static void InitLists() {
 			if (defSets == null) {
 				defSets = new List<DefType>[5, 9];
-				for (int i = 0; i < 5; i++) {
-					for (int j = 0; j < 9; j++) {
+				for (var i = 0; i < 5; i++) {
+					for (var j = 0; j < 9; j++) {
 						defSets[i, j] = new List<DefType>();
 					}
 				}
-				foreach (AbstractScript scp in AbstractScript.AllScripts) {
-					DefType def = scp as DefType;
+				foreach (var scp in AbstractScript.AllScripts) {
+					var def = scp as DefType;
 					if (def != null) {
-						Material mat = def.Material;
-						WearableType type = def.WearableType;
+						var mat = def.Material;
+						var type = def.WearableType;
 						if (((mat >= Material.Copper) && (mat <= Material.Mithril)) &&
 							((type >= WearableType.Studded) && (type <= WearableType.Plate))) {
 
@@ -416,10 +416,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			public override object GetValue(object target) {
 				//set the fields on all defs to the same value.
-				List<DefType> defs = defSets[this.firstIndex, this.secondIndex];
-				FieldType value = this.GetValue(defs[0]);
+				var defs = defSets[this.firstIndex, this.secondIndex];
+				var value = this.GetValue(defs[0]);
 
-				foreach (DefType def in defs) {
+				foreach (var def in defs) {
 					this.SetValue(def, value);
 				}
 
@@ -427,9 +427,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override void SetValue(object target, object value) {
-				List<DefType> defs = defSets[this.firstIndex, this.secondIndex];
+				var defs = defSets[this.firstIndex, this.secondIndex];
 
-				foreach (DefType def in defs) {
+				foreach (var def in defs) {
 					this.SetValue(def, (FieldType) value);
 				}
 			}

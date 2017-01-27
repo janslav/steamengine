@@ -125,8 +125,8 @@ namespace SteamEngine.Networking {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "loginFlags")]
 		public void Prepare(AbstractAccount charsSource, int loginFlags) {
-			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
-				AbstractCharacter ch = charsSource.GetCharacterInSlot(i);
+			for (var i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+				var ch = charsSource.GetCharacterInSlot(i);
 				if (ch != null) {
 					this.charNames[i] = ch.Name;
 				} else {
@@ -143,9 +143,9 @@ namespace SteamEngine.Networking {
 		protected override void WriteDynamicPart() {
 			this.SeekFromCurrent(1); //skip numOfCharacters byte
 
-			int numOfCharacters = 0;
-			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
-				string name = this.charNames[i];
+			var numOfCharacters = 0;
+			for (var i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+				var name = this.charNames[i];
 				if (name != null) {
 					this.EncodeASCIIString(name, 30);
 					this.EncodeZeros(30);
@@ -264,7 +264,7 @@ namespace SteamEngine.Networking {
 			this.flaggedUid = ch.FlaggedUid;
 			this.model = ch.ShortModel;
 			this.color = ch.ShortColor;
-			MutablePoint4D p = ch.point4d;
+			var p = ch.point4d;
 			this.x = p.x;
 			this.y = p.y;
 			this.z = p.z;
@@ -363,7 +363,7 @@ namespace SteamEngine.Networking {
 		public void Prepare(AbstractCharacter ch, HighlightColor highlight) {
 			this.flaggedUid = ch.FlaggedUid;
 			this.model = ch.ShortModel;
-			MutablePoint4D point = ch.point4d;
+			var point = ch.point4d;
 			this.x = point.x;
 			this.y = point.y;
 			this.z = point.z;
@@ -377,7 +377,7 @@ namespace SteamEngine.Networking {
 				this.items.Add(new ItemInfo(i.FlaggedUid, i.ShortColor, i.ShortModel, i.Layer));
 			}
 
-			AbstractCharacter mount = ch.Mount;
+			var mount = ch.Mount;
 			if (mount != null) {
 				this.items.Add(new ItemInfo(mount.FlaggedUid | 0x40000000, mount.ShortColor, mount.MountItem, (int) LayerNames.Mount));
 			}
@@ -398,7 +398,7 @@ namespace SteamEngine.Networking {
 			this.EncodeByte(this.flagsToSend);
 			this.EncodeByte(this.highlight);
 
-			foreach (ItemInfo i in this.items) {
+			foreach (var i in this.items) {
 				this.EncodeUInt(i.flaggedUid);
 				if (i.color == 0) {
 					this.EncodeUShort(i.model);
@@ -531,7 +531,7 @@ namespace SteamEngine.Networking {
 			this.corpseUid = corpseUid;
 
 			this.items.Clear();
-			foreach (ICorpseEquipInfo iulp in equippedItems) {
+			foreach (var iulp in equippedItems) {
 				this.items.Add(new ItemInfo(iulp.FlaggedUid, iulp.Layer));
 			}
 		}
@@ -552,7 +552,7 @@ namespace SteamEngine.Networking {
 
 		protected override void WriteDynamicPart() {
 			this.EncodeUInt(this.corpseUid);
-			foreach (ItemInfo i in this.items) {
+			foreach (var i in this.items) {
 				this.EncodeByte(i.layer);
 				this.EncodeUInt(i.flaggedUid);
 			}
@@ -601,7 +601,7 @@ namespace SteamEngine.Networking {
 
 			this.items.Clear();
 
-			foreach (AbstractItem i in cont) {
+			foreach (var i in cont) {
 				if (viewer.CanSeeVisibility(i)) {
 					this.items.Add(new ItemInfo(i));
 					visibleItems.Add(i);
@@ -616,7 +616,7 @@ namespace SteamEngine.Networking {
 			this.flaggedUid = corpseUid;
 
 			this.items.Clear();
-			foreach (ICorpseEquipInfo i in equippedItems) {
+			foreach (var i in equippedItems) {
 				this.items.Add(new ItemInfo(i));
 			}
 
@@ -630,7 +630,7 @@ namespace SteamEngine.Networking {
 			this.items.Clear();
 
 			ulong mask = 1;
-			for (int i = 0; i < 64; i++, mask <<= 1) {
+			for (var i = 0; i < 64; i++, mask <<= 1) {
 				if ((content & mask) != 0) {
 					this.items.Add(new ItemInfo((uint) (0x7FFFFFFF - i), (ushort) (i + offset)));
 				}
@@ -644,7 +644,7 @@ namespace SteamEngine.Networking {
 		protected override void WriteDynamicPart() {
 			this.EncodeUShort((ushort) this.items.Count);
 
-			foreach (ItemInfo i in this.items) {
+			foreach (var i in this.items) {
 				this.EncodeUInt(i.flaggedUid);
 				this.EncodeUShort(i.model);
 				this.EncodeByte(0);
@@ -683,7 +683,7 @@ namespace SteamEngine.Networking {
 			this.EncodeUShort(this.bookModel);
 			this.EncodeShort(this.firstSpellId);
 
-			for (int i = 0; i < 8; i++) {
+			for (var i = 0; i < 8; i++) {
 				this.EncodeByte((byte) (this.content >> (i * 8)));
 			}
 		}
@@ -741,7 +741,7 @@ namespace SteamEngine.Networking {
 			this.flaggedUid = item.FlaggedUid;
 			this.amount = item.ShortAmount;
 			this.model = item.ShortModel;
-			MutablePoint4D point = item.point4d;
+			var point = item.point4d;
 			this.x = point.x;
 			this.y = point.y;
 			this.z = point.z;
@@ -941,7 +941,7 @@ namespace SteamEngine.Networking {
 				this.dexterity = ch.Dex;
 				this.intelligence = ch.Int;
 
-				long lgold = ch.Gold;
+				var lgold = ch.Gold;
 				this.gold = (uint) (lgold > 0xffffffff ? 0xffffffff : lgold);
 				this.armor = ch.StatusArmorClass;
 				this.weight = (ushort) ch.Weight;
@@ -1066,7 +1066,7 @@ namespace SteamEngine.Networking {
 			}
 
 			this.skillList.Clear();
-			foreach (ISkill s in skills) {
+			foreach (var s in skills) {
 				this.skillList.Add(new SkillInfo(s.Id, s.RealValue, s.ModifiedValue, s.Cap, s.Lock));
 			}
 		}
@@ -1129,7 +1129,7 @@ namespace SteamEngine.Networking {
 		protected override void WriteDynamicPart() {
 			this.EncodeByte(this.type);
 
-			foreach (SkillInfo s in this.skillList) {
+			foreach (var s in this.skillList) {
 				if (this.singleSkill) {
 					this.EncodeUShort(s.id);
 				} else {
@@ -1202,7 +1202,7 @@ namespace SteamEngine.Networking {
 
 			for (int i = 0, n = this.ids.Count; i < n; i++) {
 				this.EncodeInt(this.ids[i]);
-				string msg = this.strings[i];
+				var msg = this.strings[i];
 				if (msg == null) {
 					msg = "";
 				}
@@ -1597,8 +1597,8 @@ namespace SteamEngine.Networking {
 		string[] names = new string[AbstractAccount.maxCharactersPerGameAccount];
 
 		public void Prepare(IList<AbstractCharacter> chars) {
-			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
-				AbstractCharacter ch = chars[i];
+			for (var i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+				var ch = chars[i];
 				if (ch != null) {
 					this.names[i] = ch.Name;
 				} else {
@@ -1614,7 +1614,7 @@ namespace SteamEngine.Networking {
 		protected override void WriteDynamicPart() {
 			this.EncodeByte(AbstractAccount.maxCharactersPerGameAccount);
 
-			for (int i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
+			for (var i = 0; i < AbstractAccount.maxCharactersPerGameAccount; i++) {
 				this.EncodeASCIIString(this.names[i], 30);
 				this.EncodeZeros(30);
 			}
@@ -1674,7 +1674,7 @@ namespace SteamEngine.Networking {
 			this.EncodeASCIIStringTerminated(this.layoutText);
 
 			this.EncodeUShort((ushort) this.strings.Count);
-			foreach (string s in this.strings) {
+			foreach (var s in this.strings) {
 				this.EncodeUShort((ushort) s.Length);
 				this.EncodeBigEndianUnicodeString(s);
 			}
@@ -1823,10 +1823,10 @@ namespace SteamEngine.Networking {
 		public void Prepare(IPoint4D source, IPoint4D target, byte type, int effect, byte speed, byte duration, int unk, bool fixedDirection, bool explodes, int hue, RenderModes renderMode) {
 			source = source.TopPoint;
 			target = target.TopPoint;
-			Thing sourceAsThing = source as Thing;
+			var sourceAsThing = source as Thing;
 			if (sourceAsThing != null) {
 				this.sourceUid = sourceAsThing.FlaggedUid;
-				MutablePoint4D p = sourceAsThing.point4d;
+				var p = sourceAsThing.point4d;
 				this.sourceX = p.x;
 				this.sourceY = p.y;
 				this.sourceZ = p.z;
@@ -1836,10 +1836,10 @@ namespace SteamEngine.Networking {
 				this.sourceY = (ushort) source.Y;
 				this.sourceZ = (sbyte) source.Z;
 			}
-			Thing targetAsThing = target as Thing;
+			var targetAsThing = target as Thing;
 			if (targetAsThing != null) {
 				this.targetUid = targetAsThing.FlaggedUid;
-				MutablePoint4D p = targetAsThing.point4d;
+				var p = targetAsThing.point4d;
 				this.targetX = p.x;
 				this.targetY = p.y;
 				this.targetZ = p.z;
@@ -1894,10 +1894,10 @@ namespace SteamEngine.Networking {
 		public void Prepare(IPoint4D source, IPoint4D target, AbstractItem i) {
 			source = source.TopPoint;
 			target = target.TopPoint;
-			Thing sourceAsThing = source as Thing;
+			var sourceAsThing = source as Thing;
 			if (sourceAsThing != null) {
 				this.sourceUid = sourceAsThing.FlaggedUid;
-				MutablePoint4D p = sourceAsThing.point4d;
+				var p = sourceAsThing.point4d;
 				this.sourceX = p.x;
 				this.sourceY = p.y;
 				this.sourceZ = p.z;
@@ -1907,10 +1907,10 @@ namespace SteamEngine.Networking {
 				this.sourceY = (ushort) source.Y;
 				this.sourceZ = (sbyte) source.Z;
 			}
-			Thing targetAsThing = target as Thing;
+			var targetAsThing = target as Thing;
 			if (targetAsThing != null) {
 				this.targetUid = targetAsThing.FlaggedUid;
-				MutablePoint4D p = targetAsThing.point4d;
+				var p = targetAsThing.point4d;
 				this.targetX = p.x;
 				this.targetY = p.y;
 				this.targetZ = p.z;
@@ -2014,7 +2014,7 @@ namespace SteamEngine.Networking {
 		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "members")]
 		public void Prepare(IEnumerable<AbstractCharacter> members) {
 			this.members.Clear();
-			foreach (AbstractCharacter ch in members) {
+			foreach (var ch in members) {
 				this.members.Add(ch.FlaggedUid);
 			}
 		}
@@ -2025,9 +2025,9 @@ namespace SteamEngine.Networking {
 
 		protected override void WriteSubCmd() {
 			this.EncodeByte(0x01);
-			int n = this.members.Count;
+			var n = this.members.Count;
 			this.EncodeByte((byte) n);
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				this.EncodeUInt(this.members[i]);
 			}
 		}
@@ -2047,7 +2047,7 @@ namespace SteamEngine.Networking {
 			this.members.Clear();
 			this.members.Add(removedMember.FlaggedUid);
 			if (members != null) {
-				foreach (AbstractCharacter ch in members) {
+				foreach (var ch in members) {
 					this.members.Add(ch.FlaggedUid);
 				}
 			}
@@ -2059,9 +2059,9 @@ namespace SteamEngine.Networking {
 
 		protected override void WriteSubCmd() {
 			this.EncodeByte(0x02);
-			int n = this.members.Count;
+			var n = this.members.Count;
 			this.EncodeByte((byte) (n - 1));
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				this.EncodeUInt(this.members[i]);
 			}
 		}
@@ -2140,7 +2140,7 @@ namespace SteamEngine.Networking {
 			this.facetsCount = (byte) Map.FacetCount;
 			this.mapPatches.Clear();
 			this.staticsPatches.Clear();
-			for (int i = 0; i < this.facetsCount; i++) {
+			for (var i = 0; i < this.facetsCount; i++) {
 				this.mapPatches.Add(Map.GetFacetPatchesMapCount(i));
 				this.staticsPatches.Add(Map.GetFacetPatchesStaticsCount(i));
 			}
@@ -2152,7 +2152,7 @@ namespace SteamEngine.Networking {
 
 		protected override void WriteSubCmd() {
 			this.EncodeByte(this.facetsCount);
-			for (int i = 0; i < this.facetsCount; i++) {
+			for (var i = 0; i < this.facetsCount; i++) {
 				this.EncodeInt(this.mapPatches[i]);
 				this.EncodeInt(this.staticsPatches[i]);
 			}
@@ -2253,8 +2253,8 @@ namespace SteamEngine.Networking {
 			this.uid = uid;
 
 			this.entries.Clear();
-			bool headerDone = false;
-			foreach (string str in allTexts) {
+			var headerDone = false;
+			foreach (var str in allTexts) {
 				if (headerDone) {
 					Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
 					this.entries.Add(new Entry { text = str });
@@ -2274,7 +2274,7 @@ namespace SteamEngine.Networking {
 			this.header = header;
 
 			this.entries.Clear();
-			foreach (string str in choices) {
+			foreach (var str in choices) {
 				Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
 				this.entries.Add(new Entry { text = str });
 			}
@@ -2295,8 +2295,8 @@ namespace SteamEngine.Networking {
 			this.header = header;
 
 			this.entries.Clear();
-			foreach (IItemMenuEntry entry in choices) {
-				string str = entry.Text;
+			foreach (var entry in choices) {
+				var str = entry.Text;
 				Sanity.IfTrueThrow(str.Length > byte.MaxValue, "Choice text length 256 exceeded");
 				this.entries.Add(new Entry
 				{
@@ -2316,11 +2316,11 @@ namespace SteamEngine.Networking {
 			this.EncodeShort((short) Globals.dice.Next(short.MaxValue));
 
 			this.EncodeASCIIStringWithLenByte(this.header);
-			int n = this.entries.Count;
+			var n = this.entries.Count;
 			this.EncodeByte((byte) n);
 
-			for (int i = 0; i < n; i++) {
-				Entry entry = this.entries[i];
+			for (var i = 0; i < n; i++) {
+				var entry = this.entries[i];
 				this.EncodeUShort(entry.model);
 				this.EncodeUShort(entry.color);
 				this.EncodeASCIIStringWithLenByte(entry.text);

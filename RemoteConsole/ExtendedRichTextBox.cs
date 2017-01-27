@@ -65,7 +65,7 @@ namespace SteamEngine.RemoteConsole {
 
 			// Get the horizontal and vertical resolutions at which the object is
 			// being displayed
-			using (Graphics _graphics = this.CreateGraphics()) {
+			using (var _graphics = this.CreateGraphics()) {
 				this.xDpi = _graphics.DpiX;
 				this.yDpi = _graphics.DpiY;
 			}
@@ -365,7 +365,7 @@ namespace SteamEngine.RemoteConsole {
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public UnderlineStyle SelectionUnderlineStyle {
 			get {
-				CHARFORMAT2 fmt = new CHARFORMAT2();
+				var fmt = new CHARFORMAT2();
 				fmt.cbSize = Marshal.SizeOf(fmt);
 
 				// Get the underline style
@@ -373,19 +373,19 @@ namespace SteamEngine.RemoteConsole {
 				if ((fmt.dwMask & CFM_UNDERLINETYPE) == 0) {
 					return UnderlineStyle.None;
 				}
-				byte style = (byte) (fmt.bUnderlineType & 0x0F);
+				var style = (byte) (fmt.bUnderlineType & 0x0F);
 				return (UnderlineStyle) style;
 			}
 			set {
 				// Ensure we don't alter the color
-				UnderlineColor color = this.SelectionUnderlineColor;
+				var color = this.SelectionUnderlineColor;
 
 				// Ensure we don't show it if it shouldn't be shown
 				if (value == UnderlineStyle.None)
 					color = UnderlineColor.Black;
 
 				// Set the underline type
-				CHARFORMAT2 fmt = new CHARFORMAT2();
+				var fmt = new CHARFORMAT2();
 				fmt.cbSize = Marshal.SizeOf(fmt);
 				fmt.dwMask = CFM_UNDERLINETYPE;
 				fmt.bUnderlineType = (byte) ((byte) value | (byte) color);
@@ -404,7 +404,7 @@ namespace SteamEngine.RemoteConsole {
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public UnderlineColor SelectionUnderlineColor {
 			get {
-				CHARFORMAT2 fmt = new CHARFORMAT2();
+				var fmt = new CHARFORMAT2();
 				fmt.cbSize = Marshal.SizeOf(fmt);
 
 				// Get the underline color
@@ -412,7 +412,7 @@ namespace SteamEngine.RemoteConsole {
 				if ((fmt.dwMask & CFM_UNDERLINETYPE) == 0) {
 					return UnderlineColor.None;
 				}
-				byte style = (byte) (fmt.bUnderlineType & 0xF0);
+				var style = (byte) (fmt.bUnderlineType & 0xF0);
 				return (UnderlineColor) style;
 			}
 			set {
@@ -421,14 +421,14 @@ namespace SteamEngine.RemoteConsole {
 					this.SelectionUnderlineStyle = UnderlineStyle.None;
 				} else {
 					// Ensure we don't alter the style
-					UnderlineStyle style = this.SelectionUnderlineStyle;
+					var style = this.SelectionUnderlineStyle;
 
 					// Ensure we don't show it if it shouldn't be shown
 					if (style == UnderlineStyle.None)
 						value = UnderlineColor.Black;
 
 					// Set the underline color
-					CHARFORMAT2 fmt = new CHARFORMAT2();
+					var fmt = new CHARFORMAT2();
 					fmt.cbSize = Marshal.SizeOf(fmt);
 					fmt.dwMask = CFM_UNDERLINETYPE;
 					fmt.bUnderlineType = (byte) ((byte) style | (byte) value);
@@ -518,7 +518,7 @@ namespace SteamEngine.RemoteConsole {
 		/// Scrolls the data up one page.
 		/// </summary>
 		public void ScrollLineUp(int num) {
-			for (int i = 0; i < num; i++) {
+			for (var i = 0; i < num; i++) {
 				SendMessage(new HandleRef(this, this.Handle), WM_VSCROLL, SB_LINEUP, 0);
 			}
 		}
@@ -527,7 +527,7 @@ namespace SteamEngine.RemoteConsole {
 		/// Scrolls the data down one page.
 		/// </summary>
 		public void ScrollLineDown(int num) {
-			for (int i = 0; i < num; i++) {
+			for (var i = 0; i < num; i++) {
 				SendMessage(new HandleRef(this, this.Handle), WM_VSCROLL, SB_LINEDOWN, 0);
 			}
 		}
@@ -539,7 +539,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <value>the scroll bar information</value>
 		public ScrollBarInformation VerticalScrollInformation {
 			get {
-				SCROLLINFO info = new SCROLLINFO();
+				var info = new SCROLLINFO();
 				info.cbSize = Marshal.SizeOf(info);
 				info.fMask = SIF_ALL;
 				//int ret = 
@@ -722,7 +722,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="_color"></param>
 		public void InsertTextAsRtf(string _text, Font _font, RtfColor _textColor, RtfColor _backColor) {
 
-			StringBuilder _rtf = new StringBuilder();
+			var _rtf = new StringBuilder();
 
 			// Append the RTF header
 			_rtf.Append(RTF_HEADER);
@@ -758,7 +758,7 @@ namespace SteamEngine.RemoteConsole {
 		/// </returns>
 		private string GetDocumentArea(string _text, Font _font) {
 
-			StringBuilder _doc = new StringBuilder();
+			var _doc = new StringBuilder();
 
 			// Append the standard RTF document area control string
 			_doc.Append(RTF_DOCUMENT_PRE);
@@ -854,7 +854,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <param name="_image"></param>
 		public void InsertImage(Image _image) {
 
-			StringBuilder _rtf = new StringBuilder();
+			var _rtf = new StringBuilder();
 
 			// Append the RTF header
 			_rtf.Append(RTF_HEADER);
@@ -932,19 +932,19 @@ namespace SteamEngine.RemoteConsole {
 		/// <returns></returns>
 		private string GetImagePrefix(Image _image) {
 
-			StringBuilder _rtf = new StringBuilder();
+			var _rtf = new StringBuilder();
 
 			// Calculate the current width of the image in (0.01)mm
-			int picw = (int) Math.Round((_image.Width /this.xDpi) * HMM_PER_INCH);
+			var picw = (int) Math.Round((_image.Width /this.xDpi) * HMM_PER_INCH);
 
 			// Calculate the current height of the image in (0.01)mm
-			int pich = (int) Math.Round((_image.Height /this.yDpi) * HMM_PER_INCH);
+			var pich = (int) Math.Round((_image.Height /this.yDpi) * HMM_PER_INCH);
 
 			// Calculate the target width of the image in twips
-			int picwgoal = (int) Math.Round((_image.Width /this.xDpi) * TWIPS_PER_INCH);
+			var picwgoal = (int) Math.Round((_image.Width /this.xDpi) * TWIPS_PER_INCH);
 
 			// Calculate the target height of the image in twips
-			int pichgoal = (int) Math.Round((_image.Height /this.yDpi) * TWIPS_PER_INCH);
+			var pichgoal = (int) Math.Round((_image.Height /this.yDpi) * TWIPS_PER_INCH);
 
 			// Append values to RTF string
 			_rtf.Append(@"{\pict\wmetafile8");
@@ -1037,16 +1037,16 @@ namespace SteamEngine.RemoteConsole {
 				}
 
 				// Get the handle of the Enhanced Metafile
-				IntPtr _hEmf = _metaFile.GetHenhmetafile();
+				var _hEmf = _metaFile.GetHenhmetafile();
 
 				// A call to EmfToWmfBits with a null buffer return the size of the
 				// buffer need to store the WMF bits.  Use this to get the buffer
 				// size.
-				uint _bufferSize = GdipEmfToWmfBits(_hEmf, 0, null, MM_ANISOTROPIC,
+				var _bufferSize = GdipEmfToWmfBits(_hEmf, 0, null, MM_ANISOTROPIC,
 				 EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
 
 				// Create an array to hold the bits
-				byte[] _buffer = new byte[_bufferSize];
+				var _buffer = new byte[_bufferSize];
 
 				// A call to EmfToWmfBits with a valid buffer copies the bits into the
 				// buffer an returns the number of bits in the WMF.  
@@ -1055,7 +1055,7 @@ namespace SteamEngine.RemoteConsole {
 				 EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
 
 				// Append the bits to the RTF string
-				for (int i = 0; i < _buffer.Length; ++i) {
+				for (var i = 0; i < _buffer.Length; ++i) {
 					_rtf.Append(string.Format("{0:X2}", _buffer[i]));
 				}
 
@@ -1086,7 +1086,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <returns></returns>
 		private string GetFontTable(Font _font) {
 
-			StringBuilder _fontTable = new StringBuilder();
+			var _fontTable = new StringBuilder();
 
 			// Append table control string
 			_fontTable.Append("{\\fonttbl{\\f0");
@@ -1131,7 +1131,7 @@ namespace SteamEngine.RemoteConsole {
 		/// <returns></returns>
 		private string GetColorTable(RtfColor _textColor, RtfColor _backColor) {
 
-			StringBuilder _colorTable = new StringBuilder();
+			var _colorTable = new StringBuilder();
 
 			// Append color table control string and default font (;)
 			_colorTable.Append(@"{\colortbl ;");
@@ -1210,7 +1210,7 @@ namespace SteamEngine.RemoteConsole {
 			rectPage.Left = (int) (e.PageBounds.Left * anInch);
 			rectPage.Right = (int) (e.PageBounds.Right * anInch);
 
-			IntPtr hdc = e.Graphics.GetHdc();
+			var hdc = e.Graphics.GetHdc();
 
 			FORMATRANGE fmtRange;
 			fmtRange.chrg.cpMax = charTo;    //Indicate character from to character to
@@ -1220,13 +1220,13 @@ namespace SteamEngine.RemoteConsole {
 			fmtRange.rc = rectToPrint;             //Indicate the area on page to print
 			fmtRange.rcPage = rectPage;            //Indicate size of page
 
-			IntPtr res = IntPtr.Zero;
+			var res = IntPtr.Zero;
 
-			IntPtr wparam = IntPtr.Zero;
+			var wparam = IntPtr.Zero;
 			wparam = new IntPtr(1);
 
 			//Get the pointer to the FORMATRANGE structure in memory
-			IntPtr lparam = IntPtr.Zero;
+			var lparam = IntPtr.Zero;
 			lparam = Marshal.AllocCoTaskMem(Marshal.SizeOf(fmtRange));
 			Marshal.StructureToPtr(fmtRange, lparam, false);
 
@@ -1401,13 +1401,13 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void SetSelectionStyle(uint mask, uint effect) {
-			CHARFORMAT2 cf = new CHARFORMAT2();
+			var cf = new CHARFORMAT2();
 			cf.cbSize = Marshal.SizeOf(cf);
 			cf.dwMask = mask;
 			cf.dwEffects = effect;
 
-			IntPtr wpar = new IntPtr(SCF_SELECTION);
-			IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+			var wpar = new IntPtr(SCF_SELECTION);
+			var lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
 			Marshal.StructureToPtr(cf, lpar, false);
 
 			//IntPtr res = 

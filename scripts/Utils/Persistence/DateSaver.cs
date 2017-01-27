@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 			//return "::"+((DateTime) value).Ticks;
 			//we will return the date in some more acceptable form
 			//the FFF... notation cuts off any possible zeros, it works only if decimal part of the seconds is null				
-			string dateString = ((DateTime) objToSave).ToString("dd.MM.yyyy HH:mm:ss.FFFFFFF");
+			var dateString = ((DateTime) objToSave).ToString("dd.MM.yyyy HH:mm:ss.FFFFFFF");
 			//cut off the last zeros, we dot need them, hour was not specified
 			if (dateString.EndsWith("00:00:00")) {//no hours at all?					
 				dateString = dateString.Substring(0, dateString.Length - 8).Trim();
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object Load(Match match) {
-			GroupCollection gc = match.Groups;
+			var gc = match.Groups;
 
 			//prepare formatter for parsing and parse the date from the string
 			IFormatProvider culture = new CultureInfo("cs-CZ", true);

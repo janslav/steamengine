@@ -24,14 +24,14 @@ namespace SteamEngine.CompiledScripts {
 
 	public static class DamageManager {
 		public static double GetResistModifier(Character resistingChar, DamageType damageType) {
-			int intDamageType = (int) damageType;
+			var intDamageType = (int) damageType;
 
 			//phase 1
-			double isMagic = ((intDamageType & 0x0001) == 0) ? 0.0 : 1;
-			double isPhysical = ((intDamageType & 0x0002) == 0) ? 0.0 : 1;
+			var isMagic = ((intDamageType & 0x0001) == 0) ? 0.0 : 1;
+			var isPhysical = ((intDamageType & 0x0002) == 0) ? 0.0 : 1;
 
 			double modifier = 1;
-			double resistCount = isMagic + isPhysical;
+			var resistCount = isMagic + isPhysical;
 			modifier = modifier * resistCount;
 			Sanity.IfTrueThrow(resistCount == 0, "Attack of type '" + damageType + "' - neither magical nor physical");
 
@@ -39,19 +39,19 @@ namespace SteamEngine.CompiledScripts {
 			modifier -= isPhysical * resistingChar.ResistPhysical;
 
 			//phase 2
-			double isFire = ((intDamageType & (int) DamageType.Fire) == 0) ? 0.0 : 1;
-			double isElectric = ((intDamageType & (int) DamageType.Electric) == 0) ? 0.0 : 1;
-			double isAcid = ((intDamageType & (int) DamageType.Acid) == 0) ? 0.0 : 1;
-			double isCold = ((intDamageType & (int) DamageType.Cold) == 0) ? 0.0 : 1;
-			double isPoison = ((intDamageType & (int) DamageType.Poison) == 0) ? 0.0 : 1;
-			double isMystical = ((intDamageType & (int) DamageType.Mystical) == 0) ? 0.0 : 1;
-			double isSlashing = ((intDamageType & (int) DamageType.Slashing) == 0) ? 0.0 : 1;
-			double isStabbing = ((intDamageType & (int) DamageType.Stabbing) == 0) ? 0.0 : 1;
-			double isBlunt = ((intDamageType & (int) DamageType.Blunt) == 0) ? 0.0 : 1;
-			double isArchery = ((intDamageType & (int) DamageType.Archery) == 0) ? 0.0 : 1;
-			double isBleed = ((intDamageType & (int) DamageType.Bleed) == 0) ? 0.0 : 1;
-			double isSummon = ((intDamageType & (int) DamageType.Summon) == 0) ? 0.0 : 1;
-			double isDragon = ((intDamageType & (int) DamageType.Dragon) == 0) ? 0.0 : 1;
+			var isFire = ((intDamageType & (int) DamageType.Fire) == 0) ? 0.0 : 1;
+			var isElectric = ((intDamageType & (int) DamageType.Electric) == 0) ? 0.0 : 1;
+			var isAcid = ((intDamageType & (int) DamageType.Acid) == 0) ? 0.0 : 1;
+			var isCold = ((intDamageType & (int) DamageType.Cold) == 0) ? 0.0 : 1;
+			var isPoison = ((intDamageType & (int) DamageType.Poison) == 0) ? 0.0 : 1;
+			var isMystical = ((intDamageType & (int) DamageType.Mystical) == 0) ? 0.0 : 1;
+			var isSlashing = ((intDamageType & (int) DamageType.Slashing) == 0) ? 0.0 : 1;
+			var isStabbing = ((intDamageType & (int) DamageType.Stabbing) == 0) ? 0.0 : 1;
+			var isBlunt = ((intDamageType & (int) DamageType.Blunt) == 0) ? 0.0 : 1;
+			var isArchery = ((intDamageType & (int) DamageType.Archery) == 0) ? 0.0 : 1;
+			var isBleed = ((intDamageType & (int) DamageType.Bleed) == 0) ? 0.0 : 1;
+			var isSummon = ((intDamageType & (int) DamageType.Summon) == 0) ? 0.0 : 1;
+			var isDragon = ((intDamageType & (int) DamageType.Dragon) == 0) ? 0.0 : 1;
 
 			resistCount = isFire + isElectric + isAcid + isCold +
 				isPoison + isMystical + isSlashing + isStabbing +
@@ -87,14 +87,14 @@ namespace SteamEngine.CompiledScripts {
 
 				int previousHits = defender.Hits;
 
-				DamageArgs damageArgs = new DamageArgs(attacker, defender, flags, damage);
+				var damageArgs = new DamageArgs(attacker, defender, flags, damage);
 				Trigger_Damage(damageArgs);
 
 				damage = damageArgs.damage;
-				int newHits = (int) Math.Round(defender.Hits - damage);
+				var newHits = (int) Math.Round(defender.Hits - damage);
 				defender.Hits = (short) newHits;
 
-				int actualDamage = previousHits - newHits;
+				var actualDamage = previousHits - newHits;
 				if (actualDamage > 0) {
 					//TODO create blood?
 					if (newHits > 0) {
@@ -110,11 +110,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void ProcessSwing(Character attacker, Character defender) {
-			WeaponSwingArgs swingArgs = GetWeaponSwingArgs(attacker, defender);
+			var swingArgs = GetWeaponSwingArgs(attacker, defender);
 			SoundCalculator.PlayAttackSound(attacker);
 
 			if (TriggerResult.Cancel != Trigger_BeforeSwing(swingArgs)) {
-				int actualDamage = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.DamageAfterAC);
+				var actualDamage = CauseDamage(attacker, defender, attacker.WeaponDamageType, swingArgs.DamageAfterAC);
 
 				swingArgs.InternalSetFinalDamage(actualDamage);
 
@@ -123,12 +123,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static WeaponSwingArgs GetWeaponSwingArgs(Character attacker, Character defender) {
-			CombatSettings settings = CombatSettings.instance;
-			double attack = settings.weapAttack;
+			var settings = CombatSettings.instance;
+			var attack = settings.weapAttack;
 			double piercing = attacker.WeaponPiercing;
 
-			bool defenderIsPlayer = defender.IsPlayerForCombat;
-			bool attackerIsPlayer = attacker.IsPlayerForCombat;
+			var defenderIsPlayer = defender.IsPlayerForCombat;
+			var attackerIsPlayer = attacker.IsPlayerForCombat;
 
 			double armorClass;
 			if (attackerIsPlayer) {
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts {
 				armorClass *= settings.armorClassM;
 			}
 
-			double damageAfterAC = CombatCalculator.CalculateArmorClassEffect(attacker, defender, attack, piercing, armorClass);
+			var damageAfterAC = CombatCalculator.CalculateArmorClassEffect(attacker, defender, attack, piercing, armorClass);
 
 			return new WeaponSwingArgs(attacker, defender, attack, piercing, armorClass, damageAfterAC);
 		}

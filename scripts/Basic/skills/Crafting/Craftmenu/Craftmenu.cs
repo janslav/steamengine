@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 			get {
 				if (mainCategories.Count == 0) {//yet empty - first access, initialize it
 					for (int i = 0, n = AbstractSkillDef.SkillsCount; i < n; i++) {
-						CraftingSkillDef csk = AbstractSkillDef.GetById(i) as CraftingSkillDef;
+						var csk = AbstractSkillDef.GetById(i) as CraftingSkillDef;
 						if (csk != null) {
 							//add only Crafting skills...
 							mainCategories[(SkillName) i] = new CraftmenuCategory(csk);
@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//method for lazy loading the ICraftmenuElement parental info, used only when accessing some element's parent which is yet null
 		internal static void TryLoadParents() {
-			foreach (CraftmenuCategory mainCat in mainCategories.Values) { //these dont have Parents...
+			foreach (var mainCat in mainCategories.Values) { //these dont have Parents...
 				ResolveChildParent(mainCat);
 				mainCat.Parent = mainCat; //main categories will have themselves as parents...
 				mainCat.categorySkill = (CraftingSkillDef) AbstractSkillDef.GetByKey(mainCat.Name); //main categories have the skill Key as their name
@@ -59,8 +59,8 @@ namespace SteamEngine.CompiledScripts {
 		//for the given category iterate through all of its children and set itself as parent to them
 		//continue recursively into subcategories
 		private static void ResolveChildParent(CraftmenuCategory ofWhat) {
-			foreach (ICraftmenuElement elem in ofWhat.Contents) {
-				CraftmenuCategory elemCat = elem as CraftmenuCategory;
+			foreach (var elem in ofWhat.Contents) {
+				var elemCat = elem as CraftmenuCategory;
 				if (elemCat != null) {//we have the subcategory - resolve parents inside
 					elemCat.Parent = ofWhat; //set the subcategory's parent
 					elemCat.isLoaded = true; //loaded, now if the parental reference is null then the category should be taken as deleted
@@ -200,7 +200,7 @@ namespace SteamEngine.CompiledScripts {
 			if (this.Parent != null) {
 				this.Parent.Contents.Remove(this); //remove from the parent's hierarchy list
 			}
-			foreach (ICraftmenuElement subElem in this.contents) {
+			foreach (var subElem in this.contents) {
 				subElem.Remove();//remove every element in the removed category (incl. subcategories)
 			}
 			this.Delete(); //will clear the reference to the parent and disable the overall usage as favourite category etc.
@@ -208,9 +208,9 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>After removing the category from the craftmenu, create a pouch for it, put it into the specified location and bounce all inside items into it</summary>
 		public void Bounce(AbstractItem whereto) {
-			Item newPouch = (Item) ThingDef.GetByDefname("i_pouch").Create(whereto);
+			var newPouch = (Item) ThingDef.GetByDefname("i_pouch").Create(whereto);
 			newPouch.Name = this.Name;
-			foreach (ICraftmenuElement innerElem in this.Contents) {
+			foreach (var innerElem in this.Contents) {
 				innerElem.Bounce(newPouch);
 			}
 		}
@@ -294,7 +294,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Bouncing of the item means creating an instance and putting to the specified location</summary>
 		public void Bounce(AbstractItem whereto) {
-			Item newItm = (Item) this.itemDef.Create(whereto);
+			var newItm = (Item) this.itemDef.Create(whereto);
 		}
 		#endregion
 	}
@@ -311,26 +311,26 @@ namespace SteamEngine.CompiledScripts {
 		private void Encategorize(Item oneItm, CraftmenuCategory whereto) {
 			if (oneItm.IsContainer && oneItm.Count > 0) {//make it a subcategory
 				//use the container's name for the category name - it is up to user to name all containers properly..
-				CraftmenuCategory newSubcat = new CraftmenuCategory(oneItm.Name);
+				var newSubcat = new CraftmenuCategory(oneItm.Name);
 				newSubcat.Parent = whereto;
 				whereto.Contents.Add(newSubcat);
 				foreach (Item inner in oneItm) {
 					this.Encategorize(inner, newSubcat);//proceed with every found item
 				}
 			} else {//normal item or an empty container
-				CraftmenuItem newItem = new CraftmenuItem((ItemDef) oneItm.Def);//add the contained items
+				var newItem = new CraftmenuItem((ItemDef) oneItm.Def);//add the contained items
 				newItem.Parent = whereto;
 				whereto.Contents.Add(newItem);
 			}
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			CraftmenuCategory catToPut = (CraftmenuCategory) parameter;
+			var catToPut = (CraftmenuCategory) parameter;
 
 			this.Encategorize(targetted, catToPut);
 
 			//reopen the dialog on the stored position
-			Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(D_Craftmenu.TkLastCat);
+			var lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(D_Craftmenu.TkLastCat);
 			CraftmenuCategory prevCat = null;
 			if (lastPosDict != null) {
 				prevCat = lastPosDict[catToPut.CategorySkill];

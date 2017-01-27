@@ -36,7 +36,7 @@ namespace SteamEngine.RemoteConsole {
 			if (!LogStrParser.TryParseFileLine(e.LinkText, out filename, out line)) {
 				filename = e.LinkText;
 			}
-			string ext = Path.GetExtension(filename);
+			var ext = Path.GetExtension(filename);
 
 			filename = LogStrParser.TranslateToLocalPath(filename);
 
@@ -75,7 +75,7 @@ namespace SteamEngine.RemoteConsole {
 
 		private void InternalWriteInUIThread(string str) {
 			//this.txtBox.BeginUpdate();
-			int prevLen = this.txtBox.TextLength;
+			var prevLen = this.txtBox.TextLength;
 			this.parser.ProcessLogStr(str);
 
 			if (this.chckAutoScroll.Checked) {
@@ -90,14 +90,14 @@ namespace SteamEngine.RemoteConsole {
 
 		private void TryContract(int prevLen) {
 #if MSWIN
-			int textLength = this.txtBox.TextLength;
-			int currentLine = this.txtBox.GetLineFromCharIndex(prevLen);
-			int firstNextLine = this.txtBox.GetFirstCharIndexFromLine(currentLine + 1);
+			var textLength = this.txtBox.TextLength;
+			var currentLine = this.txtBox.GetLineFromCharIndex(prevLen);
+			var firstNextLine = this.txtBox.GetFirstCharIndexFromLine(currentLine + 1);
 			if (firstNextLine > -1) {
-				int len = textLength - firstNextLine;
+				var len = textLength - firstNextLine;
 				this.txtBox.Select(firstNextLine - 1, len + 1);
 				if (this.txtBox.SelectedText.Trim().Length > 0) {
-					string rtf = this.txtBox.SelectedRtf;
+					var rtf = this.txtBox.SelectedRtf;
 					this.contractedTexts.Add(rtf);
 					this.txtBox.SelectedText = " ";
 					this.txtBox.InsertLink(contractedSign, string.Concat(this.contractedTexts.Count - 1));
@@ -110,14 +110,14 @@ namespace SteamEngine.RemoteConsole {
 		private bool TryUncontract(string linkText) {
 #if MSWIN
 			if (linkText.StartsWith(contractedSign+"#")) {
-				string indexStr = linkText.Substring(4);
-				int i = int.Parse(indexStr);
-				string rtf = this.contractedTexts[i];
+				var indexStr = linkText.Substring(4);
+				var i = int.Parse(indexStr);
+				var rtf = this.contractedTexts[i];
 				this.contractedTexts[i] = null;
 
-				string contractedSignDecorated = " " + contractedSign;
-				int signLen = contractedSignDecorated.Length;
-				int selectionStart = this.txtBox.Text.IndexOf(contractedSignDecorated, this.txtBox.CurrentMouseCharIndex - signLen);
+				var contractedSignDecorated = " " + contractedSign;
+				var signLen = contractedSignDecorated.Length;
+				var selectionStart = this.txtBox.Text.IndexOf(contractedSignDecorated, this.txtBox.CurrentMouseCharIndex - signLen);
 				this.txtBox.Select(selectionStart, signLen + 1 + Environment.NewLine.Length);
 				this.txtBox.SelectedText = " "; //erases the [+]
 
@@ -152,7 +152,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		public void Write(string data, LogStyleInfo style) {
-			int dataLen = data.Length;
+			var dataLen = data.Length;
 			if (dataLen > 0) {
 				//while (this.txtBox.TextLength + dataLen > this.txtBox.MaxLength) {
 				//    this.txtBox.Text = this.txtBox.Text.Substring(this.txtBox.Text.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
@@ -188,7 +188,7 @@ namespace SteamEngine.RemoteConsole {
 		public event EventHandler TitleChanged;
 
 		protected virtual void OnTitleChanged() {
-			EventHandler handler = this.TitleChanged;
+			var handler = this.TitleChanged;
 			if (handler != null) {
 				handler(this, EventArgs.Empty);
 			}

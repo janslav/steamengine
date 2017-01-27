@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != this.durability) {
 					this.durability = value;
-					Character cont = this.Cont as Character;
+					var cont = this.Cont as Character;
 					if (cont != null) {
 						if (this is Weapon) {
 							cont.InvalidateCombatWeaponValues();
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				if (value != this.maxDurability) {
 					this.maxDurability = value;
-					Character cont = this.Cont as Character;
+					var cont = this.Cont as Character;
 					if (cont != null) {
 						if (this is Weapon) {
 							cont.InvalidateCombatWeaponValues();

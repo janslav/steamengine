@@ -29,23 +29,23 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal OpNode opNode;
 
 		internal static OpNode_Is Construct(IOpNodeHolder parent, Node code, int typeNameFromIndex, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
-			OpNode_Is constructed = new OpNode_Is(
+			var constructed = new OpNode_Is(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			for (int i = typeNameFromIndex, n = code.GetChildCount(); i < n; i++) {
-				Node node = code.GetChildAt(i);
+				var node = code.GetChildAt(i);
 				sb.Append(((Token) node).GetImage().Trim());
 			}
-			string typeName = sb.ToString();
+			var typeName = sb.ToString();
 
-			Type type = ClassManager.GetType(typeName);
+			var type = ClassManager.GetType(typeName);
 			if (type == null) {
 				type = Type.GetType(typeName, false, true);
 			}
@@ -73,7 +73,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object obj = this.opNode.Run(vars);
+			var obj = this.opNode.Run(vars);
 
 			return this.type.IsInstanceOfType(obj);
 		}
@@ -86,22 +86,22 @@ namespace SteamEngine.Scripting.Interpretation {
 	[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores"), SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase")]
 	public static class OpNode_Typeof {
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
-			int n = code.GetChildCount();
+			var n = code.GetChildCount();
 			if (OpNode.IsType(code.GetChildAt(1), StrictConstants.LEFT_PAREN)) {
 				n--;
 			}
 
-			StringBuilder sb = new StringBuilder();
-			for (int i = 2; i < n; i++) {
-				Node node = code.GetChildAt(i);
+			var sb = new StringBuilder();
+			for (var i = 2; i < n; i++) {
+				var node = code.GetChildAt(i);
 				sb.Append(((Token) node).GetImage().Trim());
 			}
-			string typeName = sb.ToString();
-			Type type = TryRecognizeType(typeName);
+			var typeName = sb.ToString();
+			var type = TryRecognizeType(typeName);
 			if (type == null) {
 				type = TryRecognizeType(typeName + "`1"); //this is how generic types are internally named
 			}
@@ -114,7 +114,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static Type TryRecognizeType(string typeName) {
-			Type type = ClassManager.GetType(typeName);
+			var type = ClassManager.GetType(typeName);
 			if (type == null) {
 				type = Type.GetType(typeName, false, true);
 			}

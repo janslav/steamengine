@@ -51,7 +51,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			//todo: various state checks...
 			skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 
@@ -67,7 +67,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			GameState state = skillSeqArgs.Self.GameState;
+			var state = skillSeqArgs.Self.GameState;
 			if (state != null) {
 				state.WriteLine(Loc<HidingLoc>.Get(state.Language).HidingAborted);
 			}

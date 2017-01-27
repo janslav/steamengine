@@ -43,7 +43,7 @@ namespace SteamEngine.Scripting {
 				if (this.args == null) {
 					if (this.formatArgs == null) {
 						if (this.argv.Length > 0) {//we fake the args of the function, in case it was actually called from compiled code
-							StringBuilder sb = new StringBuilder();
+							var sb = new StringBuilder();
 							for (int i = 0, n = this.argv.Length - 1; i < n; i++) {
 								sb.Append("{" + i + "}, ");
 							}

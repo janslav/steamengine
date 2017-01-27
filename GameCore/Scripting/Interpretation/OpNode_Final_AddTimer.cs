@@ -37,22 +37,22 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = this.args.Length;
-			object[] results = new object[argsCount];
+			var argsCount = this.args.Length;
+			var results = new object[argsCount];
 			object secondsVal;
 			try {
 				secondsVal = this.secondsNode.Run(vars);
-				for (int i = 0; i < argsCount; i++) {
+				for (var i = 0; i < argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				TriggerTimer timer = new TriggerTimer(this.triggerKey, this.formatString, results);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new TriggerTimer(this.triggerKey, this.formatString, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.name, timer);
 				return timer;
@@ -63,13 +63,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("AddTimer(");
+			var sb = new StringBuilder("AddTimer(");
 			sb.Append("(").Append(this.name.Name).Append(", ").Append(this.secondsNode);
 			sb.Append("@").Append(this.triggerKey.Name).Append(", ");
-			int n = this.args.Length;
+			var n = this.args.Length;
 			if (n > 0) {
 				sb.Append(", ");
-				for (int i = 0; i < n; i++) {
+				for (var i = 0; i < n; i++) {
 					sb.Append(this.args[i]).Append(", ");
 				}
 			}
@@ -94,13 +94,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = this.args.Length;
-			object[] results = new object[argsCount];
+			var argsCount = this.args.Length;
+			var results = new object[argsCount];
 			object secondsVal;
 			try {
-				for (int i = 0; i < argsCount; i++) {
+				for (var i = 0; i < argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 				secondsVal = this.secondsNode.Run(vars);
@@ -109,8 +109,8 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 
 			try {
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				MethodTimer timer = new MethodTimer(this.method, results);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new MethodTimer(this.method, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -121,7 +121,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			object secondsVal;
 			try {
@@ -130,8 +130,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				MethodTimer timer = new MethodTimer(this.method, results);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new MethodTimer(this.method, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -142,7 +142,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
 				this.args[index] = newNode;
 			} else if (this.secondsNode == oldNode) {
@@ -153,13 +153,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("AddTimer(");
+			var sb = new StringBuilder("AddTimer(");
 			sb.Append("(").Append(this.timerKey.Name).Append(", ").Append(this.secondsNode);
 			sb.Append(this.method.Name).Append(", ");
-			int n = this.args.Length;
+			var n = this.args.Length;
 			if (n > 0) {
 				sb.Append(", ");
-				for (int i = 0; i < n; i++) {
+				for (var i = 0; i < n; i++) {
 					sb.Append(this.args[i]).Append(", ");
 				}
 			}
@@ -188,24 +188,24 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = this.args.Length;
-			object[] results = new object[argsCount];
+			var argsCount = this.args.Length;
+			var results = new object[argsCount];
 			object secondsVal;
 			try {
-				for (int i = 0; i < argsCount; i++) {
+				for (var i = 0; i < argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 				secondsVal = this.secondsNode.Run(vars);
 			} finally {
 				vars.self = oSelf;
 			}
-			string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
+			var resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 
 			try {
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				MethodTimer timer = new MethodTimer(this.method, new object[] { resultString });
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new MethodTimer(this.method, new object[] { resultString });
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -216,7 +216,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			object secondsVal;
 			try {
@@ -225,9 +225,9 @@ namespace SteamEngine.Scripting.Interpretation {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				MethodTimer timer = new MethodTimer(this.method, new object[] { resultString });
+				var resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new MethodTimer(this.method, new object[] { resultString });
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -238,7 +238,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
 				this.args[index] = newNode;
 			} else if (this.secondsNode == oldNode) {
@@ -249,13 +249,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("AddTimer_String(");
+			var sb = new StringBuilder("AddTimer_String(");
 			sb.Append("(").Append(this.timerKey.Name).Append(", ").Append(this.secondsNode);
 			sb.Append(this.method.Name).Append(", ");
-			int n = this.args.Length;
+			var n = this.args.Length;
 			if (n > 0) {
 				sb.Append(", ");
-				for (int i = 0; i < n; i++) {
+				for (var i = 0; i < n; i++) {
 					sb.Append(this.args[i]).Append(", ");
 				}
 			}
@@ -285,18 +285,18 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int normalArgsLength = this.normalArgs.Length;
-			object[] results = new object[normalArgsLength + 1];
+			var normalArgsLength = this.normalArgs.Length;
+			var results = new object[normalArgsLength + 1];
 			object secondsVal;
 			try {
-				for (int i = 0; i < normalArgsLength; i++) {
+				for (var i = 0; i < normalArgsLength; i++) {
 					results[i] = this.normalArgs[i].Run(vars);
 				}
-				int paramArrayLength = this.paramArgs.Length;
-				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
-				for (int i = 0; i < paramArrayLength; i++) {
+				var paramArrayLength = this.paramArgs.Length;
+				var paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
+				for (var i = 0; i < paramArrayLength; i++) {
 					paramArray.SetValue(this.paramArgs[i].Run(vars), i);
 				}
 				results[normalArgsLength] = paramArray;
@@ -305,8 +305,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				MethodTimer timer = new MethodTimer(this.method, results);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new MethodTimer(this.method, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -317,7 +317,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			object secondsVal;
 			try {
@@ -326,18 +326,18 @@ namespace SteamEngine.Scripting.Interpretation {
 				vars.self = oSelf;
 			}
 
-			int normalArgsLength = this.normalArgs.Length;
-			object[] modifiedResults = new object[normalArgsLength + 1];
+			var normalArgsLength = this.normalArgs.Length;
+			var modifiedResults = new object[normalArgsLength + 1];
 			Array.Copy(results, modifiedResults, normalArgsLength);
 			try {
 				//Console.WriteLine("results[0].GetType(): "+results[0]);
-				int paramArrayLength = this.paramArgs.Length;
-				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
+				var paramArrayLength = this.paramArgs.Length;
+				var paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
 				Array.Copy(results, normalArgsLength, paramArray, 0, paramArrayLength);
 				modifiedResults[normalArgsLength] = paramArray;
 
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				MethodTimer timer = new MethodTimer(this.method, modifiedResults);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new MethodTimer(this.method, modifiedResults);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -348,7 +348,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.normalArgs, oldNode);
+			var index = Array.IndexOf(this.normalArgs, oldNode);
 			if (index >= 0) {
 				this.normalArgs[index] = newNode;
 				return;
@@ -362,7 +362,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("AddTimer_Params(");
+			var sb = new StringBuilder("AddTimer_Params(");
 			sb.Append("(").Append(this.timerKey.Name).Append(", ").Append(this.secondsNode);
 			sb.Append(this.method.Name).Append(", ");
 			for (int i = 0, n = this.normalArgs.Length; i < n; i++) {
@@ -396,21 +396,21 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			object[] results = new object[this.argsCount];
+			var results = new object[this.argsCount];
 			object secondsVal;
 			try {
 				secondsVal = this.secondsNode.Run(vars);
-				for (int i = 0; i < this.argsCount; i++) {
+				for (var i = 0; i < this.argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				FunctionTimer timer = new FunctionTimer(this.function, this.formatString, results);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new FunctionTimer(this.function, this.formatString, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -427,7 +427,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			object secondsVal;
 			try {
@@ -436,8 +436,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				vars.self = oSelf;
 			}
 			try {
-				double seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
-				FunctionTimer timer = new FunctionTimer(this.function, this.formatString, results);
+				var seconds = Convert.ToDouble(secondsVal, CultureInfo.InvariantCulture);
+				var timer = new FunctionTimer(this.function, this.formatString, results);
 				timer.DueInSeconds = seconds;
 				((PluginHolder) vars.self).AddTimer(this.timerKey, timer);
 				return timer;
@@ -454,7 +454,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
 				this.args[index] = newNode;
 			} else if (this.secondsNode == oldNode) {
@@ -465,13 +465,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("AddTimer(");
+			var sb = new StringBuilder("AddTimer(");
 			sb.Append("(").Append(this.timerKey.Name).Append(", ").Append(this.secondsNode);
 			sb.Append(this.function.Name).Append(", ");
-			int n = this.args.Length;
+			var n = this.args.Length;
 			if (n > 0) {
 				sb.Append(", ");
-				for (int i = 0; i < n; i++) {
+				for (var i = 0; i < n; i++) {
 					sb.Append(this.args[i]).Append(", ");
 				}
 			}

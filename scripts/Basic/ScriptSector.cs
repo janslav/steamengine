@@ -69,15 +69,15 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Perform all check necesarry to do on timeout</summary>
 		internal void CheckOnTimeout() {
 			//check and clean all old TrackPoints left by passing characters
-			TimeSpan minServerTime = Globals.TimeAsSpan - maxEntityAge;
+			var minServerTime = Globals.TimeAsSpan - maxEntityAge;
 
 			List<Character> charsToRemove = null;
-			foreach (KeyValuePair<Character, TrackPoint.LinkedQueue> pair in this.charsPassing) {
-				Character oneChar = pair.Key;
-				TrackPoint.LinkedQueue charsPath = pair.Value;
+			foreach (var pair in this.charsPassing) {
+				var oneChar = pair.Key;
+				var charsPath = pair.Value;
 
-				TrackPoint nextPoint = charsPath.Oldest;
-				TrackPoint newQueueStart = nextPoint;
+				var nextPoint = charsPath.Oldest;
+				var newQueueStart = nextPoint;
 
 				while (nextPoint != null) {
 					if (nextPoint.CreatedAt <= minServerTime) {//check the oldest Queue element
@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			if (charsToRemove != null) {
-				foreach (Character charToRemove in charsToRemove) {
+				foreach (var charToRemove in charsToRemove) {
 					this.charsPassing.Remove(charToRemove);
 				}
 			}
@@ -120,7 +120,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>For the given map Point4D compute and return the corresponding ScriptSector for further purposes</summary>
 		public static ScriptSector GetScriptSector(IPoint4D forPoint) {
-			SectorKey determiningPoint = new SectorKey((ushort) (forPoint.X >> scriptSectorSize), (ushort) (forPoint.Y >> scriptSectorSize), forPoint.M);
+			var determiningPoint = new SectorKey((ushort) (forPoint.X >> scriptSectorSize), (ushort) (forPoint.Y >> scriptSectorSize), forPoint.M);
 			ScriptSector retSector;
 			if (!scriptSectors.TryGetValue(determiningPoint, out retSector)) {
 				retSector = new ScriptSector(determiningPoint);//create new
@@ -136,14 +136,14 @@ namespace SteamEngine.CompiledScripts {
 		public static IEnumerable<ScriptSector> GetScriptSectorsInRectangle(AbstractRectangle rectangle, byte mapplane) {
 			//get first and last computed ScriptSector point for the given rectangle
 			//(i.e. the sectors where the top left and bottom right rectangle points lies)
-			int ssMinX = rectangle.MinX >> scriptSectorSize;
-			int ssMinY = rectangle.MinY >> scriptSectorSize;
-			int ssMaxX = rectangle.MaxX >> scriptSectorSize;
-			int ssMaxY = rectangle.MaxY >> scriptSectorSize;
+			var ssMinX = rectangle.MinX >> scriptSectorSize;
+			var ssMinY = rectangle.MinY >> scriptSectorSize;
+			var ssMaxX = rectangle.MaxX >> scriptSectorSize;
+			var ssMaxY = rectangle.MaxY >> scriptSectorSize;
 
 			//check all computed sector identifiers if some ScriptSector exists for them and if so, return it
-			for (int sx = ssMinX; sx <= ssMaxX; sx++) {
-				for (int sy = ssMinY; sy <= ssMaxY; sy++) {
+			for (var sx = ssMinX; sx <= ssMaxX; sx++) {
+				for (var sy = ssMinY; sy <= ssMaxY; sy++) {
 					ScriptSector oneSector;
 					if (scriptSectors.TryGetValue(new SectorKey(sx, sy, mapplane), out oneSector)) {
 						yield return oneSector;
@@ -159,16 +159,16 @@ namespace SteamEngine.CompiledScripts {
 		/// Return the list of found characters.
 		/// </summary>
 		public static List<AbstractCharacter> GetCharactersInRectangle(AbstractRectangle rect, TimeSpan now, TimeSpan maxAge, byte mapplane) {
-			List<AbstractCharacter> retChars = new List<AbstractCharacter>();
-			TimeSpan minServTime = now - maxAge;
-			foreach (ScriptSector sector in GetScriptSectorsInRectangle(rect, mapplane)) {
-				foreach (KeyValuePair<Character, TrackPoint.LinkedQueue> pair in sector.charsPassing) {
-					Character candidate = pair.Key;
+			var retChars = new List<AbstractCharacter>();
+			var minServTime = now - maxAge;
+			foreach (var sector in GetScriptSectorsInRectangle(rect, mapplane)) {
+				foreach (var pair in sector.charsPassing) {
+					var candidate = pair.Key;
 					if (retChars.Contains(candidate)) {//if  already added from another sector, don't bother.
 						break;
 					}
-					TrackPoint.LinkedQueue queue = pair.Value;
-					foreach (TrackPoint tp in queue.EnumerateFromOldest()) {
+					var queue = pair.Value;
+					foreach (var tp in queue.EnumerateFromOldest()) {
 						if (tp.CreatedAt < minServTime) {
 							break; //the queue is sorted by creation time, once we reach one tp that is too old, all the rest are too old.
 						}
@@ -187,25 +187,25 @@ namespace SteamEngine.CompiledScripts {
 		/// and which are not older than specified.
 		/// </summary>
 		public static IEnumerable<TrackPoint> GetCharsPath(Character whose, AbstractRectangle rect, TimeSpan now, TimeSpan maxAge, byte mapplane) {
-			TimeSpan minTimeToYield = now - maxAge; //newer than this are returned
-			TimeSpan minTimeToStay = now - maxEntityAge; //older than this are deleted
+			var minTimeToYield = now - maxAge; //newer than this are returned
+			var minTimeToStay = now - maxEntityAge; //older than this are deleted
 
-			Dictionary<Point4D, TrackPoint> uniqueFootsteps = new Dictionary<Point4D, TrackPoint>();
-			foreach (ScriptSector relevantSec in GetScriptSectorsInRectangle(rect, mapplane)) {
+			var uniqueFootsteps = new Dictionary<Point4D, TrackPoint>();
+			foreach (var relevantSec in GetScriptSectorsInRectangle(rect, mapplane)) {
 				TrackPoint.LinkedQueue charPoints;
 				if (relevantSec.charsPassing.TryGetValue(whose, out charPoints)) {//only if the char is still loaded on sector (i.e. it was not yet cleaned)
-					TrackPoint next = charPoints.Newest;
+					var next = charPoints.Newest;
 					if (next == null) { //empty queue
 						continue;
 					}
 					do {
-						TrackPoint tp = next;
+						var tp = next;
 						next = tp.OlderNeighbor;
 
-						Point4D loc = tp.Location;
+						var loc = tp.Location;
 						if (!rect.Contains(tp.Location)) { //not interesting
 						} else {
-							TimeSpan tpCreatedAt = tp.CreatedAt;
+							var tpCreatedAt = tp.CreatedAt;
 							if (tpCreatedAt > minTimeToYield) { //the footprint is not too old
 								TrackPoint previousInDict;
 								if (uniqueFootsteps.TryGetValue(loc, out previousInDict)) {
@@ -229,12 +229,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static IEnumerable<TrackPoint> GetTrackPointsOn(Player trackedChar, IPoint4D point) {
-			SectorKey key = new SectorKey((ushort) (point.X >> scriptSectorSize), (ushort) (point.Y >> scriptSectorSize), point.M);
+			var key = new SectorKey((ushort) (point.X >> scriptSectorSize), (ushort) (point.Y >> scriptSectorSize), point.M);
 			ScriptSector sector;
 			if (scriptSectors.TryGetValue(key, out sector)) {
 				TrackPoint.LinkedQueue queue;
 				if (sector.charsPassing.TryGetValue(trackedChar, out queue)) {
-					foreach (TrackPoint tp in queue.EnumerateFromOldest()) {
+					foreach (var tp in queue.EnumerateFromOldest()) {
 						if (Point4D.Equals(point, tp.Location)) {
 							yield return tp;
 						}
@@ -246,7 +246,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>For the given player make a record of his actual position as a new tracking step</summary>
 		internal static void AddTrackingStep(Player whose, Direction direction) {
 			//get actual sector
-			ScriptSector hisSector = GetScriptSector(whose);
+			var hisSector = GetScriptSector(whose);
 
 			//check if we already have this any of char's trackpoints in this sector
 			TrackPoint.LinkedQueue sectorTPQueue;
@@ -278,10 +278,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//add the actually stepped point to the queue (no matter if we have stepped on it previously)
-			TrackPoint tp = new TrackPoint(whose, whose, model);
+			var tp = new TrackPoint(whose, whose, model);
 
 			//check if we are being tracked and in this case, send the information about the new step made
-			List<Character> tbList = (List<Character>) whose.GetTag(TrackingSkillDef.trackedByTK);
+			var tbList = (List<Character>) whose.GetTag(TrackingSkillDef.trackedByTK);
 			if (tbList != null) {
 				if (tbList.Count > 0) {
 					TryRefreshPoint(tbList, tp);
@@ -294,18 +294,18 @@ namespace SteamEngine.CompiledScripts {
 
 		private static void TryRefreshPoint(List<Character> trackers, TrackPoint newTP) {
 			PacketGroup removingPacket = null;
-			bool needRemovePointsChecked = true;
+			var needRemovePointsChecked = true;
 			PacketGroup addingPacket = null;
-			Player trackedChar = newTP.Owner;
-			Point4D newTPLocation = newTP.Location;
+			var trackedChar = newTP.Owner;
+			var newTPLocation = newTP.Location;
 
-			foreach (Character tracker in trackers) {
-				GameState trackerState = tracker.GameState;
+			foreach (var tracker in trackers) {
+				var trackerState = tracker.GameState;
 				if (trackerState != null) {
-					PlayerTrackingPlugin trackersPlugin = PlayerTrackingPlugin.GetInstalledPlugin(tracker);
+					var trackersPlugin = PlayerTrackingPlugin.GetInstalledPlugin(tracker);
 					if ((trackersPlugin != null) && (trackersPlugin.IsObservingPoint(newTPLocation))) {
 						if (needRemovePointsChecked) {
-							foreach (TrackPoint tp in GetTrackPointsOn(trackedChar, newTPLocation)) {
+							foreach (var tp in GetTrackPointsOn(trackedChar, newTPLocation)) {
 								if (removingPacket == null) {
 									removingPacket = PacketGroup.AcquireMultiUsePG();
 								}
@@ -396,7 +396,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override bool Equals(object obj) {
 			if (obj is SectorKey) {
-				SectorKey sk = (SectorKey) obj;
+				var sk = (SectorKey) obj;
 				return ((this.x == sk.x) && (this.y == sk.y) && (this.m == sk.m));
 			}
 			return false;

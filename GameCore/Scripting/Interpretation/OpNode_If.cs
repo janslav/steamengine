@@ -40,28 +40,28 @@ namespace SteamEngine.Scripting.Interpretation {
 
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_If constructed = new OpNode_If(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_If(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
-			Production ifProduction = (Production) code;
-			List<OpNode> conditionsList = new List<OpNode>();
-			List<OpNode> blocksList = new List<OpNode>();
-			int n = code.GetChildCount();
-			for (int i = 0; i < n; i++) {
-				Node node = ifProduction.GetChildAt(i);
+			var ifProduction = (Production) code;
+			var conditionsList = new List<OpNode>();
+			var blocksList = new List<OpNode>();
+			var n = code.GetChildCount();
+			for (var i = 0; i < n; i++) {
+				var node = ifProduction.GetChildAt(i);
 				if ((IsType(node, StrictConstants.IF_BEGIN)) || (IsType(node, StrictConstants.ELSE_IF_BLOCK))) {
-					Production prod = (Production) node;//type IF_BEGIN or ELSE_IF_BLOCK, which are in this context equal
+					var prod = (Production) node;//type IF_BEGIN or ELSE_IF_BLOCK, which are in this context equal
 														//skipping IF / ELSEIF
-					Node condition = prod.GetChildAt(1);
-					OpNode condNode = LScriptMain.CompileNode(constructed, condition, true, context);
+					var condition = prod.GetChildAt(1);
+					var condNode = LScriptMain.CompileNode(constructed, condition, true, context);
 					conditionsList.Add(condNode);
 					//skipping EOL
 					if (prod.GetChildCount() == 4) {
-						Node block = prod.GetChildAt(3);
+						var block = prod.GetChildAt(3);
 						blocksList.Add(LScriptMain.CompileNode(constructed, block, true, context));
 					} else {
 						blocksList.Add(null);
@@ -73,10 +73,10 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (conditionsList.Count != blocksList.Count) {
 				throw new SEException("assertion: conditionsList.Count != blocksList.Count.   This should not happen!");
 			}
-			Node elseNode = ifProduction.GetChildAt(n - 3);
+			var elseNode = ifProduction.GetChildAt(n - 3);
 			if (IsType(elseNode, StrictConstants.ELSE_BLOCK)) {
-				Production elseProd = (Production) elseNode;
-				Node elseCode = elseProd.GetChildAt(2);
+				var elseProd = (Production) elseNode;
+				var elseCode = elseProd.GetChildAt(2);
 				constructed.elseBlock = LScriptMain.CompileNode(constructed, elseCode, true, context);
 			}
 
@@ -92,7 +92,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.blocks, oldNode);
+			var index = Array.IndexOf(this.blocks, oldNode);
 			if (index < 0) {
 				index = Array.IndexOf(this.conditions, oldNode);
 				if (index < 0) {
@@ -112,7 +112,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			bool wasRun = false;
+			var wasRun = false;
 			object retVal = null;
 			for (int i = 0, n = this.conditions.Length; i < n; i++) {
 				if (ConvertTools.ToBoolean(this.conditions[i].Run(vars))) {
@@ -130,7 +130,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("If (");
+			var str = new StringBuilder("If (");
 			str.Append(this.conditions[0]).Append(")").Append(Environment.NewLine);
 			if (this.blocks[0] != null) {
 				str.Append(this.blocks[0]);

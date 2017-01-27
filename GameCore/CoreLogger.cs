@@ -40,8 +40,8 @@ namespace SteamEngine {
 
 		protected override string GetFilepath() {
 			//DateTime.Now.GetDateTimeFormats()[4]
-			DateTime dtnow = DateTime.Now;
-			string filename = string.Format(CultureInfo.InvariantCulture,
+			var dtnow = DateTime.Now;
+			var filename = string.Format(CultureInfo.InvariantCulture,
 				"SteamEngine.GameServer.{0}-{1}-{2}.log",
 				dtnow.Year.ToString("0000", CultureInfo.InvariantCulture),
 				dtnow.Month.ToString("00", CultureInfo.InvariantCulture),

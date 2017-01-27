@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_Assign() {
-			Player self = (Player) this.Cont;
+			var self = (Player) this.Cont;
 			short statDifference;
 
 			self.Vit = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Vit, (short) this.EffectPower, out statDifference);

@@ -470,15 +470,15 @@ namespace SteamEngine.Common {
 
 		#region RenderText
 		private static LogStr RenderText(object data) {
-			Exception e = data as Exception;
+			var e = data as Exception;
 			if (e != null) {
 				return instance.RenderText(e);
 			}
-			LogStr ls = data as LogStr;
+			var ls = data as LogStr;
 			if (ls != null) {
 				return instance.RenderText(ls);
 			}
-			StackTrace stackTrace = data as StackTrace;
+			var stackTrace = data as StackTrace;
 			if (stackTrace != null) {
 				return instance.RenderText(stackTrace);
 			}
@@ -495,8 +495,8 @@ namespace SteamEngine.Common {
 
 		protected virtual LogStr RenderText(Exception e) {
 			if (e != null) {
-				LogStrBuilder builder = new LogStrBuilder();
-				string str = "\t";
+				var builder = new LogStrBuilder();
+				var str = "\t";
 				RenderException(ref str, builder, e);
 				return builder.ToLogStr();
 			}
@@ -505,7 +505,7 @@ namespace SteamEngine.Common {
 
 		public virtual LogStr RenderText(StackTrace stackTrace) {
 			if (stackTrace != null) {
-				LogStrBuilder builder = new LogStrBuilder();
+				var builder = new LogStrBuilder();
 				RenderStackTrace("\t", builder, stackTrace);
 				return builder.ToLogStr();
 			}
@@ -513,7 +513,7 @@ namespace SteamEngine.Common {
 		}
 
 		internal static void RenderException(ref string leftPad, LogStrBuilder builder, Exception e) {
-			Exception innerEx = e.InnerException;
+			var innerEx = e.InnerException;
 			if (innerEx != null) {
 				RenderException(ref leftPad, builder, innerEx);
 				//builder.Append(Environment.NewLine);
@@ -521,42 +521,42 @@ namespace SteamEngine.Common {
 				builder.Append(" ---> ");
 			}
 
-			SEException see = e as SEException;
+			var see = e as SEException;
 			if (see != null) {
 				builder.Append(see.NiceMessage);
 			} else {
 				builder.Append(e.Message);
 			}
 
-			StackTrace trace = new StackTrace(e, true);
+			var trace = new StackTrace(e, true);
 			RenderStackTrace(leftPad, builder, trace);
 			leftPad += "\t";
 		}
 
 		private static void RenderStackTrace(string leftPad, LogStrBuilder builder, StackTrace trace) {
-			int n = trace.FrameCount;
+			var n = trace.FrameCount;
 
-			for (int i = 0; i < n; i++) {
-				StackFrame frame = trace.GetFrame(i);
-				MethodBase methodBase = frame.GetMethod();
+			for (var i = 0; i < n; i++) {
+				var frame = trace.GetFrame(i);
+				var methodBase = frame.GetMethod();
 				if (methodBase != null) {
 					builder.Append(Environment.NewLine);
 					builder.Append(leftPad);
 					builder.Append("at ");
 
-					Type declaringType = methodBase.DeclaringType;
+					var declaringType = methodBase.DeclaringType;
 					if (declaringType != null) {
 						builder.Append(Tools.TypeToString(declaringType));
 						builder.Append(".");
 					}
 					builder.Append(methodBase.Name);
 
-					MethodInfo method = methodBase as MethodInfo;
+					var method = methodBase as MethodInfo;
 					if ((method != null) && method.IsGenericMethod) {
-						Type[] genericArguments = method.GetGenericArguments();
+						var genericArguments = method.GetGenericArguments();
 						builder.Append("<");
-						int index = 0;
-						bool displayComma = true;
+						var index = 0;
+						var displayComma = true;
 						while (index < genericArguments.Length) {
 							if (!displayComma) {
 								builder.Append(",");
@@ -569,15 +569,15 @@ namespace SteamEngine.Common {
 						builder.Append(">");
 					}
 					builder.Append("(");
-					ParameterInfo[] parameters = methodBase.GetParameters();
-					bool commaDisplayed = true;
-					for (int j = 0; j < parameters.Length; j++) {
+					var parameters = methodBase.GetParameters();
+					var commaDisplayed = true;
+					for (var j = 0; j < parameters.Length; j++) {
 						if (!commaDisplayed) {
 							builder.Append(", ");
 						} else {
 							commaDisplayed = false;
 						}
-						string name = "<UnknownType>";
+						var name = "<UnknownType>";
 						if (parameters[j].ParameterType != null) {
 							name = Tools.TypeToString(parameters[j].ParameterType);
 						}
@@ -603,7 +603,7 @@ namespace SteamEngine.Common {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static LogStr LogStrFileLine(string file, object line) {
 			try {
-				int lineInt = Convert.ToInt32(line, CultureInfo.InvariantCulture);
+				var lineInt = Convert.ToInt32(line, CultureInfo.InvariantCulture);
 				return LogStr.FileLine(file, lineInt);
 			} catch {
 			}
@@ -620,8 +620,8 @@ namespace SteamEngine.Common {
 		}
 
 		protected static void OpenFile() {
-			string pathname = instance.GetFilepath();
-			string dirname = Path.GetDirectoryName(pathname);
+			var pathname = instance.GetFilepath();
+			var dirname = Path.GetDirectoryName(pathname);
 			Tools.EnsureDirectory(dirname, true);
 			try {
 				file = File.AppendText(pathname);
@@ -698,7 +698,7 @@ namespace SteamEngine.Common {
 
 		public override void WriteLine(string value) {
 			lock (lockObject) {
-				string printline = string.Concat(DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), ": ", indentation, value);
+				var printline = string.Concat(DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), ": ", indentation, value);
 				console.WriteLine(printline);
 				if (OnConsoleWriteLine != null) {
 					OnConsoleWriteLine(printline);
@@ -716,7 +716,7 @@ namespace SteamEngine.Common {
 
 		public static void WriteLine(LogStr value) {
 			lock (lockObject) {
-				LogStr printline = LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), (LogStr) ": ", (LogStr) indentation, value);
+				var printline = LogStr.Concat((LogStr) DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture), (LogStr) ": ", (LogStr) indentation, value);
 				if (console != null) {
 					console.WriteLine(printline.RawString);
 					if (OnConsoleWriteLine != null) {

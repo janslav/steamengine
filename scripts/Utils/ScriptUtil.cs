@@ -15,7 +15,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static ArrayList ArrayListFromEnumerator(IEnumerator enumerator) {
-			ArrayList list = new ArrayList();
+			var list = new ArrayList();
 			while (enumerator.MoveNext()) {
 				list.Add(enumerator.Current);
 			}
@@ -23,8 +23,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static string GetLogString(GameState state, string message) {
-			AbstractAccount acc = state.Account;
-			AbstractCharacter ch = state.Character;
+			var acc = state.Account;
+			var ch = state.Character;
 			if (acc != null)
 			{
 				if (ch != null) {
@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 		/// Note that ratio can also be negative or greater than 1
 		/// </remarks>
 		public static double EvalRangeDouble(double ratio, double min, double max) {
-			double range = max - min;
+			var range = max - min;
 			return min + (range * ratio);
 		}
 
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			double segSize;
 			int minIdx;
 
-			int len = arr.Length;
+			var len = arr.Length;
 			switch (len) {
 				case 0:
 					return 0;
@@ -99,34 +99,34 @@ namespace SteamEngine.CompiledScripts {
 					break;
 			}
 
-			double min = arr[minIdx];
-			double max = arr[minIdx + 1];
+			var min = arr[minIdx];
+			var max = arr[minIdx + 1];
 			return min + (((max - min) * ratio) / segSize);
 		}
 
 		public static int EvalRandomFaktor(int ratio, int min, int max) {
-			int randomValue = Globals.dice.Next(ratio * min, ratio * max);
+			var randomValue = Globals.dice.Next(ratio * min, ratio * max);
 			return randomValue / 1000;
 		}
 
 		public static double GetRandInRange(double min, double max) {
-			double randomValue = Globals.dice.NextDouble();
-			double diff = max - min;
+			var randomValue = Globals.dice.NextDouble();
+			var diff = max - min;
 			return min + (randomValue * diff);
 		}
 
 		public static void ListScripts(string args) {
-			string testString = string.Concat(args);
+			var testString = string.Concat(args);
 			Globals.SrcWriteLine("Listing scripts containing string '<testString>' in their defname:");
 
-			Regex re = new Regex(testString);
+			var re = new Regex(testString);
 
-			foreach (AbstractScript script in AbstractScript.AllScripts) {
-				string defname = script.Defname;
+			foreach (var script in AbstractScript.AllScripts) {
+				var defname = script.Defname;
 				if ((defname != null) && re.IsMatch(defname)) {
 					Globals.SrcWriteLine(script.ToString());
 				} else {
-					AbstractDef def = script as AbstractDef;
+					var def = script as AbstractDef;
 					if (def != null) {
 						defname = def.Altdefname;
 						if ((defname != null) && re.IsMatch(defname)) {
@@ -164,7 +164,7 @@ namespace SteamEngine.CompiledScripts {
 				Globals.Version, Globals.ServerName, GameServer.AllClients.Count, AbstractItem.Instances, AbstractCharacter.Instances,
 				GC.GetTotalMemory(false) / 1024, Environment.NewLine));
 
-			ScriptHolder saveInfoFunc = PeriodicSaveInformationFunction;
+			var saveInfoFunc = PeriodicSaveInformationFunction;
 			if (saveInfoFunc != null) {
 				ConvertTools.ToString(saveInfoFunc.Run(Globals.Instance, (object[]) null));
 			}

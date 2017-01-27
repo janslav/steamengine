@@ -62,12 +62,12 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
 			Console.WriteLine(state + " identified (steamengine.ini at '" + this.steamengineIniPath + "')");
-			SEGameServerSetup setup = Settings.RememberGameServer(this.steamengineIniPath);
+			var setup = Settings.RememberGameServer(this.steamengineIniPath);
 			state.SetIdentificationData(setup);
 			GameServersManager.AddGameServer(state);
 
 			if (ConsoleServer.ConsoleServer.AllConsolesCount > 0) {
-				foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				foreach (var console in ConsoleServer.ConsoleServer.AllConsoles) {
 					console.OpenCmdWindow(state.Setup.Name, state.ServerUid);
 					console.TryLoginToGameServer(state);
 				}
@@ -106,7 +106,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
 			state.SetStartupFinished(true);
 
-			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(
+			var console = ConsoleServer.ConsoleServer.GetClientByUid(
 				(ConsoleId) this.consoleId);
 			if (console != null) {
 				if (this.loginSuccessful) {
@@ -114,7 +114,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 				} else {
 					console.CloseCmdWindow(state.ServerUid);
 
-					ICollection<GameServer> serversLoggedIn = GameServersManager.AllServersWhereLoggedIn(console);
+					var serversLoggedIn = GameServersManager.AllServersWhereLoggedIn(console);
 					if (serversLoggedIn.Count == 0) {
 						Settings.ForgetUser(console.AccountName);
 						console.SendLoginFailedAndClose("GameServer '" + state.Setup.Name + "' rejected username '" + this.accName + "' and/or it's password.");
@@ -147,7 +147,7 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		protected override void Handle(NamedPipeConnection<SEGameServerClient> conn, SEGameServerClient state) {
-			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid((ConsoleId) this.consoleId);
+			var console = ConsoleServer.ConsoleServer.GetClientByUid((ConsoleId) this.consoleId);
 			if (console != null) {
 				console.WriteLine(state.ServerUid, this.line);
 			}

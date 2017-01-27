@@ -50,9 +50,9 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private void AddTrigger(ScriptHolder scriptHolder) {
-			string name = scriptHolder.Name;
+			var name = scriptHolder.Name;
 			//Console.WriteLine("Adding trigger {0} to tg {1}", name, this);
-			TriggerKey tk = TriggerKey.Acquire(name);
+			var tk = TriggerKey.Acquire(name);
 			if (this.triggers.ContainsKey(tk)) {
 				Logger.WriteError("Attempted to declare triggers of the same name (" + LogStr.Ident(name) + ") in trigger-group " + LogStr.Ident(this.Defname) + "!");
 				return;
@@ -69,9 +69,9 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private static InterpretedTriggerGroup GetNewOrCleared(string defname) {
-			TriggerGroup tg = GetByDefname(defname);
+			var tg = GetByDefname(defname);
 			if (tg == null) {
-				InterpretedTriggerGroup stg = new InterpretedTriggerGroup(defname);
+				var stg = new InterpretedTriggerGroup(defname);
 				stg.Register();
 				return stg;
 			}
@@ -88,7 +88,7 @@ namespace SteamEngine.Scripting.Objects {
 		public static TriggerGroup Load(PropsSection input) {
 			SeShield.AssertInTransaction();
 
-			InterpretedTriggerGroup group = GetNewOrCleared(input.HeaderName);
+			var group = GetNewOrCleared(input.HeaderName);
 			for (int i = 0, n = input.TriggerCount; i < n; i++) {
 				var sc = new LScriptHolder(input.GetTrigger(i), contTriggerGroupName: input.HeaderName);
 				if (!sc.IsUnloaded) {//in case the compilation failed, we do not add the trigger

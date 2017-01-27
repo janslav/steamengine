@@ -28,16 +28,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//internal static readonly TagKey ipsListTK = TagKey.Acquire("_blocked_ips_list_");
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			int IPwidth = 120; //velikost okna pro IP adresu 
-			int duvod = 350;
-			int kdo = 110;
-			int width = IPwidth * 2 + duvod + kdo + 2 * ButtonMetrics.D_BUTTON_WIDTH;
+			var IPwidth = 120; //velikost okna pro IP adresu 
+			var duvod = 350;
+			var kdo = 110;
+			var width = IPwidth * 2 + duvod + kdo + 2 * ButtonMetrics.D_BUTTON_WIDTH;
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
+			var dialogHandler = new ImprovedDialog(gi);
 
 			args.SetDataComparerIfNeededLScript<FirewallEntry>("LowerBound.GetAddressBytes()");
 
-			List<FirewallEntry> entries = args.GetDataList<FirewallEntry>();
+			var entries = args.GetDataList<FirewallEntry>();
 			if (entries == null) {
 				entries = Firewall.GetAllEntries();
 				args.SetDataList(entries);
@@ -45,9 +45,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, entries.Count);
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, entries.Count);
 
 			dialogHandler.CreateBackground(width);
 			dialogHandler.SetLocation(40, 30);
@@ -79,9 +79,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS));
 			dialogHandler.CopyColsFromLastTable();
 
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++, rowCntr++) {
-				FirewallEntry entry = entries[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++, rowCntr++) {
+				var entry = entries[i];
 				dialogHandler.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(i + 10).Build();
 				dialogHandler.LastTable[rowCntr, 1] = GUTAText.Builder.Text(entry.LowerBound.ToString()).Build();
 				dialogHandler.LastTable[rowCntr, 2] = GUTAText.Builder.Text(entry.UpperBound.ToString()).Build();
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			List<FirewallEntry> entries = args.GetDataList<FirewallEntry>();
+			var entries = args.GetDataList<FirewallEntry>();
 
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)				
 				switch (gr.PressedButton) {
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					case 5: // block single ip
 						//stackneme aktualni dialog pro navrat
 						args.RemoveDataList();
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Firewall_BlockIP>.Instance);//a zobrazime novy
+						var newGi = gi.Cont.Dialog(SingletonScript<D_Firewall_BlockIP>.Instance);//a zobrazime novy
 						DialogStacking.EnstackDialog(gi, newGi);
 						return;
 					case 6: // block iprange
@@ -146,8 +146,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				//porad jsme zde - klikalo se na tlacitko primo u bloknute IP
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = gr.PressedButton - 10;
-				FirewallEntry entry = entries[row];
+				var row = gr.PressedButton - 10;
+				var entry = entries[row];
 				if (entry.IsSingleIPEntry) {
 					Firewall.RemoveBlockedIP(entry.LowerBound);
 					//znovuzavolat dialog

@@ -42,17 +42,17 @@ namespace SteamEngine.Scripting.Interpretation {
 		private bool isClass;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, bool mustEval, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
-			OpNode_Lazy_Expression constructed = new OpNode_Lazy_Expression(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var filename = LScriptMain.GetParentScriptHolder(parent).Filename;
+			var constructed = new OpNode_Lazy_Expression(
 				parent, filename, line, column, code);
 
 			constructed.mustEval = mustEval;
 			//LScript.DisplayTree(code);
 
 			if (IsType(code, StrictConstants.STRING)) {
-				string identifier = ((Token) code).GetImage();
+				var identifier = ((Token) code).GetImage();
 				//some "keywords"
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "args")) { //true for case insensitive
 																				   /*args*/
@@ -88,16 +88,16 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 			if (IsType(code, StrictConstants.SIMPLE_EXPRESSION)) {
 				constructed.name = LScriptMain.GetFirstTokenString(code);
-				int current = 1;
-				Node caller = code.GetChildAt(current);
+				var current = 1;
+				var caller = code.GetChildAt(current);
 				if (IsType(caller, StrictConstants.CALLER)) {
 					constructed.GetArgsFrom(caller, context);
 					current++;
 				}
 
-				List<OpNode> indexersList = new List<OpNode>();
+				var indexersList = new List<OpNode>();
 				while (IsType(code.GetChildAt(current), StrictConstants.INDEXER)) {
-					Production indexer = (Production) code.GetChildAt(current);
+					var indexer = (Production) code.GetChildAt(current);
 					//"identifier[...] = ..." - then the assignment "belongs" to the indexer
 					if (IsAssigner(code.GetChildAt(current + 1))) {
 						indexer.AddChild(((Production) code).PopChildAt(current + 1));
@@ -107,7 +107,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					current++;
 				}
 
-				Node assigner = code.GetChildAt(current);
+				var assigner = code.GetChildAt(current);
 				if (IsAssigner(assigner)) {
 					if (constructed.args == null) {
 						constructed.GetArgsFrom(assigner, context);
@@ -122,7 +122,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					constructed.args = new OpNode[0];
 				}
 				if (indexersList.Count > 0) {
-					OpNode[] chain = new OpNode[indexersList.Count + 1];
+					var chain = new OpNode[indexersList.Count + 1];
 					chain[0] = constructed;
 					for (int i = 0, n = indexersList.Count; i < n; i++) {
 						chain[i + 1] = indexersList[i];
@@ -137,32 +137,32 @@ namespace SteamEngine.Scripting.Interpretation {
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		protected void GetArgsFrom(Node caller, LScriptCompilationContext context) {
 			//caller / assigner
-			Node arg = caller.GetChildAt(1); //ArgsList or just one expression
+			var arg = caller.GetChildAt(1); //ArgsList or just one expression
 											 //skipped the caller`s first token - "(" / "=" / " "
 			if (IsType(arg, StrictConstants.RIGHT_PAREN)) {
 				this.args = new OpNode[0];
 				return;
 			}
 			if (IsType(arg, StrictConstants.ARGS_LIST)) {
-				List<OpNode> argsList = new List<OpNode>();
+				var argsList = new List<OpNode>();
 				//ArrayList stringList = new ArrayList();
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				for (int i = 0, n = arg.GetChildCount(); i < n; i += 2) { //step 2 - skipping argsseparators
 					sb.Append("{" + i / 2 + "}");
 					if (i + 1 < n) {
-						Node separator = arg.GetChildAt(i + 1);
+						var separator = arg.GetChildAt(i + 1);
 						sb.Append(LScriptMain.GetString(separator));
 					}
-					Node node = arg.GetChildAt(i);
+					var node = arg.GetChildAt(i);
 					argsList.Add(LScriptMain.CompileNode(this, node, context));
 				}
 				this.args = argsList.ToArray();
 
-				object[] stringTokens = new object[arg.GetChildCount()];
+				var stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);
 				this.formatString = sb.ToString();
 			} else {
-				OpNode compiled = LScriptMain.CompileNode(this, arg, context);
+				var compiled = LScriptMain.CompileNode(this, arg, context);
 				this.args = new[] { compiled };
 				this.formatString = "{0}";
 			}
@@ -173,7 +173,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -187,11 +187,11 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			Commands.AuthorizeCommandThrow(Globals.Src, this.name);
 
-			bool memberNameMatched = false;
-			bool skillKeyMatched = false;
+			var memberNameMatched = false;
+			var skillKeyMatched = false;
 
-			bool tryInstance = true; //are the members only static or also instance
-			bool haveBaseInstance = true; //is here some base instance/type?
+			var tryInstance = true; //are the members only static or also instance
+			var haveBaseInstance = true; //is here some base instance/type?
 			Type seType = null;
 
 			OpNode finalOpNode;
@@ -215,12 +215,12 @@ namespace SteamEngine.Scripting.Interpretation {
 					this.SetNewParentToArgs((IOpNodeHolder) newNode);
 				} else { //args.Length == 0
 						 //Console.WriteLine("OpNode_Object.Construct from return");
-					OpNode nullNode = OpNode_Object.Construct(null, (object) null);
+					var nullNode = OpNode_Object.Construct(null, (object) null);
 					newNode = new OpNode_Return(this.parent, this.filename, this.line, this.column, this.OrigNode, nullNode);
 				}
 				this.ReplaceSelf(newNode);
 
-				object oSelf = vars.self;
+				var oSelf = vars.self;
 				vars.self = vars.defaultObject;
 				try {
 					return newNode.Run(vars);
@@ -230,7 +230,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 
 			//scripts
-			AbstractScript ad = AbstractScript.GetByDefname(this.name);
+			var ad = AbstractScript.GetByDefname(this.name);
 			if (ad != null) {
 				finalOpNode = OpNode_Object.Construct(this.parent, ad);
 				goto runit;
@@ -250,7 +250,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (!string.IsNullOrEmpty(this.classOrNamespaceName)) {
 					//noArgs
 					if (!this.isClass) {
-						string className = this.classOrNamespaceName + "." + this.name;
+						var className = this.classOrNamespaceName + "." + this.name;
 						type = Type.GetType(className, false, true);
 						if (type == null) {
 							throw new NameRefException(this.line, this.column, this.filename,
@@ -264,7 +264,7 @@ namespace SteamEngine.Scripting.Interpretation {
 						tryInstance = false;
 						//Console.WriteLine("tryInstance = false: {0} ({1}) at {2}:{3}", type, className, this.line, this.column);
 					} else {
-						ClassNameRef classRef = (ClassNameRef) vars.self;
+						var classRef = (ClassNameRef) vars.self;
 						type = Type.GetType(classRef.name, false, true);
 						if (type == null) {
 							type = ClassManager.GetType(classRef.name);
@@ -292,7 +292,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			//arg/local
 			if (this.args.Length == 0) {
-				OpNode_Lazy_ExpressionChain chainAsParent = this.parent as OpNode_Lazy_ExpressionChain;
+				var chainAsParent = this.parent as OpNode_Lazy_ExpressionChain;
 				if ((chainAsParent != null) && chainAsParent.GetChildIndex(this) > 0) {
 					//we can only resolve as local variable if we're the leftmost string
 				} else if (this.ParentScriptHolder.ContainsLocalVarName(this.name)) {
@@ -313,7 +313,7 @@ namespace SteamEngine.Scripting.Interpretation {
 						(StringComparer.OrdinalIgnoreCase.Equals(this.name, "itemnewbie")) ||
 						(StringComparer.OrdinalIgnoreCase.Equals(this.name, "sell")) ||
 						(StringComparer.OrdinalIgnoreCase.Equals(this.name, "buy")))) {
-					int argsLength = this.args.Length;
+					var argsLength = this.args.Length;
 					if ((argsLength == 1) || (argsLength == 2)) {
 						resolver.RunArgs();
 						if ((resolver.Results[0] is IThingFactory) && ((argsLength == 1) ||
@@ -324,14 +324,14 @@ namespace SteamEngine.Scripting.Interpretation {
 							} else {
 								amountNode = this.args[1];
 							}
-							bool newbie = (StringComparer.OrdinalIgnoreCase.Equals(this.name, "itemnewbie"));
+							var newbie = (StringComparer.OrdinalIgnoreCase.Equals(this.name, "itemnewbie"));
 							finalOpNode = new OpNode_TemplateItem(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								newbie, this.args[0], amountNode);
 							goto runit;
 						}
 					}
 				}
-				MemberTypes typesToResolve = (tryInstance ? MemberTypes.All : MemberTypes.Constructor);
+				var typesToResolve = (tryInstance ? MemberTypes.All : MemberTypes.Constructor);
 				memberNameMatched |= resolver.Resolve(type, BindingFlags.Instance, typesToResolve, out desc);
 				if (!this.ResolveAsClassMember(desc, out finalOpNode)) {//in other words, if desc was null
 					memberNameMatched |= resolver.Resolve(type, BindingFlags.Static, MemberTypes.All, out desc);
@@ -365,7 +365,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 			}
 			//function
-			ScriptHolder function = ScriptHolder.GetFunction(this.name);
+			var function = ScriptHolder.GetFunction(this.name);
 			if (function != null) {
 				finalOpNode = new OpNode_Function(this.parent, this.filename, this.line, this.column, this.OrigNode,
 					function, this.args, this.formatString);
@@ -374,7 +374,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			//skillkey
 			if (vars.self is AbstractCharacter) {
-				AbstractSkillDef sd = AbstractSkillDef.GetByKey(this.name);
+				var sd = AbstractSkillDef.GetByKey(this.name);
 				if (sd != null) {
 					skillKeyMatched = true;
 					if (this.args.Length == 0) {
@@ -397,14 +397,14 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			if (this.args.Length == 0) {
 				//constant (defnames)
-				Constant con = Constant.GetByName(this.name);
+				var con = Constant.GetByName(this.name);
 				if (con != null) {
 					finalOpNode = new OpNode_Constant(this.parent, this.filename, this.line, this.column, this.OrigNode, con);
 					goto runit;
 				}
 
 				//regions
-				StaticRegion reg = StaticRegion.GetByDefname(this.name);
+				var reg = StaticRegion.GetByDefname(this.name);
 				if (reg != null) {
 					finalOpNode = OpNode_Object.Construct(this.parent, reg);
 					goto runit;
@@ -413,15 +413,15 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			//a little hack for gumps - to make possible to use dialog layout methods without the "argo."
 			if ((vars.self == vars.defaultObject) && (vars.scriptArgs != null) && (vars.scriptArgs.Argv.Length > 0)) {
-				InterpretedGump sgi = vars.scriptArgs.Argv[0] as InterpretedGump;
+				var sgi = vars.scriptArgs.Argv[0] as InterpretedGump;
 				if (sgi != null) {
 					if (InterpretedGump.IsMethodName(this.name)) {
 						desc = null;
 						memberNameMatched = resolver.Resolve(typeof(InterpretedGump), BindingFlags.Instance, MemberTypes.Method, out desc);
 						this.ResolveAsClassMember(desc, out finalOpNode);
 						if (finalOpNode != null) {
-							OpNode_MethodWrapper onmw = (OpNode_MethodWrapper) finalOpNode;
-							OpNode_RunOnArgo newNode = new OpNode_RunOnArgo(this.parent, this.filename, this.line, this.column, this.OrigNode, onmw);
+							var onmw = (OpNode_MethodWrapper) finalOpNode;
+							var newNode = new OpNode_RunOnArgo(this.parent, this.filename, this.line, this.column, this.OrigNode, onmw);
 							onmw.parent = newNode;
 							finalOpNode = newNode;
 							goto runit;
@@ -461,9 +461,9 @@ namespace SteamEngine.Scripting.Interpretation {
 				throw new InterpreterException("Undefined identifier '" + LogStr.Ident(this.name) + "'",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 			}
-			string thisNodeString = this.OrigString;
+			var thisNodeString = this.OrigString;
 			//Console.WriteLine("OpNode_Object.Construct from !mustEval");
-			OpNode finalStringOpNode = OpNode_Object.Construct(this.parent, thisNodeString);
+			var finalStringOpNode = OpNode_Object.Construct(this.parent, thisNodeString);
 			this.ReplaceSelf(finalStringOpNode);
 			return thisNodeString;
 			//			}
@@ -475,7 +475,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				this.results = resolver.Results;
 			}
 			//finally run it
-			IOpNodeHolder finalAsHolder = finalOpNode as IOpNodeHolder;
+			var finalAsHolder = finalOpNode as IOpNodeHolder;
 			if (finalAsHolder != null) {
 				this.SetNewParentToArgs(finalAsHolder);
 			}
@@ -493,7 +493,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (desc == null) {
 				return false;
 			}
-			MemberInfo info = desc.Info;
+			var info = desc.Info;
 			MethodInfo methodInfo;
 			ConstructorInfo constructorInfo;
 			FieldInfo fieldInfo;
@@ -511,7 +511,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					} else if (MemberResolver.IsField(info)) {
 						fieldInfo = (FieldInfo) info;
 						if ((fieldInfo.Attributes & FieldAttributes.Literal) == FieldAttributes.Literal) {
-							object retVal = fieldInfo.GetValue(null);
+							var retVal = fieldInfo.GetValue(null);
 							finalOpNode = OpNode_Object.Construct(this.parent, retVal);
 						} else {
 							fieldInfo = MemberWrapper.GetWrapperFor((FieldInfo) info);
@@ -544,14 +544,14 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 					break;
 				case SpecialType.Params:
-					MethodBase methOrCtor = (MethodBase) info;
-					ParameterInfo[] pars = methOrCtor.GetParameters();//these are guaranteed to have the right number of arguments...
-					int methodParamLength = pars.Length;
-					Type paramsElementType = pars[methodParamLength - 1].ParameterType.GetElementType();
-					int normalArgsLength = methodParamLength - 1;
-					int paramArgsLength = this.args.Length - normalArgsLength;
-					OpNode[] normalArgs = new OpNode[normalArgsLength];
-					OpNode[] paramArgs = new OpNode[paramArgsLength];
+					var methOrCtor = (MethodBase) info;
+					var pars = methOrCtor.GetParameters();//these are guaranteed to have the right number of arguments...
+					var methodParamLength = pars.Length;
+					var paramsElementType = pars[methodParamLength - 1].ParameterType.GetElementType();
+					var normalArgsLength = methodParamLength - 1;
+					var paramArgsLength = this.args.Length - normalArgsLength;
+					var normalArgs = new OpNode[normalArgsLength];
+					var paramArgs = new OpNode[paramArgsLength];
 					Array.Copy(this.args, normalArgs, normalArgsLength);
 					Array.Copy(this.args, normalArgsLength, paramArgs, 0, paramArgsLength);
 
@@ -572,7 +572,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		private void SetNewParentToArgs(IOpNodeHolder newParent) {
 			for (int i = 0, n = this.args.Length; i < n; i++) {
-				OpNode node = this.args[i];
+				var node = this.args[i];
 				//Console.WriteLine("Setting new parent {0} (type {1}) to {2} ({3})", newParent, newParent.GetType(), node, node.GetType());
 				node.parent = newParent;
 			}
@@ -580,7 +580,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder(this.name).Append("(");
+			var str = new StringBuilder(this.name).Append("(");
 			for (int i = 0, n = this.args.Length; i < n; i++) {
 				str.Append(this.args[i]).Append(", ");
 			}

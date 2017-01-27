@@ -24,15 +24,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog that will display all trackable characters nearby the tracker with the possibility to track them...</summary>
 	public class D_Tracking_Characters : CompiledGumpDef {
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			SkillSequenceArgs ssa = (SkillSequenceArgs) args[0];
-			CharacterTypes charType = (CharacterTypes) ssa.Param1;
-			List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args[1];//trackable characters around
+			var ssa = (SkillSequenceArgs) args[0];
+			var charType = (CharacterTypes) ssa.Param1;
+			var charsAround = (List<AbstractCharacter>) args[1];//trackable characters around
 			charsAround.Sort(CharComparerByName<AbstractCharacter>.instance); //sort by name (why not? :-) )
 
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, charsAround.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, charsAround.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(180);
 			dlg.SetLocation(80, 50);
@@ -52,15 +52,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			//seznam charu ke stopovani
-			GUTATable charsTable = new GUTATable(imax - firstiVal);
+			var charsTable = new GUTATable(imax - firstiVal);
 			charsTable.RowHeight = 50; //dobra vejska pro obrazky
 			charsTable.InnerRowsDelimited = true;
 			dlg.AddTable(charsTable);
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			GumpIDs displayGump = GumpIDs.Figurine_Man; //default
+			var rowCntr = 0;
+			var displayGump = GumpIDs.Figurine_Man; //default
 			switch (charType) {
 				case CharacterTypes.Animals:
 					displayGump = GumpIDs.Figurine_Llama;
@@ -74,8 +74,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				default:
 					break; //for All or Players we need to determine either the whole Icon or at least the Player's gender
 			}
-			for (int i = firstiVal; i < imax; i++) {
-				Character chr = (Character) charsAround[i];
+			for (var i = firstiVal; i < imax; i++) {
+				var chr = (Character) charsAround[i];
 				if (charType == CharacterTypes.Players) {
 					displayGump = chr.IsMale ? GumpIDs.Figurine_Man : GumpIDs.Figurine_Woman;
 				} else if (charType == CharacterTypes.All) {//for "all" determine the icon char by char
@@ -102,9 +102,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else {
 				//check which character from the list is to be tracked
-				SkillSequenceArgs ssa = (SkillSequenceArgs) args[0];
-				List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args[1];
-				Character charToTrack = (Character) charsAround[gr.PressedButton - 10];
+				var ssa = (SkillSequenceArgs) args[0];
+				var charsAround = (List<AbstractCharacter>) args[1];
+				var charToTrack = (Character) charsAround[gr.PressedButton - 10];
 
 				ssa.Target1 = charToTrack;
 				ssa.Param2 = TrackingEnums.Phase_Character_Track; //track the particular character

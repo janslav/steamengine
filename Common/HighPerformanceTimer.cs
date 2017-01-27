@@ -47,7 +47,7 @@ namespace SteamEngine.Common {
 
 		static HighPerformanceTimer() {
 			try {
-				bool success = NativeMethods.QueryPerformanceFrequency(out frequency);
+				var success = NativeMethods.QueryPerformanceFrequency(out frequency);
 				if (success) {
 					dFrequency = frequency;
 					dmFrequency = dFrequency / 1000.0;
@@ -70,7 +70,7 @@ namespace SteamEngine.Common {
 				    return Environment.TickCount;
 				}
 				long count;
-				bool success = NativeMethods.QueryPerformanceCounter(out count);
+				var success = NativeMethods.QueryPerformanceCounter(out count);
 				if (success) {
 					return count;
 				}
@@ -159,8 +159,8 @@ namespace SteamEngine.Common {
 
 		public void Dispose() {
 			if (!this.disposed) {
-				long ticksOnEnd = HighPerformanceTimer.TickCount;
-				long diff = ticksOnEnd - this.ticksOnStart;
+				var ticksOnEnd = HighPerformanceTimer.TickCount;
+				var diff = ticksOnEnd - this.ticksOnStart;
 				Logger.indentation = Logger.indentation.Substring(0, Logger.indentation.Length - 1);
 				Logger.StaticWriteLine("...took " + HighPerformanceTimer.TicksToTimeSpan(diff));
 				this.disposed = true;

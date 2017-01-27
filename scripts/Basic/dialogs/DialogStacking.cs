@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dialogsMultiStack = new Dictionary<int, Stack<Gump>>();
 				oldGi.Cont.SetTag(dialogStackTK, dialogsMultiStack);
 			}*/
-			Dictionary<int, Stack<Gump>> dialogsMultiStack = AcquireDialogsDictionary(oldGi.Cont.GameState);
+			var dialogsMultiStack = AcquireDialogsDictionary(oldGi.Cont.GameState);
 			Stack<Gump> actualStack;
 			if (!dialogsMultiStack.TryGetValue(oldGi.Uid, out actualStack)) {
 				actualStack = new Stack<Gump>(); //vytvortit a ulozit
@@ -111,7 +111,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// This is necesasry since the resent dialog has a different uid than its older form
 		/// </summary>
 		public static void ResendAndRestackDialog(Gump oldInstance) {
-			Gump newInstance = oldInstance.Cont.SendGump(
+			var newInstance = oldInstance.Cont.SendGump(
 				oldInstance.Focus, oldInstance.Def, oldInstance.InputArgs);//resend
 			RenewStackedDialog(oldInstance, newInstance);//and restack
 		}
@@ -143,7 +143,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>For displaying the previously stored dialog (if any)</summary>
 		public static void ShowPreviousDialog(Gump actualGi) {
-			Gump sgi = PopStackedDialog(actualGi);
+			var sgi = PopStackedDialog(actualGi);
 			if (sgi != null) {
 				ResendAndRestackDialog(sgi); //we also have to alter stack information about the resent dialog...
 			}

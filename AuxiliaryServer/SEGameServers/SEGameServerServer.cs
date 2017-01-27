@@ -33,8 +33,8 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		private static void BroadcastRSLS(bool state) {
-			foreach (GameServer gameServer in GameServersManager.AllRunningGameServers) {
-				SEGameServerClient segs = gameServer as SEGameServerClient;
+			foreach (var gameServer in GameServersManager.AllRunningGameServers) {
+				var segs = gameServer as SEGameServerClient;
 				if (segs != null) {
 					segs.RequestSendingLogStr(state);
 				}

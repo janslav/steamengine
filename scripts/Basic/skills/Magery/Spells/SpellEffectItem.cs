@@ -26,8 +26,8 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class SpellEffectItem {
 		public static bool CheckPositionForItem(int x, int y, ref int z, Map map, int height, bool checkCharacters) {
-			for (int offset = 0; offset < 10; offset++) {
-				int offsetZ = z - offset;
+			for (var offset = 0; offset < 10; offset++) {
+				var offsetZ = z - offset;
 				if (map.CanFit(x, y, offsetZ, height, true, checkCharacters)) {
 					z = offsetZ;
 					return true;
@@ -80,12 +80,12 @@ namespace SteamEngine.CompiledScripts {
 	public partial class SpellEffectItemDef {
 
 		public SpellEffectItem Conjure(IPoint4D target, bool checkCharacters, int spellPower, TimeSpan duration, bool dispellable) {
-			int x = target.X;
-			int y = target.Y;
-			int z = target.Z;
-			Map map = target.GetMap();
+			var x = target.X;
+			var y = target.Y;
+			var z = target.Z;
+			var map = target.GetMap();
 			if (SpellEffectItem.CheckPositionForItem(x, y, ref z, map, this.Height, checkCharacters)) {
-				SpellEffectItem item = (SpellEffectItem) this.Create(x, y, z, map.M);
+				var item = (SpellEffectItem) this.Create(x, y, z, map.M);
 				item.Init(spellPower, duration, dispellable);
 				return item;
 			}

@@ -26,7 +26,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		//accepts Code, SimpleCode
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			Production prod = (Production) code;
+			var prod = (Production) code;
 			return Construct(parent, prod.children, context);
 		}
 
@@ -35,16 +35,16 @@ namespace SteamEngine.Scripting.Interpretation {
 				return LScriptMain.CompileNode(parent, (Node) children[0], context);
 			}
 
-			int highestPriority = -1;
-			int opIndex = -1;
+			var highestPriority = -1;
+			var opIndex = -1;
 			for (int i = 1, n = children.Count; i < n; i += 2) {//step is 2, we are looking just for the operators
-				Node node = (Node) children[i];
-				string op = LScriptMain.GetString(node).Trim().ToLowerInvariant();
+				var node = (Node) children[i];
+				var op = LScriptMain.GetString(node).Trim().ToLowerInvariant();
 				if (IsComparing(op)) {
 					opIndex = i;
 					break;
 				}
-				int priority = OperatorPriority(op);
+				var priority = OperatorPriority(op);
 				if (priority >= highestPriority) {
 					opIndex = i;
 					highestPriority = priority;
@@ -55,7 +55,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 
 			OpNode_Lazy_BinOperator constructed = null;
-			Node operatorNode = (Node) children[opIndex];
+			var operatorNode = (Node) children[opIndex];
 			if (OpNode.IsType(operatorNode, StrictConstants.OP_AND)) {
 				constructed = new OpNode_LogicalAnd(parent, operatorNode, context);
 			} else if (OpNode.IsType(operatorNode, StrictConstants.OP_OR)) {
@@ -65,8 +65,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				constructed = OpNode_Lazy_BinOperator.Construct(parent, operatorNode, context);
 			}
 
-			ArrayList listLeft = children.GetRange(0, opIndex);
-			ArrayList listRight = children.GetRange(opIndex + 1, children.Count - opIndex - 1);
+			var listLeft = children.GetRange(0, opIndex);
+			var listRight = children.GetRange(opIndex + 1, children.Count - opIndex - 1);
 			constructed.left = Construct(constructed, listLeft, context);
 			constructed.right = Construct(constructed, listRight, context);
 
@@ -79,7 +79,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					return true;
 				}
 			} else {
-				char first = op[0];
+				var first = op[0];
 				if ((first == '<') || (first == '>')) {
 					return true;
 				}

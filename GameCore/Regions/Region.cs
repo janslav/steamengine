@@ -76,7 +76,7 @@ namespace SteamEngine.Regions {
 
 		public IList<ImmutableRectangle> Rectangles {
 			get {
-				RegionRectangle[] arr = new RegionRectangle[this.rectangles.Count];
+				var arr = new RegionRectangle[this.rectangles.Count];
 				this.rectangles.CopyTo(arr, 0);
 				return arr;
 			}
@@ -146,7 +146,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public static bool TryExitAndEnter(Region oldRegion, Region newRegion, AbstractCharacter ch) {
-			Region sharedParent = FindCommonParent(oldRegion, newRegion);
+			var sharedParent = FindCommonParent(oldRegion, newRegion);
 			while (oldRegion != sharedParent) {
 				if (!oldRegion.TryExit(ch)) {//cancelled
 					return false;
@@ -169,7 +169,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public static void ExitAndEnter(Region oldRegion, Region newRegion, AbstractCharacter ch) {//exit and enter all the regions in hierarchy
-			Region sharedParent = FindCommonParent(oldRegion, newRegion);
+			var sharedParent = FindCommonParent(oldRegion, newRegion);
 			while (oldRegion != sharedParent) {
 				oldRegion.Exit(ch);
 				oldRegion = oldRegion.parent;
@@ -188,9 +188,9 @@ namespace SteamEngine.Regions {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void Trigger_ItemEnter(ItemOnGroundArgs args) {
-			Region region = args.Region;
-			Point4D point = args.Point;
-			AbstractItem item = args.ManipulatedItem;
+			var region = args.Region;
+			var point = args.Point;
+			var item = args.ManipulatedItem;
 
 			do {
 				region.TryTrigger(TriggerKey.itemEnter, args);
@@ -206,9 +206,9 @@ namespace SteamEngine.Regions {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void Trigger_ItemLeave(ItemOnGroundArgs args) {
-			Region region = args.Region;
-			Point4D point = args.Point;
-			AbstractItem item = args.ManipulatedItem;
+			var region = args.Region;
+			var point = args.Point;
+			var item = args.ManipulatedItem;
 
 			do {
 				region.TryTrigger(TriggerKey.itemLeave, args);
@@ -224,7 +224,7 @@ namespace SteamEngine.Regions {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void Trigger_DenyPickupItemFrom(DenyPickupArgs args) {
-			Region region = this;
+			var region = this;
 
 			do {
 				if (TriggerResult.Cancel != region.TryCancellableTrigger(TriggerKey.denyPickupItemFrom, args)) {
@@ -249,7 +249,7 @@ namespace SteamEngine.Regions {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult Trigger_DenyPutItemOn(DenyPutOnGroundArgs args) {
 			this.ThrowIfDeleted();
-			Region region = this;
+			var region = this;
 
 			do {
 				if (TriggerResult.Cancel != region.TryCancellableTrigger(TriggerKey.denyPutItemOn, args)) {
@@ -293,7 +293,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool ContainsPoint(Point2D point) {
-			foreach (ImmutableRectangle rect in this.Rectangles) {
+			foreach (var rect in this.Rectangles) {
 				if (rect.Contains(point)) {
 					return true;
 				}
@@ -302,7 +302,7 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool ContainsPoint(int x, int y) {
-			foreach (ImmutableRectangle rect in this.Rectangles) {
+			foreach (var rect in this.Rectangles) {
 				if (rect.Contains(x, y)) {
 					return true;
 				}
@@ -391,16 +391,16 @@ namespace SteamEngine.Regions {
 					break;
 				case "rect":
 				case "rectangle": //RECT=2300,3612,3264,4096
-					Match m = rectRE.Match(valueString);
+					var m = rectRE.Match(valueString);
 					if (m.Success) {
-						GroupCollection gc = m.Groups;
-						ushort x1 = ConvertTools.ParseUInt16(gc["x1"].Value);
-						ushort y1 = ConvertTools.ParseUInt16(gc["y1"].Value);
-						ushort x2 = ConvertTools.ParseUInt16(gc["x2"].Value);
-						ushort y2 = ConvertTools.ParseUInt16(gc["y2"].Value);
+						var gc = m.Groups;
+						var x1 = ConvertTools.ParseUInt16(gc["x1"].Value);
+						var y1 = ConvertTools.ParseUInt16(gc["y1"].Value);
+						var x2 = ConvertTools.ParseUInt16(gc["x2"].Value);
+						var y2 = ConvertTools.ParseUInt16(gc["y2"].Value);
 						//Point2D point1 = new Point2D(x1, y1);
 						//Point2D point2 = new Point2D(x2, y2);
-						RegionRectangle rr = new RegionRectangle(x1, y1, x2, y2, this);
+						var rr = new RegionRectangle(x1, y1, x2, y2, this);
 						//RegionRectangle rr = new RegionRectangle(point1, point2, this);//throws sanityExcepton if the points are not the correct corners. Or should we check it here? as in RegionImporter?
 						this.rectangles.Add(rr);
 					} else {
@@ -429,7 +429,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private void LoadParent_Delayed(object resolvedObject, string filename, int line) {
-			Region reg = resolvedObject as Region;
+			var reg = resolvedObject as Region;
 			if (reg != null) {
 				this.parent = reg;
 			} else {
@@ -447,7 +447,7 @@ namespace SteamEngine.Regions {
 				output.WriteValue("parent", this.parent);
 			}
 			//RECT=2300,3612,3264,4096
-			foreach (RegionRectangle rect in this.rectangles) {
+			foreach (var rect in this.rectangles) {
 				output.WriteLine("rect=" + rect.MinX + "," + rect.MinY + "," + rect.MaxX + "," + rect.MaxY);
 			}
 

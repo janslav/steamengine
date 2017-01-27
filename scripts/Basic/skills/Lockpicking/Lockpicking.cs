@@ -12,7 +12,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Player self = skillSeqArgs.Self as Player;
+			var self = skillSeqArgs.Self as Player;
 			if (self != null) {
 				self.Target(SingletonScript<Targ_Lockpick>.Instance, skillSeqArgs);
 			}
@@ -24,8 +24,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Item targetted = (Item) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var targetted = (Item) skillSeqArgs.Target1;
 			if (self.CanReachWithMessage(targetted)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));	// TODO pridat succes v zavislosti na obtiznosti zamku
 				return TriggerResult.Continue;
@@ -36,8 +36,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Item targetted = (Item) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var targetted = (Item) skillSeqArgs.Target1;
 
 			self.SysMessage(self.IsFemale ? Loc<LockpickLoc>.Get(self.Language).successWoman : Loc<LockpickLoc>.Get(self.Language).success);
 
@@ -46,12 +46,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			skillSeqArgs.Self.SysMessage(Loc<LockpickLoc>.Get(self.Language).fail);
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			skillSeqArgs.Self.SysMessage(Loc<LockpickLoc>.Get(self.Language).abort);
 		}
 	}
@@ -60,12 +60,12 @@ namespace SteamEngine.CompiledScripts {
 	public class t_lockpick : CompiledTriggerGroup {
 		public void On_DClick(Item self, Character clicker) {
 			//TODO? use resource system for consuming lockpicks
-			DenyResult canPickup = clicker.CanPickup(self);
+			var canPickup = clicker.CanPickup(self);
 			if (canPickup.Allow) {
 				clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Lockpicking, self));
 				//StartLockpick(clicker, self);
 			} else {
-				foreach (Item i in clicker.Backpack.EnumShallow()) {
+				foreach (var i in clicker.Backpack.EnumShallow()) {
 					if ((i.Type == this) && (clicker.CanPickup(i).Allow)) {
 						clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Lockpicking, self));
 						return;
@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+			var skillSeq = (SkillSequenceArgs) parameter;
 
 			//nevidi na cil
 			if (self.CanReachWithMessage(targetted)) {

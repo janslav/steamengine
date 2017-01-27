@@ -56,10 +56,10 @@ namespace SteamEngine.CompiledScripts {
 		/// These should be available via their 'amounts'
 		/// </summary>
 		internal void ConsumeItems(double howManyTimes) {
-			long toConsume = (long) (this.DesiredCount * howManyTimes);
-			foreach (Item itm in this.foundItems) {
+			var toConsume = (long) (this.DesiredCount * howManyTimes);
+			foreach (var itm in this.foundItems) {
 				//try consume as much as possible of this item
-				long wasConsumed = itm.Consume(toConsume);
+				var wasConsumed = itm.Consume(toConsume);
 				toConsume -= wasConsumed;
 				if (toConsume < 1) {
 					break; //desired amount has been already consumed, stop iterating
@@ -73,11 +73,11 @@ namespace SteamEngine.CompiledScripts {
 		/// Then consume it
 		/// </summary>
 		internal void ConsumeSomeItems() {
-			int available = (int) Math.Min(this.foundCount, this.DesiredCount); //we can consume at most the really desired count (but no more)
-			long toConsume = (long) Math.Round((new Random().NextDouble()) * available);
-			foreach (Item itm in this.foundItems) {
+			var available = (int) Math.Min(this.foundCount, this.DesiredCount); //we can consume at most the really desired count (but no more)
+			var toConsume = (long) Math.Round((new Random().NextDouble()) * available);
+			foreach (var itm in this.foundItems) {
 				//try consume as much as possible of this item
-				long wasConsumed = itm.Consume(toConsume);
+				var wasConsumed = itm.Consume(toConsume);
 				toConsume -= wasConsumed;
 				if (toConsume == 0) {
 					break; //desired amount has been already consumed, stop iterating

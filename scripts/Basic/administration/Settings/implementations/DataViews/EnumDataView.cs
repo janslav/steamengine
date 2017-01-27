@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			yield return ItemsCountField.instance;
 			//iterovat budeme nejpozdeji do doby nez dojdou polozky seznamu
 			//(iterovani mozno byt prerusovano kvuli pagingu i jinde...)
-			for (int i = firstLineIndex; i < Enum.GetNames(target.GetType()).Length; i++) {
+			for (var i = firstLineIndex; i < Enum.GetNames(target.GetType()).Length; i++) {
 				yield return EnumItemFields.GetInitializedInstance(i, target);
 			}
 		}
@@ -142,7 +142,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				int n = this.names.Length;
+				var n = this.names.Length;
 				if (this.index < n) {
 					//get the value for to the current Name in the sorted Names array
 					return Enum.Parse(this.targetEnumType, this.names[this.index]);
@@ -151,10 +151,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetStringValue(object target) {
-				int n = this.names.Length;
+				var n = this.names.Length;
 				if (this.index < n) {
 					//return the value casted to basic type (so e.g. number is displayed and not "red" text...)
-					object value = Enum.Parse(this.targetEnumType, this.names[this.index]);
+					var value = Enum.Parse(this.targetEnumType, this.names[this.index]);
 					return Convert.ToString(Convert.ChangeType(value, this.underlyingType));
 				}
 				return "";

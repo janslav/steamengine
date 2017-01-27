@@ -66,8 +66,8 @@ namespace SteamEngine.CompiledScripts {
 
 		private HashSet<SpellDef> GetCachedSpells() {
 			if (this.cachedSpells == null) {
-				HashSet<SpellDef> hs = new HashSet<SpellDef>();
-				foreach (SpellDef def in (SpellDef[]) this.allowedSpells.CurrentValue) {
+				var hs = new HashSet<SpellDef>();
+				foreach (var def in (SpellDef[]) this.allowedSpells.CurrentValue) {
 					hs.Add(def);
 				}
 				this.cachedSpells = hs;
@@ -146,7 +146,7 @@ namespace SteamEngine.CompiledScripts {
 		public ProfessionSkillEntry GetSkillEntry(int skillId) {
 			ProfessionSkillEntry retVal;
 			if (!this.skillsCache.TryGetValue(skillId, out retVal)) {
-				string name = AbstractSkillDef.GetById(skillId).PrettyDefname;
+				var name = AbstractSkillDef.GetById(skillId).PrettyDefname;
 				retVal = new ProfessionSkillEntry(
 					Convert.ToInt32(this.GetCurrentFieldValue(skillMinimumPrefix + name)),
 					Convert.ToInt32(this.GetCurrentFieldValue(skillCapPrefix + name)));
@@ -171,7 +171,7 @@ namespace SteamEngine.CompiledScripts {
 		#region Abilities
 		/// <summary>Return the maximal value of the given ability for this profession</summary>
 		public int GetAbilityMaximumPoints(AbilityDef abilityDef) {
-			ProfessionAbilityEntry entry = this.GetAbilityEntry(abilityDef);
+			var entry = this.GetAbilityEntry(abilityDef);
 			if (entry != null) {
 				return entry.maxPoints;
 			}
@@ -181,8 +181,8 @@ namespace SteamEngine.CompiledScripts {
 		public ProfessionAbilityEntry GetAbilityEntry(AbilityDef abilityDef) {
 			ProfessionAbilityEntry retVal;
 			if (!this.abilityCache.TryGetValue(abilityDef, out retVal)) {
-				string name = abilityDef.PrettyDefname;
-				string prefixed = abilityOrderPrefix + name;
+				var name = abilityDef.PrettyDefname;
+				var prefixed = abilityOrderPrefix + name;
 				if (this.HasFieldValue(prefixed)) {
 					retVal = new ProfessionAbilityEntry(abilityDef,
 						Convert.ToInt32(this.GetCurrentFieldValue(prefixed)),
@@ -197,10 +197,10 @@ namespace SteamEngine.CompiledScripts {
 		public IEnumerable<ProfessionAbilityEntry> AllAbilitiesSorted {
 			get {
 				if (this.sortedAbilityCache == null) {
-					foreach (AbilityDef def in AbilityDef.AllAbilities) {
+					foreach (var def in AbilityDef.AllAbilities) {
 						this.GetAbilityEntry(def);
 					}
-					List<ProfessionAbilityEntry> list = new List<ProfessionAbilityEntry>(this.abilityCache.Values);
+					var list = new List<ProfessionAbilityEntry>(this.abilityCache.Values);
 					list.Sort(delegate(ProfessionAbilityEntry a, ProfessionAbilityEntry b) {
 						return Comparer<int>.Default.Compare(
 							a.order, b.order);
@@ -232,7 +232,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void LoadScriptLines(PropsSection ps) {
 			this.ClearCache();
 
-			PropsLine p = ps.PopPropsLine("name");
+			var p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
 
 			base.LoadScriptLines(ps);
@@ -244,34 +244,34 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			//try recognizing an ability name or defname. The parameters mean order of displaying and max points in that ability for this profession
-			AbilityDef ability = AbilityDef.GetByDefname(param);
+			var ability = AbilityDef.GetByDefname(param);
 			if (ability == null) {
 				ability = AbilityDef.GetByName(param);
 			}
 			if (ability != null) {
-				string[] preparsed = Utility.SplitSphereString(args, true);
+				var preparsed = Utility.SplitSphereString(args, true);
 				if (preparsed.Length < 2) {
 					throw new SEException("ProfessionDef ability entries need 2 numbers - order and maximum points");
 				}
 
-				string abilityName = ability.PrettyDefname;
+				var abilityName = ability.PrettyDefname;
 				this.InitOrSetFieldValue<int>(filename, line, abilityOrderPrefix + abilityName, preparsed[0]);
 				this.InitOrSetFieldValue<int>(filename, line, abilityMaxPointsPrefix + abilityName, preparsed[1]);
 				return;
 			}
 
 			//try recognizing a skill name or defname. The parameters then mean starting and max (cap) points for this profession
-			AbstractSkillDef skillDef = AbstractSkillDef.GetByDefname(param);
+			var skillDef = AbstractSkillDef.GetByDefname(param);
 			if (skillDef == null) {
 				skillDef = AbstractSkillDef.GetByKey(param);
 			}
 			if (skillDef != null) {
-				string[] preparsed = Utility.SplitSphereString(args, true);
+				var preparsed = Utility.SplitSphereString(args, true);
 				if (preparsed.Length < 2) {
 					throw new SEException("ProfessionDef skill entries need 2 numbers - minimum and cap");
 				}
 
-				string skillName = skillDef.PrettyDefname;
+				var skillName = skillDef.PrettyDefname;
 				this.InitOrSetFieldValue<int>(filename, line, skillMinimumPrefix + skillName, preparsed[0]);
 				this.InitOrSetFieldValue<int>(filename, line, skillCapPrefix + skillName, preparsed[1]);
 				return;
@@ -329,8 +329,8 @@ namespace SteamEngine.CompiledScripts {
 		private const string skillCapPrefix = "SkillCap.";
 
 		public override void LoadFromSaves(PropsSection input) {
-			foreach (PropsLine line in input.PropsLines) {
-				string name = line.Name;
+			foreach (var line in input.PropsLines) {
+				var name = line.Name;
 				if (!this.HasFieldValue(name)) {
 					if (name.StartsWith(abilityMaxPointsPrefix) ||
 							name.StartsWith(abilityOrderPrefix) ||
@@ -349,7 +349,7 @@ namespace SteamEngine.CompiledScripts {
 		#region Static utility methods
 
 		public static ProfessionDef GetProfessionOfChar(Player player) {
-			ProfessionPlugin plugin = ProfessionPlugin.GetInstalledPlugin(player);
+			var plugin = ProfessionPlugin.GetInstalledPlugin(player);
 			if (plugin != null) {
 				return plugin.ProfessionDef;
 			}

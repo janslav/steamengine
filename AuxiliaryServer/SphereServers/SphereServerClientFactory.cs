@@ -8,8 +8,8 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 	//simplified version of "Communication" framework, only communicates in cleartext - telnet style
 	public static class SphereServerClientFactory {
 		public static void Init() {
-			foreach (IGameServerSetup setup in Settings.KnownGameServersList) {
-				SphereServerSetup sphereSetup = setup as SphereServerSetup;
+			foreach (var setup in Settings.KnownGameServersList) {
+				var sphereSetup = setup as SphereServerSetup;
 				if (sphereSetup != null) {
 					Connect(sphereSetup, 0);
 				}
@@ -17,12 +17,12 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		public static void Connect(SphereServerSetup setup, int ms) {
-			IPEndPoint endpoint = new IPEndPoint(
+			var endpoint = new IPEndPoint(
 				//Dns.GetHostAddresses("server.moria.cz")[0], 2593
 				IPAddress.Loopback, setup.Port
 				);
 
-			Socket socket = new Socket(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+			var socket = new Socket(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
 			ScheduleConnect(new object[] { socket, endpoint, setup }, ms);			
 		}
@@ -35,9 +35,9 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private static void ScheduledBeginConnect(object state) {
 			Console.WriteLine("ScheduledBeginConnect in");
 			try {
-				object[] arr = (object[]) state;
-				Socket socket = (Socket) arr[0];
-				IPEndPoint endpoint = (IPEndPoint) arr[1];
+				var arr = (object[]) state;
+				var socket = (Socket) arr[0];
+				var endpoint = (IPEndPoint) arr[1];
 
 				socket.BeginConnect(endpoint, BeginConnectCallBack, state);
 			} catch (Exception e) {
@@ -47,10 +47,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private static void BeginConnectCallBack(IAsyncResult result) {
-			object[] arr = (object[]) result.AsyncState;
-			Socket socket = (Socket) arr[0];
+			var arr = (object[]) result.AsyncState;
+			var socket = (Socket) arr[0];
 			//IPEndPoint endpoint = (IPEndPoint) arr[1];
-			SphereServerSetup setup = (SphereServerSetup) arr[2];
+			var setup = (SphereServerSetup) arr[2];
 
 			try {
 				socket.EndConnect(result);

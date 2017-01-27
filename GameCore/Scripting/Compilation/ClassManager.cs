@@ -47,7 +47,7 @@ namespace SteamEngine.Scripting.Compilation {
 
 		static List<SupplySubclassInstanceBase> InitDecoratedTypesDelegsList() {
 			//can't be in GeneratedCodeUtil's Bootstrap, cos that's too late.
-			List<SupplySubclassInstanceBase> list = new List<SupplySubclassInstanceBase>();
+			var list = new List<SupplySubclassInstanceBase>();
 			list.Add(new SupplySubclassInstanceTuple<ISteamCsCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true)); //ClassManager.RegisterSupplySubclassInstances<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true);
 			return list;
 		}
@@ -86,33 +86,33 @@ namespace SteamEngine.Scripting.Compilation {
 
 		//removes all non-core references
 		internal static void ForgetScripts() {
-			Type[] types = new Type[allTypesbyName.Count];
+			var types = new Type[allTypesbyName.Count];
 			allTypesbyName.Values.CopyTo(types, 0);
 			allTypesbyName.Clear();
-			foreach (Type type in types) {
+			foreach (var type in types) {
 				if (coreAssembly == type.Assembly) {
 					allTypesbyName[type.Name] = type;
 				}
 			}
 
-			List<SupplyDecoratedTypeBase> tempDecoTypes = new List<SupplyDecoratedTypeBase>(supplyDecoratedTypesDelegs.Count);
-			foreach (SupplyDecoratedTypeBase entry in supplyDecoratedTypesDelegs) {
+			var tempDecoTypes = new List<SupplyDecoratedTypeBase>(supplyDecoratedTypesDelegs.Count);
+			foreach (var entry in supplyDecoratedTypesDelegs) {
 				if (!IsTypeFromScripts(entry.type) && !IsTypeFromScripts(entry.TargetClass)) {
 					tempDecoTypes.Add(entry);
 				}
 			}
 			supplyDecoratedTypesDelegs = tempDecoTypes;
 
-			List<SupplySubclassInstanceBase> tempInstances = new List<SupplySubclassInstanceBase>(supplySubclassInstanceDelegs.Count);
-			foreach (SupplySubclassInstanceBase entry in supplySubclassInstanceDelegs) {
+			var tempInstances = new List<SupplySubclassInstanceBase>(supplySubclassInstanceDelegs.Count);
+			foreach (var entry in supplySubclassInstanceDelegs) {
 				if (!IsTypeFromScripts(entry.type) && !IsTypeFromScripts(entry.TargetClass)) {
 					tempInstances.Add(entry);
 				}
 			}
 			supplySubclassInstanceDelegs = tempInstances;
 
-			List<TypeDelegPair> tempSubclasses = new List<TypeDelegPair>(supplySubclassDelegs.Count);
-			foreach (TypeDelegPair entry in supplySubclassDelegs) {
+			var tempSubclasses = new List<TypeDelegPair>(supplySubclassDelegs.Count);
+			foreach (var entry in supplySubclassDelegs) {
 				if (!IsTypeFromScripts(entry.type)) {
 					tempSubclasses.Add(entry);
 				}
@@ -239,7 +239,7 @@ namespace SteamEngine.Scripting.Compilation {
 		}
 
 		internal static bool InitClasses(Assembly assembly) {
-			Type[] types = assembly.GetTypes();
+			var types = assembly.GetTypes();
 			if (!InitClasses(types, assembly.GetName().Name)) {
 				Logger.WriteCritical("Scripts invalid.");
 				return false;
@@ -250,11 +250,11 @@ namespace SteamEngine.Scripting.Compilation {
 		}
 
 		private static bool InitClasses(Type[] types, string assemblyName) {
-			bool success = true;
+			var success = true;
 
 			//first call the Bootstrap methods (if present)
 			foreach (var type in types) {
-				MethodInfo m = type.GetMethod("Bootstrap", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+				var m = type.GetMethod("Bootstrap", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
 				if (m != null) {
 					SeShield.InTransaction(() => m.Invoke(null, null));
 				}
@@ -278,7 +278,7 @@ namespace SteamEngine.Scripting.Compilation {
 		private static void InitClass(Type type) {
 			allTypesbyName[type.Name] = type;
 
-			foreach (MethodInfo meth in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)) {
+			foreach (var meth in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)) {
 				if (Attribute.IsDefined(meth, typeof(RegisterWithRunTestsAttribute))) {
 					TestSuite.AddTest(meth);
 				}
@@ -288,29 +288,29 @@ namespace SteamEngine.Scripting.Compilation {
 			}
 
 			if (type.IsSubclassOf(typeof(TagHolder))) {
-				MethodInfo rtgmi = type.GetMethod("RegisterTriggerGroup",
+				var rtgmi = type.GetMethod("RegisterTriggerGroup",
 					BindingFlags.Public | BindingFlags.Static, null, new[] { typeof(TriggerGroup) }, null);
 				if (rtgmi != null) {
-					RegisterTGDeleg rtgd = (RegisterTGDeleg) Delegate.CreateDelegate(typeof(RegisterTGDeleg), rtgmi);
+					var rtgd = (RegisterTGDeleg) Delegate.CreateDelegate(typeof(RegisterTGDeleg), rtgmi);
 					registerTGmethods[type.Name] = rtgd;
 				}
 			}
 
 			//initialise all language classes
 			if (type.IsSubclassOf(typeof(CompiledLocStringCollection<>))) {
-				MethodInfo locInitMethod = typeof(Loc<>).MakeGenericType(type).GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+				var locInitMethod = typeof(Loc<>).MakeGenericType(type).GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
 				locInitMethod.Invoke(null, null);
 			}
 
-			bool match = false;
-			foreach (TypeDelegPair entry in supplySubclassDelegs) {
+			var match = false;
+			foreach (var entry in supplySubclassDelegs) {
 				if (entry.type.IsAssignableFrom(type)) {
 					match = match || entry.deleg(type);
 				}
 			}
 
-			foreach (SupplyDecoratedTypeBase entry in supplyDecoratedTypesDelegs) {
-				object[] attribs = type.GetCustomAttributes(entry.type, entry.inherited);
+			foreach (var entry in supplyDecoratedTypesDelegs) {
+				var attribs = type.GetCustomAttributes(entry.type, entry.inherited);
 				if (attribs.Length > 0) {
 					match = match || entry.InvokeDeleg(type, (Attribute) attribs[0]);
 					if (attribs.Length > 1) {
@@ -321,14 +321,14 @@ namespace SteamEngine.Scripting.Compilation {
 
 			if (!match) {
 				object instance = null;
-				foreach (SupplySubclassInstanceBase entry in supplySubclassInstanceDelegs) {
+				foreach (var entry in supplySubclassInstanceDelegs) {
 					if (entry.type.IsAssignableFrom(type)) {
 						if ((type.IsAbstract) ||
 							((entry.sealedOnly) && (!type.IsSealed))) {
 							continue;
 						}
 						if (instance == null) {
-							ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+							var ci = type.GetConstructor(Type.EmptyTypes);
 							if (ci != null) {
 								instance = ci.Invoke(null);
 							} else if (entry.throwIfNoCtor) {
@@ -339,7 +339,7 @@ namespace SteamEngine.Scripting.Compilation {
 							if (!entry.InvokeDeleg(instance)) {//if there's no loading method, just the constructor, 
 															   //and if it's an abstractscript, it needs to be registered. Can't be done in AbstractScript constructor itself cos that's too soon.
 															   //Or it would need some tweaks which I'm not in the mood to do :)
-								AbstractScript script = instance as AbstractScript;
+								var script = instance as AbstractScript;
 								if (script != null) {
 									script.Register(); //can't be run inside of the constructor...
 								}
@@ -365,16 +365,16 @@ namespace SteamEngine.Scripting.Compilation {
 		//called by Main on the end of startup/recompile process
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void InitScripts() {
-			Type[] types = commonAssembly.GetTypes();
+			var types = commonAssembly.GetTypes();
 			if (!InitClasses(types, commonAssembly.GetName().Name)) {
 				throw new SEException("Common library invalid.");
 			}
 
 			Logger.WriteDebug("Initializing Scripts.");
-			foreach (Type type in allTypesbyName.Values) {
-				Assembly a = type.Assembly;
+			foreach (var type in allTypesbyName.Values) {
+				var a = type.Assembly;
 				if ((coreAssembly != a) && (commonAssembly != a)) {
-					MethodInfo m = type.GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+					var m = type.GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
 					if (m != null) {
 						try {
 							m.Invoke(null, null);

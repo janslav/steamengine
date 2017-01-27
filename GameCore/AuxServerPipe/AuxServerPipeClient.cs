@@ -82,7 +82,7 @@ namespace SteamEngine.AuxServerPipe {
 			Logger.OnConsoleWrite += this.onConsoleWrite;
 			Logger.OnConsoleWriteLine += this.onConsoleWriteLine;
 
-			IdentifyGameServerPacket packet = Pool<IdentifyGameServerPacket>.Acquire();
+			var packet = Pool<IdentifyGameServerPacket>.Acquire();
 			packet.Prepare();
 			conn.SendSinglePacket(packet);
 
@@ -115,7 +115,7 @@ namespace SteamEngine.AuxServerPipe {
 
 		private void SendLogString(string data) {
 			if (this.sendLogStrings && this.pipe.IsConnected) {
-				LogStringPacket packet = Pool<LogStringPacket>.Acquire();
+				var packet = Pool<LogStringPacket>.Acquire();
 				packet.Prepare(data);
 				this.pipe.SendSinglePacket(packet);
 			}

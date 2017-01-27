@@ -40,7 +40,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
 				Globals.Instance.SetTag(this.name, this.arg.Run(vars));

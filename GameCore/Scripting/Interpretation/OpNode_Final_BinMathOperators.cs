@@ -28,8 +28,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToDouble(leftVal, CultureInfo.InvariantCulture) + Convert.ToDouble(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -55,8 +55,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToDouble(leftVal, CultureInfo.InvariantCulture) - Convert.ToDouble(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -82,8 +82,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToDouble(leftVal, CultureInfo.InvariantCulture) * Convert.ToDouble(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -109,8 +109,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToDouble(leftVal, CultureInfo.InvariantCulture) / Convert.ToDouble(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -136,8 +136,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToInt64(leftVal, CultureInfo.InvariantCulture) / Convert.ToInt64(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -163,8 +163,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToDouble(leftVal, CultureInfo.InvariantCulture) % Convert.ToDouble(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -190,8 +190,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToInt64(leftVal, CultureInfo.InvariantCulture) & Convert.ToInt64(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -217,8 +217,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVal = this.left.Run(vars);
-			object rightVal = this.right.Run(vars);
+			var leftVal = this.left.Run(vars);
+			var rightVal = this.right.Run(vars);
 			try {
 				return (Convert.ToInt64(leftVal, CultureInfo.InvariantCulture) | Convert.ToInt64(rightVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {

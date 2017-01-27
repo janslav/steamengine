@@ -64,7 +64,7 @@ namespace SteamEngine.Networking {
 		}
 
 		private static Thread InitThread() {
-			Thread thread = new Thread(Cycle);
+			var thread = new Thread(Cycle);
 			thread.IsBackground = true;
 			thread.Start();
 			return thread;
@@ -73,11 +73,11 @@ namespace SteamEngine.Networking {
 		static void Cycle() {
 			while (manualResetEvent.WaitOne()) {
 				lock (queue) {
-					LinkedListNode<MovementState> currentNode = queue.First;
+					var currentNode = queue.First;
 					while (currentNode != null) {
-						LinkedListNode<MovementState> nextNode = currentNode.Next;
+						var nextNode = currentNode.Next;
 
-						MovementState ms = currentNode.Value;
+						var ms = currentNode.Value;
 						if (ms.moveRequests.Count > 0) {
 							lock (MainClass.globalLock) {
 								ms.ProcessMovement(ms.moveRequests.Dequeue());
@@ -110,7 +110,7 @@ namespace SteamEngine.Networking {
 		//called from incomingpacket.Handle, so we're also under lock(globallock)
 		internal void MovementRequest(Direction direction, bool running, byte sequence) {
 			lock (queue) {
-				int requestCount = this.moveRequests.Count;
+				var requestCount = this.moveRequests.Count;
 				if (requestCount == 0) {
 					this.ProcessMovement(new MoveRequest(direction, running, sequence));
 				} else {
@@ -124,7 +124,7 @@ namespace SteamEngine.Networking {
 		}
 
 		private void ProcessMovement(MoveRequest mr) {
-			AbstractCharacter ch = this.gameState.Character;
+			var ch = this.gameState.Character;
 			if (ch == null) {
 				this.moveRequests.Clear();
 				return;
@@ -145,12 +145,12 @@ namespace SteamEngine.Networking {
 		}
 
 		private bool CanMoveAgain() {
-			long currentTime = HighPerformanceTimer.TickCount;
-			long diff = currentTime - this.nextMovementTime;
+			var currentTime = HighPerformanceTimer.TickCount;
+			var diff = currentTime - this.nextMovementTime;
 
 			//Logger.WriteInfo(MovementTracingOn, "Time between movement = "+HighPerformanceTimer.TicksToSeconds(currentTime-lastMovementTime));
 
-			long reserves = this.lastStepReserve + this.secondLastStepReserve + this.thirdLastStepReserve;
+			var reserves = this.lastStepReserve + this.secondLastStepReserve + this.thirdLastStepReserve;
 
 			if (diff + reserves >= 0) {
 				//Logger.WriteInfo(MovementTracingOn, "Time later than allowed = "+HighPerformanceTimer.TicksToSeconds(diff + reserves));
@@ -176,19 +176,19 @@ namespace SteamEngine.Networking {
 		}
 
 		private void Movement(Direction dir, bool running, byte sequence) {
-			AbstractCharacter ch = this.gameState.CharacterNotNull;
+			var ch = this.gameState.CharacterNotNull;
 
 			//Logger.WriteInfo(MovementTracingOn, "Moving.");
-			bool success = ch.WalkRunOrFly(dir, running, true);	//true = we don't want to get a 0x77 for ourself, our client knows we're moving if it gets the verify move packet.
+			var success = ch.WalkRunOrFly(dir, running, true);	//true = we don't want to get a 0x77 for ourself, our client knows we're moving if it gets the verify move packet.
 			if (success) {
-				CharacterMoveAcknowledgeOutPacket packet = Pool<CharacterMoveAcknowledgeOutPacket>.Acquire();
+				var packet = Pool<CharacterMoveAcknowledgeOutPacket>.Acquire();
 				packet.Prepare(sequence, ch.GetHighlightColorFor(ch));
 				this.gameState.Conn.SendSinglePacket(packet);
 				CharSyncQueue.ProcessChar(ch);//I think this is really needed. We can't wait to the end of the cycle, because movement 
 				//should be as much synced between clients as possible
 			} else {
 
-				CharMoveRejectionOutPacket packet = Pool<CharMoveRejectionOutPacket>.Acquire();
+				var packet = Pool<CharMoveRejectionOutPacket>.Acquire();
 				packet.Prepare(sequence, ch);
 				this.gameState.Conn.SendSinglePacket(packet);
 

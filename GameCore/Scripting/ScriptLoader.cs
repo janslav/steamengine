@@ -39,8 +39,8 @@ namespace SteamEngine.Scripting {
 
 		//the method that is called on server initialisation by MainClass.
 		internal static void Load() {
-			ICollection<ScriptFile> files = allFiles.GetAllFiles();
-			long lengthSum = allFiles.LengthSum;
+			var files = allFiles.GetAllFiles();
+			var lengthSum = allFiles.LengthSum;
 
 			using (StopWatch.StartAndDisplay("Loading " + LogStr.Number(files.Count) + " *.def and *.scp script files. (" + LogStr.Number(lengthSum) + " bytes)...")) {
 
@@ -106,7 +106,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		public static void Resync() {
-			ICollection<ScriptFile> files = allFiles.GetChangedFiles();//this makes the entities unload
+			var files = allFiles.GetChangedFiles();//this makes the entities unload
 			if (files.Count > 0) {
 				PacketSequences.BroadCast("Server is pausing for script resync...");
 
@@ -116,7 +116,7 @@ namespace SteamEngine.Scripting {
 
 				ObjectSaver.StartingLoading();
 
-				foreach (ScriptFile f in files) {
+				foreach (var f in files) {
 					if (f.Exists) {
 						Console.WriteLine("Resyncing file '" + LogStr.File(f.FullName) + "'.");
 						try {
@@ -147,7 +147,7 @@ namespace SteamEngine.Scripting {
 
 				PacketSequences.BroadCast("Script resync finished.");
 			} else {
-				ISrc src = Globals.Src;
+				var src = Globals.Src;
 				if (src != null) {
 					src.WriteLine("No files to resync.");
 				} else {
@@ -166,7 +166,7 @@ namespace SteamEngine.Scripting {
 		private static IEnumerable<IUnloadable> LoadScriptsFromFile(ScriptFile file) {
 			if (file.Exists) //this may not be true on rare circumstances (basically, delete script and recompile) not gonna do any better fix
 			{
-				using (StreamReader stream = file.OpenText()) {
+				using (var stream = file.OpenText()) {
 					foreach (var script in PropsFileParser.Load(file.FullName, stream, StartsAsScript, false).SelectMany(LoadSection)) {
 						yield return script;
 					}
@@ -177,8 +177,8 @@ namespace SteamEngine.Scripting {
 		private static IEnumerable<IUnloadable> LoadSection(PropsSection section) {
 			return SeShield.InTransaction(() => {
 				try {
-					string type = section.HeaderType.ToLowerInvariant();
-					string name = section.HeaderName;
+					var type = section.HeaderType.ToLowerInvariant();
+					var name = section.HeaderName;
 					if ((string.IsNullOrEmpty(name)) && (type == "eof")) {
 						return Enumerable.Empty<IUnloadable>();
 					}
@@ -259,7 +259,7 @@ namespace SteamEngine.Scripting {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadNewFile(string filename) {
-			FileInfo fi = new FileInfo(filename);
+			var fi = new FileInfo(filename);
 			if (!fi.Exists) {
 				try {
 					fi = new FileInfo(Path.Combine(Globals.ScriptsPath, filename));
@@ -271,7 +271,7 @@ namespace SteamEngine.Scripting {
 					PacketSequences.BroadCast("Server is pausing for script file loading...");
 					Globals.PauseServerTime();
 
-					ScriptFile sf = allFiles.AddFile(fi);
+					var sf = allFiles.AddFile(fi);
 					Console.WriteLine("Loading " + LogStr.File(fi.FullName));
 					LoadFile(sf);
 
@@ -305,7 +305,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		public static void RegisterScriptType(string[] names, LoadSection deleg, bool startAsScript) {
-			foreach (string name in names) {
+			foreach (var name in names) {
 				RegisterScriptType(name, deleg, startAsScript);
 			}
 		}
@@ -325,11 +325,11 @@ namespace SteamEngine.Scripting {
 			SeShield.AssertInTransaction();
 			allFiles.Clear();
 
-			Assembly coreAssembly = ClassManager.CoreAssembly;
+			var coreAssembly = ClassManager.CoreAssembly;
 
 			var origScripts = scriptTypesByName.ToArray();
 			scriptTypesByName.Clear();
-			foreach (KeyValuePair<string, RegisteredScript> pair in origScripts) {
+			foreach (var pair in origScripts) {
 				if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly) {
 					scriptTypesByName[pair.Key] = pair.Value;
 				}

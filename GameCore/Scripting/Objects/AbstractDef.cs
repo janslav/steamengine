@@ -109,10 +109,10 @@ namespace SteamEngine.Scripting.Objects {
 			SeShield.AssertInTransaction();
 			//todo: a way to load new defs (or just regions)
 
-			string typeName = input.HeaderType;
-			string defname = input.HeaderName;
+			var typeName = input.HeaderType;
+			var defname = input.HeaderName;
 
-			AbstractDef def = GetByDefname(defname);
+			var def = GetByDefname(defname);
 			if (def == null) {
 				Logger.WriteError(input.Filename, input.HeaderLine, LogStr.Ident(typeName + " " + defname)
 					+ " is in the world being loaded, but it was not defined in the scripts. Skipping.");
@@ -127,7 +127,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public virtual void LoadFromSaves(PropsSection input) {
-			foreach (PropsLine pl in input.PropsLines) {
+			foreach (var pl in input.PropsLines) {
 				ObjectSaver.Load(pl.Value, this.LoadField_Delayed, this.filename, pl.Line,
 					pl.Name);
 			}
@@ -136,14 +136,14 @@ namespace SteamEngine.Scripting.Objects {
 		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void LoadField_Delayed(object resolvedObject, string filename, int line, object args) {
 			SeShield.AssertInTransaction();
-			string fieldName = (string) args;
+			var fieldName = (string) args;
 			FieldValue fv;
 
 			if (!this.fieldValues.TryGetValue(fieldName, out fv)) {//that means it's not in scripts
-				Match m = TagHolder.tagRE.Match(fieldName);
+				var m = TagHolder.tagRE.Match(fieldName);
 				if (m.Success) {    //If the name begins with 'tag.'
-					string tagName = m.Groups["name"].Value;
-					TagKey tk = TagKey.Acquire(tagName);
+					var tagName = m.Groups["name"].Value;
+					var tk = TagKey.Acquire(tagName);
 					tagName = "tag." + tagName;
 					fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
 					this.fieldValues[tk] = fv;
@@ -258,17 +258,17 @@ namespace SteamEngine.Scripting.Objects {
 
 			var all = AllScripts;
 
-			foreach (AbstractScript script in all) {
-				AbstractDef def = script as AbstractDef;
+			foreach (var script in all) {
+				var def = script as AbstractDef;
 				if (def != null) {
 					def.alreadySaved = false;
 				}
 			}
-			int count = all.Count;
-			int a = 0;
-			int countPerCent = count / 200;
-			foreach (AbstractScript script in all) {
-				AbstractDef def = script as AbstractDef;
+			var count = all.Count;
+			var a = 0;
+			var countPerCent = count / 200;
+			foreach (var script in all) {
+				var def = script as AbstractDef;
 				if (def != null) {
 					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Saving defs: " + ((a * 100) / count) + " %");
@@ -289,7 +289,7 @@ namespace SteamEngine.Scripting.Objects {
 		public void Save(SaveStream output) {
 			SeShield.AssertInTransaction();
 
-			bool headerWritten = false;
+			var headerWritten = false;
 			foreach (var entry in this.fieldValues) {
 				if (entry.Key is TagKey) { //so that tags dont get written twice
 					continue;
@@ -355,7 +355,7 @@ namespace SteamEngine.Scripting.Objects {
 			}
 
 			//lazy initialisation. We're looking for the according parser
-			Type type = defType;
+			var type = defType;
 			while (type != typeof(AbstractDef)) {
 				if (registeredDefnameParsersByType.TryGetValue(type, out parserMethod)) {
 					inferredDefnameParsersByType.Add(defType, parserMethod);
@@ -408,18 +408,18 @@ namespace SteamEngine.Scripting.Objects {
 		public static IUnloadable LoadFromScripts(PropsSection input) {
 			SeShield.AssertInTransaction();
 			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
-			string typeName = input.HeaderType;
-			ConstructorInfo constructor = constructorsByTypeName[typeName];
-			Type type = constructor.DeclaringType;
+			var typeName = input.HeaderType;
+			var constructor = constructorsByTypeName[typeName];
+			var type = constructor.DeclaringType;
 
 			string defname, altdefname;
 			GetDefnameParser(type)(input, out defname, out altdefname);
 			defname = string.Intern(string.Concat(defname));
 			altdefname = string.Intern(string.Concat(altdefname));
 
-			AbstractScript def = AbstractScript.GetByDefname(defname);
+			var def = AbstractScript.GetByDefname(defname);
 			if (!string.IsNullOrEmpty(altdefname)) {
-				AbstractScript defByAltdefname = AbstractScript.GetByDefname(altdefname);
+				var defByAltdefname = AbstractScript.GetByDefname(altdefname);
 				if (defByAltdefname != null) {
 					if (def == null) {
 						def = defByAltdefname;
@@ -444,7 +444,7 @@ namespace SteamEngine.Scripting.Objects {
 			}
 
 			//construct new or resync
-			AbstractDef constructed = (AbstractDef) def;
+			var constructed = (AbstractDef) def;
 			if (def == null) {
 				object[] cargs = { defname, input.Filename, input.HeaderLine };
 				constructed = (AbstractDef) constructor.Invoke(cargs);
@@ -465,14 +465,14 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private static void DefaultDefnameParser(PropsSection section, out string defname, out string altdefname) {
-			string typeName = section.HeaderType.ToLowerInvariant();
+			var typeName = section.HeaderType.ToLowerInvariant();
 			defname = section.HeaderName.ToLowerInvariant();
 
 			bool defnameIsNum;
 			defname = DenumerizeDefname(typeName, defname, out defnameIsNum);
 
 			altdefname = null;
-			PropsLine defnameLine = section.TryPopPropsLine("defname");
+			var defnameLine = section.TryPopPropsLine("defname");
 			if (defnameLine != null) {
 				altdefname = defnameLine.Value;
 				bool altdefnameIsNum;
@@ -485,7 +485,7 @@ namespace SteamEngine.Scripting.Objects {
 
 				//if header name is a number, we put it as alt
 				if (defnameIsNum && !altdefnameIsNum) {
-					string t = altdefname;
+					var t = altdefname;
 					altdefname = defname;
 					defname = t;
 				}
@@ -546,9 +546,9 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public virtual void LoadScriptLines(PropsSection ps) {
-			foreach (PropsLine p in ps.PropsLines) {
+			foreach (var p in ps.PropsLines) {
 				try {
-					string name = p.Name.ToLowerInvariant();
+					var name = p.Name.ToLowerInvariant();
 
 					if (name.StartsWith("tag.") || (this.fieldValues.ContainsKey(name))) {
 						this.LoadScriptLine(ps.Filename, p.Line, name, p.Value);
@@ -569,11 +569,11 @@ namespace SteamEngine.Scripting.Objects {
 		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
 			SeShield.AssertInTransaction();
 
-			Match m = TagHolder.tagRE.Match(param);
+			var m = TagHolder.tagRE.Match(param);
 			FieldValue fieldValue;
 			if (m.Success) {    //If the name begins with 'tag.'
-				string tagName = m.Groups["name"].Value;
-				TagKey tk = TagKey.Acquire(tagName);
+				var tagName = m.Groups["name"].Value;
+				var tk = TagKey.Acquire(tagName);
 
 				if (!this.fieldValues.TryGetValue(tk, out fieldValue)) {
 					tagName = "tag." + tagName;
@@ -605,8 +605,8 @@ namespace SteamEngine.Scripting.Objects {
 			// load postponed lines. That are those which are not initialised by the start of the loading.
 			// this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
 			// this way, for example ProfessionDef definition can list skills and abilities
-			foreach (AbstractScript script in AllScripts) {
-				AbstractDef def = script as AbstractDef;
+			foreach (var script in AllScripts) {
+				var def = script as AbstractDef;
 				if (def != null) {
 					def.LoadPostponedScriptLines();
 					def.Trigger_AfterLoadFromScripts();
@@ -657,12 +657,12 @@ namespace SteamEngine.Scripting.Objects {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void ResolveAll() {
 			var all = AllScripts;
-			int count = all.Count;
+			var count = all.Count;
 			Logger.WriteDebug("Resolving " + count + " defs");
 
-			DateTime before = DateTime.Now;
-			int a = 0;
-			int countPerCent = count / 100;
+			var before = DateTime.Now;
+			var a = 0;
+			var countPerCent = count / 100;
 			foreach (var script in all) {
 				if (a % countPerCent == 0) {
 					Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
@@ -686,7 +686,7 @@ namespace SteamEngine.Scripting.Objects {
 				});
 				a++;
 			}
-			DateTime after = DateTime.Now;
+			var after = DateTime.Now;
 			Logger.WriteDebug("...took " + (after - before));
 			Logger.SetTitle("");
 		}
@@ -694,7 +694,7 @@ namespace SteamEngine.Scripting.Objects {
 		public override void Unload() {
 			SeShield.AssertInTransaction();
 
-			foreach (FieldValue fv in this.fieldValues.Values.ToList()) {
+			foreach (var fv in this.fieldValues.Values.ToList()) {
 				fv.Unload();
 			}
 
@@ -738,7 +738,7 @@ namespace SteamEngine.Scripting.Objects {
 
 			FieldValue fv;
 			if (!this.fieldValues.TryGetValue(tk, out fv)) {
-				string tagName = "tag." + tk;
+				var tagName = "tag." + tk;
 				fv = new FieldValue(tagName, FieldValueType.Typeless, null, "", -1, "");
 				this.fieldValues[tk] = fv;
 				this.fieldValues[tagName] = fv;

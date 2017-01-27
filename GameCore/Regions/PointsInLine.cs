@@ -114,7 +114,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private void AddAsFirst(int x, int y, int z) {
-			MutablePoint3D first = this.array[this.firstIndex];
+			var first = this.array[this.firstIndex];
 			if (EqualsXY(first, x, y)) {
 				//we do nothing, Z is not so relevant really
 			} else if ((this.lastIndex >= this.firstIndex) && //comparing only makes sense if there's at least 1 point already
@@ -132,7 +132,7 @@ namespace SteamEngine.Regions {
 		}
 
 		private void AddAsLast(int x, int y, int z) {
-			MutablePoint3D last = this.array[this.lastIndex];
+			var last = this.array[this.lastIndex];
 			if (EqualsXY(last, x, y)) {
 				//we do nothing, Z is not so relevant really
 			} else if ((this.lastIndex >= this.firstIndex) && //comparing only makes sense if there's at least 1 point already
@@ -151,11 +151,11 @@ namespace SteamEngine.Regions {
 
 		//grow the array and put the old contents somewhere in the middle
 		private void Grow() {
-			MutablePoint3D[] old = this.array;
-			int oldFirstIndex = this.firstIndex;
-			int diff = this.lastIndex - this.firstIndex;
+			var old = this.array;
+			var oldFirstIndex = this.firstIndex;
+			var diff = this.lastIndex - this.firstIndex;
 
-			int len = old.Length * 4;
+			var len = old.Length * 4;
 			this.array = new MutablePoint3D[len];
 			this.firstIndex = len / 2;
 			this.lastIndex = this.firstIndex + diff;
@@ -173,13 +173,13 @@ namespace SteamEngine.Regions {
 		}
 
 		public bool Contains(int x, int y, out int z) {
-			MutablePoint3D p = new MutablePoint3D { x = (ushort) x, y = (ushort) y};
+			var p = new MutablePoint3D { x = (ushort) x, y = (ushort) y};
 
 #if DEBUG
 			//debug check using normal foreach. Could be normally in some kind of unittest but meh...
-			int debugIndex = -1;
-			int lastA = int.MinValue;
-			for (int i = this.firstIndex; i <= this.lastIndex; i++) {
+			var debugIndex = -1;
+			var lastA = int.MinValue;
+			for (var i = this.firstIndex; i <= this.lastIndex; i++) {
 
 				//check if we're really sorted the way we should be
 				if (this.sortByX) {
@@ -199,19 +199,19 @@ namespace SteamEngine.Regions {
 				}
 			}
 #endif
-			int index = Array.BinarySearch(this.array, this.firstIndex, (this.lastIndex - this.firstIndex) + 1,
+			var index = Array.BinarySearch(this.array, this.firstIndex, (this.lastIndex - this.firstIndex) + 1,
 				p, this.comparer);			
 
 			if (index >= 0) {
 				//also check previous and next ones
 				//there can only be 1-3 points on one A coordination
-				int checkStart = Math.Max(index - 2, this.firstIndex);
-				int checkEnd = Math.Min(index + 2, this.lastIndex);
-				for (int i = checkStart; i <= checkEnd; i++) {
+				var checkStart = Math.Max(index - 2, this.firstIndex);
+				var checkEnd = Math.Min(index + 2, this.lastIndex);
+				for (var i = checkStart; i <= checkEnd; i++) {
 					if (EqualsXY(this.array[i], x, y)) {
 #if DEBUG
-						MutablePoint3D ip = this.array[i];
-						MutablePoint3D debugp = this.array[debugIndex];
+						var ip = this.array[i];
+						var debugp = this.array[debugIndex];
 						Sanity.IfTrueThrow(debugIndex != i, "debugIndex != i.	" +
 							"debugIndex=" + debugIndex + ", i=" + i + ",	" +
 							"ip.x=" + ip.x + ", ip.y=" + ip.y + ",	" +
@@ -235,15 +235,15 @@ namespace SteamEngine.Regions {
 		#region IEnumerable<Point3D> Members
 
 		IEnumerator<Point3D> IEnumerable<Point3D>.GetEnumerator() {
-			for (int i = this.firstIndex; i <= this.lastIndex; i++) {
-				MutablePoint3D p = this.array[i];
+			for (var i = this.firstIndex; i <= this.lastIndex; i++) {
+				var p = this.array[i];
 				yield return new Point3D(p.x, p.y, p.z);
 			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
-			for (int i = this.firstIndex; i <= this.lastIndex; i++) {
-				MutablePoint3D p = this.array[i];
+			for (var i = this.firstIndex; i <= this.lastIndex; i++) {
+				var p = this.array[i];
 				yield return new Point3D(p.x, p.y, p.z);
 			}
 		}

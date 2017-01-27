@@ -64,7 +64,7 @@ namespace SteamEngine {
 		}
 
 		internal void AddLoaded(Thing o, int loadedUid) {
-			int index = loadedUid - startOffset;
+			var index = loadedUid - startOffset;
 			if (this.loadingFinished) {
 				throw new SEException("Add(object,index) disabled after LoadingFinished");
 			}
@@ -89,8 +89,8 @@ namespace SteamEngine {
 			if (this.freeSlots.Count == 0) {	//no indexes in the freeSlots queue
 				this.FillFreeSlotQueue();
 			}
-			int index = this.freeSlots.Dequeue();
-			int uid = index + startOffset;
+			var index = this.freeSlots.Dequeue();
+			var uid = index + startOffset;
 			if (uid >= (highestPossibleUid - this.fakeSlots.Count)) {
 				throw new SEException("We're out of UIDs. This is baaaad.");
 			}
@@ -107,7 +107,7 @@ namespace SteamEngine {
 		private void FillFreeSlotQueue() {
 			this.freeSlots.Clear();
 
-			int counter = 0;
+			var counter = 0;
 			for (int i = 0, n = this.array.Length; i < n; i++) {
 				if (this.array[i] == null) {
 					this.freeSlots.Enqueue(i);
@@ -128,12 +128,12 @@ namespace SteamEngine {
 		}
 
 		private void ResizeArray(int newHighestElement) {
-			int newSize = Math.Max(newHighestElement + minimalLength, this.array.Length * 2);
+			var newSize = Math.Max(newHighestElement + minimalLength, this.array.Length * 2);
 			this.ResizeImpl(newSize);
 		}
 
 		private void ResizeImpl(int newSize) {
-			Thing[] temp = new Thing[newSize];
+			var temp = new Thing[newSize];
 			Array.Copy(this.array, temp, this.array.Length);
 			this.array = temp;
 		}
@@ -143,7 +143,7 @@ namespace SteamEngine {
 		}
 
 		internal Thing Get(int uid) { //may return a null object
-			int index = uid - startOffset;
+			var index = uid - startOffset;
 			if (index < this.array.Length && index >= 0) {
 				return this.array[index];
 			}
@@ -151,12 +151,12 @@ namespace SteamEngine {
 		}
 
 		internal void RemoveAt(int uid) {
-			int index = uid - startOffset;
+			var index = uid - startOffset;
 			if (this.array[index] != null) { //only add to queue if not already null
 				this.array[index] = null;
 				if (index == this.highestUsedIndex) {
 					//we find the next highest used index (below the one so far)
-					int i = this.highestUsedIndex;
+					var i = this.highestUsedIndex;
 					for (; i >= 0; i--) {
 						if (this.array[i] != null) {
 							break;
@@ -172,12 +172,12 @@ namespace SteamEngine {
 		}
 
 		internal void ReIndexAll() {
-			Thing[] origArray = this.array;
-			int n = origArray.Length;
-			Thing[] newArray = new Thing[n];
+			var origArray = this.array;
+			var n = origArray.Length;
+			var newArray = new Thing[n];
 
 			for (int i = 0, newI = 0; i < n; i++) {
-				Thing elem = origArray[i];
+				var elem = origArray[i];
 				if (!Equals(elem, null)) {
 					newArray[newI] = elem;
 					elem.InternalSetUid(newI + startOffset);
@@ -191,7 +191,7 @@ namespace SteamEngine {
 			if (this.freeFakeSlots.Count == 0) {	//no indexes in the freeSlots queue
 				this.FillFreeFakeSlotQueue();
 			}
-			int index = this.freeFakeSlots.Dequeue();
+			var index = this.freeFakeSlots.Dequeue();
 			this.fakeSlots[index] = true;
 			return highestPossibleUid - index;
 		}
@@ -199,7 +199,7 @@ namespace SteamEngine {
 		private void FillFreeFakeSlotQueue() {
 			this.freeFakeSlots.Clear();
 
-			int counter = 0;
+			var counter = 0;
 			for (int i = 0, n = this.fakeSlots.Capacity; i < n; i++) {
 				if (i >= this.fakeSlots.Count) {
 					this.fakeSlots.Add(false);
@@ -219,7 +219,7 @@ namespace SteamEngine {
 		}
 
 		internal void DisposeFakeUid(int uid) {
-			int index = highestPossibleUid - uid;
+			var index = highestPossibleUid - uid;
 			if (index < this.fakeSlots.Count) {
 				if (this.fakeSlots[index]) {
 					this.fakeSlots[index] = false;
@@ -229,14 +229,14 @@ namespace SteamEngine {
 		}
 
 		public IEnumerator<Thing> GetEnumerator() {
-			int v = this.version;
+			var v = this.version;
 
 			for (int i = 0, n = this.highestUsedIndex; i <= n; i++) {
 				if (v != this.version) {
 					throw new InvalidOperationException("The collection was modified after the enumerator was created.");
 				}
 
-				Thing elem = this.array[i];
+				var elem = this.array[i];
 				if (elem != null) {
 					yield return elem;
 				}

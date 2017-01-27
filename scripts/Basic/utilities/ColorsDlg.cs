@@ -30,14 +30,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static readonly int dlgWidth = 850; //sirka dialogu
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			int startingColor = Convert.ToInt32(args[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
+			var startingColor = Convert.ToInt32(args[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
-			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS * columnsCnt), lastColor);
+			var imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS * columnsCnt), lastColor);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(dlgWidth);
 			dlg.SetLocation(50, 50);
@@ -57,15 +57,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent(); //zpruhledni zbytek dialogu
 
 			//sloupecky - napred pripravime sirky
-			int[] columns = new int[columnsCnt];
-			for (int i = 0; i < columns.Length; i++) {
+			var columns = new int[columnsCnt];
+			for (var i = 0; i < columns.Length; i++) {
 				//columns[i] = dlgWidth / columnsCnt;
 				columns[i] = 80;
 			}
 			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS, columns));
-			int colorCntr = firstiVal; //zacneme od te, ktera ma byt na strance prvni
-			for (int i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
-				for (int j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor; j++, colorCntr++) { //a v nem kazdy radek
+			var colorCntr = firstiVal; //zacneme od te, ktera ma byt na strance prvni
+			for (var i = 0; i < columnsCnt; i++) {//pro kazdy sloupecek
+				for (var j = 0; j < ImprovedDialog.PAGE_ROWS && colorCntr <= lastColor; j++, colorCntr++) { //a v nem kazdy radek
 					//vlozit priklad jedne pouzite barvy (dokud nedojdou barvy)
 					//dlg.LastTable[j, i] = TextFactory.CreateText(colorCntr, "Color(" + String.Format("{0:X2}", colorCntr) + ")");
 					dlg.LastTable[j, i] = GUTAText.Builder.Text("Color(" + colorCntr + ")").Hue(colorCntr).Build();
@@ -99,7 +99,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Prepare an array of colors to be displayed</summary>
 		private int[] prepareColorList(int startingColor) {
-			int[] retArr = new int[lastColor - startingColor + 1];
+			var retArr = new int[lastColor - startingColor + 1];
 			for (int i = startingColor, j = 0; i <= lastColor; i++, j++) {
 				retArr[j] = i;
 			}
@@ -113,11 +113,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void ColorsDialog(AbstractCharacter sender, ScriptArgs text) {
 			if (text == null || text.Args.Length == 0) {
-				DialogArgs newArgs = new DialogArgs(0); //zaciname od 0. barvy
+				var newArgs = new DialogArgs(0); //zaciname od 0. barvy
 				newArgs.SetTag(ImprovedDialog.pagingIndexTK, 0); //prvni na strance bude ta 0.
 				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
 			} else {
-				DialogArgs newArgs = new DialogArgs(Convert.ToInt32(text.Argv[0])); //zaciname od zvolene barvy
+				var newArgs = new DialogArgs(Convert.ToInt32(text.Argv[0])); //zaciname od zvolene barvy
 				newArgs.SetTag(ImprovedDialog.pagingIndexTK, Convert.ToInt32(text.Argv[0])); //prvni na strance bude ta zvolena
 				sender.Dialog(SingletonScript<D_Colors>.Instance, newArgs);
 			}

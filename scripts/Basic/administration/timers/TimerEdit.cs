@@ -27,10 +27,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 400;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			TagHolder th = (TagHolder) args.GetTag(D_TimerList.holderTK); //na koho budeme timer ukladat?
-			Timer tm = (Timer) args.GetTag(editedTimerTK); //timer ktery editujeme
+			var th = (TagHolder) args.GetTag(D_TimerList.holderTK); //na koho budeme timer ukladat?
+			var tm = (Timer) args.GetTag(editedTimerTK); //timer ktery editujeme
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -65,10 +65,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
-				int timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
-				Timer tm = (Timer) args.GetTag(editedTimerTK);
+				var timerTime = Convert.ToInt32(gr.GetNumberResponse(11));
+				var tm = (Timer) args.GetTag(editedTimerTK);
 				tm.DueInSeconds = timerTime;
-				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
+				var prevStacked = DialogStacking.PopStackedDialog(gi);
 				if (prevStacked.Def is D_TimerList) {
 					//prisli jsme z timerlistu - mame zde seznam a muzeme ho smazat
 					prevStacked.InputArgs.RemoveTag(D_TimerList.timerListTK);

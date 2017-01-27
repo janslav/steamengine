@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class Musical : Item {
 		public override void On_DClick(AbstractCharacter ac) {
-			Character clicker = ac as Character;
+			var clicker = ac as Character;
 			clicker.SelectSkill(SkillSequenceArgs.Acquire(clicker, SkillName.Musicianship, this));//select Musicianship
 		}
 

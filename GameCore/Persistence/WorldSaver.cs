@@ -51,9 +51,9 @@ namespace SteamEngine.Persistence {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		static bool TrySave() {
-			string path = Globals.SavePath;
+			var path = Globals.SavePath;
 
-			ScriptArgs sa = new ScriptArgs(path);
+			var sa = new ScriptArgs(path);
 			Globals.Instance.TryTrigger(TriggerKey.beforeSave, sa);
 			path = string.Concat(sa.Argv[0]);
 			if (path.Length < 1) {//scripts error or something...
@@ -65,12 +65,12 @@ namespace SteamEngine.Persistence {
 
 			ObjectSaver.StartingSaving();
 
-			bool success = false;
+			var success = false;
 			try {
 
 				sa = new ScriptArgs(path, "globals");
 				Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
-				SaveStream saveStream = GetSaveStream(path, sa.Argv[1]);
+				var saveStream = GetSaveStream(path, sa.Argv[1]);
 				saveStream.WriteComment("Textual SteamEngine save");
 				Globals.SaveGlobals(saveStream);
 				saveStream.WriteLine("[EOF]");
@@ -78,8 +78,8 @@ namespace SteamEngine.Persistence {
 					saveStream.Close();
 				} catch { }
 
-				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
-					string name = coordinator.FileNameToSave;
+				foreach (var coordinator in ObjectSaver.AllCoordinators) {
+					var name = coordinator.FileNameToSave;
 					sa = new ScriptArgs(path, name);
 					Globals.Instance.TryTrigger(TriggerKey.openSaveStream, sa);
 					saveStream = GetSaveStream(path, sa.Argv[1]);
@@ -105,18 +105,18 @@ namespace SteamEngine.Persistence {
 
 		static SaveStream GetSaveStream(string path, object file) {
 			//object file is either string or Stream or TextWriter
-			TextWriter tw = file as TextWriter;
+			var tw = file as TextWriter;
 			if (tw != null) {
 				//WriteLine("GetSaveStream got TextWriter: "+tw);
 				return new SaveStream(tw);
 			}
-			Stream s = file as Stream;
+			var s = file as Stream;
 			if (s != null) {
 				//Console.WriteLine("GetSaveStream got Stream: "+s);
 				return new SaveStream(new StreamWriter(s));
 			}
-			string filename = string.Concat(file);
-			string filepath = Path.Combine(path, filename + ".sav");
+			var filename = string.Concat(file);
+			var filepath = Path.Combine(path, filename + ".sav");
 			return new SaveStream(new StreamWriter(File.Create(filepath)));
 		}
 		////////////////////////////////////////////////////////////////////////////////
@@ -133,11 +133,11 @@ namespace SteamEngine.Persistence {
 			Timer.StartingLoading();
 			ObjectSaver.StartingLoading();
 
-			string path = "";
+			var path = "";
 
 			try {
 				path = Globals.SavePath;
-				ScriptArgs sa = new ScriptArgs(path);
+				var sa = new ScriptArgs(path);
 				Globals.Instance.Trigger(TriggerKey.beforeLoad, sa);
 				path = string.Concat(sa.Argv[0]);
 				if (path.Length < 1) {//scripts error or something...
@@ -147,15 +147,15 @@ namespace SteamEngine.Persistence {
 
 				sa = new ScriptArgs(path, "globals");
 				Globals.Instance.Trigger(TriggerKey.openLoadStream, sa);
-				StreamReader loadStream = GetLoadStream(path, sa.Argv[1]);
+				var loadStream = GetLoadStream(path, sa.Argv[1]);
 				InvokeLoad(loadStream, Path.Combine(path, "globals.sav"));
 				try {
 					loadStream.Close();
 				} catch { }
 
-				HashSet<string> nameSet = new HashSet<string>();
-				foreach (IBaseClassSaveCoordinator coordinator in ObjectSaver.AllCoordinators) {
-					string name = coordinator.FileNameToSave;
+				var nameSet = new HashSet<string>();
+				foreach (var coordinator in ObjectSaver.AllCoordinators) {
+					var name = coordinator.FileNameToSave;
 					if (nameSet.Contains(name.ToLowerInvariant())) {
 						//we already loaded this file.
 						continue;
@@ -197,11 +197,11 @@ namespace SteamEngine.Persistence {
 
 		private static void InvokeLoad(StreamReader stream, string filename) {
 			EOFMarked = false;
-			foreach (PropsSection section in PropsFileParser.Load(
+			foreach (var section in PropsFileParser.Load(
 					filename, stream, StartsAsScript, true)) {
 
-				string type = section.HeaderType.ToLowerInvariant();
-				string name = section.HeaderName;
+				var type = section.HeaderType.ToLowerInvariant();
+				var name = section.HeaderName;
 				if (EOFMarked) {
 					Logger.WriteWarning(section.Filename, section.HeaderLine, "[EOF] reached. Skipping " + section);
 					continue;
@@ -255,16 +255,16 @@ namespace SteamEngine.Persistence {
 
 		static StreamReader GetLoadStream(string path, object file) {
 			//object file is either string or Stream or TextWriter
-			StreamReader sr = file as StreamReader;
+			var sr = file as StreamReader;
 			if (sr != null) {
 				return sr;
 			}
-			Stream s = file as Stream;
+			var s = file as Stream;
 			if (s != null) {
 				return new StreamReader(s);
 			}
-			string filename = string.Concat(file);
-			string filepath = Path.Combine(path, filename + ".sav");
+			var filename = string.Concat(file);
+			var filepath = Path.Combine(path, filename + ".sav");
 			return new StreamReader(File.OpenRead(filepath));
 		}
 	}

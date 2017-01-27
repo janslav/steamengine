@@ -26,8 +26,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Musical instrument = skillSeqArgs.Tool as Musical;
+			var self = skillSeqArgs.Self;
+			var instrument = skillSeqArgs.Tool as Musical;
 			if (instrument != null) {
 				if (instrument.TopObj() != self) {
 					instrument = null;
@@ -43,9 +43,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 			skillSeqArgs.Tool = instrument;
 
-			Character target = skillSeqArgs.Target1 as Character;
+			var target = skillSeqArgs.Target1 as Character;
 			if (target == null) {
-				Player selfAsPlayer = self as Player;
+				var selfAsPlayer = self as Player;
 				if (selfAsPlayer != null) {
 					selfAsPlayer.Target(SingletonScript<Targ_Discordance>.Instance, skillSeqArgs);
 					return TriggerResult.Cancel;
@@ -57,8 +57,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			SkillSequenceArgs musicianship = SkillSequenceArgs.Acquire(self, SkillName.Musicianship, skillSeqArgs.Tool, true); //true = parameter for the musicianship @Stroke, it won't proceed with the skill
+			var self = skillSeqArgs.Self;
+			var musicianship = SkillSequenceArgs.Acquire(self, SkillName.Musicianship, skillSeqArgs.Tool, true); //true = parameter for the musicianship @Stroke, it won't proceed with the skill
 			musicianship.PhaseStroke();
 
 			if (musicianship.Tool != null) {
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			if (skillSeqArgs.Tool.IsDeleted || skillSeqArgs.Tool.TopObj() != self) {
 				self.SysMessage("Nemáš u sebe hudební nástroj.");
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 				return TriggerResult.Cancel;
 			}
 
-			Character target = (Character) skillSeqArgs.Target1;
+			var target = (Character) skillSeqArgs.Target1;
 
 			if (this.SkillValueOfChar(target) > 0) {
 				self.SysMessage("Tohle nelze oslabit.");
@@ -104,14 +104,14 @@ namespace SteamEngine.CompiledScripts {
 		internal static PluginKey effectPluginKey = PluginKey.Acquire("_discordanceEffect_");
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character target = (Character) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var target = (Character) skillSeqArgs.Target1;
 
 			if (target.HasPlugin(effectPluginKey)) {
 				self.SysMessage("Cíl je již oslaben.");
 			} else {
 				self.SysMessage("Úspìšnì jsi oslabil cíl.");
-				DiscordanceEffectPlugin plugin = (DiscordanceEffectPlugin) DiscordanceEffectPlugin.defInstance.Create();
+				var plugin = (DiscordanceEffectPlugin) DiscordanceEffectPlugin.defInstance.Create();
 				plugin.discordEffectPower = this.SkillValueOfChar(self);
 				target.AddPluginAsSimple(effectPluginKey, plugin);
 				self.Trigger_HostileAction(self);
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			self.SysMessage("Oslabení se nepovedlo.");
 			self.Trigger_HostileAction(self);
@@ -138,7 +138,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
-			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+			var skillSeq = (SkillSequenceArgs) parameter;
 
 			if (targetted.IsPlayer) {
 				self.SysMessage("Zamìøuj jenom monstra!");
@@ -162,9 +162,9 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly DiscordanceEffectPluginDef defInstance = new DiscordanceEffectPluginDef("p_discordanceEffect_", "C#scripts", -1);
 
 		public void On_Assign() {
-			Character cont = (Character) this.Cont;
+			var cont = (Character) this.Cont;
 
-			int lowerConst = this.discordEffectPower / 4;
+			var lowerConst = this.discordEffectPower / 4;
 
 			this.lowed_dex = (short) DiscordanceValueLower(cont.Dex, lowerConst);
 			this.lowed_str = (short) DiscordanceValueLower(cont.Str, lowerConst);
@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static int DiscordanceValueLower(int value, int lowerConst) {
-			int lowedVal = ((value * lowerConst) / 1000);
+			var lowedVal = ((value * lowerConst) / 1000);
 			if (value < lowedVal) {
 				lowedVal = value;
 			}

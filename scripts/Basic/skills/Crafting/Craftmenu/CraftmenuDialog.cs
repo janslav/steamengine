@@ -43,13 +43,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			sendTo.SysMessage("Co chceš vyrobit?");
-			ImprovedDialog dlg = new ImprovedDialog(gi);
-			CraftmenuCategory cat = (CraftmenuCategory) args[0];
+			var dlg = new ImprovedDialog(gi);
+			var cat = (CraftmenuCategory) args[0];
 
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, cat.Contents.Count); //nejvyssi index na strance
 
-			int innerWidth = (width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE);
+			var innerWidth = (width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE);
 
 			dlg.CreateBackground(width);
 			dlg.SetLocation(80, 50);
@@ -63,8 +63,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
 
-			bool forGM = ((Player) sendTo).IsGM;
-			int resourcesColumn = 6;
+			var forGM = ((Player) sendTo).IsGM;
+			var resourcesColumn = 6;
 			//"new subcategory" and "add items" button	
 			if (forGM) {//only for GMs
 				resourcesColumn = 7; //lastcolumn with graphical list of resources
@@ -100,13 +100,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable.InnerRowsDelimited = true;
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			int maxIndex = cat.Contents.Count - 1; //maximal index to access (in case of omitting...)
+			var rowCntr = 0;
+			var maxIndex = cat.Contents.Count - 1; //maximal index to access (in case of omitting...)
 			CraftmenuItem oneItm = null;
 			CraftmenuCategory oneCat = null;
-			List<int> inputIds = new List<int>(); //list for storing indexes to input fields with items count
-			for (int i = firstiVal; i < imax; i++) {
-				ICraftmenuElement elem = cat.Contents[i];
+			var inputIds = new List<int>(); //list for storing indexes to input fields with items count
+			for (var i = firstiVal; i < imax; i++) {
+				var elem = cat.Contents[i];
 				if (elem.IsCategory) {
 					oneCat = (CraftmenuCategory) elem;
 					dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Id(6 * i + 10).Valign(DialogAlignment.Valign_Center).Build();
@@ -127,25 +127,25 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					dlg.LastTable[rowCntr, 5] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(6 * i + 13).Valign(DialogAlignment.Valign_Center).Build();//display info
 
 					//now the list of resources
-					ResourcesList reses = oneItm.itemDef.Resources;
+					var reses = oneItm.itemDef.Resources;
 					if (reses != null) {//only if we have any resources...
-						int spaceLength = ImprovedDialog.TextLength(" ");
-						int lastColPos = spaceLength; //relative position in the resources column (beginning one space from the border)
-						foreach (IResourceListEntry_ItemCounter rlItm in reses.MultiplicablesSublist) {
-							ItemResource itmRes = rlItm as ItemResource;
+						var spaceLength = ImprovedDialog.TextLength(" ");
+						var lastColPos = spaceLength; //relative position in the resources column (beginning one space from the border)
+						foreach (var rlItm in reses.MultiplicablesSublist) {
+							var itmRes = rlItm as ItemResource;
 							if (itmRes != null) {//add count + item picture
-								string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2spaces
+								var textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2spaces
 								textToShow += itmRes.DesiredCount + " ";
 								dlg.LastTable[rowCntr, resourcesColumn] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
-								int countLength = ImprovedDialog.TextLength(textToShow); //length of the text with number (count of items needed) plus the separating space
+								var countLength = ImprovedDialog.TextLength(textToShow); //length of the text with number (count of items needed) plus the separating space
 								dlg.LastTable[rowCntr, resourcesColumn] = GUTAImage.Builder.Gump(itmRes.ItemDef.Model).Color(itmRes.ItemDef.Color).XPos(lastColPos + countLength).Align(DialogAlignment.Align_Left).Build();
 								//prepare next offset:
-								GumpArtDimension gad = GumpDimensions.Table[itmRes.ItemDef.Model];
+								var gad = GumpDimensions.Table[itmRes.ItemDef.Model];
 								lastColPos += spaceLength + countLength + gad.Width; //first offset, counted length of the number text including separating space, width of the icon, space after the icon
 							} else {//not an item => can be a typedef... (t_fruit etc.)
-								TriggerGroupResource tgrRes = rlItm as TriggerGroupResource;
+								var tgrRes = rlItm as TriggerGroupResource;
 								if (tgrRes != null) {
-									string textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2 spaces
+									var textToShow = (lastColPos > spaceLength) ? "  " : ""; //second and more items will be separated by 2 spaces
 									textToShow += tgrRes.DesiredCount + " " + ItemTypeNames.GetPrettyName(tgrRes.triggerGroup);
 									dlg.LastTable[rowCntr, resourcesColumn] = GUTAText.Builder.Text(textToShow).XPos(lastColPos).Align(DialogAlignment.Align_Left).Valign(DialogAlignment.Valign_Center).Build();
 									//prepare next offset:
@@ -191,8 +191,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus1, GumpResponse gr, DialogArgs args) {
-			CraftmenuCategory cat = (CraftmenuCategory) args[0];
-			int btnNo = gr.PressedButton;
+			var cat = (CraftmenuCategory) args[0];
+			var btnNo = gr.PressedButton;
 			if (btnNo < 10) {//basic buttons
 				Gump newGi;
 				Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict;
@@ -213,7 +213,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //new subcategory
 						var inputDialog = new CompiledInputDef("Nová subkategtorie", "Jméno", (sentTo, focus, filledText) => {
-							CraftmenuCategory newCat = new CraftmenuCategory(filledText);
+							var newCat = new CraftmenuCategory(filledText);
 							cat.Contents.Add(newCat);
 							newCat.Parent = cat;
 						});
@@ -233,13 +233,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 4: //start making
 						//first we will prepare the list of Item-Count pairs to be made
-						List<int> inputIds = (List<int>) args.GetTag(tkInputIds);//get the ids info
-						SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
-						foreach (int id in inputIds) {
-							int requestedCount = (int) gr.GetNumberResponse(id);//always integer number
+						var inputIds = (List<int>) args.GetTag(tkInputIds);//get the ids info
+						var selectionQueue = new SimpleQueue<CraftingSelection>();
+						foreach (var id in inputIds) {
+							var requestedCount = (int) gr.GetNumberResponse(id);//always integer number
 							if (requestedCount > 0) {//non zero request for making, parse the line number
-								int line = (id - 15) / 6; //input fields have IDs as 6*i + 15
-								CraftmenuItem cmItm = (CraftmenuItem) cat.Contents[line];
+								var line = (id - 15) / 6; //input fields have IDs as 6*i + 15
+								var cmItm = (CraftmenuItem) cat.Contents[line];
 								selectionQueue.Enqueue(new CraftingSelection(cmItm.itemDef, requestedCount));
 							}
 						}
@@ -275,9 +275,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, cat.Contents.Count, 1)) {
 			} else {
-				int btnNumber = (btnNo - 10) % 6; //on one line we have numbers 10,11,12,13,14,15 next line is 16,17,18,19,20,21 etc.
-				int line = (btnNo - (10 + btnNumber)) / 6; //e.g. 12 - (10+2) / 6 = 0; 21 - (10+3) / 6 = 8/6 = 1; 15 - (10 + 1) / 6 = 0 etc...
-				ICraftmenuElement elem = cat.Contents[line];
+				var btnNumber = (btnNo - 10) % 6; //on one line we have numbers 10,11,12,13,14,15 next line is 16,17,18,19,20,21 etc.
+				var line = (btnNo - (10 + btnNumber)) / 6; //e.g. 12 - (10+2) / 6 = 0; 21 - (10+3) / 6 = 8/6 = 1; 15 - (10 + 1) / 6 = 0 etc...
+				var elem = cat.Contents[line];
 				Gump newGi = null;
 				switch (btnNumber) {
 					case 0://show the subcategory contents
@@ -285,13 +285,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						//DialogStacking.EnstackDialog(gi, newGi);
 						break;
 					case 1://move element one position up in the list
-						ICraftmenuElement prevSibling = cat.Contents[line - 1];
+						var prevSibling = cat.Contents[line - 1];
 						cat.Contents[line - 1] = elem;
 						cat.Contents[line] = prevSibling;
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2://move element one position down
-						ICraftmenuElement nextSibling = cat.Contents[line + 1];
+						var nextSibling = cat.Contents[line + 1];
 						cat.Contents[line + 1] = elem;
 						cat.Contents[line] = nextSibling;
 						DialogStacking.ResendAndRestackDialog(gi);
@@ -331,8 +331,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public static void Craftmenu(Character self, CraftingSkillDef skill) {
-			TagKey tkKey = TagKey.Acquire(tkCraftmenuLastposPrefix);
-			Dictionary<CraftingSkillDef, CraftmenuCategory> lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(tkKey);
+			var tkKey = TagKey.Acquire(tkCraftmenuLastposPrefix);
+			var lastPosDict = (Dictionary<CraftingSkillDef, CraftmenuCategory>) self.GetTag(tkKey);
 			CraftmenuCategory prevCat = null;
 			if (lastPosDict != null && skill != null) {
 				prevCat = lastPosDict[skill];
@@ -347,12 +347,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public static void Craftmenu(Character self, string skillName) {
-			CraftingSkillDef sklDef = (CraftingSkillDef) AbstractSkillDef.GetByKey(skillName);
+			var sklDef = (CraftingSkillDef) AbstractSkillDef.GetByKey(skillName);
 			Craftmenu(self, sklDef);
 		}
 
 		public static void Craftmenu(Character self, SkillName skillName) {
-			CraftingSkillDef sklDef = (CraftingSkillDef) AbstractSkillDef.GetById((int) skillName);
+			var sklDef = (CraftingSkillDef) AbstractSkillDef.GetById((int) skillName);
 			Craftmenu(self, sklDef);
 		}
 
@@ -364,7 +364,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog listing all available craftmenu categories (one for every crafting skill)</summary>
 	public class D_CraftmenuCategories : CompiledGumpDef {
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(240);
 			dlg.SetLocation(70, 70);
@@ -375,7 +375,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
 
-			GUTATable picTable = new GUTATable(8, ImprovedDialog.ICON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH);
+			var picTable = new GUTATable(8, ImprovedDialog.ICON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH);
 			picTable.RowHeight = 40;
 			picTable.InnerRowsDelimited = true;
 			dlg.AddTable(picTable);

@@ -17,7 +17,7 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static int Action(Character self, ScriptArgs sa) {
 			if ((sa != null) && (sa.Argv.Length > 0)) {
-				int value = Convert.ToInt32(sa.Argv[0]);
+				var value = Convert.ToInt32(sa.Argv[0]);
 				if ((value != (int) self.CurrentSkillName) || (value < 0) || (value >= AbstractSkillDef.SkillsCount)) {
 					self.AbortSkill();
 				}
@@ -31,22 +31,22 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void Go(Character self, string s) {
-			StaticRegion reg = StaticRegion.GetByNameOrDefname(s);
+			var reg = StaticRegion.GetByNameOrDefname(s);
 			if (reg != null) {
 				self.P(reg.P);
 				return;
 			}
 
 			//translate s to coordinates
-			bool parse = true;
+			var parse = true;
 			string constant = null;
 			while (parse) {
 				parse = false;
-				string[] args = Utility.SplitSphereString(s, true);
+				var args = Utility.SplitSphereString(s, true);
 				switch (args.Length) {
 					case 1: {
 							if (constant == null) {
-								object o = Constant.GetValue(s);
+								var o = Constant.GetValue(s);
 								if (o is string) {
 									Logger.WriteDebug("Resolved constant '" + s + "' to " + o);
 									constant = s;
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 					break;
 				default:
 					Logger.WriteWarning("Unknown effect type '" + type + "'. Sending it anyways.");
-					GraphicalEffectOutPacket p = Pool<GraphicalEffectOutPacket>.Acquire();
+					var p = Pool<GraphicalEffectOutPacket>.Acquire();
 					p.Prepare(Globals.SrcCharacter,
 						self, type, effect, speed, duration, 0, fixedDirection, false, 0, 0);
 					GameServer.SendToClientsWhoCanSee(self, p);
@@ -127,20 +127,20 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static void Events(ITriggerGroupHolder self, ScriptArgs sa) {
 			if (sa != null) {
-				object[] argv = sa.Argv;
+				var argv = sa.Argv;
 				if (argv.Length > 0) {
-					object firstArg = argv[0];
-					TriggerGroup tg = firstArg as TriggerGroup;
+					var firstArg = argv[0];
+					var tg = firstArg as TriggerGroup;
 					if (tg != null) {
 						Events(self, tg);
 						return;
 					}
-					TgRemover tgr = firstArg as TgRemover;
+					var tgr = firstArg as TgRemover;
 					if (tgr != null) {
 						Events(self, tgr);
 						return;
 					}
-					int i = Convert.ToInt32(firstArg);
+					var i = Convert.ToInt32(firstArg);
 					Events(self, i);
 					return;
 				}
@@ -164,8 +164,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static string Events(ITriggerGroupHolder self) {
-			StringBuilder toreturn = new StringBuilder();
-			foreach (TriggerGroup tg in self.GetAllTriggerGroups()) {
+			var toreturn = new StringBuilder();
+			foreach (var tg in self.GetAllTriggerGroups()) {
 				toreturn.Append(tg).Append(", ");
 
 			}

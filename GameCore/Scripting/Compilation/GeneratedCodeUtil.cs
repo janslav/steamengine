@@ -50,14 +50,14 @@ namespace SteamEngine.Scripting.Compilation {
 		private static CodeGeneratorOptions options = CreateOptions();
 
 		static CodeGeneratorOptions CreateOptions() {
-			CodeGeneratorOptions options = new CodeGeneratorOptions();
+			var options = new CodeGeneratorOptions();
 			options.IndentString = "\t";
 			options.ElseOnClosing = true;
 			return options;
 		}
 
 		internal static void RegisterGenerator(ISteamCsCodeGenerator generator) {
-			string fileName = generator.FileName;
+			var fileName = generator.FileName;
 			if (generators.ContainsKey(fileName)) {
 				throw new OverrideNotAllowedException("There is already a ISteamCSCodeGenerator (" + generators[fileName] + ") registered for the file name " + fileName);//hopefully this will never display cos it would make no sense
 			}
@@ -66,10 +66,10 @@ namespace SteamEngine.Scripting.Compilation {
 
 		//removes all non-core references
 		internal static void ForgetScripts() {
-			ISteamCsCodeGenerator[] allGens = new ISteamCsCodeGenerator[generators.Count];
+			var allGens = new ISteamCsCodeGenerator[generators.Count];
 			generators.Values.CopyTo(allGens, 0);
 			generators.Clear();
-			foreach (ISteamCsCodeGenerator gen in allGens) {
+			foreach (var gen in allGens) {
 				if (ClassManager.CoreAssembly == gen.GetType().Assembly) {
 					generators[gen.FileName] = gen;
 				}
@@ -78,16 +78,16 @@ namespace SteamEngine.Scripting.Compilation {
 
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		internal static bool WriteOutAndCompile(int compilationNumber) {
-			foreach (ISteamCsCodeGenerator generator in generators.Values) {
-				CodeCompileUnit codeCompileUnit = generator.WriteSources();
+			foreach (var generator in generators.Values) {
+				var codeCompileUnit = generator.WriteSources();
 				if (codeCompileUnit == null) {
 					Logger.WriteFatal(generator + " failed to generate scripts...?");
 					return false;
 				}
 
-				string sourceFileName = Path.Combine("Generated", generator.FileName);
+				var sourceFileName = Path.Combine("Generated", generator.FileName);
 				Tools.EnsureDirectory(Path.GetDirectoryName(sourceFileName));
-				StreamWriter outFile = new StreamWriter(sourceFileName, false);
+				var outFile = new StreamWriter(sourceFileName, false);
 				provider.GenerateCodeFromCompileUnit(codeCompileUnit, outFile, options);
 				outFile.Close();
 			}
@@ -96,7 +96,7 @@ namespace SteamEngine.Scripting.Compilation {
 				return false;
 			}
 
-			foreach (ISteamCsCodeGenerator generator in generators.Values) {
+			foreach (var generator in generators.Values) {
 				generator.HandleAssembly(generatedAssembly);
 			}
 			return true;
@@ -161,9 +161,9 @@ namespace SteamEngine.Scripting.Compilation {
 					dataType = Enum.GetUnderlyingType(enumType);
 				}
 
-				MethodInfo parseMethod = typeof(ConvertTools).GetMethod("Parse" + dataType.Name, BindingFlags.Static | BindingFlags.Public);
+				var parseMethod = typeof(ConvertTools).GetMethod("Parse" + dataType.Name, BindingFlags.Static | BindingFlags.Public);
 				if (parseMethod != null) {
-					CodeMethodInvokeExpression parseExp = new CodeMethodInvokeExpression(
+					var parseExp = new CodeMethodInvokeExpression(
 						new CodeMethodReferenceExpression(
 							new CodeTypeReferenceExpression(typeof(ConvertTools)),
 							parseMethod.Name),
@@ -178,13 +178,13 @@ namespace SteamEngine.Scripting.Compilation {
 				}
 				throw new SEException("ConvertTools class missing a method for parsing number type " + dataType + ". This shoud not happen.");
 			} else {
-				CodeMethodInvokeExpression loadMethod = new CodeMethodInvokeExpression(
+				var loadMethod = new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(typeof(ObjectSaver)),
 					"OptimizedLoad_SimpleType",
 					inputStringExpression,
 					new CodeTypeOfExpression(dataType));
 
-				MethodInfo parseMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
+				var parseMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
 					new[] { typeof(object) }, null);
 
 				//this will probably be true for datetime only
@@ -212,7 +212,7 @@ namespace SteamEngine.Scripting.Compilation {
 				return inputObjectExpression;
 			}
 			if (ConvertTools.IsNumberType(dataType)) {
-				CodeMethodInvokeExpression toNumberExp = new CodeMethodInvokeExpression(
+				var toNumberExp = new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(typeof(Convert)),
 					"To" + dataType.Name,
 					inputObjectExpression);
@@ -223,7 +223,7 @@ namespace SteamEngine.Scripting.Compilation {
 				}
 				return toNumberExp;
 			}
-			MethodInfo convertMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
+			var convertMethod = typeof(Convert).GetMethod("To" + dataType.Name, BindingFlags.Static | BindingFlags.Public, null,
 				new[] { typeof(object) }, null);
 
 			//this will probably be true for datetime only

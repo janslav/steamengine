@@ -134,7 +134,7 @@ namespace SteamEngine {
 		/// </summary>
 		public int Count {
 			get {
-				ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
+				var tll = this.contentsOrComponents as ThingLinkedList;
 				if (tll == null) {
 					return 0;
 				}
@@ -156,7 +156,7 @@ namespace SteamEngine {
 				if (value != this.amount) {
 					this.InvalidateAosToolTips();
 					ItemSyncQueue.AboutToChange(this);
-					Thing c = this.Cont;
+					var c = this.Cont;
 					if (c != null) {
 						c.AdjustWeight(this.def.Weight * (value - this.amount));
 					}
@@ -166,7 +166,7 @@ namespace SteamEngine {
 		}
 
 		protected internal override void AdjustWeight(float adjust) {
-			Thing c = this.Cont;
+			var c = this.Cont;
 			if (c != null) {
 				c.AdjustWeight(adjust);
 			}
@@ -314,7 +314,7 @@ namespace SteamEngine {
 
 		public override Region Region {
 			get {
-				Thing top = this.TopObj();
+				var top = this.TopObj();
 				return this.GetMap().GetRegionFor(top.point4d);
 			}
 		}
@@ -325,7 +325,7 @@ namespace SteamEngine {
 		}
 
 		public override AbstractItem FindCont(int index) {
-			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
+			var tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				return null;
 			}
@@ -333,7 +333,7 @@ namespace SteamEngine {
 		}
 
 		public void OpenTo(AbstractCharacter viewer) {
-			GameState viewerState = viewer.GameState;
+			var viewerState = viewer.GameState;
 			this.OpenTo(viewer, viewerState, viewerState.Conn);
 		}
 
@@ -344,7 +344,7 @@ namespace SteamEngine {
 
 				//send container
 				OpenedContainers.SetContainerOpened(viewer, this);
-				DrawContainerOutPacket packet = Pool<DrawContainerOutPacket>.Acquire();
+				var packet = Pool<DrawContainerOutPacket>.Acquire();
 				packet.PrepareContainer(this.FlaggedUid, this.Gump);
 				viewerConn.SendSinglePacket(packet);
 
@@ -358,7 +358,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void Trigger_ContainerOpen(AbstractCharacter viewer, GameState viewerState, TcpConnection<GameState> viewerConn) {
-			ScriptArgs sa = new ScriptArgs(viewer, viewerState, viewerConn);
+			var sa = new ScriptArgs(viewer, viewerState, viewerConn);
 			this.TryTrigger(TriggerKey.containerOpen, sa);
 			try {
 				this.On_ContainerOpen(viewer, viewerState, viewerConn);
@@ -376,7 +376,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual ItemOnGroundUpdater GetOnGroundUpdater() {
-			ItemOnGroundUpdater iogu = ItemOnGroundUpdater.GetFromCache(this);
+			var iogu = ItemOnGroundUpdater.GetFromCache(this);
 			if (iogu == null) {
 				iogu = new ItemOnGroundUpdater(this);
 			}
@@ -384,7 +384,7 @@ namespace SteamEngine {
 		}
 
 		internal sealed override void Trigger_Destroy() {
-			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
+			var tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				tll.BeingDeleted();
 			}
@@ -394,7 +394,7 @@ namespace SteamEngine {
 		}
 
 		public void EmptyCont() {
-			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
+			var tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll != null) {
 				tll.Empty();
 			}
@@ -419,8 +419,8 @@ namespace SteamEngine {
 		}
 
 		public override void On_Create() {
-			AbstractItemDef aidef = (AbstractItemDef) this.def;
-			AbstractItemDef dupe = aidef.DupeItem;
+			var aidef = (AbstractItemDef) this.def;
+			var dupe = aidef.DupeItem;
 			if (dupe != null) {
 				this.def = dupe;
 			}
@@ -441,7 +441,7 @@ namespace SteamEngine {
 		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				tg.Run(this, tk, sa);
 			}
 			base.TryTrigger(tk, sa);
@@ -453,7 +453,7 @@ namespace SteamEngine {
 		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				tg.TryRun(this, tk, sa);
 			}
 			base.TryTrigger(tk, sa);
@@ -465,7 +465,7 @@ namespace SteamEngine {
 		public override TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				if (TagMath.Is1(tg.Run(this, tk, sa))) {
 					return TriggerResult.Cancel;
 				}
@@ -486,7 +486,7 @@ namespace SteamEngine {
 		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
 					return TriggerResult.Cancel;
 				}
@@ -516,7 +516,7 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#"), SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		internal void Trigger_Step(AbstractCharacter steppingChar, bool repeated, MovementType movementType) {
 			this.ThrowIfDeleted();
-			ScriptArgs sa = new ScriptArgs(steppingChar, this, repeated, movementType);
+			var sa = new ScriptArgs(steppingChar, this, repeated, movementType);
 
 			steppingChar.TryTrigger(TriggerKey.itemStep, sa);
 			steppingChar.On_ItemStep(this, repeated, movementType);//sends true if repeated=1
@@ -531,11 +531,11 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public override void Save(SaveStream output) {
 			base.Save(output);
-			AbstractItemDef def = this.TypeDef;
+			var def = this.TypeDef;
 			if ((this.name != null) && (!def.Name.Equals(this.name))) {
 				output.WriteValue("name", this.name);
 			}
-			Thing c = this.Cont;
+			var c = this.Cont;
 			if (c != null) {
 				output.WriteValue("cont", c);
 			}
@@ -601,13 +601,13 @@ namespace SteamEngine {
 
 		public sealed override bool IsInContainer {
 			get {
-				Thing c = this.Cont;
+				var c = this.Cont;
 				return (c != null && c.IsItem);
 			}
 		}
 
 		public sealed override Thing TopObj() {
-			Thing c = this.Cont;
+			var c = this.Cont;
 			if (c != null) {
 				return c.TopObj();
 			}
@@ -616,7 +616,7 @@ namespace SteamEngine {
 
 		//returns true if this is in given container or its subcontainers
 		public bool IsWithinCont(Thing container) {
-			Thing myCont = this.Cont;
+			var myCont = this.Cont;
 			if (myCont == container) {
 				return true;
 			}
@@ -630,7 +630,7 @@ namespace SteamEngine {
 
 		public sealed override IEnumerator<AbstractItem> GetEnumerator() {
 			this.ThrowIfDeleted();
-			ThingLinkedList tll = this.contentsOrComponents as ThingLinkedList;
+			var tll = this.contentsOrComponents as ThingLinkedList;
 			if (tll == null) {
 				return EmptyReadOnlyGenericCollection<AbstractItem>.instance;
 			}

@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item CreateEmptyFlask(Container container) {
-			ItemDef emptyFlaskDef = this.TypeDef.EmptyFlask;
+			var emptyFlaskDef = this.TypeDef.EmptyFlask;
 			if (emptyFlaskDef != null) {
 				return (Item) container.NewItem(emptyFlaskDef);
 			}

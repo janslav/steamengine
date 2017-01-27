@@ -40,7 +40,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		internal void AddSubSection(ClassTemplateSubSection subSection) {
-			string name = subSection.name;
+			var name = subSection.name;
 			if (this.subsections.ContainsKey(name)) {
 				throw new SEException("The section " + this.className + " already contains a subsection called " + name);
 			}

@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected virtual void On_Start(Player self, object parameter) {
-			GameState state = self.GameState;
+			var state = self.GameState;
 			if (state != null) {
 				state.Target(this.AllowGround, this.targon, this.targonCancel, parameter);
 			}

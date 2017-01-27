@@ -7,7 +7,7 @@ namespace SteamEngine.CompiledScripts {
             this.Say("Shine");
             if (this.Amount > 1) {
                 //vytvori hromadku dalsich pochodni s amount-1
-                Item restOfTorches = (Item)this.Dupe();
+                var restOfTorches = (Item)this.Dupe();
 				restOfTorches.Amount = restOfTorches.Amount - 1;
 				this.Amount = 1;
             }

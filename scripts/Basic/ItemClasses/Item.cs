@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 		///  then the item will be deleted. Method returns the actually consumed amount.
 		///  </summary>
 		public long Consume(long howMany) {
-			int prevAmount = this.Amount;
+			var prevAmount = this.Amount;
 
 			long resultAmount;
 			try {
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override byte FlagsToSend {
 			get {
-				int retVal = 0;
+				var retVal = 0;
 
 				if (this.IsNotVisible) {
 					retVal |= 0x80;
@@ -157,13 +157,13 @@ namespace SteamEngine.CompiledScripts {
 			this.ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();
 			while (e.MoveNext()) {
-				Item i = (Item) e.Current;
+				var i = (Item) e.Current;
 				yield return i;
 			}
 			e.Reset();
 			while (e.MoveNext()) {
-				Item i = (Item) e.Current;
-				foreach (Item deep in i.EnumDeep()) {
+				var i = (Item) e.Current;
+				foreach (var deep in i.EnumDeep()) {
 					yield return deep;
 				}
 			}
@@ -174,12 +174,12 @@ namespace SteamEngine.CompiledScripts {
 			this.ThrowIfDeleted();
 			IEnumerator e = this.GetEnumerator();
 			while (e.MoveNext()) {
-				Item i = (Item) e.Current;
+				var i = (Item) e.Current;
 				yield return i;
 			}
 			e.Reset();
 			while (e.MoveNext()) {
-				Item i = (Item) e.Current;
+				var i = (Item) e.Current;
 				foreach (Item shallow in i) {
 					yield return shallow;
 				}
@@ -213,7 +213,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public Item FindByType(TriggerGroup type) {
 			this.ThrowIfDeleted();
-			foreach (Item i in this.EnumDeep()) {
+			foreach (var i in this.EnumDeep()) {
 				if (i.Type == type) {
 					return i;
 				}
@@ -223,7 +223,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public Item FindByTypeShallow(TriggerGroup type) {
 			this.ThrowIfDeleted();
-			foreach (Item i in this.EnumShallow()) {
+			foreach (var i in this.EnumShallow()) {
 				if (i.Type == type) {
 					return i;
 				}
@@ -232,7 +232,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item FindByClass(Type type) {
-			foreach (Item i in this.EnumDeep()) {
+			foreach (var i in this.EnumDeep()) {
 				if (i.GetType() == type) {
 					return i;
 				}
@@ -241,7 +241,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item FindByClassShallow(Type type) {
-			foreach (Item i in this.EnumShallow()) {
+			foreach (var i in this.EnumShallow()) {
 				if (i.GetType() == type) {
 					return i;
 				}
@@ -250,7 +250,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item FindById(ItemDef def) {
-			foreach (Item i in this.EnumDeep()) {
+			foreach (var i in this.EnumDeep()) {
 				if (i.Def == def) {
 					return i;
 				}
@@ -259,7 +259,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Item FindByIdShallow(ItemDef def) {
-			foreach (Item i in this.EnumShallow()) {
+			foreach (var i in this.EnumShallow()) {
 				if (i.Def == def) {
 					return i;
 				}
@@ -268,12 +268,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void GetNameCliloc(out int id, out string argument) {
-			string name = this.Name;
-			int amount = this.Amount;
+			var name = this.Name;
+			var amount = this.Amount;
 			id = 1042971;//~1_NOTHING~
 			argument = null;
 			if (amount <= 1) {
-				ItemDispidInfo idi = this.TypeDef.DispidInfo;
+				var idi = this.TypeDef.DispidInfo;
 				if (idi != null) {
 					if (StringComparer.OrdinalIgnoreCase.Equals(name, idi.SingularName)) {
 						id = (1020000 + (this.Model & 16383)); //hmmm...
@@ -288,7 +288,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
-			int amount = this.Amount;
+			var amount = this.Amount;
 			if (this.Amount <= 1) {
 				PacketSequences.SendNameFrom(clickerConn, this, this.Name, 0);
 			} else {
@@ -318,8 +318,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override AbstractItem NewItem(IThingFactory factory, int amount) {
-			Thing t = factory.Create(this);
-			AbstractItem i = t as AbstractItem;
+			var t = factory.Create(this);
+			var i = t as AbstractItem;
 			if (i != null) {
 				if (i.IsStackable) {
 					i.Amount = amount;
@@ -367,7 +367,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public int RecursiveCount {
 			get {
-				int c = 0;
+				var c = 0;
 
 				foreach (Item i in this) {
 					c += i.RecursiveCount + 1;

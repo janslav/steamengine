@@ -98,7 +98,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public string GetTextResponse(int id) {
 			for (int i = 0, n = this.responseTexts.Length; i < n; i++) {
-				ResponseText rt = this.responseTexts[i];
+				var rt = this.responseTexts[i];
 				if (rt.Id == id) {
 					return rt.Text;
 				}
@@ -108,7 +108,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public decimal GetNumberResponse(int id) {
 			for (int i = 0, n = this.responseNumbers.Length; i < n; i++) {
-				ResponseNumber rn = this.responseNumbers[i];
+				var rn = this.responseNumbers[i];
 				if ((rn != null) && (rn.Id == id)) {
 					return rn.Number;
 				}

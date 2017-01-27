@@ -43,7 +43,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			object result;
 			try {
@@ -53,7 +53,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 
 			try {
-				AbstractCharacter ch = (AbstractCharacter) oSelf;
+				var ch = (AbstractCharacter) oSelf;
 				//ch.SkillById(skillId).RealValue = Convert.ToUInt16(result);
 				ch.SetRealSkillValue(this.skillId, Convert.ToInt32(result, CultureInfo.InvariantCulture));
 				//ch.Skills[skillId].RealValue = Convert.ToUInt16(result);
@@ -65,7 +65,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			AbstractCharacter ch = (AbstractCharacter) vars.self;
+			var ch = (AbstractCharacter) vars.self;
 			ch.SetRealSkillValue(this.skillId, Convert.ToInt32(results[0], CultureInfo.InvariantCulture));
 			//ch.Skills[skillId].RealValue = Convert.ToUInt16(results[0]);
 			return null;
@@ -88,7 +88,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				AbstractCharacter ch = (AbstractCharacter) vars.self;
+				var ch = (AbstractCharacter) vars.self;
 				return ch.GetSkill(this.skillId);
 				//return ch.Skills[skillId].RealValue;
 			} catch (Exception e) {
@@ -98,7 +98,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			AbstractCharacter ch = (AbstractCharacter) vars.self;
+			var ch = (AbstractCharacter) vars.self;
 			return ch.GetSkill(this.skillId);
 			//return ch.Skills[skillId].RealValue;
 		}

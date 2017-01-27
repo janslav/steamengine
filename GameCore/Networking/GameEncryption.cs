@@ -52,17 +52,17 @@ namespace SteamEngine.Networking {
 			this.cipherTable = new byte[0x100];
 
 			// Set up the crypt key
-			byte[] key = new byte[16];
+			var key = new byte[16];
 			key[0] = key[4] = key[8] = key[12] = bytesIn[offsetIn]; // (byte) ((seed >> 24) & 0xff);
 			key[1] = key[5] = key[9] = key[13] = bytesIn[checked(offsetIn + 1)]; // (byte) ((seed >> 16) & 0xff);
 			key[2] = key[6] = key[10] = key[14] = bytesIn[checked(offsetIn + 2)]; // (byte) ((seed >> 8) & 0xff);
 			key[3] = key[7] = key[11] = key[15] = bytesIn[checked(offsetIn + 3)]; // (byte) (seed & 0xff);
 
-			byte[] iv = new byte[0];
+			var iv = new byte[0];
 			this.engine = new TwofishEncryption(128, ref key, ref iv, CipherMode.ECB, TwofishBase.EncryptionDirection.Decrypting);
 
 			// Initialize table
-			for (int i = 0; i < 256; ++i) {
+			for (var i = 0; i < 256; ++i) {
 				this.cipherTable[i] = (byte) i;
 			}
 
@@ -80,9 +80,9 @@ namespace SteamEngine.Networking {
 		}
 
 		private void refreshCipherTable() {
-			uint[] block = new uint[4];
+			var block = new uint[4];
 
-			for (int i = 0; i < 256; i += 16) {
+			for (var i = 0; i < 256; i += 16) {
 				Buffer.BlockCopy(this.cipherTable, i, block, 0, 16);
 				this.engine.blockEncrypt(ref block);
 				Buffer.BlockCopy(block, 0, this.cipherTable, i, 16);

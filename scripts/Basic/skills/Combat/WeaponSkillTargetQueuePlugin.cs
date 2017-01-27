@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void RemoveTarget(Character attacker, Character target) {
-			WeaponSkillTargetQueuePlugin p = attacker.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
+			var p = attacker.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
 			if (p != null) {
 				p.RemoveTarget(target);
 			}
@@ -47,14 +47,14 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void FightCurrentTarget(Character self) {
-			WeaponSkillTargetQueuePlugin p = self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
+			var p = self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
 			if (p != null) {
 				p.FightCurrentTarget();
 			}
 		}
 
 		public void AddTarget(Character target) {
-			LinkedListNode<Character> node = this.targetQueue.First;
+			var node = this.targetQueue.First;
 			if (node != null) {
 				if (target != this.targetQueue.First.Value) {
 					while (node != null) {
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void RemoveTarget(Character target) {
-			LinkedListNode<Character> node = this.targetQueue.First;
+			var node = this.targetQueue.First;
 			while (node != null) {
 				if (node.Value == target) {
 					this.targetQueue.Remove(node);
@@ -99,8 +99,8 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 				if (target != null) {
-					SkillName skill = GetSkillNameByWeaponType(this.Cont.WeaponType);
-					SkillSequenceArgs seq = SkillSequenceArgs.Acquire(this.Cont, skill, target, null, this.Cont.Weapon, null, null);
+					var skill = GetSkillNameByWeaponType(this.Cont.WeaponType);
+					var seq = SkillSequenceArgs.Acquire(this.Cont, skill, target, null, this.Cont.Weapon, null, null);
 					seq.PhaseSelect();
 					return;
 				}
@@ -156,8 +156,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_NewPosition() {
-			Character cont = this.Cont;
-			SkillSequenceArgs skillSeq = SkillSequenceArgs.GetSkillSequenceArgs(cont);
+			var cont = this.Cont;
+			var skillSeq = SkillSequenceArgs.GetSkillSequenceArgs(cont);
 
 			if (skillSeq != null) {
 				if (skillSeq.SkillDef.Id == (int) SkillName.Marksmanship) {//nonrun archery
@@ -193,7 +193,7 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static WeaponSkillTargetQueuePlugin AcquireCombatPlugin(Character self) {
-			WeaponSkillTargetQueuePlugin p = self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
+			var p = self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
 			if (p == null) {
 				p = (WeaponSkillTargetQueuePlugin) self.AddNewPlugin(combatPluginPK, WeaponSkillTargetQueuePluginDef.instance);
 			}

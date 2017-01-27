@@ -35,7 +35,7 @@ namespace SteamEngine.Networking {
 			}
 
 			protected sealed override void OnTimeout() {
-				GameState state = this.ch.GameState;
+				var state = this.ch.GameState;
 				if (state == null) {
 					this.Delete();
 				}
@@ -47,17 +47,17 @@ namespace SteamEngine.Networking {
 		}
 
 		internal static void SendStartGameSequence(AbstractCharacter ch) {
-			GameState state = ch.GameState;
+			var state = ch.GameState;
 			if (state == null) {
 				return;
 			}
-			TcpConnection<GameState> conn = state.Conn;
+			var conn = state.Conn;
 
 			Logger.WriteDebug("Starting game for character " + ch);
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 
-			Map map = ch.GetMap();
+			var map = ch.GetMap();
 			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.SizeX, map.SizeY); //0x1B
 
 			//pg.AcquirePacket<SetFacetOutPacket>().Prepare(map.Facet);//0xBF 0x08
@@ -96,9 +96,9 @@ namespace SteamEngine.Networking {
 			}
 
 			protected sealed override void OnTimeout() {
-				GameState state = this.ch.GameState;
+				var state = this.ch.GameState;
 				if (state != null) {
-					PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+					var pg = PacketGroup.AcquireSingleUsePG();
 					pg.AcquirePacket<LoginCompleteOutPacket>(); //0x55 //jak se ukazalo tohle musi bejt az po ty pauze, i kdyz tezko rict proc. Vyssi klienti (402+) to tezko snasely v jedny davce s 0x1B
 					state.Conn.SendPacketGroup(pg);
 
@@ -115,7 +115,7 @@ namespace SteamEngine.Networking {
 		public static void SendCharInfoWithPropertiesTo(AbstractCharacter viewer, GameState viewerState,
 			TcpConnection<GameState> viewerConn, AbstractCharacter target) {
 
-			DrawObjectOutPacket packet = Pool<DrawObjectOutPacket>.Acquire();
+			var packet = Pool<DrawObjectOutPacket>.Acquire();
 			packet.Prepare(target, target.GetHighlightColorFor(viewer));
 			viewerConn.SendSinglePacket(packet);
 
@@ -126,14 +126,14 @@ namespace SteamEngine.Networking {
 			TcpConnection<GameState> viewerConn, AbstractItem container) {
 
 			if (container.Count > 0) {
-				ItemsInContainerOutPacket iicp = Pool<ItemsInContainerOutPacket>.Acquire();
+				var iicp = Pool<ItemsInContainerOutPacket>.Acquire();
 
-				using (ListBuffer<AbstractItem> listBuffer = Pool<ListBuffer<AbstractItem>>.Acquire()) {
+				using (var listBuffer = Pool<ListBuffer<AbstractItem>>.Acquire()) {
 					if (iicp.PrepareContainer(container, viewer, listBuffer.list)) {
 						viewerConn.SendSinglePacket(iicp);
 						if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
-							foreach (AbstractItem contained in listBuffer.list) {
-								AosToolTips toolTips = contained.GetAosToolTips(viewer.Language);
+							foreach (var contained in listBuffer.list) {
+								var toolTips = contained.GetAosToolTips(viewer.Language);
 								if (toolTips != null) {
 									toolTips.SendIdPacket(viewerState, viewerConn);
 								}
@@ -148,7 +148,7 @@ namespace SteamEngine.Networking {
 
 		public static void TrySendPropertiesTo(GameState viewerState, TcpConnection<GameState> viewerConn, Thing target) {
 			if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
-				AosToolTips toolTips = target.GetAosToolTips(viewerState.Language);
+				var toolTips = target.GetAosToolTips(viewerState.Language);
 				if (toolTips != null) {
 					toolTips.SendIdPacket(viewerState, viewerConn);
 				}
@@ -157,13 +157,13 @@ namespace SteamEngine.Networking {
 
 		[CLSCompliant(false)]
 		public static void SendRemoveFromView(TcpConnection<GameState> conn, uint flaggedUid) {
-			DeleteObjectOutPacket packet = Pool<DeleteObjectOutPacket>.Acquire();
+			var packet = Pool<DeleteObjectOutPacket>.Acquire();
 			packet.Prepare(flaggedUid);
 			conn.SendSinglePacket(packet);
 		}
 
 		public static void SendRemoveFromView(TcpConnection<GameState> conn, int flaggedUid) {
-			DeleteObjectOutPacket packet = Pool<DeleteObjectOutPacket>.Acquire();
+			var packet = Pool<DeleteObjectOutPacket>.Acquire();
 			packet.Prepare(flaggedUid);
 			conn.SendSinglePacket(packet);
 		}
@@ -194,7 +194,7 @@ namespace SteamEngine.Networking {
 		*/
 		public static void SendClilocSysMessage(TcpConnection<GameState> c, int msg, int color, string args) {
 			if (c != null) {
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(null, msg, "System", SpeechType.Speech, ClientFont.Unified, color, args);
 				c.SendSinglePacket(packet);
 			}
@@ -211,7 +211,7 @@ namespace SteamEngine.Networking {
 		*/
 		public static void SendClilocSysMessage(TcpConnection<GameState> c, int msg, int color, params string[] args) {
 			if (c != null) {
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(null, msg, "System", SpeechType.Speech, ClientFont.Unified, color, string.Join("\t", args));
 				c.SendSinglePacket(packet);
 			}
@@ -228,7 +228,7 @@ namespace SteamEngine.Networking {
 		*/
 		public static void SendOverheadMessage(TcpConnection<GameState> c, string msg, int color) {
 			if (c != null) {
-				AbstractCharacter cre = c.State.CharacterNotNull;
+				var cre = c.State.CharacterNotNull;
 				InternalSendMessage(c, cre, msg, "System", SpeechType.Speech, ClientFont.Unified, color);
 			}
 		}
@@ -267,7 +267,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocNameFrom(TcpConnection<GameState> c, Thing from, int msg, int color, string args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(from, msg, "", SpeechType.Name, ClientFont.Unified, color, args);
 				c.SendSinglePacket(packet);
 			}
@@ -287,7 +287,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocNameFrom(TcpConnection<GameState> c, Thing from, int msg, int color, string arg1, string arg2) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(from, msg, "", SpeechType.Name, ClientFont.Unified, color, string.Concat(arg1, "\t", arg2));
 				c.SendSinglePacket(packet);
 			}
@@ -307,7 +307,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocNameFrom(TcpConnection<GameState> c, Thing from, int msg, int color, params string[] args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(from, msg, "", SpeechType.Name, ClientFont.Unified, color, string.Join("\t", args));
 				c.SendSinglePacket(packet);
 			}
@@ -316,7 +316,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocMessageFrom(TcpConnection<GameState> c, Thing from, int msg, int color, string args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(from, msg, "System", SpeechType.Speech, ClientFont.Unified, color, args);
 				c.SendSinglePacket(packet);
 			}
@@ -325,7 +325,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocMessageFrom(TcpConnection<GameState> c, Thing from, int msg, int color, string arg1, string arg2) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(from, msg, "System", SpeechType.Speech, ClientFont.Unified, color, string.Concat(arg1, "\t", arg2));
 				c.SendSinglePacket(packet);
 			}
@@ -334,7 +334,7 @@ namespace SteamEngine.Networking {
 		public static void SendClilocMessageFrom(TcpConnection<GameState> c, Thing from, int msg, int color, params string[] args) {
 			if (c != null) {
 				Sanity.IfTrueThrow(from == null, "from == null");
-				ClilocMessageOutPacket packet = Pool<ClilocMessageOutPacket>.Acquire();
+				var packet = Pool<ClilocMessageOutPacket>.Acquire();
 				packet.Prepare(from, msg, "System", SpeechType.Speech, ClientFont.Unified, color, string.Join("\t", args));
 				c.SendSinglePacket(packet);
 			}
@@ -399,10 +399,10 @@ namespace SteamEngine.Networking {
 		*/
 		internal static void BroadCast(string msg) {
 			Console.WriteLine("Broadcasting: " + msg);
-			using (PacketGroup pg = PacketGroup.AcquireMultiUsePG()) {
+			using (var pg = PacketGroup.AcquireMultiUsePG()) {
 				pg.AddPacket(PrepareServerMessagePacket(msg));
 
-				foreach (GameState state in GameServer.AllClients) {
+				foreach (var state in GameServer.AllClients) {
 					state.Conn.SendPacketGroup(pg);
 				}
 			}
@@ -419,11 +419,11 @@ namespace SteamEngine.Networking {
 
 		internal static GameOutgoingPacket PrepareMessagePacket(Thing from, string msg, string sourceName, SpeechType type, ClientFont font, int color, string lang) {
 			if ((type != SpeechType.Spell) && (font == ClientFont.Unified)) {	//if it's another font than 3, send it as ASCII
-				UnicodeSpeechOutPacket packet = Pool<UnicodeSpeechOutPacket>.Acquire();
+				var packet = Pool<UnicodeSpeechOutPacket>.Acquire();
 				packet.Prepare(from, msg, sourceName, type, font, color, lang);
 				return packet;
 			} else {
-				SendSpeechOutPacket packet = Pool<SendSpeechOutPacket>.Acquire();
+				var packet = Pool<SendSpeechOutPacket>.Acquire();
 				packet.Prepare(from, msg, sourceName, type, font, color);
 				return packet;
 			}
@@ -444,16 +444,16 @@ namespace SteamEngine.Networking {
 		#endregion messages
 
 		public static void SendStatLocks(AbstractCharacter ch) {
-			GameState state = ch.GameState;
+			var state = ch.GameState;
 			if (state != null) {
-				ExtendedStatsOutPacket p = Pool<ExtendedStatsOutPacket>.Acquire();
+				var p = Pool<ExtendedStatsOutPacket>.Acquire();
 				p.Prepare(ch.FlaggedUid, ch.StatLockByte);
 				state.Conn.SendSinglePacket(p);
 			}
 		}
 
 		public static void SendSound(IPoint4D top, int soundId, int range) {
-			PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
+			var p = Pool<PlaySoundEffectOutPacket>.Acquire();
 			p.Prepare(top, soundId);
 			GameServer.SendToClientsInRange(top, range, p);
 		}

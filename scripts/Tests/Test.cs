@@ -118,7 +118,7 @@ namespace SteamEngine.CompiledScripts {
 	public static class TestScript {
 		public static void Moo(string asdf) {
 			char o;
-			for (int a = 0; a < asdf.Length; a++) {
+			for (var a = 0; a < asdf.Length; a++) {
 				o = asdf[a];
 				Console.Write(o);
 			}

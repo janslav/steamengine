@@ -29,13 +29,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
-			object[] argsArray = args.GetArgsArray();
+			var argsArray = args.GetArgsArray();
 			minX = string.Concat(argsArray[0]);
 			minY = string.Concat(argsArray[1]);
 			maxX = string.Concat(argsArray[2]);
 			maxY = string.Concat(argsArray[3]);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(100, 100);
@@ -75,18 +75,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (jsou to ty mutable)
-			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
+			var rectsList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
 			if (gr.PressedButton == 0) { //exit
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 1) { //ulozit
 				//precteme parametry a zkusime vytvorit rectangle
 				MutableRectangle newRect = null;
 				try {
-					int startX = (int) gr.GetNumberResponse(31);
-					int startY = (int) gr.GetNumberResponse(32);
-					int endX = (int) gr.GetNumberResponse(33);
-					int endY = (int) gr.GetNumberResponse(34);
-					object[] argsArray = args.GetArgsArray();
+					var startX = (int) gr.GetNumberResponse(31);
+					var startY = (int) gr.GetNumberResponse(32);
+					var endX = (int) gr.GetNumberResponse(33);
+					var endY = (int) gr.GetNumberResponse(34);
+					var argsArray = args.GetArgsArray();
 					argsArray[0] = startX;
 					argsArray[1] = startY;
 					argsArray[2] = endX;
@@ -95,13 +95,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
+					var newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
 				//vsef poradku tak hura zpatky (nezapomenout pridat do puvodniho seznamu!)
 				rectsList.Add(newRect);
-				Gump previousGi = DialogStacking.PopStackedDialog(gi);
+				var previousGi = DialogStacking.PopStackedDialog(gi);
 				previousGi.InputArgs.SetTag(D_Region_Rectangles.rectsListTK, rectsList); //ulozime to do predchoziho dialogu
 				DialogStacking.ResendAndRestackDialog(previousGi);
 			}

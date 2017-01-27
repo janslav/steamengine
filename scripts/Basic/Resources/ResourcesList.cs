@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 					return false;
 				}
 				//if we are here then there is for every ResourceCounter the multiplicity at least 1 (which is enough for us)
-				foreach (ItemCounter ctr in resourceCounters) {
+				foreach (var ctr in resourceCounters) {
 					ctr.ConsumeItems(1);
 				}
 				return true;
@@ -125,8 +125,8 @@ namespace SteamEngine.CompiledScripts {
 					//dispose counters
 					return 0;
 				}
-				double availableOnly = Math.Floor(this.ResListAvailableTimes(resourceCounters));
-				foreach (ItemCounter ctr in resourceCounters) {
+				var availableOnly = Math.Floor(this.ResListAvailableTimes(resourceCounters));
+				foreach (var ctr in resourceCounters) {
 					ctr.ConsumeItems(availableOnly);
 				}
 				return availableOnly;
@@ -149,7 +149,7 @@ namespace SteamEngine.CompiledScripts {
 				ResourceItemFinder.LocalizeItems(chr, where, resourceCounters);
 
 				//now for each counter consume 0-available items
-				foreach (ItemCounter ctr in resourceCounters) {
+				foreach (var ctr in resourceCounters) {
 					ctr.ConsumeSomeItems();
 				}
 
@@ -182,7 +182,7 @@ namespace SteamEngine.CompiledScripts {
 		//look to the resource counters and find out how many times we can consume the resource list
 		private double ResListAvailableTimes(ItemCounter[] resourceCounters) {
 			double leastMultiplicity = int.MaxValue;
-			foreach (ItemCounter ctr in resourceCounters) {
+			foreach (var ctr in resourceCounters) {
 				//check every resource counter and get their multiplicities (we will use the lowest one)
 				leastMultiplicity = Math.Min(leastMultiplicity, ctr.Multiplicity);
 			}
@@ -190,18 +190,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private ItemCounter[] PrepareResourceCounters() {
-			int n = this.multiplicablesSubList.Length;
-			ItemCounter[] retList = new ItemCounter[n];
+			var n = this.multiplicablesSubList.Length;
+			var retList = new ItemCounter[n];
 
-			for (int i = 0; i < n; i++) {
-				IResourceListEntry_ItemCounter rli = this.multiplicablesSubList[i];
+			for (var i = 0; i < n; i++) {
+				var rli = this.multiplicablesSubList[i];
 				retList[i] = rli.GetCounter();
 			}
 			return retList;
 		}
 
 		private bool CheckSimpleEntries(Character chr, out IResourceListEntry missingResource) {
-			foreach (IResourceListEntry_Simple rli in this.nonMultiplicablesSubList) {
+			foreach (var rli in this.nonMultiplicablesSubList) {
 				if (!rli.IsResourcePresent(chr)) { //first not found resource ends the cycle
 					missingResource = rli; //set the missing resource as the returning value for further purposes (such as message)
 					return false;
@@ -216,7 +216,7 @@ namespace SteamEngine.CompiledScripts {
 		private bool CheckEntriesWithCounters(Character chr, ResourcesLocality where, ItemCounter[] resourceCounters, out IResourceListEntry missingResource) {
 			ResourceItemFinder.LocalizeItems(chr, where, resourceCounters);
 			//now check if all resources has been found in adequate amount
-			foreach (ItemCounter ctr in resourceCounters) {
+			foreach (var ctr in resourceCounters) {
 				if (ctr.Multiplicity < 1) {//the desired resource cannot be consumed in desired amount
 					missingResource = ctr.listEntry; //return the missing resource item
 					return false;
@@ -233,9 +233,9 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Make a string containing counts and (pretty)defnames of all resource list items</summary>
 		public string ToParsableString() {
-			int n = this.resourceItemsList.Length;
-			string[] arr = new string[n];
-			for (int i = 0; i < n; i++) {
+			var n = this.resourceItemsList.Length;
+			var arr = new string[n];
+			for (var i = 0; i < n; i++) {
 				var entry = this.resourceItemsList[i];
 				arr[n] = string.Concat(entry.DesiredCount.ToString(CultureInfo.InvariantCulture), " ",
 					entry.AsPercentage ? "%" : "", entry.ParsableString);

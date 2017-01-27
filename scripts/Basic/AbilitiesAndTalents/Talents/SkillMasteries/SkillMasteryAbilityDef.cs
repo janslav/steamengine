@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//add the difference to real points of the skill (can be positive or negative)
 		protected override void On_ValueChanged(Character ch, Ability ab, int previousValue) {			
-			SkillDef skillDef = this.Skill;
+			var skillDef = this.Skill;
 			double skillValue = ch.GetRealSkillValue(skillDef);
 			skillValue += (ab.ModifiedPoints - previousValue) * this.EffectPower;
 			ch.SetRealSkillValue(skillDef, (int) skillValue);

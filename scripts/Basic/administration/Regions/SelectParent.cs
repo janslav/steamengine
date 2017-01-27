@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 450;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK); //regionlist si posilame v argumentu (napriklad pri pagingu)
+			var regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK); //regionlist si posilame v argumentu (napriklad pri pagingu)
 			if (regionsList == null) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
@@ -40,16 +40,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args.SetTag(D_Regions.regsListTK, regionsList); //ulozime to do argumentu dialogu
 			}
 
-			object sorting = args.GetTag(D_Regions.regsSortingTK);
+			var sorting = args.GetTag(D_Regions.regsSortingTK);
 			if (sorting != null) {//mame cim tridit?
 				this.SortBy(regionsList, (SortingCriteria) Convert.ToInt32(sorting));
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, regionsList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, regionsList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(200, 100);
@@ -83,9 +83,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				StaticRegion reg = regionsList[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var reg = regionsList[i];
 
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Id(10 + i).Build(); //vyber tento
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(reg.Name).Build(); //nazev
@@ -100,15 +100,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam regionu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 2: //vyhledavat / zuzit vyber
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.SetTag(D_Regions.regsSearchTK, nameCriteria);//uloz info o vyhledavacim kriteriu
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem												
 						args.RemoveTag(D_Regions.regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist
@@ -139,10 +139,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//1 sloupecek
 			} else {
 				//zjistime si radek
-				int row = gr.PressedButton - 10;
-				StaticRegion region = regionsList[row];
+				var row = gr.PressedButton - 10;
+				var region = regionsList[row];
 				//vezmem z vybraneho regionu jeho defname a predame do predchoziho dialogu
-				Gump previousGi = DialogStacking.PopStackedDialog(gi);
+				var previousGi = DialogStacking.PopStackedDialog(gi);
 				previousGi.InputArgs.SetTag(D_New_Region.parentDefTK, region.Defname); //to je zalozeni noveho regionu (posleme si defname parenta)
 				DialogStacking.ResendAndRestackDialog(previousGi);
 			}

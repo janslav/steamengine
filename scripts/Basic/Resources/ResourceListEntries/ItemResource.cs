@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
-			ItemDef idef = ThingDef.GetByDefname(definition) as ItemDef;
+			var idef = ThingDef.GetByDefname(definition) as ItemDef;
 			if (idef != null) {
 				resource = new ItemResource(idef, number, asPercentage);
 				return true;
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool IsSameResource(IResourceListEntry newOne) {
-			ItemResource asIR = newOne as ItemResource;
+			var asIR = newOne as ItemResource;
 			if (asIR != null) {
 				return (this.itemDef == asIR.itemDef);
 			}
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region IResourceListEntry_ItemCounter Members
 		public ItemCounter GetCounter() {
-			ItemCounter_ByItemDef ic = Pool<ItemCounter_ByItemDef>.Acquire();//get from pool
+			var ic = Pool<ItemCounter_ByItemDef>.Acquire();//get from pool
 			ic.ListEntry = this;
 			return ic;
 		}

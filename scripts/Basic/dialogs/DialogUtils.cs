@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public static void SetDataComparerIfNeededLScript<T>(this DialogArgs self, string expression, ListSortDirection direction = ListSortDirection.Ascending) {
 			if (!(self.GetTag(dataComparerTK) is IComparer<T>)) {
-				LScriptComparer<T> comparer = LScriptComparer<T>.GetComparer(expression, direction);
+				var comparer = LScriptComparer<T>.GetComparer(expression, direction);
 				self.SetTag(dataComparerTK, comparer);
 			}
 		}
@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public static void SetDataComparerLScript<T>(this DialogArgs self, string expression, ListSortDirection direction = ListSortDirection.Ascending) {
-			LScriptComparer<T> comparer = LScriptComparer<T>.GetComparer(expression, direction);
+			var comparer = LScriptComparer<T>.GetComparer(expression, direction);
 			self.SetDataComparer(comparer);
 		}
 
@@ -79,21 +79,21 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return;
 			}
 
-			List<T> list = self.GetDataList<T>();
+			var list = self.GetDataList<T>();
 			if (list != null) {
 				list.Sort(comparer);
 			}
 		}
 
 		public static void SortDataListUsingLscriptExpression<T>(this DialogArgs self, string expression, ListSortDirection direction = ListSortDirection.Ascending) {
-			List<T> list = self.GetDataList<T>();
+			var list = self.GetDataList<T>();
 			if (list != null) {
 				self.SetDataComparer(SortUsingLscriptExpression(list, expression, direction));
 			}
 		}
 
 		public static LScriptComparer<T> SortUsingLscriptExpression<T>(List<T> list, string expression, ListSortDirection direction = ListSortDirection.Ascending) {
-			LScriptComparer<T> comparer = LScriptComparer<T>.GetComparer(expression, direction);
+			var comparer = LScriptComparer<T>.GetComparer(expression, direction);
 			list.Sort(comparer);
 			return comparer;
 		}

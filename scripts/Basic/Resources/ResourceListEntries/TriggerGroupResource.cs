@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
-			TriggerGroup tg = TriggerGroup.GetByDefname(definition);
+			var tg = TriggerGroup.GetByDefname(definition);
 			if (tg != null) {
 				resource = new TriggerGroupResource(tg, number, asPercentage);
 				return true;
@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool IsSameResource(IResourceListEntry newOne) {
-			TriggerGroupResource newResource = newOne as TriggerGroupResource;
+			var newResource = newOne as TriggerGroupResource;
 			if (newResource != null) {
 				return (this.triggerGroup == newResource.triggerGroup);
 			}
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region IResourceListItemMultiplicable Members
 		public ItemCounter GetCounter() {
-			TriggerGroupsCounter tgc = Pool<TriggerGroupsCounter>.Acquire();//get from pool
+			var tgc = Pool<TriggerGroupsCounter>.Acquire();//get from pool
 			tgc.ListEntry = this;
 			return tgc;
 		}

@@ -45,7 +45,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			object indexVal;
 			object argVal;
@@ -56,8 +56,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				vars.self = oSelf;
 			}
 			try {
-				ArrayList list = (ArrayList) oSelf;
-				int resIndex = Convert.ToInt32(indexVal, CultureInfo.InvariantCulture);
+				var list = (ArrayList) oSelf;
+				var resIndex = Convert.ToInt32(indexVal, CultureInfo.InvariantCulture);
 				if (resIndex == list.Count) {
 					list.Add(argVal);
 				} else {

@@ -28,7 +28,7 @@ namespace SteamEngine {
 			HashSet<AbstractItem> conts;
 			if (containersByChar.TryGetValue(ch, out conts)) {
 				if (conts.Contains(container)) {
-					DenyResult retVal = ch.CanReach(container);
+					var retVal = ch.CanReach(container);
 					if (!retVal.Allow) {
 						SetContainerClosed(ch, container);
 					}
@@ -42,7 +42,7 @@ namespace SteamEngine {
 			HashSet<AbstractItem> conts;
 			if (containersByChar.TryGetValue(ch, out conts)) {
 				if (conts.Contains(container)) {
-					DenyResult retVal = DenyResultMessages.Deny_ContainerClosed;
+					var retVal = DenyResultMessages.Deny_ContainerClosed;
 					if (ch != null) {
 						retVal = ch.CanReachFromAt(fromPoint, targetPoint, container, checkTopobj);
 					}
@@ -96,7 +96,7 @@ namespace SteamEngine {
 			if (charsByContainer.TryGetValue(container, out openedBy)) {
 				charsByContainer.Remove(container);
 
-				foreach (AbstractCharacter ch in openedBy) {
+				foreach (var ch in openedBy) {
 					HashSet<AbstractItem> conts;
 					if (containersByChar.TryGetValue(ch, out conts)) {
 						conts.Remove(container);
@@ -116,7 +116,7 @@ namespace SteamEngine {
 			if (containersByChar.TryGetValue(ch, out conts)) {
 				List<AbstractItem> toRemove = null;
 
-				foreach (AbstractItem con in conts) {
+				foreach (var con in conts) {
 					if (!ch.CanReach(con).Allow) {
 						if (toRemove == null) {
 							toRemove = new List<AbstractItem>();
@@ -126,7 +126,7 @@ namespace SteamEngine {
 				}
 
 				if (toRemove != null) {
-					foreach (AbstractItem con in toRemove) {
+					foreach (var con in toRemove) {
 						SetContainerClosed(ch, con);
 					}
 				}
@@ -142,7 +142,7 @@ namespace SteamEngine {
 			if (charsByContainer.TryGetValue(container, out openedBy)) {
 				List<AbstractCharacter> toRemove = null;
 
-				foreach (AbstractCharacter ch in openedBy) {
+				foreach (var ch in openedBy) {
 					if (!ch.CanReach(container).Allow) {
 						if (toRemove == null) {
 							toRemove = new List<AbstractCharacter>();
@@ -152,7 +152,7 @@ namespace SteamEngine {
 				}
 
 				if (toRemove != null) {
-					foreach (AbstractCharacter ch in toRemove) {
+					foreach (var ch in toRemove) {
 						SetContainerClosed(ch, container);
 					}
 				}
@@ -169,17 +169,17 @@ namespace SteamEngine {
 
 		//info about opened containers is cleared, clients should know.
 		internal static void SendRemoveAllOpenedContainersFromView() {
-			foreach (GameState state in GameServer.AllClients) {
-				AbstractCharacter onlineChar = state.Character;
+			foreach (var state in GameServer.AllClients) {
+				var onlineChar = state.Character;
 				if (onlineChar != null) {
 					HashSet<AbstractItem> conts;
 					if (containersByChar.TryGetValue(onlineChar, out conts)) {
-						foreach (AbstractItem cont in conts) {
+						foreach (var cont in conts) {
 							PacketSequences.SendRemoveFromView(state.Conn, cont.FlaggedUid);
 							if (cont.IsOnGround) {
 								cont.GetOnGroundUpdater().SendTo(onlineChar, state, state.Conn);
 							} else if (cont.IsEquipped) {
-								WornItemOutPacket packet = Pool<WornItemOutPacket>.Acquire();
+								var packet = Pool<WornItemOutPacket>.Acquire();
 								packet.PrepareItem(onlineChar.FlaggedUid, cont);
 								state.Conn.SendSinglePacket(packet);
 							} //else it's in some other container, which gets closed too so we don't want it automatically visible

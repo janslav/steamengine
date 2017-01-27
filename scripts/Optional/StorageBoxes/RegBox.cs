@@ -52,10 +52,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;
-			Dictionary<int, ItemDef> dictButtonForReags = new Dictionary<int, ItemDef>();
-			int buttonsCount = 0;
-			int radku = 0;
-			RegBox box = (RegBox) focus;
+			var dictButtonForReags = new Dictionary<int, ItemDef>();
+			var buttonsCount = 0;
+			var radku = 0;
+			var box = (RegBox) focus;
 			if (box.inBoxReags == null) {
 				radku = 0;
 				i = 0;
@@ -63,8 +63,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				i = box.inBoxReags.Count;
 				radku = (i - 1) / 4;
 			}
-			int baseX = 20;
-			int baseY = 60;
+			var baseX = 20;
+			var baseY = 60;
 			gi.SetLocation(70, 25);
 			gi.ResizePic(0, 0, 5054, 660, 165 + radku * 80);
 			gi.ResizePic(10, 10, 3000, 640, 145 + radku * 80);
@@ -76,7 +76,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				gi.HtmlGumpA(baseX, 75, 200, 20, "Bedna na regy je prázdná", false, false);
 			} else {
 				i = 0;
-				foreach (KeyValuePair<ItemDef, int> pair in box.inBoxReags) {
+				foreach (var pair in box.inBoxReags) {
 					gi.Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
 					gi.HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
 					gi.HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			RegBox box = (RegBox) gi.Focus;
+			var box = (RegBox) gi.Focus;
 			if (!((Player) gi.Cont).CanPickUpWithMessage(box)) {
 				return;
 			}
@@ -111,12 +111,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.PressedButton == 1) {		// Add reags
 				((Player) gi.Cont).Target(SingletonScript<Targ_RegBox>.Instance, gi.Focus);
 			} else if (gr.PressedButton == 2) {		// OK -> give selected reags
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForReagsTK);
-				int buttonsCount = TagMath.IGetTag(args, buttonsCountTK);
-				int i = 0;
-				int reagsToGive = 0;
+				var buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForReagsTK);
+				var buttonsCount = TagMath.IGetTag(args, buttonsCountTK);
+				var i = 0;
+				var reagsToGive = 0;
 				while (i < buttonsCount) {
-					int desiredCount = (int) gr.GetNumberResponse(i);
+					var desiredCount = (int) gr.GetNumberResponse(i);
 					if ((gr.IsSwitched(i)) && (desiredCount > 0)) {	// player wants to take at least one reagent
 						if (box.inBoxReags[buttonShowItemDef[i]] < desiredCount) {
 							((Player) gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho regù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
@@ -136,8 +136,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					i++;
 				}
 			} else if (gr.PressedButton >= 1000) {
-				int thisButtonValue = gr.PressedButton - 1000;
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForReagsTK);
+				var thisButtonValue = gr.PressedButton - 1000;
+				var buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForReagsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
 				Globals.LastNewItem.Amount = box.inBoxReags[buttonShowItemDef[thisButtonValue]];
 				box.inBoxReags.Remove(buttonShowItemDef[thisButtonValue]);
@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			RegBox regBox = (RegBox) parameter;
+			var regBox = (RegBox) parameter;
 
 			if (!self.CanReachWithMessage(regBox)) {
 				return TargetResult.Done;
@@ -168,7 +168,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						previousCount = 0;
 					}
 					if (regBox.pocetRegu + targetted.Amount > regBox.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik regu, kolik skutecne lze pridat
-						int reagsToTake = regBox.TypeDef.Capacity - regBox.pocetRegu;
+						var reagsToTake = regBox.TypeDef.Capacity - regBox.pocetRegu;
 						targetted.Amount -= reagsToTake;
 						regBox.pocetRegu += reagsToTake;
 						regBox.inBoxReags[targetted.TypeDef] = previousCount + reagsToTake;
@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		protected override void On_TargonCancel(Player self, object parameter) {
-			RegBox focus = parameter as RegBox;
+			var focus = parameter as RegBox;
 			focus.Dialog(self, SingletonScript<D_RegBox>.Instance);
 		}
 	}

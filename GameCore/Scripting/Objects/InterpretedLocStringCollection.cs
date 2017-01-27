@@ -23,10 +23,10 @@ namespace SteamEngine.Scripting.Objects {
 				return null;
 			}
 
-			int n = Tools.GetEnumLength<Language>();
-			IUnloadable[] langs = new IUnloadable[n];
+			var n = Tools.GetEnumLength<Language>();
+			var langs = new IUnloadable[n];
 
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				var newLoc = new InterpretedLocStringCollection(defname: section.HeaderName, assemblyName: "LScript", language: (Language) i,
 					entriesFromCode: section.PropsLines.Select(line => new KeyValuePair<string, string>(line.Name, line.Value)));
 				langs[i] = newLoc;
@@ -48,7 +48,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public void Unload() {
-			foreach (IUnloadable member in this.array) {
+			foreach (var member in this.array) {
 				if (member != null) {
 					member.Unload();
 				}
@@ -57,7 +57,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public bool IsUnloaded {
 			get {
-				foreach (IUnloadable member in this.array) {
+				foreach (var member in this.array) {
 					if (member != null) {
 						if (member.IsUnloaded) {
 							return true;

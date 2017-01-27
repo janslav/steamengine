@@ -39,8 +39,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_DenyDClick(DenyClickArgs args) {
-			Character ch = (Character) args.ClickingChar;
-			Thing cont = this.Cont;
+			var ch = (Character) args.ClickingChar;
+			var cont = this.Cont;
 			if (ch.IsGM || (cont == ch) || (cont == ch.Backpack)) {
 				base.On_DenyDClick(args);
 			}
@@ -55,9 +55,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void DisplayTo(Character viewer) {
-			GameState state = viewer.GameState;
+			var state = viewer.GameState;
 			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
+				var conn = state.Conn;
 
 				//this is probably not necessary. We'll see if it breaks :)
 				//PacketGroup pg = PacketGroup.AcquireSingleUsePG();
@@ -72,7 +72,7 @@ namespace SteamEngine.CompiledScripts {
 				//}
 				//conn.SendPacketGroup(pg);
 
-				PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+				var pg = PacketGroup.AcquireSingleUsePG();
 				pg.AcquirePacket<DrawContainerOutPacket>().PrepareSpellbook(this.FlaggedUid);
 				conn.SendPacketGroup(pg);
 
@@ -91,9 +91,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool AddSpell(int spellId) {
-			int firstSpellId = this.FirstSpellId;
+			var firstSpellId = this.FirstSpellId;
 			if ((spellId >= firstSpellId) && (spellId < (firstSpellId + 64))) {
-				ulong mask = (ulong) 1 << (spellId - firstSpellId);
+				var mask = (ulong) 1 << (spellId - firstSpellId);
 				if ((this.contents & mask) == 0) {
 					this.contents |= mask;
 					this.Update();
@@ -108,9 +108,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool RemoveSpell(int spellId) {
-			int firstSpellId = this.FirstSpellId;
+			var firstSpellId = this.FirstSpellId;
 			if ((spellId >= firstSpellId) && (spellId < (firstSpellId + 64))) {
-				ulong mask = (ulong) 1 << (spellId - firstSpellId);
+				var mask = (ulong) 1 << (spellId - firstSpellId);
 				if ((this.contents & mask) != 0) {
 					this.contents &= ~mask;
 					this.Update();
@@ -125,16 +125,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool HasSpell(int spellId) {
-			int firstSpellId = this.FirstSpellId;
+			var firstSpellId = this.FirstSpellId;
 			if ((spellId >= firstSpellId) && (spellId < (firstSpellId + 64))) {
-				ulong mask = (ulong) 1 << (spellId - firstSpellId);
+				var mask = (ulong) 1 << (spellId - firstSpellId);
 				return (this.contents & mask) != 0;
 			}
 			return false;
 		}
 
 		public override void On_PutItemOn(ItemOnItemArgs args) {
-			SpellScroll scroll = args.ManipulatedItem as SpellScroll;
+			var scroll = args.ManipulatedItem as SpellScroll;
 			if (scroll != null) {
 				if (this.AddSpell(scroll.SpellId)) {
 					scroll.Delete();
@@ -158,19 +158,19 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			SpellBook book = targetted as SpellBook;
+			var book = targetted as SpellBook;
 			if (book != null) {
 				if (self.CanPickUpWithMessage(book)) {
-					Container cont = targetted.Cont as Container;
+					var cont = targetted.Cont as Container;
 					if (cont == null) {
 						cont = self.Backpack;
 					}
-					int firstSpellId = book.FirstSpellId;
+					var firstSpellId = book.FirstSpellId;
 					for (int i = firstSpellId, n = firstSpellId + 64; i < n; i++) {
 						if (book.HasSpell(i)) {
-							SpellDef spell = SpellDef.GetById(i);
+							var spell = SpellDef.GetById(i);
 							if (spell != null) {
-								SpellScrollDef scrollDef = spell.ScrollItem;
+								var scrollDef = spell.ScrollItem;
 								if (scrollDef != null) {
 									scrollDef.Create(cont);
 									book.RemoveSpell(i);

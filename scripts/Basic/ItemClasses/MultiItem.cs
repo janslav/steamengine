@@ -46,9 +46,9 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Create(Thing t) {
 			base.On_Create(t);
 			if (this.components == null) {
-				List<DynamicMultiItemComponentDescription> dmicds = new List<DynamicMultiItemComponentDescription>(this.loadHelpers.Count);
-				foreach (DMICDLoadHelper helper in this.loadHelpers) {
-					DynamicMultiItemComponentDescription dmicd = helper.Resolve();
+				var dmicds = new List<DynamicMultiItemComponentDescription>(this.loadHelpers.Count);
+				foreach (var helper in this.loadHelpers) {
+					var dmicd = helper.Resolve();
 					if (dmicd != null) {
 						dmicds.Add(dmicd);
 					}
@@ -57,12 +57,12 @@ namespace SteamEngine.CompiledScripts {
 				this.loadHelpers = null;
 			}
 
-			MultiItem mi = (MultiItem) t;
+			var mi = (MultiItem) t;
 
-			int n = this.components.Length;
+			var n = this.components.Length;
 			if (n > 0) {
-				Item[] items = new Item[n];
-				for (int i = 0; i < n; i++) {
+				var items = new Item[n];
+				for (var i = 0; i < n; i++) {
 					items[i] = this.components[i].Create(t.X, t.Y, t.Z, t.M); ;
 				}
 				mi.components = items;
@@ -115,9 +115,9 @@ namespace SteamEngine.CompiledScripts {
 			private int endY;
 
 			internal MultiRegionRectangleHelper(string args) {
-				Match m = rectRE.Match(args);
+				var m = rectRE.Match(args);
 				if (m.Success) {
-					GroupCollection gc = m.Groups;
+					var gc = m.Groups;
 					this.startX = ConvertTools.ParseInt32(gc["x1"].Value);
 					this.startY = ConvertTools.ParseInt32(gc["y1"].Value);
 					this.endX = ConvertTools.ParseInt32(gc["x2"].Value);
@@ -158,11 +158,11 @@ namespace SteamEngine.CompiledScripts {
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 			internal static DynamicMultiItemComponentDescription Parse(string str) {
-				Match m = dmicdRE.Match(str);
+				var m = dmicdRE.Match(str);
 				if (m.Success) {
-					GroupCollection gc = m.Groups;
-					string defname = gc["defname"].Value;
-					ItemDef def = GetByDefname(defname) as ItemDef;
+					var gc = m.Groups;
+					var defname = gc["defname"].Value;
+					var def = GetByDefname(defname) as ItemDef;
 					if (def == null) {
 						int model;
 						if (ConvertTools.TryParseInt32(defname, out model)) {
@@ -173,9 +173,9 @@ namespace SteamEngine.CompiledScripts {
 						}
 					}
 
-					short x = ConvertTools.ParseInt16(gc["x"].Value);
-					short y = ConvertTools.ParseInt16(gc["y"].Value);
-					string zstr = gc["z"].Value;
+					var x = ConvertTools.ParseInt16(gc["x"].Value);
+					var y = ConvertTools.ParseInt16(gc["y"].Value);
+					var zstr = gc["z"].Value;
 					sbyte z;
 					if (zstr.Length > 0) {
 						z = ConvertTools.ParseSByte(zstr);
@@ -214,7 +214,7 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Destroy() {
 			base.On_Destroy();
 			if (this.components != null) {
-				foreach (Item i in this.components) {
+				foreach (var i in this.components) {
 					if (i != null) {
 						i.Delete();
 					}
@@ -239,10 +239,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal virtual void InitMultiRegion() {
-			int n = this.TypeDef.rectangleHelpers.Count;
+			var n = this.TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
-				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
-				for (int i = 0; i < n; i++) {
+				var newRectangles = new ImmutableRectangle[n];
+				for (var i = 0; i < n; i++) {
 					newRectangles[i] = this.TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
 				this.region = new MultiRegion(this, newRectangles);

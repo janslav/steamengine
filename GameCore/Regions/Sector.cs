@@ -252,31 +252,31 @@ namespace SteamEngine.Regions {
 
 			internal int GetTileId(int x, int y) {
 				this.LoadStatics();
-				int basex = x & sectorAnd;
-				int basey = y & sectorAnd;
+				var basex = x & sectorAnd;
+				var basey = y & sectorAnd;
 
-				int relX = x - basex;
-				int relY = y - basey;
+				var relX = x - basex;
+				var relY = y - basey;
 				return this.staticSector.GetTileId(relX, relY);
 			}
 
 			internal int GetTileZ(int x, int y) {
 				this.LoadStatics();
-				int basex = x & sectorAnd;
-				int basey = y & sectorAnd;
+				var basex = x & sectorAnd;
+				var basey = y & sectorAnd;
 
-				int relX = x - basex;
-				int relY = y - basey;
+				var relX = x - basex;
+				var relY = y - basey;
 				return this.staticSector.GetTileZ(relX, relY);
 			}
 
 			internal void GetTile(int x, int y, out int z, out int id) {
 				this.LoadStatics();
-				int basex = x & sectorAnd;
-				int basey = y & sectorAnd;
+				var basex = x & sectorAnd;
+				var basey = y & sectorAnd;
 
-				int relX = x - basex;
-				int relY = y - basey;
+				var relX = x - basex;
+				var relY = y - basey;
 
 				z = this.staticSector.GetTileZ(relX, relY);
 				id = this.staticSector.GetTileId(relX, relY);
@@ -287,14 +287,14 @@ namespace SteamEngine.Regions {
 			#region Regions
 			public Region GetRegionFor(int x, int y) {
 				if (this.dynamicRegionRects != null) {
-					foreach (RegionRectangle dynamicRect in this.dynamicRegionRects) {
+					foreach (var dynamicRect in this.dynamicRegionRects) {
 						if (dynamicRect.Contains(x, y)) {
 							return dynamicRect.region;
 						}
 					}
 				}
-				for (int i = this.rectangles.Length - 1; i >= 0; i--) {
-					RegionRectangle rect = this.rectangles[i];
+				for (var i = this.rectangles.Length - 1; i >= 0; i--) {
+					var rect = this.rectangles[i];
 					if (rect.Contains(x, y)) {
 						return rect.region;
 					}
@@ -310,11 +310,11 @@ namespace SteamEngine.Regions {
 					//ACHTUNG!!! do not use the width but send immediatelly the second coordinates!!!
 					//ImmutableRectangle sectorRect = new ImmutableRectangle((ushort) (sx<<Map.sectorFactor), (ushort) (sy<<Map.sectorFactor),
 					//	Map.sectorWidth, Map.sectorWidth);
-					int startX = (this.sx << sectorFactor);
-					int startY = (this.sy << sectorFactor);
-					ImmutableRectangle sectorRect = new ImmutableRectangle(startX, startY,
+					var startX = (this.sx << sectorFactor);
+					var startY = (this.sy << sectorFactor);
+					var sectorRect = new ImmutableRectangle(startX, startY,
 						(startX + sectorWidth), (startY + sectorWidth));
-					SectRectComparer comparer = new SectRectComparer(sectorRect);
+					var comparer = new SectRectComparer(sectorRect);
 					Array.Sort(this.rectangles, comparer);
 				}
 			}
@@ -332,8 +332,8 @@ namespace SteamEngine.Regions {
 				//Less than zero: x is less than y.
 				//Greater than zero: x is greater than y.
 				public int Compare(object x, object y) {
-					RegionRectangle a = (RegionRectangle) x;
-					RegionRectangle b = (RegionRectangle) y;
+					var a = (RegionRectangle) x;
+					var b = (RegionRectangle) y;
 					if (a.region.HierarchyIndex < b.region.HierarchyIndex) {
 						return -1;
 					}
@@ -343,8 +343,8 @@ namespace SteamEngine.Regions {
 					if (Globals.FastStartUp) {
 						return 0;
 					}
-					ImmutableRectangle intersectA = ImmutableRectangle.GetIntersection(this.sectorRectangle, a);
-					ImmutableRectangle intersectB = ImmutableRectangle.GetIntersection(this.sectorRectangle, b);
+					var intersectA = ImmutableRectangle.GetIntersection(this.sectorRectangle, a);
+					var intersectB = ImmutableRectangle.GetIntersection(this.sectorRectangle, b);
 					return intersectA.TilesNumber.CompareTo(intersectB.TilesNumber);
 				}
 			}
@@ -386,7 +386,7 @@ namespace SteamEngine.Regions {
 				}
 				if (performControls) {
 					//check whethre other dynamic region rectangles do not intersect with the currently inserted one
-					foreach (RegionRectangle existingRect in this.dynamicRegionRects) {
+					foreach (var existingRect in this.dynamicRegionRects) {
 						if (existingRect.IntersectsWith(rect)) {
 							return false; //problem here, stop trying !
 						}

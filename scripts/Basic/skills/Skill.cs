@@ -54,11 +54,11 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				int oldValue = this.realValue;
-				int newValue = Math.Max(0, value);
+				var newValue = Math.Max(0, value);
 				if (newValue != this.realValue) {
 					CharSyncQueue.AboutToChangeSkill(this.cont, this.id);
 
-					int oldModified = this.ModifiedValue;
+					var oldModified = this.ModifiedValue;
 					this.realValue = (ushort) newValue;
 
 					if (oldModified != this.ModifiedValue) { //this might not be true, if the modifier value is negative
@@ -85,7 +85,7 @@ namespace SteamEngine.CompiledScripts {
 			if (difference != 0) {
 				CharSyncQueue.AboutToChangeSkill(this.cont, this.id);
 
-				int oldModified = this.ModifiedValue;
+				var oldModified = this.ModifiedValue;
 				this.modification += (short) difference;
 
 				if (oldModified != this.ModifiedValue) { //modified value may not have changed if we're still in negative numbers
@@ -97,9 +97,9 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Cap {
 			get {
-				Player self = this.cont as Player;
+				var self = this.cont as Player;
 				if (self != null) {
-					ProfessionDef prof = self.Profession;
+					var prof = self.Profession;
 					if (prof != null) {
 						return prof.GetSkillCap(this.id);
 					}
@@ -172,11 +172,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal bool LoadSavedString(string p) {
-			string[] split = Utility.SplitSphereString(p, true);
+			var split = Utility.SplitSphereString(p, true);
 			if (!ConvertTools.TryParseUInt16(split[0], out this.realValue)) {
 				return false;
 			}
-			int len = split.Length;
+			var len = split.Length;
 			if (len > 1) {
 				if (!ConvertTools.TryParseInt16(split[1], out this.modification)) {
 					return false;

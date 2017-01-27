@@ -26,8 +26,8 @@ namespace SteamEngine.CompiledScripts {
 
 		static AnimCalculator() {
 			animDuration = new float[256, 256];
-			for (int numFrames = 0; numFrames < 256; numFrames++) {
-				for (int frameDelay = 0; frameDelay < 256; frameDelay++) {
+			for (var numFrames = 0; numFrames < 256; numFrames++) {
+				for (var frameDelay = 0; frameDelay < 256; frameDelay++) {
 					animDuration[numFrames, frameDelay] = SlowAnimDuration((ushort) numFrames, (byte) frameDelay);
 				}
 			}
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 
 			//Fill animsAvailableTranslate with the power-of-two for each bit of animsAvailable.
 			uint code = 1;
-			for (int anim = 0; anim < 32; anim++) {
+			for (var anim = 0; anim < 32; anim++) {
 				animsAvailableTranslate[anim] = code;
 				code += code;
 			}
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static AnimalAnim GetAnimalAnim(GenericAnim anim, uint animsAvailable) {
-			AnimalAnim realAnim = AnimalAnim.Walk;
+			var realAnim = AnimalAnim.Walk;
 			switch (anim) {
 				case GenericAnim.Walk:
 					realAnim = AnimalAnim.Walk;
@@ -132,8 +132,8 @@ namespace SteamEngine.CompiledScripts {
 					}
 					break;
 				case GenericAnim.RandomIdleAction:
-					bool canPerformIdle1 = CanPerformAnim(AnimalAnim.IdleAction, animsAvailable);
-					bool canPerformIdle2 = CanPerformAnim(AnimalAnim.IdleAction2, animsAvailable);
+					var canPerformIdle1 = CanPerformAnim(AnimalAnim.IdleAction, animsAvailable);
+					var canPerformIdle2 = CanPerformAnim(AnimalAnim.IdleAction2, animsAvailable);
 					if (canPerformIdle1 && canPerformIdle2) {
 						switch (Globals.dice.Next(2)) {
 							case 0:
@@ -243,7 +243,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static MonsterAnim GetMonsterAnim(GenericAnim anim, uint animsAvailable) {
-			MonsterAnim realAnim = MonsterAnim.Walk;
+			var realAnim = MonsterAnim.Walk;
 			switch (anim) {
 				case GenericAnim.Walk: {
 						realAnim = MonsterAnim.Walk;
@@ -266,8 +266,8 @@ namespace SteamEngine.CompiledScripts {
 						break;
 					}
 				case GenericAnim.RandomIdleAction: {
-						bool canPerformIdle1 = CanPerformAnim(MonsterAnim.IdleAction, animsAvailable);
-						bool canPerformIdle2 = CanPerformAnim(MonsterAnim.LookAround, animsAvailable);
+						var canPerformIdle1 = CanPerformAnim(MonsterAnim.IdleAction, animsAvailable);
+						var canPerformIdle2 = CanPerformAnim(MonsterAnim.LookAround, animsAvailable);
 						if (canPerformIdle1 && canPerformIdle2) {
 							switch (Globals.dice.Next(2)) {
 								case 0:
@@ -379,7 +379,7 @@ namespace SteamEngine.CompiledScripts {
 						break;
 					}
 				case GenericAnim.GetHit:
-					int count = 0;
+					var count = 0;
 
 					if (CanPerformAnim(MonsterAnim.GetHit, animsAvailable)) {
 						tempMonsterAnimArray[0] = MonsterAnim.GetHit;
@@ -419,7 +419,7 @@ namespace SteamEngine.CompiledScripts {
 						break;
 					}
 				case GenericAnim.Block: {		//also represents Dodge
-						double dbl = Globals.dice.NextDouble();
+						var dbl = Globals.dice.NextDouble();
 						if (dbl < 0.5 && CanPerformAnim(MonsterAnim.BlockLeft, animsAvailable)) {
 							realAnim = MonsterAnim.BlockLeft;
 						} else if (CanPerformAnim(MonsterAnim.BlockRight, animsAvailable)) {
@@ -468,7 +468,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static HumanAnim GetHumanAnim(Character self, GenericAnim anim) {
-			HumanAnim realAnim = HumanAnim.WalkUnarmed;
+			var realAnim = HumanAnim.WalkUnarmed;
 			switch (anim) {
 				case GenericAnim.Walk:
 					if (self.Flag_Riding) {
@@ -501,7 +501,7 @@ namespace SteamEngine.CompiledScripts {
 					break;
 				case GenericAnim.RandomIdleAction:
 					if (self.Flag_Riding) {
-						double dbl = Globals.dice.NextDouble();
+						var dbl = Globals.dice.NextDouble();
 						if (dbl < .25) {
 							realAnim = HumanAnim.MountedSalute;
 						} else if (dbl < .5) {
@@ -523,7 +523,7 @@ namespace SteamEngine.CompiledScripts {
 					} else if (self.Flag_WarMode) {
 						realAnim = HumanAnim.WarMode;	//no idle actions when in war mode.
 					} else {
-						double dbl = Globals.dice.NextDouble();
+						var dbl = Globals.dice.NextDouble();
 						if (dbl < .5) {
 							realAnim = HumanAnim.LookAround;
 						} else {
@@ -533,7 +533,7 @@ namespace SteamEngine.CompiledScripts {
 					break;
 				case GenericAnim.IdleAction:
 					if (self.Flag_Riding) {
-						double dbl = Globals.dice.NextDouble();
+						var dbl = Globals.dice.NextDouble();
 						if (dbl < .5) {
 							realAnim = HumanAnim.MountedSalute;
 						} else {
@@ -670,7 +670,7 @@ namespace SteamEngine.CompiledScripts {
 					if (self.Flag_Riding) {
 						realAnim = HumanAnim.MountedCast;
 					} else {
-						double dbl = Globals.dice.NextDouble();
+						var dbl = Globals.dice.NextDouble();
 						if (dbl < .5) {
 							realAnim = HumanAnim.Cast;
 						} else {
@@ -690,9 +690,9 @@ namespace SteamEngine.CompiledScripts {
 				Sanity.IfTrueThrow((byte) anim > 0xff, "Cannot perform anim '" + anim + "', that number is too high.");
 				realAnim = (byte) anim;
 			} else {
-				CharModelInfo cmi = self.CharModelInfo;
-				uint animsAvailable = cmi.AnimsAvailable;
-				CharAnimType bat = cmi.charAnimType;
+				var cmi = self.CharModelInfo;
+				var animsAvailable = cmi.AnimsAvailable;
+				var bat = cmi.charAnimType;
 
 				if ((bat & CharAnimType.Human) == CharAnimType.Human) {
 					realAnim = (byte) GetHumanAnim(self, anim);
@@ -707,7 +707,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static HumanAnim GetHumanAttackAnim(Character self) {
-			HumanAnim anim = HumanAnim.AttackBareHands;
+			var anim = HumanAnim.AttackBareHands;
 			if (self.Flag_Riding) {
 				switch (self.WeaponAnimType) {
 					case WeaponAnimType.XBow:
@@ -800,7 +800,7 @@ namespace SteamEngine.CompiledScripts {
 		static MonsterAnim[] tempMonsterAnimArray = new MonsterAnim[(int) MonsterAnim.NumAnims];
 		//we have 6 different attacks. I hope it's correct.
 		public static MonsterAnim GetMonsterRandomAttackAnim(uint animsAvailable) {
-			int count = 0;
+			var count = 0;
 
 			for (MonsterAnim i = MonsterAnim.Attack1, n = MonsterAnim.Attack6; i <= n; i++) {
 				if (CanPerformAnim(i, animsAvailable)) {
@@ -810,7 +810,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (count > 0) {
-				int random = Globals.dice.Next(count);
+				var random = Globals.dice.Next(count);
 
 				return tempMonsterAnimArray[random];
 			}
@@ -819,8 +819,8 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public static AnimalAnim GetAnimalRandomAttackAnim(uint animsAvailable) {
-			bool canPerformAttack1 = CanPerformAnim(AnimalAnim.Attack1, animsAvailable);
-			bool canPerformAttack2 = CanPerformAnim(AnimalAnim.Attack2, animsAvailable);
+			var canPerformAttack1 = CanPerformAnim(AnimalAnim.Attack1, animsAvailable);
+			var canPerformAttack2 = CanPerformAnim(AnimalAnim.Attack2, animsAvailable);
 
 			if (canPerformAttack1 && canPerformAttack2) {
 				switch (Globals.dice.Next(2)) {
@@ -838,10 +838,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void PerformAttackAnim(Character self) {
-			int anim = 0;
+			var anim = 0;
 
-			CharModelInfo cmi = self.CharModelInfo;
-			CharAnimType bat = cmi.charAnimType;
+			var cmi = self.CharModelInfo;
+			var bat = cmi.charAnimType;
 
 			if ((bat & CharAnimType.Human) == CharAnimType.Human) {
 				anim = (int) GetHumanAttackAnim(self);
@@ -851,7 +851,7 @@ namespace SteamEngine.CompiledScripts {
 				anim = (int) GetAnimalRandomAttackAnim(cmi.AnimsAvailable);
 			}
 
-			double seconds = self.WeaponDelay.TotalSeconds;
+			var seconds = self.WeaponDelay.TotalSeconds;
 			byte frameDelay = 0;
 			seconds = seconds - (0.25 * attackAnimFrames);
 			if (seconds > 0) {

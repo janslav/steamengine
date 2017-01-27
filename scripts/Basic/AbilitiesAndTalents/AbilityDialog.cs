@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam abilit
-			List<AbilityDef> abList = args.GetTag(listTK) as List<AbilityDef>;
+			var abList = args.GetTag(listTK) as List<AbilityDef>;
 
 			if (abList == null) {
 				//vzit seznam abilit dle vyhledavaciho kriteria
@@ -42,10 +42,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.SortAbilityDefs(abList, (SortingCriteria) TagMath.IGetTag(args, sortingTK));
 				args.SetTag(listTK, abList); //ulozime to do argumentu dialogu				
 			}
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, abList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, abList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(70, 70);
@@ -79,9 +79,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				AbilityDef ad = abList[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var ad = abList[i];
 
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + i).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ad.Name).Build();
@@ -99,16 +99,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam abilitydefu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<AbilityDef> abList = (List<AbilityDef>) args.GetTag(listTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
+			var abList = (List<AbilityDef>) args.GetTag(listTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //vyhledat dle zadani
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(criteriumTK, nameCriteria);
 						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
@@ -138,18 +138,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, abList.Count, 1)) {//kliknuto na paging?
 			} else {
 				//zjistime si radek
-				int row = (gr.PressedButton - 10);
-				AbilityDef ad = abList[row];
+				var row = (gr.PressedButton - 10);
+				var ad = abList[row];
 				//a zobrazime info dialog
-				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ad));
+				var newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ad));
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
 		}
 
 		/// <summary>Retreives the list of all existing abilities</summary>
 		private List<AbilityDef> ListifyAbilities(IEnumerable<AbilityDef> abilities, string criteria) {
-			List<AbilityDef> absList = new List<AbilityDef>();
-			foreach (AbilityDef entry in abilities) {
+			var absList = new List<AbilityDef>();
+			foreach (var entry in abilities) {
 				if (criteria == null || criteria.Equals("")) {
 					absList.Add(entry);//bereme vse
 				} else if (entry.Name.ToUpper().Contains(criteria.ToUpper())) {
@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		[SteamFunction]
 		public static void AllAbilities(Character self, ScriptArgs text) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(sortingTK, SortingCriteria.NameAsc);//default sorting
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_AbilitiesList>.Instance, newArgs);

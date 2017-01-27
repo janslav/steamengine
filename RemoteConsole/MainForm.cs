@@ -29,8 +29,8 @@ namespace SteamEngine.RemoteConsole {
 
 		public void AddCmdLineDisplay(GameUid id, string name) {
 			if (!this.displays.ContainsKey(id)) {
-				TabPage tab = new TabPage(name);
-				CommandLineDisplay cld = new CommandLineDisplay(name, id);
+				var tab = new TabPage(name);
+				var cld = new CommandLineDisplay(name, id);
 				
 				cld.txtDisplay.TitleChanged += this.txtDisplay_TitleChanged;
 				tab.Controls.Add(cld);
@@ -59,9 +59,9 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		public void ClearCmdLineDisplays() {
-			Control[] controls = new Control[this.tabControl.Controls.Count];
+			var controls = new Control[this.tabControl.Controls.Count];
 			this.tabControl.Controls.CopyTo(controls, 0);
-			foreach (Control ctrl in controls) {
+			foreach (var ctrl in controls) {
 				if ((ctrl != this.systemTab) && (ctrl is TabPage)) {
 					ctrl.Dispose();
 				}
@@ -70,8 +70,8 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void TxtDisplay_TitleChanged(object sender, EventArgs ignored) {
-			LogStrDisplay display = (LogStrDisplay) sender;
-			TabPage page = display.Parent.Parent as TabPage;
+			var display = (LogStrDisplay) sender;
+			var page = display.Parent.Parent as TabPage;
 			if (page != null) {
 				page.Text = display.Title;
 			}
@@ -79,15 +79,15 @@ namespace SteamEngine.RemoteConsole {
 
 		private void menuConnect_Click(object sender, EventArgs e) {
 			this.reconnectingTimer.Stop();
-			ConnectionForm cf = new ConnectionForm();
+			var cf = new ConnectionForm();
 			cf.ShowDialog();
 		}
 
 		protected override void OnControlRemoved(ControlEventArgs e) {
-			TabPage page = e.Control as TabPage;
+			var page = e.Control as TabPage;
 			if (page != null) {
 				foreach (Control pageControl in page.Controls) {
-					CommandLineDisplay cld = pageControl as CommandLineDisplay;
+					var cld = pageControl as CommandLineDisplay;
 					if (cld != null) {
 						cld.txtDisplay.TitleChanged -= this.txtDisplay_TitleChanged;
 					}
@@ -153,7 +153,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void menuStartGameServer_Click(object sender, EventArgs e) {
-			ConsoleClient cc = ConsoleClient.ConnectedInstance;
+			var cc = ConsoleClient.ConnectedInstance;
 			if (cc != null) {
 				cc.Conn.SendPacketGroup(RequestServersToStartPacket.group);
 			}

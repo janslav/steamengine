@@ -44,9 +44,9 @@ namespace SteamEngine {
 		private static int count;
 
 		static ModuleBuilder AcquireModule() {			
-			AssemblyName name = new AssemblyName();
+			var name = new AssemblyName();
 			name.Name = "MemberWrapper Assembly";
-			AssemblyBuilder assembly = Thread.GetDomain().DefineDynamicAssembly(name, AssemblyBuilderAccess.Run);
+			var assembly = Thread.GetDomain().DefineDynamicAssembly(name, AssemblyBuilderAccess.Run);
 			return assembly.DefineDynamicModule("MemberWrapper Module");
 		}
 
@@ -71,11 +71,11 @@ namespace SteamEngine {
 		//returns basedefinition beyond class hierarchy - it goes as far as interfaces
 		public static MethodInfo GetMIBaseDefinition(MethodInfo mi) {
 			mi = mi.GetBaseDefinition();
-			Type declaringType = mi.DeclaringType;
-			Type[] ifaces = declaringType.GetInterfaces();
-			foreach (Type iface in ifaces) {
-				InterfaceMapping mapping = declaringType.GetInterfaceMap(iface);
-				int i = Array.IndexOf(mapping.TargetMethods, mi);
+			var declaringType = mi.DeclaringType;
+			var ifaces = declaringType.GetInterfaces();
+			foreach (var iface in ifaces) {
+				var mapping = declaringType.GetInterfaceMap(iface);
+				var i = Array.IndexOf(mapping.TargetMethods, mi);
 				if (i >= 0) {
 					return mapping.InterfaceMethods[i].GetBaseDefinition();
 				}
@@ -120,7 +120,7 @@ namespace SteamEngine {
 		internal static MethodInfo GetConvertMethod(Type t) {
 			MethodInfo mi;
 			if (!convertMethods.TryGetValue(t, out mi)) {
-				string methodName = "To" + t.Name;
+				var methodName = "To" + t.Name;
 				mi = typeof(Convert).GetMethod(methodName, singleObjTypeArr);
 				if (mi != null) {
 					convertMethods[t] = mi;
@@ -131,7 +131,7 @@ namespace SteamEngine {
 
 		internal static void EmitPushParams(ILGenerator il, ParameterInfo[] parameters, int argsAt) {
 			for (int i = 0, n = parameters.Length; i < n; i++) {
-				Type pt = parameters[i].ParameterType;
+				var pt = parameters[i].ParameterType;
 				EmitPushArgument(il, argsAt);//Ldarg
 				EmitPushInt32(il, i);//Ldc_I4
 				il.Emit(OpCodes.Ldelem_Ref); //push the indexed value
@@ -154,7 +154,7 @@ namespace SteamEngine {
 				if (type.IsEnum) {
 					type = Enum.GetUnderlyingType(type);
 				}
-				MethodInfo convertMethod = GetConvertMethod(type);
+				var convertMethod = GetConvertMethod(type);
 				if (convertMethod != null) {
 					il.EmitCall(OpCodes.Call, convertMethod, null);
 				} else {//there is no converting method
@@ -314,12 +314,12 @@ namespace SteamEngine {
 			}
 
 			private static string GetWrapperClassNameFor(ConstructorInfo ci) {
-				StringBuilder sb = new StringBuilder(ci.DeclaringType.Name);
+				var sb = new StringBuilder(ci.DeclaringType.Name);
 				sb.Append("_").Append("ctor");
 
-				ParameterInfo[] parameters = ci.GetParameters();
+				var parameters = ci.GetParameters();
 				for (int i = 0, n = parameters.Length; i < n; i++) {
-					Type pt = parameters[i].ParameterType;
+					var pt = parameters[i].ParameterType;
 					sb.Append("_").Append(pt.Name);
 				}
 				sb.Append("_").Append(count++);
@@ -341,9 +341,9 @@ namespace SteamEngine {
 			private static void EmitInvokeMethod(ConstructorInfo constructor, TypeBuilder tb,
 					Type[] invokeParamTypes, int paramsAt) {
 
-				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
+				var mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
 					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(object), invokeParamTypes);
-				ILGenerator il = mb.GetILGenerator();
+				var il = mb.GetILGenerator();
 
 				EmitPushParams(il, constructor.GetParameters(), paramsAt);
 
@@ -353,14 +353,14 @@ namespace SteamEngine {
 			}
 
 			internal static ConstructorWrapper SpitAndInstantiateWrapperFor(ConstructorInfo constructor) {
-				TypeBuilder tb = module.DefineType(GetWrapperClassNameFor(constructor),
+				var tb = module.DefineType(GetWrapperClassNameFor(constructor),
 					TypeAttributes.NotPublic, typeof(ConstructorWrapper));
 
 				EmitInvokeMethod(constructor, tb, invokeParamTypes1, 3);
 				EmitInvokeMethod(constructor, tb, invokeParamTypes2, 4);
 
-				Type t = tb.CreateType();
-				ConstructorWrapper constructed = (ConstructorWrapper) Activator.CreateInstance(t);
+				var t = tb.CreateType();
+				var constructed = (ConstructorWrapper) Activator.CreateInstance(t);
 				constructed.constructorInfo = constructor;
 				return constructed;
 			}
@@ -436,13 +436,13 @@ namespace SteamEngine {
 			}
 
 			internal static FieldWrapper SpitAndInstantiateWrapperFor(FieldInfo field) {
-				TypeBuilder tb = module.DefineType(GetWrapperClassNameFor(field), TypeAttributes.NotPublic, typeof(FieldWrapper));
+				var tb = module.DefineType(GetWrapperClassNameFor(field), TypeAttributes.NotPublic, typeof(FieldWrapper));
 
 				//first build the SetValue method
 				MethodBuilder mb;
 				ILGenerator il;
-				Type declaringType = field.DeclaringType;
-				Type fieldType = field.FieldType;
+				var declaringType = field.DeclaringType;
+				var fieldType = field.FieldType;
 
 				if (!field.IsInitOnly) {//readonly field, no set method
 					mb = tb.DefineMethod("SetValue", MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.Virtual,
@@ -496,9 +496,9 @@ namespace SteamEngine {
 				}
 				il.Emit(OpCodes.Ret);//the getter method finished
 
-				Type t = tb.CreateType();
+				var t = tb.CreateType();
 
-				FieldWrapper constructed = (FieldWrapper) Activator.CreateInstance(t);
+				var constructed = (FieldWrapper) Activator.CreateInstance(t);
 				constructed.fieldInfo = field;
 
 				return constructed;
@@ -566,12 +566,12 @@ namespace SteamEngine {
 			}
 
 			private static string GetWrapperClassNameFor(MethodInfo mi) {
-				StringBuilder sb = new StringBuilder(mi.DeclaringType.Name);
+				var sb = new StringBuilder(mi.DeclaringType.Name);
 				sb.Append("_").Append(mi.Name);
 
-				ParameterInfo[] parameters = mi.GetParameters();
+				var parameters = mi.GetParameters();
 				for (int i = 0, n = parameters.Length; i < n; i++) {
-					Type pt = parameters[i].ParameterType;
+					var pt = parameters[i].ParameterType;
 					sb.Append("_").Append(pt.Name);
 				}
 				sb.Append("_").Append(count++);
@@ -585,13 +585,13 @@ namespace SteamEngine {
 				typeof(object), typeof(BindingFlags), typeof(Binder), typeof(object[]), typeof(CultureInfo)};
 
 			internal static MethodWrapper SpitAndInstantiateWrapperFor(MethodInfo method) {
-				TypeBuilder tb = module.DefineType(GetWrapperClassNameFor(method),
+				var tb = module.DefineType(GetWrapperClassNameFor(method),
 					TypeAttributes.NotPublic, typeof(MethodWrapper));
-				MethodBuilder mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
+				var mb = tb.DefineMethod("Invoke", MethodAttributes.Final | MethodAttributes.Public | MethodAttributes.ReuseSlot
 					| MethodAttributes.Virtual | MethodAttributes.HideBySig, typeof(object), invokeParamTypes);
-				ILGenerator il = mb.GetILGenerator();
+				var il = mb.GetILGenerator();
 
-				Type declaringType = method.DeclaringType;
+				var declaringType = method.DeclaringType;
 				if (!method.IsStatic) {
 					il.Emit(OpCodes.Ldarg_1);//push the "this" object
 					EmitConvertOrUnBox(il, declaringType);
@@ -606,8 +606,8 @@ namespace SteamEngine {
 				EmitCall(il, method);
 				EmitReturn(il, method.ReturnType);
 
-				Type t = tb.CreateType();
-				MethodWrapper constructed = (MethodWrapper) Activator.CreateInstance(t);
+				var t = tb.CreateType();
+				var constructed = (MethodWrapper) Activator.CreateInstance(t);
 				constructed.methodInfo = method;
 				return constructed;
 			}

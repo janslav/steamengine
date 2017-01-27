@@ -37,9 +37,9 @@ namespace SteamEngine.Scripting.Objects {
 			this.remover = new TgRemover(this);
 
 			//register it as 'global' triggergroup for some class, like *_allitems gets sent to Item.RegisterTriggerGroup()
-			Match m = globalNameRe.Match(defname);
+			var m = globalNameRe.Match(defname);
 			if (m.Success) {
-				string typeName = m.Groups["value"].Value;
+				var typeName = m.Groups["value"].Value;
 				if (StringComparer.OrdinalIgnoreCase.Equals(typeName, "account")) {
 					typeName = "GameAccount";
 				}
@@ -67,8 +67,8 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static void ReAddGlobals() {
-			foreach (AbstractScript script in AllScripts) {
-				TriggerGroup tg = script as TriggerGroup;
+			foreach (var script in AllScripts) {
+				var tg = script as TriggerGroup;
 				if (tg != null) {
 					if (tg.Defname.ToLowerInvariant().EndsWith("_global")) {
 						Globals.Instance.AddTriggerGroup(tg);

@@ -43,7 +43,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 
 		private void Fields() {
 			if (this.subSection != null) {
-				foreach (ClassTemplateInstanceField ctfi in this.subSection.fields) {
+				foreach (var ctfi in this.subSection.fields) {
 					this.generatedType.Members.Add(CodeField(ctfi));
 					this.generatedType.Members.Add(CodeProperty(ctfi));
 				}
@@ -51,7 +51,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private static CodeMemberField CodeField(ClassTemplateInstanceField ctfi) {
-			CodeMemberField field = new CodeMemberField("FieldValue", ctfi.uncapName);
+			var field = new CodeMemberField("FieldValue", ctfi.uncapName);
 			field.Attributes = MemberAttributes.Final | MemberAttributes.Private;
 			if (ctfi.isStatic) {
 				field.Attributes |= MemberAttributes.Static;
@@ -60,7 +60,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private static CodeMemberProperty CodeProperty(ClassTemplateInstanceField ctfi) {
-			CodeMemberProperty prop = new CodeMemberProperty();
+			var prop = new CodeMemberProperty();
 			prop.Type = new CodeTypeReference(ctfi.typeString);
 			prop.Name = ctfi.capName;
 			if (ctfi.access == MemberAttributes.Final) {
@@ -103,7 +103,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private void DefConstructor() {
-			CodeConstructor defConstructor = new CodeConstructor();
+			var defConstructor = new CodeConstructor();
 			defConstructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			defConstructor.Parameters.Add(new CodeParameterDeclarationExpression("String", "defname"));
 			defConstructor.Parameters.Add(new CodeParameterDeclarationExpression("String", "filename"));
@@ -114,7 +114,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 			defConstructor.BaseConstructorArgs.Add(new CodeArgumentReferenceExpression("headerLine"));
 
 			if (this.subSection != null) {
-				foreach (ClassTemplateInstanceField ctfi in this.subSection.fields) {
+				foreach (var ctfi in this.subSection.fields) {
 					defConstructor.Statements.Add(
 						new CodeAssignStatement(
 							new CodeFieldReferenceExpression(

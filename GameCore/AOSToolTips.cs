@@ -28,9 +28,9 @@ namespace SteamEngine {
 		static CacheDictionary<Thing, AosToolTips>[] cachesByLanguage = InitCachesArray();
 
 		private static CacheDictionary<Thing, AosToolTips>[] InitCachesArray() {
-			int n = Tools.GetEnumLength<Language>();
-			CacheDictionary<Thing, AosToolTips>[] cachesArray = new CacheDictionary<Thing, AosToolTips>[n];
-			for (int i = 0; i < n; i++) {
+			var n = Tools.GetEnumLength<Language>();
+			var cachesArray = new CacheDictionary<Thing, AosToolTips>[n];
+			for (var i = 0; i < n; i++) {
 				cachesArray[i] = new CacheDictionary<Thing, AosToolTips>(50000, true);//znate nekdo nejaky lepsi cislo? :)
 			}
 			return cachesArray;
@@ -49,7 +49,7 @@ namespace SteamEngine {
 		}
 
 		public static void RemoveFromCache(Thing thing) {
-			foreach (CacheDictionary<Thing, AosToolTips> cache in cachesByLanguage) {
+			foreach (var cache in cachesByLanguage) {
 				cache.Remove(thing);
 			}
 		}
@@ -187,7 +187,7 @@ namespace SteamEngine {
 		}
 
 		public static void ClearCache() {
-			foreach (CacheDictionary<Thing, AosToolTips> cache in cachesByLanguage) {
+			foreach (var cache in cachesByLanguage) {
 				cache.Clear();
 			}
 		}

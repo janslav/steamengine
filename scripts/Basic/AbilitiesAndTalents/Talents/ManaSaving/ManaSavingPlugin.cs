@@ -50,13 +50,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_SkillSuccess(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
-				Character self = (Character) this.Cont;
-				ActivableAbilityDef abilityDef = ManaSavingDef;
+				var self = (Character) this.Cont;
+				var abilityDef = ManaSavingDef;
 
 				if (self.Mana < self.MaxMana) {
-					SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+					var spell = (SpellDef) skillSeqArgs.Param1;
 					double manause = spell.GetManaUse(skillSeqArgs.Tool is SpellScroll);
-					double giveback = manause * this.EffectPower;
+					var giveback = manause * this.EffectPower;
 				
 					self.Mana = (short) Math.Min(
 						Math.Ceiling(self.Mana + giveback), //round up

@@ -51,7 +51,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
-			Thing t = (Thing) vars.defaultObject;
+			var t = (Thing) vars.defaultObject;
 			vars.self = t;
 
 			IThingFactory tf;
@@ -64,7 +64,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 
 			try {
-				AbstractItem i = t.NewItem(tf, amount);
+				var i = t.NewItem(tf, amount);
 				vars.self = i;
 				return i;
 			} catch (InterpreterException ie) {
@@ -82,15 +82,15 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {
-			Thing t = (Thing) vars.defaultObject;
+			var t = (Thing) vars.defaultObject;
 			vars.self = t;
-			IThingFactory tf = (IThingFactory) results[0];
-			int amount = 1;
+			var tf = (IThingFactory) results[0];
+			var amount = 1;
 			if (results.Length > 1) {
 				amount = Convert.ToInt32(results[1], CultureInfo.InvariantCulture);
 			}
 			try {
-				AbstractItem i = t.NewItem(tf, amount);
+				var i = t.NewItem(tf, amount);
 				vars.self = i;
 				return i;
 			} catch (InterpreterException ie) {

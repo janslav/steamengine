@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			base.On_Click(clicker, clickerState, clickerConn);
-			Language language = clickerState.Language;
+			var language = clickerState.Language;
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				string.Concat(this.potionsCount.ToString(), " potions"),
 				0);
@@ -47,8 +47,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			PotionKeg keg = (PotionKeg) parameter;
-			Potion potion = targetted as Potion;
+			var keg = (PotionKeg) parameter;
+			var potion = targetted as Potion;
 
 			if (!self.CanReachWithMessage(keg)) {
 				self.SysMessage("CanReachWithMessage");
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 				if (keg.potionDef == potion.TypeDef) {
 					ThingDef.GetByDefname("i_bottle_empty").Create(self.Backpack);
 					if ((keg.TypeDef.Capacity - keg.potionsCount) < targetted.Amount) {	// poresime prekroceni nosnosti kegu -> do kegu se prida jen tolik potionu, kolik skutecne lze pridat
-						int potionsToTake = keg.TypeDef.Capacity - keg.potionsCount;
+						var potionsToTake = keg.TypeDef.Capacity - keg.potionsCount;
 						targetted.Amount -= potionsToTake;
 						keg.potionsCount += potionsToTake;
 						Globals.LastNewItem.Amount = potionsToTake;

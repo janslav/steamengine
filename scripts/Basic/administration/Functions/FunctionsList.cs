@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam funkci
-			List<ScriptHolder> fList = args.GetTag(listTK) as List<ScriptHolder>;
+			var fList = args.GetTag(listTK) as List<ScriptHolder>;
 
 			if (fList == null) {
 				//vzit seznam fci dle vyhledavaciho kriteria
@@ -42,10 +42,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.SortFunctions(fList, (SortingCriteria) TagMath.IGetTag(args, sortTK));
 				args.SetTag(listTK, fList); //ulozime to do argumentu dialogu				
 			}
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, fList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, fList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(70, 70);
@@ -77,9 +77,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				ScriptHolder sh = fList[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var sh = fList[i];
 
 				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(sh.Name).Build();
 				//cudl na zobrazeni popisu }aktivni pouze je-li popis
@@ -97,16 +97,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam fci bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<ScriptHolder> fList = (List<ScriptHolder>) args.GetTag(listTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, fList.Count);
+			var fList = (List<ScriptHolder>) args.GetTag(listTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, fList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog						
 						break;
 					case 1: //vyhledat dle zadani
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(criteriaTK, nameCriteria);
 						args.RemoveTag(listTK);//vycistit soucasny odkaz na list aby se mohl prenacist
@@ -125,18 +125,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, fList.Count, 1)) {//posledni 1 - pocet sloupecku v dialogu				
 			} else {
-				int row = (gr.PressedButton - 10);//zjistime si radek
-				ScriptHolder sh = fList[row];
+				var row = (gr.PressedButton - 10);//zjistime si radek
+				var sh = fList[row];
 				//a zobrazime info dialog
-				Gump newGi = D_Display_Text.ShowInfo(sh.Description + ""); //nezobrazovat "null", jen prazdno evt...
+				var newGi = D_Display_Text.ShowInfo(sh.Description + ""); //nezobrazovat "null", jen prazdno evt...
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
 		}
 
 		/// <summary>Retreives the list of all existing functions</summary>
 		private List<ScriptHolder> ListifyFunctions(IEnumerable<ScriptHolder> fctions, string criteria) {
-			List<ScriptHolder> fList = new List<ScriptHolder>();
-			foreach (ScriptHolder entry in fctions) {
+			var fList = new List<ScriptHolder>();
+			foreach (var entry in fctions) {
 				if (criteria == null || criteria.Equals("")) {
 					fList.Add(entry);//bereme vse
 				} else if (entry.Name.ToUpper().Contains(criteria.ToUpper())) {
@@ -165,7 +165,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		[SteamFunction]
 		public static void AllFunctions(Character self, ScriptArgs text) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(sortTK, SortingCriteria.NameAsc);//default sorting
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_Functions>.Instance, newArgs);

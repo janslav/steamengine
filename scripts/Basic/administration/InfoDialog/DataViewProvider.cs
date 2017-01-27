@@ -31,11 +31,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Will find dataview for given type.</summary>
 		public static IDataView FindDataViewByType(Type handledType) {
-			IDataView view = (IDataView) dataViewsForTypes[handledType];
+			var view = (IDataView) dataViewsForTypes[handledType];
 			if (view != null) {
 				return view;
 			}
-			foreach (KeyValuePair<Type, IDataView> pair in dataViewsForbaseClasses) {
+			foreach (var pair in dataViewsForbaseClasses) {
 				if (pair.Key.IsAssignableFrom(handledType)) {
 					dataViewsForTypes[handledType] = pair.Value;
 					return pair.Value;
@@ -57,9 +57,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static bool CheckGeneratedDataViewClass(Type type) {
 			if (!type.IsAbstract) {
 				//if (typeof(IDataView).IsAssignableFrom(type)) { //this should be managed by the ClassManager :)
-				ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+				var ci = type.GetConstructor(Type.EmptyTypes);
 				if (ci != null) {
-					IDataView idv = (IDataView) ci.Invoke(new object[0] { });
+					var idv = (IDataView) ci.Invoke(new object[0] { });
 
 					if (idv.HandleSubclasses) {
 						dataViewsForbaseClasses.Add(idv.HandledType, idv);

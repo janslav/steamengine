@@ -10,7 +10,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
-			Player self = skillSeqArgs.Self as Player;
+			var self = skillSeqArgs.Self as Player;
 			if (self != null) {
 				self.Target(SingletonScript<Targ_AnimalLore>.Instance, skillSeqArgs);
 			}
@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (self.CanInteractWithMessage(skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 				return TriggerResult.Continue;
@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			GameState stateSelf = skillSeqArgs.Self.GameState;
+			var stateSelf = skillSeqArgs.Self.GameState;
 			if (stateSelf != null) {
 				//TODO: Hlasky pro ruzne intervaly STR/STAM
 				stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ASuccess1);
@@ -39,14 +39,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			GameState stateSelf = skillSeqArgs.Self.GameState;
+			var stateSelf = skillSeqArgs.Self.GameState;
 			if (stateSelf != null) {
 				stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).AFailed);
 			}
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			GameState stateSelf = skillSeqArgs.Self.GameState;
+			var stateSelf = skillSeqArgs.Self.GameState;
 			if (stateSelf != null) {
 				stateSelf.WriteLine(Loc<AnimalLoreLoc>.Get(stateSelf.Language).ACanceled);
 			}
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (targetted.IsAnimal) {
-				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+				var skillSeq = (SkillSequenceArgs) parameter;
 				skillSeq.Target1 = targetted;
 				skillSeq.PhaseStart();
 				return TargetResult.Done;

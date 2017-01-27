@@ -52,7 +52,7 @@ namespace SteamEngine {
 			if (this.count == 0) {
 				throw new SEException("count == 0");
 			}
-			T t = this.array[this.headindex];
+			var t = this.array[this.headindex];
 			this.array[this.headindex] = default(T);
 			this.headindex = ((this.headindex + 1) % this.array.Length);
 			this.count--;
@@ -76,7 +76,7 @@ namespace SteamEngine {
 		}
 
 		private void Grow() {
-			T[] newArray = new T[this.array.Length * 2 + 1];
+			var newArray = new T[this.array.Length * 2 + 1];
 			if (this.count > 0) {
 				if (this.headindex < this.tailindex) {
 					Array.Copy(this.array, this.headindex, newArray, 0, this.count);
@@ -91,9 +91,9 @@ namespace SteamEngine {
 		}
 
 		public bool Contains(T item) {
-			int index = this.headindex;
-			int num2 = this.count;
-			EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+			var index = this.headindex;
+			var num2 = this.count;
+			var comparer = EqualityComparer<T>.Default;
 			while (num2-- > 0) {
 				if (item == null) {
 					if (this.array[index] == null) {

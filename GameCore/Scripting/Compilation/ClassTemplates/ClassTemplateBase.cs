@@ -25,7 +25,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 			ClassTemplateSubSection defss = null;
 			ClassTemplateSubSection ss = null;
 
-			foreach (ClassTemplateSubSection entry in section.subsections.Values) {
+			foreach (var entry in section.subsections.Values) {
 				switch (entry.name.ToLowerInvariant()) {
 					case "def":
 					case "defvars":
@@ -42,7 +42,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 				}
 			}
 
-			foreach (ClassTemplateBase ctb in GetImplementations(section, defss, ss)) {
+			foreach (var ctb in GetImplementations(section, defss, ss)) {
 				ccu.Namespaces[0].Types.Add(ctb.GeneratedType);
 			}
 		}

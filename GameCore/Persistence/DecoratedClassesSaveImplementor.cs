@@ -206,7 +206,7 @@ namespace SteamEngine.Persistence {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes"), SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
 		protected void LoadSectionLines(PropsSection ps, object loadedObject) {
-			foreach (PropsLine p in ps.PropsLines) {
+			foreach (var p in ps.PropsLines) {
 				try {
 					this.LoadLineImpl(loadedObject, ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 				} catch (FatalException) {
@@ -247,19 +247,19 @@ namespace SteamEngine.Persistence {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
-				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+				var codeCompileUnit = new CodeCompileUnit();
 
 
 				if (decoratedClasses.Count > 0) {
 					Logger.WriteDebug("Generating SaveImplementors");
 
-					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+					var ns = new CodeNamespace("SteamEngine.CompiledScripts");
 					codeCompileUnit.Namespaces.Add(ns);
 
-					foreach (Type decoratedClass in decoratedClasses) {
+					foreach (var decoratedClass in decoratedClasses) {
 						try {
-							GeneratedInstance gi = new GeneratedInstance(decoratedClass);
-							CodeTypeDeclaration ctd = gi.GetGeneratedType();
+							var gi = new GeneratedInstance(decoratedClass);
+							var ctd = gi.GetGeneratedType();
 							ns.Types.Add(ctd);
 						} catch (FatalException) {
 							throw;
@@ -294,7 +294,7 @@ namespace SteamEngine.Persistence {
 
 			internal GeneratedInstance(Type decoratedClass) {
 				this.decoratedClass = decoratedClass;
-				foreach (MemberInfo mi in decoratedClass.GetMembers(
+				foreach (var mi in decoratedClass.GetMembers(
 						BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)) {
 					this.HandleLoadingInitializerAttribute(mi);
 					this.HandleLoadLineAttribute(mi);
@@ -326,9 +326,9 @@ namespace SteamEngine.Persistence {
 						throw new SEException("Can not use the " + LogStr.Ident("SaveAttribute") + " on two class members.");
 					}
 					if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
-						MethodInfo meth = (MethodInfo) mi;
+						var meth = (MethodInfo) mi;
 						if (!meth.IsStatic) {
-							ParameterInfo[] pars = meth.GetParameters();
+							var pars = meth.GetParameters();
 							if ((pars.Length == 1) && (pars[0].ParameterType == typeof(SaveStream))) {
 								this.saveMethod = meth;
 							}
@@ -348,13 +348,13 @@ namespace SteamEngine.Persistence {
 					if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 						this.loadSection = (MethodBase) mi;
 					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
-						MethodInfo meth = (MethodInfo) mi;
+						var meth = (MethodInfo) mi;
 						if (meth.IsStatic) {
 							this.loadSection = meth;
 						}
 					}
 					if (this.loadSection != null) {
-						ParameterInfo[] pars = this.loadSection.GetParameters();
+						var pars = this.loadSection.GetParameters();
 						if ((pars.Length != 1) || (pars[0].ParameterType != typeof(PropsSection))) {
 							throw new SEException(LogStr.Ident("LoadSectionAttribute") + " can only be placed on a callable member with one parameter of type PropsSection.");
 						}
@@ -366,10 +366,10 @@ namespace SteamEngine.Persistence {
 
 			private void HandleSaveableDataAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(SaveableDataAttribute), false)) {
-					bool added = false;
+					var added = false;
 					if ((mi.MemberType & MemberTypes.Property) == MemberTypes.Property) {
-						PropertyInfo pi = (PropertyInfo) mi;
-						MethodInfo[] accessors = pi.GetAccessors();
+						var pi = (PropertyInfo) mi;
+						var accessors = pi.GetAccessors();
 						if (accessors.Length == 2) {
 							if (!accessors[0].IsStatic) {
 								this.saveableDataProperties.Add(pi);
@@ -379,7 +379,7 @@ namespace SteamEngine.Persistence {
 							throw new SEException(LogStr.Ident("SaveableDataAttribute") + " can only be placed on fields or properties with both setter and getter.");
 						}
 					} else if ((mi.MemberType & MemberTypes.Field) == MemberTypes.Field) {
-						FieldInfo fi = (FieldInfo) mi;
+						var fi = (FieldInfo) mi;
 						if (!fi.IsStatic) {
 							this.saveableDataFields.Add(fi);
 							added = true;
@@ -397,9 +397,9 @@ namespace SteamEngine.Persistence {
 						throw new SEException("Can not use the " + LogStr.Ident("LoadLineAttribute") + " on two class members.");
 					}
 					if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
-						MethodInfo meth = (MethodInfo) mi;
+						var meth = (MethodInfo) mi;
 						if (!meth.IsStatic) {
-							ParameterInfo[] pars = meth.GetParameters();
+							var pars = meth.GetParameters();
 							if ((pars.Length == 4) && (pars[0].ParameterType == typeof(string)) && (pars[1].ParameterType == typeof(int))
 							    && (pars[2].ParameterType == typeof(string)) && (pars[3].ParameterType == typeof(string))) {
 								this.loadLine = meth;
@@ -420,7 +420,7 @@ namespace SteamEngine.Persistence {
 					if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 						this.loadingInitializer = (MethodBase) mi;
 					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
-						MethodInfo meth = (MethodInfo) mi;
+						var meth = (MethodInfo) mi;
 						if (meth.IsStatic) {
 							this.loadingInitializer = meth;
 						}
@@ -441,7 +441,7 @@ namespace SteamEngine.Persistence {
 						throw new SEException("Can not use the " + LogStr.Ident("LoadingFinalizerAttribute") + " on two class members.");
 					}
 					if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
-						MethodInfo meth = (MethodInfo) mi;
+						var meth = (MethodInfo) mi;
 						if ((!meth.IsStatic) && (meth.GetParameters().Length == 0)) {
 							this.loadingFinalizer = meth;
 						}
@@ -453,7 +453,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedSaveImplementor_" + this.decoratedClass.Name);
+				var codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedSaveImplementor_" + this.decoratedClass.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(typeof(DecoratedClassesSaveImplementor));
 				codeTypeDeclatarion.IsClass = true;
@@ -466,7 +466,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			private CodeConstructor GenerateConstructor() {
-				CodeConstructor retVal = new CodeConstructor();
+				var retVal = new CodeConstructor();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 
 				retVal.BaseConstructorArgs.Add(new CodeTypeOfExpression(this.decoratedClass));
@@ -476,7 +476,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			private void GenerateLoadSectionMethod(CodeTypeMemberCollection methods) {
-				CodeMemberMethod loadSectionMethod = new CodeMemberMethod();
+				var loadSectionMethod = new CodeMemberMethod();
 				loadSectionMethod.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 
 				loadSectionMethod.Name = "LoadSection";
@@ -490,7 +490,7 @@ namespace SteamEngine.Persistence {
 						new CodeArgumentReferenceExpression("input"),
 						"HeaderLine")));
 
-				CodeTryCatchFinallyStatement trycatch = new CodeTryCatchFinallyStatement();
+				var trycatch = new CodeTryCatchFinallyStatement();
 				loadSectionMethod.Statements.Add(trycatch);
 
 				//Memory loadedObject = new Memory();
@@ -505,7 +505,7 @@ namespace SteamEngine.Persistence {
 							this.loadSection.Name,
 							new CodeArgumentReferenceExpression("input"));
 
-						Type returnedType = ((MethodInfo) this.loadSection).ReturnType;
+						var returnedType = ((MethodInfo) this.loadSection).ReturnType;
 						if (this.decoratedClass != returnedType) {
 							createObjectExpression = new CodeCastExpression(
 								this.decoratedClass,
@@ -525,8 +525,8 @@ namespace SteamEngine.Persistence {
 					this.decoratedClass, "loadedObject", createObjectExpression));
 
 				if (this.loadSection == null) {
-					foreach (PropertyInfo pi in this.saveableDataProperties) {
-						CodeAssignStatement propertyAssignment = new CodeAssignStatement();
+					foreach (var pi in this.saveableDataProperties) {
+						var propertyAssignment = new CodeAssignStatement();
 						propertyAssignment.Left = new CodePropertyReferenceExpression(
 							new CodeVariableReferenceExpression("loadedObject"),
 							pi.Name);
@@ -535,8 +535,8 @@ namespace SteamEngine.Persistence {
 							pi.Name, pi.PropertyType);
 					}
 
-					foreach (FieldInfo fi in this.saveableDataFields) {
-						CodeAssignStatement fieldAssignment = new CodeAssignStatement();
+					foreach (var fi in this.saveableDataFields) {
+						var fieldAssignment = new CodeAssignStatement();
 						fieldAssignment.Left = new CodeFieldReferenceExpression(
 							new CodeVariableReferenceExpression("loadedObject"),
 							fi.Name);
@@ -599,7 +599,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			private CodeMemberMethod GenerateLoadLineImplMethod() {
-				CodeMemberMethod loadLineMethod = new CodeMemberMethod();
+				var loadLineMethod = new CodeMemberMethod();
 				loadLineMethod.Attributes = MemberAttributes.Family | MemberAttributes.Override;
 
 				loadLineMethod.Name = "LoadLineImpl";
@@ -631,7 +631,7 @@ namespace SteamEngine.Persistence {
 			private void GenerateLoadFieldOrProperty(CodeTypeMemberCollection methods,
 					CodeStatementCollection statements, CodeAssignStatement assignment, string name, Type type) {
 
-				string propsLineName = Utility.Uncapitalize(name + "Line");
+				var propsLineName = Utility.Uncapitalize(name + "Line");
 
 				statements.Add(new CodeVariableDeclarationStatement(
 					typeof(PropsLine), propsLineName,
@@ -640,7 +640,7 @@ namespace SteamEngine.Persistence {
 						"TryPopPropsLine",
 						new CodePrimitiveExpression(name))));
 
-				CodeConditionStatement ifStatement = new CodeConditionStatement(
+				var ifStatement = new CodeConditionStatement(
 					new CodeBinaryOperatorExpression(
 						new CodeVariableReferenceExpression(propsLineName),
 						CodeBinaryOperatorType.IdentityEquality,
@@ -676,7 +676,7 @@ namespace SteamEngine.Persistence {
 				} else {
 					//we create a method for delayed loading of the value
 
-					CodeMemberMethod delayedLoadMethod = this.GenerateDelayedLoadMethod(assignment, name, type);
+					var delayedLoadMethod = this.GenerateDelayedLoadMethod(assignment, name, type);
 					methods.Add(delayedLoadMethod);
 
 					//ObjectSaver.Load(value, new LoadObject(LoadSomething_Delayed), filename, line);
@@ -704,7 +704,7 @@ namespace SteamEngine.Persistence {
 
 			private CodeMemberMethod GenerateDelayedLoadMethod(CodeAssignStatement assignment, string name, Type type) {
 
-				CodeMemberMethod delayedLoadMethod = new CodeMemberMethod();
+				var delayedLoadMethod = new CodeMemberMethod();
 				delayedLoadMethod.Attributes = MemberAttributes.Private;
 
 				delayedLoadMethod.Name = "DelayedLoad_" + name;
@@ -731,7 +731,7 @@ namespace SteamEngine.Persistence {
 
 
 			private CodeMemberMethod GenerateSaveMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
+				var retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 
 				retVal.Name = "Save";
@@ -746,7 +746,7 @@ namespace SteamEngine.Persistence {
 						new CodeArgumentReferenceExpression("objToSave"))));
 				if (this.loadSection == null) {
 					//writer.WriteValue("Flags", castObjToSave.Flags);
-					foreach (PropertyInfo pi in this.saveableDataProperties) {
+					foreach (var pi in this.saveableDataProperties) {
 						retVal.Statements.Add(new CodeMethodInvokeExpression(
 							new CodeArgumentReferenceExpression("writer"),
 							"WriteValue",
@@ -755,7 +755,7 @@ namespace SteamEngine.Persistence {
 								new CodeVariableReferenceExpression("castObjToSave"),
 								pi.Name)));
 					}
-					foreach (FieldInfo fi in this.saveableDataFields) {
+					foreach (var fi in this.saveableDataFields) {
 						retVal.Statements.Add(new CodeMethodInvokeExpression(
 							new CodeArgumentReferenceExpression("writer"),
 							"WriteValue",

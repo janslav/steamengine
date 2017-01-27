@@ -9,7 +9,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Player self = skillSeqArgs.Self as Player;
+			var self = skillSeqArgs.Self as Player;
 			if (self != null) {
 				self.Target(SingletonScript<Targ_ArmsLore>.Instance, skillSeqArgs);
 			}
@@ -21,7 +21,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (self.CanReachWithMessage((Item) skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 				return TriggerResult.Continue;
@@ -30,9 +30,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.SysMessage("Arms lore SUKCEEES");// kontrolni hlaska, pozdeji odstranit!
-			Destroyable targetted = (Destroyable) skillSeqArgs.Target1;
+			var targetted = (Destroyable) skillSeqArgs.Target1;
 
 			self.SysMessage("Armor už umíme, doplníme. Vypisujeme testovaci hlasku: " + targetted.Name + " model je: " + targetted.Model);
 
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			if (targetted is Destroyable) {
-				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+				var skillSeq = (SkillSequenceArgs) parameter;
 				skillSeq.Target1 = targetted;
 				skillSeq.PhaseStart();
 				return TargetResult.Done;

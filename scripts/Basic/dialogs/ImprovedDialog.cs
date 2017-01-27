@@ -56,9 +56,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Compute the length of the text (mainly for dialog purposes)</summary>
 		public static int TextLength(string text) {
-			int retVal = 0;
+			var retVal = 0;
 			int val;
-			for (int i = 0; i < text.Length; i++) {
+			for (var i = 0; i < text.Length; i++) {
 				if (charsLength.TryGetValue(text[i], out val)) {
 					retVal += val;
 				} else {//default approx value
@@ -182,10 +182,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// No underlaying columns children will be copied!
 		/// </summary>
 		public void CopyColsFromTable(int tableNumber) {
-			GUTATable theTable = (GUTATable) this.background.Components[tableNumber];
+			var theTable = (GUTATable) this.background.Components[tableNumber];
 			foreach (GUTAColumn col in theTable.Components[0].Components) { //use the first (mainly only) virtual Row
 				//copy every column to the newly added (now empty) row
-				GUTAColumn newCol = new GUTAColumn(col.Width);
+				var newCol = new GUTAColumn(col.Width);
 				newCol.IsLast = col.IsLast;
 				this.lastTable.Components[0].AddComponent(newCol);
 			}
@@ -211,12 +211,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//...no
 				return;
 			}
-			int lastNumber = Math.Min(firstNumber + PAGE_ROWS * columnsCount, itemsCount);
-			int pagesCount = (int) Math.Ceiling((double) itemsCount / (PAGE_ROWS * columnsCount));
+			var lastNumber = Math.Min(firstNumber + PAGE_ROWS * columnsCount, itemsCount);
+			var pagesCount = (int) Math.Ceiling((double) itemsCount / (PAGE_ROWS * columnsCount));
 			//first index on the page is a multiple of number of rows per page...
-			int actualPage = (firstNumber / (PAGE_ROWS * columnsCount)) + 1;
+			var actualPage = (firstNumber / (PAGE_ROWS * columnsCount)) + 1;
 
-			bool prevNextColumnAdded = false; //indicator of navigating column
+			var prevNextColumnAdded = false; //indicator of navigating column
 			if (actualPage > 1) {
 				this.AddLastColumn(new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH));
 				this.lastColumn.AddComponent(GUTAButton.Builder.Type(LeafComponentTypes.ButtonPrev).Id(ID_PREV_BUTTON).Build()); //prev
@@ -232,8 +232,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
 			//it looks like this: "Stránka |__| / 23. <GOPAGE>  where |__| is editable field
 			//and <GOPAGE> is confirming button that jumps to the written page.
-			GUTATable storedLastTable = this.lastTable; //store these two things :)
-			GUTAColumn storedLastColumn = this.lastColumn;
+			var storedLastTable = this.lastTable; //store these two things :)
+			var storedLastColumn = this.lastColumn;
 			this.AddTable(new GUTATable(1, 0));
 			this.lastTable[0, 0] = GUTAText.Builder.TextLabel("Stránka").Build();
 			//type if input,x,y,ID, width, height, prescribed text
@@ -261,8 +261,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static bool PagingButtonsHandled(Gump gi, GumpResponse gr, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
 			//dialog construct method!)
-			DialogArgs args = gi.InputArgs;//arguments of the dialog			
-			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
+			var args = gi.InputArgs;//arguments of the dialog			
+			var pagingHandled = false; //indicator if the pressed btton was the paging one.
 			switch (gr.PressedButton) {
 				case ID_PREV_BUTTON:
 					args.SetTag(pagingIndexTK, TagMath.IGetTag(args, pagingIndexTK) - (PAGE_ROWS * columnsCount));
@@ -276,16 +276,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 				case ID_JUMP_PAGE_BUTTON:
 					//get the selected page number (absolute value - make it a bit idiot proof :) )
-					int selectedPage = (int) gr.GetNumberResponse(ID_PAGE_NO_INPUT);
+					var selectedPage = (int) gr.GetNumberResponse(ID_PAGE_NO_INPUT);
 					if (selectedPage < 1) {
 						//idiot proof adjustment
 						gi.Cont.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
 						selectedPage = 1;
 					}
 					//count the index of the first item
-					int countedFirstIndex = (selectedPage - 1) * (PAGE_ROWS * columnsCount);
+					var countedFirstIndex = (selectedPage - 1) * (PAGE_ROWS * columnsCount);
 					if (countedFirstIndex > itemsCount) { //get the last page
-						int lastPage = (itemsCount / (PAGE_ROWS * columnsCount)) + 1; //(int) casted last page number
+						var lastPage = (itemsCount / (PAGE_ROWS * columnsCount)) + 1; //(int) casted last page number
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS * columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					args.SetTag(pagingIndexTK, countedFirstIndex);//set the index of the first item
@@ -307,8 +307,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public static bool PagingButtonsHandled(Gump actualGi, int buttNo, int selPageInpt, int itemsCount, int columnsCount) {
 			//stacked dialog item (it is necessary to have it here so it must be set in the 
-			bool pagingHandled = false; //indicator if the pressed btton was the paging one.
-			DialogArgs args = actualGi.InputArgs;
+			var pagingHandled = false; //indicator if the pressed btton was the paging one.
+			var args = actualGi.InputArgs;
 			switch (buttNo) {
 				case ID_PREV_BUTTON:
 					args.SetTag(pagingIndexTK, TagMath.IGetTag(args, pagingIndexTK) - (PAGE_ROWS * columnsCount));
@@ -322,16 +322,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 				case ID_JUMP_PAGE_BUTTON:
 					//get the selected page number (absolute value - make it a bit idiot proof :) )
-					int selectedPage = selPageInpt;
+					var selectedPage = selPageInpt;
 					if (selectedPage < 1) {
 						//idiot proof adjustment
 						actualGi.Cont.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
 						selectedPage = 1;
 					}
 					//count the index of the first item
-					int countedFirstIndex = (selectedPage - 1) * (PAGE_ROWS * columnsCount);
+					var countedFirstIndex = (selectedPage - 1) * (PAGE_ROWS * columnsCount);
 					if (countedFirstIndex > itemsCount) { //get the last page
-						int lastPage = (itemsCount / (PAGE_ROWS * columnsCount)) + 1; //(int) casted last page number
+						var lastPage = (itemsCount / (PAGE_ROWS * columnsCount)) + 1; //(int) casted last page number
 						countedFirstIndex = (lastPage - 1) * (PAGE_ROWS * columnsCount); //counted fist item on the last page
 					} //otherwise it is properly set to the first item on the page
 					args.SetTag(pagingIndexTK, countedFirstIndex);

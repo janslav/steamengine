@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static int GetLightAt(IPoint4D point) {
 			point = point.TopPoint;
-			FlaggedRegion asFlagged = point.GetMap().GetRegionFor(point) as FlaggedRegion;
+			var asFlagged = point.GetMap().GetRegionFor(point) as FlaggedRegion;
 			if (asFlagged != null) {
 				return GetLightIn(asFlagged);
 			}

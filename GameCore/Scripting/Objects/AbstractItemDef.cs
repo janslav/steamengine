@@ -62,7 +62,7 @@ namespace SteamEngine.Scripting.Objects {
 			set {
 				SeShield.AssertInTransaction();
 
-				AbstractItemDef di = (AbstractItemDef) this.dupeItem.CurrentValue;
+				var di = (AbstractItemDef) this.dupeItem.CurrentValue;
 				di?.RemoveFromDupeList(this);
 				this.dupeItem.CurrentValue = value;
 				value?.AddToDupeList(this);
@@ -122,7 +122,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public TriggerGroup Type {
 			get {
-				TriggerGroup tg = (TriggerGroup) this.type.CurrentValue;
+				var tg = (TriggerGroup) this.type.CurrentValue;
 				if (tg == null) {
 					return T_Normal;
 				}
@@ -163,7 +163,7 @@ namespace SteamEngine.Scripting.Objects {
 		public override string Name {
 			get {
 				if (this.name.IsEmptyAndUnchanged) {
-					ItemDispidInfo idi = this.DispidInfo;
+					var idi = this.DispidInfo;
 					if (idi != null) {
 						return idi.SingularName;
 					}
@@ -188,7 +188,7 @@ namespace SteamEngine.Scripting.Objects {
 					return (string) this.pluralName.CurrentValue;
 				}
 				if (this.name.IsEmptyAndUnchanged) {
-					ItemDispidInfo idi = this.DispidInfo;
+					var idi = this.DispidInfo;
 					if (idi != null) {
 						return idi.PluralName;
 					}
@@ -261,7 +261,7 @@ namespace SteamEngine.Scripting.Objects {
 					//if (this.IsContainer) {
 					//    return 4;
 					//}
-					ItemDispidInfo idi = this.DispidInfo;
+					var idi = this.DispidInfo;
 					if (idi == null) {
 						return 1;
 					}
@@ -278,11 +278,11 @@ namespace SteamEngine.Scripting.Objects {
 			Logger.WriteDebug($"Highest chardef model #: {HighestCharModel} (0x{HighestCharModel.ToString("x", CultureInfo.InvariantCulture)})");
 
 			var allScripts = AllScripts;
-			int count = allScripts.Count;
+			var count = allScripts.Count;
 
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
-				int a = 0;
-				int countPerCent = count / 200;
+				var a = 0;
+				var countPerCent = count / 200;
 				foreach (var td in allScripts) {
 					if ((a % countPerCent) == 0) {
 						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");

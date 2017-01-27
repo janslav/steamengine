@@ -37,21 +37,21 @@ namespace SteamEngine.CompiledScripts {
 		public override void LoadScriptLines(PropsSection ps) {
 			base.LoadScriptLines(ps);
 
-			int n = ps.TriggerCount;
-			string[] locEntries = new string[n + 1];
+			var n = ps.TriggerCount;
+			var locEntries = new string[n + 1];
 			locEntries[0] = (string) this.message.CurrentValue;
 			this.triggers = new LScriptHolder[n];
 
-			for (int i = 0; i < n; i++) {
-				TriggerSection ts = ps.GetTrigger(i);
+			for (var i = 0; i < n; i++) {
+				var ts = ps.GetTrigger(i);
 				this.triggers[i] = new LScriptHolder(ts);
 				locEntries[i + 1] = ts.TriggerName;
 			}
 
-			int langCount = Tools.GetEnumLength<Language>();
+			var langCount = Tools.GetEnumLength<Language>();
 			this.choiceLists = new NumberedLocStringCollection[langCount];
-			string locdefname = "loc_" + ps.HeaderName;
-			for (int i = 0; i < langCount; i++) {
+			var locdefname = "loc_" + ps.HeaderName;
+			for (var i = 0; i < langCount; i++) {
 				this.choiceLists[i] = new NumberedLocStringCollection(locdefname, "LScript", (Language) i, locEntries);
 			}
 		}
@@ -62,12 +62,12 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void Unload() {
 			if (this.choiceLists != null) {
-				foreach (NumberedLocStringCollection loc in this.choiceLists) {
+				foreach (var loc in this.choiceLists) {
 					LocManager.UnregisterLoc(loc);
 				}
 				this.choiceLists = null;
 
-				foreach (LScriptHolder trg in this.triggers) {
+				foreach (var trg in this.triggers) {
 					trg.Unload();
 				}
 				this.triggers = null;
@@ -78,9 +78,9 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Response(GameState state, int index, object parameter) {
 			this.ThrowIfUnloaded();
 
-			LScriptHolder scp = this.triggers[index];
+			var scp = this.triggers[index];
 			if (scp != null) {
-				AbstractCharacter self = state.Character;
+				var self = state.Character;
 				if (self != null) {
 					scp.TryRun(self, parameter);
 				}

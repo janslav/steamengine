@@ -48,7 +48,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public virtual void On_Dispell(SpellEffectArgs spell) {
 			if (this.Dispellable) {
-				Thing t = this.Cont as Thing;
+				var t = this.Cont as Thing;
 				if (t != null) {
 					DispellDef.ShowDispellEffect(t.TopObj());
 				}

@@ -26,7 +26,7 @@ namespace SteamEngine.Regions {
 		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "to"), SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "from"), SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		public bool CanSeeLosFromTo(IPoint3D from, IPoint3D to) {
 #if TRACE
-			int distance = Point2D.GetSimpleDistance(from, to);
+			var distance = Point2D.GetSimpleDistance(from, to);
 			if (distance > Globals.MaxUpdateRange) {
 				Logger.WriteWarning("CanSeeLosFromTo for 2 points outside update range...?", new StackTrace());
 			}
@@ -46,8 +46,8 @@ namespace SteamEngine.Regions {
 			//org == dest should be handled elsewhere
 			Sanity.IfTrueThrow((diffx == 0) && (diffy == 0), "(diffx == 0) && (diffy == 0)"); 
 
-			double absdiffx = Math.Abs(diffx);
-			double absdiffy = Math.Abs(diffy);
+			var absdiffx = Math.Abs(diffx);
+			var absdiffy = Math.Abs(diffy);
 
 			double deltax, deltay, b, deltab, desta, deltaz,
 				z = org.Z;
@@ -77,7 +77,7 @@ namespace SteamEngine.Regions {
 			}
 
 			bool ascending;
-			PointsInLine path = Pool<PointsInLine>.Acquire();
+			var path = Pool<PointsInLine>.Acquire();
 			switch (deltaa) {
 				case 1:
 					ascending = true; break;
@@ -90,13 +90,13 @@ namespace SteamEngine.Regions {
 
 			int lastSinglePointX = 0,
 				lastSinglePointY = 0; //need to init to 0, or compiler bitches, which it wouldn't if it was smarter
-			bool lastPointWasSingle = false;
+			var lastPointWasSingle = false;
 
-			for (int i = 0; i < 30; i++) {
-				int b1 = (int) Math.Round(b + losPathWidth);
-				int b2 = (int) Math.Round(b - losPathWidth);
+			for (var i = 0; i < 30; i++) {
+				var b1 = (int) Math.Round(b + losPathWidth);
+				var b2 = (int) Math.Round(b - losPathWidth);
 
-				int roundedZ = (int) Math.Round(z);
+				var roundedZ = (int) Math.Round(z);
 				int p1x, p1y;
 				GetPointXY(a, b1, useX, out p1x, out p1y);
 
@@ -104,14 +104,14 @@ namespace SteamEngine.Regions {
 				//otherwise we're breaking sort in PointsInLine 
 				if (b1 == b2) { //we're only adding 1 point
 					if (lastPointWasSingle) { //last time, we also added only 1 point
-						int lastdx = p1x - lastSinglePointX;
-						int lastdy = p1y - lastSinglePointY;
+						var lastdx = p1x - lastSinglePointX;
+						var lastdy = p1y - lastSinglePointY;
 
 						//echo("lastdx:<lastdx>, lastdy:<lastdy>")
 
 						//this and last point are diagonal
 						if ((Math.Abs(lastdx) == 1) && (Math.Abs(lastdy) == 1)) {
-							int halfWayZ = (int) Math.Round(z - (deltaz / 2)); 
+							var halfWayZ = (int) Math.Round(z - (deltaz / 2)); 
 
 							//add 2 diagonal points, we don't want to see through
 							if (useX) {

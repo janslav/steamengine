@@ -53,7 +53,7 @@ namespace SteamEngine.Timers {
 			if (this.count == 0) {
 				throw new SEException("count == 0");
 			}
-			Timer result = this.heap[0];
+			var result = this.heap[0];
 			this.count--;
 			this.TrickleDown(0, this.heap[this.count]);
 			this.heap[this.count] = null;
@@ -93,13 +93,13 @@ namespace SteamEngine.Timers {
 		}
 
 		private void BubbleUp(int index, Timer timer) {
-			int parent = GetParentIndex(index);
+			var parent = GetParentIndex(index);
 			// note: (index > 0) means there is a parent
 			while ((index > 0) &&
 					(this.heap[parent].fireAt > timer.fireAt)) {
 				//original line: (heap[parent].Priority.CompareTo(he.Priority) < 0)
 				//is true when parent priority is lower than our current priority - in case of timers means it higher time
-				Timer parentTimer = this.heap[parent];
+				var parentTimer = this.heap[parent];
 				parentTimer.index = index;
 				this.heap[index] = parentTimer;
 				index = parent;
@@ -119,13 +119,13 @@ namespace SteamEngine.Timers {
 
 		private void Grow() {
 			this.capacity = (this.capacity * 2) + 1;
-			Timer[] newHeap = new Timer[this.capacity];
+			var newHeap = new Timer[this.capacity];
 			Array.Copy(this.heap, 0, newHeap, 0, this.count);
 			this.heap = newHeap;
 		}
 
 		private void TrickleDown(int index, Timer timer) {
-			int child = GetLeftChildIndex(index);
+			var child = GetLeftChildIndex(index);
 			while (child < this.count) {
 				if (((child + 1) < this.count) &&
 						(this.heap[child].fireAt > this.heap[child + 1].fireAt)) {
@@ -133,7 +133,7 @@ namespace SteamEngine.Timers {
 					//is true when left child has lower priority than right one
 					child++;
 				}
-				Timer childTimer = this.heap[child];
+				var childTimer = this.heap[child];
 				childTimer.index = index;
 				this.heap[index] = childTimer;
 				index = child;

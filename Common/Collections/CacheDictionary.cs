@@ -66,10 +66,10 @@ namespace SteamEngine {
 
 		private void PurgeLastIfNeeded() {
 			if (this.linkedList.Count > this.maxCacheItems) {
-				LinkedListNode<TKey> node = this.linkedList.Last;
+				var node = this.linkedList.Last;
 				this.linkedList.RemoveLast();
 				if (this.disposeOnRemove) {
-					IDisposable disposable = this.dict[node.Value] as IDisposable;
+					var disposable = this.dict[node.Value] as IDisposable;
 					if (disposable != null) {
 						disposable.Dispose();
 					}
@@ -94,7 +94,7 @@ namespace SteamEngine {
 				this.linkedList.Remove(valueEntry.node);
 				this.dict.Remove(key);
 				if (this.disposeOnRemove) {
-					IDisposable disposable = valueEntry.value as IDisposable;
+					var disposable = valueEntry.value as IDisposable;
 					if (disposable != null) {
 						disposable.Dispose();
 					}

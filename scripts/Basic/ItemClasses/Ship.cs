@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 				this.ResolveDMICDLoadHelper(2, rightPlankModels);
 				this.ResolveDMICDLoadHelper(3, trunkModels);
 			}
-			Ship ship = (Ship) t;
+			var ship = (Ship) t;
 			this.CreateShipComponent(this.shipComponentsDescs[0], ship, ref ship.tiller);
 			this.CreateShipComponent(this.shipComponentsDescs[1], ship, ref ship.leftPlank);
 			this.CreateShipComponent(this.shipComponentsDescs[2], ship, ref ship.rightPlank);
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void ResolveDMICDLoadHelper(int i, short[] models) {
-			DMICDLoadHelper helper = this.shipComponentsHelpers[i];
+			var helper = this.shipComponentsHelpers[i];
 			if (helper != null) {
 				helper.args = string.Concat(models[(int) this.Facing], ",", helper.args);
 				this.shipComponentsDescs[i] = helper.Resolve();
@@ -118,10 +118,10 @@ namespace SteamEngine.CompiledScripts {
 	public partial class Ship : MultiItem {
 
 		internal override void InitMultiRegion() {
-			int n = this.TypeDef.rectangleHelpers.Count;
+			var n = this.TypeDef.rectangleHelpers.Count;
 			if (n > 0) {
-				ImmutableRectangle[] newRectangles = new ImmutableRectangle[n];
-				for (int i = 0; i < n; i++) {
+				var newRectangles = new ImmutableRectangle[n];
+				for (var i = 0; i < n; i++) {
 					newRectangles[i] = this.TypeDef.rectangleHelpers[i].CreateRect(this);
 				}
 				this.region = new ShipRegion(this, newRectangles);
@@ -150,7 +150,7 @@ namespace SteamEngine.CompiledScripts {
 			if ((keywords == null) || (keywords.Length == 0)) {
 				return;
 			}
-			foreach (int keyword in keywords) {
+			foreach (var keyword in keywords) {
 				if (keyword >= 0x42 && keyword <= 0x6B) {
 					switch (keyword) {
 						//case 66://set name*
@@ -352,8 +352,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public class E_BeingOnShip : CompiledTriggerGroup {
 			private Ship GetShipOnPoint(Map map, int x, int y) {
-				Region region = map.GetRegionFor(x, y);
-				ShipRegion shipRegion = region as ShipRegion;
+				var region = map.GetRegionFor(x, y);
+				var shipRegion = region as ShipRegion;
 				if (shipRegion != null) {
 					return shipRegion.Ship;
 				}
@@ -361,7 +361,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public int On_ItemPickUp_Ground(Character self, Item pickedUp) {
-				Ship ship = this.GetShipOnPoint(self.GetMap(), pickedUp.X, pickedUp.Y);
+				var ship = this.GetShipOnPoint(self.GetMap(), pickedUp.X, pickedUp.Y);
 				if (ship != null) {
 					ship.RemoveThing(pickedUp);
 				} else {
@@ -371,7 +371,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public int On_ItemDropOn_Ground(Character self, Item dropped, ushort x, ushort y, sbyte z) {
-				Ship ship = this.GetShipOnPoint(self.GetMap(), x, y);
+				var ship = this.GetShipOnPoint(self.GetMap(), x, y);
 				if (ship != null) {
 					ship.AddThing(dropped);
 				} else {
@@ -381,7 +381,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public int On_Say(Character self, string speech, SpeechType type, int[] keywords) {
-				Ship ship = this.GetShipOnPoint(self.GetMap(), self.X, self.Y);
+				var ship = this.GetShipOnPoint(self.GetMap(), self.X, self.Y);
 				if (ship != null) {
 					ship.HandleCommand(self, keywords);
 				} else {

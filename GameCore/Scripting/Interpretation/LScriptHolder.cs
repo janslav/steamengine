@@ -123,7 +123,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				s.line = input.StartLine;
 				var stringBuilder = input.Code.ToString();
 
-				using (StringReader reader = new StringReader(stringBuilder)) {
+				using (var reader = new StringReader(stringBuilder)) {
 					s.code = LScriptMain.TryCompile(this, reader, input.StartLine);
 				}
 				s.unloaded = (this.Code == null);
@@ -137,7 +137,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				s.line = inputStartLine;
 				var stringBuilder = inputCode;
 
-				using (StringReader reader = new StringReader(stringBuilder)) {
+				using (var reader = new StringReader(stringBuilder)) {
 					s.code = LScriptMain.Compile(this, reader, inputStartLine);
 				}
 				s.unloaded = (this.Code == null);
@@ -149,14 +149,14 @@ namespace SteamEngine.Scripting.Interpretation {
 			try {
 				this.SetMetadataAndCompile(inputFilename: filename, inputStartLine: line, inputCode: script);
 
-				object retVal = this.Code.Run(
+				var retVal = this.Code.Run(
 					new ScriptVars(null, self, this.LocalVarsCount, new LScriptCompilationContext { startLine = line }));
 				return retVal;
 			} catch (ParserLogException ple) {
-				LogStr lstr = (LogStr) "";
+				var lstr = (LogStr) "";
 				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
-					ParseException pe = ple.GetError(i);
-					int curline = pe.GetLine() + line;
+					var pe = ple.GetError(i);
+					var curline = pe.GetLine() + line;
 					if (i > 0) {
 						lstr = lstr + Environment.NewLine;
 					}
@@ -176,8 +176,8 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (state.unloaded) {
 				throw new UnloadedException("Function/trigger " + LogStr.Ident(this.Name) + " is unloaded, can not be run.");
 			}
-			ScriptVars sv = new ScriptVars(sa, self, this.LocalVarsCount, new LScriptCompilationContext { startLine = state.line });
-			object retVal = state.code.Run(sv);
+			var sv = new ScriptVars(sa, self, this.LocalVarsCount, new LScriptCompilationContext { startLine = state.line });
+			var retVal = state.code.Run(sv);
 			if (sv.returned) {
 				return retVal;
 			}

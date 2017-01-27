@@ -70,7 +70,7 @@ namespace SteamEngine.Scripting {
 
 		internal ScriptFile AddFile(FileInfo file) {
 			SeShield.AssertNotInTransaction();
-			ScriptFile sf = new ScriptFile(file);
+			var sf = new ScriptFile(file);
 			if (this.scriptFiles == null) {
 				this.scriptFiles = new Dictionary<string, ScriptFile>();
 			}
@@ -119,9 +119,9 @@ namespace SteamEngine.Scripting {
 
 		internal string[] GetAllFileNames() {
 			var sfs = this.GetAllFiles();
-			string[] fileNames = new string[sfs.Count];
-			int i = 0;
-			foreach (ScriptFile sf in sfs) {
+			var fileNames = new string[sfs.Count];
+			var i = 0;
+			foreach (var sf in sfs) {
 				fileNames[i] = sf.FullName;
 				i++;
 			}
@@ -129,15 +129,15 @@ namespace SteamEngine.Scripting {
 		}
 
 		private void FindNewFiles(DirectoryInfo dir, ICollection<ScriptFile> list) {
-			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
-				DirectoryInfo di = entry as DirectoryInfo;
+			foreach (var entry in dir.GetFileSystemInfos()) {
+				var di = entry as DirectoryInfo;
 				if (di != null) {
 					if (!this.IsAvoidedDirectory(di)) {
 						this.FindNewFiles(di, list);
 					}
 				} else {
 					if (this.IsRightExtension(entry.Extension)) {
-						FileInfo file = (FileInfo) entry;
+						var file = (FileInfo) entry;
 						if (!this.HasFile(file)) {
 							list.Add(this.AddFile(file));
 						}
@@ -147,8 +147,8 @@ namespace SteamEngine.Scripting {
 		}
 
 		private void FindChangedFiles(ICollection<ScriptFile> list) {
-			foreach (ScriptFile fs in this.scriptFiles.Values) {
-				long prevLength = fs.Length;
+			foreach (var fs in this.scriptFiles.Values) {
+				var prevLength = fs.Length;
 				if (fs.CheckChanged()) {
 					list.Add(fs);
 					this.LengthSum -= prevLength;
@@ -165,9 +165,9 @@ namespace SteamEngine.Scripting {
 		}
 
 		private void InitializeList(DirectoryInfo dir) {
-			foreach (FileSystemInfo entry in dir.GetFileSystemInfos()) {
+			foreach (var entry in dir.GetFileSystemInfos()) {
 				if ((entry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
-					DirectoryInfo di = (DirectoryInfo) entry;
+					var di = (DirectoryInfo) entry;
 					if (!this.IsAvoidedDirectory(di)) {
 						this.InitializeList(di);
 					}
@@ -180,7 +180,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		private bool IsAvoidedDirectory(DirectoryInfo di) {
-			foreach (string avoid in this.avoided) {
+			foreach (var avoid in this.avoided) {
 				if (string.Compare(di.Name, avoid, true, CultureInfo.InvariantCulture) == 0) { //ignore case
 					return true; //skip this folder
 				}
@@ -189,7 +189,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		private bool IsRightExtension(string tryThis) {
-			foreach (string extension in this.extensions) {
+			foreach (var extension in this.extensions) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(tryThis, extension)) {
 					return true;
 				}
@@ -228,7 +228,7 @@ namespace SteamEngine.Scripting {
 
 		internal void Unload() {
 			if (this.scripts != null) {
-				foreach (IUnloadable script in this.scripts) {
+				foreach (var script in this.scripts) {
 					script.Unload();
 				}
 				this.scripts.Clear();

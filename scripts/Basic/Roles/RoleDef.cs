@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		/// in every RoleDef's descendant!
 		/// </summary>
 		public Role Create(RoleKey key, string name) {
-			Role newRole = this.Create(key);
+			var newRole = this.Create(key);
 			newRole.Name = name;
 			return newRole;
 		}
@@ -52,13 +52,13 @@ namespace SteamEngine.CompiledScripts {
 		/// in every RoleDef's descendant!
 		/// </summary>
 		public Role Create(RoleKey key) {
-			Role newRole = this.CreateImpl(key);
+			var newRole = this.CreateImpl(key);
 			newRole.Trigger_Create();
 			return newRole;
 		}
 
 		internal Role CreateWhenLoading(RoleKey key) {
-			Role newRole = this.CreateImpl(key);
+			var newRole = this.CreateImpl(key);
 			return newRole;
 		}
 
@@ -119,8 +119,8 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Return enumerable containing all roles (copying the values from the main dictionary)</summary>
 		public static IEnumerable<RoleDef> AllRoles {
 			get {
-				foreach (AbstractScript script in AllScripts) {
-					RoleDef roleDef = script as RoleDef;
+				foreach (var script in AllScripts) {
+					var roleDef = script as RoleDef;
 					if (roleDef != null) {
 						yield return roleDef;
 					}

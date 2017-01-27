@@ -143,7 +143,7 @@ namespace SteamEngine.CompiledScripts {
 		[SteamFunction]
 		public static void LookAround(Character self) {
 			self.SysMessage("Things:");
-			foreach (Thing t in self.GetMap().GetThingsInRange(self.X, self.Y, self.UpdateRange)) {
+			foreach (var t in self.GetMap().GetThingsInRange(self.X, self.Y, self.UpdateRange)) {
 				self.SysMessage(t.ToString());
 			}
 			//that includes players too.

@@ -35,38 +35,38 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Save(object objToSave, SaveStream writer) {
-			Array arr = (Array) objToSave;
-			Type arrType = arr.GetType();
+			var arr = (Array) objToSave;
+			var arrType = arr.GetType();
 			if (arrType.GetArrayRank() > 1) {
 				throw new SEException("Multi-dimensional array saving not implemented.");
 			}
-			Type elemType = arrType.GetElementType();
+			var elemType = arrType.GetElementType();
 			writer.WriteLine("type=" + GenericListSaver.GetTypeName(elemType));
 
-			int length = arr.Length;
+			var length = arr.Length;
 			writer.WriteValue("length", length);
-			for (int i = 0; i < length; i++) {
+			for (var i = 0; i < length; i++) {
 				writer.WriteValue(i.ToString(), arr.GetValue(i));
 			}
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.HeaderLine;
+			var currentLineNumber = input.HeaderLine;
 			try {
-				PropsLine pl = input.PopPropsLine("type");
+				var pl = input.PopPropsLine("type");
 				currentLineNumber = pl.Line;
-				Type elemType = GenericListSaver.ParseType(pl);
+				var elemType = GenericListSaver.ParseType(pl);
 
-				PropsLine lengthLine = input.PopPropsLine("length");
+				var lengthLine = input.PopPropsLine("length");
 				currentLineNumber = lengthLine.Line;
-				int length = ConvertTools.ParseInt32(lengthLine.Value);
+				var length = ConvertTools.ParseInt32(lengthLine.Value);
 
-				Array arr = Array.CreateInstance(elemType, length);
+				var arr = Array.CreateInstance(elemType, length);
 
-				for (int i = 0; i < length; i++) {
-					PropsLine valueLine = input.PopPropsLine(i.ToString());
+				for (var i = 0; i < length; i++) {
+					var valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
-					ArrayLoadHelper alip = new ArrayLoadHelper(arr, i, elemType);
+					var alip = new ArrayLoadHelper(arr, i, elemType);
 					ObjectSaver.Load(valueLine.Value, this.DelayedLoad_Index, input.Filename, valueLine.Line, alip);
 				}
 				return arr;
@@ -83,12 +83,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
-			ArrayLoadHelper alip = (ArrayLoadHelper) param;
+			var alip = (ArrayLoadHelper) param;
 			alip.arr.SetValue(ConvertTools.ConvertTo(alip.elemType, loadedObj), alip.index);
 		}
 
 		public void DelayedCopy_Index(object loadedObj, object param) {
-			ArrayLoadHelper alip = (ArrayLoadHelper) param;
+			var alip = (ArrayLoadHelper) param;
 			alip.arr.SetValue(ConvertTools.ConvertTo(alip.elemType, loadedObj), alip.index);
 		}
 
@@ -105,12 +105,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object DeepCopy(object copyFrom) {
-			Array copyFromArray = (Array) copyFrom;
-			int n = copyFromArray.Length;
-			Type elemType = copyFromArray.GetType().GetElementType();
-			Array newArray = Array.CreateInstance(elemType, n);
-			for (int i = 0; i < n; i++) {
-				ArrayLoadHelper aip = new ArrayLoadHelper(newArray, i, elemType);
+			var copyFromArray = (Array) copyFrom;
+			var n = copyFromArray.Length;
+			var elemType = copyFromArray.GetType().GetElementType();
+			var newArray = Array.CreateInstance(elemType, n);
+			for (var i = 0; i < n; i++) {
+				var aip = new ArrayLoadHelper(newArray, i, elemType);
 				DeepCopyFactory.GetCopyDelayed(copyFromArray.GetValue(i), this.DelayedCopy_Index, aip);
 			}
 			return newArray;

@@ -26,21 +26,21 @@ namespace SteamEngine.CompiledScripts {
 	public partial class MagicReflectionPlugin {
 
 		public void On_Assign() {
-			Player self = this.Cont as Player;
+			var self = this.Cont as Player;
 			if (self != null) {
 				self.WriteLine(Loc<MagicReflectionLoc>.Get(self.Language).NextEvilSpellReflects);
 			}
 		}
 
 		public virtual TriggerResult On_SpellEffect(SpellEffectArgs effectArgs) {
-			SpellDef spell = effectArgs.SpellDef;
+			var spell = effectArgs.SpellDef;
 			if ((spell.Flags & SpellFlag.IsHarmful) == SpellFlag.IsHarmful) {
 				this.Delete(); //delete the reflection plugin, it's work is done
 
-				Character origTarget = (Character) effectArgs.CurrentTarget;
-				Character origCaster = effectArgs.Caster;
+				var origTarget = (Character) effectArgs.CurrentTarget;
+				var origCaster = effectArgs.Caster;
 
-				MagicReflectionPlugin castersReflection = MagicReflectionPluginDef.GetMagicReflectionPlugin(origCaster);
+				var castersReflection = MagicReflectionPluginDef.GetMagicReflectionPlugin(origCaster);
 
 				if (castersReflection == null) { //caster doesn't have reflection active himself
 					//this.EffectPower = given by Effect setting of s_magic_reflection and reflection caster's magery
@@ -95,12 +95,12 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static MagicReflectionPlugin GetMagicReflectionPlugin(Character self) {
-			PluginKey spellKey = MagicReflectionSpellDef.EffectPluginKey_Spell;
-			MagicReflectionPlugin plugin = self.GetPlugin(spellKey) as MagicReflectionPlugin;
+			var spellKey = MagicReflectionSpellDef.EffectPluginKey_Spell;
+			var plugin = self.GetPlugin(spellKey) as MagicReflectionPlugin;
 			if (plugin != null) {
 				return plugin;
 			}
-			PluginKey potionKey = MagicReflectionSpellDef.EffectPluginKey_Potion;
+			var potionKey = MagicReflectionSpellDef.EffectPluginKey_Potion;
 			if (potionKey != spellKey) {
 				return self.GetPlugin(potionKey) as MagicReflectionPlugin;
 			}

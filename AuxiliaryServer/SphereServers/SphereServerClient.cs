@@ -90,7 +90,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 				case LoginResult.Success:
 					Console.WriteLine(this + " logged in.");
 					this.loggedIn = true;
-					foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+					foreach (var console in ConsoleServer.ConsoleServer.AllConsoles) {
 						console.OpenCmdWindow(this.Setup.Name, this.ServerUid);
 						console.TryLoginToGameServer(this);
 					}
@@ -113,7 +113,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		#region authentising console
 		public override void SendConsoleLogin(ConsoleId consoleId, string accName, string accPassword) {
-			ConsoleCredentials state = new ConsoleCredentials(consoleId, accName, accPassword);
+			var state = new ConsoleCredentials(consoleId, accName, accPassword);
 
 			if (accPassword.Length == 0) {
 				this.DenyConsole(state, " - password must be > 0 characters");
@@ -155,8 +155,8 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private void OnAccountQueryResponse(IList<string> lines, ConsoleCredentials state) {
 			try {
-				foreach (string line in lines) {
-					Match m = passwordQueryRE.Match(line);
+				foreach (var line in lines) {
+					var m = passwordQueryRE.Match(line);
 					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
 						if (!m.Groups["password"].Value.Equals(state.accPassword)) {
 							this.DenyConsole(state, "and/or it's password.");
@@ -180,10 +180,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private void OnPrivQueryResponse(IList<string> lines, ConsoleCredentials state) {
 			try {
-				foreach (string line in lines) {
-					Match m = privQueryRE.Match(line);
+				foreach (var line in lines) {
+					var m = privQueryRE.Match(line);
 					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
-						int priv = ConvertTools.ParseInt32(m.Groups["priv"].Value.Trim());
+						var priv = ConvertTools.ParseInt32(m.Groups["priv"].Value.Trim());
 						if ((priv & 0x0200) == 0x0200) {
 							this.DenyConsole(state, "- the acc is blocked.");
 						} else {
@@ -206,14 +206,14 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 
 		private void OnPlevelQueryResponse(IList<string> lines, ConsoleCredentials state) {
 			try {
-				foreach (string line in lines) {
-					Match m = plevelQueryRE.Match(line);
+				foreach (var line in lines) {
+					var m = plevelQueryRE.Match(line);
 					if (m.Groups["username"].Value.Equals(state.accName, StringComparison.OrdinalIgnoreCase)) {
-						int plevel = ConvertTools.ParseInt32(m.Groups["plevel"].Value.Trim());
+						var plevel = ConvertTools.ParseInt32(m.Groups["plevel"].Value.Trim());
 						if (plevel < 4) {
 							this.DenyConsole(state, "- low plevel.");
 						} else {
-							ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
+							var console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
 							if (console != null) {
 								console.SetLoggedInTo(this);
 							}
@@ -230,11 +230,11 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void DenyConsole(ConsoleCredentials state, string reason) {
-			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
+			var console = ConsoleServer.ConsoleServer.GetClientByUid(state.consoleUid);
 			if (console != null) {
 				console.CloseCmdWindow(this.ServerUid);
 
-				ICollection<GameServer> serversLoggedIn = GameServersManager.AllServersWhereLoggedIn(console);
+				var serversLoggedIn = GameServersManager.AllServersWhereLoggedIn(console);
 				if (serversLoggedIn.Count == 0) {
 					Settings.ForgetUser(console.AccountName);
 					console.SendLoginFailedAndClose("GameServer '" + this.Setup.Name + "' rejected username '" + state.accName + "' " + reason);
@@ -257,7 +257,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			line = line.Trim();
 			if (!string.IsNullOrEmpty(line)) {
 				if (this.loggedIn) {
-					foreach (ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
+					foreach (var console in GameServersManager.AllConsolesIn(this)) {
 						if (!console.filteredGameServers.Contains(this.ServerUid)) {
 							console.WriteLine(this.ServerUid, line);
 						}
@@ -270,7 +270,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 			if (cmd.StartsWith("[")) {
 				SphereCommands.HandleCommand(console, this, cmd.Substring(1));
 			} else {
-				ConsoleId consoleId = ConsoleId.FakeConsole;
+				var consoleId = ConsoleId.FakeConsole;
 				if (console != null) {
 					consoleId = console.ConsoleId;
 				}
@@ -280,10 +280,10 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		}
 
 		private void OnCommandReply(IList<string> lines, ConsoleId consoleId) {
-			ConsoleClient console = ConsoleServer.ConsoleServer.GetClientByUid(consoleId);
+			var console = ConsoleServer.ConsoleServer.GetClientByUid(consoleId);
 			if (console != null) {
-				foreach (string line in lines) {
-					string l = line.Trim();
+				foreach (var line in lines) {
+					var l = line.Trim();
 					if (!string.IsNullOrEmpty(l)) {
 						console.WriteLine(this.ServerUid, l);
 					}
@@ -294,7 +294,7 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private void PrivateSendCommand(object o) {
 			Console.WriteLine("PrivateSendCommand in");
 			try {
-				object[] arr = (object[]) o;
+				var arr = (object[]) o;
 				this.SendCommand((ConsoleClient) arr[0], (string) arr[1]);
 			} catch (Exception e) {
 				Common.Logger.WriteError("Unexpected error in timer callback method", e);
@@ -309,16 +309,16 @@ namespace SteamEngine.AuxiliaryServer.SphereServers {
 		private void PrivateExitLater(object o) {
 			Console.WriteLine("PrivateExitLater in");
 			try {
-				object[] arr = (object[]) o;
-				ConsoleClient console = (ConsoleClient) arr[0];
-				TimeSpan timeSpan = (TimeSpan) arr[1];
+				var arr = (object[]) o;
+				var console = (ConsoleClient) arr[0];
+				var timeSpan = (TimeSpan) arr[1];
 
 				if (timeSpan == TimeSpan.Zero) {
 					this.SendCommand(console, "B Shutdown after save");
 					this.ExitSave(console);
 				} else if (timeSpan > TimeSpan.Zero) {
 					this.SendCommand(console, "B Shutdown in " + timeSpan);
-					TimeSpan newSpan = timeSpan.Subtract(TimeSpan.FromMinutes(1));
+					var newSpan = timeSpan.Subtract(TimeSpan.FromMinutes(1));
 					if (newSpan < TimeSpan.Zero) {
 						newSpan = TimeSpan.Zero;
 					}

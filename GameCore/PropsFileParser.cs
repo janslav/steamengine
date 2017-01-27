@@ -54,20 +54,20 @@ namespace SteamEngine {
 		//}
 
 		public static IEnumerable<PropsSection> Load(string filename, StreamReader stream, CanStartAsScript isScript, bool displayPercentage) {
-			int line = 0;
+			var line = 0;
 			PropsSection curSection = null;
 			TriggerSection curTrigger = null; //these are also added to curSection...
 
-			long streamLen = stream.BaseStream.Length;
+			var streamLen = stream.BaseStream.Length;
 			long lastSentPercentage = -1;
-			string fileNameToDisplay = Path.GetFileName(filename);
+			var fileNameToDisplay = Path.GetFileName(filename);
 
 			while (true) {
-				string curLine = stream.ReadLine();
+				var curLine = stream.ReadLine();
 				line++;
 				if (curLine != null) {
 					if (displayPercentage) {
-						long currentPercentage = (stream.BaseStream.Position * 100) / streamLen;
+						var currentPercentage = (stream.BaseStream.Position * 100) / streamLen;
 						if (currentPercentage > lastSentPercentage) {
 							Logger.SetTitle(string.Concat("Loading ", fileNameToDisplay, ": ", currentPercentage.ToString(CultureInfo.InvariantCulture), "%"));
 							lastSentPercentage = currentPercentage;
@@ -83,12 +83,12 @@ namespace SteamEngine {
 						}//else the comment gets lost... :\
 						continue;
 					}
-					Match m = headerRE.Match(curLine);
+					var m = headerRE.Match(curLine);
 					if (m.Success) {
 						if (curSection != null) {//send the last section
 							yield return curSection;
 						}
-						GroupCollection gc = m.Groups;
+						var gc = m.Groups;
 						curSection = new PropsSection(filename, gc["type"].Value, gc["name"].Value, line, gc["comment"].Value);
 						if (isScript(curSection.HeaderType)) {
 							//if it is something like [function xxx]
@@ -103,7 +103,7 @@ namespace SteamEngine {
 					//on=@blah
 					if (m.Success) {
 						//create a new triggersection
-						GroupCollection gc = m.Groups;
+						var gc = m.Groups;
 						curTrigger = new TriggerSection(filename, line, gc["triggerkey"].Value, gc["triggername"].Value, gc["comment"].Value);
 						if (curSection == null) {
 							//a trigger section without real section?
@@ -126,7 +126,7 @@ namespace SteamEngine {
 					m = LocStringCollection.valueRE.Match(curLine);
 					if (m.Success) {
 						if (curSection != null) {
-							GroupCollection gc = m.Groups;
+							var gc = m.Groups;
 							curSection.AddPropsLine(gc["name"].Value, gc["value"].Value, line, gc["comment"].Value);
 						} else {
 							//this shouldnt be, a property without header...?
@@ -196,7 +196,7 @@ namespace SteamEngine {
 		}
 
 		public TriggerSection GetTrigger(string name) {
-			foreach (TriggerSection s in this.triggerSections) {
+			foreach (var s in this.triggerSections) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(name, s.TriggerName)) {
 					return s;
 				}
@@ -232,10 +232,10 @@ namespace SteamEngine {
 		}
 
 		internal void AddPropsLine(string name, string value, int line, string comment) {
-			PropsLine p = new PropsLine(name, value, line, comment);
-			string origKey = name;
-			string key = origKey;
-			for (int a = 0; this.props.ContainsKey(key); a++) {
+			var p = new PropsLine(name, value, line, comment);
+			var origKey = name;
+			var key = origKey;
+			for (var a = 0; this.props.ContainsKey(key); a++) {
 				key = origKey + a.ToString(CultureInfo.InvariantCulture);
 				//duplicite properties get a counted name
 				//like if there is more "events=..." lines, they are in the hashtable with keys

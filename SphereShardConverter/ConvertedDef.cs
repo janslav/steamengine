@@ -71,7 +71,7 @@ namespace SteamEngine.Converter {
 
 		public virtual void Dump(TextWriter writer) {
 			writer.WriteLine();
-			string header = string.Concat("[", this.headerType, " ", this.headerName, "]");
+			var header = string.Concat("[", this.headerType, " ", this.headerName, "]");
 
 			if (this.origData.HeaderComment.Length > 0) {
 				header = header + " //" + this.origData.HeaderComment;
@@ -81,21 +81,21 @@ namespace SteamEngine.Converter {
 			}
 			writer.WriteLine(header);
 
-			foreach (string line in this.writtenData) {
+			foreach (var line in this.writtenData) {
 				writer.WriteLine(this.dontDump ? ("//" + line) : line);
 			}
 		}
 
 		private void BasicStageImpl(List<LineImplTask[]> implementations) {
-			foreach (LineImplTask[] arr in implementations) {
-				foreach (LineImplTask task in arr) {
-					string origKey = task.fieldName;
-					LineImpl deleg = task.deleg;
+			foreach (var arr in implementations) {
+				foreach (var task in arr) {
+					var origKey = task.fieldName;
+					var deleg = task.deleg;
 
-					string key = origKey;
-					PropsLine line = this.origData.TryPopPropsLine(key);
+					var key = origKey;
+					var line = this.origData.TryPopPropsLine(key);
 
-					for (int a = 0; (line != null); a++) {
+					for (var a = 0; (line != null); a++) {
 						deleg(this, line);
 
 						key = origKey + a;
@@ -110,8 +110,8 @@ namespace SteamEngine.Converter {
 		}
 
 		public virtual void FirstStage() {
-			bool needspace = false;
-			PropsLine line = this.origData.TryPopPropsLine("category");
+			var needspace = false;
+			var line = this.origData.TryPopPropsLine("category");
 			if (line != null) {
 				this.Set(line); needspace = true;
 			}
@@ -138,7 +138,7 @@ namespace SteamEngine.Converter {
 		public virtual void ThirdStage() {
 			this.BasicStageImpl(this.thirdStageImplementations);
 
-			foreach (PropsLine line in this.origData.PropsLines) {
+			foreach (var line in this.origData.PropsLines) {
 				if (line.Name.ToLowerInvariant().StartsWith("tag.")) {
 					WriteAsIs(this, line);
 				} else {
@@ -173,7 +173,7 @@ namespace SteamEngine.Converter {
 
 		protected static void WriteInQuotes(ConvertedDef def, PropsLine line) {
 			string value;
-			Match ma = ConvertTools.stringRE.Match(line.Value);
+			var ma = ConvertTools.stringRE.Match(line.Value);
 			if (ma.Success) {
 				value = string.Intern(ma.Groups["value"].Value);
 			} else {
@@ -202,20 +202,20 @@ namespace SteamEngine.Converter {
 		}
 
 		protected static void MayBeInt_IgnorePoint(ConvertedDef def, PropsLine line) {
-			string retVal = TryNormalizeNumber(line.Value.Replace(".", ""));
+			var retVal = TryNormalizeNumber(line.Value.Replace(".", ""));
 			def.Set(line.Name, retVal, line.Comment);
 			//return retVal;
 		}
 
 		protected static void MayBeHex_IgnorePoint(ConvertedDef def, PropsLine line) {
-			string retVal = TryNormalizeNumberAsHex(line.Value.Replace(".", ""));
+			var retVal = TryNormalizeNumberAsHex(line.Value.Replace(".", ""));
 			def.Set(line.Name, retVal, line.Comment);
 			//return retVal;
 		}
 
 		public static string TryNormalizeNumber(string input) {
 			try {
-				object number = ConvertTools.ParseAnyNumber(input);
+				var number = ConvertTools.ParseAnyNumber(input);
 				input = number.ToString();
 			} catch (Exception) {
 			}
@@ -224,8 +224,8 @@ namespace SteamEngine.Converter {
 
 		public static string TryNormalizeNumberAsHex(string input) {
 			try {
-				object number = ConvertTools.ParseAnyNumber(input);
-				long i = Convert.ToInt64(number);
+				var number = ConvertTools.ParseAnyNumber(input);
+				var i = Convert.ToInt64(number);
 				input = "0x" + i.ToString("x");
 			} catch (Exception) {
 			}

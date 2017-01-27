@@ -39,9 +39,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void Assign(Player self, object parameter) {
-			GameState state = self.GameState;
+			var state = self.GameState;
 			if (state != null) {
-				Language lang = state.Language;
+				var lang = state.Language;
 				state.Menu(this.GetAllTexts(lang),
 					this.responseCallback, this.cancelCallback, parameter);
 			}

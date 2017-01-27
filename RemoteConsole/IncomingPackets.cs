@@ -46,7 +46,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		protected override void Handle(TcpConnection<ConsoleClient> conn, ConsoleClient state) {
-			PacketQueuedForInvoking helper = new PacketQueuedForInvoking(this, conn);
+			var helper = new PacketQueuedForInvoking(this, conn);
 			lock (primaryQueue) {
 				primaryQueue.Enqueue(helper);
 			}
@@ -65,13 +65,13 @@ namespace SteamEngine.RemoteConsole {
 		//called by Windows.Forms.Timer on the MainForm, so we need no Invoke (which would get called for every single packet otherwise), but we still are in the UI thread
 		internal static void HandleQueuedPackets() {
 			lock (primaryQueue) { //we switch the primary and secondary
-				Queue<PacketQueuedForInvoking> tempQueue = primaryQueue;
+				var tempQueue = primaryQueue;
 				primaryQueue = secondaryQueue;
 				secondaryQueue = tempQueue;
 			}
 
 			while (secondaryQueue.Count > 0) {
-				PacketQueuedForInvoking helper = secondaryQueue.Dequeue();
+				var helper = secondaryQueue.Dequeue();
 				if (helper.conn.IsConnected) {
 					helper.packet.HandleInUIThread(helper.conn, helper.conn.State);
 					helper.packet.RealDispose();
@@ -162,15 +162,15 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		protected override ReadPacketResult Read() {
-			int count = this.DecodeInt();
+			var count = this.DecodeInt();
 			this.entries = new GameServerEntry[count];
 
-			for (int i = 0; i < count; i++) {
-				int number = this.DecodeInt();
-				string iniPath = this.DecodeUTF8String();
-				string name = this.DecodeUTF8String();
-				ushort port = this.DecodeUShort();
-				bool running = this.DecodeBool();
+			for (var i = 0; i < count; i++) {
+				var number = this.DecodeInt();
+				var iniPath = this.DecodeUTF8String();
+				var name = this.DecodeUTF8String();
+				var port = this.DecodeUShort();
+				var running = this.DecodeBool();
 
 				this.entries[i] = new GameServerEntry(number, iniPath, name, port, running);
 			}

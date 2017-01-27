@@ -28,9 +28,9 @@ namespace SteamEngine.Regions {
 		public DynamicRegion(ImmutableRectangle[] newRects)
 		{
 
-			int n = newRects.Length;
+			var n = newRects.Length;
 			this.rectangles = new RegionRectangle[n];
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				this.rectangles[i] = new RegionRectangle(newRects[i], this);
 			}
 		}
@@ -52,7 +52,7 @@ namespace SteamEngine.Regions {
 			}
 			this.InternalSetP(p);
 
-			Map map = Map.GetMap(p.M);
+			var map = Map.GetMap(p.M);
 			this.Parent = map.GetRegionFor(p);
 
 			return map.AddDynamicRegion(this, true); //add it to the map, but try if there is no other obstacle!
@@ -84,14 +84,14 @@ namespace SteamEngine.Regions {
 		/// <returns></returns>
 		public bool Step(int xDiff, int yDiff) {
 			//a new list of changed (moved) rectangles
-			List<RegionRectangle> movedRects = new List<RegionRectangle>();
-			foreach (RegionRectangle oneRect in this.rectangles) {
+			var movedRects = new List<RegionRectangle>();
+			foreach (var oneRect in this.rectangles) {
 				movedRects.Add(oneRect.CloneMoved(xDiff, yDiff));
 			}
-			Point4D oldP = this.P;
-			Map oldMap = Map.GetMap(oldP.M); //the dynamic region's old Map
+			var oldP = this.P;
+			var oldMap = Map.GetMap(oldP.M); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
-			bool result = this.SetRectangles(movedRects, oldMap);
+			var result = this.SetRectangles(movedRects, oldMap);
 			//add it without checks (these were performed when setting the rectangles)
 			//we will add either the new array of rectangles or the old one if there were problems
 			oldMap.AddDynamicRegion(this, false);
@@ -106,23 +106,23 @@ namespace SteamEngine.Regions {
 		/// sure that no conflicts with other dynamic regions occur when moving!
 		/// </summary>
 		private bool Step(Point4D newP) {
-			Point4D oldPos = this.P; //store the old position for case the movement fails!
+			var oldPos = this.P; //store the old position for case the movement fails!
 
-			bool xyChanged = (oldPos.X != newP.X || oldPos.Y != newP.Y);
-			bool mapChanged = oldPos.M != newP.M;
+			var xyChanged = (oldPos.X != newP.X || oldPos.Y != newP.Y);
+			var mapChanged = oldPos.M != newP.M;
 
-			Map oldMap = Map.GetMap(oldPos.M); //the dynamic region's old Map
+			var oldMap = Map.GetMap(oldPos.M); //the dynamic region's old Map
 			oldMap.RemoveDynamicRegion(this);//remove it anyways
-			bool movingOK = true;//indicator if the movement success
+			var movingOK = true;//indicator if the movement success
 			if (xyChanged) {
-				int diffX = newP.X - oldPos.X;
-				int diffY = newP.Y - oldPos.Y;
-				List<RegionRectangle> movedRects = new List<RegionRectangle>();
-				foreach (RegionRectangle oneRect in this.rectangles) {
+				var diffX = newP.X - oldPos.X;
+				var diffY = newP.Y - oldPos.Y;
+				var movedRects = new List<RegionRectangle>();
+				foreach (var oneRect in this.rectangles) {
 					movedRects.Add(oneRect.CloneMoved(diffX, diffY));
 				}
 				if (mapChanged) {
-					Map newMap = Map.GetMap(newP.M);
+					var newMap = Map.GetMap(newP.M);
 					this.Parent = newMap.GetRegionFor(newP);
 					movingOK = this.SetRectangles(movedRects, newMap);
 					newMap.AddDynamicRegion(this, false);//place the region to the map (no checks, they were already performed in SetRectangles)
@@ -132,7 +132,7 @@ namespace SteamEngine.Regions {
 					oldMap.AddDynamicRegion(this, false);//and place (no checks as well)
 				}
 			} else if (mapChanged) {
-				Map newMap = Map.GetMap(newP.M);
+				var newMap = Map.GetMap(newP.M);
 				this.Parent = newMap.GetRegionFor(newP);
 				movingOK = this.SetRectangles(this.rectangles, newMap); //here set the old rectangles (but to the new map)
 				newMap.AddDynamicRegion(this, false);//place, still no checks
@@ -154,14 +154,14 @@ namespace SteamEngine.Regions {
 		/// </summary>
 		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public bool SetRectangles<T>(IList<T> list, Map map) where T : ImmutableRectangle {
-			RegionRectangle[] newArr = new RegionRectangle[list.Count];
-			for (int i = 0; i < list.Count; i++) {
+			var newArr = new RegionRectangle[list.Count];
+			for (var i = 0; i < list.Count; i++) {
 				//take the start/end point from the IRectangle and create a new RegionRectangle
 				newArr[i] = new RegionRectangle(list[i].MinX, list[i].MinY, list[i].MaxX, list[i].MaxY, this);
 			}
 			//now the checking phase!
 			this.inactivated = true;
-			foreach (RegionRectangle rect in newArr) {
+			foreach (var rect in newArr) {
 				if (!map.CheckDynRectIntersection(rect)) {
 					//check the intercesction of the dynamic region, in case of any trouble immediatelly finish
 					return false;

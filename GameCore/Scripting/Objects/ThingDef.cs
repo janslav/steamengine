@@ -179,7 +179,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public Thing Create(int x, int y, int z, byte m) {
 			this.ThrowIfUnloaded();
-			Thing retVal = this.CreateImpl();
+			var retVal = this.CreateImpl();
 			PutOnGround(retVal, x, y, z, m);
 			this.Trigger_Create(retVal);
 			return retVal;
@@ -194,13 +194,13 @@ namespace SteamEngine.Scripting.Objects {
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public Thing Create(Thing cont) {
 			this.ThrowIfUnloaded();
-			Thing retVal = this.CreateImpl();
-			AbstractItem item = retVal as AbstractItem;
+			var retVal = this.CreateImpl();
+			var item = retVal as AbstractItem;
 			if (item == null) {//we are char
-				MutablePoint4D p = cont.TopObj().point4d;
+				var p = cont.TopObj().point4d;
 				PutOnGround(retVal, p.x, p.y, p.z, p.m);
 			} else {
-				AbstractCharacter contAsChar = cont as AbstractCharacter;
+				var contAsChar = cont as AbstractCharacter;
 				if (contAsChar != null) {
 					if (retVal.IsEquippable) {
 						PutInCont(item, contAsChar);
@@ -210,7 +210,7 @@ namespace SteamEngine.Scripting.Objects {
 				} else if (cont.IsContainer) {
 					PutInCont(item, cont);
 				} else {
-					MutablePoint4D p = cont.TopObj().point4d;
+					var p = cont.TopObj().point4d;
 					PutOnGround(item, p.x, p.y, p.z, p.m);
 				}
 			}
@@ -221,7 +221,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		private static void PutOnGround(Thing t, int x, int y, int z, byte m) {
 			//MarkAsLimbo(t);
-			AbstractItem item = t as AbstractItem;
+			var item = t as AbstractItem;
 			if (item != null) {
 				item.Trigger_EnterRegion(x, y, z, m);
 			} else {
@@ -231,10 +231,10 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private static void PutInCont(AbstractItem item, Thing cont) {
-			AbstractItem contItem = cont as AbstractItem;
+			var contItem = cont as AbstractItem;
 			if (contItem == null) {
 				//MarkAsLimbo(item);
-				int layer = item.Layer;
+				var layer = item.Layer;
 				if (layer > 0) {
 					item.Trigger_EnterChar((AbstractCharacter) cont, layer);
 				} else {
@@ -375,8 +375,8 @@ namespace SteamEngine.Scripting.Objects {
 
 
 		private static void ParseDefnames(PropsSection section, out string defname, out string altdefname) {
-			string typeName = section.HeaderType.ToLowerInvariant();
-			Type thingDefType = GetDefTypeByName(typeName);
+			var typeName = section.HeaderType.ToLowerInvariant();
+			var thingDefType = GetDefTypeByName(typeName);
 			if (thingDefType == null) {
 				throw new SEException("Type " + LogStr.Ident(typeName) + " does not exist.");
 			}
@@ -393,7 +393,7 @@ namespace SteamEngine.Scripting.Objects {
 				}
 			}
 
-			PropsLine defnameLine = section.TryPopPropsLine("defname");
+			var defnameLine = section.TryPopPropsLine("defname");
 			if (defnameLine != null) {
 				altdefname = ConvertTools.LoadSimpleQuotedString(defnameLine.Value);
 
@@ -409,7 +409,7 @@ namespace SteamEngine.Scripting.Objects {
 		public override void LoadScriptLines(PropsSection ps) {
 			SeShield.AssertInTransaction();
 			int defnum;
-			string defname = this.Defname;
+			var defname = this.Defname;
 			if (ConvertTools.TryParseInt32(defname.Substring(2), out defnum)) {
 				if (this.IsCharDef && defname.StartsWith("c_")) {
 					if (defnum > HighestCharModel) {

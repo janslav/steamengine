@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts {
 				//We want the same triggers fired as if the client dragged it manually (yes, a lot of triggers)
 				
 				if ((this.Cont != from) || (this.Z != this.Layer)) { //we only try the equipping if not already equipped
-					DenyResult dr = from.TryPickupItem(this, 1);
+					var dr = from.TryPickupItem(this, 1);
 					if (dr.Allow) {
 						dr = from.TryEquipItemOnChar(from);
 					}

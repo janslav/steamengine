@@ -37,7 +37,7 @@ namespace SteamEngine.Networking {
 
 		protected override void ProcessQueue() {
 			while (this.queue.Count > 0) {
-				CharState ch = this.queue.Dequeue();
+				var ch = this.queue.Dequeue();
 				if (ch.thing != null) {
 					ch.ProcessChar();
 				}
@@ -117,7 +117,7 @@ namespace SteamEngine.Networking {
 		/// <summary>Call when position is about to be changed</summary>
 		public static void AboutToChangePosition(AbstractCharacter thing, MovementType movType) {
 			if (IsEnabled) {
-				int movTypeInt = (int) movType;
+				var movTypeInt = (int) movType;
 				Sanity.IfTrueThrow((movTypeInt < 1 || movTypeInt > 8), "Incorrect MovementType.");
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "AboutToChangePosition(" + thing + ", " + movType + ") called");
 				instance.PopAndEnqueueInstance(thing).AboutToChangePosition(movTypeInt);
@@ -248,7 +248,7 @@ namespace SteamEngine.Networking {
 			}
 
 			internal void AboutToChangeSkill(int skillId) {
-				for (int i = 0; i < this.changedSkillsCount; i++) {
+				for (var i = 0; i < this.changedSkillsCount; i++) {
 					if (this.changedSkills[i] == skillId) {
 						return;//we know about this change already
 					}
@@ -263,7 +263,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 			private bool GetNameChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.Name) == CharSyncFlags.Name) && (!string.Equals(this.name, this.thing.Name, StringComparison.Ordinal)));
+				var retVal = (((this.changeFlags & CharSyncFlags.Name) == CharSyncFlags.Name) && (!string.Equals(this.name, this.thing.Name, StringComparison.Ordinal)));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "NameChanged: true");
 				return retVal;
 			}
@@ -276,14 +276,14 @@ namespace SteamEngine.Networking {
 			}
 
 			private bool GetBasePropsChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.BaseProps) == CharSyncFlags.BaseProps)
+				var retVal = (((this.changeFlags & CharSyncFlags.BaseProps) == CharSyncFlags.BaseProps)
 					&& ((this.model != this.thing.Model) || (this.color != this.thing.Color)));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetBasePropsChanged (model/color): " + retVal);
 				return retVal;
 			}
 
 			private bool GetDirectionChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.Direction) == CharSyncFlags.Direction)
+				var retVal = (((this.changeFlags & CharSyncFlags.Direction) == CharSyncFlags.Direction)
 					&& (this.direction != this.thing.Direction));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetDirectionChanged: " + retVal);
 				return retVal;
@@ -298,9 +298,9 @@ namespace SteamEngine.Networking {
 			private bool GetChangedFlags(out bool invisChanges, out bool warModeChanges) {
 				invisChanges = false;
 				warModeChanges = false;
-				bool retVal = false;
+				var retVal = false;
 				if ((this.changeFlags & CharSyncFlags.Flags) == CharSyncFlags.Flags) {
-					byte newFlagsToSend = this.thing.FlagsToSend;
+					var newFlagsToSend = this.thing.FlagsToSend;
 
 					if ((this.flagsToSend & 0x40) != (newFlagsToSend & 0x40)) {
 						warModeChanges = true;
@@ -338,7 +338,7 @@ namespace SteamEngine.Networking {
 				teleported = false;
 				running = false;
 				requestedStep = false;
-				bool retVal = false;
+				var retVal = false;
 				if (((this.changeFlags & CharSyncFlags.Position) == CharSyncFlags.Position) && (!Point4D.Equals(this.point, this.thing))) {
 					retVal = true;
 					if ((this.changeFlags & CharSyncFlags.Running) == CharSyncFlags.Running) {
@@ -366,13 +366,13 @@ namespace SteamEngine.Networking {
 			}
 
 			private bool GetMountChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.Mount) == CharSyncFlags.Mount) && (this.mount != this.thing.Mount));
+				var retVal = (((this.changeFlags & CharSyncFlags.Mount) == CharSyncFlags.Mount) && (this.mount != this.thing.Mount));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetMountChanged: " + retVal);
 				return retVal;
 			}
 
 			private bool GetHighlightChanged() {
-				bool retVal = ((this.changeFlags & CharSyncFlags.Highlight) == CharSyncFlags.Highlight);
+				var retVal = ((this.changeFlags & CharSyncFlags.Highlight) == CharSyncFlags.Highlight);
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetHighlightChanged: " + retVal);
 				return retVal;
 			}
@@ -385,7 +385,7 @@ namespace SteamEngine.Networking {
 			}
 
 			private bool GetHitpointsChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.Hits) == CharSyncFlags.Hits)
+				var retVal = (((this.changeFlags & CharSyncFlags.Hits) == CharSyncFlags.Hits)
 					&& ((this.hitpoints != this.thing.Hits) || (this.maxHitpoints != this.thing.MaxHits)));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetHitpointsChanged: " + retVal);
 				return retVal;
@@ -399,7 +399,7 @@ namespace SteamEngine.Networking {
 			}
 
 			private bool GetManaChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.Mana) == CharSyncFlags.Mana)
+				var retVal = (((this.changeFlags & CharSyncFlags.Mana) == CharSyncFlags.Mana)
 					&& ((this.mana != this.thing.Mana) || (this.maxMana != this.thing.MaxMana)));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetManaChanged: " + retVal);
 				return retVal;
@@ -412,7 +412,7 @@ namespace SteamEngine.Networking {
 				}
 			}
 			private bool GetStaminaChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.Stam) == CharSyncFlags.Stam)
+				var retVal = (((this.changeFlags & CharSyncFlags.Stam) == CharSyncFlags.Stam)
 					&& ((this.stamina != this.thing.Stam) || (this.maxStamina != this.thing.MaxStam)));
 				Logger.WriteInfo(Globals.NetSyncingTracingOn && retVal, "GetStaminaChanged: " + retVal);
 				return retVal;
@@ -439,7 +439,7 @@ namespace SteamEngine.Networking {
 			}
 
 			private bool GetStatsChanged() {
-				bool retVal = (((this.changeFlags & CharSyncFlags.Stats) == CharSyncFlags.Stats)
+				var retVal = (((this.changeFlags & CharSyncFlags.Stats) == CharSyncFlags.Stats)
 					&& ((this.str != this.thing.Str) || (this.dex != this.thing.Dex) || (this.intel != this.thing.Int) ||
 					(this.isFemale != this.thing.IsFemale) || (this.gold != this.thing.Gold) ||
 					(this.armorClass != this.thing.StatusArmorClass) ||
@@ -481,30 +481,30 @@ namespace SteamEngine.Networking {
 			private static void ProcessCharResend(AbstractCharacter ch) {
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessCharResend " + ch);
 
-				GameState state = ch.GameState;
+				var state = ch.GameState;
 				if (state != null) {
-					DrawGamePlayerOutPacket packet = Pool<DrawGamePlayerOutPacket>.Acquire();
+					var packet = Pool<DrawGamePlayerOutPacket>.Acquire();
 					packet.Prepare(state, ch);
 					state.Conn.SendSinglePacket(packet);
 				}
 
-				bool propertiesExist = true;
+				var propertiesExist = true;
 				AosToolTips[] toolTipsArray = null;
 
-				foreach (AbstractCharacter viewer in ch.GetMap().GetPlayersInRange(ch.X, ch.Y, Globals.MaxUpdateRange)) {
+				foreach (var viewer in ch.GetMap().GetPlayersInRange(ch.X, ch.Y, Globals.MaxUpdateRange)) {
 					if (viewer != ch) {
-						GameState viewerState = viewer.GameState;
+						var viewerState = viewer.GameState;
 						if (viewerState != null) {
 							if (viewer.CanSeeForUpdate(ch).Allow) {
-								HighlightColor highlightColor = ch.GetHighlightColorFor(viewer);
-								int highlight = (int) highlightColor;
-								PacketGroup pg = charInfoPackets[highlight];
+								var highlightColor = ch.GetHighlightColorFor(viewer);
+								var highlight = (int) highlightColor;
+								var pg = charInfoPackets[highlight];
 								if (pg == null) {
 									pg = PacketGroup.AcquireMultiUsePG();
 									pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, highlightColor); //0x78
 									charInfoPackets[highlight] = pg;
 								}
-								TcpConnection<GameState> viewerConn = viewerState.Conn;
+								var viewerConn = viewerState.Conn;
 								viewerConn.SendPacketGroup(pg);
 								if (Globals.UseAosToolTips && viewerState.Version.AosToolTips) {
 									if (propertiesExist) {
@@ -517,7 +517,7 @@ namespace SteamEngine.Networking {
 				}
 
 				for (int i = 0, n = charInfoPackets.Length; i < n; i++) {
-					PacketGroup pg = charInfoPackets[i];
+					var pg = charInfoPackets[i];
 					if (pg != null) {
 						pg.Dispose();
 						charInfoPackets[i] = null;
@@ -529,8 +529,8 @@ namespace SteamEngine.Networking {
 				if (toolTipsArray == null) {
 					toolTipsArray = new AosToolTips[Tools.GetEnumLength<Language>()];
 				}
-				Language language = viewerState.Language;
-				AosToolTips toolTips = toolTipsArray[(int) language];
+				var language = viewerState.Language;
+				var toolTips = toolTipsArray[(int) language];
 				if (toolTips == null) {
 					toolTips = target.GetAosToolTips(language);
 					toolTipsArray[(int) language] = toolTips;
@@ -555,31 +555,31 @@ namespace SteamEngine.Networking {
 
 				Logger.WriteInfo(Globals.NetSyncingTracingOn, "ProcessCharUpdate " + ch);
 				bool invisChanged, warModeChanges;
-				bool flagsChanged = this.GetChangedFlags(out invisChanged, out warModeChanges);
-				bool highlightChanged = this.GetHighlightChanged();
-				bool hitsChanged = this.GetHitpointsChanged();
-				bool nameChanged = this.GetNameChanged();
-				bool mountChanged = this.GetMountChanged();
+				var flagsChanged = this.GetChangedFlags(out invisChanged, out warModeChanges);
+				var highlightChanged = this.GetHighlightChanged();
+				var hitsChanged = this.GetHitpointsChanged();
+				var nameChanged = this.GetNameChanged();
+				var mountChanged = this.GetMountChanged();
 				bool teleported, running, requestedStep;
-				bool posChanged = this.GetPositionChanged(out teleported, out running, out requestedStep);
-				bool directionChanged = this.GetDirectionChanged();
-				bool basePropsChanged = this.GetBasePropsChanged();
-				bool propertiesChanged = (this.changeFlags & CharSyncFlags.Property) == CharSyncFlags.Property;
-				bool propertiesExist = propertiesChanged;
+				var posChanged = this.GetPositionChanged(out teleported, out running, out requestedStep);
+				var directionChanged = this.GetDirectionChanged();
+				var basePropsChanged = this.GetBasePropsChanged();
+				var propertiesChanged = (this.changeFlags & CharSyncFlags.Property) == CharSyncFlags.Property;
+				var propertiesExist = propertiesChanged;
 				AosToolTips[] toolTipsArray = null;
-				ICollection<AbstractCharacter> partyMembers = ch.PartyMembers;
-				bool hasParty = (partyMembers != null && partyMembers.Count > 1);
+				var partyMembers = ch.PartyMembers;
+				var hasParty = (partyMembers != null && partyMembers.Count > 1);
 
-				Map chMap = ch.GetMap();
-				int chX = ch.X;
-				int chY = ch.Y;
+				var chMap = ch.GetMap();
+				var chX = ch.X;
+				var chY = ch.Y;
 
 				PacketGroup pgRemoveMount = null, pgUpdateMount = null;
 
 				{
-					GameState myState = ch.GameState;
+					var myState = ch.GameState;
 					if (myState != null) {
-						TcpConnection<GameState> myConn = myState.Conn;
+						var myConn = myState.Conn;
 						this.UpdateSkills(myState, myConn);
 
 						if (propertiesChanged) {
@@ -589,16 +589,16 @@ namespace SteamEngine.Networking {
 						}
 						if (this.GetStatsChanged() || nameChanged) {
 							Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending StatusBar to self");
-							StatusBarInfoOutPacket sbiop = Pool<StatusBarInfoOutPacket>.Acquire();
+							var sbiop = Pool<StatusBarInfoOutPacket>.Acquire();
 							sbiop.Prepare(ch, StatusBarType.Me); //0x11
 							myConn.SendSinglePacket(sbiop);
 						} else {
-							bool manaChanged = this.GetManaChanged();
-							bool staminaChanged = this.GetStaminaChanged();
+							var manaChanged = this.GetManaChanged();
+							var staminaChanged = this.GetStaminaChanged();
 							if (hitsChanged || manaChanged || staminaChanged) {
 								if (hitsChanged && manaChanged && staminaChanged) {//all 3 stats
 									Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending Stats to self");
-									PacketGroup statsPG = PacketGroup.AcquireMultiUsePG();
+									var statsPG = PacketGroup.AcquireMultiUsePG();
 									statsPG.AcquirePacket<MobAttributesOutPacket>().Prepare(ch, true); //0x2d
 									myConn.SendPacketGroup(statsPG);
 									if (hasParty) {
@@ -608,7 +608,7 @@ namespace SteamEngine.Networking {
 								} else {
 									if (manaChanged) {
 										Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending Mana to self");
-										PacketGroup manaPG = PacketGroup.AcquireMultiUsePG();
+										var manaPG = PacketGroup.AcquireMultiUsePG();
 										manaPG.AcquirePacket<UpdateCurrentManaOutPacket>().Prepare(ch.FlaggedUid, ch.Mana, ch.MaxMana, true); //0xa2
 										myConn.SendPacketGroup(manaPG);
 										if (hasParty) {
@@ -618,7 +618,7 @@ namespace SteamEngine.Networking {
 									}
 									if (staminaChanged) {
 										Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending Stamina to self");
-										PacketGroup stamPG = PacketGroup.AcquireMultiUsePG();
+										var stamPG = PacketGroup.AcquireMultiUsePG();
 										stamPG.AcquirePacket<UpdateCurrentStaminaOutPacket>().Prepare(ch.FlaggedUid, ch.Stam, ch.MaxStam, true); //0xa3
 										myConn.SendPacketGroup(stamPG);
 										if (hasParty) {
@@ -628,7 +628,7 @@ namespace SteamEngine.Networking {
 									}
 									if (hitsChanged) {
 										Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending Hitpoints to self");
-										PacketGroup hitsPG = PacketGroup.AcquireMultiUsePG();
+										var hitsPG = PacketGroup.AcquireMultiUsePG();
 										hitsPG.AcquirePacket<UpdateCurrentHealthOutPacket>().Prepare(ch.FlaggedUid, ch.Hits, ch.MaxHits, true); //0xa1
 										myConn.SendPacketGroup(hitsPG);
 										if (hasParty) {
@@ -641,12 +641,12 @@ namespace SteamEngine.Networking {
 						}
 						if (flagsChanged || basePropsChanged || ((directionChanged || posChanged) && (!requestedStep || teleported))) {
 							Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending char info to self");
-							DrawGamePlayerOutPacket dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
+							var dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
 							dgpot.Prepare(myState, ch); //0x20
 							myConn.SendSinglePacket(dgpot);
 						}
 						if (highlightChanged) {
-							DrawObjectOutPacket doop = Pool<DrawObjectOutPacket>.Acquire();
+							var doop = Pool<DrawObjectOutPacket>.Acquire();
 							doop.Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78							
 							myConn.SendSinglePacket(doop);
 						}
@@ -655,17 +655,17 @@ namespace SteamEngine.Networking {
 							PreparedPacketGroups.SendWarMode(myConn, ch.Flag_WarMode);
 						}
 						if (posChanged) {
-							Map oldMap = this.point.GetMap();
-							bool mapChanged = oldMap != chMap;
-							int updateRange = ch.UpdateRange;
+							var oldMap = this.point.GetMap();
+							var mapChanged = oldMap != chMap;
+							var updateRange = ch.UpdateRange;
 
 							if (mapChanged) {//other map. We must clear the view, and possibly change client's facet
-								int newFacet = chMap.Facet;
+								var newFacet = chMap.Facet;
 								if (oldMap.Facet != newFacet) {
 									PreparedPacketGroups.SendFacetChange(myConn, newFacet);
 								}
 								PacketGroup pg = null;
-								foreach (Thing t in oldMap.GetThingsInRange(this.point.X, this.point.Y, updateRange)) {
+								foreach (var t in oldMap.GetThingsInRange(this.point.X, this.point.Y, updateRange)) {
 									Logger.WriteInfo(Globals.NetSyncingTracingOn, "Removing thing (" + t + ") from own view");
 									if (pg == null) {
 										pg = PacketGroup.AcquireSingleUsePG();
@@ -676,19 +676,19 @@ namespace SteamEngine.Networking {
 									myConn.SendPacketGroup(pg);
 								}
 							}
-							foreach (Thing thingInRange in chMap.GetThingsInRange(chX, chY, updateRange)) {
+							foreach (var thingInRange in chMap.GetThingsInRange(chX, chY, updateRange)) {
 								if (thingInRange != ch) {//it isn't me
 									if (ch.CanSeeForUpdate(thingInRange).Allow && (mapChanged ||
 									!ch.CanSeeForUpdateFrom(this.point, thingInRange).Allow)) {//I can see it now, but couldn't see it before
 										Logger.WriteInfo(Globals.NetSyncingTracingOn, "Sending thing (" + thingInRange + ") to self");
-										AbstractCharacter newChar = thingInRange as AbstractCharacter;
+										var newChar = thingInRange as AbstractCharacter;
 										if (newChar != null) {
 											PacketSequences.SendCharInfoWithPropertiesTo(ch, myState, myConn, newChar);
-											UpdateCurrentHealthOutPacket uchop = Pool<UpdateCurrentHealthOutPacket>.Acquire();
+											var uchop = Pool<UpdateCurrentHealthOutPacket>.Acquire();
 											uchop.Prepare(newChar.FlaggedUid, newChar.Hits, newChar.MaxHits, false); //0xa1
 											myConn.SendSinglePacket(uchop);
 										} else {
-											AbstractItem newItem = (AbstractItem) thingInRange;
+											var newItem = (AbstractItem) thingInRange;
 											newItem.GetOnGroundUpdater().SendTo(ch, myState, myConn);
 
 											PacketSequences.TrySendPropertiesTo(myState, myConn, newItem);
@@ -705,30 +705,30 @@ namespace SteamEngine.Networking {
 
 				if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged ||
 						invisChanged || hitsChanged || nameChanged || mountChanged || basePropsChanged) {
-					int range = Globals.MaxUpdateRange;
+					var range = Globals.MaxUpdateRange;
 					if (teleported) {
 						this.RemoveFromViewIfNeeded();
 					} else if (posChanged) {
 						range++;//not teleported, that means only a step, so we update wider range
 					}
 
-					bool myCharInfosTouched = false;
-					bool myMovingsTouched = false;
+					var myCharInfosTouched = false;
+					var myMovingsTouched = false;
 
 					PacketGroup pgDeleteObject = null;
 					PacketGroup pgPetStatus = null;
 					PacketGroup pgOtherStatus = null;
 					PacketGroup pgHitsPacket = null;
 
-					foreach (AbstractCharacter viewer in chMap.GetPlayersInRange(chX, chY, (ushort) range)) {
+					foreach (var viewer in chMap.GetPlayersInRange(chX, chY, (ushort) range)) {
 						if (viewer != ch) {
-							GameState viewerState = viewer.GameState;
+							var viewerState = viewer.GameState;
 							if (viewerState != null) {
-								TcpConnection<GameState> viewerConn = viewerState.Conn;
-								bool viewerCanSeeForUpdateAtPointChecked = false;
-								bool viewerCanSeeForUpdateAtPoint = false;
-								bool viewerCanSeeForUpdateChecked = false;
-								bool viewerCanSeeForUpdate = false;
+								var viewerConn = viewerState.Conn;
+								var viewerCanSeeForUpdateAtPointChecked = false;
+								var viewerCanSeeForUpdateAtPoint = false;
+								var viewerCanSeeForUpdateChecked = false;
+								var viewerCanSeeForUpdate = false;
 
 								if ((!teleported) && (invisChanged || posChanged)) { //if teleported, we're already done
 									if (!invisChanged) {
@@ -752,8 +752,8 @@ namespace SteamEngine.Networking {
 									viewerCanSeeForUpdate = viewer.CanSeeForUpdate(ch).Allow;
 								}
 								if (viewerCanSeeForUpdate) {
-									bool hitsSent = false;
-									bool newCharSent = false;
+									var hitsSent = false;
+									var newCharSent = false;
 									if (invisChanged || posChanged) {
 										if (!invisChanged) {
 											if (!viewerCanSeeForUpdateAtPointChecked) {
@@ -763,8 +763,8 @@ namespace SteamEngine.Networking {
 										if (invisChanged || !viewerCanSeeForUpdateAtPoint) {
 											//viewer didn't see us, but he does now - we send newchar packet
 											myCharInfosTouched = true;
-											int highlight = (int) ch.GetHighlightColorFor(viewer);
-											PacketGroup myCharInfo = myCharInfos[highlight];
+											var highlight = (int) ch.GetHighlightColorFor(viewer);
+											var myCharInfo = myCharInfos[highlight];
 											if (myCharInfo == null) {
 												myCharInfo = PacketGroup.AcquireMultiUsePG();
 												myCharInfo.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, (HighlightColor) highlight); //0x78
@@ -791,8 +791,8 @@ namespace SteamEngine.Networking {
 										}
 										if (posChanged || directionChanged || flagsChanged || warModeChanges || highlightChanged || basePropsChanged) {
 											myMovingsTouched = true;
-											int highlight = (int) ch.GetHighlightColorFor(viewer);
-											PacketGroup myMoving = myMovings[highlight];
+											var highlight = (int) ch.GetHighlightColorFor(viewer);
+											var myMoving = myMovings[highlight];
 											if (myMoving == null) {
 												myMoving = PacketGroup.AcquireMultiUsePG();
 												myMoving.AcquirePacket<UpdatePlayerPacket>().Prepare(ch, running, (HighlightColor) highlight); //0x77
@@ -848,7 +848,7 @@ namespace SteamEngine.Networking {
 
 					if (myMovingsTouched) {
 						for (int i = 0, n = myMovings.Length; i < n; i++) {
-							PacketGroup pg = myMovings[i];
+							var pg = myMovings[i];
 							if (pg != null) {
 								pg.Dispose();
 								myMovings[i] = null;
@@ -858,7 +858,7 @@ namespace SteamEngine.Networking {
 
 					if (myCharInfosTouched) {
 						for (int i = 0, n = myCharInfos.Length; i < n; i++) {
-							PacketGroup pg = myCharInfos[i];
+							var pg = myCharInfos[i];
 							if (pg != null) {
 								pg.Dispose();
 								myCharInfos[i] = null;
@@ -886,9 +886,9 @@ namespace SteamEngine.Networking {
 			}
 
 			private static void SendPGToPartyMembers(AbstractCharacter self, ICollection<AbstractCharacter> partyMembers, PacketGroup statsPG) {
-				foreach (AbstractCharacter partyMember in partyMembers) {
+				foreach (var partyMember in partyMembers) {
 					if (self.CanSeeCoordinates(partyMember)) {
-						GameState partyState = partyMember.GameState;
+						var partyState = partyMember.GameState;
 						if (partyState != null) {
 							partyState.Conn.SendPacketGroup(statsPG);
 						}
@@ -897,7 +897,7 @@ namespace SteamEngine.Networking {
 			}
 
 			private void SendMountChange(TcpConnection<GameState> viewerConn, AbstractCharacter ch, ref PacketGroup pgRemoveMount, ref PacketGroup pgUpdateMount) {
-				AbstractCharacter myMount = ch.Mount;
+				var myMount = ch.Mount;
 				if (myMount == null) {
 					if (pgRemoveMount == null) {
 						pgRemoveMount = PacketGroup.AcquireMultiUsePG();
@@ -916,13 +916,13 @@ namespace SteamEngine.Networking {
 			}
 
 			private void RemoveFromViewIfNeeded() {
-				ImmutableRectangle rect = new ImmutableRectangle(this.point, Globals.MaxUpdateRange);
+				var rect = new ImmutableRectangle(this.point, Globals.MaxUpdateRange);
 
 				PacketGroup pg = null;
-				Map map = this.point.GetMap();
+				var map = this.point.GetMap();
 
-				foreach (AbstractCharacter viewer in map.GetPlayersInRectangle(rect)) {
-					GameState state = viewer.GameState;
+				foreach (var viewer in map.GetPlayersInRectangle(rect)) {
+					var state = viewer.GameState;
 					if (state != null) {
 						if ((viewer.CanSeeForUpdateAt(this.point, this.thing).Allow) && (!viewer.CanSeeForUpdate(this.thing).Allow)) {
 							if (pg == null) {
@@ -941,10 +941,10 @@ namespace SteamEngine.Networking {
 
 			private void UpdateSkills(GameState myState, TcpConnection<GameState> myConn) {
 				if (this.changedSkillsCount > 0) {
-					PacketGroup pg = PacketGroup.AcquireSingleUsePG();
-					for (int i = 0; i < this.changedSkillsCount; i++) {
-						int skillId = this.changedSkills[i];
-						ISkill skill = this.thing.GetSkillObject(skillId);
+					var pg = PacketGroup.AcquireSingleUsePG();
+					for (var i = 0; i < this.changedSkillsCount; i++) {
+						var skillId = this.changedSkills[i];
+						var skill = this.thing.GetSkillObject(skillId);
 						Logger.WriteInfo(Globals.NetSyncingTracingOn, "UpdateSkill id: " + skillId);
 						pg.AcquirePacket<SendSkillsOutPacket>().PrepareSingleSkillUpdate((ushort) skillId, skill, myState.Version.DisplaySkillCaps);
 					}
@@ -955,7 +955,7 @@ namespace SteamEngine.Networking {
 
 		//get an ItemState instance from the pool, or create a new one
 		private CharState PopAndEnqueueInstance(AbstractCharacter ch) {
-			CharState state = ch.syncState;
+			var state = ch.syncState;
 			if (state != null) {
 				return state; //we assume it's enqueued already and stuff. No one is to touch AbstractCharacter.syncState but this class!
 			}

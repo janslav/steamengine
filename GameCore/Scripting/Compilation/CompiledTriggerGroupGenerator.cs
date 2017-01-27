@@ -50,17 +50,17 @@ namespace SteamEngine.Scripting.Compilation {
 		public CodeCompileUnit WriteSources() {
 			return SeShield.InTransaction(() => {
 				try {
-					CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+					var codeCompileUnit = new CodeCompileUnit();
 					if (compiledTGs.Any()) {
 						Logger.WriteDebug("Generating compiled Triggergroups");
 
-						CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+						var ns = new CodeNamespace("SteamEngine.CompiledScripts");
 						codeCompileUnit.Namespaces.Add(ns);
 
-						foreach (Type decoratedClass in compiledTGs) {
+						foreach (var decoratedClass in compiledTGs) {
 							try {
-								GeneratedInstance gi = new GeneratedInstance(decoratedClass);
-								CodeTypeDeclaration ctd = gi.GetGeneratedType();
+								var gi = new GeneratedInstance(decoratedClass);
+								var ctd = gi.GetGeneratedType();
 								ns.Types.Add(ctd);
 							} catch (FatalException) {
 								throw;
@@ -98,12 +98,12 @@ namespace SteamEngine.Scripting.Compilation {
 
 			internal GeneratedInstance(Type tgType) {
 				this.tgType = tgType;
-				MemberTypes memberType = MemberTypes.Method; //Only find methods.
-				BindingFlags bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public;
+				var memberType = MemberTypes.Method; //Only find methods.
+				var bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public;
 
-				MemberInfo[] mis = tgType.FindMembers(memberType, bindingAttr, StartsWithString, "on_"); //Does its name start with "on_"?
-				foreach (MemberInfo m in mis) {
-					MethodInfo mi = m as MethodInfo;
+				var mis = tgType.FindMembers(memberType, bindingAttr, StartsWithString, "on_"); //Does its name start with "on_"?
+				foreach (var m in mis) {
+					var mi = m as MethodInfo;
 					if (mi != null) {
 						this.triggerMethods.Add(mi);
 					}
@@ -113,7 +113,7 @@ namespace SteamEngine.Scripting.Compilation {
 			internal CodeTypeDeclaration GetGeneratedType() {
 				this.AssertCorrectThread();
 
-				CodeTypeDeclaration codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_" + this.tgType.Name);
+				var codeTypeDeclatarion = new CodeTypeDeclaration("GeneratedTriggerGroup_" + this.tgType.Name);
 				codeTypeDeclatarion.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclatarion.BaseTypes.Add(this.tgType);
 				codeTypeDeclatarion.IsClass = true;
@@ -125,7 +125,7 @@ namespace SteamEngine.Scripting.Compilation {
 			}
 
 			private CodeMemberMethod GenerateRunMethod() {
-				CodeMemberMethod retVal = new CodeMemberMethod();
+				var retVal = new CodeMemberMethod();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 				retVal.Name = "Run";
 				retVal.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "self"));
@@ -139,8 +139,8 @@ namespace SteamEngine.Scripting.Compilation {
 						"argv"));
 
 					retVal.Statements.Add(new CodeSnippetStatement("\t\t\tswitch (tk.Uid) {"));
-					foreach (MethodInfo mi in this.triggerMethods) {
-						TriggerKey tk = TriggerKey.Acquire(mi.Name.Substring(3));
+					foreach (var mi in this.triggerMethods) {
+						var tk = TriggerKey.Acquire(mi.Name.Substring(3));
 						retVal.Statements.Add(new CodeSnippetStatement("\t\t\t\tcase(" + tk.Uid + "): //" + tk.Name));
 						retVal.Statements.AddRange(
 							CompiledScriptHolderGenerator.GenerateMethodInvocation(mi,
@@ -168,7 +168,7 @@ namespace SteamEngine.Scripting.Compilation {
 			}
 
 			private static bool StartsWithString(MemberInfo m, object filterCriteria) {
-				string s = ((string) filterCriteria).ToLowerInvariant();
+				var s = ((string) filterCriteria).ToLowerInvariant();
 				return m.Name.ToLowerInvariant().StartsWith(s);
 			}
 		}

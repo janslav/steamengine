@@ -43,7 +43,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal override object Run(ScriptVars vars) {
 			object retVal;
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
 				retVal = this.arg.Run(vars);
@@ -72,7 +72,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
 				this.args[index] = newNode;
 				return;
@@ -81,18 +81,18 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			int argsCount = this.args.Length;
-			object[] results = new object[argsCount];
-			for (int i = 0; i < argsCount; i++) {
+			var argsCount = this.args.Length;
+			var results = new object[argsCount];
+			for (var i = 0; i < argsCount; i++) {
 				results[i] = this.args[i].Run(vars);
 			}
-			string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
+			var resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 			vars.returned = true;
 			return resultString;
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("(");
+			var str = new StringBuilder("(");
 			str.AppendFormat("return((");
 			for (int i = 0, n = this.args.Length; i < n; i++) {
 				str.Append(this.args[i]).Append(", ");

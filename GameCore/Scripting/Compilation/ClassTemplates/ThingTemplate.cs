@@ -29,7 +29,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private void Constructor() {
-			CodeConstructor ctdConstructor = new CodeConstructor();
+			var ctdConstructor = new CodeConstructor();
 			ctdConstructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			ctdConstructor.Parameters.Add(new CodeParameterDeclarationExpression(this.section.defClassName, "myDef"));
 			ctdConstructor.BaseConstructorArgs.Add(new CodeArgumentReferenceExpression("myDef"));

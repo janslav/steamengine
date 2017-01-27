@@ -37,13 +37,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Save(object objToSave, SaveStream writer) {
-			IDictionary dict = (IDictionary) objToSave;
-			int count = dict.Count;
+			var dict = (IDictionary) objToSave;
+			var count = dict.Count;
 			writer.WriteValue("count", count);
-			Type[] genericArguments = objToSave.GetType().GetGenericArguments();
+			var genericArguments = objToSave.GetType().GetGenericArguments();
 			writer.WriteLine("TKey=" + GenericListSaver.GetTypeName(genericArguments[0]));
 			writer.WriteLine("TValue=" + GenericListSaver.GetTypeName(genericArguments[1]));
-			int i = 0;
+			var i = 0;
 			foreach (DictionaryEntry entry in dict) {
 				writer.WriteValue(i + ".K", entry.Key);
 				writer.WriteValue(i + ".V", entry.Value);
@@ -52,25 +52,25 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.HeaderLine;
+			var currentLineNumber = input.HeaderLine;
 			try {
-				PropsLine pl = input.PopPropsLine("TKey");
+				var pl = input.PopPropsLine("TKey");
 				currentLineNumber = pl.Line;
-				Type[] genericTypes = new Type[2];
+				var genericTypes = new Type[2];
 				genericTypes[0] = GenericListSaver.ParseType(pl);
 				pl = input.PopPropsLine("TValue");
 				currentLineNumber = pl.Line;
 				genericTypes[1] = GenericListSaver.ParseType(pl);
-				Type dictType = typeof(Dictionary<,>).MakeGenericType(genericTypes);
-				IDictionary dict = (IDictionary) Activator.CreateInstance(dictType);
+				var dictType = typeof(Dictionary<,>).MakeGenericType(genericTypes);
+				var dict = (IDictionary) Activator.CreateInstance(dictType);
 
-				PropsLine countLine = input.PopPropsLine("count");
+				var countLine = input.PopPropsLine("count");
 				currentLineNumber = countLine.Line;
-				int count = int.Parse(countLine.Value);
-				for (int i = 0; i < count; i++) {
-					PropsLine keyLine = input.PopPropsLine(i + ".K");
-					PropsLine valueLine = input.PopPropsLine(i + ".V");
-					DictionaryLoadHelper helper = new DictionaryLoadHelper(dict, genericTypes[0], genericTypes[1]);
+				var count = int.Parse(countLine.Value);
+				for (var i = 0; i < count; i++) {
+					var keyLine = input.PopPropsLine(i + ".K");
+					var valueLine = input.PopPropsLine(i + ".V");
+					var helper = new DictionaryLoadHelper(dict, genericTypes[0], genericTypes[1]);
 					currentLineNumber = keyLine.Line;
 					ObjectSaver.Load(keyLine.Value, helper.DelayedLoad_Key, input.Filename, keyLine.Line);
 					currentLineNumber = valueLine.Line;
@@ -137,14 +137,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object DeepCopy(object copyFrom) {
-			IDictionary copyFromDict = (IDictionary) copyFrom;
+			var copyFromDict = (IDictionary) copyFrom;
 
-			Type[] genericArguments = copyFrom.GetType().GetGenericArguments();
-			Type dictType = typeof(Dictionary<,>).MakeGenericType(genericArguments);
-			IDictionary newDict = (IDictionary) Activator.CreateInstance(dictType);
+			var genericArguments = copyFrom.GetType().GetGenericArguments();
+			var dictType = typeof(Dictionary<,>).MakeGenericType(genericArguments);
+			var newDict = (IDictionary) Activator.CreateInstance(dictType);
 
 			foreach (DictionaryEntry entry in copyFromDict) {
-				DictionaryLoadHelper helper = new DictionaryLoadHelper(newDict, genericArguments[0], genericArguments[1]);
+				var helper = new DictionaryLoadHelper(newDict, genericArguments[0], genericArguments[1]);
 				DeepCopyFactory.GetCopyDelayed(entry.Key, helper.DelayedCopy_Key);
 				DeepCopyFactory.GetCopyDelayed(entry.Value, helper.DelayedCopy_Value);
 			}

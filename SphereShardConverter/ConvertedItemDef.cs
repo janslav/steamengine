@@ -86,14 +86,14 @@ namespace SteamEngine.Converter {
 
 		//resources list may need some number (counts) corrections
 		private static void HandleResourcesList(ConvertedDef def, PropsLine line) {
-			string args = line.Value.ToLowerInvariant();
-			StringBuilder corrected = new StringBuilder(args.Length);
-			string commentary = "";
+			var args = line.Value.ToLowerInvariant();
+			var corrected = new StringBuilder(args.Length);
+			var commentary = "";
 
-			string[] singleResources = args.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries); //split to single resources
-			foreach(string s in singleResources) {
-				string singleRes = s.Replace(".", ""); //sphere scripts weirdly have skill numbers with a dot sometimes. Hope this won't break something else than skills
-				string[] split = singleRes.Split(Tools.whitespaceChars, StringSplitOptions.RemoveEmptyEntries);
+			var singleResources = args.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries); //split to single resources
+			foreach(var s in singleResources) {
+				var singleRes = s.Replace(".", ""); //sphere scripts weirdly have skill numbers with a dot sometimes. Hope this won't break something else than skills
+				var split = singleRes.Split(Tools.whitespaceChars, StringSplitOptions.RemoveEmptyEntries);
 				if (split.Length == 2) {
 					object ignored;
 					if (ConvertTools.TryParseAnyNumber(split[1], out ignored)) {
@@ -117,10 +117,10 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void HandleType(ConvertedDef d, PropsLine line) {
-			ConvertedItemDef def = (ConvertedItemDef) d;
+			var def = (ConvertedItemDef) d;
 			def.Set(line);
 
-			string args = line.Value.ToLowerInvariant();
+			var args = line.Value.ToLowerInvariant();
 			def.type = args;
 
 			switch (args) {
@@ -171,7 +171,7 @@ namespace SteamEngine.Converter {
 				case "t_weapon_bolt":
 				case "t_weapon_bolt_jagged":
 				case "t_weapon_arrow":
-					bool isColored = def.IsColoredMetal();
+					var isColored = def.IsColoredMetal();
 					if (isColored) {
 						def.headerType = "ColoredProjectileDef";
 						def.Set("MaterialType", "MaterialType.Wood", "guessed by Converter");
@@ -207,9 +207,9 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void HandleTwohanded(ConvertedDef d, PropsLine line) {
-			ConvertedItemDef def = (ConvertedItemDef) d;
+			var def = (ConvertedItemDef) d;
 			def.twoHandedSet = true;
-			string largs = line.Value.ToLowerInvariant();
+			var largs = line.Value.ToLowerInvariant();
 			switch (largs) {
 				case "0":
 				case "n":
@@ -225,15 +225,15 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void HandleArmorOrDam(ConvertedDef d, PropsLine line) {
-			ConvertedItemDef def = (ConvertedItemDef) d;
+			var def = (ConvertedItemDef) d;
 			if (!def.armorOrDamHandled) {
 				def.armorOrDamHandled = true;
 				string value = null;
-				string[] strings = Utility.SplitSphereString(line.Value, true);
-				int n = strings.Length;
+				var strings = Utility.SplitSphereString(line.Value, true);
+				var n = strings.Length;
 				double sum = 0;
-				for (int i = 0; i < n; i++) {
-					string str = strings[i];
+				for (var i = 0; i < n; i++) {
+					var str = strings[i];
 					int number;
 					if (ConvertTools.TryParseInt32(str, out number)) {
 						sum += number;
@@ -288,13 +288,13 @@ namespace SteamEngine.Converter {
 		}
 
 		public static void SecondStageFinished() {
-			HashSet<ConvertedItemDef> itemDefSet = new HashSet<ConvertedItemDef>();
+			var itemDefSet = new HashSet<ConvertedItemDef>();
 			foreach (ConvertedItemDef def in itemsByDefname.Values) {
 				itemDefSet.Add(def);
 			}
 
-			foreach (ConvertedItemDef def in itemDefSet) {
-				ConvertedItemDef baseDef = def.modelDef as ConvertedItemDef;
+			foreach (var def in itemDefSet) {
+				var baseDef = def.modelDef as ConvertedItemDef;
 				if (baseDef != null) {
 					if (baseDef.isEquippable) {
 						def.MakeEquippable();
@@ -325,8 +325,8 @@ namespace SteamEngine.Converter {
 
 		public override void ThirdStage() {
 			if (this.isEquippable && !this.layerSet) {
-				int model = this.Model;
-				ItemDispidInfo info = ItemDispidInfo.GetByModel(model);
+				var model = this.Model;
+				var info = ItemDispidInfo.GetByModel(model);
 				if (info != null) {
 					this.layer = info.Quality.ToString();
 					this.Set("layer", this.layer, "Set by Converter");
@@ -338,19 +338,19 @@ namespace SteamEngine.Converter {
 			}
 
 			if (this.isWeapon) {
-				bool isColored = this.IsColoredMetal();
+				var isColored = this.IsColoredMetal();
 				if (isColored) {
 					this.headerType = "ColoredWeaponDef";
 				} else {
 					this.headerType = "WeaponDef";
 				}
 
-				MaterialType materialType = MaterialType.Metal;
-				WeaponType weaponType = WeaponType.BareHands;
+				var materialType = MaterialType.Metal;
+				var weaponType = WeaponType.BareHands;
 
 				switch (this.type.ToLowerInvariant()) {
 					case "t_weapon_sword":
-						string prettyDefName = this.PrettyDefname.ToLowerInvariant();
+						var prettyDefName = this.PrettyDefname.ToLowerInvariant();
 						if (prettyDefName.Contains("_axe_") || prettyDefName.EndsWith("_axe")) {
 							if (this.isTwoHanded) {
 								weaponType = WeaponType.TwoHandAxe;
@@ -414,7 +414,7 @@ namespace SteamEngine.Converter {
 				}
 				this.Set("WeaponType", "WeaponType." + weaponType, "guessed by Converter");
 
-				WeaponAnimType animType = WeaponAnimTypeSetting.TranslateAnimType(weaponType);
+				var animType = WeaponAnimTypeSetting.TranslateAnimType(weaponType);
 				if (animType != WeaponAnimType.Undefined) {
 					this.Set("WeaponAnimType", "WeaponAnimType." + animType, "guessed by Converter");
 				}
@@ -423,7 +423,7 @@ namespace SteamEngine.Converter {
 					this.Set("MaterialType", "MaterialType." + materialType, "guessed by Converter");
 				}
 			} else if (this.isWearable) {
-				bool isColored = this.IsColoredMetal();
+				var isColored = this.IsColoredMetal();
 				if (isColored) {
 					this.headerType = "ColoredArmorDef";
 					this.Set("MaterialType", "MaterialType.Metal", "guessed by Converter");
@@ -450,7 +450,7 @@ namespace SteamEngine.Converter {
 		}
 
 		private bool IsColoredMetal() {
-			string material = GetMaterialFromDefname(this.PrettyDefname);
+			var material = GetMaterialFromDefname(this.PrettyDefname);
 			if (material != null) {
 				this.Set("Material", "Material." + Utility.Capitalize(material), "guessed by Converter");
 				return true;
@@ -463,7 +463,7 @@ namespace SteamEngine.Converter {
 			RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
 
 		private static string GetMaterialFromDefname(string defname) {
-			Match m = materialRE.Match(defname);
+			var m = materialRE.Match(defname);
 			if (m.Success) {
 				return m.Groups["material"].Value;
 			}
@@ -475,7 +475,7 @@ namespace SteamEngine.Converter {
 			RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
 
 		private WearableType GetWearableType(string prettyDefname) {
-			Match m = wearableTypeRE.Match(prettyDefname);
+			var m = wearableTypeRE.Match(prettyDefname);
 			if (m.Success) {
 				switch (m.Groups["type"].Value.ToLowerInvariant()) {
 					case "bone":
@@ -496,7 +496,7 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void HandleLayer(ConvertedDef d, PropsLine line) {
-			ConvertedItemDef def = (ConvertedItemDef) d;
+			var def = (ConvertedItemDef) d;
 			def.MakeEquippable();
 			def.layerSet = true;
 			def.layer = TryNormalizeNumber(line.Value);

@@ -175,13 +175,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//first prepare all childrens size, positions etc - it is necessary to separate this from 
 			//writing all children because one child can have influcence to the previous children 
 			//(which must be considered before writing them)
-			foreach (GUTAComponent child in this.components) {
+			foreach (var child in this.components) {
 				child.parent = this;
 				child.gump = this.gump;
 				child.OnBeforeWrite(this);
 			}
 			//now write them
-			foreach (GUTAComponent child in this.components) {
+			foreach (var child in this.components) {
 				child.WriteComponent();
 			}
 		}
@@ -206,7 +206,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.xPos = 0;
 			if (this.yPos < 0)
 				this.yPos = 0;
-			foreach (GUTAComponent child in this.components) {
+			foreach (var child in this.components) {
 				child.AdjustPosition(xPart, yPart);
 			}
 		}
@@ -269,8 +269,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// 'Dialog -> children'
 		/// </summary>
 		public override string ToString() {
-			StringBuilder retStr = new StringBuilder("Dialog");
-			foreach (GUTAComponent child in this.components) {
+			var retStr = new StringBuilder("Dialog");
+			foreach (var child in this.components) {
 				retStr.Append(child);
 			}
 			return retStr.ToString();
@@ -296,7 +296,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Basic gump table - single virtual row - specify the number of innerrows only</summary>
 		public GUTATable(int rowCount) {
-			GUTARow oneRow = new GUTARow(rowCount); //virtual Row the columns are all inside
+			var oneRow = new GUTARow(rowCount); //virtual Row the columns are all inside
 			this.AddComponent(oneRow); //this will serve as component[0] in the following constructor (if necessary)
 		}
 
@@ -308,10 +308,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public GUTATable(int rowCount, params int[] columnSizes)
 			: this(rowCount) {
-			bool shallBeLast = false;
-			for (int i = 0; i < columnSizes.Length; i++) {
+			var shallBeLast = false;
+			for (var i = 0; i < columnSizes.Length; i++) {
 				if (shallBeLast) { //are we adding the last column?					
-					GUTAColumn lastCol = new GUTAColumn(columnSizes[i]);
+					var lastCol = new GUTAColumn(columnSizes[i]);
 					lastCol.IsLast = true;
 					this.components[0].AddComponent(lastCol);
 				} else {
@@ -412,7 +412,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			get {
 				//get the value from the first virtual row
-				GUTARow virtualRow = (GUTARow) this.components[0];
+				var virtualRow = (GUTARow) this.components[0];
 				return ((GUTARow) this.components[0])[row, col];
 			}
 		}
@@ -434,7 +434,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 			if (parent.Components.IndexOf(this) > 0) { //this is not the first row
 				//take the position from the previous sibling table
-				GUTATable lastTable = (GUTATable) parent.Components[parent.Components.IndexOf(this) - 1];
+				var lastTable = (GUTATable) parent.Components[parent.Components.IndexOf(this) - 1];
 				//the x position is simple
 				this.xPos = lastTable.xPos;
 				//the y position is right under the previous row
@@ -452,7 +452,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					this.yPos += ImprovedDialog.D_SPACE; //one space to delimit the row from the top border
 				} else {
 					this.width = parent.Width - ImprovedDialog.D_COL_SPACE; //substract the column delimiter since all parent columns get this substracted...
-					GUTAColumn parCol = (GUTAColumn) parent;
+					var parCol = (GUTAColumn) parent;
 					//parentalGUTAColumn->GUTARow.Components.IndexOf(parentalGUTAColumn) > 0
 					//if (parCol.Parent.Components.IndexOf(parCol) == parCol.Parent.Components.Count - 1) {
 					//	//this table is in the last column
@@ -499,12 +499,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string offset = "\r\n";
-			for (int i = 0; i < this.level; i++) {
+			var offset = "\r\n";
+			for (var i = 0; i < this.level; i++) {
 				offset += "\t";
 			}
-			StringBuilder retStr = new StringBuilder(offset + "->Table");
-			foreach (GUTAComponent child in this.components) {
+			var retStr = new StringBuilder(offset + "->Table");
+			foreach (var child in this.components) {
 				retStr.Append(child);
 			}
 			return retStr.ToString();
@@ -541,10 +541,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public GUTARow(int rowCount, params int[] columnSizes)
 			: this(rowCount) {
-			bool shallBeLast = false;
-			for (int i = 0; i < columnSizes.Length; i++) {
+			var shallBeLast = false;
+			for (var i = 0; i < columnSizes.Length; i++) {
 				if (shallBeLast) { //are we adding the last column?					
-					GUTAColumn lastCol = new GUTAColumn(columnSizes[i]);
+					var lastCol = new GUTAColumn(columnSizes[i]);
 					lastCol.IsLast = true;
 					this.AddComponent(lastCol);
 				} else {
@@ -583,9 +583,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 										   (col + 1) + ". column out of " + this.Components.Count);
 				}
 				//get the column we are adding the component to
-				GUTAColumn columnToAccess = (GUTAColumn) this.Components[col];
+				var columnToAccess = (GUTAColumn) this.Components[col];
 				//now check what is the component:
-				GUTAComponent addedObj = value;//the component will be added directly	
+				var addedObj = value;//the component will be added directly	
 				if (addedObj == null) {
 					string strVal;
 					if (ConvertTools.TryConvertToString(value, out strVal)) {
@@ -682,7 +682,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 			if (parent.Components.IndexOf(this) > 0) { //this is not the first virtual row
 				//take the position from the previous sibling table
-				GUTARow lastRow = (GUTARow) parent.Components[parent.Components.IndexOf(this) - 1];
+				var lastRow = (GUTARow) parent.Components[parent.Components.IndexOf(this) - 1];
 				//the x position is simple
 				this.xPos = lastRow.xPos;
 				//the y position is right under the previous virtual row
@@ -720,12 +720,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string offset = "\r\n";
-			for (int i = 0; i < this.level; i++) {
+			var offset = "\r\n";
+			for (var i = 0; i < this.level; i++) {
 				offset += "\t";
 			}
-			StringBuilder retStr = new StringBuilder(offset + "->Row");
-			foreach (GUTAComponent child in this.components) {
+			var retStr = new StringBuilder(offset + "->Row");
+			foreach (var child in this.components) {
 				retStr.Append(child);
 			}
 			return retStr.ToString();
@@ -818,8 +818,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			if (parent.Components.IndexOf(this) > 0) {//this is not the first column
 				//get the previous column
-				GUTAColumn prevCol = (GUTAColumn) parent.Components[parent.Components.IndexOf(this) - 1];
-				bool lastInRow = parent.Components.IndexOf(this) == parent.Components.Count - 1;
+				var prevCol = (GUTAColumn) parent.Components[parent.Components.IndexOf(this) - 1];
+				var lastInRow = parent.Components.IndexOf(this) == parent.Components.Count - 1;
 				if (this.isLast) { //last column and the previous sibling had 0 width specified - it will be recomputed now
 					//adjust the previous columns size to the space between the twiceprevious column 
 					//and the newly added column (it can be also negative value...)              
@@ -874,8 +874,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (!this.NoWrite) {
 				//and also check the delimiting spaces for rows..., after the transparency check
 				if (this.delimitRows) {
-					int rowHeight = ((GUTARow) this.parent).RowHeight;
-					for (int i = 0; i < this.rowCount - 1; i++) {
+					var rowHeight = ((GUTARow) this.parent).RowHeight;
+					for (var i = 0; i < this.rowCount - 1; i++) {
 						//add after each "row" one pixel beige line...
 						this.gump.AddGumpPicTiled(this.xPos, this.yPos + (i + 1) * rowHeight + (i) * ImprovedDialog.D_COL_SPACE, this.width - ImprovedDialog.D_COL_SPACE, 1, ImprovedDialog.D_DEFAULT_ROW_BACKGROUND);
 					}
@@ -892,12 +892,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string offset = "\r\n";
-			for (int i = 0; i < this.level; i++) {
+			var offset = "\r\n";
+			for (var i = 0; i < this.level; i++) {
 				offset += "\t";
 			}
-			StringBuilder retStr = new StringBuilder(offset + "->Column");
-			foreach (GUTAComponent child in this.components) {
+			var retStr = new StringBuilder(offset + "->Column");
+			foreach (var child in this.components) {
 				retStr.Append(child);
 			}
 			return retStr.ToString();

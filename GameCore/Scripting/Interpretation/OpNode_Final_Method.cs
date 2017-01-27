@@ -38,7 +38,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -47,12 +47,12 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = this.args.Length;
-			object[] results = new object[argsCount];
+			var argsCount = this.args.Length;
+			var results = new object[argsCount];
 			try {
-				for (int i = 0; i < argsCount; i++) {
+				for (var i = 0; i < argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
@@ -93,7 +93,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("(");
+			var str = new StringBuilder("(");
 			str.AppendFormat("{0} {1}.{2}(", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
 				str.Append(this.args[i]).Append(", ");
@@ -125,7 +125,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.normalArgs, oldNode);
+			var index = Array.IndexOf(this.normalArgs, oldNode);
 			if (index >= 0) {
 				this.normalArgs[index] = newNode;
 				return;
@@ -140,17 +140,17 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int normalArgsLength = this.normalArgs.Length;
-			object[] results = new object[normalArgsLength + 1];
+			var normalArgsLength = this.normalArgs.Length;
+			var results = new object[normalArgsLength + 1];
 			try {
-				for (int i = 0; i < normalArgsLength; i++) {
+				for (var i = 0; i < normalArgsLength; i++) {
 					results[i] = this.normalArgs[i].Run(vars);
 				}
-				int paramArrayLength = this.paramArgs.Length;
-				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
-				for (int i = 0; i < paramArrayLength; i++) {
+				var paramArrayLength = this.paramArgs.Length;
+				var paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
+				for (var i = 0; i < paramArrayLength; i++) {
 					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, this.paramArgs[i].Run(vars)), i);
 				}
 				results[normalArgsLength] = paramArray;
@@ -174,14 +174,14 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
 		public object TryRun(ScriptVars vars, object[] results) {//the dont have the normalargs and paramsargs separated...
-			int normalArgsLength = this.normalArgs.Length;
-			object[] modifiedResults = new object[normalArgsLength + 1];
+			var normalArgsLength = this.normalArgs.Length;
+			var modifiedResults = new object[normalArgsLength + 1];
 			Array.Copy(results, modifiedResults, normalArgsLength);
 			try {
 				//Console.WriteLine("results[0].GetType(): "+results[0]);
-				int paramArrayLength = this.paramArgs.Length;
-				Array paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
-				for (int i = 0; i < paramArrayLength; i++) {
+				var paramArrayLength = this.paramArgs.Length;
+				var paramArray = Array.CreateInstance(this.paramsElementType, paramArrayLength);
+				for (var i = 0; i < paramArrayLength; i++) {
 					paramArray.SetValue(ConvertTools.ConvertTo(this.paramsElementType, results[i + normalArgsLength]), i);
 				}
 				modifiedResults[normalArgsLength] = paramArray;
@@ -200,7 +200,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("(");
+			var str = new StringBuilder("(");
 			str.AppendFormat("{0} {1}.{2}(", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
 			for (int i = 0, n = this.normalArgs.Length; i < n; i++) {
 				str.Append(this.normalArgs[i]).Append(", ");
@@ -237,7 +237,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
 				this.args[index] = newNode;
 				return;
@@ -246,19 +246,19 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
-			int argsCount = this.args.Length;
-			object[] results = new object[argsCount];
+			var argsCount = this.args.Length;
+			var results = new object[argsCount];
 			try {
-				for (int i = 0; i < argsCount; i++) {
+				for (var i = 0; i < argsCount; i++) {
 					results[i] = this.args[i].Run(vars);
 				}
 			} finally {
 				vars.self = oSelf;
 			}
 			try {
-				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				var resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				return this.method.Invoke(oSelf, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;
@@ -275,7 +275,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		public object TryRun(ScriptVars vars, object[] results) {
 			//Console.WriteLine("OpNode_MethodWrapper results: "+Tools.ObjToString(results));
 			try {
-				string resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
+				var resultString = string.Format(CultureInfo.InvariantCulture, this.formatString, results);
 				return this.method.Invoke(vars.self, new object[] { resultString });
 			} catch (InterpreterException) {
 				throw;
@@ -290,7 +290,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("(");
+			var str = new StringBuilder("(");
 			str.AppendFormat("{0} {1}.{2}((", this.method.ReturnType, this.method.DeclaringType, this.method.Name);
 			for (int i = 0, n = this.args.Length; i < n; i++) {
 				str.Append(this.args[i]).Append(", ");
@@ -315,7 +315,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object origSelf = vars.self;
+			var origSelf = vars.self;
 			try {
 				vars.self = vars.scriptArgs.Argv[0];
 				return this.toRun.Run(vars);
@@ -334,7 +334,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			object origSelf = vars.self;
+			var origSelf = vars.self;
 			try {
 				vars.self = vars.scriptArgs.Argv[0];
 				return this.toRun.TryRun(vars, results);

@@ -60,7 +60,7 @@ namespace SteamEngine.Networking {
 		}
 
 		public void SendTo(AbstractCharacter viewer) {
-			GameState state = viewer.GameState;
+			var state = viewer.GameState;
 			if (state != null) {
 				this.SendTo(viewer, state, state.Conn);
 			}

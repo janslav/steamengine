@@ -73,17 +73,17 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
 			try {
-				CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+				var codeCompileUnit = new CodeCompileUnit();
 				if (decoratedClasses.Count > 0) {
 					Logger.WriteDebug("Generating Manual DeepCopy Implementors");
 
-					CodeNamespace ns = new CodeNamespace("SteamEngine.CompiledScripts");
+					var ns = new CodeNamespace("SteamEngine.CompiledScripts");
 					codeCompileUnit.Namespaces.Add(ns);
 
-					foreach (Type decoratedClass in decoratedClasses) {
+					foreach (var decoratedClass in decoratedClasses) {
 						try {
-							GeneratedInstance gi = new GeneratedInstance(decoratedClass);
-							CodeTypeDeclaration ctd = gi.GetGeneratedType();
+							var gi = new GeneratedInstance(decoratedClass);
+							var ctd = gi.GetGeneratedType();
 							ns.Types.Add(ctd);
 						} catch (FatalException) {
 							throw;
@@ -115,7 +115,7 @@ namespace SteamEngine {
 
 			internal GeneratedInstance(Type decoratedClass) {
 				this.decoratedClass = decoratedClass;
-				foreach (MemberInfo mi in decoratedClass.GetMembers()) {
+				foreach (var mi in decoratedClass.GetMembers()) {
 					this.HandleDeepCopyImplementationAttribute(mi);
 					this.HandleCopyableDataAttribute(mi);
 				}
@@ -133,7 +133,7 @@ namespace SteamEngine {
 					if ((mi.MemberType & MemberTypes.Constructor) == MemberTypes.Constructor) {
 						this.initializer = (MethodBase) mi;
 					} else if ((mi.MemberType & MemberTypes.Method) == MemberTypes.Method) {
-						MethodInfo meth = (MethodInfo) mi;
+						var meth = (MethodInfo) mi;
 						if (!meth.ReturnType.IsAssignableFrom(this.decoratedClass)) {
 							throw new SEException("Incompatible return type of method " + meth);
 						}
@@ -142,7 +142,7 @@ namespace SteamEngine {
 						}
 					}
 					if (this.initializer != null) {
-						ParameterInfo[] pars = this.initializer.GetParameters();
+						var pars = this.initializer.GetParameters();
 						if (pars.Length == 0) {
 						} else if ((pars.Length == 1) && (pars[0].ParameterType == this.decoratedClass)) {
 						} else {
@@ -156,10 +156,10 @@ namespace SteamEngine {
 
 			private void HandleCopyableDataAttribute(MemberInfo mi) {
 				if (mi.IsDefined(typeof(CopyableDataAttribute), false)) {
-					bool added = false;
+					var added = false;
 					if ((mi.MemberType & MemberTypes.Property) == MemberTypes.Property) {
-						PropertyInfo pi = (PropertyInfo) mi;
-						MethodInfo[] accessors = pi.GetAccessors();
+						var pi = (PropertyInfo) mi;
+						var accessors = pi.GetAccessors();
 						if (accessors.Length == 2) {
 							if (!accessors[0].IsStatic) {
 								this.copyableDataProperties.Add(pi);
@@ -169,7 +169,7 @@ namespace SteamEngine {
 							throw new SEException(LogStr.Ident("CopyableDataAttribute") + " can only be placed on fields or properties with both setter and getter.");
 						}
 					} else if ((mi.MemberType & MemberTypes.Field) == MemberTypes.Field) {
-						FieldInfo fi = (FieldInfo) mi;
+						var fi = (FieldInfo) mi;
 						if (!fi.IsStatic) {
 							this.copyableDataFields.Add(fi);
 							added = true;
@@ -182,7 +182,7 @@ namespace SteamEngine {
 			}
 
 			private void GenerateDeepCopyMethod(CodeTypeMemberCollection methods) {
-				CodeMemberMethod deepCopyMethod = new CodeMemberMethod();
+				var deepCopyMethod = new CodeMemberMethod();
 				deepCopyMethod.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 				deepCopyMethod.Name = "DeepCopy";
 				deepCopyMethod.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "copyFrom"));
@@ -220,12 +220,12 @@ namespace SteamEngine {
 					"copy",
 					initExpression));
 
-				foreach (FieldInfo fi in this.copyableDataFields) {
-					string name = fi.Name;
+				foreach (var fi in this.copyableDataFields) {
+					var name = fi.Name;
 					deepCopyMethod.Statements.Add(this.GenerateCopyOperation(methods, name, fi.FieldType, false));
 				}
-				foreach (PropertyInfo pi in this.copyableDataProperties) {
-					string name = pi.Name;
+				foreach (var pi in this.copyableDataProperties) {
+					var name = pi.Name;
 					deepCopyMethod.Statements.Add(this.GenerateCopyOperation(methods, name, pi.PropertyType, true));
 				}
 
@@ -255,9 +255,9 @@ namespace SteamEngine {
 					}
 					return new CodeAssignStatement(to, from);
 				} else {
-					string methodName = "DelayedGetCopy_" + name;
+					var methodName = "DelayedGetCopy_" + name;
 
-					CodeMemberMethod method = new CodeMemberMethod();
+					var method = new CodeMemberMethod();
 					method.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 					method.Name = methodName;
 					method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(object), "copiedValue"));
@@ -299,7 +299,7 @@ namespace SteamEngine {
 			}
 
 			private CodeMemberProperty GenerateHandledTypeProperty() {
-				CodeMemberProperty retVal = new CodeMemberProperty();
+				var retVal = new CodeMemberProperty();
 				retVal.Attributes = MemberAttributes.Public | MemberAttributes.Final; ;
 				retVal.Name = "HandledType";
 				retVal.Type = new CodeTypeReference(typeof(Type));
@@ -315,7 +315,7 @@ namespace SteamEngine {
 			}
 
 			internal CodeTypeDeclaration GetGeneratedType() {
-				CodeTypeDeclaration codeTypeDeclaration = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_" + this.decoratedClass.Name);
+				var codeTypeDeclaration = new CodeTypeDeclaration("GeneratedDeepCopyImplementor_" + this.decoratedClass.Name);
 				codeTypeDeclaration.TypeAttributes = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
 				codeTypeDeclaration.BaseTypes.Add(typeof(IDeepCopyImplementor));
 				codeTypeDeclaration.IsClass = true;

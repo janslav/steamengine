@@ -91,7 +91,7 @@ namespace SteamEngine.Regions
 				return false;
 			}
 
-			bool hasSurface = false;
+			var hasSurface = false;
 
 			int tileId;
 			int tileZ;
@@ -100,7 +100,7 @@ namespace SteamEngine.Regions
 			int lowZ = 0, avgZ = 0, topZ = 0;
 
 			this.GetAverageZ(x, y, ref lowZ, ref avgZ, ref topZ);
-			TileFlag landFlags = TileData.GetTileFlags(tileId & 0x3FFF);
+			var landFlags = TileData.GetTileFlags(tileId & 0x3FFF);
 
 			if (((landFlags & TileFlag.Impassable) != 0) && (avgZ > z) && ((z + height) > lowZ)) {
 				return false;
@@ -111,10 +111,10 @@ namespace SteamEngine.Regions
 
 			bool surface, impassable;
 
-			foreach (AbstractInternalItem staticTile in this.GetStaticsAndMultiComponentsOnCoords(x, y)) {
-				ItemDispidInfo dispidInfo = staticTile.DispidInfo;
-				TileFlag staticFlag = dispidInfo.Flags;
-				int staticZ = staticTile.Z;
+			foreach (var staticTile in this.GetStaticsAndMultiComponentsOnCoords(x, y)) {
+				var dispidInfo = staticTile.DispidInfo;
+				var staticFlag = dispidInfo.Flags;
+				var staticZ = staticTile.Z;
 				surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
 				impassable = (staticFlag & TileFlag.Impassable) == TileFlag.Impassable;
 
@@ -124,20 +124,20 @@ namespace SteamEngine.Regions
 					hasSurface = true;
 			}
 
-			Sector sector = this.GetSector(x >> sectorFactor, y >> sectorFactor);
-			foreach (Thing t in sector.Things) {
-				AbstractItem item = t as AbstractItem;
+			var sector = this.GetSector(x >> sectorFactor, y >> sectorFactor);
+			foreach (var t in sector.Things) {
+				var item = t as AbstractItem;
 				if (item != null) {
-					int itemX = item.X;
-					int itemY = item.Y;
-					int itemZ = item.Z;
-					int itemModel = item.Model;
+					var itemX = item.X;
+					var itemY = item.Y;
+					var itemZ = item.Z;
+					var itemModel = item.Model;
 					if ((itemModel < 0x4000) && (itemX == x) && (itemY == y)) {
-						ItemDispidInfo dispidInfo = ItemDispidInfo.GetByModel(itemModel);
-						TileFlag staticFlag = dispidInfo.Flags;
+						var dispidInfo = ItemDispidInfo.GetByModel(itemModel);
+						var staticFlag = dispidInfo.Flags;
 						surface = (staticFlag & TileFlag.Surface) == TileFlag.Surface;
 						impassable = (staticFlag & TileFlag.Impassable) == TileFlag.Impassable;
-						int itemHeight = item.Height;
+						var itemHeight = item.Height;
 
 						if ((surface || impassable || (checkBlocksFit && item.BlocksFit)) && (itemZ + itemHeight) > z && (z + height) > itemZ) {
 							return false;
@@ -147,9 +147,9 @@ namespace SteamEngine.Regions
 						}
 					}
 				} else if (checkCharacters) {
-					AbstractCharacter ch = (AbstractCharacter) t;
+					var ch = (AbstractCharacter) t;
 					if (ch.X == x && ch.Y == y && (!ch.Flag_Insubst)) {
-						int chZ = ch.Z;
+						var chZ = ch.Z;
 						if ((chZ + 16) > z && (z + height) > chZ) {
 							return false;
 						}
@@ -166,14 +166,14 @@ namespace SteamEngine.Regions
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "5#"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "4#"), SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "6#")]
 		public bool CheckMovement(IPoint3D point, IMovementSettings settings, Direction d, bool hackMove, out int xForward, out int yForward, out int newZ) {
-			int xStart = point.X;
-			int yStart = point.Y;
+			var xStart = point.X;
+			var yStart = point.Y;
 			xForward = xStart;
 			yForward = yStart;
 			int xRight = xStart, yRight = yStart;
 			int xLeft = xStart, yLeft = yStart;
 
-			bool checkDiagonals = ((int) d & 0x1) == 0x1;
+			var checkDiagonals = ((int) d & 0x1) == 0x1;
 
 			Offset(d, ref xForward, ref yForward);
 
@@ -192,17 +192,17 @@ namespace SteamEngine.Regions
 
 			int startZ, startTop;
 
-			TileFlag reqFlags = TileFlag.ImpassableSurface;
+			var reqFlags = TileFlag.ImpassableSurface;
 
 			if (settings.CanSwim) {
 				reqFlags |= TileFlag.Wet;
 			}
 
 			if (checkDiagonals) {
-				Sector sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
-				Sector sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
-				Sector sectorLeft = this.GetSector(xLeft >> sectorFactor, yLeft >> sectorFactor);
-				Sector sectorRight = this.GetSector(xRight >> sectorFactor, yRight >> sectorFactor);
+				var sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
+				var sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
+				var sectorLeft = this.GetSector(xLeft >> sectorFactor, yLeft >> sectorFactor);
+				var sectorRight = this.GetSector(xRight >> sectorFactor, yRight >> sectorFactor);
 
 				//List<Sector> sectorsPool = sectorsPool;
 
@@ -220,21 +220,21 @@ namespace SteamEngine.Regions
 					sectorsPool.Add(sectorRight);
 				}
 
-				for (int i = 0; i < sectorsPool.Count; ++i) {
-					Sector sector = sectorsPool[i];
+				for (var i = 0; i < sectorsPool.Count; ++i) {
+					var sector = sectorsPool[i];
 
-					foreach (Thing t in sector.Things) {
-						AbstractItem item = t as AbstractItem;
+					foreach (var t in sector.Things) {
+						var item = t as AbstractItem;
 						if (item == null) {
 							continue;
 						}
 
-						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
+						var model = item.Model;
+						var idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0)
 							continue;
-						int itemX = item.X;
-						int itemY = item.Y;
+						var itemX = item.X;
+						var itemY = item.Y;
 
 						if (sector == sectorStart && (itemX == xStart && itemY == yStart) && model < 0x4000) {
 							itemsPoolStart.Add(item);
@@ -251,23 +251,23 @@ namespace SteamEngine.Regions
 				if (sectorsPool.Count > 0)
 					sectorsPool.Clear();
 			} else {
-				Sector sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
-				Sector sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
+				var sectorStart = this.GetSector(xStart >> sectorFactor, yStart >> sectorFactor);
+				var sectorForward = this.GetSector(xForward >> sectorFactor, yForward >> sectorFactor);
 
 				if (sectorStart == sectorForward) {
-					foreach (Thing t in sectorStart.Things) {
-						AbstractItem item = t as AbstractItem;
+					foreach (var t in sectorStart.Things) {
+						var item = t as AbstractItem;
 						if (item == null) {
 							continue;
 						}
 
-						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
+						var model = item.Model;
+						var idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0) {
 							continue;
 						}
-						int itemX = item.X;
-						int itemY = item.Y;
+						var itemX = item.X;
+						var itemY = item.Y;
 
 						if (itemX == xStart && itemY == yStart && model < 0x4000) {
 							itemsPoolStart.Add(item);
@@ -276,38 +276,38 @@ namespace SteamEngine.Regions
 						}
 					}
 				} else {
-					foreach (Thing t in sectorForward.Things) {
-						AbstractItem item = t as AbstractItem;
+					foreach (var t in sectorForward.Things) {
+						var item = t as AbstractItem;
 						if (item == null) {
 							continue;
 						}
 
-						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
+						var model = item.Model;
+						var idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0) {
 							continue;
 						}
-						int itemX = item.X;
-						int itemY = item.Y;
+						var itemX = item.X;
+						var itemY = item.Y;
 
 						if (itemX == xForward && itemY == yForward && model < 0x4000) {
 							itemsPoolForward.Add(item);
 						}
 					}
 
-					foreach (Thing t in sectorStart.Things) {
-						AbstractItem item = t as AbstractItem;
+					foreach (var t in sectorStart.Things) {
+						var item = t as AbstractItem;
 						if (item == null) {
 							continue;
 						}
 
-						int model = item.Model;
-						ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
+						var model = item.Model;
+						var idi = ItemDispidInfo.GetByModel(model);
 						if ((idi.Flags & reqFlags) == 0) {
 							continue;
 						}
-						int itemX = item.X;
-						int itemY = item.Y;
+						var itemX = item.X;
+						var itemY = item.Y;
 
 						if (itemX == xStart && itemY == yStart && model < 0x4000) {
 							itemsPoolStart.Add(item);
@@ -318,7 +318,7 @@ namespace SteamEngine.Regions
 
 			this.GetStartZ(settings, point, itemsPoolStart, out startZ, out startTop);
 
-			bool moveIsOk = this.Check(point, settings, itemsPoolForward, xForward, yForward, startTop, startZ, out newZ);
+			var moveIsOk = this.Check(point, settings, itemsPoolForward, xForward, yForward, startTop, startZ, out newZ);
 			if (moveIsOk && checkDiagonals) {
 				int hold;
 				//ani monstra ani hraci nemuzou projit sikmo pres roh, natoz pres diagonalni zed
@@ -349,24 +349,24 @@ namespace SteamEngine.Regions
 
 		private static bool IsOk(bool ignoreDoors, int ourZ, int ourTop, List<AbstractInternalItem> tiles, List<AbstractItem> items) {
 			for (int i = 0, n = tiles.Count; i < n; i++) {
-				AbstractInternalItem check = tiles[i];
-				ItemDispidInfo itemData = check.DispidInfo;
+				var check = tiles[i];
+				var itemData = check.DispidInfo;
 
 				if ((itemData.Flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
-					int checkZ = check.Z;
-					int checkTop = checkZ + itemData.CalcHeight;
+					var checkZ = check.Z;
+					var checkTop = checkZ + itemData.CalcHeight;
 
 					if (checkTop > ourZ && ourTop > checkZ)
 						return false;
 				}
 			}
 
-			for (int i = 0; i < items.Count; ++i) {
-				AbstractItem item = items[i];
+			for (var i = 0; i < items.Count; ++i) {
+				var item = items[i];
 
-				int model = item.Model;
-				ItemDispidInfo idi = ItemDispidInfo.GetByModel(model);
-				TileFlag flags = idi.Flags;
+				var model = item.Model;
+				var idi = ItemDispidInfo.GetByModel(model);
+				var flags = idi.Flags;
 
 				if ((flags & TileFlag.ImpassableSurface) != 0) {// Impassable || Surface
 					if (ignoreDoors && ((flags & TileFlag.Door) != 0
@@ -374,8 +374,8 @@ namespace SteamEngine.Regions
 						//^^^^ ve standartnich tiledata.mul nemaj tyhle modely flag_door i kdyz sou to dvere
 						continue;
 
-					int checkZ = item.Z;
-					int checkTop = checkZ + idi.CalcHeight;
+					var checkZ = item.Z;
+					var checkTop = checkZ + idi.CalcHeight;
 
 					if (checkTop > ourZ && ourTop > checkZ)
 						return false;
@@ -397,26 +397,26 @@ namespace SteamEngine.Regions
 		private bool Check(IPoint3D point, IMovementSettings settings, List<AbstractItem> items, int x, int y, int startTop, int startZ, out int newZ) {
 			newZ = 0;
 
-			int landTile = this.GetTileId(x, y);
+			var landTile = this.GetTileId(x, y);
 			int landZ = 0, landCenter = 0, landTop = 0;
-			TileFlag tileFlags = TileData.GetTileFlags(landTile);
+			var tileFlags = TileData.GetTileFlags(landTile);
 
-			bool canSwim = settings.CanSwim;
-			bool canFly = settings.CanFly;
-			bool canCrossLand = settings.CanCrossLand;
-			bool canCrossLava = settings.CanCrossLava;
-			bool ignoreDoors = settings.IgnoreDoors;
+			var canSwim = settings.CanSwim;
+			var canFly = settings.CanFly;
+			var canCrossLand = settings.CanCrossLand;
+			var canCrossLava = settings.CanCrossLava;
+			var ignoreDoors = settings.IgnoreDoors;
 
-			bool landBlocks = TileData.HasFlag(tileFlags, TileFlag.Impassable);
-			bool considerLand = !TileData.IsIgnoredId(landTile);
+			var landBlocks = TileData.HasFlag(tileFlags, TileFlag.Impassable);
+			var considerLand = !TileData.IsIgnoredId(landTile);
 
-			int pointZ = point.Z;
+			var pointZ = point.Z;
 
 			//we can't go over land or it's no land...let's try swimming, lavawalking or flying
 			if ((landBlocks) || (!canCrossLand)) {
 				landBlocks = true; //land blocks us if we can't cross land
-				bool isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
-				bool isLava = t_lava.IsTypeOfMapTile(landTile);
+				var isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
+				var isLava = t_lava.IsTypeOfMapTile(landTile);
 				if ((canSwim && isWater) ||
 				    (canCrossLava && isLava) ||
 				    (canFly)) {
@@ -428,25 +428,25 @@ namespace SteamEngine.Regions
 
 			this.GetAverageZ(x, y, ref landZ, ref landCenter, ref landTop);
 
-			bool moveIsOk = false;
+			var moveIsOk = false;
 
-			int stepHeight = settings.ClimbPower;
-			int stepTop = startTop + stepHeight;
-			int checkTop = startZ + PersonHeight;
+			var stepHeight = settings.ClimbPower;
+			var stepTop = startTop + stepHeight;
+			var checkTop = startZ + PersonHeight;
 
 			staticsPool.Clear();
-			foreach (AbstractInternalItem staticItem in this.GetStaticsAndMultiComponentsOnCoords(x, y)) {
+			foreach (var staticItem in this.GetStaticsAndMultiComponentsOnCoords(x, y)) {
 				staticsPool.Add(staticItem);
 			}
 
 			for (int i = 0, n = staticsPool.Count; i < n; i++) {
-				AbstractInternalItem staticItem = staticsPool[i];
+				var staticItem = staticsPool[i];
 
-				ItemDispidInfo idi = staticItem.DispidInfo;
-				TileFlag flags = idi.Flags;
+				var idi = staticItem.DispidInfo;
+				var flags = idi.Flags;
 
-				bool staticIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
-				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
+				var staticIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
+				var staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if ((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable
 				    (canSwim && staticIsWater) || //je to voda a my umime plavat
@@ -456,14 +456,14 @@ namespace SteamEngine.Regions
 					if (!canFly && !canCrossLand && !staticIsWater && !staticIsLava)
 						continue;//neumime chodit/litat a neni to voda/lava (he?)
 
-					int itemZ = staticItem.Z;
-					int itemTop = itemZ;
-					int ourZ = itemZ + idi.CalcHeight;
+					var itemZ = staticItem.Z;
+					var itemTop = itemZ;
+					var ourZ = itemZ + idi.CalcHeight;
 					//int ourTop = ourZ + PersonHeight;
-					int testTop = checkTop;
+					var testTop = checkTop;
 
 					if (moveIsOk) {
-						int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
+						var cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
 
 						if (cmp > 0 || (cmp == 0 && ourZ > newZ))
 							continue;
@@ -476,7 +476,7 @@ namespace SteamEngine.Regions
 						itemTop += idi.Height;
 
 					if (stepTop >= itemTop) {
-						int landCheck = itemZ;
+						var landCheck = itemZ;
 
 						if (idi.Height >= stepHeight)
 							landCheck += stepHeight;
@@ -494,13 +494,13 @@ namespace SteamEngine.Regions
 				}
 			}
 
-			for (int i = 0; i < items.Count; ++i) {
-				AbstractItem item = items[i];
-				ItemDispidInfo idi = ItemDispidInfo.GetByModel(item.Model);
-				TileFlag flags = idi.Flags;
+			for (var i = 0; i < items.Count; ++i) {
+				var item = items[i];
+				var idi = ItemDispidInfo.GetByModel(item.Model);
+				var flags = idi.Flags;
 
-				bool itemIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
-				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);
+				var itemIsWater = ((flags & TileFlag.Wet) == TileFlag.Wet);
+				var itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if (/*item.Flag_NeverMovable && */((flags & TileFlag.ImpassableSurface) == TileFlag.Surface || // Surface && !Impassable && !Movable
 				                                   (canSwim && itemIsWater) || //je to voda a my umime plavat
@@ -510,14 +510,14 @@ namespace SteamEngine.Regions
 					if (!canFly && !canCrossLand && !itemIsWater && !itemIsLava)
 						continue;//neumime chodit/litat a neni to voda/lava (he?)
 
-					int itemZ = item.Z;
-					int itemTop = itemZ;
-					int ourZ = itemZ + idi.CalcHeight;
+					var itemZ = item.Z;
+					var itemTop = itemZ;
+					var ourZ = itemZ + idi.CalcHeight;
 					//int ourTop = ourZ + PersonHeight;
-					int testTop = checkTop;
+					var testTop = checkTop;
 
 					if (moveIsOk) {
-						int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
+						var cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
 
 						if (cmp > 0 || (cmp == 0 && ourZ > newZ))
 							continue;
@@ -530,7 +530,7 @@ namespace SteamEngine.Regions
 						itemTop += idi.Height;
 
 					if (stepTop >= itemTop) {
-						int landCheck = itemZ;
+						var landCheck = itemZ;
 
 						if (idi.Height >= stepHeight)
 							landCheck += stepHeight;
@@ -549,17 +549,17 @@ namespace SteamEngine.Regions
 			}
 
 			if (considerLand && !landBlocks && stepTop >= landZ) {
-				int ourZ = landCenter;
+				var ourZ = landCenter;
 				//int ourTop = ourZ + PersonHeight;
-				int testTop = checkTop;
+				var testTop = checkTop;
 
 				if (ourZ + PersonHeight > testTop)
 					testTop = ourZ + PersonHeight;
 
-				bool shouldCheck = true;
+				var shouldCheck = true;
 
 				if (moveIsOk) {
-					int cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
+					var cmp = Math.Abs(ourZ - pointZ) - Math.Abs(newZ - pointZ);
 
 					if (cmp > 0 || (cmp == 0 && ourZ > newZ))
 						shouldCheck = false;
@@ -578,22 +578,22 @@ namespace SteamEngine.Regions
 		private void GetStartZ(IMovementSettings settings, IPoint3D point, List<AbstractItem> itemList, out int zLow, out int zTop) {
 			int xCheck = point.X, yCheck = point.Y;
 
-			int landTile = this.GetTileId(xCheck, yCheck);
+			var landTile = this.GetTileId(xCheck, yCheck);
 			int landZ = 0, landCenter = 0, landTop = 0;
-			TileFlag tileFlags = TileData.GetTileFlags(landTile);
+			var tileFlags = TileData.GetTileFlags(landTile);
 
-			bool canSwim = settings.CanSwim;
-			bool canFly = settings.CanFly;
-			bool canCrossLand = settings.CanCrossLand;
-			bool canCrossLava = settings.CanCrossLava;
+			var canSwim = settings.CanSwim;
+			var canFly = settings.CanFly;
+			var canCrossLand = settings.CanCrossLand;
+			var canCrossLava = settings.CanCrossLava;
 
-			bool landBlocks = TileData.HasFlag(tileFlags, TileFlag.Impassable);
+			var landBlocks = TileData.HasFlag(tileFlags, TileFlag.Impassable);
 
 			//we can't go over land or it's no land...let's try swimming, lavawalking or flying
 			if ((landBlocks) || (!canCrossLand)) {
 				landBlocks = true; //land blocks us if we can't cross land
-				bool isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
-				bool isLava = t_lava.IsTypeOfMapTile(landTile);
+				var isWater = ((tileFlags & TileFlag.Wet) == TileFlag.Wet);
+				var isLava = t_lava.IsTypeOfMapTile(landTile);
 				if ((canSwim && isWater) ||
 				    (canCrossLava && isLava) ||
 				    (canFly)) {
@@ -603,12 +603,12 @@ namespace SteamEngine.Regions
 
 			this.GetAverageZ(xCheck, yCheck, ref landZ, ref landCenter, ref landTop);
 
-			bool considerLand = !TileData.IsIgnoredId(landTile);
+			var considerLand = !TileData.IsIgnoredId(landTile);
 
-			int zCenter = zLow = zTop = 0;
-			bool isSet = false;
+			var zCenter = zLow = zTop = 0;
+			var isSet = false;
 
-			int pointZ = point.Z;
+			var pointZ = point.Z;
 
 			if (considerLand && !landBlocks && pointZ >= landCenter) {
 				zLow = landZ;
@@ -620,14 +620,14 @@ namespace SteamEngine.Regions
 				isSet = true;
 			}
 
-			foreach (AbstractInternalItem staticItem in this.GetStaticsAndMultiComponentsOnCoords(xCheck, yCheck)) {
+			foreach (var staticItem in this.GetStaticsAndMultiComponentsOnCoords(xCheck, yCheck)) {
 
-				ItemDispidInfo idi = staticItem.DispidInfo;
+				var idi = staticItem.DispidInfo;
 
-				int calcTop = (staticItem.Z + idi.CalcHeight);
+				var calcTop = (staticItem.Z + idi.CalcHeight);
 
-				bool staticIsWater = ((idi.Flags & TileFlag.Wet) == TileFlag.Wet);
-				bool staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
+				var staticIsWater = ((idi.Flags & TileFlag.Wet) == TileFlag.Wet);
+				var staticIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
 				if ((!isSet || calcTop >= zCenter) &&
 				    ((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
@@ -643,7 +643,7 @@ namespace SteamEngine.Regions
 					zLow = staticItem.Z;
 					zCenter = calcTop;
 
-					int top = staticItem.Z + idi.Height;
+					var top = staticItem.Z + idi.Height;
 
 					if (!isSet || top > zTop)
 						zTop = top;
@@ -652,15 +652,15 @@ namespace SteamEngine.Regions
 				}
 			}
 
-			for (int i = 0; i < itemList.Count; ++i) {
-				AbstractItem item = itemList[i];
+			for (var i = 0; i < itemList.Count; ++i) {
+				var item = itemList[i];
 
-				ItemDispidInfo idi = ItemDispidInfo.GetByModel(item.Model);
+				var idi = ItemDispidInfo.GetByModel(item.Model);
 
-				bool itemIsWater = ((idi.Flags & TileFlag.Wet) == TileFlag.Wet);
-				bool itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);
+				var itemIsWater = ((idi.Flags & TileFlag.Wet) == TileFlag.Wet);
+				var itemIsLava = t_lava.IsTypeOfMapTile(idi.Id);
 
-				int calcTop = item.Z + idi.CalcHeight;
+				var calcTop = item.Z + idi.CalcHeight;
 
 				if ((!isSet || calcTop >= zCenter) &&
 				    ((idi.Flags & TileFlag.Surface) != 0 || //je to stul (eh?)
@@ -676,7 +676,7 @@ namespace SteamEngine.Regions
 					zLow = item.Z;
 					zCenter = calcTop;
 
-					int top = item.Z + idi.Height;
+					var top = item.Z + idi.Height;
 
 					if (!isSet || top > zTop)
 						zTop = top;
@@ -707,10 +707,10 @@ namespace SteamEngine.Regions
 		}
 
 		private void GetAverageZ(int x, int y, ref int z, ref int avg, ref int top) {
-			int zTop = this.GetTileZ(x, y);
-			int zLeft = this.GetTileZ(x, y + 1);
-			int zRight = this.GetTileZ(x + 1, y);
-			int zBottom = this.GetTileZ(x + 1, y + 1);
+			var zTop = this.GetTileZ(x, y);
+			var zLeft = this.GetTileZ(x, y + 1);
+			var zRight = this.GetTileZ(x + 1, y);
+			var zBottom = this.GetTileZ(x + 1, y + 1);
 			z = zTop;
 			if (zLeft < z) {
 				z = zLeft;
@@ -739,7 +739,7 @@ namespace SteamEngine.Regions
 		}
 
 		private static int FloorAverage(int a, int b) {
-			int v = a + b;
+			var v = a + b;
 			if (v < 0) {
 				v--;
 			}
@@ -750,8 +750,8 @@ namespace SteamEngine.Regions
 		[SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters"), SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public int GetFixedZ(IPoint3D point) {
 			//int oldZ = point.Z;
-			int x = point.X;
-			int y = point.Y;
+			var x = point.X;
+			var y = point.Y;
 			//if (this.IsValidPos(x, y)) {
 			return this.GetTileZ(x, y);
 			//}

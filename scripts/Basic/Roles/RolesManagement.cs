@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <param name="role">The role.</param>
 		/// <returns>Allow = true: chr is now member of role, otherwise it's not</returns>
 		public static DenyResult TryAssign(Character chr, Role role) {
-			RoleKey key = role.Key;
+			var key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 				Role prevRole;
@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 					if (role == prevRole) {
 						return DenyResultMessages.Allow; // we're already in place, all is ok
 					}
-					DenyResult result = role.Trigger_DenyAddMember(chr); //check if we can enter this role
+					var result = role.Trigger_DenyAddMember(chr); //check if we can enter this role
 					if (result.Allow) {
 						result = TryUnAssign(chr, prevRole); //check if we can leave the previous role
 						if (!result.Allow) {
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 					return result;
 				}
 			} else {
-				DenyResult result = role.Trigger_DenyAddMember(chr);
+				var result = role.Trigger_DenyAddMember(chr);
 				if (result.Allow) {
 					rolesByKey = new Dictionary<RoleKey, Role>(); //check if we can enter this role
 					charactersRoles[chr] = rolesByKey;
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static void InternalAddLoadedRole(Role role, Character chr) {
-			RoleKey key = role.Key;
+			var key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 				Role prevRole;
@@ -98,14 +98,14 @@ namespace SteamEngine.CompiledScripts {
 		/// <param name="role">The role.</param>
 		/// <returns>true = chr is not member of role, false = it is</returns>
 		public static DenyResult TryUnAssign(Character chr, Role role) {
-			RoleKey key = role.Key;
+			var key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 				Role prevRole;
 				if (rolesByKey.TryGetValue(key, out prevRole)) {
 					if (role == prevRole) {
-						Role.IRoleMembership membership = role.GetMembership(chr);
-						DenyResult result = role.Trigger_DenyRemoveMember(chr, membership);
+						var membership = role.GetMembership(chr);
+						var result = role.Trigger_DenyRemoveMember(chr, membership);
 						if (result.Allow) {
 							if (rolesByKey.Count == 1) { //last role of that char
 								charactersRoles.Remove(chr);
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void UnAssign(Character chr, Role role) {
-			RoleKey key = role.Key;
+			var key = role.Key;
 			Dictionary<RoleKey, Role> rolesByKey;
 			if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 				Role prevRole;
@@ -140,8 +140,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void UnassignAll(Role role, bool beingDestroyed) {
-			RoleKey key = role.Key;
-			foreach (Character chr in role.Members) {
+			var key = role.Key;
+			foreach (var chr in role.Members) {
 				Dictionary<RoleKey, Role> rolesByKey;
 				if (charactersRoles.TryGetValue(chr, out rolesByKey)) {
 					rolesByKey.Remove(key);

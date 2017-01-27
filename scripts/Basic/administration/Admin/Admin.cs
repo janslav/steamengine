@@ -30,17 +30,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam lidi z parametru (if any)
-			ArrayList playersList = (ArrayList) args.GetTag(playersListTK);
+			var playersList = (ArrayList) args.GetTag(playersListTK);
 			if (playersList == null) {
 				playersList = ScriptUtil.ArrayListFromEnumerable(GameServer.GetAllPlayers());
 				args.SetTag(playersListTK, playersList);//ulozime do parametru dialogu
 			}
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, playersList.Count);
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, playersList.Count);
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
+			var dialogHandler = new ImprovedDialog(gi);
 			//pozadi    
 			dialogHandler.CreateBackground(800);
 			dialogHandler.SetLocation(50, 50);
@@ -108,10 +108,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				Player plr = (Player) playersList[i];
-				Hues plrColor = Hues.PlayerColor;
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var plr = (Player) playersList[i];
+				var plrColor = Hues.PlayerColor;
 				//TODO - barveni dle prislusnosti
 				dialogHandler.LastTable[rowCntr, 0] = GUTAButton.Builder.Id((4 * i) + 10).Build(); //player come
 				dialogHandler.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((4 * i) + 11).Build(); //account detail
@@ -134,7 +134,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
-			ArrayList playersList = (ArrayList) args.GetTag(playersListTK);
+			var playersList = (ArrayList) args.GetTag(playersListTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch (gr.PressedButton) {
 					case 0: //exit
@@ -173,9 +173,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, playersList.Count, 1)) {//posledni 1 - pocet sloupecku v dialogu				
 			} else { //skutecna adminovaci tlacitka z radku
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (gr.PressedButton - 10) / 4;
-				int buttNum = (gr.PressedButton - 10) % 4;
-				Player plr = (Player) playersList[row];
+				var row = (gr.PressedButton - 10) / 4;
+				var buttNum = (gr.PressedButton - 10) % 4;
+				var plr = (Player) playersList[row];
 				Gump newGi;
 				switch (buttNum) {
 					case 0: //player come

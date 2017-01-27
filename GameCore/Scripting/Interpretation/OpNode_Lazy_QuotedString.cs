@@ -31,8 +31,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		private string formatString;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			ArrayList children = ((Production) code).children;
-			object[] nodes = new object[children.Count - 2]; //minus first and last quote
+			var children = ((Production) code).children;
+			var nodes = new object[children.Count - 2]; //minus first and last quote
 			for (int i = 1, n = children.Count - 1; i < n; i++) {
 				nodes[i - 1] = children[i];
 			}
@@ -42,19 +42,19 @@ namespace SteamEngine.Scripting.Interpretation {
 		//nw when I look at it, I'm quite sure this could be yet optimised :)
 		internal static OpNode ConstructFromArray(IOpNodeHolder parent, Node code, object[] nodes, LScriptCompilationContext context) {
 			//the nodes can be both OpNodes or Nodes (parser nodes), but nothing else
-			bool isConstant = true;
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Lazy_QuotedString constructed = new OpNode_Lazy_QuotedString(
+			var isConstant = true;
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Lazy_QuotedString(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
-			ArrayList nodesList = new ArrayList();
+			var nodesList = new ArrayList();
 			for (int i = 0, n = nodes.Length; i < n; i++) {
-				object nodeAsObject = nodes[i];
+				var nodeAsObject = nodes[i];
 				if (nodeAsObject is OpNode) {
 					nodesList.Add(nodeAsObject);
 				} else {
-					Node node = (Node) nodeAsObject;
+					var node = (Node) nodeAsObject;
 					if ((IsType(node, StrictConstants.STRONG_EVAL_EXPRESSION))
 							|| (IsType(node, StrictConstants.EVAL_EXPRESSION))) {
 						nodesList.Add(LScriptMain.CompileNode(constructed, node, context));
@@ -65,12 +65,12 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 			}
 
-			StringBuilder formatBuf = new StringBuilder();
-			ArrayList evalsList = new ArrayList();
+			var formatBuf = new StringBuilder();
+			var evalsList = new ArrayList();
 			for (int i = 0, n = nodesList.Count; i < n; ) {
 				if (nodesList[i] is OpNode_Lazy_EvalExpression) {
 					isConstant = false;
-					int curEval = evalsList.Add(nodesList[i]);
+					var curEval = evalsList.Add(nodesList[i]);
 					formatBuf.Append("{").Append(curEval.ToString(CultureInfo.InvariantCulture)).Append("}"); //creates {x} in the formatstring
 					i++;
 				} else {
@@ -99,7 +99,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.evals, oldNode);
+			var index = Array.IndexOf(this.evals, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -107,7 +107,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			vars.self = vars.defaultObject;
 			try {
 				for (int i = 0, n = this.evals.Length; i < n; i++) {
@@ -120,7 +120,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			object[] strings = new object[this.evals.Length];
+			var strings = new object[this.evals.Length];
 			for (int i = 0, n = this.evals.Length; i < n; i++) {
 				strings[i] = this.evals[i].ToString();
 			}

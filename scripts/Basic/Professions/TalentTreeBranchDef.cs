@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int GetTalentMaxPoints(AbilityDef def) {
-			TalentTreeEntry leaf = this.GetEntry(def);
+			var leaf = this.GetEntry(def);
 			if (leaf != null) {
 				return leaf.maxPoints;
 			}
@@ -52,7 +52,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void SetTalentMaxPoints(AbilityDef def, int points) {
-			string fvName = talentMaxPointsPrefix + def.PrettyDefname;
+			var fvName = talentMaxPointsPrefix + def.PrettyDefname;
 			if (!this.HasFieldValue(fvName)) {
 				this.InitTypedField(fvName, 0, typeof(int)).CurrentValue = points;
 			} else {
@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public ResourcesList GetTalentDependency(AbilityDef def) {
-			TalentTreeEntry leaf = this.GetEntry(def);
+			var leaf = this.GetEntry(def);
 			if (leaf != null) {
 				return leaf.dependencies;
 			}
@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void SetTalentDependency(AbilityDef def, ResourcesList dependency) {
-			string fvName = talentMaxPointsPrefix + def.PrettyDefname;
+			var fvName = talentMaxPointsPrefix + def.PrettyDefname;
 			if (!this.HasFieldValue(fvName)) {
 				this.InitTypedField(fvName, 0, typeof(ResourcesList)).CurrentValue = dependency;
 			} else {
@@ -82,8 +82,8 @@ namespace SteamEngine.CompiledScripts {
 		public TalentTreeEntry GetEntry(AbilityDef def) {
 			TalentTreeEntry leaf;
 			if (!this.cachedLeafs.TryGetValue(def, out leaf)) {
-				string defname = def.PrettyDefname;
-				string fvName = talentTierPrefix + defname;
+				var defname = def.PrettyDefname;
+				var fvName = talentTierPrefix + defname;
 				if (this.HasFieldValue(fvName)) {
 					leaf = new TalentTreeEntry(def,
 						Convert.ToInt32(this.GetCurrentFieldValue(fvName)),
@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts {
 		public IEnumerable<TalentTreeEntry> AllTalents {
 			get {
 				if (!this.cacheComplete) {
-					foreach (AbilityDef abilityDef in AbilityDef.AllAbilities) {
+					foreach (var abilityDef in AbilityDef.AllAbilities) {
 						this.GetEntry(abilityDef);
 					}
 					this.cacheComplete = true;
@@ -120,7 +120,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
-			PropsLine p = ps.PopPropsLine("name");
+			var p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
 
 			base.LoadScriptLines(ps);
@@ -132,28 +132,28 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			//try recognizing an ability name or defname
-			AbilityDef ability = AbilityDef.GetByDefname(param);
+			var ability = AbilityDef.GetByDefname(param);
 			if (ability == null) {
 				ability = AbilityDef.GetByName(param);
 			}
 
 			//now load the parameters. it goes Tier, TierPosition, MaxPoints, resourcelist
 			if (ability != null) {
-				string[] preparsed = Utility.SplitSphereString(args, false);
-				int len = preparsed.Length;
+				var preparsed = Utility.SplitSphereString(args, false);
+				var len = preparsed.Length;
 				if (len < 3) {
 					throw new SEException("TalentTree entries need at least 3 numbers - Tier, TierPosition, MaxPoints");
 				}
 
-				string abilityName = ability.PrettyDefname;
+				var abilityName = ability.PrettyDefname;
 
 				this.InitOrSetFieldValue<int>(filename, line, talentTierPrefix + abilityName, preparsed[0]);
 				this.InitOrSetFieldValue<int>(filename, line, talentTierPositionPrefix + abilityName, preparsed[1]);
 				this.InitOrSetFieldValue<int>(filename, line, talentMaxPointsPrefix + abilityName, preparsed[2]);
 
-				string resListFieldName = talentDependencyPrefix + abilityName;
+				var resListFieldName = talentDependencyPrefix + abilityName;
 				if (len > 3) {
-					string reconstructedResList = string.Join(", ", preparsed, 3, len - 3);
+					var reconstructedResList = string.Join(", ", preparsed, 3, len - 3);
 					this.InitOrSetFieldValue<ResourcesList>(filename, line, resListFieldName, reconstructedResList);
 				} else if (!this.HasFieldValue(resListFieldName)) {
 					this.InitTypedField(resListFieldName, null, typeof(ResourcesList));
@@ -206,8 +206,8 @@ namespace SteamEngine.CompiledScripts {
 		private const string talentDependencyPrefix = "TalentDependency.";
 
 		public override void LoadFromSaves(PropsSection input) {
-			foreach (PropsLine line in input.PropsLines) {
-				string name = line.Name;
+			foreach (var line in input.PropsLines) {
+				var name = line.Name;
 				if (!this.HasFieldValue(name)) {
 					if (name.StartsWith(talentTierPrefix) ||
 							name.StartsWith(talentTierPositionPrefix) ||

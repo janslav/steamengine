@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 		/// a specified string
 		/// </summary>
 		public static List<ScriptedAccount> RetreiveByStr(string searched) {
-			List<ScriptedAccount> retList = new List<ScriptedAccount>();
+			var retList = new List<ScriptedAccount>();
 			if (searched == null) searched = ""; //can be null
 			searched = searched.ToUpper();
 
@@ -122,8 +122,8 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static ScriptedAccount CreateGameAccount(object ignored, ScriptArgs sa) {
-			string name = string.Concat(sa.Argv[0]);
-			ScriptedAccount acc = new ScriptedAccount(name);
+			var name = string.Concat(sa.Argv[0]);
+			var acc = new ScriptedAccount(name);
 
 			if (sa.Argv.Length > 1) {
 				acc.Password(string.Concat(sa.Argv[1]));
@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static ScriptedAccount CreateGameAccount(string name, string password, string email) {
-			ScriptedAccount acc = new ScriptedAccount(name);
+			var acc = new ScriptedAccount(name);
 			acc.Password(password);
 			acc.email = email;
 

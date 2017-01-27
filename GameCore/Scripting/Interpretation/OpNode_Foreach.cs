@@ -30,16 +30,16 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode blockNode;//can be null
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Foreach constructed = new OpNode_Foreach(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Foreach(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
-			Production mainProd = (Production) code;
-			Production headProd = GetHeaderCode(mainProd.GetChildAt(1));//FOREACH_HEADER_CODE or FOREACH_HEADER_IN_PARENS
-			string localName = GetLocalName(headProd.GetChildAt(0));
+			var mainProd = (Production) code;
+			var headProd = GetHeaderCode(mainProd.GetChildAt(1));//FOREACH_HEADER_CODE or FOREACH_HEADER_IN_PARENS
+			var localName = GetLocalName(headProd.GetChildAt(0));
 			constructed.localName = localName;
 			constructed.localIndex = constructed.ParentScriptHolder.GetLocalVarIndex(localName);
 			constructed.enumerableNode = LScriptMain.CompileNode(constructed, headProd.GetChildAt(2), true, context);
@@ -50,7 +50,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static string GetLocalName(Node node) {
-			Token asToken = node as Token;
+			var asToken = node as Token;
 			if (asToken != null) {
 				return asToken.GetImage().Trim();
 			}
@@ -89,9 +89,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		{
 			if (this.blockNode != null) {
 				object retVal = null;
-				IEnumerable enumerable = this.enumerableNode.Run(vars) as IEnumerable;
+				var enumerable = this.enumerableNode.Run(vars) as IEnumerable;
 				if (enumerable != null) {
-					IEnumerator enumerator = enumerable.GetEnumerator();
+					var enumerator = enumerable.GetEnumerator();
 					while ((!vars.returned) && (enumerator.MoveNext())) {
 						vars.localVars[this.localIndex] = enumerator.Current;
 						retVal = this.blockNode.Run(vars);

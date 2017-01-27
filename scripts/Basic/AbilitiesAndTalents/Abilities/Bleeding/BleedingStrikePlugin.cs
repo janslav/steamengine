@@ -43,14 +43,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public void On_AfterSwing(WeaponSwingArgs swingArgs) {
 			if (swingArgs.FinalDamage > 0) {
-				BleedingEffectPluginDef bleedingDef = SingletonScript<BleedingEffectPluginDef>.Instance;
-				Character attacker = swingArgs.attacker;
+				var bleedingDef = SingletonScript<BleedingEffectPluginDef>.Instance;
+				var attacker = swingArgs.attacker;
 
-				double bleedDamage = swingArgs.FinalDamage * attacker.Weapon.BleedingEfficiency * BleedingStrikeDef.EffectPower //standard effect
+				var bleedDamage = swingArgs.FinalDamage * attacker.Weapon.BleedingEfficiency * BleedingStrikeDef.EffectPower //standard effect
 					* (1 + (attacker.GetAbility(BleedingBonusDef) * BleedingBonusDef.EffectPower)); //bonus effect
 
-				double durationInSeconds = BleedingStrikeDef.EffectDuration;
-				int ticksCount = (int) (durationInSeconds / bleedingDef.TickInterval);
+				var durationInSeconds = BleedingStrikeDef.EffectDuration;
+				var ticksCount = (int) (durationInSeconds / bleedingDef.TickInterval);
 
 				bleedingDef.Apply(attacker, swingArgs.defender, EffectFlag.HarmfulEffect | EffectFlag.FromAbility,
 					bleedDamage, ticksCount);

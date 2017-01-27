@@ -61,7 +61,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		IEnumerable<IDataFieldView> IDataView.GetDataFieldsPage(int firstLineIndex, object target) {
 			var c = ((ThingAsContainer) target);
 
-			int i = 0;
+			var i = 0;
 			foreach (Item item in c.thing) {
 				if (i < firstLineIndex) {
 					continue;

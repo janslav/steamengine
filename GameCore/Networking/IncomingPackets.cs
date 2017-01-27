@@ -37,7 +37,7 @@ namespace SteamEngine.Networking {
 			if ((blockSize - 1) > this.LengthIn) {//-1 because "start" is after the first byte
 				return ReadPacketResult.NeedMoreData;
 			}
-			ReadPacketResult retVal = this.ReadDynamicPart(blockSize);
+			var retVal = this.ReadDynamicPart(blockSize);
 			this.SeekFromStart(blockSize - 1); //-1 because "start" is after the first byte
 			return retVal;
 		}
@@ -166,7 +166,7 @@ namespace SteamEngine.Networking {
 			SubPacket subSubPacket;
 
 			protected internal override ReadPacketResult ReadSubPacket(GeneralInformationInPacket packet, int blockSize) {
-				byte subSubId = packet.DecodeByte();
+				var subSubId = packet.DecodeByte();
 				switch (subSubId) {
 					case 0x01:
 						this.subSubPacket = Pool<AddAPartyMemberSubSubPacket>.Acquire();
@@ -221,7 +221,7 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Instance;
+					var instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestAddMember(state.CharacterNotNull);
 					}
@@ -238,7 +238,7 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Instance;
+					var instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestRemoveMember(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
 					}
@@ -258,7 +258,7 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Instance;
+					var instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestPrivateMessage(state.CharacterNotNull, Thing.UidGetCharacter(this.uid), this.message);
 					}
@@ -274,7 +274,7 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Instance;
+					var instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.RequestPublicMessage(state.CharacterNotNull, this.message);
 					}
@@ -291,7 +291,7 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Instance;
+					var instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.SetCanLoot(state.CharacterNotNull, this.canLoot);
 					}
@@ -308,7 +308,7 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Instance;
+					var instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.AcceptJoinRequest(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
 					}
@@ -325,7 +325,7 @@ namespace SteamEngine.Networking {
 				}
 
 				protected internal override void Handle(GeneralInformationInPacket packet, TcpConnection<GameState> conn, GameState state) {
-					PartyCommands instance = PartyCommands.Instance;
+					var instance = PartyCommands.Instance;
 					if (instance != null) {
 						instance.DeclineJoinRequest(state.CharacterNotNull, Thing.UidGetCharacter(this.uid));
 					}
@@ -367,13 +367,13 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			AbstractAccount acc;
-			LoginAttemptResult result = AbstractAccount.HandleLoginAttempt(this.accName, this.pass, state, out acc);
+			var result = AbstractAccount.HandleLoginAttempt(this.accName, this.pass, state, out acc);
 
 			switch (result) {
 				case LoginAttemptResult.Success:
 					Console.WriteLine(LogStr.Ident(state) + " logged in.");
 
-					PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+					var pg = PacketGroup.AcquireSingleUsePG();
 					//if (Globals.aos) {
 					//	pg.AcquirePacket<EnableLockedClientFeaturesOutPacket>().Prepare(Globals.featuresFlags);
 					//}
@@ -423,13 +423,13 @@ namespace SteamEngine.Networking {
 		string ver;
 
 		protected override ReadPacketResult Read() {
-			ushort size = this.DecodeUShort();
+			var size = this.DecodeUShort();
 			this.ver = this.DecodeAsciiString(size - 3);
 			return ReadPacketResult.Success;
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			ClientVersion cv = ClientVersion.Acquire(this.ver);
+			var cv = ClientVersion.Acquire(this.ver);
 			if (cv != state.Version) {
 				Console.WriteLine(LogStr.Ident(state.ToString()) + (" claims to be: " + cv));
 				state.InternalSetClientVersion(cv);
@@ -451,9 +451,9 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractCharacter viewer = state.CharacterNotNull;
+			var viewer = state.CharacterNotNull;
 
-			AbstractCharacter target = Thing.UidGetCharacter(this.uid);
+			var target = Thing.UidGetCharacter(this.uid);
 			if (target != null) {
 				switch (this.type) {
 					case 0x04:
@@ -486,10 +486,10 @@ namespace SteamEngine.Networking {
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.uids.Clear();
 			if (Globals.UseAosToolTips) {
-				int dataBlockSize = blockSize - 3;
+				var dataBlockSize = blockSize - 3;
 				if ((dataBlockSize >= 0) && ((dataBlockSize % 4) == 0)) {
-					int count = dataBlockSize / 4;
-					for (int i = 0; i < count; i++) {
+					var count = dataBlockSize / 4;
+					for (var i = 0; i < count; i++) {
 						this.uids.Add(this.DecodeInt());
 					}
 				}
@@ -500,11 +500,11 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			if (Globals.UseAosToolTips) {
-				AbstractCharacter curChar = state.CharacterNotNull;
-				foreach (int uid in this.uids) {
-					Thing t = Thing.UidGetThing(uid);
+				var curChar = state.CharacterNotNull;
+				foreach (var uid in this.uids) {
+					var t = Thing.UidGetThing(uid);
 					if ((t != null) && (!t.IsDeleted)) {
-						AosToolTips toolTips = t.GetAosToolTips(state.Language);
+						var toolTips = t.GetAosToolTips(state.Language);
 						if (toolTips != null) {
 							if (curChar.CanSeeForUpdate(t).Allow) {
 								toolTips.SendDataPacket(conn);
@@ -566,10 +566,10 @@ namespace SteamEngine.Networking {
 
 			if ((this.type & 0xc0) == 0xc0) {
 				int value = this.DecodeShort();
-				int numKeywords = (value & 0xFFF0) >> 4;
-				int hold = value & 0xF;
+				var numKeywords = (value & 0xFFF0) >> 4;
+				var hold = value & 0xF;
 
-				for (int i = 0; i < numKeywords; ++i) {
+				for (var i = 0; i < numKeywords; ++i) {
 					int speechID;
 					if ((i & 1) == 0) {
 						hold <<= 8;
@@ -585,7 +585,7 @@ namespace SteamEngine.Networking {
 					this.keywordsSet.Add(speechID);
 				}
 
-				int n = this.keywordsSet.Count;
+				var n = this.keywordsSet.Count;
 				if (n > 0) {
 					this.keywords = new int[n];
 					this.keywordsSet.CopyTo(this.keywords, 0);
@@ -593,7 +593,7 @@ namespace SteamEngine.Networking {
 				}
 				this.type = (byte) (this.type & ~0xc0);
 
-				int speechlen = blockSize - this.Position;
+				var speechlen = blockSize - this.Position;
 
 				this.speech = this.DecodeAsciiString(speechlen);
 			} else {
@@ -687,7 +687,7 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			Thing thing = Thing.UidGetThing(this.uid);
+			var thing = Thing.UidGetThing(this.uid);
 			if (thing != null) {
 				if (Globals.UseAosToolTips && state.Version.AosToolTips) {
 					thing.Trigger_AosClick(state.CharacterNotNull);
@@ -709,7 +709,7 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractCharacter ch = state.CharacterNotNull;
+			var ch = state.CharacterNotNull;
 			Thing thing;
 			if (this.uid == 0x3cfff) {
 				thing = ch;
@@ -768,7 +768,7 @@ namespace SteamEngine.Networking {
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractAccount acc = state.Account;
+			var acc = state.Account;
 			if (!acc.HasFreeSlot) {
 				state.WriteLine(Loc<IncomingPacketsLoc>.Get(state.Language).MaxAccCharsReached);
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -776,8 +776,8 @@ namespace SteamEngine.Networking {
 				return;
 			}
 
-			string charname = this.args.Charname;
-			for (int a = 0; a < charname.Length; a++) {
+			var charname = this.args.Charname;
+			for (var a = 0; a < charname.Length; a++) {
 				if (!(charname[a] == ' ' || (charname[a] >= 'a' && charname[a] <= 'z') || (charname[a] >= 'A' && charname[a] <= 'Z'))) {
 					state.WriteLine(Loc<IncomingPacketsLoc>.Get(state.Language).IllegalCharsInName);
 					PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
@@ -868,16 +868,16 @@ namespace SteamEngine.Networking {
 
 			//TODO: check skills and stats? Can't be bothered for moria, for now... -tar
 
-			ScriptArgs sa = new ScriptArgs(this.args);
-			object o = CreatePlayerCharacterFunction.TryRun(Globals.Instance, sa);//creates the character
+			var sa = new ScriptArgs(this.args);
+			var o = CreatePlayerCharacterFunction.TryRun(Globals.Instance, sa);//creates the character
 
-			AbstractCharacter cre = o as AbstractCharacter;
+			var cre = o as AbstractCharacter;
 			if (cre == null) {
 				PreparedPacketGroups.SendLoginDenied(conn, LoginDeniedReason.CommunicationsProblem);
 				conn.Close("The CreatePlayerCharacter function failed to create a new character.");
 				return;
 			}
-			int charSlot = cre.MakeBePlayer(acc);
+			var charSlot = cre.MakeBePlayer(acc);
 			Globals.SetSrc(cre);
 
 			Logger.WriteDebug("Logging in character " + cre);
@@ -1045,10 +1045,10 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			MovementState ms = state.movementState;
+			var ms = state.movementState;
 
-			bool running = ((this.dir & 0x80) == 0x80);
-			Direction direction = (Direction) (this.dir & 0x07);
+			var running = ((this.dir & 0x80) == 0x80);
+			var direction = (Direction) (this.dir & 0x07);
 
 			ms.MovementRequest(direction, running, this.sequence);
 		}
@@ -1064,11 +1064,11 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractCharacter cre = Thing.UidGetCharacter(this.uid);
+			var cre = Thing.UidGetCharacter(this.uid);
 			if ((cre == null) || (cre.IsDeleted)) {
 				PacketSequences.SendRemoveFromView(conn, this.uid);
 			} else {
-				AbstractCharacter self = state.CharacterNotNull;
+				var self = state.CharacterNotNull;
 				self.Trigger_PlayerAttackRequest(cre);
 			}
 		}
@@ -1085,10 +1085,10 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractItem item = Thing.UidGetItem(this.uid);
+			var item = Thing.UidGetItem(this.uid);
 			if (item != null) {
-				AbstractCharacter cre = state.CharacterNotNull;
-				DenyResult result = cre.TryPickupItem(item, this.amount);
+				var cre = state.CharacterNotNull;
+				var result = cre.TryPickupItem(item, this.amount);
 				if (!result.Allow) {
 					PickupItemResult numeric;
 					if (resultsTable.TryGetValue(result, out numeric)) {
@@ -1106,7 +1106,7 @@ namespace SteamEngine.Networking {
 
 		private static Dictionary<DenyResult, PickupItemResult> resultsTable = InitTable();
 		private static Dictionary<DenyResult, PickupItemResult> InitTable() {
-			Dictionary<DenyResult, PickupItemResult> retVal = new Dictionary<DenyResult, PickupItemResult>();
+			var retVal = new Dictionary<DenyResult, PickupItemResult>();
 			retVal.Add(DenyResultMessages.Allow, PickupItemResult.Allow);
 			retVal.Add(DenyResultMessages.Deny_NoMessage, PickupItemResult.Deny_NoMessage);
 			retVal.Add(DenyResultMessages.Deny_ThatDoesNotBelongToYou, PickupItemResult.Deny_ThatDoesNotBelongToYou);
@@ -1136,18 +1136,18 @@ namespace SteamEngine.Networking {
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
 			//always an item, may or may not have the item-flag.
-			AbstractItem i = Thing.UidGetItem(this.itemUid);
-			AbstractCharacter cre = state.CharacterNotNull;
+			var i = Thing.UidGetItem(this.itemUid);
+			var cre = state.CharacterNotNull;
 			if (i != null && cre.HasPickedUp(i)) {
 				DenyResult result;
 				if (this.contUid == -1) {//dropping on ground
 					result = cre.TryPutItemOnGround(this.x, this.y, this.z);
 				} else {
-					Thing co = Thing.UidGetThing(this.contUid);
+					var co = Thing.UidGetThing(this.contUid);
 					if (co != null) {
 						//Console.WriteLine("HandleDropItem: x = "+x+", y = "+y+", z = "+z+", cont = "+co);
 
-						AbstractItem coAsItem = co as AbstractItem;
+						var coAsItem = co as AbstractItem;
 						if (coAsItem != null) {
 							if (coAsItem.IsContainer && (this.x != 0xFFFF) && (this.y != 0xFFFF)) {
 								//client put it to some coords inside container
@@ -1185,14 +1185,14 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractItem i = Thing.UidGetItem(this.itemUid);
-			AbstractCharacter cre = state.CharacterNotNull;
+			var i = Thing.UidGetItem(this.itemUid);
+			var cre = state.CharacterNotNull;
 			if (i != null && cre.HasPickedUp(i)) {
-				AbstractCharacter contChar = Thing.UidGetCharacter(this.contUid);
+				var contChar = Thing.UidGetCharacter(this.contUid);
 				if (contChar == null) {
 					contChar = cre;
 				}
-				DenyResult result = cre.TryEquipItemOnChar(contChar);
+				var result = cre.TryEquipItemOnChar(contChar);
 
 				if ((!result.Allow) && cre.HasPickedUp(i)) { //we check if the player still has it in hand after the triggers
 					result.SendDenyMessage(cre, state, conn);
@@ -1214,7 +1214,7 @@ namespace SteamEngine.Networking {
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.type = this.DecodeByte();
 			this.actionStr = this.DecodeAsciiString(blockSize - 4);
-			string firstPart = this.actionStr.Split(Tools.whitespaceChars)[0];
+			var firstPart = this.actionStr.Split(Tools.whitespaceChars)[0];
 			this.actionParsed = ConvertTools.TryParseInt32(firstPart, out this.actionParseResult);
 			return ReadPacketResult.Success;
 		}
@@ -1232,7 +1232,7 @@ namespace SteamEngine.Networking {
 						} else {
 							skillId = this.actionParseResult;
 						}
-						AbstractSkillDef skillDef = AbstractSkillDef.GetById(skillId);
+						var skillDef = AbstractSkillDef.GetById(skillId);
 						if (skillDef.StartByMacroEnabled) {
 							state.LastSkillMacroId = skillId;
 							state.CharacterNotNull.SelectSkill(skillDef);
@@ -1279,7 +1279,7 @@ namespace SteamEngine.Networking {
 
 		protected override ReadPacketResult Read() {
 			this.stat = this.DecodeByte();
-			byte l = this.DecodeByte();
+			var l = this.DecodeByte();
 			if (l > 2) {
 				l = 0;
 			}
@@ -1308,7 +1308,7 @@ namespace SteamEngine.Networking {
 
 		protected override ReadPacketResult ReadDynamicPart(int blockSize) {
 			this.skillId = this.DecodeShort();
-			byte l = this.DecodeByte();
+			var l = this.DecodeByte();
 			if (l > 2) {
 				l = 0;
 			}
@@ -1355,10 +1355,10 @@ namespace SteamEngine.Networking {
 				PreparedPacketGroups.SendRejectDeleteCharacter(conn, DeleteCharacterResult.Deny_NonexistantCharacter);
 				return;
 			}
-			AbstractAccount acc = state.Account;
-			DeleteCharacterResult result = acc.RequestDeleteCharacter(this.charSlot);
+			var acc = state.Account;
+			var result = acc.RequestDeleteCharacter(this.charSlot);
 			if (result == DeleteCharacterResult.Allow) {
-				ResendCharactersAfterDeleteOutPacket p = Pool<ResendCharactersAfterDeleteOutPacket>.Acquire();
+				var p = Pool<ResendCharactersAfterDeleteOutPacket>.Acquire();
 				p.Prepare(acc.Characters);
 				conn.SendSinglePacket(p);
 			} else if (result != DeleteCharacterResult.Deny_NoMessage) {
@@ -1374,13 +1374,13 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractCharacter ch = state.CharacterNotNull;
+			var ch = state.CharacterNotNull;
 
-			DrawGamePlayerOutPacket dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
+			var dgpot = Pool<DrawGamePlayerOutPacket>.Acquire();
 			dgpot.Prepare(state, ch); //0x20
 			conn.SendSinglePacket(dgpot);
 
-			DrawObjectOutPacket doop = Pool<DrawObjectOutPacket>.Acquire();
+			var doop = Pool<DrawObjectOutPacket>.Acquire();
 			doop.Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78							
 			conn.SendSinglePacket(doop);
 
@@ -1397,9 +1397,9 @@ namespace SteamEngine.Networking {
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			AbstractCharacter c = Thing.UidGetCharacter(this.uid);
+			var c = Thing.UidGetCharacter(this.uid);
 			if ((c != null) && (state.CharacterNotNull.CanSeeForUpdate(c).Allow)) {
-				AllNamesOutPacket p = Pool<AllNamesOutPacket>.Acquire();
+				var p = Pool<AllNamesOutPacket>.Acquire();
 				p.Prepare(this.uid, c.Name);
 				conn.SendSinglePacket(p);
 			}
@@ -1437,30 +1437,30 @@ namespace SteamEngine.Networking {
 			this.gumpUid = this.DecodeInt();
 			this.pressedButton = this.DecodeInt();
 
-			int switchesCount = this.DecodeInt();
+			var switchesCount = this.DecodeInt();
 			this.selectedSwitches = new int[switchesCount];
-			for (int i = 0; i < switchesCount; i++) {
+			for (var i = 0; i < switchesCount; i++) {
 				this.selectedSwitches[i] = this.DecodeInt();
 			}
 
-			uint entriesCount = this.DecodeUInt();
+			var entriesCount = this.DecodeUInt();
 			this.responseTexts = new ResponseText[entriesCount];
-			for (int i = 0; i < entriesCount; i++) {
-				ushort id = this.DecodeUShort();
-				int len = this.DecodeUShort() * 2;
-				string text = this.DecodeBigEndianUnicodeString(len);
+			for (var i = 0; i < entriesCount; i++) {
+				var id = this.DecodeUShort();
+				var len = this.DecodeUShort() * 2;
+				var text = this.DecodeBigEndianUnicodeString(len);
 				this.responseTexts[i] = new ResponseText(id, text);
 			}
 			return ReadPacketResult.Success;
 		}
 
 		protected override void Handle(TcpConnection<GameState> conn, GameState state) {
-			Gump gi = state.PopGump(this.gumpUid);
+			var gi = state.PopGump(this.gumpUid);
 			if (gi != null) {
-				int n = (gi.numEntryIDs != null) ? gi.numEntryIDs.Count : 0;
-				ResponseNumber[] responseNumbers = new ResponseNumber[n];
-				for (int i = 0; i < n; i++) {
-					foreach (ResponseText rt in this.responseTexts) {
+				var n = (gi.numEntryIDs != null) ? gi.numEntryIDs.Count : 0;
+				var responseNumbers = new ResponseNumber[n];
+				for (var i = 0; i < n; i++) {
+					foreach (var rt in this.responseTexts) {
 						if (gi.numEntryIDs[i] == rt.Id) {
 							decimal number;
 							if (ConvertTools.TryParseDecimal(rt.Text, out number)) {
@@ -1486,7 +1486,7 @@ namespace SteamEngine.Networking {
 
 		private static void SendGumpBack(TcpConnection<GameState> conn, GameState state, Gump gi, ResponseText[] responseTexts) {
 			//first we copy the responsetext into the default texts for the textentries so that they don't change.
-			foreach (ResponseText rt in responseTexts) {
+			foreach (var rt in responseTexts) {
 				int defaultTextId;
 				if (gi.entryTextIds.TryGetValue(rt.Id, out defaultTextId)) {
 					if (defaultTextId < gi.textsList.Count) {//one can never be too sure
@@ -1496,7 +1496,7 @@ namespace SteamEngine.Networking {
 			}
 			//and then we send the gump back again
 			state.SentGump(gi);
-			SendGumpMenuDialogPacket p = Pool<SendGumpMenuDialogPacket>.Acquire();
+			var p = Pool<SendGumpMenuDialogPacket>.Acquire();
 			p.Prepare(gi);
 			conn.SendSinglePacket(p);
 		}

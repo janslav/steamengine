@@ -16,19 +16,19 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode[] blocks;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			string filename = "<unknown>";//the name should in fact be irrelevant cos this node should never tthrow any exception by its nature
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var filename = "<unknown>";//the name should in fact be irrelevant cos this node should never tthrow any exception by its nature
 			if (parent != null) {
 				filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 			}
 
-			OpNode_Script constructed = new OpNode_Script(
+			var constructed = new OpNode_Script(
 				parent, filename, line, column, code);
 
-			List<OpNode> blocksList = new List<OpNode>();
+			var blocksList = new List<OpNode>();
 			for (int i = 0, n = code.GetChildCount(); i < n; i++) {
-				Node block = code.GetChildAt(i);
+				var block = code.GetChildAt(i);
 				if (block.GetId() != (int) StrictConstants.COMEOL) {
 					blocksList.Add(LScriptMain.CompileNode(constructed, block, true, context));
 				}
@@ -44,7 +44,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.blocks, oldNode);
+			var index = Array.IndexOf(this.blocks, oldNode);
 			if (index < 0) {
 				throw new SEException("Nothing to replace the node " + oldNode + " at " + this + "  with. This should not happen.");
 			}
@@ -63,7 +63,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder();
+			var str = new StringBuilder();
 			for (int i = 0, n = this.blocks.Length; i < n; i++) {
 				str.Append(this.blocks[i] + Environment.NewLine);
 			}
@@ -76,9 +76,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal object obj;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Object constructed = new OpNode_Object(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Object(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 			//Console.WriteLine("OpNode_Object: getting string "+LScript.GetString(code));
 			constructed.obj = LScriptMain.GetString(code);
@@ -86,11 +86,11 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal static OpNode Construct(IOpNodeHolder parent, object obj) {
-			string filename = "<unknown>";//the name should in fact be irrelevant cos this node should never tthrow any exception by its nature
+			var filename = "<unknown>";//the name should in fact be irrelevant cos this node should never tthrow any exception by its nature
 			if (parent != null) {
 				filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 			}
-			OpNode_Object constructed = new OpNode_Object(
+			var constructed = new OpNode_Object(
 				parent, filename, -1, -1, null);
 			constructed.obj = obj;
 			return constructed;
@@ -126,9 +126,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode node;
 
 		internal static OpNode_ToString Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_ToString constructed = new OpNode_ToString(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_ToString(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			constructed.node = LScriptMain.CompileNode(constructed, code, context);

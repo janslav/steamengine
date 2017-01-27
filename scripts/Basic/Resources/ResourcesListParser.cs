@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static ResourcesList Parse(string input) {
 			ResourcesList retVal;
-			Match m = re.Match(input);
+			var m = re.Match(input);
 			if (InternalProcessMatch(m, out retVal)) {
 				return retVal;
 			}
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public bool TryParse(string input, out object retVal) {
 			ResourcesList rl;
-			bool r = InternalTryParse(input, out rl);
+			var r = InternalTryParse(input, out rl);
 			retVal = rl;
 			return r;
 		}
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 		//we expect sth. like this:
 		//3 i_apples, 1 i_spruce_log, t_light, 5 a_warcry, 35.6 hiding etc....
 		private static bool InternalTryParse(string input, out ResourcesList retVal) {
-			Match m = re.Match(input);
+			var m = re.Match(input);
 			if (InternalProcessMatch(m, out retVal)) {
 				return true;
 			}
@@ -66,12 +66,12 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static bool InternalProcessMatch(Match m, out ResourcesList retVal) {
 			if (m.Success) {
-				List<IResourceListEntry> resources = new List<IResourceListEntry>();
-				int n = m.Groups["resource"].Captures.Count; //number of found resources
-				CaptureCollection numbers = m.Groups["number"].Captures;
-				CaptureCollection values = m.Groups["value"].Captures;
-				for (int i = 0; i < n; i++) {
-					string number = "";
+				var resources = new List<IResourceListEntry>();
+				var n = m.Groups["resource"].Captures.Count; //number of found resources
+				var numbers = m.Groups["number"].Captures;
+				var values = m.Groups["value"].Captures;
+				for (var i = 0; i < n; i++) {
+					var number = "";
 					try {
 						number = numbers[i].Value;
 						if (number.Equals(""))
@@ -80,8 +80,8 @@ namespace SteamEngine.CompiledScripts {
 						//maybe we have something like this: "2 i_something, i_something_else" which we want to be interpreted as "2 ..., 1 ..."
 						number = "1";
 					}
-					string value = values[i].Value; //resource name (trimmed)
-					double nmr = ConvertTools.ParseDouble(number);
+					var value = values[i].Value; //resource name (trimmed)
+					var nmr = ConvertTools.ParseDouble(number);
 					resources.Add(ParseResListItem(nmr, value));
 				}
 				retVal = new ResourcesList(resources);
@@ -101,8 +101,8 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static IResourceListEntry ParseResListItem(double number, string definition) {
 			//first check if the definition begins with '%' (this means that we want to consume in percents not in absolute values
-			bool isPercent = definition.StartsWith("%");
-			string realDefinition = definition;
+			var isPercent = definition.StartsWith("%");
+			var realDefinition = definition;
 			if (isPercent) {
 				realDefinition = definition.Substring(1); //omit the starting '%' character
 			}

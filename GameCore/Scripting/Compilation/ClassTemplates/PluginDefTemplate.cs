@@ -30,7 +30,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private void Create() {
-			CodeMemberMethod create = new CodeMemberMethod();
+			var create = new CodeMemberMethod();
 			create.Name = "CreateImpl";
 			create.Attributes = MemberAttributes.Family | MemberAttributes.Override; ;
 			create.ReturnType = new CodeTypeReference(typeof(Plugin));
@@ -44,7 +44,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private void Bootstrap() {
-			CodeMemberMethod init = new CodeMemberMethod();
+			var init = new CodeMemberMethod();
 			init.Name = "Bootstrap";
 			init.Attributes = MemberAttributes.Public | MemberAttributes.Static;
 			//if (!section.baseClassName.Equals("Plugin")) {

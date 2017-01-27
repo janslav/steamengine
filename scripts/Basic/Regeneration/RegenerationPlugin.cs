@@ -44,11 +44,11 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Periodically check stats and regenerate computed amount of points (if any)</summary>
 		public void On_Timer() {
-			Character holder = (Character) this.Cont;
+			var holder = (Character) this.Cont;
 			//fields set once everytime the On_Timer method gets fired
-			double hitsRegenSpeed = holder.HitsRegenSpeed;
-			double stamRegenSpeed = holder.StamRegenSpeed;
-			double manaRegenSpeed = holder.ManaRegenSpeed;
+			var hitsRegenSpeed = holder.HitsRegenSpeed;
+			var stamRegenSpeed = holder.StamRegenSpeed;
+			var manaRegenSpeed = holder.ManaRegenSpeed;
 			int hits = holder.Hits;
 			int stam = holder.Stam;
 			int mana = holder.Mana;
@@ -56,12 +56,12 @@ namespace SteamEngine.CompiledScripts {
 			int maxStam = holder.MaxStam;
 			int maxMana = holder.MaxMana;
 
-			double timeElapsed = Globals.TimeInSeconds - this.lastServerTime;
+			var timeElapsed = Globals.TimeInSeconds - this.lastServerTime;
 
 			//count the number of modified stats points (if any!)
-			int hitsChange = this.CheckStatChange(hitsRegenSpeed, hits, maxHits, timeElapsed, ref this.residuumHits);
-			int stamChange = this.CheckStatChange(stamRegenSpeed, stam, maxStam, timeElapsed, ref this.residuumStam);
-			int manaChange = this.CheckStatChange(manaRegenSpeed, mana, maxMana, timeElapsed, ref this.residuumMana);
+			var hitsChange = this.CheckStatChange(hitsRegenSpeed, hits, maxHits, timeElapsed, ref this.residuumHits);
+			var stamChange = this.CheckStatChange(stamRegenSpeed, stam, maxStam, timeElapsed, ref this.residuumStam);
+			var manaChange = this.CheckStatChange(manaRegenSpeed, mana, maxMana, timeElapsed, ref this.residuumMana);
 
 			if ((hitsChange == 0) && (stamChange == 0) && (manaChange == 0) && //nothing regenerated now
 				(this.residuumHits == 0) && (this.residuumStam == 0) && (this.residuumMana == 0)) {//nothing is left to the next round
@@ -75,21 +75,21 @@ namespace SteamEngine.CompiledScripts {
 			//immediately without any residuum next round)
 			double usedTimer;
 			if ((hitsChange == 0) || (stamChange == 0) || (manaChange == 0)) { // some stat is unmodified, use the fastest regeneration
-				double fastestRegen = Math.Max(Math.Abs(hitsRegenSpeed), Math.Max(Math.Abs(stamRegenSpeed), Math.Abs(manaRegenSpeed)));
-				double fastestStatsResiduum = ((fastestRegen == Math.Abs(hitsRegenSpeed)) ? this.residuumHits : //fastest are hits - use them
+				var fastestRegen = Math.Max(Math.Abs(hitsRegenSpeed), Math.Max(Math.Abs(stamRegenSpeed), Math.Abs(manaRegenSpeed)));
+				var fastestStatsResiduum = ((fastestRegen == Math.Abs(hitsRegenSpeed)) ? this.residuumHits : //fastest are hits - use them
 												((fastestRegen == Math.Abs(stamRegenSpeed)) ? this.residuumStam : //fastest is stamina - use it
 													Math.Abs(manaRegenSpeed))); //use mana
 				//count the timer for the stat with the fastest regen speed
 				usedTimer = this.CountIdealTimer(fastestRegen, fastestStatsResiduum);
 			} else { //count the ideal timer for the next round
 				//we are using the newly counted residuum here (see CheckStatChange) method...
-				double hitsIdealTimer = this.CountIdealTimer(hitsRegenSpeed, this.residuumHits);
-				double stamIdealTimer = this.CountIdealTimer(stamRegenSpeed, this.residuumStam);
-				double manaIdealTimer = this.CountIdealTimer(manaRegenSpeed, this.residuumMana);
-				double midTimer = Utility.ArithmeticMean(hitsIdealTimer, stamIdealTimer, manaIdealTimer);
-				double hitsTmrDiff = Math.Abs(hitsIdealTimer - midTimer);
-				double manaTmrDiff = Math.Abs(stamIdealTimer - midTimer);
-				double stamTmrDiff = Math.Abs(manaIdealTimer - midTimer);
+				var hitsIdealTimer = this.CountIdealTimer(hitsRegenSpeed, this.residuumHits);
+				var stamIdealTimer = this.CountIdealTimer(stamRegenSpeed, this.residuumStam);
+				var manaIdealTimer = this.CountIdealTimer(manaRegenSpeed, this.residuumMana);
+				var midTimer = Utility.ArithmeticMean(hitsIdealTimer, stamIdealTimer, manaIdealTimer);
+				var hitsTmrDiff = Math.Abs(hitsIdealTimer - midTimer);
+				var manaTmrDiff = Math.Abs(stamIdealTimer - midTimer);
+				var stamTmrDiff = Math.Abs(manaIdealTimer - midTimer);
 
 				usedTimer = midTimer; //by default we want to use the mean value of the count timers
 				if (Math.Max(stamTmrDiff, Math.Max(hitsTmrDiff, manaTmrDiff)) > ALLOWED_TIMER_DIFF) {
@@ -107,11 +107,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private int CheckStatChange(double regenSpeed, int stat, int maxStat, double timeElapsed, ref double residuumStat) {
-			int statChange = 0;
+			var statChange = 0;
 			//when does the stat get modified?
 			if ((regenSpeed < 0 && (stat > 0)) ||  //negative regeneration
 					(regenSpeed > 0 && (stat < maxStat))) { //positive regeneration
-				int countedChange = this.CountStatChange(regenSpeed, ref residuumStat, timeElapsed);
+				var countedChange = this.CountStatChange(regenSpeed, ref residuumStat, timeElapsed);
 				//do not overgo the maxhits or undergo the 0
 				if (countedChange < 0) {
 					//we are substracting - do not go below zero!
@@ -134,8 +134,8 @@ namespace SteamEngine.CompiledScripts {
 			//x = (lastResiduum) + (regenSpeed * timer);
 			//we want the timer to be greater than MIN_TIMER and the number of regenerated points
 			//to be integer
-			double retTmr = 0.0d;
-			int x = 1; //we expect to gain at least 1 point ideally :-)
+			var retTmr = 0.0d;
+			var x = 1; //we expect to gain at least 1 point ideally :-)
 			while (retTmr < MIN_TIMER) {
 				retTmr = (x - currentResiduum) / regenSpeed;
 				x++;
@@ -151,8 +151,8 @@ namespace SteamEngine.CompiledScripts {
 		private int CountStatChange(double regenSpeed, ref double lastResiduum, double timeElapsed) {
 			//the number of regenerated points (x) is as follows: 
 			//x = (lastResiduum) + (regenSpeed * timer);
-			double absoluteChange = lastResiduum + (regenSpeed * timeElapsed);
-			int retVal = (int) Math.Round(absoluteChange); //the stat value added - truncated
+			var absoluteChange = lastResiduum + (regenSpeed * timeElapsed);
+			var retVal = (int) Math.Round(absoluteChange); //the stat value added - truncated
 			lastResiduum = absoluteChange - retVal; //this is the new residuum for the next round
 
 			return retVal;

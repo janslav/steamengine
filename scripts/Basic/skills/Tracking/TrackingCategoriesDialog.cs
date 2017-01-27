@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog that will display possible categories of characters to track (NPC's, Animals, Players)</summary>
 	public class D_Tracking_Categories : CompiledGumpDef {
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(180);
 			dlg.SetLocation(80, 50);
@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dlg.MakeLastTableTransparent();
 
-			GUTATable picTable = new GUTATable(4, ImprovedDialog.ICON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH);
+			var picTable = new GUTATable(4, ImprovedDialog.ICON_WIDTH, 0, ButtonMetrics.D_BUTTON_WIDTH);
 			picTable.RowHeight = 50; //dobra vejska pro obrazky
 			picTable.InnerRowsDelimited = true;
 			dlg.AddTable(picTable);
@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			SkillSequenceArgs skillSeqArgs = (SkillSequenceArgs) args[0];
+			var skillSeqArgs = (SkillSequenceArgs) args[0];
 			switch (gr.PressedButton) {
 				case 0: //exit - finish tracking without selecting anything
 					skillSeqArgs.PhaseAbort();

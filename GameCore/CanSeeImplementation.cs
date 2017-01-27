@@ -32,7 +32,7 @@ namespace SteamEngine {
 		*/
 		public int UpdateRange {
 			get {
-				GameState state = this.GameState;
+				var state = this.GameState;
 				if (state != null) {
 					return state.UpdateRange;
 				}
@@ -42,7 +42,7 @@ namespace SteamEngine {
 
 		public byte RequestedUpdateRange {
 			get {
-				GameState state = this.GameState;
+				var state = this.GameState;
 				if (state != null) {
 					return state.RequestedUpdateRange;
 				}
@@ -60,7 +60,7 @@ namespace SteamEngine {
 		 */
 		public virtual int VisionRange {
 			get {
-				object value = this.GetTag(visionRangeTK);
+				var value = this.GetTag(visionRangeTK);
 				if (value == null) {
 					return Globals.MaxUpdateRange;
 				}
@@ -73,7 +73,7 @@ namespace SteamEngine {
 					this.RemoveTag(visionRangeTK);
 				}
 
-				GameState state = this.GameState;
+				var state = this.GameState;
 				if (state != null) {
 					state.SyncUpdateRange();
 				}
@@ -108,8 +108,8 @@ namespace SteamEngine {
 				}
 			} else if (target.IsEquipped) {
 				if (target.Z < sentLayers) {
-					Thing container = target.TopObj(); //the char that has this item equipped
-					DenyResult canSeeContainer = this.CanSeeForUpdateImpl(fromCoordinates, targetMapCoordinates, container);
+					var container = target.TopObj(); //the char that has this item equipped
+					var canSeeContainer = this.CanSeeForUpdateImpl(fromCoordinates, targetMapCoordinates, container);
 
 					if (canSeeContainer.Allow) {
 						if (!this.CanSeeVisibility(target)) {
@@ -158,7 +158,7 @@ namespace SteamEngine {
 			if (fromCoordinates.M != targetM) {
 				return false;
 			}
-			int dist = Point2D.GetSimpleDistance(fromCoordinates.X, fromCoordinates.Y, targetX, targetY);
+			var dist = Point2D.GetSimpleDistance(fromCoordinates.X, fromCoordinates.Y, targetX, targetY);
 			return dist <= this.UpdateRange;
 		}
 
@@ -184,7 +184,7 @@ namespace SteamEngine {
 					return DenyResultMessages.Deny_ThatIsTooFarAway;
 				}
 
-				Map map = fromCoordinates.GetMap();
+				var map = fromCoordinates.GetMap();
 				if (!map.CanSeeLosFromTo(fromCoordinates, targetMapCoordinates)) {
 					return DenyResultMessages.Deny_ThatIsOutOfLOS;
 				}
@@ -201,7 +201,7 @@ namespace SteamEngine {
 				}
 			} //else we already checked it
 
-			AbstractItem container = target.Cont as AbstractItem;
+			var container = target.Cont as AbstractItem;
 			if (container != null) {
 				if (this.IsOnline) {
 					return OpenedContainers.HasContainerOpenFromAt(this, fromCoordinates, targetMapCoordinates, container, false);//calls this method recursively... false cos we already checked topobj
@@ -218,7 +218,7 @@ namespace SteamEngine {
 			if (!this.CanReachMapRangeFrom(this, target)) {
 				return DenyResultMessages.Deny_ThatIsTooFarAway;
 			}
-			Map m = this.GetMap();
+			var m = this.GetMap();
 			if (!m.CanSeeLosFromTo(this, target)) {
 				return DenyResultMessages.Deny_ThatIsOutOfLOS;
 			}
@@ -230,21 +230,21 @@ namespace SteamEngine {
 				return DenyResultMessages.Deny_ThatDoesntExist;
 			}
 
-			IPoint3D targetTop = target.TopPoint;
+			var targetTop = target.TopPoint;
 
 			int thisM = this.M;
-			IPoint4D targetAs4D = targetTop as IPoint4D;
+			var targetAs4D = targetTop as IPoint4D;
 
 			if ((targetAs4D != null) && (targetAs4D.M != thisM)) { //different M
 				return DenyResultMessages.Deny_ThatIsTooFarAway;
 			}
-			Map map = Map.GetMap(thisM);
-			Thing targetAsThing = target as Thing;
+			var map = Map.GetMap(thisM);
+			var targetAsThing = target as Thing;
 			if (targetAsThing != null) {
 				if ((targetAsThing.IsDeleted) || (targetAsThing.Flag_Disconnected)) {
 					return DenyResultMessages.Deny_ThatDoesntExist;
 				}
-				DenyResult canSee = this.CanSeeForUpdate(targetAsThing);
+				var canSee = this.CanSeeForUpdate(targetAsThing);
 				if (!canSee.Allow) {
 					return canSee;
 				}
@@ -274,7 +274,7 @@ namespace SteamEngine {
 				return false;
 			}
 
-			int dist = Point2D.GetSimpleDistance(fromCoordinates, target);
+			var dist = Point2D.GetSimpleDistance(fromCoordinates, target);
 			return dist <= Globals.ReachRange;
 		}
 

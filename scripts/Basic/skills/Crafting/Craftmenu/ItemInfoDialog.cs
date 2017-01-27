@@ -25,16 +25,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 600;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(gi);
-			ItemDef itm = (ItemDef) args[0];
+			var dlg = new ImprovedDialog(gi);
+			var itm = (ItemDef) args[0];
 
-			GumpArtDimension picDim = GumpDimensions.Table[itm.Model];
+			var picDim = GumpDimensions.Table[itm.Model];
 
 			dlg.CreateBackground(width);
 			dlg.SetLocation(100, 70);
 
 			//jmeno, ikona, cudlik na zruseni
-			GUTATable hdrTable = new GUTATable(1, 85, 120, 0, ButtonMetrics.D_BUTTON_WIDTH);
+			var hdrTable = new GUTATable(1, 85, 120, 0, ButtonMetrics.D_BUTTON_WIDTH);
 			//add 2 pixels from both top and bottom corners (but minimal rowheight stays... - due to button icons))
 			hdrTable.RowHeight = Math.Max(ImprovedDialog.D_ROW_HEIGHT, picDim.Height + 2 * ImprovedDialog.D_ICON_SPACE);
 			dlg.AddTable(hdrTable);
@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.LastTable[0, 3] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build(); //exit button
 			dlg.MakeLastTableTransparent();
 
-			int otherRows = 2;
+			var otherRows = 2;
 			if (itm.IsWeaponDef) {
 				otherRows += 2; //attack vsM and vsP
 			}

@@ -21,12 +21,12 @@ using SteamEngine.Scripting.Objects;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Test : CompiledGumpDef {
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			int headerColor = 1;
-			string header = "Carpentry Menu";
+			var headerColor = 1;
+			var header = "Carpentry Menu";
 			//int contentColor = 1;
-			string content = "blablub blöb";
-			int width = 200;
-			int height = 220;
+			var content = "blablub blöb";
+			var width = 200;
+			var height = 220;
 
 			gi.ResizePic(0, 0, 5054, width, height + 100);
 

@@ -93,11 +93,11 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal LScriptHolder ParentScriptHolder {
 			get {//"topobj" of a node
-				LScriptHolder parentAsHolder = this.parent as LScriptHolder;
+				var parentAsHolder = this.parent as LScriptHolder;
 				if (parentAsHolder != null) {
 					return parentAsHolder;
 				}
-				OpNode parentAsOpNode = this.parent as OpNode;
+				var parentAsOpNode = this.parent as OpNode;
 				if (parentAsOpNode != null) {
 					return parentAsOpNode.ParentScriptHolder;
 				}

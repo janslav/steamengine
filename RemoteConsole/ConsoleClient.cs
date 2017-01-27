@@ -62,7 +62,7 @@ namespace SteamEngine.RemoteConsole {
 		private delegate void NoParamDeleg();
 
 		public void On_Close(string reason) {
-			IPEndPoint ep = this.conn.EndPoint;
+			var ep = this.conn.EndPoint;
 			Console.WriteLine("Disconnected from " + ep + ": " + reason);
 
 			connectedInstance = null;
@@ -76,7 +76,7 @@ namespace SteamEngine.RemoteConsole {
 
 		public static void SendCommand(GameUid id, string command) {
 			if (connectedInstance != null) {
-				CommandLinePacket p = Pool<CommandLinePacket>.Acquire();
+				var p = Pool<CommandLinePacket>.Acquire();
 				p.Prepare(id, command);
 				connectedInstance.conn.SendSinglePacket(p);
 			}
@@ -87,17 +87,17 @@ namespace SteamEngine.RemoteConsole {
 				return;
 			}
 			try {
-				IPAddress[] ips = Dns.GetHostAddresses(eps.Address);
+				var ips = Dns.GetHostAddresses(eps.Address);
 
-				bool compatibleAddressPresent = false;
-				foreach (IPAddress ip in ips) {
+				var compatibleAddressPresent = false;
+				foreach (var ip in ips) {
 					if (ip.AddressFamily == AddressFamily.InterNetwork) {
 						compatibleAddressPresent = true;
-						TcpConnection<ConsoleClient> createdConn = factory.Connect(new IPEndPoint(ip, eps.Port));
+						var createdConn = factory.Connect(new IPEndPoint(ip, eps.Port));
 
 						Settings.Save();
 						createdConn.State.endPointSetting = eps;
-						RequestLoginPacket packet = Pool<RequestLoginPacket>.Acquire();
+						var packet = Pool<RequestLoginPacket>.Acquire();
 						packet.Prepare(eps.UserName, eps.Password);
 						createdConn.SendSinglePacket(packet);
 						return;

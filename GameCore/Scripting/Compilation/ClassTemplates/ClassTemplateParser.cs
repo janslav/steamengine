@@ -46,7 +46,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		static CodeGeneratorOptions options = CreateOptions();
 
 		private static CodeGeneratorOptions CreateOptions() {
-			CodeGeneratorOptions options = new CodeGeneratorOptions();
+			var options = new CodeGeneratorOptions();
 			options.IndentString = "\t";
 			return options;
 		}
@@ -55,8 +55,8 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 			allFiles = new ScriptFileCollection(Globals.ScriptsPath, ".ct");
 
 			Logger.WriteDebug("Processing ClassTemplates");
-			int numFilesRead = 0;
-			foreach (ScriptFile file in allFiles.GetAllFiles()) {
+			var numFilesRead = 0;
+			foreach (var file in allFiles.GetAllFiles()) {
 				ProcessFile(file);
 				numFilesRead++;
 			}
@@ -64,7 +64,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		public static void Resync() {
-			foreach (ScriptFile file in allFiles.GetChangedFiles()) {
+			foreach (var file in allFiles.GetChangedFiles()) {
 				if (file.Exists) {
 					ProcessFile(file);
 				} else {
@@ -75,9 +75,9 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 
 		private static void UnloadFile(ScriptFile scriptFile) {
 			scriptFile.Unload();
-			string dirName = Path.GetDirectoryName(scriptFile.FullName);
-			string fileName = GetGeneratedFileName(scriptFile.FullName);
-			string outFileName = Path.Combine(dirName, fileName);
+			var dirName = Path.GetDirectoryName(scriptFile.FullName);
+			var fileName = GetGeneratedFileName(scriptFile.FullName);
+			var outFileName = Path.Combine(dirName, fileName);
 
 			if (File.Exists(outFileName)) {
 				File.Delete(outFileName);
@@ -87,9 +87,9 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private static void ProcessFile(ScriptFile scriptFile) {
 
-			CodeCompileUnit ccu = CreateCompileUnit();
+			var ccu = CreateCompileUnit();
 
-			foreach (ClassTemplateSection section in ParseFile(scriptFile)) {
+			foreach (var section in ParseFile(scriptFile)) {
 				try {
 					ClassTemplateBase.ProcessSection(section, ccu);
 				} catch (FatalException) {
@@ -101,11 +101,11 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 				}
 			}
 
-			string dirName = Path.GetDirectoryName(scriptFile.FullName);
-			string fileName = GetGeneratedFileName(scriptFile.FullName);
-			string outFileName = Path.Combine(dirName, fileName);
+			var dirName = Path.GetDirectoryName(scriptFile.FullName);
+			var fileName = GetGeneratedFileName(scriptFile.FullName);
+			var outFileName = Path.Combine(dirName, fileName);
 
-			using (StreamWriter outFile = new StreamWriter(outFileName)) {
+			using (var outFile = new StreamWriter(outFileName)) {
 				CodeDomProvider provider = new CSharpCodeProvider();
 				provider.GenerateCodeFromCompileUnit(ccu, outFile, options);
 			}
@@ -113,28 +113,28 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private static IEnumerable<ClassTemplateSection> ParseFile(ScriptFile scriptFile) {
-			string fileName = scriptFile.FullName;
+			var fileName = scriptFile.FullName;
 
-			StreamReader stream = scriptFile.OpenText();
+			var stream = scriptFile.OpenText();
 
-			int line = 0;
+			var line = 0;
 			ClassTemplateSection curSection = null;
 			ClassTemplateSubSection curSubSection = null; //these are also added to curSection...
 			while (true) {
-				string curLine = stream.ReadLine();
+				var curLine = stream.ReadLine();
 				line++;
 				if (curLine != null) {
 					curLine = curLine.Trim();
 					if ((curLine.Length == 0) || (curLine.StartsWith("//"))) {
 						continue;
 					}
-					Match m = sectionHeaderRE.Match(curLine);
+					var m = sectionHeaderRE.Match(curLine);
 					//[SomethingTemplate Myclass : mybaseclass]
 					if (m.Success) {
 						if (curSection != null) {
 							yield return curSection;
 						}
-						GroupCollection gc = m.Groups;
+						var gc = m.Groups;
 						curSection = new ClassTemplateSection(line, gc["templatename"].Value, gc["classname"].Value, gc["baseclassname"].Value);
 						curSubSection = null;
 						continue;
@@ -155,7 +155,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 					m = fieldRE.Match(curLine);
 					if (m.Success) {
 						if (curSubSection != null) {
-							GroupCollection gc = m.Groups;
+							var gc = m.Groups;
 							curSubSection.AddField(
 								new ClassTemplateInstanceField(gc["access"].Value, gc["static"].Value,
 									gc["type"].Value, gc["name"].Value, gc["defval"].Value));
@@ -177,8 +177,8 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private static CodeCompileUnit CreateCompileUnit() {
-			CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
-			CodeNamespace codeNamespace = new CodeNamespace("SteamEngine.CompiledScripts");
+			var codeCompileUnit = new CodeCompileUnit();
+			var codeNamespace = new CodeNamespace("SteamEngine.CompiledScripts");
 			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(AbstractScript).Namespace));
 			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(MainClass).Namespace));
 			codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(Timer).Namespace));
@@ -195,7 +195,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 		}
 
 		private static string GetGeneratedFileName(string origFilename) {
-			string filename = Path.GetFileNameWithoutExtension(origFilename);
+			var filename = Path.GetFileNameWithoutExtension(origFilename);
 
 			//trim every whitespace and '_'
 			filename = filename.Trim('_', '\t', '\n', '\v', '\f', '\r', ' ', '\x00a0', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008', '\u2009', '\u200a', '\u200b', '\u3000', '\ufeff');

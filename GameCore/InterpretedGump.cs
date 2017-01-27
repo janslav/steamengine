@@ -26,7 +26,7 @@ namespace SteamEngine
 		}
 
 		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
-			InterpretedGumpDef sdef = (InterpretedGumpDef) this.Def;
+			var sdef = (InterpretedGumpDef) this.Def;
 			sdef.OnResponse(this, pressedButton, selectedSwitches, responseTexts, responseNumbers);
 		}
 

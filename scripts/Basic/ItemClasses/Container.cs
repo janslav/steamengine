@@ -32,10 +32,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override short Gump {
 			get {
-				short gump = this.TypeDef.Gump;
+				var gump = this.TypeDef.Gump;
 				if (gump == -1) {		//It has no defined gump
-					AbstractItemDef idef = ThingDef.FindItemDef(this.Model);
-					ContainerDef cdef = idef as ContainerDef;
+					var idef = ThingDef.FindItemDef(this.Model);
+					var cdef = idef as ContainerDef;
 					if (cdef != null) {
 						gump = cdef.Gump;
 					}
@@ -48,8 +48,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override AbstractItem NewItem(IThingFactory factory, int amount) {
-			Thing t = factory.Create(this);
-			AbstractItem i = t as AbstractItem;
+			var t = factory.Create(this);
+			var i = t as AbstractItem;
 			if (i != null) {
 				if (i.Cont != this) {
 					i.Delete();
@@ -68,10 +68,10 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_DClick(AbstractCharacter from) {
 			//(TODO): check ownership(?), trigger snooping(done?), etc...
-			Character topChar = this.TopObj() as Character;
-			Character fromAsChar = (Character) from;
+			var topChar = this.TopObj() as Character;
+			var fromAsChar = (Character) from;
 			if ((topChar != null) && (topChar != fromAsChar) && (!fromAsChar.IsGM)) {
-				SkillSequenceArgs ssa = SkillSequenceArgs.Acquire(fromAsChar, SkillName.Snooping, this, null, null, null, null);
+				var ssa = SkillSequenceArgs.Acquire(fromAsChar, SkillName.Snooping, this, null, null, null, null);
 				ssa.PhaseSelect();
 			} else {
 				this.OpenTo(fromAsChar);
@@ -117,7 +117,7 @@ namespace SteamEngine.CompiledScripts {
 				Sanity.IfTrueThrow(backpack.Count != 1, "The backpack thinks it has " + backpack.Count + " items, not 1!");
 				Sanity.IfTrueThrow(backpack.FindCont(0) != sword, "The backpack doesn't have the sword as its first item!");
 				Logger.Show("TestSuite", "Duping the sword.");
-				uint suid = sword.FlaggedUid;
+				var suid = sword.FlaggedUid;
 				sword2 = (Item) sword.Dupe();
 				Sanity.IfTrueThrow(sword.FlaggedUid == sword2.FlaggedUid, "The duped sword has the same UID.");
 				Sanity.IfTrueThrow(sword.FlaggedUid != suid, "The original sword's UID has changed!");
@@ -136,8 +136,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void FixWeight() {
-			float w = this.Def.Weight;
-			foreach (AbstractItem i in this) {
+			var w = this.Def.Weight;
+			foreach (var i in this) {
 				if (i != null) {
 					i.FixWeight();
 					w += i.Weight;
@@ -158,7 +158,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			base.On_Click(clicker, clickerState, clickerConn);
-			Language language = clickerState.Language;
+			var language = clickerState.Language;
 			PacketSequences.SendNameFrom(clicker.GameState.Conn, this,
 				string.Concat(this.Count.ToString(), " ", Loc<ContainerLoc>.Get(language).itemsGenitiv, ", ",
 				this.Weight.ToString(), " ", Loc<ContainerLoc>.Get(language).stonesGenitiv),

@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void ApplyDrains() {
-			Character ch = (Character) this.Cont;
+			var ch = (Character) this.Cont;
 			if (ch != null) {
 				ch.HitsRegenSpeed -= this.hitsDrain;
 				ch.StamRegenSpeed -= this.stamDrain;

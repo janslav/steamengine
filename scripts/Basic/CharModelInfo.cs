@@ -39,9 +39,9 @@ namespace SteamEngine.CompiledScripts {
 
 		//data taken from runuo
 		public static void Bootstrap() {
-			string filename = Path.Combine(Globals.ScriptsPath, "bodyTable.cfg");
+			var filename = Path.Combine(Globals.ScriptsPath, "bodyTable.cfg");
 			if (File.Exists(filename)) {
-				using (StreamReader ip = new StreamReader(filename)) {
+				using (var ip = new StreamReader(filename)) {
 					bodyTable = new CharAnimType[1000];
 
 					string line;
@@ -50,11 +50,11 @@ namespace SteamEngine.CompiledScripts {
 						if (line.Length == 0 || line.StartsWith("#"))
 							continue;
 
-						string[] split = line.Split('\t');
+						var split = line.Split('\t');
 
 						try {
-							int bodyID = int.Parse(split[0]);
-							CharAnimType type = (CharAnimType) Enum.Parse(typeof(CharAnimType), split[1], true);
+							var bodyID = int.Parse(split[0]);
+							var type = (CharAnimType) Enum.Parse(typeof(CharAnimType), split[1], true);
 
 							if (bodyID >= 0 && bodyID < bodyTable.Length)
 								bodyTable[bodyID] = type;

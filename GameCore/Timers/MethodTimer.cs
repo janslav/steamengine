@@ -56,12 +56,12 @@ namespace SteamEngine.Timers {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), Save]
 		public override void Save(SaveStream output) {
-			StringBuilder sb = new StringBuilder(this.method.DeclaringType.ToString());
+			var sb = new StringBuilder(this.method.DeclaringType.ToString());
 			sb.Append(".").Append(this.method.Name);
 			sb.Append("(");
-			ParameterInfo[] pars = this.method.GetParameters();
+			var pars = this.method.GetParameters();
 			if (pars.Length > 0) {
-				foreach (ParameterInfo pi in pars) {
+				foreach (var pi in pars) {
 					sb.Append(pi.ParameterType);
 					sb.Append(", ");
 				}
@@ -80,18 +80,18 @@ namespace SteamEngine.Timers {
 			if (name.Equals("method")) {
 				//Console.WriteLine("loading method with string: "+value);
 
-				Match m = methodSignRE.Match(value);
+				var m = methodSignRE.Match(value);
 				if (m.Success) {
-					GroupCollection gc = m.Groups;
-					Type type = Type.GetType(gc["type"].Value, true, true); //true true: throw exception, case insensitive
-					string methodName = gc["method"].Value;
-					CaptureCollection cc = gc[2].Captures;
-					int ccCount = cc.Count;
-					Type[] paramTypes = new Type[ccCount];
-					for (int i = 0; i < ccCount; i++) {
+					var gc = m.Groups;
+					var type = Type.GetType(gc["type"].Value, true, true); //true true: throw exception, case insensitive
+					var methodName = gc["method"].Value;
+					var cc = gc[2].Captures;
+					var ccCount = cc.Count;
+					var paramTypes = new Type[ccCount];
+					for (var i = 0; i < ccCount; i++) {
 						paramTypes[i] = Type.GetType(cc[i].Value, true, true);
 					}
-					MethodInfo mi = type.GetMethod(methodName, paramTypes);
+					var mi = type.GetMethod(methodName, paramTypes);
 					if (mi != null) {
 						this.method = MemberWrapper.GetWrapperFor(mi);
 					} else {

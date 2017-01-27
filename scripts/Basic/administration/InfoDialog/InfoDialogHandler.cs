@@ -72,8 +72,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//what type of dialog we have?
 			this.isSettings = target is SettingsMetaCategory;
 
-			int[] columns = new int[1 + COLS_COUNT];
-			int firstFieldsColumn = 1;
+			var columns = new int[1 + COLS_COUNT];
+			var firstFieldsColumn = 1;
 			if (viewCls.GetActionButtonsCount(target) > 0) {
 				this.REAL_COLUMNS_COUNT = COLS_COUNT; //standard number of field columns
 				columns[0] = ACTION_COLUMN; //we have the action buttons column	
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.REAL_COLUMNS_COUNT = COLS_COUNT + 1; //one more field column
 				firstFieldsColumn = 0;
 			}
-			for (int i = firstFieldsColumn; i <= COLS_COUNT; i++) {
+			for (var i = firstFieldsColumn; i <= COLS_COUNT; i++) {
 				columns[i] = this.FieldColumn; //same width for every other datafield column
 			}
 
@@ -113,8 +113,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.actionTable.Transparent = true;
 			}
 			//then other tables (3 columns - name(, button), value)
-			for (int i = firstFieldsColumn; i <= COLS_COUNT; i++) {
-				GUTATable actualTbl = new GUTATable(PAGE_ROWS, FIELD_LABEL, ButtonMetrics.D_BUTTON_WIDTH, 0);
+			for (var i = firstFieldsColumn; i <= COLS_COUNT; i++) {
+				var actualTbl = new GUTATable(PAGE_ROWS, FIELD_LABEL, ButtonMetrics.D_BUTTON_WIDTH, 0);
 				//tbl     row           column            ...adding inner table
 				this.LastTable.Components[0].Components[i].AddComponent(actualTbl); //first row - i-th column
 				actualTbl.Transparent = true;
@@ -137,9 +137,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//first column holds the type information in brackets() and the name of the field
 			this.actualFieldTable[this.actualFieldRow, 0] = GUTAText.Builder.TextLabel(GetFieldName(field, target)).Build();
 
-			object fieldValue = field.GetValue(target);
+			var fieldValue = field.GetValue(target);
 			Type fieldValueType = null;
-			string thirdColumnText = "";
+			var thirdColumnText = "";
 			bool thirdColumnIsText; //third column is editable or just simple text
 			bool secondColIsButton; //second column is with or without button
 
@@ -192,7 +192,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			//if the value to be written to the text column is too long, we will add a button for value's detail display
 			if (TextLength(thirdColumnText) > this.FieldColumn - (FIELD_LABEL + ButtonMetrics.D_BUTTON_WIDTH + 2 * D_COL_SPACE)) { //whole single column includes label (,button), field value - we need only the value
-				Dictionary<int, IDataFieldView> detailBtnsPairing = (Dictionary<int, IDataFieldView>) this.instance.InputArgs.GetTag(D_Info.detailIndexPairingTK);
+				var detailBtnsPairing = (Dictionary<int, IDataFieldView>) this.instance.InputArgs.GetTag(D_Info.detailIndexPairingTK);
 				this.actualFieldTable[this.actualFieldRow, 2] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(detailsIndex).Build();
 				//now the shortened text (non editable - this will be done usnig the new button...
 				this.actualFieldTable[this.actualFieldRow, 2] = GUTAText.Builder.Text(thirdColumnText.Substring(0, 10) + "...").XPos(ButtonMetrics.D_BUTTON_WIDTH).Build();
@@ -204,7 +204,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} else {
 					this.actualFieldTable[this.actualFieldRow, 2] = GUTAInput.Builder.Id(editsIndex).Text(thirdColumnText).Build();
 					//store the field under the edits index
-					Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>) this.instance.InputArgs.GetTag(D_Info.editFieldsIndexPairingTK);
+					var editFieldsPairing = (Dictionary<int, IDataFieldView>) this.instance.InputArgs.GetTag(D_Info.editFieldsIndexPairingTK);
 					editFieldsPairing.Add(editsIndex, field);
 					editsIndex++;
 				}
@@ -226,28 +226,28 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Create paging for the Info dialog - it looks a little bit different than normal paging</summary>
 		public void CreatePaging(IDataView viewCls, object target, int firstItemButt, int firstItemFld) {
-			int buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
-			int fieldLines = viewCls.GetFieldsCount(target); //number of fields didvided by number of columns per page
-			int maxLines = Math.Max(buttonLines, fieldLines);
+			var buttonLines = viewCls.GetActionButtonsCount(target); //number of action buttons
+			var fieldLines = viewCls.GetFieldsCount(target); //number of fields didvided by number of columns per page
+			var maxLines = Math.Max(buttonLines, fieldLines);
 			//deciding on where is more items, get the determining first item position (we will count the page number from it)
 			//shortly - we are paging either according to the buttons (of there are more buttons) or fields (if there are more fields...)
-			int pageDeterminingFirstItem = (buttonLines > fieldLines) ? firstItemButt : firstItemFld;
+			var pageDeterminingFirstItem = (buttonLines > fieldLines) ? firstItemButt : firstItemFld;
 			//more buttons than fields in all columns? - the number of buttons will be the director of paging (or it will be the opposite way)
-			int columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : this.REAL_COLUMNS_COUNT;
+			var columnsForPagingCreate = (buttonLines > fieldLines) ? 1 : this.REAL_COLUMNS_COUNT;
 			//do we need the paging at all?
 			if (maxLines <= PAGE_ROWS * columnsForPagingCreate) {
 				//no...
 				return;
 			}
 
-			int pagesCount = (int) Math.Ceiling((double) maxLines / (PAGE_ROWS * columnsForPagingCreate));
-			int actualPage = (pageDeterminingFirstItem / (PAGE_ROWS * columnsForPagingCreate)) + 1;
+			var pagesCount = (int) Math.Ceiling((double) maxLines / (PAGE_ROWS * columnsForPagingCreate));
+			var actualPage = (pageDeterminingFirstItem / (PAGE_ROWS * columnsForPagingCreate)) + 1;
 
-			bool prevNextColumnAdded = false; //indicator of navigating column
+			var prevNextColumnAdded = false; //indicator of navigating column
 			//last column					//the inner table's first row (the inner table is in the 1st row in the COLS_COUNT-th column
 			//									tbl        1st row		 COLS_COUNTth column	inner table	   its first row...
-			GUTARow pagingTableRow = (GUTARow) this.LastTable.Components[0].Components[COLS_COUNT].Components[0].Components[0];
-			GUTAColumn pagingCol = new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH);
+			var pagingTableRow = (GUTARow) this.LastTable.Components[0].Components[COLS_COUNT].Components[0].Components[0];
+			var pagingCol = new GUTAColumn(ButtonMetrics.D_BUTTON_PREVNEXT_WIDTH);
 			pagingCol.IsLast = true;
 			if (actualPage > 1) {
 				pagingTableRow.AddComponent(pagingCol);
@@ -265,7 +265,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//add a navigating bar to the bottom (editable field for jumping to the selected page)
 			//it looks like this: "Stránka |__| / 23. <GOPAGE>  where |__| is editable field
 			//and <GOPAGE> is confirming button that jumps to the written page.
-			GUTATable storedLastTable = this.LastTable; //store this one :)
+			var storedLastTable = this.LastTable; //store this one :)
 
 			this.AddTable(new GUTATable(1, 0));
 			this.LastTable[0, 0] = GUTAText.Builder.TextLabel("Stránka").Build();
@@ -280,14 +280,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Check the gump response for the pressed button number and if it is one of the paging buttons, do something</summary>
 		public static bool PagingHandled(Gump gi, GumpResponse gr) {
-			DialogArgs args = gi.InputArgs;//arguments of the dialog		
-			object target = args[0];
-			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
-			int buttonCount = viewCls.GetActionButtonsCount(target);
-			int fieldsCount = viewCls.GetFieldsCount(target);
+			var args = gi.InputArgs;//arguments of the dialog		
+			var target = args[0];
+			var viewCls = DataViewProvider.FindDataViewByType(target.GetType());
+			var buttonCount = viewCls.GetActionButtonsCount(target);
+			var fieldsCount = viewCls.GetFieldsCount(target);
 			//how many columns for fields do we have?
-			int fieldsColumnsCount = (buttonCount > 0) ? COLS_COUNT : (COLS_COUNT + 1);
-			bool pagingHandled = false; //indicator if the pressed button was the paging one.
+			var fieldsColumnsCount = (buttonCount > 0) ? COLS_COUNT : (COLS_COUNT + 1);
+			var pagingHandled = false; //indicator if the pressed button was the paging one.
 			switch (gr.PressedButton) {
 				case ID_PREV_BUTTON:
 					//set the first indexes one page to the back
@@ -303,16 +303,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 				case ID_JUMP_PAGE_BUTTON:
 					//get the selected page number (absolute value - make it a bit idiot proof :) )
-					int selectedPage = (int) gr.GetNumberResponse(ID_PAGE_NO_INPUT);
+					var selectedPage = (int) gr.GetNumberResponse(ID_PAGE_NO_INPUT);
 					if (selectedPage < 1) {
 						//idiot proof adjustment
 						gi.Cont.WriteLine("Nepovolené èíslo stránky - povoleny jen kladné hodnoty");
 						selectedPage = 1;
 					}
 					//count the index of the first item
-					int newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * fieldsColumnsCount);
+					var newFirstFldIndex = (selectedPage - 1) * (PAGE_ROWS * fieldsColumnsCount);
 					if (newFirstFldIndex > fieldsCount) {
-						int lastPage = (fieldsCount / (PAGE_ROWS * fieldsColumnsCount)) + 1; //(int) casted last page number
+						var lastPage = (fieldsCount / (PAGE_ROWS * fieldsColumnsCount)) + 1; //(int) casted last page number
 						newFirstFldIndex = (lastPage - 1) * PAGE_ROWS * fieldsColumnsCount; //counted first item on the last page
 					}
 					args.SetTag(D_Info.pagingFieldsTK, newFirstFldIndex);//set the index of the first field
@@ -327,7 +327,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private GUTAComponent CreateInfoInnerButton(ref int buttonsIndex, IDataFieldView field) {
 			GUTAComponent retBut = GUTAButton.Builder.Id(buttonsIndex).Build();
 			//store the field under the edits index
-			Dictionary<int, IDataFieldView> buttonsPairing = (Dictionary<int, IDataFieldView>) this.instance.InputArgs.GetTag(D_Info.btnsIndexPairingTK);
+			var buttonsPairing = (Dictionary<int, IDataFieldView>) this.instance.InputArgs.GetTag(D_Info.btnsIndexPairingTK);
 			buttonsPairing.Add(buttonsIndex, field);
 			buttonsIndex++;
 			return retBut;
@@ -335,8 +335,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Return the fields name accompanied with the type information (but sometimes we dont need the type info...)</summary>
 		private static string GetFieldName(IDataFieldView field, object target) {
-			object fieldVal = field.GetValue(target);
-			string retName = field.GetName(target);
+			var fieldVal = field.GetValue(target);
+			var retName = field.GetName(target);
 			if (typeof(Enum).IsAssignableFrom(target.GetType())) { } //target is Enum (e.g when infoizing the Enum itself and displaying its items)
 			 else if (typeof(Enum).IsAssignableFrom(field.FieldType)) { }//field is of type Enum
 			  else {

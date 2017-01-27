@@ -69,15 +69,15 @@ namespace SteamEngine.AuxiliaryServer {
 				throw new SEException("Can't find sphere.ini on the path " + iniPath + ". Restore it or delete the entry from steamaux.ini.");
 			}
 
-			IniFileSection sphereSection = gameIni.GetSection("SPHERE");
+			var sphereSection = gameIni.GetSection("SPHERE");
 			name = sphereSection.GetValue<string>("SERVNAME");
 			port = sphereSection.GetValue<int>("SERVPORT");
 		}
 
 		private static string ReadScriptsPathFromSphereIni(string iniPath) {
-			IniFile gameIni = new IniFile(Path.Combine(iniPath, "sphere.ini"));
+			var gameIni = new IniFile(Path.Combine(iniPath, "sphere.ini"));
 
-			string scriptsPath = gameIni.GetSection("SPHERE").GetValue<string>("ScpFiles");
+			var scriptsPath = gameIni.GetSection("SPHERE").GetValue<string>("ScpFiles");
 
 			if (Path.IsPathRooted(scriptsPath)) {
 				return scriptsPath;
@@ -164,7 +164,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public override bool Equals(object obj) {
-			SphereServerSetup gsis = obj as SphereServerSetup;
+			var gsis = obj as SphereServerSetup;
 			if (gsis != null) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(this.IniPath, gsis.IniPath)) {
 					return true;
@@ -178,13 +178,13 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public void StartGameServerProcess(BuildType build) {
-			string path = Path.Combine(this.ramdiscIniPath, sphereExeName);
+			var path = Path.Combine(this.ramdiscIniPath, sphereExeName);
 			Console.WriteLine("Starting Sphereserver: " + this.IniPath);
 			Process.Start(path);
 		}
 
 		public void SvnUpdate(ConsoleClient console) {
-			GameServer sphere = GameServersManager.GetInstanceByIniID(this.iniID);
+			var sphere = GameServersManager.GetInstanceByIniID(this.iniID);
 			if (sphere != null) {
 				sphere.SendCommand(console, "r");
 			}
@@ -208,12 +208,12 @@ namespace SteamEngine.AuxiliaryServer {
 
 		private void StartExitlaterScheduler() {
 			if (this.exitLaterParam >= 0) {
-				DateTime now = DateTime.Now;
-				DateTime schedule = now.Date + this.exitLaterDailySchedule.TimeOfDay;
+				var now = DateTime.Now;
+				var schedule = now.Date + this.exitLaterDailySchedule.TimeOfDay;
 				if (now > schedule) { //too late today
 					schedule = schedule.AddDays(1); //schedule for tomorrow
 				}
-				TimeSpan span = schedule - now;
+				var span = schedule - now;
 
 				Console.WriteLine(string.Concat(
 					"Automatic exitlater scheduled for sphereserver at ", this.HardDiscIniPath, " for ",
@@ -230,13 +230,13 @@ namespace SteamEngine.AuxiliaryServer {
 		private void ScheduledExitLater(object ignored) {
 			Console.WriteLine("ScheduledExitLater in");
 			try {
-				DateTime now = DateTime.Now;
-				DateTime schedule = now.Date + this.exitLaterDailySchedule.TimeOfDay;
+				var now = DateTime.Now;
+				var schedule = now.Date + this.exitLaterDailySchedule.TimeOfDay;
 				if (now > schedule) { //so it doesn't happen too early today, reschedules if needed
 					Console.WriteLine(string.Concat(
 						"Invoking exitlater ", this.exitLaterParam.ToString(), " for sphereserver at ", this.HardDiscIniPath));
 
-					SphereServerClient sphere = GameServersManager.GetInstanceByIniID(this.iniID) as SphereServerClient;
+					var sphere = GameServersManager.GetInstanceByIniID(this.iniID) as SphereServerClient;
 					if (sphere != null) {
 						sphere.ExitLater(null, TimeSpan.FromMinutes(this.exitLaterParam));
 					} else {

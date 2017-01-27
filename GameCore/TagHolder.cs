@@ -58,11 +58,11 @@ namespace SteamEngine {
 		public TagHolder(TagHolder copyFrom) { //copying constuctor
 			if (copyFrom.tags != null) {
 				foreach (DictionaryEntry entry in copyFrom.tags) {
-					TagKey tagK = entry.Key as TagKey;
+					var tagK = entry.Key as TagKey;
 					if (tagK != null) {
 						DeepCopyFactory.GetCopyDelayed(entry.Value, this.DelayedGetCopy_Tag, tagK);
 					} else {
-						TimerKey timerK = entry.Key as TimerKey;
+						var timerK = entry.Key as TimerKey;
 						if (timerK != null) {
 							DeepCopyFactory.GetCopyDelayed(entry.Value, this.DelayedGetCopy_Timer);
 						}
@@ -94,12 +94,12 @@ namespace SteamEngine {
 		//called by Timer after load, do not use otherwise.
 		public BoundTimer AddTimer(TimerKey key, BoundTimer timer) {
 			if (this.tags != null) {
-				TimerKey prevKey = this.tags[timer] as TimerKey;
+				var prevKey = this.tags[timer] as TimerKey;
 				if (prevKey != null && prevKey != key) {
 					throw new SEException("You can't assign one Timer to one TagHolder under 2 different TimerKeys");
 				}
 
-				BoundTimer prevTimer = this.tags[key] as BoundTimer;
+				var prevTimer = this.tags[key] as BoundTimer;
 				if (prevTimer != null && prevTimer != timer) {
 					this.RemoveTimer(prevTimer);
 				}
@@ -114,7 +114,7 @@ namespace SteamEngine {
 
 		public BoundTimer RemoveTimer(TimerKey key) {
 			if (this.tags != null) {
-				BoundTimer timer = this.tags[key] as BoundTimer;
+				var timer = this.tags[key] as BoundTimer;
 				if (timer != null) {
 					this.tags.Remove(key);
 					this.tags.Remove(timer);
@@ -127,7 +127,7 @@ namespace SteamEngine {
 
 		public void RemoveTimer(BoundTimer timer) {
 			if (this.tags != null) {
-				TimerKey key = this.tags[timer] as TimerKey;
+				var key = this.tags[timer] as TimerKey;
 				if (key != null) {
 					this.tags.Remove(key);
 					this.tags.Remove(timer);
@@ -137,7 +137,7 @@ namespace SteamEngine {
 		}
 
 		public void DeleteTimer(TimerKey key) {
-			BoundTimer timer = this.RemoveTimer(key);
+			var timer = this.RemoveTimer(key);
 			if (timer != null) {
 				timer.Delete();
 			}
@@ -147,15 +147,15 @@ namespace SteamEngine {
 			if (this.tags == null) {
 				return;
 			}
-			List<TimerKey> toBeRemoved = new List<TimerKey>();
-			foreach (object keyObj in this.tags.Keys) {
-				TimerKey key = keyObj as TimerKey;
+			var toBeRemoved = new List<TimerKey>();
+			foreach (var keyObj in this.tags.Keys) {
+				var key = keyObj as TimerKey;
 				if (key != null) {
 					toBeRemoved.Add(key);
 				}
 			}
 
-			foreach (TimerKey key in toBeRemoved) {
+			foreach (var key in toBeRemoved) {
 				this.RemoveTimer(key).Delete();
 			}
 			this.ReleaseTagsTableIfEmpty();
@@ -183,7 +183,7 @@ namespace SteamEngine {
 		public IEnumerable<KeyValuePair<TimerKey, BoundTimer>> GetAllTimers() {
 			if (this.tags != null) {
 				foreach (DictionaryEntry entry in this.tags) {
-					TimerKey tk = entry.Key as TimerKey;
+					var tk = entry.Key as TimerKey;
 					if (tk != null) {
 						yield return new KeyValuePair<TimerKey, BoundTimer>(tk, (BoundTimer) entry.Value);
 					}
@@ -197,7 +197,7 @@ namespace SteamEngine {
 		public IEnumerable<KeyValuePair<TagKey, object>> GetAllTags() {
 			if (this.tags != null) {
 				foreach (DictionaryEntry entry in this.tags) {
-					TagKey tk = entry.Key as TagKey;
+					var tk = entry.Key as TagKey;
 					if (tk != null) {
 						yield return new KeyValuePair<TagKey, object>(tk, entry.Value);
 					}
@@ -248,21 +248,21 @@ namespace SteamEngine {
 			if (this.tags == null) {
 				return;
 			}
-			List<TagKey> toBeRemoved = new List<TagKey>();
-			foreach (object keyObj in this.tags.Keys) {
-				TagKey key = keyObj as TagKey;
+			var toBeRemoved = new List<TagKey>();
+			foreach (var keyObj in this.tags.Keys) {
+				var key = keyObj as TagKey;
 				if (key != null) {
 					toBeRemoved.Add(key);
 				}
 			}
-			foreach (TagKey key in toBeRemoved) {
+			foreach (var key in toBeRemoved) {
 				this.RemoveTag(key);
 			}
 			this.ReleaseTagsTableIfEmpty();
 		}
 
 		public string ListTags() {
-			int tagcount = 0;
+			var tagcount = 0;
 			StringBuilder sb = null;
 			if (this.tags != null) {
 				sb = new StringBuilder("Tags of the object '").Append(this).Append("' :").Append(Environment.NewLine);
@@ -287,9 +287,9 @@ namespace SteamEngine {
 		}
 
 		private static string ListProperties(Type type, string name) {
-			PropertyInfo[] props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-			StringBuilder propNames = new StringBuilder("(");
-			foreach (PropertyInfo propertyInfo in props) {
+			var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			var propNames = new StringBuilder("(");
+			foreach (var propertyInfo in props) {
 				if (name == null || StringComparer.OrdinalIgnoreCase.Equals(propertyInfo.Name, name)) {
 					if (propNames.Length > 1) {
 						propNames.Append(", ");
@@ -310,9 +310,9 @@ namespace SteamEngine {
 		}
 
 		private static string ListMethods(Type type, string name) {
-			MethodInfo[] meths = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-			StringBuilder methNames = new StringBuilder("(");
-			foreach (MethodInfo methodInfo in meths) {
+			var meths = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+			var methNames = new StringBuilder("(");
+			foreach (var methodInfo in meths) {
 				if (name == null || StringComparer.OrdinalIgnoreCase.Equals(methodInfo.Name, name)) {
 					if (methNames.Length > 1) {
 						methNames.Append(", ");
@@ -342,10 +342,10 @@ namespace SteamEngine {
 			if (this.tags != null) {
 				ArrayList forDeleting = null;
 				foreach (DictionaryEntry entry in this.tags) {
-					object key = entry.Key;
-					object value = entry.Value;
+					var key = entry.Key;
+					var value = entry.Value;
 					if (key is TagKey) {
-						IDeletable deletableValue = value as IDeletable;
+						var deletableValue = value as IDeletable;
 						if (deletableValue != null) {
 							if (deletableValue.IsDeleted) {
 								if (forDeleting == null) {
@@ -363,7 +363,7 @@ namespace SteamEngine {
 					}
 				}
 				if (forDeleting != null) {
-					foreach (object key in forDeleting) {
+					foreach (var key in forDeleting) {
 						this.tags.Remove(key);
 					}
 				}
@@ -379,17 +379,17 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "3#")]
 		public virtual void LoadLine(string filename, int line, string valueName, string valueString) {
-			Match m = tagRE.Match(valueName);
+			var m = tagRE.Match(valueName);
 			if (m.Success) {	//If the name begins with 'tag.'
-				string tagName = m.Groups["name"].Value;
-				TagKey tk = TagKey.Acquire(tagName);
+				var tagName = m.Groups["name"].Value;
+				var tk = TagKey.Acquire(tagName);
 				ObjectSaver.Load(valueString, this.DelayedLoad_Tag, filename, line, tk);
 				return;
 			}
 			m = timerKeyRE.Match(valueName);
 			if (m.Success) {	//If the name begins with '%'
-				string timerName = m.Groups["name"].Value;
-				TimerKey tk = TimerKey.Acquire(timerName);
+				var timerName = m.Groups["name"].Value;
+				var tk = TimerKey.Acquire(timerName);
 				ObjectSaver.Load(valueString, this.DelayedLoad_Timer, filename, line, tk);
 				return;
 			}
@@ -399,7 +399,7 @@ namespace SteamEngine {
 		//used by loaders (Thing, GameAccount...)
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal void LoadSectionLines(PropsSection ps) {
-			foreach (PropsLine p in ps.PropsLines) {
+			foreach (var p in ps.PropsLines) {
 				try {
 					this.LoadLine(ps.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 				} catch (FatalException) {

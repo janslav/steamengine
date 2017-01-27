@@ -55,7 +55,7 @@ namespace SteamEngine.CompiledScripts {
 		#region Flags
 		public sealed override byte FlagsToSend {
 			get {
-				int ret = 0;
+				var ret = 0;
 
 				if (this.Flag_GreenHealthBar) {
 					ret |= 0x04;
@@ -167,7 +167,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void RemovePoisonCounter() {
-			int val = Convert.ToInt32(this.GetTag(poisonCounterTK)) - 1;
+			var val = Convert.ToInt32(this.GetTag(poisonCounterTK)) - 1;
 			if (val <= 0) {
 				this.Flag_GreenHealthBar = false;
 				this.RemoveTag(poisonCounterTK);
@@ -235,7 +235,7 @@ namespace SteamEngine.CompiledScripts {
 					this.Dismount();
 				} else {
 
-					Character newMount = (Character) value;
+					var newMount = (Character) value;
 					if ((newMount.mountorrider != null) && (!newMount.Flag_Riding)) {
 						throw new SEException("You can't set Mount to something that's being ridden!");
 					}
@@ -360,7 +360,7 @@ namespace SteamEngine.CompiledScripts {
 			if (chr == this) {
 				return true;
 			}
-			Character target = (Character) chr;
+			var target = (Character) chr;
 			return (this.IsPetOf(target)) && (this.CanReach(target).Allow);
 		}
 
@@ -392,11 +392,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool CanSeeVisibility(Thing target) {
-			Item targetAsItem = target as Item;
+			var targetAsItem = target as Item;
 			if (targetAsItem != null) {
 				return this.CanSeeVisibility(targetAsItem);
 			}
-			Character targetAsChar = target as Character;
+			var targetAsChar = target as Character;
 			if (targetAsChar != null) {
 				return this.CanSeeVisibility(targetAsChar);
 			}
@@ -428,7 +428,7 @@ namespace SteamEngine.CompiledScripts {
 				if (this.IsGM) {
 					return true;
 				}
-				HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+				var ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
 				return ((ssp != null) &&
 				        (ssp.hadDetectedMe != null) &&
 				        (ssp.hadDetectedMe.Contains(this)));
@@ -455,7 +455,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region CanSee... / Check...
 		public bool CanSeeLOSMessage(IPoint3D target) {
-			DenyResult result = this.CanSeeLOS(target);
+			var result = this.CanSeeLOS(target);
 			if (result.Allow) {
 				return true;
 			}
@@ -483,7 +483,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CheckAliveWithMessage() {
-			DenyResult result = this.CheckAlive();
+			var result = this.CheckAlive();
 			if (result.Allow) {
 				return true;
 			}
@@ -496,12 +496,12 @@ namespace SteamEngine.CompiledScripts {
 
 		public DenyResult CanInteractWith(IPoint3D target) {
 			if (!this.IsGM) {
-				DenyResult result = this.CheckAlive();
+				var result = this.CheckAlive();
 				if (!result.Allow) {
 					return result;
 				}
 
-				Character targetAsChar = target as Character;
+				var targetAsChar = target as Character;
 				if (targetAsChar != null) {
 					if (targetAsChar.Flag_Dead) {
 						return DenyResultMessages_Character.Deny_TargetIsDead;
@@ -521,7 +521,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CanInteractWithMessage(IPoint3D target) {
-			DenyResult result = this.CanInteractWith(target);
+			var result = this.CanInteractWith(target);
 			if (result.Allow) {
 				return true;
 			}
@@ -530,7 +530,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CanPickUpWithMessage(Item target) {
-			DenyResult result = this.CanPickup(target);
+			var result = this.CanPickup(target);
 			if (result.Allow) {
 				return true;
 			}
@@ -539,7 +539,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool CanReachWithMessage(Thing target) {
-			DenyResult result = this.CanReach(target);
+			var result = this.CanReach(target);
 			if (result.Allow) {
 				return true;
 			}
@@ -558,18 +558,18 @@ namespace SteamEngine.CompiledScripts {
 
 			//TODO zamykani kontejneru
 
-			DenyResult result = DenyResultMessages.Allow;
+			var result = DenyResultMessages.Allow;
 
-			Thing c = targetContainer.Cont;
+			var c = targetContainer.Cont;
 			if (c != null) {
-				Item contAsItem = c as Item;
+				var contAsItem = c as Item;
 				if (contAsItem != null) {
 					return OpenedContainers.HasContainerOpen(this, contAsItem);
 				}
 				if (c != this) {
 					result = this.CanReach(c);
 					if (result.Allow) {
-						Character contAsChar = (Character) c;
+						var contAsChar = (Character) c;
 						if (!contAsChar.IsPetOf(this)) {//not my pet or myself
 							return DenyResultMessages.Deny_ThatDoesNotBelongToYou;
 						}
@@ -849,11 +849,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistMagic {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistMagicTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistMagicTK));
 				return dynamicPart + this.TypeDef.ResistMagic;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistMagic;
+				var dynamicPart = value - this.TypeDef.ResistMagic;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMagicTK, dynamicPart);
 				} else {
@@ -864,11 +864,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistFire {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistFireTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistFireTK));
 				return dynamicPart + this.TypeDef.ResistFire;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistFire;
+				var dynamicPart = value - this.TypeDef.ResistFire;
 				if (dynamicPart != 0) {
 					this.SetTag(resistFireTK, dynamicPart);
 				} else {
@@ -879,11 +879,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistElectric {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistElectricTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistElectricTK));
 				return dynamicPart + this.TypeDef.ResistElectric;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistElectric;
+				var dynamicPart = value - this.TypeDef.ResistElectric;
 				if (dynamicPart != 0) {
 					this.SetTag(resistElectricTK, dynamicPart);
 				} else {
@@ -894,11 +894,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistAcid {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistAcidTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistAcidTK));
 				return dynamicPart + this.TypeDef.ResistAcid;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistAcid;
+				var dynamicPart = value - this.TypeDef.ResistAcid;
 				if (dynamicPart != 0) {
 					this.SetTag(resistAcidTK, dynamicPart);
 				} else {
@@ -909,11 +909,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistCold {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistColdTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistColdTK));
 				return dynamicPart + this.TypeDef.ResistCold;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistCold;
+				var dynamicPart = value - this.TypeDef.ResistCold;
 				if (dynamicPart != 0) {
 					this.SetTag(resistColdTK, dynamicPart);
 				} else {
@@ -924,11 +924,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistPoison {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistPoisonTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistPoisonTK));
 				return dynamicPart + this.TypeDef.ResistPoison;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistPoison;
+				var dynamicPart = value - this.TypeDef.ResistPoison;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPoisonTK, dynamicPart);
 				} else {
@@ -939,11 +939,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistMystical {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistMysticalTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistMysticalTK));
 				return dynamicPart + this.TypeDef.ResistMystical;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistMystical;
+				var dynamicPart = value - this.TypeDef.ResistMystical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistMysticalTK, dynamicPart);
 				} else {
@@ -954,11 +954,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistPhysical {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistPhysicalTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistPhysicalTK));
 				return dynamicPart + this.TypeDef.ResistPhysical;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistPhysical;
+				var dynamicPart = value - this.TypeDef.ResistPhysical;
 				if (dynamicPart != 0) {
 					this.SetTag(resistPhysicalTK, dynamicPart);
 				} else {
@@ -969,11 +969,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistSlashing {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistSlashingTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistSlashingTK));
 				return dynamicPart + this.TypeDef.ResistSlashing;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistSlashing;
+				var dynamicPart = value - this.TypeDef.ResistSlashing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSlashingTK, dynamicPart);
 				} else {
@@ -984,11 +984,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistStabbing {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistStabbingTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistStabbingTK));
 				return dynamicPart + this.TypeDef.ResistStabbing;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistStabbing;
+				var dynamicPart = value - this.TypeDef.ResistStabbing;
 				if (dynamicPart != 0) {
 					this.SetTag(resistStabbingTK, dynamicPart);
 				} else {
@@ -999,11 +999,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistBlunt {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistBluntTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistBluntTK));
 				return dynamicPart + this.TypeDef.ResistBlunt;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistBlunt;
+				var dynamicPart = value - this.TypeDef.ResistBlunt;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBluntTK, dynamicPart);
 				} else {
@@ -1014,11 +1014,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistArchery {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistArcheryTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistArcheryTK));
 				return dynamicPart + this.TypeDef.ResistArchery;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistArchery;
+				var dynamicPart = value - this.TypeDef.ResistArchery;
 				if (dynamicPart != 0) {
 					this.SetTag(resistArcheryTK, dynamicPart);
 				} else {
@@ -1029,11 +1029,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistBleed {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistBleedTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistBleedTK));
 				return dynamicPart + this.TypeDef.ResistBleed;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistBleed;
+				var dynamicPart = value - this.TypeDef.ResistBleed;
 				if (dynamicPart != 0) {
 					this.SetTag(resistBleedTK, dynamicPart);
 				} else {
@@ -1044,11 +1044,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistSummon {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistSummonTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistSummonTK));
 				return dynamicPart + this.TypeDef.ResistSummon;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistSummon;
+				var dynamicPart = value - this.TypeDef.ResistSummon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistSummonTK, dynamicPart);
 				} else {
@@ -1059,11 +1059,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistDragon {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistDragonTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistDragonTK));
 				return dynamicPart + this.TypeDef.ResistDragon;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistDragon;
+				var dynamicPart = value - this.TypeDef.ResistDragon;
 				if (dynamicPart != 0) {
 					this.SetTag(resistDragonTK, dynamicPart);
 				} else {
@@ -1074,11 +1074,11 @@ namespace SteamEngine.CompiledScripts {
 
 		public int ResistParalyse {
 			get {
-				int dynamicPart = Convert.ToInt32(this.GetTag(resistParalyseTK));
+				var dynamicPart = Convert.ToInt32(this.GetTag(resistParalyseTK));
 				return dynamicPart + this.TypeDef.ResistParalyse;
 			}
 			set {
-				int dynamicPart = value - this.TypeDef.ResistParalyse;
+				var dynamicPart = value - this.TypeDef.ResistParalyse;
 				if (dynamicPart != 0) {
 					this.SetTag(resistParalyseTK, dynamicPart);
 				} else {
@@ -1160,14 +1160,14 @@ namespace SteamEngine.CompiledScripts {
 				CharSyncQueue.AboutToChangeHitpoints(this);
 				this.hitpoints = 0;
 
-				CorpseDef cd = this.TypeDef.CorpseDef;
+				var cd = this.TypeDef.CorpseDef;
 				Corpse corpse = null;
 				if (cd != null) {
 					corpse = (Corpse) cd.Create((IPoint4D) this);
 					//NetState.ProcessThing(corpse);
 				}
 
-				GameState state = this.GameState;
+				var state = this.GameState;
 				TcpConnection<GameState> conn = null;
 				if (state != null) {
 					conn = state.Conn;
@@ -1175,7 +1175,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 
 				PacketGroup pg = null;
-				foreach (TcpConnection<GameState> viewerConn in this.GetMap().GetConnectionsWhoCanSee(this)) {
+				foreach (var viewerConn in this.GetMap().GetConnectionsWhoCanSee(this)) {
 					if (conn != viewerConn) {
 						if (pg == null) {
 							pg = PacketGroup.AcquireMultiUsePG();
@@ -1218,7 +1218,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Resne. Pokud je mrtva postava v blizkosti tela(max 1 policko), tak to lootne i telo</summary>
 		public void Resurrect() {
 			Corpse c = null;
-			foreach (Thing nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
+			foreach (var nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
 				c = nearbyThing as Corpse;
 				if (c != null)
 				{
@@ -1253,7 +1253,7 @@ namespace SteamEngine.CompiledScripts {
 				this.Flag_Insubst = false;
 				this.Flag_Dead = false;
 
-				GameState state = this.GameState;
+				var state = this.GameState;
 				if (state != null) {
 					PreparedPacketGroups.SendResurrectMessage(state.Conn);
 				}
@@ -1263,7 +1263,7 @@ namespace SteamEngine.CompiledScripts {
 		private static TagKey oColorTK = TagKey.Acquire("_ocolor_");
 		public int OColor {
 			get {
-				object o = this.GetTag(oColorTK);
+				var o = this.GetTag(oColorTK);
 				if (o != null) {
 					return Convert.ToInt32(o);
 				}
@@ -1281,7 +1281,7 @@ namespace SteamEngine.CompiledScripts {
 		private static TagKey oModelTK = TagKey.Acquire("_omodel_");
 		public int OModel {
 			get {
-				object o = this.GetTag(oModelTK);
+				var o = this.GetTag(oModelTK);
 				if (o != null) {
 					return Convert.ToInt32(o);
 				}
@@ -1379,7 +1379,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Return the appropriate Skill instance by given ID, or null if given skill values are default (value 0 and lock up).</summary>
 		public override ISkill GetSkillObject(int id) {
 			if (this.skillsabilities != null) {
-				AbstractSkillDef def = AbstractSkillDef.GetById(id);
+				var def = AbstractSkillDef.GetById(id);
 				object retVal = null;
 				if (this.skillsabilities.TryGetValue(def, out retVal)) {
 					return (ISkill) retVal;
@@ -1400,12 +1400,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void SetRealSkillValue(int id, int value) {
-			AbstractSkillDef def = AbstractSkillDef.GetById(id);
+			var def = AbstractSkillDef.GetById(id);
 			this.AcquireSkillObject(def).RealValue = value;
 		}
 
 		public override void SetSkillLockType(int id, SkillLockType type) {
-			AbstractSkillDef def = AbstractSkillDef.GetById(id);
+			var def = AbstractSkillDef.GetById(id);
 			this.AcquireSkillObject(def).Lock = type;
 		}
 
@@ -1415,7 +1415,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Change the 'modified' value of a skill.</summary>
 		public void ModifySkillValue(int id, int difference) {
-			AbstractSkillDef def = AbstractSkillDef.GetById(id);
+			var def = AbstractSkillDef.GetById(id);
 			this.AcquireSkillObject(def).ModifyValue(difference);
 		}
 
@@ -1431,7 +1431,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Get modified value of the skill.</summary>
 		public override int GetSkill(int id) {
-			ISkill skl = this.GetSkillObject(id);
+			var skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.ModifiedValue;
 			}
@@ -1445,7 +1445,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Get modified value of the skill.</summary>
 		public int GetSkill(AbstractSkillDef skillDef) {
-			Skill skl = this.GetSkillObject(skillDef);
+			var skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
 				return skl.ModifiedValue;
 			}
@@ -1465,7 +1465,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int GetRealSkillValue(int id) {
-			ISkill skl = this.GetSkillObject(id);
+			var skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.ModifiedValue;
 			}
@@ -1477,7 +1477,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public int GetRealSkillValue(AbstractSkillDef skillDef) {
-			Skill skl = this.GetSkillObject(skillDef);
+			var skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
 				return skl.ModifiedValue;
 			}
@@ -1486,7 +1486,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Get value of the lock type of skill with given ID, if the skill is not present return default</summary>
 		public SkillLockType GetSkillLockType(int id) {
-			ISkill skl = this.GetSkillObject(id);
+			var skl = this.GetSkillObject(id);
 			if (skl != null) {
 				return skl.Lock;
 			}
@@ -1498,7 +1498,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public SkillLockType GetSkillLockType(AbstractSkillDef skillDef) {
-			Skill skl = this.GetSkillObject(skillDef);
+			var skl = this.GetSkillObject(skillDef);
 			if (skl != null) {
 				return skl.Lock;
 			}
@@ -1529,7 +1529,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void InternalRemoveSkill(int id) {
-			AbstractSkillDef aDef = AbstractSkillDef.GetById(id);
+			var aDef = AbstractSkillDef.GetById(id);
 			this.SkillsAbilities.Remove(aDef);
 		}
 
@@ -1559,7 +1559,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Start a skill.</summary>
 		public void SelectSkill(SkillDef skillDef) {
 			if (skillDef != null) {
-				SkillSequenceArgs args = SkillSequenceArgs.Acquire(this, skillDef);
+				var args = SkillSequenceArgs.Acquire(this, skillDef);
 				args.PhaseSelect();
 			}
 		}
@@ -1571,7 +1571,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public SkillDef CurrentSkill {
 			get {
-				SkillSequenceArgs ssa = SkillSequenceArgs.GetSkillSequenceArgs(this);
+				var ssa = SkillSequenceArgs.GetSkillSequenceArgs(this);
 				if (ssa != null) {
 					return ssa.SkillDef;
 				}
@@ -1593,7 +1593,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public SkillName CurrentSkillName {
 			get {
-				SkillSequenceArgs ssa = SkillSequenceArgs.GetSkillSequenceArgs(this);
+				var ssa = SkillSequenceArgs.GetSkillSequenceArgs(this);
 				if (ssa != null) {
 					return (SkillName) ssa.SkillDef.Id;
 				}
@@ -1672,19 +1672,19 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Get number of modified points the character has for specified AbilityDef. Equals getting the ModifiedPoints property value on the Ability object directly.</summary>
 		public int GetAbility(AbilityDef aDef) {
-			Ability retAb = this.GetAbilityObject(aDef);
+			var retAb = this.GetAbilityObject(aDef);
 			return (retAb == null ? 0 : retAb.ModifiedPoints); //either null or Ability.Points if the player has it
 		}
 
 		/// <summary>Modifies the points of the Ability by given diference. Equals calling ModifyPoints on the Ability object directly.</summary>
 		public void ModifyAbilityPoints(AbilityDef aDef, int difference) {
-			Ability ab = this.AcquireAbilityObject(aDef);
+			var ab = this.AcquireAbilityObject(aDef);
 			ab.ModifyPoints(difference);
 		}
 
 		/// <summary>Set specified number of real points the character has for specified AbilityDef. Equals setting the RealPoints property on the Ability object directly.</summary>
 		public void SetRealAbilityPoints(AbilityDef aDef, int points) {
-			Ability ab = this.AcquireAbilityObject(aDef);
+			var ab = this.AcquireAbilityObject(aDef);
 			ab.RealPoints = points;
 		}
 
@@ -1774,17 +1774,17 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void AddHits(int howMany) {
-			int newCount = this.Hits + howMany;
+			var newCount = this.Hits + howMany;
 			this.Hits = (short) Math.Min(0, Math.Max(this.MaxHits, newCount));
 		}
 
 		public void AddMana(int howMany) {
-			int newCount = this.Mana + howMany;
+			var newCount = this.Mana + howMany;
 			this.Mana = (short) Math.Min(0, Math.Max(this.MaxMana, newCount));
 		}
 
 		public void AddStamina(int howMany) {
-			int newCount = this.Stam + howMany;
+			var newCount = this.Stam + howMany;
 			this.Stam = (short) Math.Min(0, Math.Max(this.MaxStam, newCount));
 		}
 
@@ -1802,7 +1802,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static TriggerKey hostileActionTK = TriggerKey.Acquire("hostileAction");
 		public void Trigger_HostileAction(Character enemy) {
-			ScriptArgs sa = new ScriptArgs(enemy);
+			var sa = new ScriptArgs(enemy);
 			this.TryTrigger(hostileActionTK, sa);
 			this.On_HostileAction(enemy);
 		}
@@ -1824,7 +1824,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			AbstractItem i = (AbstractItem) backpackDef.Create(this);
+			var i = (AbstractItem) backpackDef.Create(this);
 			if (i == null) {
 				throw new SEException("Unable to create backpack.");
 			}
@@ -1832,7 +1832,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public sealed override AbstractItem GetBackpack() {
-			AbstractItem foundPack = this.FindLayer(LayerNames.Pack);
+			var foundPack = this.FindLayer(LayerNames.Pack);
 			if (foundPack == null) {
 				foundPack = this.AddBackpack();
 			}
@@ -1847,7 +1847,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public BankBox Bank {
 			get {
-				AbstractItem foundBankbox = this.FindLayer(LayerNames.Bankbox);
+				var foundBankbox = this.FindLayer(LayerNames.Bankbox);
 
 				if (foundBankbox == null) {
 					var def = SingletonScript<BankBoxDef>.Instance;
@@ -1858,7 +1858,7 @@ namespace SteamEngine.CompiledScripts {
 						throw new SEException("Wrong layer of bankbox itemdef.");
 					}
 
-					AbstractItem i = (AbstractItem) def.Create(this);
+					var i = (AbstractItem) def.Create(this);
 					if (i == null) {
 						throw new SEException("Unable to create bankbox.");
 					}
@@ -1872,8 +1872,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public Equippable NewEquip(IThingFactory factory) {
-			Thing t = factory.Create(this);
-			Equippable i = t as Equippable;
+			var t = factory.Create(this);
+			var i = t as Equippable;
 			if (i != null) {
 				if (i.Cont != this) {
 					i.Delete();
@@ -1888,16 +1888,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Dupe(Thing model) {
-			Character copyFrom = (Character) model;
+			var copyFrom = (Character) model;
 
 			if (copyFrom.skillsabilities != null) {
-				foreach (object o in copyFrom.skillsabilities.Values) {
-					Ability a = o as Ability;
+				foreach (var o in copyFrom.skillsabilities.Values) {
+					var a = o as Ability;
 					if (a != null) {
 						this.SkillsAbilities.Add(a.Def,
 							new Ability(a, this)); //add copy of the Ability object to the duped char's storage
 					} else {
-						Skill s = (Skill) o;
+						var s = (Skill) o;
 						this.SkillsAbilities.Add(AbstractSkillDef.GetById(s.Id),
 							new Skill(s, this)); //add copy of the Skill object to the duped char's storage
 					}
@@ -1908,12 +1908,12 @@ namespace SteamEngine.CompiledScripts {
 		#region Persistence
 		public override void On_Save(SaveStream output) {
 			if (this.skillsabilities != null) {
-				foreach (object o in this.skillsabilities.Values) {
-					Ability a = o as Ability;
+				foreach (var o in this.skillsabilities.Values) {
+					var a = o as Ability;
 					if (a != null) {
 						output.WriteLine(string.Concat(a.Def.PrettyDefname, "=", a.GetSaveString()));
 					} else {
-						Skill s = (Skill) o;
+						var s = (Skill) o;
 						output.WriteLine(string.Concat(s.Def.PrettyDefname, "=", s.GetSaveString()));
 					}
 				}
@@ -1922,20 +1922,20 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_Load(PropsSection input) {
-			List<PropsLine> linesList = new List<PropsLine>(input.PropsLines); //can't iterate over the property itself, popping the lines would break the iteration
-			foreach (PropsLine line in linesList) {
-				AbilityDef abDef = AbilityDef.GetByDefname(line.Name);
+			var linesList = new List<PropsLine>(input.PropsLines); //can't iterate over the property itself, popping the lines would break the iteration
+			foreach (var line in linesList) {
+				var abDef = AbilityDef.GetByDefname(line.Name);
 				if (abDef != null) {
 					input.PopPropsLine(line.Name);
-					Ability ab = this.AcquireAbilityObject(abDef);
+					var ab = this.AcquireAbilityObject(abDef);
 					if (!ab.LoadSavedString(line.Value)) {
 						Logger.WriteError(input.Filename, line.Line, "Unrecognised ability value format.");
 					}
 				} else {
-					AbstractSkillDef skillDef = AbstractSkillDef.GetByDefname(line.Name);
+					var skillDef = AbstractSkillDef.GetByDefname(line.Name);
 					if (skillDef != null) {
 						input.PopPropsLine(line.Name);
-						Skill skill = this.AcquireSkillObject(skillDef);
+						var skill = this.AcquireSkillObject(skillDef);
 						if (!skill.LoadSavedString(line.Value)) {
 							Logger.WriteError(input.Filename, line.Line, "Unrecognised skill value format.");
 						}
@@ -1949,7 +1949,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Check if the current character has plevel greater than 1 (is more than player)</summary>
 		public bool IsGM {
 			get {
-				AbstractAccount acc = this.Account;
+				var acc = this.Account;
 				if (acc != null) {
 					return acc.PLevel > 1;
 				}
@@ -1976,7 +1976,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override TriggerResult On_DenyItemDClick(DenyClickArgs args) {
-			DenyResult dr = this.CanReach(args.Target);
+			var dr = this.CanReach(args.Target);
 			args.Result = dr;
 			return dr.Allow ? TriggerResult.Continue : TriggerResult.Cancel;
 		}
@@ -2006,8 +2006,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void FixWeight() {
 			CharSyncQueue.AboutToChangeStats(this);
-			float w = this.Def.Weight;
-			foreach (AbstractItem i in this) {
+			var w = this.Def.Weight;
+			foreach (var i in this) {
 				if (i != null) {
 					i.FixWeight();
 					w += i.Weight;
@@ -2395,7 +2395,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>hodi zbran do batohu</summary>
 		public void DisArm() {
-			Weapon w = this.Weapon;
+			var w = this.Weapon;
 			if (w != null)
 				w.Cont = this.Backpack;
 		}
@@ -2410,7 +2410,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public CharModelInfo CharModelInfo {
 			get {
-				int model = this.Model;
+				var model = this.Model;
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
 					this.charModelInfo = CharModelInfo.GetByModel(model);
 				}
@@ -2479,7 +2479,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override ICollection<AbstractCharacter> PartyMembers {
 			get {
-				Party p = Party.GetParty(this);
+				var p = Party.GetParty(this);
 				if (p != null) {
 					return (ICollection<AbstractCharacter>) p.Members;
 				}
@@ -2507,7 +2507,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public CharModelInfo CharModelInfo {
 			get {
-				int model = this.Model;
+				var model = this.Model;
 				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
 					this.charModelInfo = CharModelInfo.GetByModel(model);
 				}

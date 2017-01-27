@@ -31,12 +31,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		static GumpDimensions() {
 			if (File.Exists(Globals.ScriptsPath + datafilePath)) {
-				using (FileStream fs = new FileStream(Globals.ScriptsPath + datafilePath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-					BinaryReader bin = new BinaryReader(fs);
+				using (var fs = new FileStream(Globals.ScriptsPath + datafilePath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+					var bin = new BinaryReader(fs);
 
 					bounds = new GumpArtDimension[0x4000];
 
-					for (int i = 0; i < 0x4000; ++i) {
+					for (var i = 0; i < 0x4000; ++i) {
 						int xMin = bin.ReadInt16();
 						int yMin = bin.ReadInt16();
 						int xMax = bin.ReadInt16();

@@ -41,9 +41,9 @@ namespace SteamEngine.UoData {
 		}
 
 		internal MultiItemComponent[] Create(ushort x, ushort y, sbyte z, Map map) {
-			int n = this.parts.Count;
-			MultiItemComponent[] retVal = new MultiItemComponent[n];
-			for (int i = 0; i < n; i++) {
+			var n = this.parts.Count;
+			var retVal = new MultiItemComponent[n];
+			for (var i = 0; i < n; i++) {
 				retVal[i] = this.parts[i].Create(x, y, z, map);
 			}
 			return retVal;
@@ -56,14 +56,14 @@ namespace SteamEngine.UoData {
 			if (Globals.UseMultiItems) {
 				Console.WriteLine("Loading " + LogStr.File("Multi.mul") + " - multi items info.");
 
-				string mulFileP = Path.Combine(Globals.MulPath, "multi.mul");
-				string idxFileP = Path.Combine(Globals.MulPath, "multi.idx");
+				var mulFileP = Path.Combine(Globals.MulPath, "multi.mul");
+				var idxFileP = Path.Combine(Globals.MulPath, "multi.idx");
 
 				if (File.Exists(mulFileP) && File.Exists(idxFileP)) {
-					FileStream idxfs = new FileStream(idxFileP, FileMode.Open, FileAccess.Read);
-					FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
-					BinaryReader idxbr = new BinaryReader(idxfs);
-					BinaryReader mulbr = new BinaryReader(mulfs);
+					var idxfs = new FileStream(idxFileP, FileMode.Open, FileAccess.Read);
+					var mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read);
+					var idxbr = new BinaryReader(idxfs);
+					var mulbr = new BinaryReader(mulfs);
 
 					int slots = 0, items = 0;
 
@@ -78,12 +78,12 @@ namespace SteamEngine.UoData {
 									mulbr.BaseStream.Seek(pos, SeekOrigin.Begin);
 								}
 								var listOfItems = new List<MultiComponentDescription>(length / 12);
-								for (int i = 0; i < length / 12; i++) {
-									ushort id = mulbr.ReadUInt16();
-									short offsetX = mulbr.ReadInt16();
-									short offsetY = mulbr.ReadInt16();
-									short offsetZ = mulbr.ReadInt16();
-									int flags = mulbr.ReadInt32();
+								for (var i = 0; i < length / 12; i++) {
+									var id = mulbr.ReadUInt16();
+									var offsetX = mulbr.ReadInt16();
+									var offsetY = mulbr.ReadInt16();
+									var offsetZ = mulbr.ReadInt16();
+									var flags = mulbr.ReadInt32();
 
 									//s nulou jsou "stiny" ocekavanych dynamickych itemu, jako treba dveri.
 									if (flags > 0) {
@@ -111,11 +111,11 @@ namespace SteamEngine.UoData {
 					idxbr.Close();
 
 					if (Globals.WriteMulDocsFiles) {
-						StreamWriter docsw = File.CreateText(Globals.GetMulDocPathFor("MultiItems.txt"));
+						var docsw = File.CreateText(Globals.GetMulDocPathFor("MultiItems.txt"));
 
-						foreach (KeyValuePair<int, MultiData> entry in multiItems) {
+						foreach (var entry in multiItems) {
 							docsw.WriteLine("Item: " + entry.Key + "\t Num parts: " + entry.Value.parts.Count);
-							foreach (MultiComponentDescription p in entry.Value.parts) {
+							foreach (var p in entry.Value.parts) {
 								docsw.WriteLine("\t ItemId: " + p.ItemId);
 								docsw.WriteLine("\t Offset X: " + p.OffsetX);
 								docsw.WriteLine("\t Offset Y: " + p.OffsetY);

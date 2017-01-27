@@ -58,13 +58,13 @@ namespace SteamEngine.Regions {
 		}
 
 		internal void SetParsedP(string value) {
-			Match match = Point4D.positionRE.Match(value);
+			var match = Point4D.positionRE.Match(value);
 			if (match.Success) {
-				GroupCollection gc = match.Groups;
+				var gc = match.Groups;
 				int x = ConvertTools.ParseUInt16(gc["x"].Value);
 				int y = ConvertTools.ParseUInt16(gc["y"].Value);
-				string zstr = gc["z"].Value;
-				string mstr = gc["m"].Value;
+				var zstr = gc["z"].Value;
+				var mstr = gc["m"].Value;
 				int z;
 				byte m;
 				if (zstr.Length > 0) {

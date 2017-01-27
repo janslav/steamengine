@@ -35,12 +35,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// displaying
 		/// </summary>
 		public static List<SettingResult> AssertSettings(Dictionary<int, IDataFieldView> editFields, GumpResponse resp, object target) {
-			List<SettingResult> resList = new List<SettingResult>();
+			var resList = new List<SettingResult>();
 			SettingResult oneRes = null;
-			foreach (int key in editFields.Keys) {
-				IDataFieldView field = editFields[key];
+			foreach (var key in editFields.Keys) {
+				var field = editFields[key];
 				oneRes = new SettingResult(field, target); //prepare the result
-				string newStringValue = resp.GetTextResponse(key); //get the value from the edit field
+				var newStringValue = resp.GetTextResponse(key); //get the value from the edit field
 				if (!typeof(Enum).IsAssignableFrom(field.FieldType) && !newStringValue.Equals(field.GetStringValue(target))) {
 					//hnadled type is not Enum and it has changed somehow...
 					oneRes.Outcome = SettingsEnums.ChangedOK; //assume it will be OK
@@ -87,8 +87,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Count all successfully edited fields</summary>
 		public static int CountSuccessfulSettings(List<SettingResult> results) {
-			int resCntr = 0;
-			foreach (SettingResult sres in results) {
+			var resCntr = 0;
+			foreach (var sres in results) {
 				if (sres.Outcome == SettingsEnums.ChangedOK) {
 					resCntr++;
 				}
@@ -98,8 +98,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Count all failed fields</summary>
 		public static int CountUnSuccessfulSettings(List<SettingResult> results) {
-			int resCntr = 0;
-			foreach (SettingResult sres in results) {
+			var resCntr = 0;
+			foreach (var sres in results) {
 				if (sres.Outcome == SettingsEnums.ChangedError) {
 					resCntr++;
 				}
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Compare case insensitively the names of enumeration values if they have changed</summary>
 		private static bool IsEnumValueChanged(IDataFieldView field, object target, string newEnumValueName) {
-			string oldEnumValuName = Enum.GetName(field.FieldType, field.GetValue(target));
+			var oldEnumValuName = Enum.GetName(field.FieldType, field.GetValue(target));
 			return !StringComparer.OrdinalIgnoreCase.Equals(oldEnumValuName, newEnumValueName);
 		}
 
@@ -118,10 +118,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// We will use it in the info/settings dialog for displaying and identification
 		/// </summary>
 		public static string GetValuePrefix(IDataFieldView field, object target) {
-			object value = field.GetValue(target);
-			string valuePrefix = "";
+			var value = field.GetValue(target);
+			var valuePrefix = "";
 
-			Type t = value.GetType();
+			var t = value.GetType();
 			//we will store it in the special dictionary
 			if (!prefixTypes.TryGetValue(t, out valuePrefix)) {
 				//types like Enum, Numbers, String, Regions  or Globals doesn't have any prefixes, they will be displayed as is
@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					valuePrefix = "#";
 				} else {
 					//try the simpleimplementors
-					ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
+					var iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
 					if (iss != null) {
 						valuePrefix = iss.Prefix;
 					} else {
@@ -185,9 +185,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				return "(Glob)";
 			}
 			//nothing special, try the simpleimplementors
-			ISimpleSaveImplementor iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
+			var iss = ObjectSaver.GetSimpleSaveImplementorByType(t);
 			if (iss != null) {
-				string pref = iss.Prefix;
+				var pref = iss.Prefix;
 				if (pref.Contains("(")) {
 					return pref; //it already contains the brackets
 				} //add the surrounding brackets

@@ -357,7 +357,7 @@ namespace SteamEngine {
 
 		public static GameState SrcGameState {
 			get {
-				AbstractCharacter ch = src as AbstractCharacter;
+				var ch = src as AbstractCharacter;
 				if (ch != null) {
 					return ch.GameState;
 				}
@@ -367,7 +367,7 @@ namespace SteamEngine {
 
 		public static TcpConnection<GameState> SrcTcpConnection {
 			get {
-				AbstractCharacter ch = src as AbstractCharacter;
+				var ch = src as AbstractCharacter;
 				if (ch != null) {
 					return ch.GameState.Conn;
 				}
@@ -418,8 +418,8 @@ namespace SteamEngine {
 		private static void LoadIni() {
 			try {
 				Logger.WriteDebug("Loading steamengine.ini");
-				IniFile iniH = new IniFile("steamengine.ini");
-				IniFileSection setup = iniH.GetNewOrParsedSection("setup");
+				var iniH = new IniFile("steamengine.ini");
+				var setup = iniH.GetNewOrParsedSection("setup");
 
 				serverName = setup.GetValue("name", "Unnamed SteamEngine Shard", "The name of your shard");
 				adminEmail = setup.GetValue("adminEmail", "admin@email.com", "Your Email to be displayed in status web, etc.");
@@ -429,7 +429,7 @@ namespace SteamEngine {
 
 				allowUnencryptedClients = setup.GetValue("allowUnencryptedClients", true, "Allow clients with no encryption to connect. There's no problem with that, except for lower security.");
 
-				IniFileSection files = iniH.GetNewOrParsedSection("files");
+				var files = iniH.GetNewOrParsedSection("files");
 				logPath = Path.GetFullPath(files.GetValue("logPath", "./logs/", "Path to the log files"));
 				logToFiles = files.GetValue("logToFiles", true, "Whether to log console output to a file");
 				CoreLogger.Init();
@@ -444,7 +444,7 @@ namespace SteamEngine {
 				readBodyDefs = files.GetValue("readBodyDefs", true, "Whether to read Bodyconv.def (a client file) in order to determine what character models lack defs (and then to write new ones for them to 'scripts/defaults/chardefs/newCharDefsFromMuls.def').");
 				writeMulDocsFiles = files.GetValue("writeMulDocsFiles", false, "If this is true/on/1, then SteamEngine will write out some files with general information gathered from various MUL files into the 'docs/MUL file docs' folder. These should be distributed with SteamEngine anyways, but this is useful sometimes (like when a new UO expansion is released).");
 
-				IniFileSection login = iniH.GetNewOrParsedSection("login");
+				var login = iniH.GetNewOrParsedSection("login");
 				//alwaysUpdateRouterIPOnStartup = (bool) login.GetValue<bool>("alwaysUpdateRouterIPOnStartup", false, "Automagically determine the routerIP every time SteamEngine is run, instead of using the setting for it in steamengine.ini.");
 				//string omit = login.GetValue<string>("omitip", "5.0.0.0", "IP to omit from server lists, for example, omitIP=5.0.0.0. You can have multiple omitIP values, separated by comma.");
 				//omitip = new List<IPAddress>();
@@ -455,7 +455,7 @@ namespace SteamEngine {
 				//omitip = new System.Collections.ObjectModel.ReadOnlyCollection<IPAddress>(omitip);
 
 				bool exists;
-				string msgBox = "";
+				var msgBox = "";
 				if (iniH.FileExists) {
 					exists = true;
 					//string routerIP = login.GetValue<string>("routerIP", "", "The IP to show to people who are outside your LAN");
@@ -464,7 +464,7 @@ namespace SteamEngine {
 					////}
 					mulPath = files.GetValue("mulPath", "muls", "Path to the mul files");
 				} else {
-					string mulsPath = GetMulsPath();
+					var mulsPath = GetMulsPath();
 					if (mulsPath == null) {
 						msgBox += "Unable to locate the UO MUL files. Please either place them in the 'muls' folder or specify the proper path in steamengine.ini (change mulPath=muls to the proper path)\n\n";
 						mulsPath = files.GetValue("mulPath", "muls", "Path to the mul files");
@@ -486,10 +486,10 @@ namespace SteamEngine {
 				autoAccountCreation = login.GetValue("autoAccountCreation", false, "Automatically create accounts when someone attempts to log in");
 				blockOSI3DClient = login.GetValue("blockOSI3DClient", true, "Block the OSI 3D client from connecting. Said client is not supported, since it tends to do things in a stupid manner.");
 
-				IniFileSection ports = iniH.GetNewOrParsedSection("ports");
+				var ports = iniH.GetNewOrParsedSection("ports");
 				port = ports.GetValue<ushort>("game", 2595, "The port to listen on for client connections");
 
-				IniFileSection text = iniH.GetNewOrParsedSection("text");
+				var text = iniH.GetNewOrParsedSection("text");
 				commandPrefix = text.GetValue("commandPrefix", ".", "The command prefix. You can make it 'Computer, ' if you really want.");
 				alternateCommandPrefix = text.GetValue("alternateCommandPrefix", "[", "The command prefix. Defaults to [. In the god-client, . is treated as an internal client command, and anything starting with . is NOT sent to the server.");
 				//supportUnicode = text.GetValue<bool>("supportUnicode", true, "If you turn this off, all messages, speech, etc sent TO clients will take less bandwidth, but nobody'll be able to speak in unicode (I.E. They can only speak using normal english characters, not russian, chinese, etc.)");
@@ -497,7 +497,7 @@ namespace SteamEngine {
 				defaultAsciiMessageColor = text.GetValue<ushort>("serverMessageColor", 0x0000, "The color to use for server messages (Welcome to **, pause for worldsave, etc). Can be in hex, but it doesn't have to be.");
 				defaultUnicodeMessageColor = text.GetValue<ushort>("defaultUnicodeMessageColor", 0x0394, "The color to use for unicode messages with no specified color (or a specified color of 0, which is not really valid for unicode messages).");
 
-				IniFileSection ranges = iniH.GetNewOrParsedSection("ranges");
+				var ranges = iniH.GetNewOrParsedSection("ranges");
 				reachRange = ranges.GetValue<ushort>("reachRange", 5, "The distance (in spaces) a character can reach.");
 				squaredReachRange = reachRange * reachRange;
 				//sightRange = ranges.GetValue<ushort>("sightRange", 15, "The distance (in spaces) a character can see.");
@@ -507,12 +507,12 @@ namespace SteamEngine {
 				whisperDistance = ranges.GetValue("whisperDistance", 2, "The maximum distance from which a whisper can be heard.");
 				yellDistance = ranges.GetValue("yellDistance", 20, "The maximum distance from which a yell can be heard.");
 
-				IniFileSection plevels = iniH.GetNewOrParsedSection("plevels");
+				var plevels = iniH.GetNewOrParsedSection("plevels");
 				maximalPlevel = plevels.GetValue<byte>("maximalPlevel", 7, "Maximal plevel - the highest possible plevel (the owner's plevel)");
 				plevelOfGM = plevels.GetValue("plevelOfGM", 4, "Plevel needed to do all the cool stuff GM do. See invis, walk thru walls, ignore line of sight, own all animals, etc.");
 				plevelForLscriptCommands = plevels.GetValue("plevelForLscriptCommands", 2, "With this (or higher) plevel, the client's commands are parsed and executed as LScript statements. Otherwise, much simpler parser is used, for speed and security.");
 
-				IniFileSection scripts = iniH.GetNewOrParsedSection("scripts");
+				var scripts = iniH.GetNewOrParsedSection("scripts");
 				resolveEverythingAtStart = scripts.GetValue("resolveEverythingAtStart", false, "If this is false, Constants and fields of scripted defs (ThingDef,Skilldef, etc.) will be resolved from the text on demand (and probably at the first save). Otherwise, everything is resolved on the start. Leave this to false on your development server, but set it to true for a live shard, because it's more secure.");
 				defaultItemModel = scripts.GetValue<ushort>("defaultItemModel", 0xeed, "The item model # to use when an itemdef has no model specified.");
 				defaultCharModel = scripts.GetValue<ushort>("defaultCharModel", 0x0190, "The character body/model # to use when a chardef has no model specified.");
@@ -522,7 +522,7 @@ namespace SteamEngine {
 				//loginFlags = 0;
 				//featuresFlags = 0;
 
-				IniFileSection features = iniH.GetNewOrParsedSection("features");
+				var features = iniH.GetNewOrParsedSection("features");
 				//features.Comment("These are features which can be toggled on or off.");
 				useAosToolTips = features.GetValue("useAosToolTips", true, "If this is on, AOS tooltips (onmouseover little windows instead of onclick texts) are enabled. Applies for clients > 3.0.8o");
 				//OneCharacterOnly = (bool) features.IniEntry("OneCharacterOnly", (bool)false, "Limits accounts to one character each (except GMs)).");
@@ -568,7 +568,7 @@ namespace SteamEngine {
 				//Six Characters		: LF 0x40 FF 0x8020
 
 
-				IniFileSection temporary = iniH.GetNewOrParsedSection("temporary");
+				var temporary = iniH.GetNewOrParsedSection("temporary");
 				temporary.AddComment("These are temporary INI settings, which will be going away in future versions.");
 				fastStartUp = temporary.GetValue("fastStartUp", false, "If set to true, some time consuming steps in the server init phase will be skipped (like loading of defs and scripts), for faster testing of other functions. In this mode, the server will be of course not usable for game serving.");
 				parallelStartUp = temporary.GetValue("parallelStartUp", false, "If set to true, some parts of startup will run multi-threaded. Not recommended for production.");
@@ -605,9 +605,9 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public static string GetMulsPath() {
 #if MSWIN
-			RegistryKey soft = Registry.LocalMachine.OpenSubKey("SOFTWARE");
+			var soft = Registry.LocalMachine.OpenSubKey("SOFTWARE");
 			if (soft != null) {
-				RegistryKey rk = soft.OpenSubKey("Origin Worlds Online");
+				var rk = soft.OpenSubKey("Origin Worlds Online");
 				if (rk == null) {
 					rk = soft.OpenSubKey("Wow6432Node"); //32bit stuff in 64bit Windows? Bizarre node name anyway
 					if (rk != null) {
@@ -616,14 +616,14 @@ namespace SteamEngine {
 				}
 
 				if (rk != null) {
-					string[] names = rk.GetSubKeyNames();
-					foreach (string name in names) {
-						RegistryKey uoKey = rk.OpenSubKey(name);
+					var names = rk.GetSubKeyNames();
+					foreach (var name in names) {
+						var uoKey = rk.OpenSubKey(name);
 						if (uoKey != null) {
-							string[] names2 = uoKey.GetSubKeyNames();
-							foreach (string name2 in names2) {
-								RegistryKey verKey = uoKey.OpenSubKey(name2);
-								string s = verKey.GetValue("InstCDPath") as string;
+							var names2 = uoKey.GetSubKeyNames();
+							foreach (var name2 in names2) {
+								var verKey = uoKey.OpenSubKey(name2);
+								var s = verKey.GetValue("InstCDPath") as string;
 								if (s != null) {
 									return s;
 								}
@@ -662,7 +662,7 @@ namespace SteamEngine {
 		}
 
 		private static string GetVersion() {
-			using (SvnClient client = new SvnClient()) {
+			using (var client = new SvnClient()) {
 				SvnInfoEventArgs info;
 				client.GetInfo(SvnTarget.FromString(Path.GetFullPath("."), true), out info);
 
@@ -816,7 +816,7 @@ namespace SteamEngine {
 
 		internal static void LoadGlobals(PropsSection input) {
 			//Console.WriteLine("["+input.headerType+" "+input.headerName+"]");
-			PropsLine timeLine = input.TryPopPropsLine("time");
+			var timeLine = input.TryPopPropsLine("time");
 			long value;
 			if ((timeLine != null) && (ConvertTools.TryParseInt64(timeLine.Value, out value))) {
 				lastMarkServerTime = TimeSpan.FromTicks(value);
@@ -870,13 +870,13 @@ namespace SteamEngine {
 				Console.WriteLine("Invoking NDOC, documentation will be generated to docs/sourceDoc");
 				try {
 #if DEBUG
-					string project = "debug.ndoc";
+					var project = "debug.ndoc";
 #elif SANE
 					string project="sane.ndoc";
 #elif OPTIMIZED
 					string project="optimized.ndoc";
 #endif
-					ProcessStartInfo info = new ProcessStartInfo(ndocExe, "-project=" + project);
+					var info = new ProcessStartInfo(ndocExe, "-project=" + project);
 					info.WorkingDirectory = "./distrib/";
 					info.WindowStyle = ProcessWindowStyle.Normal;
 					info.UseShellExecute = true;
@@ -900,7 +900,7 @@ namespace SteamEngine {
 		//}
 
 		public static string GetMulDocPathFor(string filename) {
-			string docPath = Path.Combine(docsPath, "defaults");
+			var docPath = Path.Combine(docsPath, "defaults");
 			Tools.EnsureDirectory(docPath, true);
 
 			return Path.Combine(docPath, filename);
@@ -970,7 +970,7 @@ namespace SteamEngine {
 				if (paused > 0) {
 					return lastMarkServerTime;
 				}
-				DateTime current = DateTime.Now;
+				var current = DateTime.Now;
 				return lastMarkServerTime + (current - lastMarkRealTime);
 			}
 		}
@@ -987,7 +987,7 @@ namespace SteamEngine {
 			//Logger.WriteDebug("paused level raised to " + paused);
 			//Logger.WriteDebug(new StackTrace());
 			if (paused == 1) {
-				DateTime current = DateTime.Now;
+				var current = DateTime.Now;
 
 				lastMarkServerTime = lastMarkServerTime + (current - lastMarkRealTime);
 				lastMarkRealTime = current;

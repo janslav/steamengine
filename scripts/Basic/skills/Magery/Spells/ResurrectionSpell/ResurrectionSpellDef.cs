@@ -42,10 +42,10 @@ namespace SteamEngine.CompiledScripts {
 
 
 
-			int range = this.EffectRange;
+			var range = this.EffectRange;
 			Character owner;
-			Character caster = spellEffectArgs.Caster;
-			Corpse corp = target as Corpse;
+			var caster = spellEffectArgs.Caster;
+			var corp = target as Corpse;
 
 			if (corp != null) {
 				if (corp.Owner != null) {

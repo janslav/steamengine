@@ -37,11 +37,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Item item = (Item) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var item = (Item) skillSeqArgs.Target1;
 
 			if (self.CanReach(item).Allow) {
-				int diff = (int) (700 + 100 * Math.Log(item.Weight + 1));
+				var diff = (int) (700 + 100 * Math.Log(item.Weight + 1));
 				skillSeqArgs.Success = CheckSuccess(self.GetSkill(SkillName.Stealing), diff);
 			} else {
 				skillSeqArgs.Success = false;
@@ -50,15 +50,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.ClilocSysMessage(500174);      // You successfully steal the item!
 
 			//Snooping implementation does the rest
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Item item = (Item) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var item = (Item) skillSeqArgs.Target1;
 			self.ClilocSysMessage(500172);	    // I failed to steal.
 			((Character) item.TopObj()).Trigger_HostileAction(self);
 			//self.ClilocSysMessage(500167);	    // You are now a criminal.

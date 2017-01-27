@@ -38,13 +38,13 @@ namespace SteamEngine.CompiledScripts {
 
 		public static Direction[] GetPathFromTo(IPoint3D start, IPoint3D target, Map map, IMovementSettings settings, int maxIterations) {
 #if DEBUG
-			long ticksStart = HighPerformanceTimer.TickCount;
+			var ticksStart = HighPerformanceTimer.TickCount;
 			long ticksEnd;
 			double seconds;
 #endif
-			int targetX = target.X;
-			int targetY = target.Y;
-			int targetZ = target.Z;
+			var targetX = target.X;
+			var targetY = target.Y;
+			var targetZ = target.Z;
 
 			if ((targetX == start.X) && (targetY == start.Y) && (targetZ == start.Z)) {
 				return emptyArray;
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 			closedAndOpenList.Clear();
 			openList.Clear();
 			AStarNode.ReuseAll();
-			AStarNode parentNode = AStarNode.GetNew(null, Direction.North, 0, start.X, start.Y, start.Z);
+			var parentNode = AStarNode.GetNew(null, Direction.North, 0, start.X, start.Y, start.Z);
 
 			closedAndOpenList.Add(parentNode);
 			openList.Enqueue(parentNode, Heuristic(start, target));
@@ -62,16 +62,16 @@ namespace SteamEngine.CompiledScripts {
 			int iterations = 0, nodesUsed = 0;
 			while ((iterations < maxIterations) && (openList.Count > 0)) {
 				parentNode = openList.Dequeue();
-				int newStepsSoFar = parentNode.stepsSoFar + 1;
-				for (int d = 0; d < 8; d++) {
+				var newStepsSoFar = parentNode.stepsSoFar + 1;
+				for (var d = 0; d < 8; d++) {
 					int newY, newX, newZ;
-					Direction dir = (Direction) d;
+					var dir = (Direction) d;
 					if (map.CheckMovement(parentNode, settings, dir, false, out newX, out newY, out newZ)) {
 
 						//we found the target
 						if ((targetX == newX) && (targetY == newY) && (targetZ == newZ)) {
-							Direction[] path = new Direction[newStepsSoFar];
-							int i = newStepsSoFar - 1;
+							var path = new Direction[newStepsSoFar];
+							var i = newStepsSoFar - 1;
 							path[i] = dir;
 							i--;
 							for (; i >= 0; i--) {
@@ -86,9 +86,9 @@ namespace SteamEngine.CompiledScripts {
 							return path;
 						}
 
-						AStarNode newNode = AStarNode.GetNew(parentNode, dir, newStepsSoFar, newX, newY, newZ);
+						var newNode = AStarNode.GetNew(parentNode, dir, newStepsSoFar, newX, newY, newZ);
 						if (!closedAndOpenList.Contains(newNode)) {
-							int f = newStepsSoFar + Heuristic(newNode, target);
+							var f = newStepsSoFar + Heuristic(newNode, target);
 							closedAndOpenList.Add(newNode);
 							openList.Enqueue(newNode, f);
 
@@ -113,9 +113,9 @@ namespace SteamEngine.CompiledScripts {
 			//return Point2D.GetSimpleDistance(start, target);
 
 			//taken RunUO heuristic. Let's see how we're compatible ;)
-			int x = start.X - target.X;
-			int y = start.Y - target.Y;
-			int z = start.Z - target.Z;
+			var x = start.X - target.X;
+			var y = start.Y - target.Y;
+			var z = start.Z - target.Z;
 
 			x *= 11;
 			y *= 11;
@@ -183,7 +183,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			public override bool Equals(object obj) {
-				AStarNode node = obj as AStarNode;
+				var node = obj as AStarNode;
 				if (node != null) {
 					return ((this.x == node.x) && (this.y == node.y) && (this.z == node.z));
 				}
@@ -245,9 +245,9 @@ namespace SteamEngine.CompiledScripts {
 		public static class Functions_Astar_Test {
 			[SteamFunction]
 			public static void Astar_Walk(Character self, ScriptArgs sa) {
-				Player src = Globals.Src as Player;
+				var src = Globals.Src as Player;
 				if (src != null) {
-					double seconds = 0.5;
+					var seconds = 0.5;
 					if ((sa != null) && (sa.Argv.Length > 0)) {
 						seconds = Convert.ToDouble(sa.Argv[0]);
 					}
@@ -258,7 +258,7 @@ namespace SteamEngine.CompiledScripts {
 
 			[SteamFunction]
 			public static void Astar_Draw(Character self, ScriptArgs sa) {
-				Player src = Globals.Src as Player;
+				var src = Globals.Src as Player;
 				if (src != null) {
 					IMovementSettings settings = null;
 					if ((sa != null) && (sa.Argv.Length > 0)) {
@@ -285,21 +285,21 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected override TargetResult On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
-				object[] arr = (object[]) parameter;
-				Character self = (Character) arr[0];
-				IMovementSettings settings = (IMovementSettings) arr[1];
+				var arr = (object[]) parameter;
+				var self = (Character) arr[0];
+				var settings = (IMovementSettings) arr[1];
 
-				byte m = self.M;
-				Map map = Map.GetMap(m);
-				Direction[] path = GetPathFromTo(self, targetted, map, settings);
+				var m = self.M;
+				var map = Map.GetMap(m);
+				var path = GetPathFromTo(self, targetted, map, settings);
 				if (path != null) {
 					IPoint3D start = self;
-					foreach (Direction dir in path) {
+					foreach (var dir in path) {
 						int x, y, z;
 						if (!map.CheckMovement(start, settings, dir, false, out x, out y, out z)) {
 							Globals.SrcWriteLine("Dir " + dir + " from " + start + " unwalkable when re-checked.");
 						}
-						Item i = (Item) Def.Create((ushort) x, (ushort) y, (sbyte) z, m);
+						var i = (Item) Def.Create((ushort) x, (ushort) y, (sbyte) z, m);
 						i.Color = 0x21; // Tento radek je historicky prvnim C# skripterkym pocinem pana Verbatima, mocneho a krfafeho! 7.4.2007 0:29am
 						start = i;
 						i.AddTimer(decayTimerKey, new AStarDecayTimer()).DueInSeconds = 10;
@@ -322,7 +322,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout(TagHolder cont) {
-				Item self = cont as Item;
+				var self = cont as Item;
 				if (self != null) {
 					self.Delete();
 				}
@@ -342,15 +342,15 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected override TargetResult On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
-				object[] arr = (object[]) parameter;
-				Character self = (Character) arr[0];
-				double seconds = Convert.ToDouble(arr[1]);
-				byte m = self.M;
-				Map map = Map.GetMap(m);
-				Direction[] path = GetPathFromTo(self, targetted, map, self.MovementSettings);
+				var arr = (object[]) parameter;
+				var self = (Character) arr[0];
+				var seconds = Convert.ToDouble(arr[1]);
+				var m = self.M;
+				var map = Map.GetMap(m);
+				var path = GetPathFromTo(self, targetted, map, self.MovementSettings);
 				if (path != null) {
 					self.RemoveTimer(walkTimerKey);
-					AStarWalkTimer timer = new AStarWalkTimer(path);
+					var timer = new AStarWalkTimer(path);
 					timer.DueInSeconds = seconds;
 					timer.PeriodInSeconds = seconds;
 					self.AddTimer(walkTimerKey, timer);
@@ -384,10 +384,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			protected sealed override void OnTimeout(TagHolder cont) {
-				Character self = (Character) cont;
+				var self = (Character) cont;
 
 				if (this.pathIndex < this.path.Length) {
-					Direction nextStep = this.path[this.pathIndex];
+					var nextStep = this.path[this.pathIndex];
 					if (nextStep != self.Direction) {
 						self.Direction = nextStep;
 					}

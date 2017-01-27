@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("List doublify")]
 		public void SomeMethod() {
-			for (int i = 0; i < (this.bar == 0 ? 1 : this.bar) * 2; i++) {
+			for (var i = 0; i < (this.bar == 0 ? 1 : this.bar) * 2; i++) {
 				this.nejakejList.Add(this.nejakejList.Count);
 			}
 			this.bar = (this.bar == 0 ? 1 : this.bar) * 2;
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Table doublify")]
 		public void SomeOtherMethod() {
-			for (int i = 0; i < (this.baz == 0 ? 1 : this.baz) * 2; i++) {
+			for (var i = 0; i < (this.baz == 0 ? 1 : this.baz) * 2; i++) {
 				this.nejakaTabulka.Add(this.nejakaTabulka.Count + ".)", this.nejakaTabulka.Count);
 			}
 			this.baz = (this.baz == 0 ? 1 : this.baz) * 2;

@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class PoisonPotion {
 
 		public override void On_DClick(AbstractCharacter dclicker) {
-			SkillSequenceArgs args = SkillSequenceArgs.Acquire((Character) dclicker, SkillName.Poisoning, this);
+			var args = SkillSequenceArgs.Acquire((Character) dclicker, SkillName.Poisoning, this);
 			args.PhaseSelect();
 
 			//base.On_DClick(dclicker); //empties flask
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public int PoisonPower {
 			get {
-				int[] arr = this.TypeDef.PoisonPower;
+				var arr = this.TypeDef.PoisonPower;
 				if (arr == null) {
 					return 0;
 				}

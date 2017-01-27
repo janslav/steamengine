@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts {
 	public partial class DamagingPoisonEffectPlugin {
 
 		public override void On_FadingEffectTick() {
-			Character self = this.Cont as Character;
+			var self = this.Cont as Character;
 			if (self != null) {
 
 				double damage = DamageManager.CauseDamage(this.SourceThing as Character, self,
@@ -53,9 +53,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void AnnouncePoisonStrength(PoisonStrengthMessage strength) {
-			Character self = this.Cont as Character;
+			var self = this.Cont as Character;
 			if (self != null) {
-				int roundedEffect = (int) strength;
+				var roundedEffect = (int) strength;
 				if (roundedEffect < 0) {
 					roundedEffect = 0;
 				} else if (roundedEffect > 4) {

@@ -82,18 +82,18 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 
 		internal void WriteToMyConsoles(string str) {
 			if (this.startupFinished) {
-				foreach (ConsoleClient console in GameServersManager.AllConsolesIn(this)) {
+				foreach (var console in GameServersManager.AllConsolesIn(this)) {
 					console.Write(this.ServerUid, str);
 				}
 			} else {
-				foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				foreach (var console in ConsoleServer.ConsoleServer.AllConsoles) {
 					console.Write(this.ServerUid, str);
 				}
 			}
 		}
 
 		internal void RequestSendingLogStr(bool state) {
-			RequestSendingLogStringsPacket packet = Pool<RequestSendingLogStringsPacket>.Acquire();
+			var packet = Pool<RequestSendingLogStringsPacket>.Acquire();
 			packet.Prepare(state);
 			this.conn.SendSinglePacket(packet);
 		}
@@ -105,13 +105,13 @@ namespace SteamEngine.AuxiliaryServer.SEGameServers {
 		}
 
 		public override void SendCommand(ConsoleClient console, string cmd) {
-			ConsoleCommandLinePacket p = Pool<ConsoleCommandLinePacket>.Acquire();
+			var p = Pool<ConsoleCommandLinePacket>.Acquire();
 			p.Prepare(console.ConsoleId, console.AccountName, console.AccountPassword, cmd);
 			this.Conn.SendSinglePacket(p);
 		}
 
 		public override void SendConsoleLogin(ConsoleId consoleId, string accName, string accPassword) {
-			ConsoleLoginRequestPacket loginRequest = Pool<ConsoleLoginRequestPacket>.Acquire();
+			var loginRequest = Pool<ConsoleLoginRequestPacket>.Acquire();
 			loginRequest.Prepare(consoleId, accName, accPassword);
 			this.Conn.SendSinglePacket(loginRequest);
 		}

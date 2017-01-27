@@ -59,7 +59,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			string opString = LScriptMain.GetString(this.operatorNode).Trim();
+			var opString = LScriptMain.GetString(this.operatorNode).Trim();
 			this.result = this.obj.Run(vars);
 
 			if (this.result == null) {
@@ -105,16 +105,16 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 			if (newNode != null) {
 				object retVal;
-				OpNode_Lazy_UnOperator newNodeAsUnOp = newNode as OpNode_Lazy_UnOperator;
+				var newNodeAsUnOp = newNode as OpNode_Lazy_UnOperator;
 				if (newNodeAsUnOp != null) {
 					newNodeAsUnOp.obj = this.obj;
 				}
-				OpNode newNodeAsOpNode = (OpNode) newNode;
+				var newNodeAsOpNode = (OpNode) newNode;
 				this.ReplaceSelf(newNodeAsOpNode);
 				retVal = newNode.TryRun(vars, new[] { this.result });
 				if (this.obj is OpNode_Object) {
 					//operand is constant -> result is also constant
-					OpNode constNode = OpNode_Object.Construct(this.parent, retVal);
+					var constNode = OpNode_Object.Construct(this.parent, retVal);
 					this.parent.Replace(newNodeAsOpNode, constNode);
 				}
 				return retVal;
@@ -125,13 +125,13 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		private OpNode_MethodWrapper FindOperatorMethod(string methodName) {
 			if (this.result != null) {
-				List<MethodInfo> matches = new List<MethodInfo>();
+				var matches = new List<MethodInfo>();
 
-				Type type = this.result.GetType();
-				MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
-				foreach (MethodInfo mi in methods) {
+				var type = this.result.GetType();
+				var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+				foreach (var mi in methods) {
 					if (mi.Name.Equals(methodName)) {
-						ParameterInfo[] pars = mi.GetParameters();
+						var pars = mi.GetParameters();
 						if (pars.Length == 1) {
 							if (MemberResolver.IsCompatibleType(pars[0].ParameterType, this.result)) {
 								matches.Add(mi);
@@ -140,8 +140,8 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 				}
 				if (matches.Count == 1) {
-					MethodInfo method = MemberWrapper.GetWrapperFor(matches[0]);
-					OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode, method, this.obj);
+					var method = MemberWrapper.GetWrapperFor(matches[0]);
+					var newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode, method, this.obj);
 					return newNode;
 				}
 				if (matches.Count > 1) {
@@ -150,8 +150,8 @@ namespace SteamEngine.Scripting.Interpretation {
 
 					//}
 
-					StringBuilder sb = new StringBuilder("Ambiguity detected when resolving operator. There were following possibilities:");
-					foreach (MethodInfo mi in matches) {
+					var sb = new StringBuilder("Ambiguity detected when resolving operator. There were following possibilities:");
+					foreach (var mi in matches) {
 						sb.Append(Environment.NewLine);
 						sb.AppendFormat("{0} {1}.{2}", mi.ReturnType, mi.DeclaringType, mi);
 					}
@@ -166,7 +166,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("( ");
+			var str = new StringBuilder("( ");
 			str.Append(LScriptMain.GetString(this.operatorNode).Trim()).Append(" ");
 			str.Append(this.obj).Append(")");
 			return str.ToString();

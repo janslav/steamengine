@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 		private static PluginKey weaponSkillTargetPK = PluginKey.Acquire("_weaponSkillTarget_");
 
 		public static void InstallTargetTracker(Character defender, Character attacker) {
-			WeaponSkillTargetTrackerPlugin p = defender.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;
+			var p = defender.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;
 			if (p == null) {
 				p = (WeaponSkillTargetTrackerPlugin) defender.AddNewPlugin(weaponSkillTargetPK, WeaponSkillTargetTrackerPluginDef.instance);
 			}
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void UnInstallTargetTracker(Character self, Character attacker) {
-			WeaponSkillTargetTrackerPlugin p = self.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;
+			var p = self.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;
 			if (p != null) {
 				p.attackers.Remove(attacker);
 				if (p.attackers.Count == 0) {
@@ -46,8 +46,8 @@ namespace SteamEngine.CompiledScripts {
 
 		private void CheckAttackers() {
 			List<Character> toBeDeleted = null;
-			foreach (Character attacker in this.attackers) {
-				SkillSequenceArgs skillSeq = SkillSequenceArgs.GetSkillSequenceArgs(attacker);
+			foreach (var attacker in this.attackers) {
+				var skillSeq = SkillSequenceArgs.GetSkillSequenceArgs(attacker);
 				if ((skillSeq != null) && (skillSeq.SkillDef is WeaponSkillDef) && (skillSeq.Target1 != this.Cont)) {//attacker still attacking :)
 					skillSeq.PhaseStroke();
 				} else {//the attacker is not attacking us, let's stop tracking.
@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 			if (toBeDeleted != null) {
-				foreach (Character delete in toBeDeleted) {
+				foreach (var delete in toBeDeleted) {
 					this.attackers.Remove(delete);
 				}
 			}

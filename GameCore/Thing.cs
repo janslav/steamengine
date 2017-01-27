@@ -85,7 +85,7 @@ namespace SteamEngine {
 				savedCharacters = 0;
 				savedItems = 0;
 				alreadySaved = new List<bool>(things.HighestUsedIndex);
-				foreach (Thing t in things) {
+				foreach (var t in things) {
 					SaveThis(output, t.TopObj());//each thing should recursively save it's contained items
 				}
 				Logger.WriteDebug(string.Format(CultureInfo.InvariantCulture,
@@ -103,7 +103,7 @@ namespace SteamEngine {
 				Logger.WriteDebug(string.Format(CultureInfo.InvariantCulture,
 												"Loaded {0} things: {1} items and {2} characters.",
 												loadedItems + loadedCharacters, loadedItems, loadedCharacters));
-				foreach (Thing t in things) {
+				foreach (var t in things) {
 					try {
 						t.On_AfterLoad();
 					} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
@@ -124,8 +124,8 @@ namespace SteamEngine {
 
 			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
-				int uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
-				Thing thing = UidGetThing(uid);
+				var uid = int.Parse(m.Groups["value"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+				var thing = UidGetThing(uid);
 				if (thing != null) {
 					return thing;
 				}
@@ -182,7 +182,7 @@ namespace SteamEngine {
 		}
 
 		public static AbstractItem UidGetContainer(int uid) {
-			AbstractItem i = things.Get(UidClearFlags(uid)) as AbstractItem;
+			var i = things.Get(UidClearFlags(uid)) as AbstractItem;
 			if ((i != null) && (i.IsContainer)) {
 				return i;
 			}
@@ -390,7 +390,7 @@ namespace SteamEngine {
 		}
 
 		public void NudgeUp(int amt) {
-			sbyte tmpZ = this.point4d.z;
+			var tmpZ = this.point4d.z;
 			try {
 				tmpZ = checked((sbyte) (tmpZ + amt));
 				this.Z = tmpZ;
@@ -401,7 +401,7 @@ namespace SteamEngine {
 		}
 
 		public void NudgeDown(short amt) {
-			sbyte tmpZ = this.point4d.z;
+			var tmpZ = this.point4d.z;
 			try {
 				tmpZ = checked((sbyte) (tmpZ - amt));
 				this.Z = tmpZ;
@@ -502,7 +502,7 @@ namespace SteamEngine {
 		public override void Trigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				tg.Run(this, tk, sa);
 			}
 			base.Trigger(tk, sa);
@@ -512,7 +512,7 @@ namespace SteamEngine {
 		public override void TryTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				tg.TryRun(this, tk, sa);
 			}
 			base.TryTrigger(tk, sa);
@@ -522,7 +522,7 @@ namespace SteamEngine {
 		public override TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				if (TagMath.Is1(tg.Run(this, tk, sa))) {
 					return TriggerResult.Cancel;
 				}
@@ -536,7 +536,7 @@ namespace SteamEngine {
 		public override TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
 			this.ThrowIfDeleted();
 			for (int i = 0, n = registeredTGs.Count; i < n; i++) {
-				TriggerGroup tg = registeredTGs[i];
+				var tg = registeredTGs[i];
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
 					return TriggerResult.Cancel;
 				}
@@ -600,7 +600,7 @@ namespace SteamEngine {
 
 			//we need defname and p(x,y, z, m)  to construct the thing.
 
-			ThingDef thingDef = ThingDef.GetByDefname(input.HeaderName);
+			var thingDef = ThingDef.GetByDefname(input.HeaderName);
 
 			if (thingDef == null) {
 				Logger.WriteError(input.Filename, input.HeaderLine, "Defname '" + LogStr.Ident(input.HeaderName) + "' not found. Thing loading interrupted.");
@@ -608,7 +608,7 @@ namespace SteamEngine {
 			}
 
 			int _uid;
-			PropsLine prop = input.TryPopPropsLine("uid");
+			var prop = input.TryPopPropsLine("uid");
 			if (prop == null) {
 				prop = input.TryPopPropsLine("serial");
 			}
@@ -624,7 +624,7 @@ namespace SteamEngine {
 			_uid = UidClearFlags(_uid);
 
 			uidBeingLoaded = _uid;//the constructor should set this as Uid
-			Thing constructed = thingDef.CreateWhenLoading();//let's hope the P gets loaded properly later ;)
+			var constructed = thingDef.CreateWhenLoading();//let's hope the P gets loaded properly later ;)
 
 			things.AddLoaded(constructed, _uid);
 
@@ -662,8 +662,8 @@ namespace SteamEngine {
 			this.ThrowIfDeleted();
 			switch (valueName) {
 				case "p":
-					object o = ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(Point4D));
-					Point4D asPoint = o as Point4D;
+					var o = ObjectSaver.OptimizedLoad_SimpleType(valueString, typeof(Point4D));
+					var asPoint = o as Point4D;
 					if (asPoint != null) {
 						this.point4d.SetXYZM(asPoint);
 					} else {
@@ -738,7 +738,7 @@ namespace SteamEngine {
 				output.WriteLine();
 				ObjectSaver.FlushCache(output);
 				if (this.CanContain) {
-					foreach (AbstractItem i in this) {
+					foreach (var i in this) {
 						SaveThis(output, i);
 					}
 				}
@@ -907,13 +907,13 @@ namespace SteamEngine {
 			if (clicker == null)
 				return;
 
-			GameState clickerState = clicker.GameState;
+			var clickerState = clicker.GameState;
 			if (clickerState != null) {
-				TcpConnection<GameState> clickerConn = clickerState.Conn;
+				var clickerConn = clickerState.Conn;
 				if (!clicker.CanSeeForUpdate(this).Allow) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
-					ScriptArgs sa = new ScriptArgs(clicker, clickerState, clickerConn, this);
+					var sa = new ScriptArgs(clicker, clickerState, clickerConn, this);
 					if (TriggerResult.Cancel != this.TryCancellableTrigger(TriggerKey.aosClick, sa)) {
 						//@aosClick on thing did not return 1
 						try {
@@ -932,13 +932,13 @@ namespace SteamEngine {
 			if (clicker == null)
 				return;
 
-			GameState clickerState = clicker.GameState;
+			var clickerState = clicker.GameState;
 			if (clickerState != null) {
-				TcpConnection<GameState> clickerConn = clickerState.Conn;
+				var clickerConn = clickerState.Conn;
 				if (!clicker.CanSeeForUpdate(this).Allow) {
 					PacketSequences.SendRemoveFromView(clickerConn, this.FlaggedUid);
 				} else {
-					ScriptArgs sa = new ScriptArgs(clicker, this);
+					var sa = new ScriptArgs(clicker, this);
 					var result = this.Trigger_SpecificClick(clicker, sa);
 					if (result != TriggerResult.Cancel) {
 						//@itemclick or @charclick on src did not return 1
@@ -968,7 +968,7 @@ namespace SteamEngine {
 		[SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", MessageId = "Member")]
 		public virtual void On_AosClick(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			//aos client basically only clicks on incoming characters and corpses
-			AosToolTips toolTips = this.GetAosToolTips(clicker.Language);
+			var toolTips = this.GetAosToolTips(clicker.Language);
 			PacketSequences.SendClilocNameFrom(clicker.GameState.Conn, this,
 				toolTips.FirstId, 0, toolTips.FirstArgument);
 		}
@@ -990,14 +990,14 @@ namespace SteamEngine {
 				return;
 
 			//deny triggers first
-			bool isItem = this.IsItem;
-			DenyResult result = this.Trigger_DenyDClick(dclicker, isItem);
+			var isItem = this.IsItem;
+			var result = this.Trigger_DenyDClick(dclicker, isItem);
 
 			if (!result.Allow) {
 				result.SendDenyMessage(dclicker);
 
 			} else {//action triggers
-				ScriptArgs sa = new ScriptArgs(dclicker, this);
+				var sa = new ScriptArgs(dclicker, this);
 
 				if (isItem) {
 					dclicker.TryTrigger(TriggerKey.itemDClick, sa);
@@ -1019,7 +1019,7 @@ namespace SteamEngine {
 		}
 
 		private DenyResult Trigger_DenyDClick(AbstractCharacter dclicker, bool isItem) {
-			DenyClickArgs denyArgs = new DenyClickArgs(dclicker, this);
+			var denyArgs = new DenyClickArgs(dclicker, this);
 			TriggerResult result;
 
 			if (isItem) {
@@ -1138,14 +1138,14 @@ namespace SteamEngine {
 		}
 
 		public static void ClearAll() {
-			foreach (Thing t in things) {
+			foreach (var t in things) {
 				t.uid = -1;
 			}
 			things.Clear();
 		}
 
 		public void RemoveFromView() {
-			DeleteObjectOutPacket p = Pool<DeleteObjectOutPacket>.Acquire();
+			var p = Pool<DeleteObjectOutPacket>.Acquire();
 			p.Prepare(this);
 			GameServer.SendToClientsWhoCanSee(this, p);
 		}
@@ -1154,7 +1154,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public AosToolTips GetAosToolTips(Language language) {
-			AosToolTips toolTips = AosToolTips.GetFromCache(this, language);
+			var toolTips = AosToolTips.GetFromCache(this, language);
 			if (toolTips != null) {
 				return toolTips;
 			}
@@ -1270,9 +1270,9 @@ namespace SteamEngine {
 		public void SoundTo(int soundId, AbstractCharacter toPlayer) {
 			if (soundId != 0xffff) {
 				if (toPlayer != null) {
-					GameState state = toPlayer.GameState;
+					var state = toPlayer.GameState;
 					if (state != null) {
-						PlaySoundEffectOutPacket p = Pool<PlaySoundEffectOutPacket>.Acquire();
+						var p = Pool<PlaySoundEffectOutPacket>.Acquire();
 						p.Prepare(this, soundId);
 						state.Conn.SendSinglePacket(p);
 					}
@@ -1486,7 +1486,7 @@ namespace SteamEngine {
 		//TODO needs work
 		public void Fix() {
 			int oldZ = this.point4d.z;
-			int newZ = this.GetMap().GetFixedZ(this);
+			var newZ = this.GetMap().GetFixedZ(this);
 			if (oldZ != newZ) {
 				this.Z = newZ;
 			}
@@ -1569,11 +1569,11 @@ namespace SteamEngine {
 					Unicode doesn't support special fonts like runic.
 		 */
 		public void Speech(string msg, int clilocMsg, SpeechType type, int color, ClientFont font, int[] keywords, string[] args) {
-			AbstractCharacter self = this as AbstractCharacter;
+			var self = this as AbstractCharacter;
 
-			string language = "enu";
+			var language = "enu";
 			if (self != null) {
-				GameState state = self.GameState;
+				var state = self.GameState;
 				if (state != null) {
 					language = state.ClientLanguage;
 				}
@@ -1584,9 +1584,9 @@ namespace SteamEngine {
 		public void Speech(string msg, int clilocMsg, SpeechType type, int color, ClientFont font, string language, int[] keywords, string[] args) {
 			this.ThrowIfDeleted();
 
-			AbstractCharacter speaker = this as AbstractCharacter;
+			var speaker = this as AbstractCharacter;
 			GameState speakerGameState = null;
-			bool runSpeechTriggers = false;
+			var runSpeechTriggers = false;
 			if (speaker != null) {
 				speakerGameState = speaker.GameState;
 				runSpeechTriggers = speaker.IsPlayer;
@@ -1598,7 +1598,7 @@ namespace SteamEngine {
 				}
 			}// else item/npc is speaking... no triggers fired
 
-			int dist = 0;
+			var dist = 0;
 			switch (type) {
 				case SpeechType.Speech:
 					dist = Globals.SpeechDistance;
@@ -1618,7 +1618,7 @@ namespace SteamEngine {
 					break;
 			}
 
-			Map map = this.GetMap();
+			var map = this.GetMap();
 			IEnumerable<AbstractCharacter> chars;
 			SpeechArgs sa;
 			AbstractCharacter listenerToExclude = null;
@@ -1630,7 +1630,7 @@ namespace SteamEngine {
 
 					//zkusime jestli se jedna o osloveni jmenem
 					if (!string.IsNullOrWhiteSpace(msg)) {
-						foreach (AbstractCharacter listener in chars) {
+						foreach (var listener in chars) {
 							if (msg.StartsWith(listener.Name + " ")) {
 								if (listener.CanSeeLOS(speaker).Allow) {
 									listener.Trigger_Hear(sa);
@@ -1664,7 +1664,7 @@ namespace SteamEngine {
 
 			PacketGroup pg = null;
 			try {
-				foreach (AbstractCharacter listener in chars) {
+				foreach (var listener in chars) {
 					if ((runSpeechTriggers) && (listener != speaker) && (listener != listenerToExclude) && listener.CanSeeLOS(speaker).Allow) {
 						var result = listener.Trigger_Hear(sa);
 						if (result == SpeechResult.ActedUponExclusively) {

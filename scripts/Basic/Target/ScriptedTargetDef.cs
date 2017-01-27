@@ -62,13 +62,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void LoadTriggers(PropsSection input, ScriptedTargetDef td) {
-			TriggerSection trigger_start = input.PopTrigger("start");
+			var trigger_start = input.PopTrigger("start");
 			if (trigger_start != null) {
 				td.on_start = new LScriptHolder(trigger_start);
 			}
 
-			int n = input.TriggerCount;
-			TriggerSection trigger_point = input.GetTrigger("targon_coords");
+			var n = input.TriggerCount;
+			var trigger_point = input.GetTrigger("targon_coords");
 			if (trigger_point == null) {
 				trigger_point = input.GetTrigger("targon_coordinates");
 			}
@@ -82,8 +82,8 @@ namespace SteamEngine.CompiledScripts {
 				td.targon_point = new LScriptHolder(trigger_point);
 			} else {
 
-				for (int i = 0; i < n; i++) {
-					TriggerSection trigger = input.GetTrigger(i);
+				for (var i = 0; i < n; i++) {
+					var trigger = input.GetTrigger(i);
 					switch (trigger.TriggerName.ToLowerInvariant()) {
 						case "targon_ground":
 							td.targon_ground = new LScriptHolder(trigger);
@@ -128,7 +128,7 @@ namespace SteamEngine.CompiledScripts {
 					return;
 				}
 			} else {
-				string msg = this.Message;
+				var msg = this.Message;
 				if (!string.IsNullOrEmpty(msg)) {
 					ch.SysMessage(this.Message);
 				}
@@ -137,7 +137,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Targon(GameState state, IPoint3D getback, object parameter) {
-			Player player = state.Character as Player;
+			var player = state.Character as Player;
 			if (player != null) {
 				if (this.targon_point != null) {
 					if (this.TryRunTrigger(this.targon_point, player, getback, parameter)) {
@@ -145,7 +145,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 					return;
 				}
-				Thing targettedThing = getback as Thing;
+				var targettedThing = getback as Thing;
 				if (targettedThing != null) {
 					if (this.targon_thing != null) {
 						if (this.TryRunTrigger(this.targon_thing, player, getback, parameter)) {
@@ -153,14 +153,14 @@ namespace SteamEngine.CompiledScripts {
 						}
 						return;
 					}
-					Character targettedChar = getback as Character;
+					var targettedChar = getback as Character;
 					if ((targettedChar != null) && (this.targon_char != null)) {
 						if (this.TryRunTrigger(this.targon_char, player, getback, parameter)) {
 							this.On_Start(player, parameter);
 						}
 						return;
 					}
-					Item targettedItem = getback as Item;
+					var targettedItem = getback as Item;
 					if ((targettedItem != null) && (this.targon_item != null)) {
 						if (this.TryRunTrigger(this.targon_item, player, getback, parameter)) {
 							this.On_Start(player, parameter);
@@ -168,7 +168,7 @@ namespace SteamEngine.CompiledScripts {
 						return;
 					}
 				} else {
-					AbstractInternalItem targettedStatic = getback as AbstractInternalItem;
+					var targettedStatic = getback as AbstractInternalItem;
 					if (targettedStatic != null)
 					{
 						if (this.targon_static != null) {
@@ -197,16 +197,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_TargonCancel(GameState state, object parameter) {
-			AbstractCharacter ch = state.Character;
+			var ch = state.Character;
 			if ((ch != null) && (this.targon_cancel != null)) {
 				this.targon_cancel.TryRun(ch, parameter);
 			}
 		}
 
 		private bool TryRunTrigger(LScriptHolder script, AbstractCharacter self, params object[] parameters) {
-			object retVal = script.TryRun(self, parameters);
+			var retVal = script.TryRun(self, parameters);
 			try {
-				int retInt = Convert.ToInt32(retVal);
+				var retInt = Convert.ToInt32(retVal);
 				if (retInt == 1) {
 					return true;
 				}

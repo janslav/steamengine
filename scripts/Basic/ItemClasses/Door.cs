@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 		public static readonly TriggerKey tkDenyCloseDoor = TriggerKey.Acquire("denyCloseDoor");
 
 		private void Trigger_Open(Character user) {
-			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);
+			var args = new DenySwitchDoorArgs(user, this);
 
 			var triggerResult = user.TryCancellableTrigger(tkDenyOpenDoor, args);
 			if (triggerResult != TriggerResult.Cancel) {
@@ -82,7 +82,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			DenyResult denyResult = args.Result;
+			var denyResult = args.Result;
 
 			if (denyResult.Allow) {
 				this.SetOpen();
@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void Trigger_Close(Character user) {
-			DenySwitchDoorArgs args = new DenySwitchDoorArgs(user, this);
+			var args = new DenySwitchDoorArgs(user, this);
 
 			var triggerResult = user.TryCancellableTrigger(tkDenyCloseDoor, args);
 			if (triggerResult != TriggerResult.Cancel) {
@@ -109,7 +109,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			DenyResult denyResult = args.Result;
+			var denyResult = args.Result;
 
 			if (denyResult.Allow) {
 				this.SetClose();
@@ -266,7 +266,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void SetBaseDoorModelOrThrow() {
-			int model = this.Model;
+			var model = this.Model;
 			switch (model) {
 				case 0x190e://bar door.
 				case 0x190f:
@@ -276,7 +276,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if ((model < this.baseModel) || (model > (this.baseModel + 15))) {
 				for (int i = 0, n = baseModels.Length; i < n; i++) {
-					ushort bm = baseModels[i];
+					var bm = baseModels[i];
 					if ((model >= bm) && (model <= (bm + 15))) {
 						this.baseModel = bm;
 						return;

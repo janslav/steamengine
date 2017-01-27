@@ -64,7 +64,7 @@ namespace SteamEngine {
 
 				Console.WriteLine("Init done.");
 
-				Thread t = new Thread(delegate () {
+				var t = new Thread(delegate () {
 					Console.ReadLine();
 					exitTokenSource.Cancel();
 				});

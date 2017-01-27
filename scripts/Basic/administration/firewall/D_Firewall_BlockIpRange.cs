@@ -26,13 +26,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey ipToRangeTK = TagKey.Acquire("_ip_to_range_");
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			string ipfrom = TagMath.SGetTagNotNull(args, ipFromRangeTK);
-			string ipto = TagMath.SGetTagNotNull(args, ipToRangeTK);
+			var ipfrom = TagMath.SGetTagNotNull(args, ipFromRangeTK);
+			var ipto = TagMath.SGetTagNotNull(args, ipToRangeTK);
 
-			int width = 500;
-			int labels = 150;
+			var width = 500;
+			var labels = 150;
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
+			var dialogHandler = new ImprovedDialog(gi);
 
 			dialogHandler.CreateBackground(width);
 			dialogHandler.SetLocation(200, 280);
@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void BlockIpRange(Character self, ScriptArgs sa) {
 			if (sa != null) {
-				DialogArgs newArgs = new DialogArgs();
+				var newArgs = new DialogArgs();
 				if (sa.Argv != null && sa.Argv.Length == 1) {
 					newArgs.SetTag(ipFromRangeTK, sa.Argv[0]);
 				} else if (sa.Argv != null && sa.Argv.Length == 2) {

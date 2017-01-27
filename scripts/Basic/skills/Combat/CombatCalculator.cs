@@ -24,8 +24,8 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static CombatArmorValues CalculateCombatArmorValues(Character self) {
 			int armorClassVsP, mindDefenseVsP, armorClassVsM, mindDefenseVsM;
-			int resist = SkillDef.SkillValueOfChar(self, SkillName.MagicResist);
-			double resistEffect = SkillDef.GetBySkillName(SkillName.MagicResist).GetEffectForChar(self);
+			var resist = SkillDef.SkillValueOfChar(self, SkillName.MagicResist);
+			var resistEffect = SkillDef.GetBySkillName(SkillName.MagicResist).GetEffectForChar(self);
 			mindDefenseVsP = (int) (
 				(resist * resistEffect) / 1000);
 			mindDefenseVsM = mindDefenseVsP;
@@ -86,16 +86,16 @@ namespace SteamEngine.CompiledScripts {
 				double armorVsMTotal = 0;
 
 				foreach (Item equipped in self.VisibleEquip) {
-					Wearable wearable = equipped as Wearable;
+					var wearable = equipped as Wearable;
 					if (wearable != null) {
-						LayerNames layer = (LayerNames) wearable.Z;
-						int armorVsP = wearable.ArmorVsP;
-						int mindDefVsP = wearable.MindDefenseVsP;
-						int armorVsM = wearable.ArmorVsM;
-						int mindDefVsM = wearable.MindDefenseVsM;
+						var layer = (LayerNames) wearable.Z;
+						var armorVsP = wearable.ArmorVsP;
+						var mindDefVsP = wearable.MindDefenseVsP;
+						var armorVsM = wearable.ArmorVsM;
+						var mindDefVsM = wearable.MindDefenseVsM;
 						
-						int material = 0;
-						ColoredArmor colored = wearable as ColoredArmor;
+						var material = 0;
+						var colored = wearable as ColoredArmor;
 						if (colored != null) {
 							material = (int) colored.TypeDef.Material;
 						}
@@ -207,7 +207,7 @@ namespace SteamEngine.CompiledScripts {
 									materialFeet = Math.Max(materialFeet, material);
 									break;
 								case LayerNames.Hand2: //shield
-									int parrying = SkillDef.SkillValueOfChar(self, SkillName.Parry);
+									var parrying = SkillDef.SkillValueOfChar(self, SkillName.Parry);
 									armorVsPTotal = (armorVsP * parrying) / 1000;
 									armorVsMTotal = (armorVsP * parrying) / 1000;
 									//no mindDef with shield
@@ -270,15 +270,15 @@ namespace SteamEngine.CompiledScripts {
 					(materialLegs * 0.2) +
 					(materialFeet * 0.05);
 			}
-			CombatArmorValues retVal = new CombatArmorValues();
+			var retVal = new CombatArmorValues();
 			retVal.armorVsP = armorClassVsP;
 			retVal.armorVsM = armorClassVsM;
 			retVal.mindDefenseVsP = mindDefenseVsP;
 			retVal.mindDefenseVsM = mindDefenseVsM;
 			retVal.material = materialTotal;
 
-			int acModifier = self.ArmorClassModifier;
-			int mdModifier = self.MindDefenseModifier;
+			var acModifier = self.ArmorClassModifier;
+			var mdModifier = self.MindDefenseModifier;
 
 			retVal.armorVsP += acModifier;
 			retVal.armorVsM += acModifier;
@@ -339,7 +339,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private static Projectile TryFindProjectile(Character self, ProjectileType type) {
 			if (type != ProjectileType.None) {
-				Projectile retVal = self.weaponProjectile;
+				var retVal = self.weaponProjectile;
 				if ((retVal != null) &&
 						(retVal.IsDeleted ||
 						(retVal.TopObj() != self) ||
@@ -347,7 +347,7 @@ namespace SteamEngine.CompiledScripts {
 					retVal = null;
 				}
 				if ((retVal == null) || (!CheckProjectile(retVal, type))) {
-					foreach (Item i in self.Backpack.EnumShallow()) {
+					foreach (var i in self.Backpack.EnumShallow()) {
 						retVal = i as Projectile;
 						if ((retVal != null) && (CheckProjectile(retVal, type))) {
 							return retVal;
@@ -361,14 +361,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static bool CheckProjectile(Projectile projectile, ProjectileType type) {
-			ProjectileType actualType = projectile.ProjectileType;
+			var actualType = projectile.ProjectileType;
 			return ((type & actualType) == type);
 		}
 
 		internal static CombatWeaponValues CalculateCombatWeaponValues(Character self) {
-			CombatWeaponValues retVal = new CombatWeaponValues();
+			var retVal = new CombatWeaponValues();
 
-			Weapon weapon = self.FindLayer(LayerNames.Hand1) as Weapon;
+			var weapon = self.FindLayer(LayerNames.Hand1) as Weapon;
 			if (weapon == null) {
 				weapon = self.FindLayer(LayerNames.Hand2) as Weapon;
 			}
@@ -412,27 +412,27 @@ namespace SteamEngine.CompiledScripts {
 					weapMindPowerVsP = MagerySettings.instance.bareHandsMindPowerVsP;
 					weapMindPowerVsM = MagerySettings.instance.bareHandsMindPowerVsP;
 				}
-				double delay = Math.Sqrt(self.Dex);
+				var delay = Math.Sqrt(self.Dex);
 				delay *= weapSpeed;
 				delay *= CombatSettings.instance.weaponSpeedGlobal;
 				retVal.delay = TimeSpan.FromSeconds((0xfffff / 1000.0) / delay);//dedictvi z morie. funguje to tak proc to menit :)
 
-				double tacticsAttack = SkillDef.GetBySkillName(SkillName.Tactics).GetEffectForChar(self);
-				double anatomyAttack = SkillDef.GetBySkillName(SkillName.Anatomy).GetEffectForChar(self);
-				double armsloreAttack = SkillDef.GetBySkillName(SkillName.ArmsLore).GetEffectForChar(self);
-				double strAttack = self.Str * CombatSettings.instance.attackStrModifier;
-				double sum = (tacticsAttack + anatomyAttack + armsloreAttack + strAttack) / 1000;
+				var tacticsAttack = SkillDef.GetBySkillName(SkillName.Tactics).GetEffectForChar(self);
+				var anatomyAttack = SkillDef.GetBySkillName(SkillName.Anatomy).GetEffectForChar(self);
+				var armsloreAttack = SkillDef.GetBySkillName(SkillName.ArmsLore).GetEffectForChar(self);
+				var strAttack = self.Str * CombatSettings.instance.attackStrModifier;
+				var sum = (tacticsAttack + anatomyAttack + armsloreAttack + strAttack) / 1000;
 				retVal.attackVsP = weapAttackVsP * sum;
 				retVal.attackVsM = weapAttackVsM * sum;
 
-				double evalIntMP = SkillDef.GetBySkillName(SkillName.EvalInt).GetEffectForChar(self);
-				double spiritSpeakMP = SkillDef.GetBySkillName(SkillName.SpiritSpeak).GetEffectForChar(self);
-				double intMP = self.Int * MagerySettings.instance.mindPowerIntModifier;
+				var evalIntMP = SkillDef.GetBySkillName(SkillName.EvalInt).GetEffectForChar(self);
+				var spiritSpeakMP = SkillDef.GetBySkillName(SkillName.SpiritSpeak).GetEffectForChar(self);
+				var intMP = self.Int * MagerySettings.instance.mindPowerIntModifier;
 				sum = (evalIntMP + spiritSpeakMP + intMP) / 1000;
 				retVal.mindPowerVsM = weapMindPowerVsM * sum;
 				retVal.mindPowerVsP = weapMindPowerVsP * sum;
 			} else {
-				NPCDef npcDef = self.DefForCombat as NPCDef;
+				var npcDef = self.DefForCombat as NPCDef;
 				if (npcDef != null) {
 					retVal.weaponType = npcDef.WeaponType;
 					if (retVal.weaponType == WeaponType.Undefined) {
@@ -466,7 +466,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			int rangeModifier = self.WeaponRangeModifier;
+			var rangeModifier = self.WeaponRangeModifier;
 			retVal.rangeVsM += rangeModifier;
 			retVal.rangeVsP += rangeModifier;
 
@@ -477,13 +477,13 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public static double CalculateArmorClassEffect(Character attacker, Character defender, double attack, double piercing, double armorClass) {
-			bool defenderIsPlayer = defender.IsPlayerForCombat;
-			bool attackerIsPlayer = attacker.IsPlayerForCombat;
-			CombatSettings settings = CombatSettings.instance;
+			var defenderIsPlayer = defender.IsPlayerForCombat;
+			var attackerIsPlayer = attacker.IsPlayerForCombat;
+			var settings = CombatSettings.instance;
 
 			double damageMod;
 
-			bool isMvP = false;
+			var isMvP = false;
 			if (defenderIsPlayer) {
 				if (attackerIsPlayer) {
 					damageMod = settings.swingDamagePvP;
@@ -495,7 +495,7 @@ namespace SteamEngine.CompiledScripts {
 				damageMod = settings.swingDamageM;
 			}
 
-			double armor = armorClass * (1000 - piercing) / 1000;
+			var armor = armorClass * (1000 - piercing) / 1000;
 			if (!isMvP) {
 				armor = ScriptUtil.GetRandInRange(settings.armorRandEffectMin, settings.armorRandEffectMax);
 			}

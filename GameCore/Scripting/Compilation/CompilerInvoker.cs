@@ -40,7 +40,7 @@ namespace SteamEngine.Scripting.Compilation {
 
 		internal static bool CompileScripts(bool firstCompiling) {
 			using (StopWatch.StartAndDisplay("Compiling scripts...")) {
-				bool success = true;
+				var success = true;
 
 				if (firstCompiling) {
 					success = ClassManager.InitClasses(ClassManager.CoreAssembly);

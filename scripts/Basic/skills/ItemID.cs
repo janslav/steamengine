@@ -11,7 +11,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Player self = skillSeqArgs.Self as Player;
+			var self = skillSeqArgs.Self as Player;
 			if (self != null) {
 				self.Target(SingletonScript<Targ_ItemID>.Instance, skillSeqArgs);
 			}
@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (self.CanReachWithMessage((Item) skillSeqArgs.Target1)) {
 				skillSeqArgs.Success = this.CheckSuccess(self, Globals.dice.Next(700));
 				return TriggerResult.Continue;
@@ -33,9 +33,9 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			//TODO: dodìlat hlášku pro success 
-			Character self = skillSeqArgs.Self;
-			GameState stateSelf = self.GameState;
-			Item targetted = (Item) skillSeqArgs.Target1;
+			var self = skillSeqArgs.Self;
+			var stateSelf = self.GameState;
+			var targetted = (Item) skillSeqArgs.Target1;
 			self.SysMessage(targetted + "," + targetted.IsDeleted);// kontrolni hlaska, pozdeji odstranit!
 
 			//if (stateSelf != null) {
@@ -45,14 +45,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			GameState stateSelf = skillSeqArgs.Self.GameState;
+			var stateSelf = skillSeqArgs.Self.GameState;
 			if (stateSelf != null) {
 				stateSelf.WriteLine(Loc<ItemIdLoc>.Get(stateSelf.Language).IFailed);
 			}
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			GameState stateSelf = skillSeqArgs.Self.GameState;
+			var stateSelf = skillSeqArgs.Self.GameState;
 			if (stateSelf != null) {
 				stateSelf.WriteLine(Loc<ItemIdLoc>.Get(stateSelf.Language).ICanceled);
 			}
@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 	public class Targ_ItemID : CompiledTargetDef {
 
 		protected override void On_Start(Player self, object parameter) {
-			GameState stateSelf = self.GameState;
+			var stateSelf = self.GameState;
 			if (stateSelf != null) {
 				stateSelf.WriteLine(Loc<ItemIdLoc>.Get(stateSelf.Language).TargetWhat);
 			}
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 				return TargetResult.RestartTargetting;
 			}
 
-			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+			var skillSeq = (SkillSequenceArgs) parameter;
 			skillSeq.Target1 = targetted;
 			skillSeq.PhaseStart();
 			return TargetResult.Done;

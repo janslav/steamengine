@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!args.attacker.IsPlayer) {
 				this.EffectPower -= args.damage;
 
-				Character self = (Character) this.Cont;
+				var self = (Character) this.Cont;
 				if (Math.Round(this.EffectPower) > 0) {
 					//do no damage at all
 					self.Hits += (short) Math.Round(args.damage);
@@ -62,12 +62,12 @@ namespace SteamEngine.CompiledScripts {
 
 		private TriggerResult CheckAllowedSpells(SkillSequenceArgs skillSeq) {
 			if (skillSeq.SkillDef.Id == (int) SkillName.Magery) {
-				SpellDef spell = (SpellDef) skillSeq.Param1;
+				var spell = (SpellDef) skillSeq.Param1;
 				switch (spell.Id) {
 					case 22: //teleport
 					case 32: //recall
 					case 52: //gate
-						Character self = skillSeq.Self;
+						var self = skillSeq.Self;
 						self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).cantTeleport);
 						//return true; //cancel
 						this.Delete(); //cancel travelling spell, or cancel the shield?
@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public TriggerResult On_Step(Direction direction, bool running) {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.WriteLine(Loc<EnergyShieldLoc>.Get(self.Language).cantMove);
 			//return true; //cancel
 			this.Delete(); //cancel movement, or cancel the shield?

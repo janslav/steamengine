@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static short ModifyStat(int lowBoundary, short statValue, short statDiff, out short resultDiff) {
 			if (statDiff < 0) {
-				short retVal = (short) (statValue + statDiff);
+				var retVal = (short) (statValue + statDiff);
 				if (retVal < minStat) { //this would decrease the stat under the boundary
 					if (statValue < minStat) { //the stat is already under the boundary, we leave it as is
 						resultDiff = 0;
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class StrModSpellEffectPlugin {
 		public void On_Assign() {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, (short) this.EffectPower, out this.strDifference);
 		}
 
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class DexModSpellEffectPlugin {
 		public void On_Assign() {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, (short) this.EffectPower, out this.dexDifference);
 		}
 
@@ -91,8 +91,8 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class IntModSpellEffectPlugin {
 		public void On_Assign() {
-			Character self = (Character) this.Cont;
-			short shortEffect = (short) this.EffectPower;
+			var self = (Character) this.Cont;
+			var shortEffect = (short) this.EffectPower;
 
 			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
 			//also lower npc maxmana?
@@ -115,8 +115,8 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class BlessSpellEffectPlugin {
 		public void On_Assign() {
-			Character self = (Character) this.Cont;
-			short shortEffect = (short) this.EffectPower;
+			var self = (Character) this.Cont;
+			var shortEffect = (short) this.EffectPower;
 			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, shortEffect, out this.strDifference);
 			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, shortEffect, out this.dexDifference);
 			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
@@ -141,18 +141,18 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class CurseSpellEffectPlugin {
 		public void On_Assign() {
-			Character self = (Character) this.Cont;
-			short shortEffect = (short) this.EffectPower;
+			var self = (Character) this.Cont;
+			var shortEffect = (short) this.EffectPower;
 
 			self.Str = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Str, shortEffect, out this.strDifference);
 			self.Dex = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Dex, shortEffect, out this.dexDifference);
 			self.Int = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.Int, shortEffect, out this.intDifference);
 
-			Player contAsPlayer = self as Player;
+			var contAsPlayer = self as Player;
 			if (contAsPlayer != null) {
 				contAsPlayer.Vit = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, contAsPlayer.Vit, shortEffect, out this.maxHitsDifference);
 			} else {
-				NPC contAsNPC = (NPC) self;
+				var contAsNPC = (NPC) self;
 
 				contAsNPC.MaxStam = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.MaxStam, shortEffect, out this.maxStamDifference);
 				contAsNPC.MaxMana = StatModSpellsUtils.ModifyStat(StatModSpellsUtils.minStat, self.MaxMana, shortEffect, out this.maxManaDifference);
@@ -202,11 +202,11 @@ namespace SteamEngine.CompiledScripts {
 			cont.Str -= this.strDifference;
 			cont.Dex -= this.dexDifference;
 			cont.Int -= this.intDifference;
-			Player contAsPlayer = cont as Player;
+			var contAsPlayer = cont as Player;
 			if (contAsPlayer != null) {
 				contAsPlayer.Vit -= this.maxHitsDifference;
 			} else {
-				NPC contAsNPC = (NPC) cont;
+				var contAsNPC = (NPC) cont;
 				contAsNPC.MaxStam -= this.maxStamDifference;
 				contAsNPC.MaxMana -= this.maxManaDifference;
 

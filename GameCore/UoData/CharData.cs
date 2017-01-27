@@ -38,7 +38,7 @@ namespace SteamEngine.UoData {
 		public static void GenerateMissingDefs() {
 			if (Globals.ReadBodyDefs) {
 				StreamReader sr;
-				string fPath = Path.Combine(Globals.MulPath, "Bodyconv.def");
+				var fPath = Path.Combine(Globals.MulPath, "Bodyconv.def");
 				if (File.Exists(fPath)) {
 					sr = new StreamReader(fPath);
 				} else {
@@ -47,31 +47,31 @@ namespace SteamEngine.UoData {
 					return;
 				}
 
-				string chardefsPath = Tools.CombineMultiplePaths(Globals.ScriptsPath, "defaults", "chardefs");
+				var chardefsPath = Tools.CombineMultiplePaths(Globals.ScriptsPath, "defaults", "chardefs");
 				Tools.EnsureDirectory(chardefsPath, true);
 
-				StreamWriter scr = File.AppendText(Path.Combine(chardefsPath, "newCharDefsFromMuls.def"));
+				var scr = File.AppendText(Path.Combine(chardefsPath, "newCharDefsFromMuls.def"));
 				Console.WriteLine("Checking " + LogStr.File("Bodyconv.def") + " to find character models for which we lack chardefs.");
-				int numWritten = 0;
+				var numWritten = 0;
 				while (true) {
-					string oline = sr.ReadLine();
-					string line = oline;
+					var oline = sr.ReadLine();
+					var line = oline;
 					if (line == null) break;
-					int comment = line.IndexOf("#");
+					var comment = line.IndexOf("#");
 					if (comment > -1) {
 						line = line.Substring(0, comment);
 					}
 					line = line.Trim();
 					if (line.Length > 0) {
-						string[] args = Utility.SplitSphereString(line, true);
+						var args = Utility.SplitSphereString(line, true);
 						if (args.Length != 4) {
 							Logger.WriteWarning("Bodyconv.def contains a line in an unexpected format. That line is '" + line + "'");
 							break;
 						}
-						int model = ConvertTools.ParseInt32(args[0]);
+						var model = ConvertTools.ParseInt32(args[0]);
 						if (!Exists(model)) {
 							AddDispid(model);
-							AbstractCharacterDef def = ThingDef.FindCharDef(model);
+							var def = ThingDef.FindCharDef(model);
 							if (def == null) {
 								if (numWritten == 0) {
 									scr.WriteLine("\n\n\n//-------------- Written " + DateTime.Now + " --------------//\n");

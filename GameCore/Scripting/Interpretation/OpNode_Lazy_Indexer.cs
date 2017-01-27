@@ -30,9 +30,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal OpNode arg;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Lazy_Indexer constructed = new OpNode_Lazy_Indexer(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Lazy_Indexer(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
@@ -40,7 +40,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			constructed.index = LScriptMain.CompileNode(constructed, code.GetChildAt(1), context);
 			//skipped "]"
 			if (IsAssigner(code.GetChildAt(3))) {
-				Node assigner = code.GetChildAt(3);
+				var assigner = code.GetChildAt(3);
 				constructed.arg = LScriptMain.CompileNode(constructed, assigner.GetChildAt(1), context);
 			}
 			//LScript.DisplayTree(code);			
@@ -48,9 +48,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal static OpNode_Lazy_Indexer Construct(IOpNodeHolder parent, Node code, OpNode index, OpNode arg, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Lazy_Indexer constructed = new OpNode_Lazy_Indexer(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Lazy_Indexer(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 			constructed.index = index;
 			if (index != null) {
@@ -88,7 +88,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (this.arg != null) {
 					newNode = new OpNode_ArrayListIndex(this.parent, this.filename, this.line, this.column,
 						this.OrigNode, this.arg, this.index);
-					IOpNodeHolder newNodeAsHolder = (IOpNodeHolder) newNode;
+					var newNodeAsHolder = (IOpNodeHolder) newNode;
 					this.arg.parent = newNodeAsHolder;
 					this.index.parent = newNodeAsHolder;
 					this.ReplaceSelf(newNode);
@@ -97,20 +97,20 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 			}
 
-			List<MethodInfo> matches = new List<MethodInfo>();
-			MethodInfo[] methods = vars.self.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			foreach (MethodInfo mi in methods) {
+			var matches = new List<MethodInfo>();
+			var methods = vars.self.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			foreach (var mi in methods) {
 				if (mi.IsSpecialName && (mi.IsPublic || (mi.IsVirtual && mi.IsFinal))) { //public or implementing interface (typically IList or some such)
 					if (this.arg == null) {//getting indexed item
 						if (mi.Name.EndsWith("get_Item")) {
-							ParameterInfo[] pars = mi.GetParameters();
+							var pars = mi.GetParameters();
 							if (pars.Length == 1) {
 								matches.Add(mi);
 							}
 						}
 					} else {
 						if (mi.Name.EndsWith("set_Item")) {
-							ParameterInfo[] pars = mi.GetParameters();
+							var pars = mi.GetParameters();
 							if (pars.Length == 2) {
 								matches.Add(mi);
 							}
@@ -124,17 +124,17 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 			if (this.arg == null) {//getter
 				object indexResult;
-				object oSelf = vars.self;
+				var oSelf = vars.self;
 				vars.self = vars.defaultObject;
 				try {
 					indexResult = this.index.Run(vars);
 				} finally {
 					vars.self = oSelf;
 				}
-				List<MethodInfo> exactMatches = new List<MethodInfo>();
-				List<MethodInfo> stringMatches = new List<MethodInfo>();
-				foreach (MethodInfo mi in matches) {
-					Type desiredIndexType = mi.GetParameters()[0].ParameterType;
+				var exactMatches = new List<MethodInfo>();
+				var stringMatches = new List<MethodInfo>();
+				foreach (var mi in matches) {
+					var desiredIndexType = mi.GetParameters()[0].ParameterType;
 					if (MemberResolver.IsCompatibleType(desiredIndexType, indexResult)) {
 						exactMatches.Add(mi);
 					} else if (desiredIndexType == typeof(string)) {
@@ -142,7 +142,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 				}
 				if (exactMatches.Count == 1) {
-					MethodInfo method = MemberWrapper.GetWrapperFor(exactMatches[0]);
+					var method = MemberWrapper.GetWrapperFor(exactMatches[0]);
 					newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 						method, this.index);
 					this.index.parent = (IOpNodeHolder) newNode;
@@ -152,9 +152,9 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (exactMatches.Count == 0)
 				{
 					if (stringMatches.Count == 1) {
-						OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+						var toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
 						this.index.parent = toStringNode;
-						MethodInfo method = MemberWrapper.GetWrapperFor(stringMatches[0]);
+						var method = MemberWrapper.GetWrapperFor(stringMatches[0]);
 						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 							method, this.index);
 						this.ReplaceSelf(newNode);
@@ -163,7 +163,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					throw new InterpreterException("No suitable indexer found for type " + vars.self.GetType(),
 						this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName());
 				} //exactMatches.Count >1
-				StringBuilder sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
+				var sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
 				foreach (object obj in exactMatches) {
 					sb.Append(Environment.NewLine).Append(obj);
 				}
@@ -172,7 +172,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			} else {
 				object indexResult;
 				object argResult;
-				object oSelf = vars.self;
+				var oSelf = vars.self;
 				vars.self = vars.defaultObject;
 				try {
 					indexResult = this.index.Run(vars);
@@ -181,17 +181,17 @@ namespace SteamEngine.Scripting.Interpretation {
 					vars.self = oSelf;
 				}
 
-				List<MethodInfo> exactMatches = new List<MethodInfo>();
-				List<MethodInfo> argStringMatches = new List<MethodInfo>();
-				List<MethodInfo> indexStringMatches = new List<MethodInfo>();
-				List<MethodInfo> bothStringMatches = new List<MethodInfo>();
+				var exactMatches = new List<MethodInfo>();
+				var argStringMatches = new List<MethodInfo>();
+				var indexStringMatches = new List<MethodInfo>();
+				var bothStringMatches = new List<MethodInfo>();
 
-				foreach (MethodInfo mi in matches) {
-					ParameterInfo[] pars = mi.GetParameters();
-					Type desiredIndexType = pars[0].ParameterType;
-					Type desiredArgType = pars[1].ParameterType;
-					bool indexIsCompatible = MemberResolver.IsCompatibleType(desiredIndexType, indexResult);
-					bool argIsCompatible = MemberResolver.IsCompatibleType(desiredArgType, argResult);
+				foreach (var mi in matches) {
+					var pars = mi.GetParameters();
+					var desiredIndexType = pars[0].ParameterType;
+					var desiredArgType = pars[1].ParameterType;
+					var indexIsCompatible = MemberResolver.IsCompatibleType(desiredIndexType, indexResult);
+					var argIsCompatible = MemberResolver.IsCompatibleType(desiredArgType, argResult);
 
 					if (indexIsCompatible && argIsCompatible) {
 						exactMatches.Add(mi);
@@ -205,7 +205,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 
 				if (exactMatches.Count == 1) {
-					MethodInfo method = MemberWrapper.GetWrapperFor(exactMatches[0]);
+					var method = MemberWrapper.GetWrapperFor(exactMatches[0]);
 					newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 						method, this.index, this.arg);
 					this.index.parent = (IOpNodeHolder) newNode;
@@ -216,9 +216,9 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (exactMatches.Count == 0)
 				{
 					if (argStringMatches.Count == 1) {
-						OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
+						var toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
 						this.arg.parent = toStringNode;
-						MethodInfo method = MemberWrapper.GetWrapperFor(argStringMatches[0]);
+						var method = MemberWrapper.GetWrapperFor(argStringMatches[0]);
 						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 							method, this.index, toStringNode);
 						this.index.parent = (IOpNodeHolder) newNode;
@@ -227,9 +227,9 @@ namespace SteamEngine.Scripting.Interpretation {
 						return ((ITriable) newNode).TryRun(vars, new[] { indexResult, string.Concat(argResult) }); ;
 					}
 					if (indexStringMatches.Count == 1) {
-						OpNode_ToString toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+						var toStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
 						this.index.parent = toStringNode;
-						MethodInfo method = MemberWrapper.GetWrapperFor(indexStringMatches[0]);
+						var method = MemberWrapper.GetWrapperFor(indexStringMatches[0]);
 						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 							method, toStringNode, this.arg);
 						toStringNode.parent = (IOpNodeHolder) newNode;
@@ -238,11 +238,11 @@ namespace SteamEngine.Scripting.Interpretation {
 						return ((ITriable) newNode).TryRun(vars, new[] { string.Concat(indexResult), argResult }); ;
 					}
 					if (bothStringMatches.Count == 1) {
-						OpNode_ToString indexToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
+						var indexToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.index);
 						this.index.parent = indexToStringNode;
-						OpNode_ToString argToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
+						var argToStringNode = new OpNode_ToString(this.parent, this.filename, this.line, this.column, this.OrigNode, this.arg);
 						this.arg.parent = argToStringNode;
-						MethodInfo method = MemberWrapper.GetWrapperFor(indexStringMatches[0]);
+						var method = MemberWrapper.GetWrapperFor(indexStringMatches[0]);
 						newNode = new OpNode_MethodWrapper(this.parent, this.filename, this.line, this.column, this.OrigNode,
 							method, indexToStringNode, argToStringNode);
 						indexToStringNode.parent = (IOpNodeHolder) newNode;
@@ -259,7 +259,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 				//}
 
-				StringBuilder sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
+				var sb = new StringBuilder("Ambiguity detected when resolving this indexer. There were following possibilities:");
 				foreach (object obj in exactMatches) {
 					sb.Append(Environment.NewLine).Append(obj);
 				}

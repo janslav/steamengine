@@ -55,7 +55,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 		internal override object Run(ScriptVars vars) {
-			string opString = LScriptMain.GetString(this.OrigNode).Trim().ToLowerInvariant();
+			var opString = LScriptMain.GetString(this.OrigNode).Trim().ToLowerInvariant();
 			this.leftResult = this.left.Run(vars);
 			this.rightResult = this.right.Run(vars);
 
@@ -201,17 +201,17 @@ namespace SteamEngine.Scripting.Interpretation {
 
 				if (newNode != null) {
 					object retVal;
-					OpNode_Lazy_BinOperator newNodeAsBinOp = newNode as OpNode_Lazy_BinOperator;
+					var newNodeAsBinOp = newNode as OpNode_Lazy_BinOperator;
 					if (newNodeAsBinOp != null) {
 						newNodeAsBinOp.left = this.left;
 						newNodeAsBinOp.right = this.right;
 					}
-					OpNode newNodeAsON = (OpNode) newNode;
+					var newNodeAsON = (OpNode) newNode;
 					this.ReplaceSelf(newNodeAsON);
 					retVal = newNode.TryRun(vars, new[] { this.leftResult, this.rightResult });
 					if ((this.left is OpNode_Object) && (this.right is OpNode_Object)) {
 						//both operands are constant -> result is also constant
-						OpNode constNode = OpNode_Object.Construct(this.parent, retVal);
+						var constNode = OpNode_Object.Construct(this.parent, retVal);
 						this.parent.Replace(newNodeAsON, constNode);
 					}
 					return retVal;
@@ -252,7 +252,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (this.rightResult == null) {
 				return this.FindOperatorMethodOnType(methodName, this.leftResult.GetType());
 			}
-			OpNode_MethodWrapper method = this.FindOperatorMethodOnType(methodName, this.leftResult.GetType());
+			var method = this.FindOperatorMethodOnType(methodName, this.leftResult.GetType());
 			if (method != null) {
 				return method;
 			}
@@ -260,12 +260,12 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private OpNode_MethodWrapper FindOperatorMethodOnType(string methodName, Type type) {
-			List<MethodInfo> matches = new List<MethodInfo>();
+			var matches = new List<MethodInfo>();
 
-			MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
-			foreach (MethodInfo mi in methods) {
+			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+			foreach (var mi in methods) {
 				if (mi.Name.Equals(methodName)) { //true for case insensitive
-					ParameterInfo[] pars = mi.GetParameters();
+					var pars = mi.GetParameters();
 					if (pars.Length == 2) {
 						if (MemberResolver.IsCompatibleType(pars[0].ParameterType, this.leftResult)
 								&& MemberResolver.IsCompatibleType(pars[1].ParameterType, this.rightResult)) {
@@ -275,8 +275,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 			}
 			if (matches.Count == 1) {
-				MethodInfo method = MemberWrapper.GetWrapperFor(matches[0]);
-				OpNode_MethodWrapper newNode = new OpNode_MethodWrapper(this.parent, this.filename,
+				var method = MemberWrapper.GetWrapperFor(matches[0]);
+				var newNode = new OpNode_MethodWrapper(this.parent, this.filename,
 					this.line, this.column, this.OrigNode, method, this.left, this.right);
 				return newNode;
 			}
@@ -286,8 +286,8 @@ namespace SteamEngine.Scripting.Interpretation {
 
 				//}
 
-				StringBuilder sb = new StringBuilder("Ambiguity detected when resolving operator. There were following possibilities:");
-				foreach (MethodInfo mi in matches) {
+				var sb = new StringBuilder("Ambiguity detected when resolving operator. There were following possibilities:");
+				foreach (var mi in matches) {
 					sb.Append(Environment.NewLine);
 					sb.AppendFormat("{0} {1}.{2}", mi.ReturnType, mi.DeclaringType, mi);
 				}
@@ -304,7 +304,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("(");
+			var str = new StringBuilder("(");
 			str.Append(this.left);
 			str.Append(" ").Append(LScriptMain.GetString(this.OrigNode).Trim()).Append(" ");
 			str.Append(this.right);

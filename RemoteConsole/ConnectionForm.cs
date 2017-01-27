@@ -50,7 +50,7 @@ namespace SteamEngine.RemoteConsole {
 		}
 
 		private void btnConnect_Click(object sender, EventArgs e) {
-			EndPointSetting eps = (EndPointSetting) this.endPointSettingBindingSource.Current;
+			var eps = (EndPointSetting) this.endPointSettingBindingSource.Current;
 			if (eps != null) {
 				ConsoleClient.Connect(new EndPointSetting(eps));
 

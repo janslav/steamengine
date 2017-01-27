@@ -274,7 +274,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Create the GUTAButton instance</summary>
 			public override GUTAButton Build() {
-				GUTAButton retVal = new GUTAButton(this);
+				var retVal = new GUTAButton(this);
 				return retVal;
 			}
 		}
@@ -302,11 +302,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
-			GUTARow grandpa = (GUTARow) parent.Parent;
+			var grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
 			this.columnRow = this.xPos / grandpa.RowHeight;
 
-			int valignOffset = 0;
+			var valignOffset = 0;
 			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
 					valignOffset = grandpa.RowHeight / 2 - ButtonMetrics.D_BUTTON_HEIGHT / 2; //moves the button to the middle of the column
@@ -326,12 +326,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string linesTabsOffset = "\r\n"; //at least one row
+			var linesTabsOffset = "\r\n"; //at least one row
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < this.columnRow; i++) {
+			for (var i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < this.level; i++) {
+			for (var i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
 			return linesTabsOffset + "->" + stringDescription;
@@ -416,7 +416,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Create the GUTACheckBox instance</summary>
 			public override GUTACheckBox Build() {
-				GUTACheckBox retVal = new GUTACheckBox(this);
+				var retVal = new GUTACheckBox(this);
 				return retVal;
 			}
 		}
@@ -440,12 +440,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
-			GUTARow grandpa = (GUTARow) parent.Parent;
+			var grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
 			this.columnRow = this.xPos / grandpa.RowHeight;
 
-			int valignOffset = 0;
-			int alignOffset = 0;
+			var valignOffset = 0;
+			var alignOffset = 0;
 
 			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
@@ -455,7 +455,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					valignOffset = grandpa.RowHeight - ButtonMetrics.D_CHECKBOX_HEIGHT; //moves the button to the bottom
 					break;
 			}
-			int parentWidth = parent.Width;
+			var parentWidth = parent.Width;
 			switch (this.align) {
 				case DialogAlignment.Align_Center:
 					alignOffset = parentWidth / 2 - ButtonMetrics.D_CHECKBOX_WIDTH / 2; //moves the text to the middle of the column
@@ -554,7 +554,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Create the GUTARadioButton instance</summary>
 			public override GUTARadioButton Build() {
-				GUTARadioButton retVal = new GUTARadioButton(this);
+				var retVal = new GUTARadioButton(this);
 				return retVal;
 			}
 		}
@@ -578,12 +578,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
-			GUTARow grandpa = (GUTARow) parent.Parent;
+			var grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
 			this.columnRow = this.xPos / grandpa.RowHeight;
 
-			int valignOffset = 0;
-			int alignOffset = 0;
+			var valignOffset = 0;
+			var alignOffset = 0;
 
 			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
@@ -593,7 +593,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					valignOffset = grandpa.RowHeight - ButtonMetrics.D_RADIO_HEIGHT; //moves the button to the bottom
 					break;
 			}
-			int parentWidth = parent.Width;
+			var parentWidth = parent.Width;
 			switch (this.align) {
 				case DialogAlignment.Align_Center:
 					alignOffset = parentWidth / 2 - ButtonMetrics.D_RADIO_WIDTH / 2; //moves the text to the middle of the column
@@ -732,7 +732,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Create the GUTAInput instance</summary>
 			public override GUTAInput Build() {
-				GUTAInput retVal = new GUTAInput(this);
+				var retVal = new GUTAInput(this);
 				return retVal;
 			}
 		}
@@ -760,7 +760,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
-			GUTARow grandpa = (GUTARow) parent.Parent;
+			var grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
 			this.columnRow = this.xPos / grandpa.RowHeight;
 
@@ -776,8 +776,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				this.width -= (this.xPos - parent.XPos);
 			}
 
-			int valignOffset = 0;
-			int alignOffset = 0;
+			var valignOffset = 0;
+			var alignOffset = 0;
 			switch (this.valign) {
 				case DialogAlignment.Valign_Center:
 					valignOffset = grandpa.RowHeight / 2 - this.height / 2 + 1; //moves the field to the middle of the column
@@ -786,7 +786,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					valignOffset = grandpa.RowHeight - this.height + 1; //moves the field to the bottom
 					break;
 			}
-			int parentWidth = parent.Width;
+			var parentWidth = parent.Width;
 			switch (this.align) {
 				case DialogAlignment.Align_Center:
 					alignOffset = parentWidth / 2 - this.width / 2; //moves the field to the middle of the column
@@ -820,7 +820,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				case LeafComponentTypes.InputNumber: {
 						if (this.textId == 0) {//no text ID was specified, use the text version (but send it as double!)
 							//if the text is empty (the input field will be empty), then display zero
-							decimal textToDisp = string.IsNullOrWhiteSpace(this.text) ? default(decimal) : decimal.Parse(this.text);
+							var textToDisp = string.IsNullOrWhiteSpace(this.text) ? default(decimal) : decimal.Parse(this.text);
 							this.gump.AddNumberEntry(this.xPos, this.yPos, this.width, this.height, this.textHue, this.id, textToDisp);
 						} else {
 							this.gump.AddNumberEntry(this.xPos, this.yPos, this.width, this.height, this.textHue, this.id, this.textId);
@@ -831,12 +831,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string linesTabsOffset = "\r\n";
+			var linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < this.columnRow; i++) {
+			for (var i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < this.level; i++) {
+			for (var i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
 			return linesTabsOffset + "->Input";
@@ -946,7 +946,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Create the GUTAText instance</summary>
 			public override GUTAText Build() {
-				GUTAText retVal = new GUTAText(this);
+				var retVal = new GUTAText(this);
 				return retVal;
 			}
 		}
@@ -967,15 +967,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
-			GUTARow grandpa = (GUTARow) parent.Parent;
+			var grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
 			this.columnRow = this.xPos / grandpa.RowHeight;
 
-			int alignOffset = 0;
-			int valignOffset = 0;
+			var alignOffset = 0;
+			var valignOffset = 0;
 			if (this.text != null) { //we are not using the ID of the text, we can do some alignment computings if necessary
-				int parentWidth = parent.Width;
-				int textWidth = ImprovedDialog.TextLength(this.text);
+				var parentWidth = parent.Width;
+				var textWidth = ImprovedDialog.TextLength(this.text);
 				switch (this.align) {
 					case DialogAlignment.Align_Center:
 						alignOffset = parentWidth / 2 - textWidth / 2; //moves the text to the middle of the column
@@ -1011,12 +1011,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string linesTabsOffset = "\r\n";
+			var linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < this.columnRow; i++) {
+			for (var i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < this.level; i++) {
+			for (var i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
 			return linesTabsOffset + "->GUTAText(" + this.text + ")";
@@ -1088,7 +1088,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Create the GUTAText instance</summary>
 			public override GUTAHTMLText Build() {
-				GUTAHTMLText retVal = new GUTAHTMLText(this);
+				var retVal = new GUTAHTMLText(this);
 				return retVal;
 			}
 		}
@@ -1118,7 +1118,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
-			GUTARow grandpa = (GUTARow) parent.Parent;
+			var grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
 			this.columnRow = this.xPos / grandpa.RowHeight;
 
@@ -1144,12 +1144,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string linesTabsOffset = "\r\n";
+			var linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < this.columnRow; i++) {
+			for (var i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < this.level; i++) {
+			for (var i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
 			return linesTabsOffset + "->HTMLText(" + this.text + ")";
@@ -1240,7 +1240,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			/// <summary>Create the GUTAImage instance</summary>
 			public override GUTAImage Build() {
-				GUTAImage retVal = new GUTAImage(this);
+				var retVal = new GUTAImage(this);
 				return retVal;
 			}
 		}
@@ -1260,14 +1260,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			this.level = parent.Level + 1;
 
 			//get the grandparent (GUTARow) (parent is GUTAColumn!)
-			GUTARow grandpa = (GUTARow) parent.Parent;
+			var grandpa = (GUTARow) parent.Parent;
 			//set the column row (counted from the relative position and the grandpa's inner-row height)
 			this.columnRow = this.xPos / grandpa.RowHeight;
 
-			GumpArtDimension picDim = GumpDimensions.Table[this.gumpId];
+			var picDim = GumpDimensions.Table[this.gumpId];
 
-			int alignOffset = -picDim.X; //at least...
-			int valignOffset = -picDim.Y; //at least...
+			var alignOffset = -picDim.X; //at least...
+			var valignOffset = -picDim.Y; //at least...
 
 			switch (this.align) {
 				case DialogAlignment.Align_Center:
@@ -1299,12 +1299,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override string ToString() {
-			string linesTabsOffset = "\r\n";
+			var linesTabsOffset = "\r\n";
 			//add as much rows as is the row which this item lies in
-			for (int i = 0; i < this.columnRow; i++) {
+			for (var i = 0; i < this.columnRow; i++) {
 				linesTabsOffset += "\r\n";
 			}
-			for (int i = 0; i < this.level; i++) {
+			for (var i = 0; i < this.level; i++) {
 				linesTabsOffset += "\t";
 			}
 			return linesTabsOffset + "->Image(" + this.gumpId + ")";

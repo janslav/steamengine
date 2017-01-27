@@ -25,14 +25,14 @@ namespace SteamEngine.CompiledScripts {
 		private static PluginKey craftingProcessPK = PluginKey.Acquire("_craftingProcess_");
 
 		public static void UnInstallCraftingPlugin(Character self) {
-			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
+			var p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
 			if (p != null) {
 				p.Delete();
 			}
 		}
 
 		public static SimpleQueue<CraftingSelection> GetCraftingQueue(Character self) {
-			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
+			var p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
 			if (p != null) {
 				return p.craftingOrder.SelectionQueue;
 			}
@@ -40,14 +40,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void StartCrafting(Character self, CraftingOrder crOrd) {
-			CraftingProcessPlugin p = InstallCraftingPlugin(self, crOrd);
+			var p = InstallCraftingPlugin(self, crOrd);
 			p.StartCrafting();
 		}
 
 		private void StartCrafting() {
-			SkillSequenceArgs ssa = SkillSequenceArgs.Acquire((Character) this.Cont, this.craftingOrder.CraftingSkill);
+			var ssa = SkillSequenceArgs.Acquire((Character) this.Cont, this.craftingOrder.CraftingSkill);
 
-			CraftingSelection csl = this.craftingOrder.SelectionQueue.Peek();
+			var csl = this.craftingOrder.SelectionQueue.Peek();
 			ssa.Param1 = (csl != null ? csl.ItemDef : null);  //either selected ItemDef or null (both is acceptable)
 
 			ssa.PhaseSelect();
@@ -59,11 +59,11 @@ namespace SteamEngine.CompiledScripts {
 		/// If failed - start the craftmaking again immediatelly
 		/// </summary>
 		internal static void MakeFinished(SkillSequenceArgs skillSeqArgs, bool canMakeAndHasMaterial) {
-			Character cont = skillSeqArgs.Self;
-			CraftingProcessPlugin pl = (CraftingProcessPlugin) cont.GetPlugin(craftingProcessPK);
+			var cont = skillSeqArgs.Self;
+			var pl = (CraftingProcessPlugin) cont.GetPlugin(craftingProcessPK);
 
 			if (skillSeqArgs.Success) {
-				CraftingSelection crSel = pl.craftingOrder.SelectionQueue.Peek(); //actual crafted item and its to-make count
+				var crSel = pl.craftingOrder.SelectionQueue.Peek(); //actual crafted item and its to-make count
 				crSel.Count -= 1;//lower the amount of items to be made
 				if (crSel.Count <= 0) {
 					pl.craftingOrder.SelectionQueue.Dequeue(); //remove from the queue
@@ -90,10 +90,10 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal static void MakeImpossible(SkillSequenceArgs skillSeqArgs) {
-			Character cont = skillSeqArgs.Self;
-			CraftingProcessPlugin pl = (CraftingProcessPlugin) cont.GetPlugin(craftingProcessPK);
+			var cont = skillSeqArgs.Self;
+			var pl = (CraftingProcessPlugin) cont.GetPlugin(craftingProcessPK);
 
-			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
+			var iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
 			pl.craftingOrder.SelectionQueue.Dequeue(); //remove the item from the queue
 			if (pl.craftingOrder.SelectionQueue.Count > 0) { //still something to be made
@@ -110,7 +110,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static CraftingProcessPlugin InstallCraftingPlugin(Character self, CraftingOrder craftingOrder) {
-			CraftingProcessPlugin p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
+			var p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
 			if (p == null) {
 				p = (CraftingProcessPlugin) self.AddNewPlugin(craftingProcessPK, CraftingProcessPluginDef.instance);
 			}

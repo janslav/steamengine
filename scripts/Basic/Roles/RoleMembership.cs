@@ -48,9 +48,9 @@ namespace SteamEngine.CompiledScripts {
 
 			[LoadSection]
 			public RoleMembership(PropsSection input) {
-				int currentLineNumber = input.HeaderLine;
+				var currentLineNumber = input.HeaderLine;
 				try {
-					PropsLine pl = input.PopPropsLine("member");
+					var pl = input.PopPropsLine("member");
 					currentLineNumber = pl.Line;
 					ObjectSaver.Load(pl.Value, this.Load_RoleMember, input.Filename, pl.Line);
 
@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 					ObjectSaver.Load(pl.Value, this.Load_RoleCont, input.Filename, pl.Line);
 
 
-					foreach (PropsLine p in input.PropsLines) {
+					foreach (var p in input.PropsLines) {
 						try {
 							this.LoadLine(input.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 						} catch (FatalException) {

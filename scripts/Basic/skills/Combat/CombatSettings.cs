@@ -332,7 +332,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			internal override WeaponAnimType GetValue(WeaponDef def) {
-				WeaponAnimType anim = def.WeaponAnimType;
+				var anim = def.WeaponAnimType;
 				if (anim == WeaponAnimType.Undefined) {
 					anim = TranslateAnimType(def.WeaponType);
 				}
@@ -341,7 +341,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static WeaponAnimType TranslateAnimType(WeaponType type) {
-			WeaponAnimType anim = WeaponAnimType.Undefined;
+			var anim = WeaponAnimType.Undefined;
 			switch (type) {
 				case WeaponType.BareHands:
 					anim = WeaponAnimType.BareHands;

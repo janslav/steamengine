@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private TriggerResult CheckCancelSkill(Player player, SkillSequenceArgs skillSeqArgs) {
 			if ((!player.IsGM) && skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
-				SpellDef spell = (SpellDef) skillSeqArgs.Param1;
+				var spell = (SpellDef) skillSeqArgs.Param1;
 				if (!this.profession.AllowedSpells.Contains(spell)) {
 					player.RedMessage(string.Format(CultureInfo.InvariantCulture,
 						Loc<ProfessionPluginLoc>.Get(player.Language).YouCantCastThis,
@@ -77,7 +77,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static void InstallProfessionPlugin(Player player, ProfessionDef professionDef) {
 			if (professionDef != null) {
-				ProfessionPlugin newPlugin = (ProfessionPlugin) professionDef.ProfessionPluginDef.Create();
+				var newPlugin = (ProfessionPlugin) professionDef.ProfessionPluginDef.Create();
 				newPlugin.profession = professionDef;
 				player.AddPlugin(professionKey, newPlugin); //if there was a previous one, it's deleted now
 			} else {

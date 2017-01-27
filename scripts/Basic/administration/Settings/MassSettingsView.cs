@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public IEnumerable<IDataFieldView> GetDataFieldsPage(int firstLineIndex, object target) {
-			IMassSettings holder = (IMassSettings) target;
+			var holder = (IMassSettings) target;
 			for (int i = firstLineIndex, n = holder.Count; i < n; i++) {
 				yield return holder.GetFieldView(i);
 			}

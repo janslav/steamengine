@@ -56,10 +56,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;
-			Dictionary<int, ItemDef> dictButtonForGems = new Dictionary<int, ItemDef>();
-			int buttonsCount = 0;
-			int radku = 0;
-			GemBox box = (GemBox) focus;
+			var dictButtonForGems = new Dictionary<int, ItemDef>();
+			var buttonsCount = 0;
+			var radku = 0;
+			var box = (GemBox) focus;
 			if (box.inBoxGems == null) {
 				radku = 0;
 				i = 0;
@@ -67,8 +67,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				i = box.inBoxGems.Count;
 				radku = (i - 1) / 4;
 			}
-			int baseX = 20;
-			int baseY = 60;
+			var baseX = 20;
+			var baseY = 60;
 			gi.SetLocation(70, 25);
 			gi.ResizePic(0, 0, 5054, 660, 165 + radku * 80);
 			gi.ResizePic(10, 10, 3000, 640, 145 + radku * 80);
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				gi.HtmlGumpA(baseX, 75, 200, 20, "Bedna na drahé kameny je prázdná", false, false);
 			} else {
 				i = 0;
-				foreach (KeyValuePair<ItemDef, int> pair in box.inBoxGems) {
+				foreach (var pair in box.inBoxGems) {
 					gi.Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
 					gi.HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
 					gi.HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			GemBox box = (GemBox) gi.Focus;
+			var box = (GemBox) gi.Focus;
 			if (!((Player) gi.Cont).CanPickUpWithMessage(box)) {
 				return;
 			}
@@ -115,12 +115,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (gr.PressedButton == 1) {		// Add gems
 				((Player) gi.Cont).Target(SingletonScript<Targ_GemBox>.Instance, gi.Focus);
 			} else if (gr.PressedButton == 2) {		// OK -> give selected gems
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForGemsTK);
-				int buttonsCount = TagMath.IGetTag(args, buttonsCountTK);
-				int i = 0;
-				int gemsToGive = 0;
+				var buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForGemsTK);
+				var buttonsCount = TagMath.IGetTag(args, buttonsCountTK);
+				var i = 0;
+				var gemsToGive = 0;
 				while (i < buttonsCount) {
-					int desiredCount = (int) gr.GetNumberResponse(i);
+					var desiredCount = (int) gr.GetNumberResponse(i);
 					if ((gr.IsSwitched(i)) && (desiredCount > 0)) {	// player wants to take at least one gem
 						if (box.inBoxGems[buttonShowItemDef[i]] < desiredCount) {
 							((Player) gi.Cont).RedMessage("Snažíš se vyndat pøíliš mnoho gemù: " + buttonShowItemDef[i].Name + ". Vyndáváš plný poèet.");
@@ -140,8 +140,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					i++;
 				}
 			} else if (gr.PressedButton >= 1000) {
-				int thisButtonValue = gr.PressedButton - 1000;
-				Dictionary<int, ItemDef> buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForGemsTK);
+				var thisButtonValue = gr.PressedButton - 1000;
+				var buttonShowItemDef = (Dictionary<int, ItemDef>) args.GetTag(buttonsForGemsTK);
 				buttonShowItemDef[thisButtonValue].Create(((Player) gi.Cont).Backpack);
 				Globals.LastNewItem.Amount = box.inBoxGems[buttonShowItemDef[thisButtonValue]];
 				box.inBoxGems.Remove(buttonShowItemDef[thisButtonValue]);
@@ -158,7 +158,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			GemBox gemBox = (GemBox) parameter;
+			var gemBox = (GemBox) parameter;
 			if (!self.CanReachWithMessage(gemBox)) {
 				return TargetResult.Done;
 			}
@@ -172,7 +172,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					}
 
 					if (gemBox.pocetGemu + targetted.Amount > gemBox.TypeDef.Capacity) {	// poresime prekroceni nosnosti bedny -> do bedny se prida jen tolik gemu, kolik skutecne lze pridat
-						int gemsToTake = gemBox.TypeDef.Capacity - gemBox.pocetGemu;
+						var gemsToTake = gemBox.TypeDef.Capacity - gemBox.pocetGemu;
 						targetted.Amount -= gemsToTake;
 						gemBox.pocetGemu += gemsToTake;
 						gemBox.inBoxGems[targetted.TypeDef] = previousCount + gemsToTake;
@@ -189,7 +189,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		protected override void On_TargonCancel(Player self, object parameter) {
-			GemBox focus = parameter as GemBox;
+			var focus = parameter as GemBox;
 			focus.Dialog(self, SingletonScript<D_GemBox>.Instance);
 		}
 	}

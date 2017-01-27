@@ -26,13 +26,13 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
-			Character caster = spellEffectArgs.Caster;
+			var caster = spellEffectArgs.Caster;
 			target.Trigger_HostileAction(caster);
 
-			int spellPower = spellEffectArgs.SpellPower;
+			var spellPower = spellEffectArgs.SpellPower;
 			double effect = (int) this.GetEffectForValue(spellPower);
-			double durationInSeconds = this.GetDurationForValue(spellPower);
-			int ticksCount = (int) (durationInSeconds / SingletonScript<DamagingPoisonEffectPluginDef>.Instance.TickInterval);
+			var durationInSeconds = this.GetDurationForValue(spellPower);
+			var ticksCount = (int) (durationInSeconds / SingletonScript<DamagingPoisonEffectPluginDef>.Instance.TickInterval);
 
 			((FadingEffectDurationPluginDef) this.EffectPluginDef).Apply(caster, target, spellEffectArgs.EffectFlag, 
 				effect, ticksCount);

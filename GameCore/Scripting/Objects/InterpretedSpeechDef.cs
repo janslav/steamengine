@@ -43,8 +43,8 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			string name = input.HeaderName.ToLower();
-			AbstractScript s = AbstractScript.GetByDefname(name);
+			var name = input.HeaderName.ToLower();
+			var s = AbstractScript.GetByDefname(name);
 			ScriptedSpeech ssd;
 			if (s != null) {
 				ssd = s as ScriptedSpeech;
@@ -57,18 +57,18 @@ namespace SteamEngine.Scripting.Objects {
 			}
 
 			//now do load the trigger code. 
-			int triggerCount = input.TriggerCount;
+			var triggerCount = input.TriggerCount;
 			ssd.triggers = new SpeechTrigger[triggerCount];
-			List<SpeechTrigger> sameCodeTriggers = new List<SpeechTrigger>();
-			for (int i = 0; i < triggerCount; i++) {
-				TriggerSection trigger = input.GetTrigger(i);
-				SpeechTrigger st = new SpeechTrigger(trigger.TriggerName);
+			var sameCodeTriggers = new List<SpeechTrigger>();
+			for (var i = 0; i < triggerCount; i++) {
+				var trigger = input.GetTrigger(i);
+				var st = new SpeechTrigger(trigger.TriggerName);
 				sameCodeTriggers.Add(st);
 				ssd.triggers[i] = st;
 
 				if (!IsEmptyCode(trigger.Code.ToString())) {
-					LScriptHolder holder = new LScriptHolder(trigger);
-					foreach (SpeechTrigger same in sameCodeTriggers) {
+					var holder = new LScriptHolder(trigger);
+					foreach (var same in sameCodeTriggers) {
 						same.holder = holder;
 					}
 					sameCodeTriggers.Clear();
@@ -84,11 +84,11 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override SpeechResult Handle(AbstractCharacter listener, SpeechArgs speechArgs) {
-			string message = speechArgs.Speech;
-			foreach (SpeechTrigger st in this.triggers) {
-				Match m = st.re.Match(message);
+			var message = speechArgs.Speech;
+			foreach (var st in this.triggers) {
+				var m = st.re.Match(message);
 				if (m.Success) {
-					object o = st.holder.Run(listener, speechArgs);
+					var o = st.holder.Run(listener, speechArgs);
 					return (SpeechResult) Convert.ToInt32(o);
 				}
 			}
@@ -96,11 +96,11 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs) {
-			string message = speechArgs.Speech;
-			foreach (SpeechTrigger st in this.triggers) {
-				Match m = st.re.Match(message);
+			var message = speechArgs.Speech;
+			foreach (var st in this.triggers) {
+				var m = st.re.Match(message);
 				if (m.Success) {
-					object o = st.holder.TryRun(listener, speechArgs);
+					var o = st.holder.TryRun(listener, speechArgs);
 					try {
 						return (SpeechResult) Convert.ToInt32(o);
 					} catch { }
@@ -110,7 +110,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private static Regex GetRegex(string triggername) {
-			string pattern = GeneratePattern(triggername);
+			var pattern = GeneratePattern(triggername);
 			Regex regex;
 			if (!regexes.TryGetValue(pattern, out regex)) {
 				regex = new Regex(pattern,
@@ -131,7 +131,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		private static bool IsEmptyCode(string code) {
 			string line;
-			StringReader reader = new StringReader(code);
+			var reader = new StringReader(code);
 			while ((line = reader.ReadLine()) != null) {
 				line = line.Trim();
 				if ((line.Length != 0) && (!line.StartsWith("//"))) {

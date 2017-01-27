@@ -53,9 +53,9 @@ namespace SteamEngine {
 		}
 
 		public void WriteLine(string line) {
-			AuxServerPipeClient aspc = AuxServerPipeClient.ConnectedInstance;
+			var aspc = AuxServerPipeClient.ConnectedInstance;
 			if (aspc != null) {
-				ConsoleWriteLinePacket p = Pool<ConsoleWriteLinePacket>.Acquire();
+				var p = Pool<ConsoleWriteLinePacket>.Acquire();
 				p.Prepare(this.consoleId, line);
 				aspc.PipeConnection.SendSinglePacket(p);
 			}

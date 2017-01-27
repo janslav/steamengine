@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts {
 				if (value == null) {
 					this.targetDescription = null;
 				} else {
-					Region targetRegion = value.GetMap().GetRegionFor(value);
+					var targetRegion = value.GetMap().GetRegionFor(value);
 					this.targetDescription = targetRegion.Name;
 				}
 				this.InvalidateAosToolTips();
@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_BuildAosToolTips(AosToolTips opc, Language language) {
-			RecallRuneLoc loc = Loc<RecallRuneLoc>.Get(language);
+			var loc = Loc<RecallRuneLoc>.Get(language);
 			if (string.IsNullOrEmpty(this.targetDescription)) {
 				opc.AddNameColonValue(loc.target, loc.anUnknownDestination);
 			} else {
@@ -66,8 +66,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static bool CheckTelePermissionOut(Character caster) {
-			FlaggedRegion region = caster.Region as FlaggedRegion;			
-			RegionFlags regionFlags = region.Flags;
+			var region = caster.Region as FlaggedRegion;			
+			var regionFlags = region.Flags;
 
 			if ((regionFlags & RegionFlags.NoTeleportingOut) == RegionFlags.NoTeleportingOut) {
 				caster.RedMessage(Loc<RecallRuneLoc>.Get(caster.Language).ForbiddenTeleportingOut);
@@ -79,8 +79,8 @@ namespace SteamEngine.CompiledScripts {
 
 		public static bool CheckTelePermissionIn(Character caster, IPoint4D destination) {
 			destination = destination.TopPoint;
-			FlaggedRegion region = destination.GetMap().GetRegionFor(destination) as FlaggedRegion;
-			RegionFlags regionFlags = region.Flags;
+			var region = destination.GetMap().GetRegionFor(destination) as FlaggedRegion;
+			var regionFlags = region.Flags;
 
 			if ((regionFlags & RegionFlags.NoTeleportingIn) == RegionFlags.NoTeleportingIn) {
 				caster.RedMessage(Loc<RecallRuneLoc>.Get(caster.Language).ForbiddenTeleportingIn);

@@ -47,7 +47,7 @@ namespace SteamEngine.Timers {
 		}
 
 		protected override void OnTimeout(TagHolder cont) {
-			ScriptArgs sa = new ScriptArgs(this.formatString, this.args);
+			var sa = new ScriptArgs(this.formatString, this.args);
 			Globals.SetSrc(null);
 			((PluginHolder) cont).TryTrigger(this.trigger, sa);
 		}

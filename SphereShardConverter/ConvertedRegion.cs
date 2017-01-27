@@ -89,7 +89,7 @@ namespace SteamEngine.Converter {
 
 			this.Set("createdat", ObjectSaver.Save(DateTime.Now), "");
 
-			string name = input.HeaderName;
+			var name = input.HeaderName;
 			this.Set("Name", "\"" + name + "\"", "");
 			if (StringComparer.OrdinalIgnoreCase.Equals(name, "%servname%")) {
 				//headerType = "WorldRegion";
@@ -99,11 +99,11 @@ namespace SteamEngine.Converter {
 			}
 			this.headerType = "Region";
 			//todo: make this strip all non-ascii characters
-			string[] splitted = nonCharacterSplitRE.Split(name);
+			var splitted = nonCharacterSplitRE.Split(name);
 			splitted[0] = "a_" + splitted[0];
 			name = string.Join("_", splitted);//we make "a_local_mine" out of "local mine"
-			string defname = name;
-			int toAdd = 2;
+			var defname = name;
+			var toAdd = 2;
 			while (regionsByDefname.ContainsKey(defname)) {
 				defname = name + "_" + toAdd;
 				toAdd++;
@@ -112,7 +112,7 @@ namespace SteamEngine.Converter {
 			this.headerName = defname;
 			allRegions.Add(this);
 
-			PropsLine defnameLine = input.TryPopPropsLine("defname");
+			var defnameLine = input.TryPopPropsLine("defname");
 			if (defnameLine != null) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(defnameLine.Value, "a_world")) {
 					//headerType = "Worldregion";
@@ -125,15 +125,15 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void ParseRect(ConvertedDef def, PropsLine line) {
-			Match m = Region.rectRE.Match(line.Value);
+			var m = Region.rectRE.Match(line.Value);
 			if (m.Success) {
-				GroupCollection gc = m.Groups;
+				var gc = m.Groups;
 				//Console.WriteLine("args: "+args);
 				//Console.WriteLine("parsed as: {0}, {1}, {2}, {3}", gc["x1"], gc["y1"], gc["x2"], gc["y2"]);
-				ushort x1 = ConvertTools.ParseUInt16(gc["x1"].Value);
-				ushort y1 = ConvertTools.ParseUInt16(gc["y1"].Value);
-				ushort x2 = ConvertTools.ParseUInt16(gc["x2"].Value);
-				ushort y2 = ConvertTools.ParseUInt16(gc["y2"].Value);
+				var x1 = ConvertTools.ParseUInt16(gc["x1"].Value);
+				var y1 = ConvertTools.ParseUInt16(gc["y1"].Value);
+				var x2 = ConvertTools.ParseUInt16(gc["x2"].Value);
+				var y2 = ConvertTools.ParseUInt16(gc["y2"].Value);
 				ushort minX;
 				ushort maxX;
 				ushort minY;
@@ -153,7 +153,7 @@ namespace SteamEngine.Converter {
 					maxY = y1;
 				}
 				maxX--; maxY--; //this is because sphere has weird system of rectangle coordinates
-				string retVal = string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY);
+				var retVal = string.Format("{0},{1},{2},{3}", minX, minY, maxX, maxY);
 				def.Set("Rect", retVal, line.Comment);
 				((ConvertedRegion) def).rectangles.Add(new ImmutableRectangle(minX, minY, maxX, maxY));
 				//return retVal;
@@ -164,7 +164,7 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void ParseMapplane(ConvertedDef def, PropsLine line) {
-			ConvertedRegion r = (ConvertedRegion) def;
+			var r = (ConvertedRegion) def;
 			r.mapplane = ConvertTools.ParseByte(line.Value);
 			r.mapplaneSet = true;
 			r.mapplaneLine = line;
@@ -174,18 +174,18 @@ namespace SteamEngine.Converter {
 		private static Point4DSaveImplementor pImplementor = new Point4DSaveImplementor();
 
 		private static void ParseP(ConvertedDef def, PropsLine line) {
-			ConvertedRegion r = (ConvertedRegion) def;
-			Point4D p = Point4D.Parse(line.Value);
+			var r = (ConvertedRegion) def;
+			var p = Point4D.Parse(line.Value);
 			if (!r.mapplaneSet) {
 				r.mapplane = p.M;
 			}
-			string retVal = pImplementor.Save(p);
+			var retVal = pImplementor.Save(p);
 			def.Set("Spawnpoint", retVal, line.Comment);
 			//return retVal;
 		}
 
 		private static void ParseFlags(ConvertedDef def, PropsLine line) {
-			string name = line.Name;
+			var name = line.Name;
 			switch (line.Name.ToLowerInvariant()) {
 				case "flagsafe":
 					name = "Flag_safe";
@@ -207,7 +207,7 @@ namespace SteamEngine.Converter {
 					break;
 			}
 
-			int value = ConvertTools.ParseInt32(line.Value);
+			var value = ConvertTools.ParseInt32(line.Value);
 			if (value != 0) {//it is flagged region
 				//if (def.headerType.StartsWith("World")) {
 				//    def.headerType = "WorldFlaggedRegion";
@@ -221,30 +221,30 @@ namespace SteamEngine.Converter {
 		}
 
 		public override void SecondStage() {
-			int rectanglesCount = this.rectangles.Count;
+			var rectanglesCount = this.rectangles.Count;
 			this.points = new Point2D[rectanglesCount * 4];
-			for (int i = 0; i < rectanglesCount; i++) {
-				ImmutableRectangle rect = this.rectangles[i];
+			for (var i = 0; i < rectanglesCount; i++) {
+				var rect = this.rectangles[i];
 				this.points[(i * 4) + 0] = new Point2D(rect.MinX, rect.MinY);//left lower
 				this.points[(i * 4) + 1] = new Point2D(rect.MinX, rect.MaxY);//left upper
 				this.points[(i * 4) + 2] = new Point2D(rect.MaxX, rect.MaxY);//right upper
 				this.points[(i * 4) + 3] = new Point2D(rect.MaxX, rect.MinY);//right lower
 			}
 
-			List<DictionaryEntry> temp = new List<DictionaryEntry>();
-			foreach (ConvertedRegion reg in allRegions) {
+			var temp = new List<DictionaryEntry>();
+			foreach (var reg in allRegions) {
 				if (this.HasSameMapplane(reg)) {
-					int contained = reg.ContainsPoints(this.points);
+					var contained = reg.ContainsPoints(this.points);
 					temp.Add(new DictionaryEntry(contained, reg));
 				}
 			}
-			int tempCount = temp.Count;
-			int highestResult = 0;
-			int occurences = 0;
-			for (int i = 0; i < tempCount; i++) {
-				DictionaryEntry entry = temp[i];
-				int result = (int) entry.Key;
-				ConvertedRegion p = (ConvertedRegion) entry.Value;
+			var tempCount = temp.Count;
+			var highestResult = 0;
+			var occurences = 0;
+			for (var i = 0; i < tempCount; i++) {
+				var entry = temp[i];
+				var result = (int) entry.Key;
+				var p = (ConvertedRegion) entry.Value;
 				if ((this != p) && this.HasSameMapplane(p)) {
 					if (result > highestResult) {
 						occurences = 0;
@@ -259,11 +259,11 @@ namespace SteamEngine.Converter {
 				this.Warning(this.origData.HeaderLine, "Region " + this.headerName + " has no parents!");
 			}
 			this.parents = new ConvertedRegion[occurences];
-			int index = 0;
-			for (int i = 0; i < tempCount; i++) {
-				DictionaryEntry entry = temp[i];
-				int result = (int) entry.Key;
-				ConvertedRegion p = (ConvertedRegion) entry.Value;
+			var index = 0;
+			for (var i = 0; i < tempCount; i++) {
+				var entry = temp[i];
+				var result = (int) entry.Key;
+				var p = (ConvertedRegion) entry.Value;
 				if ((result == highestResult) && (p != this) && this.HasSameMapplane(p)) {
 					this.parents[index] = p;
 					index++;
@@ -295,10 +295,10 @@ namespace SteamEngine.Converter {
 		}
 
 		private int ContainsPoints(Point2D[] ps) {
-			int counter = 0;
+			var counter = 0;
 			for (int i = 0, n = ps.Length; i < n; i++) {
-				Point2D p = ps[i];
-				foreach (ImmutableRectangle rect in this.rectangles) {
+				var p = ps[i];
+				foreach (var rect in this.rectangles) {
 					if (rect.Contains(p)) {
 						counter++;
 					}
@@ -311,10 +311,10 @@ namespace SteamEngine.Converter {
 			if (this.hierarchyIndex != -1) {
 				return true;
 			}
-			int highestHierarchyIndex = -2;
-			int highestHierarchyIndexAt = -1;
+			var highestHierarchyIndex = -2;
+			var highestHierarchyIndexAt = -1;
 			for (int i = 0, n = this.parents.Length; i < n; i++) {
-				ConvertedRegion reg = this.parents[i];
+				var reg = this.parents[i];
 				if (reg.hierarchyIndex == -1) {
 					return false;
 				}
@@ -323,7 +323,7 @@ namespace SteamEngine.Converter {
 					highestHierarchyIndexAt = i;
 				}
 			}
-			ConvertedRegion definitiveParent = this.parents[highestHierarchyIndexAt];
+			var definitiveParent = this.parents[highestHierarchyIndexAt];
 			this.parents = new[] { definitiveParent };
 			this.hierarchyIndex = definitiveParent.hierarchyIndex + 1;
 			this.Set("Parent", "(" + definitiveParent.headerName + ")", "calculated by Converter");
@@ -333,25 +333,25 @@ namespace SteamEngine.Converter {
 
 		//internal static void ResolveRegionsHierarchy() {
 		public static void SecondStageFinished() {
-			List<ConvertedRegion> temp = new List<ConvertedRegion>(allRegions);//copy list of all regions
-			int lastCount = -1;
+			var temp = new List<ConvertedRegion>(allRegions);//copy list of all regions
+			var lastCount = -1;
 			while (temp.Count > 0) {
 				if (lastCount == temp.Count) {
 					//this will probably never happen
 					Logger.WriteError("Region hierarchy not completely resolvable - No regions converted!");
 					Logger.WriteInfo(ConverterMain.AdditionalConverterMessages, "These are the unresolved ones:");
-					foreach (ConvertedRegion reg in temp) {
+					foreach (var reg in temp) {
 						reg.Info(reg.origData.HeaderLine, reg + ", possible parents: " + Tools.ObjToString(reg.parents));
 					}
 
-					foreach (ConvertedRegion reg in allRegions) {
+					foreach (var reg in allRegions) {
 						reg.DontDump();
 					}
 					return;
 				}
 				lastCount = temp.Count;
-				for (int i = 0; i < temp.Count; ) {
-					ConvertedRegion r = temp[i];
+				for (var i = 0; i < temp.Count; ) {
+					var r = temp[i];
 					if (r.TryDefinitiveParent()) {
 						temp.RemoveAt(i);
 					} else {

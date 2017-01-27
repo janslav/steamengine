@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal static void InstallOnChar(Character trackingChar, Character trackedChar, ImmutableRectangle playerRect, TimeSpan maxAge, int safeSteps) {
 			trackingChar.DeletePlugin(trackingPluginKey);
-			PlayerTrackingPlugin tpl = (PlayerTrackingPlugin) defInstance.Create();
+			var tpl = (PlayerTrackingPlugin) defInstance.Create();
 			tpl.Init(trackedChar, playerRect, maxAge, safeSteps);
 			trackingChar.AddPlugin(trackingPluginKey, tpl);
 		}
@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsObservingPoint(IPoint4D point) {
-			Character cont = (Character) this.Cont;
+			var cont = (Character) this.Cont;
 			if (cont.M == point.M) {
 				return this.trackingRectangle.Contains(point);
 			}
@@ -114,13 +114,13 @@ namespace SteamEngine.CompiledScripts {
 			//lower bound of the footsteps visibility-age (upper bound is Globals.TimeAsSpan)
 			//the footsteps LastStepTime must lie between these two bounds for the footprint to be visible
 			//the maxFootstepAge is computed from the tracker's skill
-			Character tracker = (Character) this.Cont;
-			GameState state = tracker.GameState;
+			var tracker = (Character) this.Cont;
+			var state = tracker.GameState;
 			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
+				var conn = state.Conn;
 				this.lastRefreshAt = Globals.TimeAsSpan;
 				this.trackingRectangle = new ImmutableRectangle(tracker, (ushort) (this.rectWidth / 2));
-				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, this.lastRefreshAt, this.maxFootstepAge, tracker.M)) {
+				foreach (var tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, this.lastRefreshAt, this.maxFootstepAge, tracker.M)) {
 					this.SendObjectPacket(this.lastRefreshAt, conn, tp);
 				}
 			}
@@ -132,14 +132,14 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			Character tracker = (Character) this.Cont;
-			GameState state = tracker.GameState;
+			var tracker = (Character) this.Cont;
+			var state = tracker.GameState;
 			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
-				TimeSpan now = Globals.TimeAsSpan;
-				TimeSpan sinceLastRefresh = now - this.lastRefreshAt;
-				TimeSpan totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
-				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, now, totalMaxAge, tracker.M)) {
+				var conn = state.Conn;
+				var now = Globals.TimeAsSpan;
+				var sinceLastRefresh = now - this.lastRefreshAt;
+				var totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
+				foreach (var tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, now, totalMaxAge, tracker.M)) {
 					this.SendRefreshObject(now, conn, tp);
 				}
 				this.lastRefreshAt = now;
@@ -152,11 +152,11 @@ namespace SteamEngine.CompiledScripts {
 				return;
 			}
 
-			GameState state = tracker.GameState;
+			var state = tracker.GameState;
 			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
+				var conn = state.Conn;
 
-				foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, Globals.TimeAsSpan, this.maxFootstepAge, tracker.M)) {
+				foreach (var tp in ScriptSector.GetCharsPath(this.trackedChar, this.trackingRectangle, Globals.TimeAsSpan, this.maxFootstepAge, tracker.M)) {
 					SendDeletePacket(conn, tp);
 				}
 				this.lastRefreshAt = TimeSpan.Zero;
@@ -169,9 +169,9 @@ namespace SteamEngine.CompiledScripts {
 			this.RefreshVisibleFootsteps();
 			this.stepsCntr = this.safeSteps; //set the counter
 
-			Character cont = (Character) this.Cont;
+			var cont = (Character) this.Cont;
 			//to the tracked char's list add the actual tracker
-			List<Character> tbList = (List<Character>) this.trackedChar.GetTag(TrackingSkillDef.trackedByTK);
+			var tbList = (List<Character>) this.trackedChar.GetTag(TrackingSkillDef.trackedByTK);
 			if (tbList == null) {
 				tbList = new List<Character>();
 				this.trackedChar.SetTag(TrackingSkillDef.trackedByTK, tbList);
@@ -186,7 +186,7 @@ namespace SteamEngine.CompiledScripts {
 
 			this.SendDeleteAllVisibleFootsteps(formerCont);
 			//remove from the trackedBy list on the tracked character
-			List<Character> tbList = (List<Character>) this.trackedChar.GetTag(TrackingSkillDef.trackedByTK);
+			var tbList = (List<Character>) this.trackedChar.GetTag(TrackingSkillDef.trackedByTK);
 			tbList.Remove(formerCont);
 			if (tbList.Count == 0) {
 				this.trackedChar.RemoveTag(TrackingSkillDef.trackedByTK);
@@ -194,7 +194,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void On_NewPosition(Point4D oldP) {
-			Player tracker = (Player) this.Cont;
+			var tracker = (Player) this.Cont;
 			//check the steps counter
 			this.stepsCntr--;
 			if (this.stepsCntr == 0)
@@ -207,36 +207,36 @@ namespace SteamEngine.CompiledScripts {
 				this.stepsCntr = this.safeSteps; //reset the counter
 			}
 
-			ImmutableRectangle oldRect = this.trackingRectangle;
-			ImmutableRectangle newRect = new ImmutableRectangle(tracker, (ushort) (this.rectWidth / 2));
+			var oldRect = this.trackingRectangle;
+			var newRect = new ImmutableRectangle(tracker, (ushort) (this.rectWidth / 2));
 			this.trackingRectangle = newRect;
-			int dist = Point2D.GetSimpleDistance(oldRect.MinX, oldRect.MinY, newRect.MinX, newRect.MinY);
-			TimeSpan now = Globals.TimeAsSpan;
+			var dist = Point2D.GetSimpleDistance(oldRect.MinX, oldRect.MinY, newRect.MinX, newRect.MinY);
+			var now = Globals.TimeAsSpan;
 
-			GameState state = tracker.GameState;
+			var state = tracker.GameState;
 			if (state != null) {
-				TcpConnection<GameState> conn = state.Conn;
+				var conn = state.Conn;
 				if (dist > this.rectWidth) {//old and new have no intersection. We treat them separately, and only send delete packets in the area still visible to client
-					ImmutableRectangle updateRect = new ImmutableRectangle(tracker, state.UpdateRange);
-					ImmutableRectangle oldRectVisible = ImmutableRectangle.GetIntersection(oldRect, updateRect);
-					foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, oldRectVisible, now, this.maxFootstepAge, tracker.M)) {
+					var updateRect = new ImmutableRectangle(tracker, state.UpdateRange);
+					var oldRectVisible = ImmutableRectangle.GetIntersection(oldRect, updateRect);
+					foreach (var tp in ScriptSector.GetCharsPath(this.trackedChar, oldRectVisible, now, this.maxFootstepAge, tracker.M)) {
 						SendDeletePacket(conn, tp);
 					}
-					foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, newRect, now, this.maxFootstepAge, tracker.M)) {
+					foreach (var tp in ScriptSector.GetCharsPath(this.trackedChar, newRect, now, this.maxFootstepAge, tracker.M)) {
 						this.SendObjectPacket(now, conn, tp);
 					}
 				} else {
-					int bigRectMinX = Math.Min(oldRect.MinX, newRect.MinX);
-					int bigRectMinY = Math.Min(oldRect.MinY, newRect.MinY);
-					int bigRectMaxX = Math.Max(oldRect.MaxX, newRect.MaxX);
-					int bigRectMaxY = Math.Max(oldRect.MaxY, newRect.MaxY);
-					ImmutableRectangle bigRect = new ImmutableRectangle(bigRectMinX, bigRectMinY, bigRectMaxX, bigRectMaxY);
+					var bigRectMinX = Math.Min(oldRect.MinX, newRect.MinX);
+					var bigRectMinY = Math.Min(oldRect.MinY, newRect.MinY);
+					var bigRectMaxX = Math.Max(oldRect.MaxX, newRect.MaxX);
+					var bigRectMaxY = Math.Max(oldRect.MaxY, newRect.MaxY);
+					var bigRect = new ImmutableRectangle(bigRectMinX, bigRectMinY, bigRectMaxX, bigRectMaxY);
 
-					TimeSpan sinceLastRefresh = now - this.lastRefreshAt;
-					TimeSpan totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
+					var sinceLastRefresh = now - this.lastRefreshAt;
+					var totalMaxAge = this.maxFootstepAge + sinceLastRefresh; //those > maxFootstepAge will get removed
 
-					foreach (TrackPoint tp in ScriptSector.GetCharsPath(this.trackedChar, bigRect, now, totalMaxAge, tracker.M)) {
-						Point4D loc = tp.Location;
+					foreach (var tp in ScriptSector.GetCharsPath(this.trackedChar, bigRect, now, totalMaxAge, tracker.M)) {
+						var loc = tp.Location;
 						if (newRect.Contains(loc)) {
 							if (oldRect.Contains(loc)) {//intersection. We only refresh colors/remove too old
 								this.SendRefreshObject(now, conn, tp);
@@ -258,20 +258,20 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void SendObjectPacket(TimeSpan now, TcpConnection<GameState> conn, TrackPoint tp) {
-			int color = tp.GetColor(now, this.maxFootstepAge);
-			ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
+			var color = tp.GetColor(now, this.maxFootstepAge);
+			var oiop = Pool<ObjectInfoOutPacket>.Acquire();
 			oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, color);
 			conn.SendSinglePacket(oiop);
 		}
 
 		private void SendRefreshObject(TimeSpan now, TcpConnection<GameState> conn, TrackPoint tp) {
-			TimeSpan minTimeToShow = now - this.maxFootstepAge;
-			TimeSpan tpCreatedAt = tp.CreatedAt;
+			var minTimeToShow = now - this.maxFootstepAge;
+			var tpCreatedAt = tp.CreatedAt;
 			if (tpCreatedAt >= minTimeToShow) {
-				int oldColor = tp.GetColor(this.lastRefreshAt, this.maxFootstepAge);
-				int newColor = tp.GetColor(now, this.maxFootstepAge);
+				var oldColor = tp.GetColor(this.lastRefreshAt, this.maxFootstepAge);
+				var newColor = tp.GetColor(now, this.maxFootstepAge);
 				if (oldColor != newColor) {
-					ObjectInfoOutPacket oiop = Pool<ObjectInfoOutPacket>.Acquire();
+					var oiop = Pool<ObjectInfoOutPacket>.Acquire();
 					oiop.PrepareFakeItem(tp.FakeUID, tp.Model, tp.Location, 1, Direction.North, newColor);
 					conn.SendSinglePacket(oiop);
 				}
@@ -281,7 +281,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void SendDeletePacket(TcpConnection<GameState> conn, TrackPoint tp) {
-			DeleteObjectOutPacket doop = Pool<DeleteObjectOutPacket>.Acquire();
+			var doop = Pool<DeleteObjectOutPacket>.Acquire();
 			doop.Prepare(tp.FakeUID);
 			conn.SendSinglePacket(doop);
 		}
@@ -312,14 +312,14 @@ namespace SteamEngine.CompiledScripts {
 
 		private void CheckDistance(Player tracker) {
 			//check the distance to the tracked target
-			int currentDist = Point2D.GetSimpleDistance(tracker, this.whoToTrack);
+			var currentDist = Point2D.GetSimpleDistance(tracker, this.whoToTrack);
 			if (currentDist > this.maxAllowedDist) {
 				this.Delete();
 			}
 		}
 
 		public void On_Step(ScriptArgs args) {//1st arg = direction (byte), 2nd arg = running (bool)
-			Player tracker = (Player) this.Cont;
+			var tracker = (Player) this.Cont;
 			//check the steps counter
 			this.stepsCntr--;
 			if (this.stepsCntr == 0)

@@ -81,7 +81,7 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		private void OnAccept(IAsyncResult asyncResult) {
-			Socket listener = (Socket) asyncResult.AsyncState;
+			var listener = (Socket) asyncResult.AsyncState;
 
 			Socket accepted = null;
 
@@ -94,7 +94,7 @@ namespace SteamEngine.Communication.TCP {
 			}
 
 			if (accepted != null) {
-				TcpConnection<TState> newConn = Pool<TcpConnection<TState>>.Acquire();
+				var newConn = Pool<TcpConnection<TState>>.Acquire();
 				newConn.socket = accepted;
 				this.InitNewConnection(newConn);
 			}

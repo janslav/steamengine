@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Activate(Character ch, Ability ab) {
 			base.On_Activate(ch, ab);
 
-			StatDrainingEffectDurationPlugin plugin = ch.GetPlugin(this.PluginKey) as StatDrainingEffectDurationPlugin;
+			var plugin = ch.GetPlugin(this.PluginKey) as StatDrainingEffectDurationPlugin;
 			if (plugin != null) {
 				plugin.InitDrain(this.HitsDrain, this.StamDrain, this.ManaDrain);
 			}

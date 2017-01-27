@@ -66,18 +66,18 @@ namespace SteamEngine.CompiledScripts {
 		private static TagKey tkSavedStaticMembersTable = TagKey.Acquire("SavedStaticMembersTable");
 
 		private static void LoadMembers() {
-			Hashtable table = Globals.Instance.GetTag(tkSavedStaticMembersTable) as Hashtable;
+			var table = Globals.Instance.GetTag(tkSavedStaticMembersTable) as Hashtable;
 			Globals.Instance.RemoveTag(tkSavedStaticMembersTable);
 
 			if (table != null) {
 				foreach (DictionaryEntry entry in table) {
 					try {
-						string[] splitKey = ((string) entry.Key).Split(':');
-						Type type = ClassManager.GetType(splitKey[0]);
+						var splitKey = ((string) entry.Key).Split(':');
+						var type = ClassManager.GetType(splitKey[0]);
 						if (type != null) {
-							MemberInfo[] mis = type.GetMember(splitKey[1], BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+							var mis = type.GetMember(splitKey[1], BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 							if (mis.Length > 0) {
-								MemberInfo mi = mis[0];
+								var mi = mis[0];
 								Type miReturnType;
 								if (IsPropertyOrField(mi, out miReturnType)) {
 									object value;
@@ -130,15 +130,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void SaveMembers() {
-			Hashtable table = new Hashtable();
-			foreach (MemberInfo mi in registeredMembers) {
+			var table = new Hashtable();
+			foreach (var mi in registeredMembers) {
 				object obj;
 				if (mi.MemberType == MemberTypes.Property) {
 					obj = ((PropertyInfo) mi).GetValue(null, null);
 				} else {
 					obj = ((FieldInfo) mi).GetValue(null);
 				}
-				string key = mi.ReflectedType.Name + ":" + mi.Name;
+				var key = mi.ReflectedType.Name + ":" + mi.Name;
 				table[key] = obj;
 			}
 			Globals.Instance.SetTag(tkSavedStaticMembersTable, table);
@@ -151,9 +151,9 @@ namespace SteamEngine.CompiledScripts {
 			LoadMembers();
 
 			registeredMembers.Clear();
-			foreach (Type type in ClassManager.AllManagedTypes) {
+			foreach (var type in ClassManager.AllManagedTypes) {
 				if (Attribute.IsDefined(type, typeof(HasSavedMembersAttribute))) {
-					foreach (MemberInfo mi in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)) {
+					foreach (var mi in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)) {
 						TryRegisterMember(mi);
 					}
 				}
@@ -163,7 +163,7 @@ namespace SteamEngine.CompiledScripts {
 		private static void TryRegisterMember(MemberInfo mi) {
 			if (mi.IsDefined(typeof(SavedMemberAttribute), false)) {
 				if (mi.MemberType == MemberTypes.Property) {
-					PropertyInfo pi = (PropertyInfo) mi;
+					var pi = (PropertyInfo) mi;
 					if (!pi.CanRead || !pi.CanWrite) {
 						Logger.WriteWarning(pi.DeclaringType.Name, pi.Name, "The property must be both writable and readable to be saved and loaded.");
 						return;
@@ -178,8 +178,8 @@ namespace SteamEngine.CompiledScripts {
 		/// 'SaveableData' attribute - we will use them as a settings dialog subsection
 		/// </summary>
 		public static List<MemberInfo> GetSaveableDataFromClass(Type type) {
-			List<MemberInfo> retList = new List<MemberInfo>();
-			foreach (MemberInfo mi in type.GetMembers()) {
+			var retList = new List<MemberInfo>();
+			foreach (var mi in type.GetMembers()) {
 				if (mi.IsDefined(typeof(SaveableDataAttribute), false)) {
 					retList.Add(mi);
 				}
@@ -192,9 +192,9 @@ namespace SteamEngine.CompiledScripts {
 		/// field. This will be displayed in the 'settings' dialog.
 		/// </summary>
 		public static string GetSettingDescFor(MemberInfo mi) {
-			string retDesc = "";
+			var retDesc = "";
 			//first try to find the SavedMember attribute
-			object[] attrs = mi.GetCustomAttributes(typeof(SavedMemberAttribute), false);
+			var attrs = mi.GetCustomAttributes(typeof(SavedMemberAttribute), false);
 			if (attrs.Length > 0) {
 				//we know that there will be exactly one SavedMember attribute
 				retDesc = ((SavedMemberAttribute) attrs[0]).Description;

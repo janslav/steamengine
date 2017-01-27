@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod("PluginsCount", typeof(int))]
 		public static object GetPluginsCount(object target) {
-			int counter = 0;
+			var counter = 0;
 			foreach (object o in ((PluginHolder) target).GetAllPlugins()) {
 				counter++;
 			}
@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod("TriggerGroupCount", typeof(int))]
 		public static object GetTriggerGroupCount(object target) {
-			int counter = 0;
+			var counter = 0;
 			foreach (object o in ((PluginHolder) target).GetAllTriggerGroups()) {
 				counter++;
 			}
@@ -41,8 +41,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod("TriggerGroups", typeof(string))]
 		public static object GetTriggerGroups(object target) {
-			string retString = "";
-			foreach (TriggerGroup tg in ((PluginHolder) target).GetAllTriggerGroups()) {
+			var retString = "";
+			foreach (var tg in ((PluginHolder) target).GetAllTriggerGroups()) {
 				retString += tg.PrettyDefname;
 			}
 			return retString;

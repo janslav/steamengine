@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY, name, defname, home, parent; //predzadane hodnoty (if any)
 
-			object[] argsArray = args.GetArgsArray();
+			var argsArray = args.GetArgsArray();
 			minX = string.Concat(argsArray[0]);
 			minY = string.Concat(argsArray[1]);
 			maxX = string.Concat(argsArray[2]);
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			home = TagMath.SGetTagNotNull(args, homeposTK);
 			parent = TagMath.SGetTagNotNull(args, parentDefTK);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(150, 150);
@@ -99,11 +99,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 1) { //ulozit				
 				//zkusime precist vsechny parametry
-				int startX = (int) gr.GetNumberResponse(31);
-				int startY = (int) gr.GetNumberResponse(32);
-				int endX = (int) gr.GetNumberResponse(33);
-				int endY = (int) gr.GetNumberResponse(34);
-				object[] argsArray = args.GetArgsArray();
+				var startX = (int) gr.GetNumberResponse(31);
+				var startY = (int) gr.GetNumberResponse(32);
+				var endX = (int) gr.GetNumberResponse(33);
+				var endY = (int) gr.GetNumberResponse(34);
+				var argsArray = args.GetArgsArray();
 				argsArray[0] = startX;
 				argsArray[1] = startY;
 				argsArray[2] = endX;
@@ -123,7 +123,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} catch {
 					//tady se octneme pokud zadal blbe ty souradnice (napred levy horni, pak pravy dolni roh!)
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
+					var newGi = D_Display_Text.ShowError("MinX/Y ma byt levy horni roh, MaxX/Y ma byt pravy dolni");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
@@ -133,47 +133,47 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} catch {
 					//podelal homepos
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("Chybne zadana home position - ocekavano '(4D)x,y,z,m'");
+					var newGi = D_Display_Text.ShowError("Chybne zadana home position - ocekavano '(4D)x,y,z,m'");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
-				StaticRegion parent = StaticRegion.GetByDefname(gr.GetTextResponse(24));//parent defname
+				var parent = StaticRegion.GetByDefname(gr.GetTextResponse(24));//parent defname
 				if (name == null || name.Equals("") || defname == null || defname.Equals("")) {
 					//neco blbe s namem nebo defnamem
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("Name i defname musi byt zadano");
+					var newGi = D_Display_Text.ShowError("Name i defname musi byt zadano");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
 				if (!newRect.Contains(home)) {
 					//homepos by nesedla
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("Home pozice (" + gr.GetTextResponse(23) + ") musi lezet v zadanem rectanglu (" + args[0] + "," + args[1] + ")-(" + args[2] + "," + args[3] + ")");
+					var newGi = D_Display_Text.ShowError("Home pozice (" + gr.GetTextResponse(23) + ") musi lezet v zadanem rectanglu (" + args[0] + "," + args[1] + ")-(" + args[2] + "," + args[3] + ")");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
 				if (StaticRegion.GetByName(name) != null) {
 					//jmeno uz existuje
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("Region se jmenem " + name + " uz existuje");
+					var newGi = D_Display_Text.ShowError("Region se jmenem " + name + " uz existuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
 				if (StaticRegion.GetByDefname(defname) != null) {
 					//defname uz existuje
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("Region s defnamem " + defname + " uz existuje");
+					var newGi = D_Display_Text.ShowError("Region s defnamem " + defname + " uz existuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
 				if (parent == null) {
 					//parent je povinnost!
-					Gump newGi = D_Display_Text.ShowError("Rodièovský region " + gr.GetTextResponse(24) + " neexistuje");
+					var newGi = D_Display_Text.ShowError("Rodièovský region " + gr.GetTextResponse(24) + " neexistuje");
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
 
-				List<MutableRectangle> oneRectList = new List<MutableRectangle>();
+				var oneRectList = new List<MutableRectangle>();
 				oneRectList.Add(newRect);
 				//vsef poradku tak hura vytvorit novy region
 				StaticRegion newRegion = new FlaggedRegion(defname, parent);
@@ -185,7 +185,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 2) {//vyber regionu parenta                         dialog,vyhledavani,prvni index, seznam regionu, trideni
 				//zkusime precist vsechyn parametry abychom je kdyztak meli
-				object[] argsArray = args.GetArgsArray();
+				var argsArray = args.GetArgsArray();
 				argsArray[0] = (int) gr.GetNumberResponse(31);
 				argsArray[1] = (int) gr.GetNumberResponse(32);
 				argsArray[2] = (int) gr.GetNumberResponse(33);
@@ -195,9 +195,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args.SetTag(homeposTK, gr.GetTextResponse(23)); //home pozice
 				args.SetTag(parentDefTK, gr.GetTextResponse(24)); //parentuv defname
 
-				DialogArgs newArgs = new DialogArgs();
+				var newArgs = new DialogArgs();
 				newArgs.SetTag(D_Regions.regsSortingTK, SortingCriteria.NameAsc);//zakladni trideni			
-				Gump newGi = gi.Cont.Dialog(SingletonScript<D_SelectParent>.Instance, newArgs);
+				var newGi = gi.Cont.Dialog(SingletonScript<D_SelectParent>.Instance, newArgs);
 				DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku				
 			}
 		}

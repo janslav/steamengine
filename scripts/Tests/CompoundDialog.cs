@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs sa) {
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(450);
 			dlg.SetLocation(50, 50);
@@ -51,12 +51,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//telo
 			dlg.AddTable(new GUTATable(ImprovedDialog.PAGE_ROWS, 200, 0));
 
-			GUTATable innerTable1 = new GUTATable(ImprovedDialog.PAGE_ROWS, 0, 100);
+			var innerTable1 = new GUTATable(ImprovedDialog.PAGE_ROWS, 0, 100);
 			//innerTable1[0,0] = TextFactory.CreateLabel("prvni vnitrni tabulecka");
 			//innerTable1[0, 1] = TextFactory.CreateHeadline("druhej sloupecek");
 			innerTable1.Transparent = true;
 			innerTable1.NoWrite = true;
-			GUTATable innerTable2 = new GUTATable(ImprovedDialog.PAGE_ROWS, 0, 100);
+			var innerTable2 = new GUTATable(ImprovedDialog.PAGE_ROWS, 0, 100);
 			//innerTable2[0,0] = TextFactory.CreateLabel("druha vnitrni tabulecka");
 			//innerTable2[0, 1] = TextFactory.CreateHeadline("taky druhej sloupecek");
 			innerTable2.Transparent = true;

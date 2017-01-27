@@ -36,15 +36,15 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Activate(Character chr, Ability ab) {
 			//TODO - taky nejak zarvat nebo co !
 
-			double power = ab.Def.EffectPower * ab.ModifiedPoints; //
-			TimeSpan duration = TimeSpan.FromSeconds(ab.Def.EffectDuration);
+			var power = ab.Def.EffectPower * ab.ModifiedPoints; //
+			var duration = TimeSpan.FromSeconds(ab.Def.EffectDuration);
 
 			foreach (Player target in chr.GetMap().GetPlayersInRange(chr.X, chr.Y, (ushort) this.ComputeRange(chr))) {
 				if (chr == target) {
 					continue; //dont do selfwarcry ;)
 				}
 
-				WarcryEffectPlugin warcryEffect = (WarcryEffectPlugin) WarcryEffectPlugin.defInstance.Create();
+				var warcryEffect = (WarcryEffectPlugin) WarcryEffectPlugin.defInstance.Create();
 				warcryEffect.Init(chr, EffectFlag.FromAbility | EffectFlag.HarmfulEffect, power, duration, this);
 				target.AddPlugin(WarcryEffectPlugin.warcyEffectPluginKey, warcryEffect);
 			}
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 		/// </summary>
 		[SteamFunction("Warcry")]
 		public static void WarcryFunction(Character chr, ScriptArgs args) {
-			WarcryDef wcrDef = SingletonScript<WarcryDef>.Instance;
+			var wcrDef = SingletonScript<WarcryDef>.Instance;
 			wcrDef.Activate(chr);
 		}
 	}

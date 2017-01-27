@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region IResourceListEntry_Simple Members
 		public bool IsResourcePresent(Character chr) {
-			Player asPlayer = chr as Player;
+			var asPlayer = chr as Player;
 			if (asPlayer != null) {
 				return asPlayer.Level >= this.DesiredCount;
 			}

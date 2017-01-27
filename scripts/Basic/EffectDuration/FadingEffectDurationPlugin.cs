@@ -33,14 +33,14 @@ namespace SteamEngine.CompiledScripts {
 		public override void Init(Thing sourceThing, EffectFlag sourceType, double power, TimeSpan duration, AbstractDef sourceDef) {
 			base.Init(sourceThing, sourceType, power, duration, sourceDef);
 
-			double tickSpan = this.TypeDef.TickInterval;
-			double tickCount = duration.TotalSeconds / tickSpan;
-			double differencePerTick = this.EffectPower / tickCount;
+			var tickSpan = this.TypeDef.TickInterval;
+			var tickCount = duration.TotalSeconds / tickSpan;
+			var differencePerTick = this.EffectPower / tickCount;
 			this.AddTimer(tickTimerKey, new FadingEffectTickTimer(TimeSpan.FromSeconds(tickSpan), differencePerTick));
 		}
 
 		public virtual void On_Assign() {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			if ((this.Flags & EffectFlag.HarmfulEffect) == EffectFlag.HarmfulEffect) {
 				self.AddPoisonCounter(); //make the healthbar green
 			}
@@ -66,18 +66,18 @@ namespace SteamEngine.CompiledScripts {
 		public void Apply(Thing source, Character target, EffectFlag sourceType, double effectPower, int tickCount) {
 			//every FadingEffect type has it's pluginkey, so they're independent on each other
 
-			double tickSeconds = this.TickInterval;
-			double duration = tickSeconds * tickCount;
+			var tickSeconds = this.TickInterval;
+			var duration = tickSeconds * tickCount;
 
-			PluginKey key = this.PluginKey;
-			FadingEffectDurationPlugin previous = target.GetPlugin(key) as FadingEffectDurationPlugin;
+			var key = this.PluginKey;
+			var previous = target.GetPlugin(key) as FadingEffectDurationPlugin;
 			if (previous != null) {
 				if ((previous.Def == this)) {
 					//previous FadingEffect is of the same type, we sum them up to the max values and apply to the old one
 
-					double maxDuration = this.MaxTicks * tickSeconds;
-					double newDuration = Math.Min(previous.Timer + duration, maxDuration);
-					double newPower = Math.Min(previous.EffectPower + effectPower, this.GetMaxPower(source, target, sourceType));
+					var maxDuration = this.MaxTicks * tickSeconds;
+					var newDuration = Math.Min(previous.Timer + duration, maxDuration);
+					var newPower = Math.Min(previous.EffectPower + effectPower, this.GetMaxPower(source, target, sourceType));
 
 					//reinit with new duration and effect. Hope it doesn't break anything :D
 					//also we change it's source, so that the new attacker is responsible now
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			FadingEffectDurationPlugin effect = (FadingEffectDurationPlugin) this.Create();
+			var effect = (FadingEffectDurationPlugin) this.Create();
 			effect.Init(source, sourceType, effectPower,
 				TimeSpan.FromSeconds(duration));
 			target.AddPlugin(key, effect);
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void OnTimeout(TagHolder cont) {
-			FadingEffectDurationPlugin eff = (FadingEffectDurationPlugin) cont;
+			var eff = (FadingEffectDurationPlugin) cont;
 
 			eff.On_FadingEffectTick();
 			eff.EffectPower -= this.differencePerTick;

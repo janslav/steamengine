@@ -60,8 +60,8 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		protected override void Handle(TcpConnection<LoginClient> conn, LoginClient state) {
 			Console.WriteLine(state + " identified as " + this.accname);
 
-			ServersListPacket serverList = Pool<ServersListPacket>.Acquire();
-			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
+			var serverList = Pool<ServersListPacket>.Acquire();
+			var remoteAddress = conn.EndPoint.Address.GetAddressBytes();
 
 			serverList.Prepare(ServerUtils.GetMatchingInterfaceAddress(remoteAddress));
 
@@ -101,10 +101,10 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		protected override void Handle(TcpConnection<LoginClient> conn, LoginClient state) {
-			LoginToServerPacket packet = Pool<LoginToServerPacket>.Acquire();
-			byte[] remoteAddress = conn.EndPoint.Address.GetAddressBytes();
+			var packet = Pool<LoginToServerPacket>.Acquire();
+			var remoteAddress = conn.EndPoint.Address.GetAddressBytes();
 
-			byte[] localAddress = ServerUtils.GetMatchingInterfaceAddress(remoteAddress);
+			var localAddress = ServerUtils.GetMatchingInterfaceAddress(remoteAddress);
 
 			packet.Prepare(localAddress, Settings.KnownGameServersList[this.chosenServer].Port);
 

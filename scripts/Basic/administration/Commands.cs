@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <remarks>Has no effect on players.</remarks>
 		[SteamFunction]
 		public static void GM(Character self) {
-			AbstractAccount acc = self.Account;
+			var acc = self.Account;
 			if (acc != null) {
 				if (acc.PLevel < acc.MaxPLevel) {
 					acc.PLevel = acc.MaxPLevel;

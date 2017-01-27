@@ -25,9 +25,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode arg;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_Lazy_EvalExpression constructed = new OpNode_Lazy_EvalExpression(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_Lazy_EvalExpression(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//todo ?
@@ -57,7 +57,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVar = this.arg.Run(vars);
+			var retVar = this.arg.Run(vars);
 			this.ReplaceSelf(this.arg);
 			return retVar;
 		}

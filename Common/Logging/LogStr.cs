@@ -95,11 +95,11 @@ namespace SteamEngine.Common {
 		public static bool ParseFileLine(string fileline, out string file, out int line) {
 			file = "";
 			line = 0;
-			int idx = fileline.IndexOf(',', 0);
+			var idx = fileline.IndexOf(',', 0);
 			if (idx <= 0)
 				return false;
 			file = fileline.Substring(0, idx).Trim();
-			string line_str = fileline.Substring(idx + 1, fileline.Length - idx - 1).Trim();
+			var line_str = fileline.Substring(idx + 1, fileline.Length - idx - 1).Trim();
 			try {
 				line = int.Parse(line_str, CultureInfo.InvariantCulture);
 			} catch {
@@ -111,35 +111,35 @@ namespace SteamEngine.Common {
 		#region Static methods
 
 		public static LogStr Raw(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, string.Concat(obj));
 		}
 		public static LogStr Warning(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Warning, str));
 		}
 		public static LogStr Error(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Error, str));
 		}
 		public static LogStr Critical(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Critical, str));
 		}
 		public static LogStr Fatal(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Fatal, str));
 		}
 		public static LogStr Debug(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr Highlight(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Highlight, str));
 		}
 		public static LogStr Title(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(null, GetTitleSettingMessage(str));
 		}
 		//public static LogStr SetStyle(LogStyles style) {
@@ -150,19 +150,19 @@ namespace SteamEngine.Common {
 		//    return new LogStr(str, LogStr.GetStyleMessage(style, str));
 		//}
 		public static LogStr Number(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Number, str));
 		}
 		public static LogStr Ident(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.Ident, str));
 		}
 		public static LogStr FilePos(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.FilePos, str));
 		}
 		public static LogStr File(object obj) {
-			string str = Tools.ObjToString(obj);
+			var str = Tools.ObjToString(obj);
 			return new LogStr(str, GetStyleMessage(LogStyles.File, str));
 		}
 		public static LogStr Raw(string str) {
@@ -184,7 +184,7 @@ namespace SteamEngine.Common {
 			return new LogStr(str, GetStyleMessage(LogStyles.Debug, str));
 		}
 		public static LogStr FileLine(string file, int line) {
-			string str = TranslatePath(file) + ", " + line.ToString(CultureInfo.InvariantCulture);
+			var str = TranslatePath(file) + ", " + line.ToString(CultureInfo.InvariantCulture);
 			return new LogStr("(" + str + ") ", "(" + GetStyleMessage(LogStyles.FileLine, str) + ") ");
 		}
 		public static LogStr Highlight(string str) {
@@ -230,10 +230,10 @@ namespace SteamEngine.Common {
 		}
 
 		public static LogStr Concat(params LogStr[] args) {
-			int n = args.Length;
-			string[] rawstrings = new string[n];
-			string[] nicestrings = new string[n];
-			for (int i = 0; i < n; i++) {
+			var n = args.Length;
+			var rawstrings = new string[n];
+			var nicestrings = new string[n];
+			for (var i = 0; i < n; i++) {
 				rawstrings[i] = args[i].rawString;
 				nicestrings[i] = args[i].niceString;
 			}
@@ -291,12 +291,12 @@ namespace SteamEngine.Common {
 		}
 
 		public LogStrBuilder Append(object arg) {
-			string str = arg as string;
+			var str = arg as string;
 			if (str != null) {
 				this.Append(str);
 				return this;
 			}
-			LogStr ls = arg as LogStr;
+			var ls = arg as LogStr;
 			if (ls != null) {
 				this.Append(ls);
 				return this;

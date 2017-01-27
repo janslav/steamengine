@@ -40,12 +40,12 @@ namespace SteamEngine {
 		*/
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string[] SplitSphereString(string input, bool spaceSplits) {
-			List<string> results = new List<string>();
-			char lastChar = 'a';	//nothing meaningful
-			bool inQuote = false;
-			int startPos = 0;
-			for (int pos = 0; pos < input.Length; pos++) {
-				char c = input[pos];
+			var results = new List<string>();
+			var lastChar = 'a';	//nothing meaningful
+			var inQuote = false;
+			var startPos = 0;
+			for (var pos = 0; pos < input.Length; pos++) {
+				var c = input[pos];
 				if (c == '\t') c = ' ';
 				if (c == '\"') {
 					inQuote = !inQuote;
@@ -107,7 +107,7 @@ namespace SteamEngine {
 		*/
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string GetCAsciiString(BinaryReader br, int count) {
-			byte[] buffer = br.ReadBytes(count);
+			var buffer = br.ReadBytes(count);
 			int len;
 			for (len = 0; len < count && buffer[len] != 0; len++) ;
 			return Encoding.ASCII.GetString(buffer, 0, len);
@@ -119,7 +119,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string Uncomment(string input) {
-			Match m = uncommentRE.Match(input);
+			var m = uncommentRE.Match(input);
 			if (m.Success) {
 				return m.Groups["value"].Value;
 			}
@@ -148,7 +148,7 @@ namespace SteamEngine {
 				throw new SanityCheckException("ArithmeticMean called on no values");
 
 			double sum = 0;
-			foreach (double val in values) {
+			foreach (var val in values) {
 				sum += val;
 			}
 			return sum / values.Length;

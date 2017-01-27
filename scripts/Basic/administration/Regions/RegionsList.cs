@@ -31,7 +31,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 600;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(regsListTK);//regionlist si posilame v argumentu (napriklad pri pagingu)
+			var regionsList = (List<StaticRegion>) args.GetTag(regsListTK);//regionlist si posilame v argumentu (napriklad pri pagingu)
 			if (regionsList == null) {
 				//vzit seznam a pripadne ho setridit...
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
@@ -39,16 +39,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				args.SetTag(regsListTK, regionsList); //ulozime to do argumentu dialogu
 			}
 
-			object sorting = args.GetTag(regsSortingTK);
+			var sorting = args.GetTag(regsSortingTK);
 			if (sorting != null) {//mame cim tridit?
 				this.SortBy(regionsList, (SortingCriteria) Convert.ToInt32(sorting));
 			}
 
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, regionsList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, regionsList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -90,9 +90,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				StaticRegion reg = regionsList[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var reg = regionsList[i];
 
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(10 + (2 * i)).Build(); //info o regionu
 				dlg.LastTable[rowCntr, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(11 + (2 * i)).Build(); //smazat region (huh!)
@@ -109,8 +109,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam regionu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<StaticRegion> regionsList = (List<StaticRegion>) args.GetTag(regsListTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var regionsList = (List<StaticRegion>) args.GetTag(regsListTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, tridit)				
 				switch (gr.PressedButton) {
 					case 0: //exit
@@ -118,11 +118,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 1: //zalozit novy region
 						//jako parametry vzit jednoduse 4 zakladni souradnice rectanglu
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_New_Region>.Instance, new DialogArgs(0, 0, 0, 0));
+						var newGi = gi.Cont.Dialog(SingletonScript<D_New_Region>.Instance, new DialogArgs(0, 0, 0, 0));
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 2: //vyhledavat / zuzit vyber
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.SetTag(regsSearchTK, nameCriteria);//uloz info o vyhledavacim kriteriu
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem												
 						args.RemoveTag(regsListTK);//vycistit soucasny odkaz na regionlist aby se mohl prenacist
@@ -153,9 +153,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//1 sloupecek
 			} else {
 				//zjistime si radek
-				int row = (gr.PressedButton - 10) / 2;
-				int buttNo = (gr.PressedButton - 10) % 2;
-				StaticRegion region = regionsList[row];
+				var row = (gr.PressedButton - 10) / 2;
+				var buttNo = (gr.PressedButton - 10) % 2;
+				var region = regionsList[row];
 				Gump newGi;
 				switch (buttNo) {
 					case 0: //region info
@@ -201,7 +201,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void RegionsList(Thing self, ScriptArgs text) {
 			//Parametry dialogu:
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(regsSortingTK, SortingCriteria.NameAsc);//zakladni trideni
 			self.Dialog(SingletonScript<D_Regions>.Instance, newArgs);
 		}

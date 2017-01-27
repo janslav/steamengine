@@ -66,17 +66,17 @@ namespace SteamEngine {
 			start = start.TopPoint;
 			target = target.TopPoint;
 
-			int dx = (start.X - target.X);
-			int dy = (start.Y - target.Y);
+			var dx = (start.X - target.X);
+			var dy = (start.Y - target.Y);
 
-			int ax = Math.Abs(dx);
-			int ay = Math.Abs(dy);
+			var ax = Math.Abs(dx);
+			var ay = Math.Abs(dy);
 
 			if (ay > ax) {
 				if (ax == 0) {
 					return ((dy > 0) ? Direction.North : Direction.South);
 				}
-				int slope = ay / ax;
+				var slope = ay / ax;
 				if (slope > 2) {
 					return ((dy > 0) ? Direction.North : Direction.South);
 				}
@@ -90,7 +90,7 @@ namespace SteamEngine {
 						return (Direction.North);	// here ?
 					return ((dx > 0) ? Direction.West : Direction.East);
 				}
-				int slope = ax / ay;
+				var slope = ax / ay;
 				if (slope > 2) {
 					return ((dx > 0) ? Direction.West : Direction.East);
 				}
@@ -157,11 +157,11 @@ namespace SteamEngine {
 		}
 
 		public override bool Equals(object obj) {
-			Point2D p = obj as Point2D;
+			var p = obj as Point2D;
 			if (p != null) {
 				return ((this.x == p.x) && (this.y == p.y));
 			}
-			IPoint2D ip = obj as IPoint2D;
+			var ip = obj as IPoint2D;
 			if (ip != null) {
 				return ((this.x == ip.X) && (this.y == ip.Y));
 			}
@@ -238,11 +238,11 @@ namespace SteamEngine {
 		}
 
 		public override bool Equals(object obj) {
-			Point3D p = obj as Point3D;
+			var p = obj as Point3D;
 			if (p != null) {
 				return ((this.X == p.X) && (this.Y == p.Y) && (this.z == p.z));
 			}
-			IPoint3D ip = obj as IPoint3D;
+			var ip = obj as IPoint3D;
 			if (ip != null) {
 				return ((this.X == ip.X) && (this.Y == ip.Y) && (this.z == ip.Z));
 			}
@@ -313,13 +313,13 @@ namespace SteamEngine {
 		}
 
 		public static Point4D Parse(string value) {
-			Match match = positionRE.Match(value);
+			var match = positionRE.Match(value);
 			if (match.Success) {
-				GroupCollection gc = match.Groups;
-				int x = ConvertTools.ParseInt32(gc["x"].Value);
-				int y = ConvertTools.ParseInt32(gc["y"].Value);
-				string zstr = gc["z"].Value;
-				string mstr = gc["m"].Value;
+				var gc = match.Groups;
+				var x = ConvertTools.ParseInt32(gc["x"].Value);
+				var y = ConvertTools.ParseInt32(gc["y"].Value);
+				var zstr = gc["z"].Value;
+				var mstr = gc["m"].Value;
 				int z;
 				byte m;
 				if (zstr.Length > 0) {
@@ -363,11 +363,11 @@ namespace SteamEngine {
 		}
 
 		public override bool Equals(object obj) {
-			Point4D p = obj as Point4D;
+			var p = obj as Point4D;
 			if (p != null) {
 				return ((this.X == p.X) && (this.Y == p.Y) && (this.Z == p.Z) && (this.m == p.m));
 			}
-			IPoint4D ip = obj as IPoint4D;
+			var ip = obj as IPoint4D;
 			if (ip != null) {
 				return ((this.X == ip.X) && (this.Y == ip.Y) && (this.Z == ip.Z) && (this.m == ip.M));
 			}

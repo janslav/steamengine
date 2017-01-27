@@ -53,16 +53,16 @@ namespace SteamEngine.Common {
 			var result = entriesFromCode.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
 			var helperList = new Dictionary<string,string>(result, StringComparer.OrdinalIgnoreCase);
 
-			string path = Tools.CombineMultiplePaths(".", servLocDir,
+			var path = Tools.CombineMultiplePaths(".", servLocDir,
 				Enum.GetName(typeof(Language), this.Language),
 				this.AssemblyName,
 				string.Concat(this.Defname, ".txt"));
 
-			FileInfo file = new FileInfo(path);
+			var file = new FileInfo(path);
 			if (file.Exists) {
-				using (StreamReader reader = file.OpenText()) {
+				using (var reader = file.OpenText()) {
 					string line;
-					int lineNum = 0;
+					var lineNum = 0;
 					while ((line = reader.ReadLine()) != null) {
 						lineNum++;
 						line = line.Trim();
@@ -70,10 +70,10 @@ namespace SteamEngine.Common {
 							continue;
 						}
 
-						Match m = valueRE.Match(line);
+						var m = valueRE.Match(line);
 						if (m.Success) {
-							GroupCollection gc = m.Groups;
-							string name = gc["name"].Value;
+							var gc = m.Groups;
+							var name = gc["name"].Value;
 							if (result.ContainsKey(name)) {
 								if (helperList.ContainsKey(name)) {
 									result[name] = gc["value"].Value;
@@ -94,8 +94,8 @@ namespace SteamEngine.Common {
 			//lines that are on the class but aren't in the text file, we append them to the file
 			if (helperList.Count > 0) {
 				Tools.EnsureDirectory(Path.GetDirectoryName(path));
-				using (StreamWriter writer = new StreamWriter(file.Open(FileMode.Append, FileAccess.Write))) {
-					foreach (KeyValuePair<string, string> pair in helperList) {
+				using (var writer = new StreamWriter(file.Open(FileMode.Append, FileAccess.Write))) {
+					foreach (var pair in helperList) {
 						writer.WriteLine(pair.Key.PadRight(32) + "= " + pair.Value);
 					}
 				}

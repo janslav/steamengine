@@ -71,8 +71,8 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal override object Run(ScriptVars vars) {
 			try {
-				int lVal = Convert.ToInt32(this.leftNode.Run(vars), CultureInfo.InvariantCulture);
-				int rVal = Convert.ToInt32(this.rightNode.Run(vars), CultureInfo.InvariantCulture);
+				var lVal = Convert.ToInt32(this.leftNode.Run(vars), CultureInfo.InvariantCulture);
+				var rVal = Convert.ToInt32(this.rightNode.Run(vars), CultureInfo.InvariantCulture);
 				if (lVal < rVal) {
 					return Globals.dice.Next(lVal, rVal + 1);
 				}
@@ -109,19 +109,19 @@ namespace SteamEngine.Scripting.Interpretation {
 			this.totalOdds = totalOdds;
 			//?TODO sort the pairs for better effectivity
 
-			foreach (ValueOddsPair pair in pairs) {
+			foreach (var pair in pairs) {
 				((OpNode) pair.Value).parent = this;
 			}
 		}
 
 		internal override object Run(ScriptVars vars) {
-			OpNode chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(this.pairs, this.totalOdds);
+			var chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(this.pairs, this.totalOdds);
 			return chosenNode.Run(vars);
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			foreach (ValueOddsPair pair in this.pairs) {
-				OpNode node = (OpNode) pair.Value;
+			foreach (var pair in this.pairs) {
+				var node = (OpNode) pair.Value;
 				if (node == oldNode) {
 					pair.Value = newNode;
 					return;
@@ -131,8 +131,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("{");
-			foreach (ValueOddsPair pair in this.pairs) {
+			var str = new StringBuilder("{");
+			foreach (var pair in this.pairs) {
 				str.Append(pair.Value).Append(" ").Append(pair.Odds.ToString(CultureInfo.InvariantCulture)).Append(" ");
 			}
 			return str.Append("}").ToString();
@@ -149,25 +149,25 @@ namespace SteamEngine.Scripting.Interpretation {
 			: base(parent, filename, line, column, origNode) {
 			this.pairs = pairs;
 			this.odds = odds;
-			foreach (OpNode odd in odds) {
+			foreach (var odd in odds) {
 				odd.parent = this;
 			}
-			foreach (ValueOddsPair pair in pairs) {
+			foreach (var pair in pairs) {
 				((OpNode) pair.Value).parent = this;
 			}
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object oSelf = vars.self;
+			var oSelf = vars.self;
 			try {
 				vars.self = vars.defaultObject;
-				int totalOdds = 0;
+				var totalOdds = 0;
 				for (int i = 0, n = this.pairs.Length; i < n; i++) {
-					int o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
+					var o = Convert.ToInt32(this.odds[i].Run(vars), CultureInfo.InvariantCulture);
 					totalOdds += o;
 					this.pairs[i].Odds = totalOdds;
 				}
-				OpNode chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(this.pairs, totalOdds);
+				var chosenNode = (OpNode) OpNode_Lazy_RandomExpression.GetRandomValue(this.pairs, totalOdds);
 				return chosenNode.Run(vars);
 			} catch (InterpreterException) {
 				throw;
@@ -184,14 +184,14 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			foreach (ValueOddsPair pair in this.pairs) {
-				OpNode node = (OpNode) pair.Value;
+			foreach (var pair in this.pairs) {
+				var node = (OpNode) pair.Value;
 				if (node == oldNode) {
 					pair.Value = newNode;
 					return;
 				}
 			}
-			int index = Array.IndexOf(this.odds, oldNode);
+			var index = Array.IndexOf(this.odds, oldNode);
 			if (index >= 0) {
 				this.odds[index] = newNode;
 				return;
@@ -200,7 +200,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("{");
+			var str = new StringBuilder("{");
 			for (int i = 0, n = this.pairs.Length; i < n; i++) {
 				str.Append(this.pairs[i].Value).Append(" ").Append(this.odds[i]).Append(" ");
 			}

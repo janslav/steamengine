@@ -60,16 +60,16 @@ namespace SteamEngine.Scripting.Interpretation {
 		protected Type[] GetParameterTypes() {
 			this.AssertCorrectThread();
 			if (this.parameterTypes == null) {
-				MethodBase methOrCtor = this.info as MethodBase;
+				var methOrCtor = this.info as MethodBase;
 				if (methOrCtor != null) {
-					ParameterInfo[] pars = methOrCtor.GetParameters();
+					var pars = methOrCtor.GetParameters();
 					this.parameterTypes = new Type[pars.Length];
 					for (int i = 0, n = pars.Length; i < n; i++) {
 						this.parameterTypes[i] = pars[i].ParameterType;
 					}
 					return this.parameterTypes;
 				}
-				FieldInfo field = this.info as FieldInfo;
+				var field = this.info as FieldInfo;
 				if (field != null) {
 					this.parameterTypes = new Type[1] { field.FieldType };
 					return this.parameterTypes;
@@ -91,7 +91,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 					break;
 				case SpecialType.Params:
-					int nonArrayLength = this.parameterTypes.Length - 1;
+					var nonArrayLength = this.parameterTypes.Length - 1;
 					i = 0;
 					for (; i < nonArrayLength; i++) {
 						if (!MemberResolver.IsCompatibleType(this.parameterTypes[i], results[i])) {
@@ -100,7 +100,7 @@ namespace SteamEngine.Scripting.Interpretation {
 							return false;
 						}
 					}
-					Type arrayType = this.parameterTypes[nonArrayLength].GetElementType();
+					var arrayType = this.parameterTypes[nonArrayLength].GetElementType();
 					for (n = results.Length; i < n; i++) {
 						if (!MemberResolver.IsCompatibleType(arrayType, results[i])) {
 							//Console.WriteLine("ParamTypesMatch returning false: arrayType is "+arrayType
@@ -156,7 +156,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		private void TryMakeMemberDescriptor(MemberInfo info, SpecialType specType,
 				ref MemberDescriptor desc, ref List<MemberDescriptor> ambiguities) {
 			this.RunArgs();
-			MemberDescriptor newDesc = new MemberDescriptor(info, specType);
+			var newDesc = new MemberDescriptor(info, specType);
 			if (newDesc.ParamTypesMatch(this.Results)) {
 				if (desc != null) {
 					if (ambiguities == null) {
@@ -175,15 +175,15 @@ namespace SteamEngine.Scripting.Interpretation {
 			this.AssertCorrectThread();
 			//resolve as any member (method or property(as getter/setter method) or constructor or field)
 
-			bool nameMatches = false;
+			var nameMatches = false;
 			desc = null;
 			List<MemberDescriptor> ambiguities = null;
-			int argsLength = this.args.Length;
+			var argsLength = this.args.Length;
 			List<MemberInfo> namedWell = null;
 
 			if (IsMethod(memberTypes)) {
-				MethodInfo[] mis = type.GetMethods(BindingFlags.Public | flags);
-				foreach (MethodInfo mi in mis) {//methods
+				var mis = type.GetMethods(BindingFlags.Public | flags);
+				foreach (var mi in mis) {//methods
 					if (StringComparer.OrdinalIgnoreCase.Equals(this.name, mi.Name)) {
 						if (namedWell == null) {
 							namedWell = new List<MemberInfo>(1);
@@ -228,7 +228,7 @@ namespace SteamEngine.Scripting.Interpretation {
 						namedWell.Clear();
 					}
 
-					foreach (PropertyInfo pi in type.GetProperties(BindingFlags.Public | flags)) {
+					foreach (var pi in type.GetProperties(BindingFlags.Public | flags)) {
 						if (StringComparer.OrdinalIgnoreCase.Equals(this.name, pi.Name)) {
 							if (namedWell == null) {
 								namedWell = new List<MemberInfo>(1);
@@ -240,7 +240,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 					if ((namedWell != null) && (namedWell.Count > 0)) {
 						foreach (PropertyInfo pi in namedWell) {
-							MethodInfo setter = pi.GetSetMethod(false); //false for public only
+							var setter = pi.GetSetMethod(false); //false for public only
 							if (setter != null) {
 								if (argsLength == 1) {
 									this.TryMakeMemberDescriptor(setter, SpecialType.Normal, ref desc, ref ambiguities);
@@ -249,7 +249,7 @@ namespace SteamEngine.Scripting.Interpretation {
 						}
 						if (desc == null) {
 							foreach (PropertyInfo pi in namedWell) {
-								MethodInfo setter = pi.GetSetMethod(false); //false for public only
+								var setter = pi.GetSetMethod(false); //false for public only
 								if (setter != null) {
 									if ((argsLength > 0) && (pi.PropertyType == typeof(string))) {
 										this.TryMakeMemberDescriptor(setter, SpecialType.String, ref desc, ref ambiguities);
@@ -259,7 +259,7 @@ namespace SteamEngine.Scripting.Interpretation {
 							if (desc == null) {
 								foreach (PropertyInfo pi in namedWell) {
 									if (argsLength == 0) {
-										MethodInfo getter = pi.GetGetMethod(false); //false for public only
+										var getter = pi.GetGetMethod(false); //false for public only
 										if (getter != null) {
 											this.TryMakeMemberDescriptor(getter, SpecialType.Normal, ref desc, ref ambiguities);
 										}
@@ -274,16 +274,16 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (IsConstructor(memberTypes)) {
 				if ((desc == null) && (StringComparer.OrdinalIgnoreCase.Equals(this.name, type.Name))) { //constructors
 					nameMatches = true;
-					ConstructorInfo[] cis = type.GetConstructors();
-					foreach (ConstructorInfo ci in cis) {
+					var cis = type.GetConstructors();
+					foreach (var ci in cis) {
 						if (ci.GetParameters().Length == argsLength) {
 							this.TryMakeMemberDescriptor(ci, SpecialType.Normal, ref desc, ref ambiguities);
 						}
 					}
 					if (desc == null) {
-						foreach (ConstructorInfo ci in cis) {
-							ParameterInfo[] pars = ci.GetParameters();
-							int parsLength = pars.Length;
+						foreach (var ci in cis) {
+							var pars = ci.GetParameters();
+							var parsLength = pars.Length;
 							if ((argsLength >= (parsLength - 1)) && (parsLength > 0)) {//(..., params sometype[] foo)
 								if (pars[pars.Length - 1].GetCustomAttributes(typeof(ParamArrayAttribute), true).Length > 0) {
 									this.TryMakeMemberDescriptor(ci, SpecialType.Params, ref desc, ref ambiguities);
@@ -291,9 +291,9 @@ namespace SteamEngine.Scripting.Interpretation {
 							}
 						}
 						if (desc == null) {
-							foreach (ConstructorInfo ci in cis) {
-								ParameterInfo[] pars = ci.GetParameters();
-								int parsLength = pars.Length;
+							foreach (var ci in cis) {
+								var pars = ci.GetParameters();
+								var parsLength = pars.Length;
 								if ((parsLength == 1) && (pars[0].ParameterType == typeof(string))) {
 									this.TryMakeMemberDescriptor(ci, SpecialType.String, ref desc, ref ambiguities);
 								}
@@ -308,7 +308,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					if (namedWell != null) {
 						namedWell.Clear();
 					}
-					foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | flags)) {
+					foreach (var fi in type.GetFields(BindingFlags.Public | flags)) {
 						if (StringComparer.OrdinalIgnoreCase.Equals(this.name, fi.Name)) {
 							if (namedWell == null) {
 								namedWell = new List<MemberInfo>(1);
@@ -341,8 +341,8 @@ namespace SteamEngine.Scripting.Interpretation {
 					return true;
 				}
 
-				StringBuilder sb = new StringBuilder("Ambiguity detected when resolving expression as object method/property. There were following possibilities:");
-				foreach (MemberDescriptor md in resolvedAmbiguities) {
+				var sb = new StringBuilder("Ambiguity detected when resolving expression as object method/property. There were following possibilities:");
+				foreach (var md in resolvedAmbiguities) {
 					sb.Append(Environment.NewLine).Append(md);
 				}
 				throw new InterpreterException(sb.ToString(),
@@ -366,7 +366,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal void RunArgs() {
 			this.AssertCorrectThread();
 			if (this.Results == null) {
-				object oSelf = this.vars.self;
+				var oSelf = this.vars.self;
 				this.results = new object[this.args.Length];
 				this.vars.self = this.vars.defaultObject;
 				try {
@@ -381,11 +381,11 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal LScriptHolder ParentScriptHolder {
 			get {//"topobj" of the parent node
-				LScriptHolder parentAsHolder = this.parent as LScriptHolder;
+				var parentAsHolder = this.parent as LScriptHolder;
 				if (parentAsHolder != null) {
 					return parentAsHolder;
 				}
-				OpNode parentAsOpNode = this.parent as OpNode;
+				var parentAsOpNode = this.parent as OpNode;
 				if (parentAsOpNode != null) {
 					return parentAsOpNode.ParentScriptHolder;
 				}
@@ -396,9 +396,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal object[] Results => this.results;
 
 		internal static bool ReturnsString(OpNode node) {
-			IKnownRetType nodeAsKnownType = node as IKnownRetType;
+			var nodeAsKnownType = node as IKnownRetType;
 			if (nodeAsKnownType != null) {
-				Type returnType = nodeAsKnownType.ReturnType;
+				var returnType = nodeAsKnownType.ReturnType;
 				if ((returnType == typeof(string)) || returnType.IsSubclassOf(typeof(string))) {
 					//we are sure that the nodeAsKnownType is always string (or null)
 					return true;
@@ -458,46 +458,46 @@ namespace SteamEngine.Scripting.Interpretation {
 		//ambiguity stuff starts here
 
 		internal static bool TryResolveAmbiguity(List<MemberDescriptor> descriptors, object[] results, out MemberDescriptor[] bestMatches) {
-			int n = descriptors.Count;
-			AmbiguityResolver[] resolvers = new AmbiguityResolver[n];
-			for (int i = 0; i < n; i++) {
+			var n = descriptors.Count;
+			var resolvers = new AmbiguityResolver[n];
+			for (var i = 0; i < n; i++) {
 				resolvers[i] = new AmbiguityResolver(descriptors[i]);
 			}
 
-			IList<AmbiguityResolver> bestGroup = CompareAmbiguities(resolvers, results);
+			var bestGroup = CompareAmbiguities(resolvers, results);
 
 			n = bestGroup.Count;
 			bestMatches = new MemberDescriptor[n];
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				bestMatches[i] = (MemberDescriptor) bestGroup[i].CreatedFrom;
 			}
 			return n == 1;
 		}
 
 		internal static bool TryResolveAmbiguity(List<MethodInfo> mis, object[] results, out MethodInfo[] bestMatches) {
-			int n = mis.Count;
-			AmbiguityResolver[] resolvers = new AmbiguityResolver[n];
-			for (int i = 0; i < n; i++) {
+			var n = mis.Count;
+			var resolvers = new AmbiguityResolver[n];
+			for (var i = 0; i < n; i++) {
 				resolvers[i] = new AmbiguityResolver(mis[i]);
 			}
 
-			IList<AmbiguityResolver> bestGroup = CompareAmbiguities(resolvers, results);
+			var bestGroup = CompareAmbiguities(resolvers, results);
 
 			n = bestGroup.Count;
 			bestMatches = new MethodInfo[n];
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				bestMatches[i] = (MethodInfo) bestGroup[i].CreatedFrom;
 			}
 			return n == 1;
 		}
 
 		private static IList<AmbiguityResolver> CompareAmbiguities(AmbiguityResolver[] resolvers, object[] results) {
-			List<List<AmbiguityResolver>> equalityGroups = new List<List<AmbiguityResolver>>();
+			var equalityGroups = new List<List<AmbiguityResolver>>();
 
-			foreach (AmbiguityResolver current in resolvers) {
+			foreach (var current in resolvers) {
 				current.EvalAmbiguity(results);
-				bool addedIntoGroup = false;
-				foreach (List<AmbiguityResolver> equalityGroup in equalityGroups) {
+				var addedIntoGroup = false;
+				foreach (var equalityGroup in equalityGroups) {
 					if (HaveEqualDistances(current, equalityGroup[0])) {
 						equalityGroup.Add(current);
 						addedIntoGroup = true;
@@ -505,16 +505,16 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 				}
 				if (!addedIntoGroup) {//create new group
-					List<AmbiguityResolver> newGroup = new List<AmbiguityResolver>();
+					var newGroup = new List<AmbiguityResolver>();
 					newGroup.Add(current);
 					equalityGroups.Add(newGroup);
 				}
 			}
 			equalityGroups.Sort(CompareEqalityGroups);
-			List<AmbiguityResolver> bestGroup = equalityGroups[equalityGroups.Count - 1];
+			var bestGroup = equalityGroups[equalityGroups.Count - 1];
 			equalityGroups.RemoveAt(equalityGroups.Count - 1);
 
-			foreach (List<AmbiguityResolver> equalityGroup in equalityGroups) {
+			foreach (var equalityGroup in equalityGroups) {
 				if (CompareEqalityGroups(bestGroup, equalityGroup) < 1) {
 					return resolvers;//we failed, we return the whole set :\
 				}
@@ -523,8 +523,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static bool HaveEqualDistances(AmbiguityResolver a, AmbiguityResolver b) {
-			int[] distancesA = a.Distances;
-			int[] distancesB = b.Distances;
+			var distancesA = a.Distances;
+			var distancesB = b.Distances;
 			for (int i = 0, n = distancesA.Length; i < n; i++) {
 				if (distancesA[i] != distancesB[i]) {
 					return false;
@@ -534,12 +534,12 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static int CompareEqalityGroups(List<AmbiguityResolver> groupA, List<AmbiguityResolver> groupB) {
-			int[] distancesA = groupA[0].Distances;
-			int[] distancesB = groupB[0].Distances;
-			int retVal = 0;
+			var distancesA = groupA[0].Distances;
+			var distancesB = groupB[0].Distances;
+			var retVal = 0;
 			for (int i = 0, n = distancesA.Length; i < n; i++) {
-				int distA = distancesA[i];
-				int distB = distancesB[i];
+				var distA = distancesA[i];
+				var distB = distancesB[i];
 				if (distA < distB) {
 					if (retVal == 0) {
 						retVal = 1;
@@ -588,7 +588,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			internal void EvalAmbiguity(object[] results) {
 				this.AssertCorrectThread();
 				this.distances = new int[results.Length];
-				Type[] paramTypes = this.GetParameterTypes();
+				var paramTypes = this.GetParameterTypes();
 
 				for (int i = 0, n = results.Length; i < n; i++) {
 					this.distances[i] = GetHierarchyDistance(paramTypes[i], results[i]);
@@ -599,8 +599,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (from == null) {
 					return int.MaxValue;
 				}
-				Type fromType = from.GetType();
-				int dist = GetSubclassDistance(toType, fromType);
+				var fromType = from.GetType();
+				var dist = GetSubclassDistance(toType, fromType);
 				if (dist == 0) {
 					return dist;//types are equal, wow! :)
 				}
@@ -620,14 +620,14 @@ namespace SteamEngine.Scripting.Interpretation {
 					return 4;
 				}
 
-				int ifaceDist = GetInterfaceDistance(toType, fromType);
+				var ifaceDist = GetInterfaceDistance(toType, fromType);
 
 				return 1000 + Math.Min(dist, ifaceDist);
 				//1000 + because the number distances are primary
 			}
 
 			private static int GetSubclassDistance(Type toType, Type fromType) {
-				int distance = 0;
+				var distance = 0;
 				do {
 					if (toType.Equals(fromType))
 						return distance;
@@ -641,16 +641,16 @@ namespace SteamEngine.Scripting.Interpretation {
 				if (!toType.IsInterface) {
 					return int.MaxValue;//totype is no interface
 				}
-				List<Type> fromTypeBaseTypes = new List<Type>();
+				var fromTypeBaseTypes = new List<Type>();
 
 				do {
 					fromTypeBaseTypes.Add(fromType);
 					fromType = fromType.BaseType;
 				} while (fromType != null);
 
-				for (int i = fromTypeBaseTypes.Count - 1; i >= 0; i--) {
-					Type fromTypeBase = fromTypeBaseTypes[i];
-					Type[] ifaces = fromTypeBase.GetInterfaces();
+				for (var i = fromTypeBaseTypes.Count - 1; i >= 0; i--) {
+					var fromTypeBase = fromTypeBaseTypes[i];
+					var ifaces = fromTypeBase.GetInterfaces();
 					if (Array.IndexOf(ifaces, toType) > -1) { //it contains the iface
 						return i + GetHighestIfaceDistanceRecursive(ifaces, toType);
 					}
@@ -659,9 +659,9 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 
 			private static int GetHighestIfaceDistanceRecursive(Type[] ifaces, Type toType) {
-				int highestDist = 0;
-				foreach (Type iface in ifaces) {
-					int newDist = GetHighestIfaceDistanceRecursive(iface.GetInterfaces(), toType);
+				var highestDist = 0;
+				foreach (var iface in ifaces) {
+					var newDist = GetHighestIfaceDistanceRecursive(iface.GetInterfaces(), toType);
 					if (newDist > highestDist) {
 						highestDist = newDist;
 					}

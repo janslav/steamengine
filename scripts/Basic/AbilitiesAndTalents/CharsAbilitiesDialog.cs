@@ -34,20 +34,20 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam abilit (je-li)
-			List<Ability> abList = args.GetTag(listTK) as List<Ability>;
+			var abList = args.GetTag(listTK) as List<Ability>;
 
 			if (abList == null) {
 				//vzit seznam abilit z focusa dle vyhledavaciho kriteria
-				Character whose = (Character) focus;
+				var whose = (Character) focus;
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
 				abList = this.ListifyAbilities(whose.Abilities, TagMath.SGetTag(args, criteriumTK));
 				this.SortAbilities(abList, (SortingCriteria) TagMath.IGetTag(args, sortingTK));
 				args.SetTag(listTK, abList); //ulozime to do argumentu dialogu				
 			}
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, abList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, abList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(70, 70);
@@ -96,10 +96,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			TimeSpan now = Globals.TimeAsSpan;
-			for (int i = firstiVal; i < imax; i++) {
-				Ability ab = abList[i];
+			var rowCntr = 0;
+			var now = Globals.TimeAsSpan;
+			for (var i = firstiVal; i < imax; i++) {
+				var ab = abList[i];
 
 				//infodialog
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((5 * i) + 10).Build();
@@ -107,9 +107,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 2] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((5 * i) + 11).Width(30).Text("" + ab.ModifiedPoints).Build();
 				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text("/" + ab.MaxPoints).XPos(30).Build();
 
-				TimeSpan ago = now - ab.LastUsage;
+				var ago = now - ab.LastUsage;
 				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Math.Round(ago.TotalSeconds, 1) + " secs ago").Build();
-				AbilityDef adef = ab.Def;
+				var adef = ab.Def;
 				if (adef is PassiveAbilityDef) { //PassiveAbilityDef ability nebude mit vubec nic na mackani
 					dlg.LastTable[rowCntr, 4] = GUTAText.Builder.Text("").Build();
 					dlg.LastTable[rowCntr, 5] = GUTAText.Builder.Text("").Build();
@@ -144,16 +144,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam abilit bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<Ability> abList = (List<Ability>) args.GetTag(listTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
+			var abList = (List<Ability>) args.GetTag(listTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, abList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //vyhledat dle zadani
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(criteriumTK, nameCriteria);
 						args.RemoveTag(listTK);//vycistit soucasny odkaz na taglist aby se mohl prenacist
@@ -181,16 +181,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 8: //pridat abilitu
 						//nacteme obsah obou input fieldu
-						string abilityDefname = gr.GetTextResponse(6);
-						decimal abilityPoints = gr.GetNumberResponse(7);
-						AbilityDef abDef = AbilityDef.GetByDefname(abilityDefname);
+						var abilityDefname = gr.GetTextResponse(6);
+						var abilityPoints = gr.GetNumberResponse(7);
+						var abDef = AbilityDef.GetByDefname(abilityDefname);
 						if (abDef == null) {
 							//zadal neexistujici abilitydefname
-							Gump newGi = D_Display_Text.ShowError("Chybnì zadáno, neznámý abilitydefname: " + abilityDefname);
+							var newGi = D_Display_Text.ShowError("Chybnì zadáno, neznámý abilitydefname: " + abilityDefname);
 							DialogStacking.EnstackDialog(gi, newGi);
 							return;
 						}
-						Character abiliter = (Character) gi.Focus;
+						var abiliter = (Character) gi.Focus;
 						abiliter.SetRealAbilityPoints(abDef, (int) abilityPoints); //zalozi novou / zmodifikuje hodnotu existujici ability
 
 						args.RemoveTag(listTK); //promazeme seznam pro prenacteni
@@ -198,12 +198,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 9: //Ulozit zmeny
 						abiliter = (Character) gi.Focus;
-						string result = "Výsledek zmìn hodnot abilit: <br>";
-						for (int abId = firstOnPage; abId < imax; abId++) {
-							int inptID = 5 * abId + 11;
-							Ability chgdAbility = abList[abId];
-							int newAbilityValue = (int) gr.GetNumberResponse(inptID);
-							int oldAbilityValue = abiliter.GetAbility(chgdAbility.Def);
+						var result = "Výsledek zmìn hodnot abilit: <br>";
+						for (var abId = firstOnPage; abId < imax; abId++) {
+							var inptID = 5 * abId + 11;
+							var chgdAbility = abList[abId];
+							var newAbilityValue = (int) gr.GetNumberResponse(inptID);
+							var oldAbilityValue = abiliter.GetAbility(chgdAbility.Def);
 							if (oldAbilityValue != newAbilityValue) {
 								result = result + "Abilita '" + chgdAbility.Name + "' zmìnìna z " + oldAbilityValue + " na " + newAbilityValue + "<br>";
 								abiliter.SetRealAbilityPoints(chgdAbility.Def, newAbilityValue);
@@ -216,9 +216,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, abList.Count, 1)) {//kliknuto na paging?
 			} else {
 				//zjistime kterej cudlik z radku byl zmacknut
-				int row = (gr.PressedButton - 10) / 5;
-				int buttNum = (gr.PressedButton - 10) % 5;
-				Ability ab = abList[row];
+				var row = (gr.PressedButton - 10) / 5;
+				var buttNum = (gr.PressedButton - 10) % 5;
+				var ab = abList[row];
 				Gump newGi;
 				switch (buttNum) {
 					case 0: //ability info
@@ -243,8 +243,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Retreives the list of all chars abilities</summary>
 		private List<Ability> ListifyAbilities(IEnumerable<Ability> abilities, string criteria) {
-			List<Ability> absList = new List<Ability>();
-			foreach (Ability entry in abilities) {
+			var absList = new List<Ability>();
+			foreach (var entry in abilities) {
 				if (criteria == null || criteria.Equals("")) {
 					absList.Add(entry);//bereme vse
 				} else if (entry.Name.ToUpper().Contains(criteria.ToUpper())) {
@@ -287,7 +287,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		[SteamFunction]
 		public static void AbilitiesList(Character self, ScriptArgs text) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(sortingTK, SortingCriteria.NameAsc);//trideni
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				self.Dialog(SingletonScript<D_CharsAbilitiesList>.Instance, newArgs);

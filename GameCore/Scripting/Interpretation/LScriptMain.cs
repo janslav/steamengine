@@ -40,16 +40,16 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		public static LScriptHolder GetNewSnippetRunner(string filename, int line, string script) {
 			script += Environment.NewLine;
-			LScriptHolder newSnippetRunner = new LScriptHolder();
+			var newSnippetRunner = new LScriptHolder();
 
 			try {
 				newSnippetRunner.SetMetadataAndCompile(inputFilename: filename, inputStartLine: line, inputCode: script);
 				return newSnippetRunner;
 			} catch (ParserLogException ple) {
-				LogStrBuilder lstr = new LogStrBuilder();
+				var lstr = new LogStrBuilder();
 				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
-					ParseException pe = ple.GetError(i);
-					int curline = pe.GetLine() + line;
+					var pe = ple.GetError(i);
+					var curline = pe.GetLine() + line;
 					if (i > 0) {
 						lstr.Append(Environment.NewLine);
 					}
@@ -98,8 +98,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal static LScriptHolder LoadAsFunction(TriggerSection input) {
 			SeShield.AssertInTransaction();
 
-			string name = input.TriggerName;
-			LScriptHolder sc = ScriptHolder.GetFunction(name) as LScriptHolder;
+			var name = input.TriggerName;
+			var sc = ScriptHolder.GetFunction(name) as LScriptHolder;
 			if (sc == null) {
 				sc = new LScriptHolder(input);
 				sc.RegisterAsFunction();
@@ -123,8 +123,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				throw;
 			} catch (ParserLogException ple) {
 				for (int i = 0, n = ple.GetErrorCount(); i < n; i++) {
-					ParseException pe = ple.GetError(i);
-					int line = pe.GetLine() + startLine;
+					var pe = ple.GetError(i);
+					var line = pe.GetLine() + startLine;
 					Logger.WriteError(parent.Filename, line, pe);
 				}
 			} catch (RecursionTooDeepException) {
@@ -144,7 +144,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			Analyzer analyzer = new LScriptAnalyzer();
 			node = analyzer.Analyze(node);
 			//DisplayTree(node);
-			OpNode finishedNode = CompileNode(parent, node, new LScriptCompilationContext());
+			var finishedNode = CompileNode(parent, node, new LScriptCompilationContext());
 			return finishedNode;
 		}
 
@@ -377,7 +377,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal static LScriptHolder GetParentScriptHolder(IOpNodeHolder holder) {
-			OpNode parentNode = holder as OpNode;
+			var parentNode = holder as OpNode;
 			if (parentNode != null) {
 				return parentNode.ParentScriptHolder;
 			}
@@ -389,7 +389,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			Console.WriteLine(context.indent + node + " : " + GetString(node));
 			//Console.WriteLine(indent+node);
 			for (int i = 0, n = node.GetChildCount(); i < n; i++) {
-				Node child = node.GetChildAt(i);
+				var child = node.GetChildAt(i);
 				context.indent += "    ";
 				DisplayTree(child, context);
 				context.indent = context.indent.Substring(0, context.indent.Length - 4);
@@ -404,13 +404,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal static string GetString(Node node) {
-			StringBuilder builder = new StringBuilder();
+			var builder = new StringBuilder();
 			BuildToString(node, builder);
 			return builder.ToString();
 		}
 
 		private static void BuildToString(Node node, StringBuilder builder) {
-			Token token = node as Token;
+			var token = node as Token;
 			if (token != null) {
 				if (node.GetId() == (int) StrictConstants.ESCAPEDCHAR) {
 					builder.Append(token.GetImage()[1]);
@@ -420,7 +420,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 			if (node != null) {
 				for (int i = 0, n = node.GetChildCount(); i < n; i++) {
-					Node child = node.GetChildAt(i);
+					var child = node.GetChildAt(i);
 					BuildToString(child, builder);
 				}
 			}

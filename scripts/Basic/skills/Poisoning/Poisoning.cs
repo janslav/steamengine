@@ -36,15 +36,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			PoisonPotion potion = skillSeqArgs.Tool as PoisonPotion;
+			var self = skillSeqArgs.Self;
+			var potion = skillSeqArgs.Tool as PoisonPotion;
 			if (potion != null) {
 				if (!self.CanPickUpWithMessage(potion)) {
 					potion = null;
 				}
 			}
 			if (potion == null) {
-				Player selfAsPlayer = self as Player;
+				var selfAsPlayer = self as Player;
 				if (selfAsPlayer != null) {
 					selfAsPlayer.Target(SingletonScript<Targ_Poisoning_Potion>.Instance, skillSeqArgs);
 				} else {
@@ -53,14 +53,14 @@ namespace SteamEngine.CompiledScripts {
 				return TriggerResult.Cancel;
 			}
 
-			Item target = skillSeqArgs.Target1 as Item;
+			var target = skillSeqArgs.Target1 as Item;
 			if (target != null) {
 				if (!CanPoisonWithMessage(self, potion, target)) {
 					target = null;
 				}
 			}
 			if (target == null) {
-				Player selfAsPlayer = self as Player;
+				var selfAsPlayer = self as Player;
 				if (selfAsPlayer != null) {
 					selfAsPlayer.Target(SingletonScript<Targ_Poisoning_Target>.Instance, skillSeqArgs);
 				} else {
@@ -73,14 +73,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.Sound(0x4F);
 
-			PoisonPotion potion = (PoisonPotion) skillSeqArgs.Tool;
+			var potion = (PoisonPotion) skillSeqArgs.Tool;
 			skillSeqArgs.Param1 = PoisonedItemPlugin.Acquire(potion); //we need to remember the parameters
 
-			IPoisonableItem targetItem = (IPoisonableItem) skillSeqArgs.Target1;
-			int difficulty = targetItem.PoisoningDifficulty;
+			var targetItem = (IPoisonableItem) skillSeqArgs.Target1;
+			var difficulty = targetItem.PoisoningDifficulty;
 			skillSeqArgs.Success = this.CheckSuccess(self, difficulty);
 
 			if ((targetItem is Projectile) || (Globals.dice.NextDouble() <= 0.1)) { //1 potion can poison ~10 weapons or <=50 arrows
@@ -97,16 +97,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
-			PoisonPotion potion = (PoisonPotion) skillSeqArgs.Tool;
-			Item target = (Item) skillSeqArgs.Target1;
+			var potion = (PoisonPotion) skillSeqArgs.Tool;
+			var target = (Item) skillSeqArgs.Target1;
 			if (!CanPoisonWithMessage(self, potion, target)) {
 				return;
 			}
 
-			PoisonedItemPlugin plugin = (PoisonedItemPlugin) skillSeqArgs.Param1;
-			Projectile asProjectile = target as Projectile;
+			var plugin = (PoisonedItemPlugin) skillSeqArgs.Param1;
+			var asProjectile = target as Projectile;
 			if (asProjectile != null) {
 				plugin.BindToProjectile(asProjectile);
 			} else {
@@ -116,11 +116,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			if ((1200 - self.GetSkill(this)) > Globals.dice.Next(12000)) {
 				self.RedMessageCliloc(502148); //You make a grave mistake while applying the poison.
-				PoisonedItemPlugin plugin = (PoisonedItemPlugin) skillSeqArgs.Param1;
+				var plugin = (PoisonedItemPlugin) skillSeqArgs.Param1;
 				plugin.Apply(self, self, EffectFlag.FromPotion | EffectFlag.HarmfulEffect);
 				plugin.Delete();
 			}
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 			if (!self.CanPickUpWithMessage(target)) {
 				return false;
 			}
-			Weapon asWeapon = target as Weapon;
+			var asWeapon = target as Weapon;
 			if (asWeapon != null) {
 				if (asWeapon.PoisoningDifficulty < 1) {
 					self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThisWeapon);
@@ -141,13 +141,13 @@ namespace SteamEngine.CompiledScripts {
 				} //check for existing poison?
 				return true;
 			}
-			Projectile asProjectile = target as Projectile;
+			var asProjectile = target as Projectile;
 			if (asProjectile != null) {
 				if (asProjectile.PoisoningDifficulty < 1) {
 					self.SysMessage(Loc<PoisoningLoc>.Get(self.Language).CantPoisonThisProjectile);
 					return false;
 				}
-				PoisonedItemPlugin poison = PoisonedItemPlugin.GetPoisonPlugin(asProjectile);
+				var poison = PoisonedItemPlugin.GetPoisonPlugin(asProjectile);
 				if (poison != null)
 				{
 					if (poison.PoisonType != potion.PoisonType) {
@@ -176,7 +176,7 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
 			if (targetted is PoisonPotion) {
-				SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+				var skillSeq = (SkillSequenceArgs) parameter;
 				skillSeq.Tool = targetted;
 				skillSeq.PhaseSelect();
 				return TargetResult.Done;
@@ -194,7 +194,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			SkillSequenceArgs skillSeq = (SkillSequenceArgs) parameter;
+			var skillSeq = (SkillSequenceArgs) parameter;
 			skillSeq.Target1 = targetted;
 			skillSeq.PhaseStart();
 			return TargetResult.Done;

@@ -71,14 +71,14 @@ namespace SteamEngine.AuxiliaryServer {
 			knownGameServersList = new List<IGameServerSetup>();
 			knownGameServersListWrapper = new ReadOnlyCollection<IGameServerSetup>(knownGameServersList);
 
-			IniFile ini = new IniFile(iniFileName);
+			var ini = new IniFile(iniFileName);
 
-			IniFileSection files = ini.GetNewOrParsedSection("Files");
+			var files = ini.GetNewOrParsedSection("Files");
 
 			logPath = Path.GetFullPath(files.GetValue("logPath", "logs", "Path to the log files"));
 
 
-			IniFileSection loginServer = ini.GetNewOrParsedSection("LoginServer");
+			var loginServer = ini.GetNewOrParsedSection("LoginServer");
 
 			timeZone = loginServer.GetValue<sbyte>("timeZone", 5, "What time-zone you're in. 0 is GMT, 5 is EST, etc.");
 
@@ -86,14 +86,14 @@ namespace SteamEngine.AuxiliaryServer {
 				loginServer.GetValue("port", 2593, "The port to listen on for game client connections"));
 
 
-			IniFileSection consoleServer = ini.GetNewOrParsedSection("ConsoleServer");
+			var consoleServer = ini.GetNewOrParsedSection("ConsoleServer");
 
 			consoleServerEndpoint = new IPEndPoint(IPAddress.Any,
 				consoleServer.GetValue("port", 2594, "The port to listen on for remote console connections"));
 
 
 			//SE gameservers
-			foreach (IniFileSection section in ini.GetSections("GameServer")) {
+			foreach (var section in ini.GetSections("GameServer")) {
 				TryAddKnownGameServer(new SEGameServerSetup(section));
 			}
 
@@ -102,7 +102,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			//Sphereservers
-			foreach (IniFileSection section in ini.GetSections("SphereServer")) {
+			foreach (var section in ini.GetSections("SphereServer")) {
 				TryAddKnownGameServer(new SphereServerSetup(section));
 			}
 
@@ -120,7 +120,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public static bool TryAddKnownGameServer(IGameServerSetup gsig) {
-			int prevCount = knownGameServersSet.Count;
+			var prevCount = knownGameServersSet.Count;
 			knownGameServersSet.Add(gsig);
 			if (knownGameServersSet.Count > prevCount) {
 				knownGameServersList.Add(gsig);
@@ -131,17 +131,17 @@ namespace SteamEngine.AuxiliaryServer {
 
 		//SE server specific - sphere doesn't "call" by itself :)
 		public static SEGameServerSetup RememberGameServer(string iniPath) {
-			foreach (IGameServerSetup game in knownGameServersSet) {
+			foreach (var game in knownGameServersSet) {
 				if (string.Equals(game.IniPath, Path.GetFullPath(iniPath), StringComparison.OrdinalIgnoreCase)) {
 					Sanity.IfTrueThrow(game.GetType() != typeof(SEGameServerSetup), "SE gameserver running on a path that belongs to a sphereserver, according to steamaux.ini. Wtf?");
 					return (SEGameServerSetup) game;
 				}
 			}
 
-			IniFile ini = new IniFile(iniFileName);
-			IniFileSection section = ini.GetNewSection("GameServer");
+			var ini = new IniFile(iniFileName);
+			var section = ini.GetNewSection("GameServer");
 
-			SEGameServerSetup newGameServer = new SEGameServerSetup(iniPath);
+			var newGameServer = new SEGameServerSetup(iniPath);
 			if (TryAddKnownGameServer(newGameServer)) {
 				newGameServer.WriteToIniSection(section);
 			}
@@ -152,22 +152,22 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public static void ForgetUser(string user) {
-			IniFile ini = new IniFile(iniFileName);
-			IniFileSection usersSection = ini.GetNewOrParsedSection("Users");
+			var ini = new IniFile(iniFileName);
+			var usersSection = ini.GetNewOrParsedSection("Users");
 			usersSection.RemoveValue(user);
 			ini.WriteToFile();
 		}
 
 		public static void RememberUser(string user, string password) {
-			IniFile ini = new IniFile(iniFileName);
-			IniFileSection usersSection = ini.GetNewOrParsedSection("Users");
+			var ini = new IniFile(iniFileName);
+			var usersSection = ini.GetNewOrParsedSection("Users");
 			usersSection.SetValue(user, password, null);
 			ini.WriteToFile();
 		}
 
 		public static bool CheckUser(string user, string password) {
-			IniFile ini = new IniFile(iniFileName);
-			IniFileSection usersSection = ini.GetNewOrParsedSection("Users");
+			var ini = new IniFile(iniFileName);
+			var usersSection = ini.GetNewOrParsedSection("Users");
 			string passToCompare;
 			if (usersSection.TryGetValue(user, out passToCompare)) {
 				if (string.Equals(password, passToCompare, StringComparison.Ordinal)) {

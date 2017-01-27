@@ -39,24 +39,24 @@ namespace SteamEngine.Scripting.Interpretation {
 		private object[] results;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 			OpNode_Lazy_AddTimer constructed;
 
-			Production body = (Production) code.GetChildAt(2);
+			var body = (Production) code.GetChildAt(2);
 			//LScript.DisplayTree(body);
-			Node triggerOrName = body.GetChildAt(4);
+			var triggerOrName = body.GetChildAt(4);
 			if (IsType(triggerOrName, StrictConstants.STRING)) {
 				constructed = new OpNode_Lazy_AddTimer(parent, filename, line, column, code);
 				constructed.funcName = ((Token) triggerOrName).GetImage();
 			} else {//it is Triggerkey
-				string tkName = ((Token) triggerOrName.GetChildAt(triggerOrName.GetChildCount() - 1)).GetImage();
-				TriggerKey tk = TriggerKey.Acquire(tkName);
+				var tkName = ((Token) triggerOrName.GetChildAt(triggerOrName.GetChildCount() - 1)).GetImage();
+				var tk = TriggerKey.Acquire(tkName);
 				constructed = new OpNode_AddTriggerTimer(parent, filename, line, column, code, tk);
 			}//
 
-			Node timerKeyNode = body.GetChildAt(0);
+			var timerKeyNode = body.GetChildAt(0);
 			constructed.name = TimerKey.Acquire(((Token) timerKeyNode.GetChildAt(timerKeyNode.GetChildCount() - 1)).GetImage());
 			constructed.secondsNode = LScriptMain.CompileNode(constructed, body.GetChildAt(2), context);
 			if (body.GetChildCount() > 5) {
@@ -79,12 +79,12 @@ namespace SteamEngine.Scripting.Interpretation {
 			Commands.AuthorizeCommandThrow(Globals.Src, this.funcName);
 
 			if (vars.self is PluginHolder) {
-				bool memberNameMatched = false;
+				var memberNameMatched = false;
 
 				OpNode finalOpNode;
-				Type type = vars.self.GetType();
+				var type = vars.self.GetType();
 
-				MemberResolver resolver = new MemberResolver(
+				var resolver = new MemberResolver(
 					vars, this.parent, this.funcName, this.args, this.line, this.column, this.filename);
 				MemberDescriptor desc = null;
 
@@ -99,7 +99,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					goto runit;
 				}
 				//as function
-				ScriptHolder function = ScriptHolder.GetFunction(this.funcName);//no, this is not unreachable, whatever the mono compjiler says...
+				var function = ScriptHolder.GetFunction(this.funcName);//no, this is not unreachable, whatever the mono compjiler says...
 				if (function != null) {
 					finalOpNode = new OpNode_AddFunctionTimer(this.parent, this.filename, this.line, this.column, this.OrigNode, this.name, function, this.formatString, this.secondsNode, this.args);
 					goto runit;
@@ -134,7 +134,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				runit:  //I know that goto is usually considered dirty, but I find this case quite suitable for it...
 				this.results = resolver.Results;
 
-				IOpNodeHolder finalAsHolder = finalOpNode as IOpNodeHolder;
+				var finalAsHolder = finalOpNode as IOpNodeHolder;
 				if (finalAsHolder != null) {
 					this.SetNewParentToArgs(finalAsHolder);
 				}
@@ -162,7 +162,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (desc == null) {
 				return false;
 			}
-			MethodInfo MethodInfo = MemberWrapper.GetWrapperFor((MethodInfo) desc.Info);
+			var MethodInfo = MemberWrapper.GetWrapperFor((MethodInfo) desc.Info);
 
 			switch (desc.SpecialType1) {
 				case SpecialType.Normal:
@@ -177,13 +177,13 @@ namespace SteamEngine.Scripting.Interpretation {
 						this.OrigNode, this.name, MethodInfo, this.secondsNode, this.args, this.formatString);
 					break;
 				case SpecialType.Params:
-					ParameterInfo[] pars = MethodInfo.GetParameters();//these are guaranteed to have the right number of arguments...
-					int methodParamLength = pars.Length;
-					Type paramsElementType = pars[methodParamLength - 1].ParameterType.GetElementType();
-					int normalArgsLength = methodParamLength - 1;
-					int paramArgsLength = this.args.Length - normalArgsLength;
-					OpNode[] normalArgs = new OpNode[normalArgsLength];
-					OpNode[] paramArgs = new OpNode[paramArgsLength];
+					var pars = MethodInfo.GetParameters();//these are guaranteed to have the right number of arguments...
+					var methodParamLength = pars.Length;
+					var paramsElementType = pars[methodParamLength - 1].ParameterType.GetElementType();
+					var normalArgsLength = methodParamLength - 1;
+					var paramArgsLength = this.args.Length - normalArgsLength;
+					var normalArgs = new OpNode[normalArgsLength];
+					var paramArgs = new OpNode[paramArgsLength];
 					Array.Copy(this.args, normalArgs, normalArgsLength);
 					Array.Copy(this.args, normalArgsLength, paramArgs, 0, paramArgsLength);
 
@@ -197,26 +197,26 @@ namespace SteamEngine.Scripting.Interpretation {
 		private void GetArgsFrom(Node arg, LScriptCompilationContext context) {
 			//caller / assigner
 			if (IsType(arg, StrictConstants.ARGS_LIST)) {
-				List<OpNode> argsList = new List<OpNode>();
+				var argsList = new List<OpNode>();
 				//ArrayList stringList = new ArrayList();
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				for (int i = 0, n = arg.GetChildCount(); i < n; i += 2) { //step 2 - skipping argsseparators
 					sb.Append("{" + i / 2 + "}");
 					if (i + 1 < n) {
-						Node separator = arg.GetChildAt(i + 1);
+						var separator = arg.GetChildAt(i + 1);
 						sb.Append(LScriptMain.GetString(separator));
 					}
-					Node node = arg.GetChildAt(i);
+					var node = arg.GetChildAt(i);
 					argsList.Add(LScriptMain.CompileNode(this, node, context));
 				}
 				this.args = argsList.ToArray();
 
-				object[] stringTokens = new object[arg.GetChildCount()];
+				var stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);
 				this.str = OpNode_Lazy_QuotedString.ConstructFromArray(this, arg, stringTokens, context);
 				this.formatString = sb.ToString();
 			} else {
-				OpNode compiled = LScriptMain.CompileNode(this, arg, context);
+				var compiled = LScriptMain.CompileNode(this, arg, context);
 				this.args = new[] { compiled };
 				this.str = OpNode_ToString.Construct(this, arg, context);
 				this.formatString = "{0}";
@@ -224,7 +224,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public virtual void Replace(OpNode oldNode, OpNode newNode) {
-			int index = Array.IndexOf(this.args, oldNode);
+			var index = Array.IndexOf(this.args, oldNode);
 			if (index >= 0) {
 				this.args[index] = newNode;
 			} else if (this.secondsNode == oldNode) {
@@ -252,13 +252,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		//}
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder("AddTimer(");
+			var sb = new StringBuilder("AddTimer(");
 			sb.Append("(").Append(this.name.Name).Append(", ").Append(this.secondsNode);
 			sb.Append(this.funcName).Append(", ");
-			int n = this.args.Length;
+			var n = this.args.Length;
 			if (n > 0) {
 				sb.Append(", ");
-				for (int i = 0; i < n; i++) {
+				for (var i = 0; i < n; i++) {
 					sb.Append(this.args[i]).Append(", ");
 				}
 			}

@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void CreateLoginsTable() {
-			string sql = @"CREATE TABLE log_logins (
+			var sql = @"CREATE TABLE log_logins (
 				id INT AUTO_INCREMENT NOT NULL,
 				account TINYTEXT ASCII NOT NULL,
 				ip TINYTEXT ASCII NOT NULL,
@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void ExecuteNonQuery(string sql) {
-			using (MySqlCommand command = new MySqlCommand(sql, DbManager.Connection)) {
+			using (var command = new MySqlCommand(sql, DbManager.Connection)) {
 				command.ExecuteNonQuery();
 			}
 		}
@@ -62,14 +62,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public void SendAll() {
 			if (this.lines.Count > 0) {
-				StringBuilder sql = new StringBuilder("INSERT INTO ");
+				var sql = new StringBuilder("INSERT INTO ");
 				sql.Append(this.TableName);
 
 				sql.Append(" ( ");
 				sql.Append(string.Join(" , ", this.ColumnNames));
 				sql.Append(" ) VALUES ");
 
-				foreach (string[] line in this.lines) {
+				foreach (var line in this.lines) {
 					sql.Append(" ( '");
 					sql.Append(string.Join("' , '", line));
 					sql.Append("' ) , ");

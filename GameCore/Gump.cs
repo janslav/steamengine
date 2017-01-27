@@ -249,7 +249,7 @@ namespace SteamEngine
 			this.CreateTexts();
 			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = this.textsList.Count - 1;
+			var textId = this.textsList.Count - 1;
 			this.AddText(x, y, hue, textId);
 			return textId;
 		}
@@ -276,7 +276,7 @@ namespace SteamEngine
 			this.CreateTexts();
 			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = this.textsList.Count - 1;
+			var textId = this.textsList.Count - 1;
 			this.AddCroppedText(x, y, width, height, hue, textId);
 			return textId;
 		}
@@ -355,7 +355,7 @@ namespace SteamEngine
 			this.CreateTexts();
 			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = this.textsList.Count - 1;
+			var textId = this.textsList.Count - 1;
 			this.AddHtmlGump(x, y, width, height, textId, hasBoundBox, isScrollable);
 			return textId;
 		}
@@ -421,7 +421,7 @@ namespace SteamEngine
 			this.CreateTexts();
 			this.textsList.Add(text);
 			//textsLengthsSum += text.Length;
-			int textId = this.textsList.Count - 1;
+			var textId = this.textsList.Count - 1;
 			this.AddTextEntry(x, y, widthPix, height, hue, id, textId);
 			return textId;
 		}
@@ -454,10 +454,10 @@ namespace SteamEngine
 
 		public int AddNumberEntry(int x, int y, int widthPix, int height, int hue, int id, decimal text) {
 			this.CreateTexts();
-			string textStr = text.ToString(CultureInfo.InvariantCulture);
+			var textStr = text.ToString(CultureInfo.InvariantCulture);
 			this.textsList.Add(textStr);
 			//textsLengthsSum += textStr.Length;
-			int textId = this.textsList.Count - 1;
+			var textId = this.textsList.Count - 1;
 			this.AddNumberEntry(x, y, widthPix, height, hue, id, textId);
 			return textId;
 		}

@@ -31,10 +31,10 @@ namespace SteamEngine.CompiledScripts {
 		} }
 		
 		public void Save(object objToSave, SaveStream writer) {
-			Hashtable table = (Hashtable) objToSave;
-			int count = table.Count;
+			var table = (Hashtable) objToSave;
+			var count = table.Count;
 			writer.WriteValue("count", count);
-			int i = 0;
+			var i = 0;
 			foreach (DictionaryEntry entry in table) {
 				writer.WriteValue(i+".K", entry.Key);
 				writer.WriteValue(i+".V", entry.Value);
@@ -43,16 +43,16 @@ namespace SteamEngine.CompiledScripts {
 		}
 		
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.HeaderLine;
+			var currentLineNumber = input.HeaderLine;
 			try {
-				PropsLine countLine = input.PopPropsLine("count");
+				var countLine = input.PopPropsLine("count");
 				currentLineNumber = countLine.Line;
-				int count = int.Parse(countLine.Value);
-				Hashtable table = new Hashtable(count);
-				for (int i = 0; i<count; i++) {
-					PropsLine keyLine = input.PopPropsLine(i+".K");
-					PropsLine valueLine = input.PopPropsLine(i+".V");
-					HashtableLoadHelper helper = new HashtableLoadHelper(table);
+				var count = int.Parse(countLine.Value);
+				var table = new Hashtable(count);
+				for (var i = 0; i<count; i++) {
+					var keyLine = input.PopPropsLine(i+".K");
+					var valueLine = input.PopPropsLine(i+".V");
+					var helper = new HashtableLoadHelper(table);
 					currentLineNumber = keyLine.Line;
 					ObjectSaver.Load(keyLine.Value, helper.DelayedLoad_Key, input.Filename, keyLine.Line);
 					currentLineNumber = valueLine.Line;
@@ -115,11 +115,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object DeepCopy(object copyFrom) {
-			Hashtable copyFromTable = (Hashtable) copyFrom;
-			Hashtable newTable = new Hashtable();
+			var copyFromTable = (Hashtable) copyFrom;
+			var newTable = new Hashtable();
 
 			foreach (DictionaryEntry entry in copyFromTable) {
-				HashtableLoadHelper helper = new HashtableLoadHelper(newTable);
+				var helper = new HashtableLoadHelper(newTable);
 				DeepCopyFactory.GetCopyDelayed(entry.Key, helper.DelayedCopy_Key);
 				DeepCopyFactory.GetCopyDelayed(entry.Value, helper.DelayedCopy_Value);
 			}

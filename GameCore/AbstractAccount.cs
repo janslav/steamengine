@@ -111,8 +111,8 @@ namespace SteamEngine {
 				Logger.WriteDebug("Saving GameAccounts.");
 				writer.WriteComment("GameAccounts");
 				writer.WriteLine();
-				int numGameAccounts = accounts.Count;
-				foreach (AbstractAccount acc in accounts.Values) {
+				var numGameAccounts = accounts.Count;
+				foreach (var acc in accounts.Values) {
 					acc.SaveWithHeader(writer);
 					ObjectSaver.FlushCache(writer);
 				}
@@ -137,7 +137,7 @@ namespace SteamEngine {
 
 			[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 			public object Load(Match m) {
-				string name = m.Groups["value"].Value;
+				var name = m.Groups["value"].Value;
 				return GetByName(name);
 			}
 		}
@@ -158,7 +158,7 @@ namespace SteamEngine {
 			//}
 			switch (valueName) {
 				case "password":
-					string str = ConvertTools.LoadSimpleQuotedString(valueString);
+					var str = ConvertTools.LoadSimpleQuotedString(valueString);
 
 					if (Globals.HashPasswords) {
 						this.passwordHash = Tools.HashPassword(str);
@@ -169,7 +169,7 @@ namespace SteamEngine {
 					}
 					break;
 				case "passwordHash":
-					Match m = ConvertTools.stringRE.Match(valueString);
+					var m = ConvertTools.stringRE.Match(valueString);
 					if (m.Success) {
 						if (Globals.HashPasswords) {
 							if (this.passwordHash == null) {	//Allows admins to set password=xxx without erasing passwordHash, and the password=xxx will override the passwordHash.
@@ -212,7 +212,7 @@ namespace SteamEngine {
 		public override void Save(SaveStream output) {
 			//output.WriteValue("uid",uid);
 			if (this.passwordHash != null) {
-				string hash = EncodeHashToString(this.passwordHash);
+				var hash = EncodeHashToString(this.passwordHash);
 				output.WriteValue("passwordHash", hash);
 			} else {
 				output.WriteValue("password", this.password);
@@ -225,7 +225,7 @@ namespace SteamEngine {
 				output.WriteValue("blocked", this.blocked);
 			}
 			this.CheckReferences();
-			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
+			for (var i = 0; i < maxCharactersPerGameAccount; i++) {
 				if (this.characters[i] != null) {
 					//output.WriteValue("CharUID["+i+"]", this.characters[i]);
 					output.WriteComment("CharUID[" + i + "]=#" + this.characters[i].Uid);
@@ -275,7 +275,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public AbstractCharacter GetLingeringCharacter() {
-			foreach (AbstractCharacter ch in this.characters) {
+			foreach (var ch in this.characters) {
 				if ((ch != null) && (ch.IsLingering)) {
 					return ch;
 				}
@@ -297,7 +297,7 @@ namespace SteamEngine {
 		}
 
 		private static AbstractAccount CreateAccount(string username, string password) {
-			AbstractAccount acc = CreateGameAccountFunction.TryRun(null, username) as AbstractAccount;
+			var acc = CreateGameAccountFunction.TryRun(null, username) as AbstractAccount;
 			Console.WriteLine("Creating new account {0}", username);
 			if (acc == null) {
 				throw new SEException("CreateGameAccount function failed to create a new account!");
@@ -416,7 +416,7 @@ namespace SteamEngine {
 			}
 
 			//delete characters
-			for (int a = 0; a < maxCharactersPerGameAccount; a++) {
+			for (var a = 0; a < maxCharactersPerGameAccount; a++) {
 				if (this.characters[a] != null) {
 					this.characters[a].InternalDelete();
 					this.characters[a] = null;
@@ -487,7 +487,7 @@ namespace SteamEngine {
 				
 		*/
 		internal void DetachCharacter(AbstractCharacter cre) {
-			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
+			for (var i = 0; i < maxCharactersPerGameAccount; i++) {
 				if (this.characters[i] == cre) {
 					this.characters[i] = null;
 					return;
@@ -506,13 +506,13 @@ namespace SteamEngine {
 			@return	True if the character was successfully attached, false otherwise.
 		*/
 		internal bool AttachCharacter(AbstractCharacter cre, out int slot) {
-			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
+			for (var i = 0; i < maxCharactersPerGameAccount; i++) {
 				if (this.characters[i] == cre) {//we have that char already
 					slot = i;
 					return true;
 				}
 			}
-			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
+			for (var i = 0; i < maxCharactersPerGameAccount; i++) {
 				if (this.characters[i] == null) {
 					this.characters[i] = cre;
 					slot = i;
@@ -534,7 +534,7 @@ namespace SteamEngine {
 
 		internal DeleteCharacterResult RequestDeleteCharacter(int index) {
 			Sanity.IfTrueThrow(index < 0 || index >= maxCharactersPerGameAccount, "Call was made to RequestDeleteCharacter with an invalid character index " + index + ", valid values being from 0 to " + (maxCharactersPerGameAccount - 1) + ".");
-			AbstractCharacter cre = this.characters[index];
+			var cre = this.characters[index];
 			if (cre == null) {
 				return DeleteCharacterResult.Deny_NonexistantCharacter;
 			}
@@ -556,7 +556,7 @@ namespace SteamEngine {
 		}
 
 		private void CheckReferences() {
-			for (int i = 0; i < maxCharactersPerGameAccount; i++) {
+			for (var i = 0; i < maxCharactersPerGameAccount; i++) {
 				if (this.characters[i] != null) {
 					if (this.characters[i].IsDeleted || this.characters[i].Account != this) {
 						//deleted or removed from account
@@ -568,7 +568,7 @@ namespace SteamEngine {
 
 		internal bool HasFreeSlot {
 			get {
-				for (int a = 0; a < maxCharactersPerGameAccount; a++) {
+				for (var a = 0; a < maxCharactersPerGameAccount; a++) {
 					if (this.characters[a] == null) {
 						return true;
 					}
@@ -631,7 +631,7 @@ namespace SteamEngine {
 
 		private static bool TestHash(byte[] original, byte[] test) {
 			if (original.Length == test.Length) {
-				for (int a = 0; a < original.Length; a++) {
+				for (var a = 0; a < original.Length; a++) {
 					if (original[a] != test[a]) return false;
 				}
 			}

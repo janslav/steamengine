@@ -28,11 +28,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
+			var ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
 			//zkusime se mrknout jestli uz nemame defname predvyplneno (napriklad pri neuspesnem zadani - preklep apd.)
-			string filledDefname = TagMath.SGetTag(args, prefilledDefnameTK);
+			var filledDefname = TagMath.SGetTag(args, prefilledDefnameTK);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -64,12 +64,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
-				string tgDefname = gr.GetTextResponse(10);
+				var tgDefname = gr.GetTextResponse(10);
 				//zkusime getnout TriggerGroupu
-				TriggerGroup tg = TriggerGroup.GetByDefname(tgDefname);
+				var tg = TriggerGroup.GetByDefname(tgDefname);
 				if (tg == null) {
 					//zobrait chybovou hlasku
-					Gump newGi = D_Display_Text.ShowError("Trigger group s defnamem '" + tgDefname + "' nenalezena!");
+					var newGi = D_Display_Text.ShowError("Trigger group s defnamem '" + tgDefname + "' nenalezena!");
 					//ulozime do tagu vlozene defname
 					args.SetTag(prefilledDefnameTK, tgDefname);
 
@@ -77,11 +77,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					return;
 				}
 				//ulozit a vubec
-				PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
+				var ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //na koho budeme tg ukladat?
 				ph.AddTriggerGroup(tg);
 				//vzit jeste predchozi dialog, musime smazat tglist aby se pregeneroval
 				//a obsahoval tu nove pridanou trigger groupu
-				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
+				var prevStacked = DialogStacking.PopStackedDialog(gi);
 				//overovat netreba, proste odstranime tag se seznamem at uz existuje nebo ne
 				prevStacked.InputArgs.RemoveTag(D_TriggerGroupsList.tgListTK);
 				DialogStacking.ResendAndRestackDialog(prevStacked);

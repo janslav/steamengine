@@ -27,12 +27,12 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public partial class ParalyzeEffectPlugin {
 		public void On_Assign() {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.ClilocSysMessage(500111); //You are frozen and cannot move.
 		}
 
 		public TriggerResult On_Step(Direction dir, bool running) {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.ClilocSysMessage(500111); //You are frozen and cannot move.
 			return TriggerResult.Cancel;
 		}
@@ -66,7 +66,7 @@ namespace SteamEngine.CompiledScripts {
 		//paralyze method for general usage
 		public static void Paralyze(Character target, PluginKey key, TimeSpan duration, Thing source, EffectFlag type) {
 			type |= EffectFlag.HarmfulEffect;
-			ParalyzeEffectPlugin plugin = (ParalyzeEffectPlugin) instance.Create();
+			var plugin = (ParalyzeEffectPlugin) instance.Create();
 			plugin.Init(source, type, 1, duration, ParalyzeSpellDef);
 			target.AddPlugin(key, plugin);
 		}
@@ -77,17 +77,17 @@ namespace SteamEngine.CompiledScripts {
 
 		[SteamFunction]
 		public static void Paralyze(Character target, ScriptArgs sa) {
-			PluginKey key = (PluginKey) sa.Argv[0];
+			var key = (PluginKey) sa.Argv[0];
 			TimeSpan duration;
-			object argv1 = sa.Argv[1];
+			var argv1 = sa.Argv[1];
 			if (argv1 is TimeSpan) {
 				duration = (TimeSpan) argv1;
 			} else {
 				duration = TimeSpan.FromSeconds(ConvertTools.ToDouble(argv1));
 			}
 			Thing source = null;
-			EffectFlag type = EffectFlag.HarmfulEffect | EffectFlag.FromTrap;
-			int len = sa.Argv.Length;
+			var type = EffectFlag.HarmfulEffect | EffectFlag.FromTrap;
+			var len = sa.Argv.Length;
 			if (len > 2) {
 				source = (Thing) sa.Argv[2];
 				if (len > 3) {

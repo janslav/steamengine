@@ -67,7 +67,7 @@ namespace SteamEngine.Common {
 
 		//remove quotes or just trim whitespace
 		public static string LoadSimpleQuotedString(string input) {
-			Match ma = stringRE.Match(input);
+			var ma = stringRE.Match(input);
 			if (ma.Success) {
 				return Tools.UnescapeNewlines(ma.Groups["value"].Value);
 			}
@@ -83,8 +83,8 @@ namespace SteamEngine.Common {
 		/// <returns></returns>
 		public static string RemoveIllegalChars(string s) {
 			if (s == null) return s;
-			for (int a = 0; a < s.Length; a++) {
-				char c = s[a];
+			for (var a = 0; a < s.Length; a++) {
+				var c = s[a];
 				if (c == '\n' || c == '\r' || c == '\0') {
 					s = s.Substring(0, a);
 					break;
@@ -116,8 +116,8 @@ namespace SteamEngine.Common {
 		public static object ConvertTo(Type type, object obj) {
 			//Console.WriteLine("Converting from {0} {1} to {2}", obj.GetType(), obj, type);
 			if (obj == null) return obj;
-			Type objectType = obj.GetType();
-			string asString = obj as string;
+			var objectType = obj.GetType();
+			var asString = obj as string;
 			if (asString == "null") {
 				return null;
 			}
@@ -174,12 +174,12 @@ namespace SteamEngine.Common {
 
 		/// <summary>Try converting the given object to string</summary>
 		public static bool TryConvertToString(object obj, out string retVal) {
-			IConvertible asConvertible = obj as IConvertible;
+			var asConvertible = obj as IConvertible;
 			if (asConvertible != null) {
 				retVal = asConvertible.ToString(invariantCulture);
 				return true;
 			}
-			IFormattable asFormattable = obj as IFormattable;
+			var asFormattable = obj as IFormattable;
 			if (asFormattable != null) {
 				retVal = asFormattable.ToString(null, invariantCulture);
 				return true;
@@ -191,11 +191,11 @@ namespace SteamEngine.Common {
 
 		/// <summary>Try converting the given object to string</summary>
 		public static string ToString(object obj) {
-			IConvertible asConvertible = obj as IConvertible;
+			var asConvertible = obj as IConvertible;
 			if (asConvertible != null) {
 				return asConvertible.ToString(invariantCulture);
 			}
-			IFormattable asFormattable = (IFormattable) obj; //throws exception if impossible
+			var asFormattable = (IFormattable) obj; //throws exception if impossible
 			if (asFormattable != null) {
 				return asFormattable.ToString(null, invariantCulture);
 			}
@@ -338,7 +338,7 @@ namespace SteamEngine.Common {
 			if (IsNumber(arg)) {
 				return (Convert.ToInt32(arg, invariantCulture) != 0);
 			}
-			string asString = arg as string;
+			var asString = arg as string;
 			if (asString != null) {
 				return ParseBoolean(asString);
 			}
@@ -393,7 +393,7 @@ namespace SteamEngine.Common {
 
 				m = intRE.Match(input);
 				if (m.Success) {
-					string toConvert = m.Groups["value"].Value;
+					var toConvert = m.Groups["value"].Value;
 					try {
 						retVal = int.Parse(toConvert, NumberStyles.Integer, invariantCulture);
 						return true;
@@ -419,9 +419,9 @@ namespace SteamEngine.Common {
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static object ParseSpecificNumber(TypeCode typeCode, string input) {
 			if (input.StartsWith("0")) {
-				Match m = hexRE.Match(input);
+				var m = hexRE.Match(input);
 				if (m.Success) {
-					string toConvert = m.Groups["value"].Value;
+					var toConvert = m.Groups["value"].Value;
 					switch (typeCode) {
 						case TypeCode.Byte:
 							return byte.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
@@ -491,7 +491,7 @@ namespace SteamEngine.Common {
 		}
 
 		private static bool TryParseSphereHex(object input, out object retVal) {
-			string str = input as string;
+			var str = input as string;
 			if (str != null) {
 				return TryParseSphereHex(str, out retVal);
 			}
@@ -501,9 +501,9 @@ namespace SteamEngine.Common {
 
 		private static bool TryParseSphereHex(string input, out object retVal) {
 			if (input.StartsWith("0")) {
-				Match m = hexRE.Match(input);
+				var m = hexRE.Match(input);
 				if (m.Success) {
-					string toConvert = m.Groups["value"].Value;
+					var toConvert = m.Groups["value"].Value;
 					try {
 						retVal = uint.Parse(toConvert, NumberStyles.HexNumber, invariantCulture);
 						return true;

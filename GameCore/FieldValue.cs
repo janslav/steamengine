@@ -78,8 +78,8 @@ namespace SteamEngine {
 
 		public static void RegisterParser(IFieldValueParser parser) {
 			SeShield.AssertInTransaction();
-			Type t = parser.HandledType;
-			foreach (Type knownType in parsers.Keys) {
+			var t = parser.HandledType;
+			foreach (var knownType in parsers.Keys) {
 				if (t.IsAssignableFrom(knownType) || knownType.IsAssignableFrom(t)) {
 					throw new SEException(parser + " is incompatible with " + parsers[knownType] + " as FieldValue parser");
 				}
@@ -123,7 +123,7 @@ namespace SteamEngine {
 			if (tempVi == null)
 				return;
 			try {
-				string value = tempVi.valueString;
+				var value = tempVi.valueString;
 				object retVal = null;
 				if (value != null) {
 					if (value.Length > 0) {
@@ -132,12 +132,12 @@ namespace SteamEngine {
 							if (this.type.GetArrayRank() > 1) {
 								throw new SEException("Can't use a multirank array in a FieldValue");
 							}
-							string[] sourceArray = Utility.SplitSphereString(value, false); //
-							Type elemType = this.type.GetElementType();
-							int n = sourceArray.Length;
-							Array resultArray = Array.CreateInstance(elemType, n);
+							var sourceArray = Utility.SplitSphereString(value, false); //
+							var elemType = this.type.GetElementType();
+							var n = sourceArray.Length;
+							var resultArray = Array.CreateInstance(elemType, n);
 
-							for (int i = 0; i < n; i++) {
+							for (var i = 0; i < n; i++) {
 								resultArray.SetValue(ConvertTools.ConvertTo(elemType, this.ResolveSingleValue(tempVi, sourceArray[i], null)), i);
 							}
 
@@ -172,7 +172,7 @@ namespace SteamEngine {
 
 		private object ResolveSingleValue(TemporaryValueImpl tempVI, string value, object retVal) {
 			if (!this.ResolveStringWithoutLScript(value, ref retVal)) {//this is a dirty shortcut to make resolving faster, without it would it last forever
-				string statement = string.Concat("return(", value, ")");
+				var statement = string.Concat("return(", value, ")");
 				LScriptHolder snippetRunner;
 				retVal = LScriptMain.RunSnippet(tempVI.filename, tempVI.line, Globals.Instance, statement, out snippetRunner);
 			}
@@ -200,7 +200,7 @@ namespace SteamEngine {
 					}
 					break;
 				case FieldValueType.Typed:
-					TypeCode code = Type.GetTypeCode(this.type);
+					var code = Type.GetTypeCode(this.type);
 					switch (code) {
 						case TypeCode.Boolean:
 							bool b;
@@ -223,7 +223,7 @@ namespace SteamEngine {
 
 							break;
 						case TypeCode.String:
-							string str = value.Trim().Trim('"');
+							var str = value.Trim().Trim('"');
 							if (!str.Contains("<") && !str.Contains(">")) {
 								retVal = str;
 								return true;
@@ -232,7 +232,7 @@ namespace SteamEngine {
 						default: //it's a number
 							if (this.type.IsEnum) {
 								try {
-									string enumStr = value.Replace(this.type.Name + ".", "") // "FieldValueType.Typed | FieldValueType.Typeless" -> "Typed , Typeles"
+									var enumStr = value.Replace(this.type.Name + ".", "") // "FieldValueType.Typed | FieldValueType.Typeless" -> "Typed , Typeles"
 										.Replace("|", ",").Replace("+", ","); //hopefully the actual value won't change by this optimisation ;)
 									retVal = Enum.Parse(this.type, enumStr, true);
 									return true;
@@ -289,7 +289,7 @@ namespace SteamEngine {
 					return parser.TryParse(value, out retVal);
 				}
 			}
-			foreach (KeyValuePair<Type, IFieldValueParser> pair in parsers) {
+			foreach (var pair in parsers) {
 				if ((returnType == null) || (returnType.IsAssignableFrom(pair.Key))) {
 					if (pair.Value.TryParse(value, out retVal)) {
 						return true;
@@ -300,7 +300,7 @@ namespace SteamEngine {
 		}
 
 		internal static bool TryResolveAsString(string value, ref object retVal) {
-			Match m = simpleStringRE.Match(value);
+			var m = simpleStringRE.Match(value);
 			if (m.Success) {
 				retVal = m.Groups["value"].Value;
 				return true;
@@ -310,7 +310,7 @@ namespace SteamEngine {
 
 		internal static bool TryResolveAsScript(string value, ref object retVal) {
 			value = value.Trim().TrimStart('#');
-			AbstractScript script = AbstractScript.GetByDefname(value);
+			var script = AbstractScript.GetByDefname(value);
 			if (script != null) {
 				retVal = script;
 				return true;
@@ -380,12 +380,12 @@ namespace SteamEngine {
 
 		private static bool CurrentAndDefaultEquals(object a, object b) {
 			if ((a is Array) && (b is Array)) { //or should we equal Collection? Arrays should be the typical collection type here tho
-				Array arrA = (Array) a;
-				Array arrB = (Array) b;
-				int n = arrA.Length;
+				var arrA = (Array) a;
+				var arrB = (Array) b;
+				var n = arrA.Length;
 				if ((n == arrB.Length) &&
 					(arrA.GetType().GetElementType() == arrB.GetType().GetElementType())) {
-					for (int i = 0; i < n; i++) {
+					for (var i = 0; i < n; i++) {
 						if (!CurrentAndDefaultEquals(arrA.GetValue(i), arrB.GetValue(i))) {
 							return false;
 						}
@@ -517,7 +517,7 @@ namespace SteamEngine {
 						} else {
 							var holderState = s.thingDef.model.shieldedState.Value;
 							if ((holderState.currentImpl == this) || (holderState.defaultImpl == this)) {
-								ThingDef d = s.thingDef;
+								var d = s.thingDef;
 								s.thingDef = null;
 								throw new ScriptException(LogStr.Ident(d) + " specifies its own defname as its model, could lead to infinite loop...!");
 							}
@@ -550,7 +550,7 @@ namespace SteamEngine {
 			}
 
 			private static object GetInternStringIfPossible(object obj) {
-				string asString = obj as string;
+				var asString = obj as string;
 				if (asString != null) {
 					return string.Intern(asString);
 				}
@@ -564,10 +564,10 @@ namespace SteamEngine {
 				set {
 					SeShield.AssertInTransaction();
 					if (value != null) {
-						Type sourceType = value.GetType();
+						var sourceType = value.GetType();
 						if ((sourceType != this.type) && (this.type.IsArray)) {
 							Array sourceArray;
-							Type elemType = this.type.GetElementType();
+							var elemType = this.type.GetElementType();
 							if (sourceType.IsArray) {//we must change the element type
 								if (sourceType.GetArrayRank() > 1) {
 									throw new SEException("Can't use a multirank array in a FieldValue");
@@ -579,9 +579,9 @@ namespace SteamEngine {
 								sourceArray = new[] { value }; //just wrap it in a 1-element array, gets converted in the next step
 							}
 
-							int n = sourceArray.Length;
+							var n = sourceArray.Length;
 							var resultArray = Array.CreateInstance(elemType, n);
-							for (int i = 0; i < n; i++) {
+							for (var i = 0; i < n; i++) {
 								resultArray.SetValue(
 									ConvertSingleValue(elemType, sourceArray.GetValue(i)), i);
 							}
@@ -595,11 +595,11 @@ namespace SteamEngine {
 			}
 
 			private static object ConvertSingleValue(Type type, object value) {
-				string valueAsString = value as string;
+				var valueAsString = value as string;
 				if (typeof(AbstractScript).IsAssignableFrom(type) && valueAsString != null) {
 					valueAsString = valueAsString.Trim();
 					valueAsString = valueAsString.TrimStart('#');
-					AbstractScript script = AbstractScript.GetByDefname(valueAsString);
+					var script = AbstractScript.GetByDefname(valueAsString);
 					if (script != null) {
 						return script;
 					}
@@ -633,7 +633,7 @@ namespace SteamEngine {
 				}
 				set {
 					SeShield.AssertInTransaction();
-					string asString = value as string;
+					var asString = value as string;
 					if (asString != null) {
 						this.obj.Value = string.Intern(asString);
 					} else {
@@ -666,10 +666,10 @@ namespace SteamEngine {
 				}
 				set {
 					if (value != null) {
-						ThingDef td = value as ThingDef;
+						var td = value as ThingDef;
 						if (td == null) {
 							if (ConvertTools.IsNumberType(value.GetType())) {
-								int id = ConvertTools.ToInt32(value);
+								var id = ConvertTools.ToInt32(value);
 								if (typeof(AbstractItemDef).IsAssignableFrom(this.type)) {
 									td = ThingDef.FindItemDef(id);
 								} else {

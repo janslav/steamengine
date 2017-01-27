@@ -47,12 +47,12 @@ namespace SteamEngine.Communication {
 
 			this.outgoingPackets = new BlockingCollection<OutgoingMessage>(new ConcurrentQueue<OutgoingMessage>());
 
-			string threadsName = Tools.TypeToString(this.GetType());
+			var threadsName = Tools.TypeToString(this.GetType());
 			this.CreateAndStartWorkerThread(threadsName + "_Worker");
 		}
 
 		private Thread CreateAndStartWorkerThread(string name) {
-			Thread t = new Thread(this.WorkerThreadMethod);
+			var t = new Thread(this.WorkerThreadMethod);
 			t.Name = name;
 			t.IsBackground = true;
 			t.Start();

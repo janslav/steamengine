@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//automaticky se zobrazi defname, createdAt, hierarchy index, mapplane
 		[Button("Parent")]
 		public static void Parent(object target) {
-			Region parent = ((Region) target).Parent;
+			var parent = ((Region) target).Parent;
 			if (parent != null) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(parent));
 			} else {
@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[Button("Rectangles")]
 		public static void Rectangles(object target) {
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(D_Region_Rectangles.regionTK, (Region) target);
 			Globals.SrcCharacter.Dialog(SingletonScript<D_Region_Rectangles>.Instance, newArgs);
 		}
@@ -49,7 +49,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[SetMethod("Home Point", typeof(Point4D))]
 		public static void SetPosition(object target, object value) {
-			Region reg = (Region) target;
+			var reg = (Region) target;
 			Point4D point = null;
 			if (value.GetType().IsAssignableFrom(typeof(Point4D))) {
 				point = (Point4D) value;

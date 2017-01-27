@@ -80,15 +80,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private static void ParseText(PropsSection input, TemplateDef td) {
-			TriggerSection trigger = input.GetTrigger(0);
+			var trigger = input.GetTrigger(0);
 			//try to read container and/or second defname from the start of the text
-			bool altdefnamedefined = false;
-			bool containerdefined = false;
-			StringBuilder newCode = new StringBuilder();
-			StringReader reader = new StringReader(trigger.Code.ToString());
-			int linenumber = input.HeaderLine;
+			var altdefnamedefined = false;
+			var containerdefined = false;
+			var newCode = new StringBuilder();
+			var reader = new StringReader(trigger.Code.ToString());
+			var linenumber = input.HeaderLine;
 			while (true) {
-				string line = reader.ReadLine();
+				var line = reader.ReadLine();
 				linenumber++;
 				if (line != null) {
 					line = line.Trim();
@@ -97,18 +97,18 @@ namespace SteamEngine.CompiledScripts {
 						continue;
 					}
 
-					Match m = LocStringCollection.valueRE.Match(line);
+					var m = LocStringCollection.valueRE.Match(line);
 					if (m.Success) {
-						GroupCollection gc = m.Groups;
-						string name = gc["name"].Value;
+						var gc = m.Groups;
+						var name = gc["name"].Value;
 						if (StringComparer.OrdinalIgnoreCase.Equals(name, "defname")) {//set altdefname
 							if (altdefnamedefined) {
 								Logger.WriteWarning(input.Filename, linenumber, "Alternative defname already defined, ignoring.");
 							} else {
-								string altdefname = gc["value"].Value;
+								var altdefname = gc["value"].Value;
 								altdefname = string.Intern(ConvertTools.LoadSimpleQuotedString(altdefname));
-								AbstractScript def = AbstractScript.GetByDefname(altdefname);
-								TemplateDef t = def as TemplateDef;
+								var def = AbstractScript.GetByDefname(altdefname);
+								var t = def as TemplateDef;
 								if (t == null) { //is null or isnt TeplateDef
 									if (def != null) {//it isnt TemplateDef
 										td.Unload();
@@ -167,18 +167,18 @@ namespace SteamEngine.CompiledScripts {
 
 		public Thing Create(int x, int y, int z, byte m) {
 			this.ThrowIfUnloaded();
-			ItemDef contDef = this.Container;
+			var contDef = this.Container;
 			if (contDef == null) {
 				contDef = this.DefaultContainer;
 			}
-			Thing cont = contDef.Create(x, y, z, m);
+			var cont = contDef.Create(x, y, z, m);
 			this.holder.Run(cont, (ScriptArgs) null);
 			return cont;
 		}
 
 		public Thing Create(Thing cont) {
 			this.ThrowIfUnloaded();
-			ItemDef contDef = this.Container;
+			var contDef = this.Container;
 			if (cont.IsChar) {
 				cont = ((Character) cont).Backpack;
 			}

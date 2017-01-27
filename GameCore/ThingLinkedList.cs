@@ -39,7 +39,7 @@ namespace SteamEngine {
 		internal void Add(Thing thing) {
 			Sanity.IfTrueThrow((thing.prevInList != null || thing.nextInList != null),
 				"'" + thing + "' being added into a ThingLinkedList while being in another cont already");
-			Thing next = this.firstThing;
+			var next = this.firstThing;
 			this.firstThing = thing;
 			thing.prevInList = null;
 			thing.nextInList = next;
@@ -69,7 +69,7 @@ namespace SteamEngine {
 		}
 
 		internal Thing FindByZ(int z) {//usd by findlayer
-			Thing i = this.firstThing;
+			var i = this.firstThing;
 			while (i != null) {
 				if (i.Z == z) {
 					return i;
@@ -84,8 +84,8 @@ namespace SteamEngine {
 				if ((index >= this.count) || (index < 0)) {
 					return null;
 				}
-				Thing i = this.firstThing;
-				int counter = 0;
+				var i = this.firstThing;
+				var counter = 0;
 				while (i != null) {
 					if (index == counter) {
 						return i;
@@ -98,18 +98,18 @@ namespace SteamEngine {
 		}
 
 		internal void Empty() {
-			Thing i = this.firstThing;
+			var i = this.firstThing;
 			while (i != null) {
-				Thing next = i.nextInList;
+				var next = i.nextInList;
 				i.InternalDelete();
 				i = next;
 			}
 		}
 
 		internal void BeingDeleted() {
-			Thing i = this.firstThing;
+			var i = this.firstThing;
 			while (i != null) {
-				Thing next = i.nextInList;
+				var next = i.nextInList;
 				i.InternalDeleteNoRFV();
 				i = next;
 			}

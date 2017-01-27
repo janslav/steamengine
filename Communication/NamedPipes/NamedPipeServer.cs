@@ -181,7 +181,7 @@ namespace SteamEngine.Communication.NamedPipes {
 		}
 
 		private void OnAccept(IAsyncResult asyncResult) {
-			NamedPipeServerStream accepted = (NamedPipeServerStream) asyncResult.AsyncState;
+			var accepted = (NamedPipeServerStream) asyncResult.AsyncState;
 
 			try {
 				this.listener.EndWaitForConnection(asyncResult);
@@ -192,7 +192,7 @@ namespace SteamEngine.Communication.NamedPipes {
 			}
 
 			if (accepted != null) {
-				NamedPipeConnection<TState> newConn = Pool<NamedPipeConnection<TState>>.Acquire();
+				var newConn = Pool<NamedPipeConnection<TState>>.Acquire();
 				newConn.SetFields(this.pipeName, accepted);
 				this.InitNewConnection(newConn);
 			}

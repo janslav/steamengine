@@ -87,7 +87,7 @@ namespace SteamEngine.UoData {
 		}
 
 		public static bool HasFlagNum(TileFlag whatsit, int bitNum) {
-			TileFlag flag = (TileFlag) (1 << bitNum);
+			var flag = (TileFlag) (1 << bitNum);
 			return ((whatsit & flag) == flag);
 		}
 
@@ -97,12 +97,12 @@ namespace SteamEngine.UoData {
 
 		[SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "SteamEngine.ItemDispidInfo")]
 		public static void Init() {
-			string mulFileP = Path.Combine(Globals.MulPath, "tiledata.mul");
+			var mulFileP = Path.Combine(Globals.MulPath, "tiledata.mul");
 			Logger.WriteDebug("Loading " + LogStr.File("tiledata.mul") + " - terrain tile info.");
 			if (File.Exists(mulFileP)) {
 				landFlags = new TileFlag[numLandTiles];
 
-				using (BinaryReader mulbr = new BinaryReader(new FileStream(mulFileP, FileMode.Open, FileAccess.Read))) {
+				using (var mulbr = new BinaryReader(new FileStream(mulFileP, FileMode.Open, FileAccess.Read))) {
 					StreamWriter mtfi = null;
 					string tileNameS;
 
@@ -111,11 +111,11 @@ namespace SteamEngine.UoData {
 							mtfi = File.CreateText(Globals.GetMulDocPathFor("TileData - map tiles.txt"));
 						}
 						ushort texId;
-						int tileId = 0;
+						var tileId = 0;
 
-						for (int block = 0; block < 512; block++) {
+						for (var block = 0; block < 512; block++) {
 							mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
-							for (int tileNum = 0; tileNum < 32; tileNum++) {
+							for (var tileNum = 0; tileNum < 32; tileNum++) {
 								landFlags[tileId] = (TileFlag) mulbr.ReadUInt32();
 								texId = mulbr.ReadUInt16();
 								tileNameS = Utility.GetCAsciiString(mulbr, 20);
@@ -156,7 +156,7 @@ namespace SteamEngine.UoData {
 					try {
 						while (true) {
 							mulbr.BaseStream.Seek(4, SeekOrigin.Current);	//header
-							for (int tileNum = 0; tileNum < 32; tileNum++) {
+							for (var tileNum = 0; tileNum < 32; tileNum++) {
 								flags = (TileFlag) mulbr.ReadUInt32();
 								weight = mulbr.ReadByte();
 								quality = mulbr.ReadByte();
@@ -202,8 +202,8 @@ namespace SteamEngine.UoData {
 						}
 					} catch (EndOfStreamException) {
 					}
-					long kilobytes = bytes / 1024;
-					long megabytes = bytes / (1024 * 1024);
+					var kilobytes = bytes / 1024;
+					var megabytes = bytes / (1024 * 1024);
 					Console.WriteLine("Finished loading tiledata.mul, item dispid info takes about " + LogStr.Number(bytes) + " bytes or " + LogStr.Number(kilobytes) + " KB or " + LogStr.Number(megabytes) + " MB (of RAM).");
 				}
 			} else {
@@ -213,24 +213,24 @@ namespace SteamEngine.UoData {
 
 		public static void GenerateMissingDefs() {
 			if (Globals.GenerateMissingDefs) {
-				string itemdefsPath = Tools.CombineMultiplePaths(Globals.ScriptsPath, "defaults", "itemdefs");
+				var itemdefsPath = Tools.CombineMultiplePaths(Globals.ScriptsPath, "defaults", "itemdefs");
 				Tools.EnsureDirectory(itemdefsPath, true);
 
-				StreamWriter scr = File.AppendText(Path.Combine(itemdefsPath, "newItemDefsFromMuls.def"));
+				var scr = File.AppendText(Path.Combine(itemdefsPath, "newItemDefsFromMuls.def"));
 				StreamWriter nonexistant = null;
 				string filepath = null;
 				if (Globals.WriteMulDocsFiles) {
 					filepath = Globals.GetMulDocPathFor("Free (unused) itemID numbers.txt");
 					nonexistant = File.CreateText(filepath);
 				}
-				int numWritten = 0;
-				int numNonexistant = 0;
-				int lastItemNum = 0;
+				var numWritten = 0;
+				var numNonexistant = 0;
+				var lastItemNum = 0;
 				ItemDispidInfo lastItem = null;
-				for (int a = 0; a < ItemDispidInfo.Count; a++) {
-					AbstractItemDef def = ThingDef.FindItemDef(a);
+				for (var a = 0; a < ItemDispidInfo.Count; a++) {
+					var def = ThingDef.FindItemDef(a);
 					if (def == null) {
-						ItemDispidInfo idi = ItemDispidInfo.GetByModel(a);
+						var idi = ItemDispidInfo.GetByModel(a);
 						if (idi.IsEmpty) {
 							numNonexistant++;
 							if (Globals.WriteMulDocsFiles) {
@@ -244,13 +244,13 @@ namespace SteamEngine.UoData {
 							if (lastItem == null || !lastItem.Equals(idi)) {
 								lastItem = idi;
 								lastItemNum = a;
-								string name = "Unnamed";
+								var name = "Unnamed";
 								if (idi.SingularName.Length > 0) {
 									name = idi.SingularName;
 								}
 								//defname, category, subsection, description
 								scr.WriteLine("");
-								string type = "ItemDef";
+								var type = "ItemDef";
 								if (HasFlag(idi.Flags, TileFlag.Wearable)) {
 									type = "EquippableDef";
 								}
@@ -292,7 +292,7 @@ namespace SteamEngine.UoData {
 								}
 								scr.WriteLine("//Tiledata flags = " + idi.Flags);
 							} else {
-								string type = "ItemDef";
+								var type = "ItemDef";
 								if (HasFlag(idi.Flags, TileFlag.Wearable)) {
 									type = "EquippableDef";
 								}
@@ -324,23 +324,23 @@ namespace SteamEngine.UoData {
 		}
 
 		public static void DumpInfoFromTileData() {
-			string tiledataDocPath = Globals.GetMulDocPathFor("tiledata");
+			var tiledataDocPath = Globals.GetMulDocPathFor("tiledata");
 			Tools.EnsureDirectory(tiledataDocPath, true);
 
-			StreamWriter scr = new StreamWriter(Path.Combine(tiledataDocPath, "item dispids.txt"));
+			var scr = new StreamWriter(Path.Combine(tiledataDocPath, "item dispids.txt"));
 
-			StreamWriter[] sw = new StreamWriter[32];
-			for (int flagNum = 0; flagNum < 32; flagNum++) {
-				string flagName = Enum.GetName(typeof(TileFlag), flagNum);
+			var sw = new StreamWriter[32];
+			for (var flagNum = 0; flagNum < 32; flagNum++) {
+				var flagName = Enum.GetName(typeof(TileFlag), flagNum);
 				sw[flagNum] = File.CreateText(Path.Combine(tiledataDocPath, flagName + ".txt"));
 				sw[flagNum].WriteLine("//This lists all items with the " + flagName + " flag (0x" + GetFlagFromFlagNum(flagNum).ToString("x") + ")");
 			}
 			scr.WriteLine("//This is not a script.");
-			for (int a = 0; a < ItemDispidInfo.Count; a++) {
-				ItemDispidInfo idi = ItemDispidInfo.GetByModel(a);
+			for (var a = 0; a < ItemDispidInfo.Count; a++) {
+				var idi = ItemDispidInfo.GetByModel(a);
 				scr.WriteLine("");
 				scr.WriteLine("[Dispid 0x" + a.ToString("x", CultureInfo.InvariantCulture) + "]");
-				string name = "Unnamed";
+				var name = "Unnamed";
 				if (idi.SingularName.Length > 0) {
 					name = idi.SingularName;
 				}
@@ -368,7 +368,7 @@ namespace SteamEngine.UoData {
 				scr.WriteLine("Unknown3=" + idi.Unknown3);
 				scr.WriteLine("Tiledata flags = " + idi.Flags);
 
-				for (int flagNum = 0; flagNum < 32; flagNum++) {
+				for (var flagNum = 0; flagNum < 32; flagNum++) {
 					if (HasFlagNum(idi.Flags, flagNum)) {
 						sw[flagNum].WriteLine("0x" + a.ToString("x", CultureInfo.InvariantCulture) + ") " + name);
 
@@ -377,7 +377,7 @@ namespace SteamEngine.UoData {
 
 
 			}
-			for (int flagNum = 0; flagNum < 32; flagNum++) {
+			for (var flagNum = 0; flagNum < 32; flagNum++) {
 				sw[flagNum].Close();
 			}
 			scr.Close();

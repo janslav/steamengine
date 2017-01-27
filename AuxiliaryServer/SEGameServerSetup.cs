@@ -73,7 +73,7 @@ namespace SteamEngine.AuxiliaryServer {
 		}
 
 		public override bool Equals(object obj) {
-			SEGameServerSetup gsis = obj as SEGameServerSetup;
+			var gsis = obj as SEGameServerSetup;
 			if (gsis != null) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(this.IniPath, gsis.IniPath)) {
 					return true;

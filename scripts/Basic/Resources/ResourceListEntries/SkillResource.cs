@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool IsSameResource(IResourceListEntry newOne) {
-			SkillResource newResource = newOne as SkillResource;
+			var newResource = newOne as SkillResource;
 			if (newResource != null) {
 				return (this.skillDef == newResource.skillDef);
 			}

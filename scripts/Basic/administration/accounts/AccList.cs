@@ -30,18 +30,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
-			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(accListTK);//mame list v tagu, vytahneme ho
+			var accList = (List<ScriptedAccount>) args.GetTag(accListTK);//mame list v tagu, vytahneme ho
 			if (accList == null) {//nemame zadny seznam
 				accList = ScriptedAccount.RetreiveByStr(TagMath.SGetTag(args, searchStringTK));
 				accList.Sort(AccountComparer.instance);//setridit, to da rozum			
 			}
 			args.SetTag(accListTK, accList);//ulozime to do argumentu dialogu
 			//zjistit zda bude paging, najit maximalni index na strance
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			//maximalni index (20 radku mame) + hlidat konec seznamu...			
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, accList.Count);
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, accList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(400);
 			dlg.SetLocation(50, 50);
@@ -71,10 +71,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//cudlik pro info
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Come").Build();
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
 				AbstractAccount ga = accList[i];
-				Hues nameColor = ga.IsOnline ? Hues.OnlineColor : Hues.OfflineColor;
+				var nameColor = ga.IsOnline ? Hues.OnlineColor : Hues.OfflineColor;
 
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(i + 10).Build(); //account info
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ga.Name).Hue(nameColor).Build(); //acc name
@@ -91,8 +91,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(accListTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var accList = (List<ScriptedAccount>) args.GetTag(accListTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch (gr.PressedButton) {
@@ -100,7 +100,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //vyhledat dle zadani
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem
 						args.SetTag(searchStringTK, nameCriteria);//uloz info o vyhledavacim kriteriu
 						args.RemoveTag(accListTK);//vycistit soucasny odkaz
@@ -108,7 +108,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						break;
 					case 2: //zalozit novy acc.
 						//ulozime dialog pro navrat
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_NewAccount>.Instance);
+						var newGi = gi.Cont.Dialog(SingletonScript<D_NewAccount>.Instance);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}
@@ -116,10 +116,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//1 sloupecek
 			} else { //skutecna talcitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
-				int row = gr.PressedButton - 10;
-				int listIndex = firstOnPage + row;
+				var row = gr.PressedButton - 10;
+				var listIndex = firstOnPage + row;
 				AbstractAccount ga = accList[row];
-				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ga));
+				var newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(ga));
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
@@ -131,7 +131,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//zavolat dialog, pocatecni pismena
 			//accountu vezmeme z args
 			//vyhledavani
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			if (text.Argv == null || text.Argv.Length == 0) {
 				sender.Dialog(SingletonScript<D_AccList>.Instance, newArgs);
 			} else {
@@ -149,8 +149,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(target.Account));
 			} else {
-				string accName = (string) text.Argv[0];
-				AbstractAccount acc = AbstractAccount.GetByName(accName);
+				var accName = (string) text.Argv[0];
+				var acc = AbstractAccount.GetByName(accName);
 				if (acc == null) {
 					Globals.SrcCharacter.SysMessage("Account se jménem " + accName + " neexistuje!", (int) Hues.Red);
 					return;

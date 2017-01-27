@@ -71,7 +71,7 @@ namespace SteamEngine.AuxiliaryServer {
 		internal static void RemoveConsole(ConsoleClient console) {
 			LinkedList<GameServer> gameServerList;
 			if (gameServers.TryGetValue(console, out gameServerList)) {
-				foreach (GameServer gameServer in gameServerList) {
+				foreach (var gameServer in gameServerList) {
 					consoles[gameServer].Remove(console);
 				}
 
@@ -82,7 +82,7 @@ namespace SteamEngine.AuxiliaryServer {
 		internal static void RemoveGameServer(GameServer gameServer) {
 			LinkedList<ConsoleClient> consoleList;
 			if (consoles.TryGetValue(gameServer, out consoleList)) {
-				foreach (ConsoleClient console in consoleList) {
+				foreach (var console in consoleList) {
 					gameServers[console].Remove(gameServer);
 				}
 
@@ -90,7 +90,7 @@ namespace SteamEngine.AuxiliaryServer {
 			}
 
 			//not just logged in ones, because all consoles see gameservers at startup
-			foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+			foreach (var console in ConsoleServer.ConsoleServer.AllConsoles) {
 				console.CloseCmdWindow(gameServer.ServerUid);
 			}
 
@@ -101,13 +101,13 @@ namespace SteamEngine.AuxiliaryServer {
 
 
 			if (AllIdentifiedGameServers.Count == 0) { //it was the last server, we kick nonlogged consoles
-				List<ConsoleClient> toKick = new List<ConsoleClient>();
-				foreach (ConsoleClient console in ConsoleServer.ConsoleServer.AllConsoles) {
+				var toKick = new List<ConsoleClient>();
+				foreach (var console in ConsoleServer.ConsoleServer.AllConsoles) {
 					if (!console.IsLoggedInAux) {
 						toKick.Add(console);
 					}
 				}
-				foreach (ConsoleClient console in toKick) {
+				foreach (var console in toKick) {
 					console.Conn.Close("Failed to identify");
 				}
 			}

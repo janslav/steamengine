@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Acc_Characters : CompiledGumpDef {
 		private static readonly TagKey accountTK = TagKey.Acquire("_account_with_chars_");
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			AbstractAccount acc = AbstractAccount.GetByName((string) args[0]); //jmeno accountu
+			var acc = AbstractAccount.GetByName((string) args[0]); //jmeno accountu
 			if (acc == null) {
 				Globals.SrcCharacter.SysMessage("Account se jménem " + args[0] + " neexistuje!", (int) Hues.Red);
 				return;
@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//mame-li ho, ulozme si ho do parametru pro pozdejsi pouziti
 			args.SetTag(accountTK, acc);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(600);
 			dlg.SetLocation(50, 600);
@@ -57,14 +57,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			foreach (AbstractCharacter oneChar in acc.Characters) {
+			var rowCntr = 0;
+			foreach (var oneChar in acc.Characters) {
 				if (oneChar == null) {
 					continue;
 				}
-				Player castChar = (Player) oneChar;
+				var castChar = (Player) oneChar;
 				// TODO poresit barvy podle prislusnosti ke strane!
-				Hues color = Hues.WriteColor;
+				var color = Hues.WriteColor;
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id(rowCntr + 10).Build(); //char info
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(castChar.Name).Hue(color).Build(); //plr name
 				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text("TODO-profese").Hue(color).Build(); //profese
@@ -80,7 +80,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			AbstractAccount acc = (AbstractAccount) args.GetTag(accountTK);
+			var acc = (AbstractAccount) args.GetTag(accountTK);
 
 			if (gr.PressedButton < 10) { //ovladaci tlacitka		
 				switch (gr.PressedButton) {
@@ -90,9 +90,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				}
 			} else { //skutecna tlacitka z radku
 				//zjistime kterej cudlik z kteryho radku byl zmacknut
-				int row = gr.PressedButton - 10;
-				Character oneChar = (Character) acc.Characters[row];
-				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
+				var row = gr.PressedButton - 10;
+				var oneChar = (Character) acc.Characters[row];
+				var newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(oneChar));
 				//ulozime dialog pro navrat
 				DialogStacking.EnstackDialog(gi, newGi);
 			}
@@ -107,9 +107,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			if (text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_Acc_Characters>.Instance, new DialogArgs(target.Account.Name));
 			} else {
-				string accName = (string) text.Argv[0];
+				var accName = (string) text.Argv[0];
 				//overime zda existuje (uz ted)
-				AbstractAccount acc = AbstractAccount.GetByName(accName);
+				var acc = AbstractAccount.GetByName(accName);
 				if (acc == null) {
 					D_Display_Text.ShowError("Account se jménem " + accName + " neexistuje!");
 					return;

@@ -94,9 +94,9 @@ namespace SteamEngine.AuxServerPipe {
 
 			protected override void OnTimeout() {
 				if (this.conn.IsConnected) {
-					AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
+					var acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
 
-					ReplyAccountLoginPacket reply = Pool<ReplyAccountLoginPacket>.Acquire();
+					var reply = Pool<ReplyAccountLoginPacket>.Acquire();
 					reply.Prepare(this.consoleId, this.accName, acc != null);
 
 					this.conn.SendSinglePacket(reply);
@@ -129,9 +129,9 @@ namespace SteamEngine.AuxServerPipe {
 				return;
 			}
 
-			AbstractAccount acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
+			var acc = AbstractAccount.HandleConsoleLoginAttempt(this.accName, this.password);
 			if (acc != null) {
-				ConsoleDummy dummy = new ConsoleDummy(acc, this.consoleId);
+				var dummy = new ConsoleDummy(acc, this.consoleId);
 
 				Commands.ConsoleCommand(dummy, this.command);
 			}

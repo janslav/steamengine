@@ -54,9 +54,9 @@ namespace SteamEngine.CompiledScripts {
 				return this.realPoints;
 			}
 			set {
-				int newValue = Math.Max(0, value);
+				var newValue = Math.Max(0, value);
 				if (newValue != this.realPoints) {
-					int oldModified = this.ModifiedPoints;
+					var oldModified = this.ModifiedPoints;
 					this.realPoints = (byte) newValue;
 					if (oldModified != this.ModifiedPoints) {
 						this.def.Trigger_ValueChanged(this.cont, this, oldModified); //call changetrigger with information about previous value
@@ -82,9 +82,9 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Change the value of ModifiedPoints</summary>
 		public void ModifyPoints(int difference) {
 			if (difference != 0) {
-				int oldValue = this.ModifiedPoints;
+				var oldValue = this.ModifiedPoints;
 				this.modification += (sbyte) difference;
-				int newValue = this.ModifiedPoints;
+				var newValue = this.ModifiedPoints;
 				if (oldValue != newValue) { //modified value may not have changed if we're still in negative numbers
 					this.def.Trigger_ValueChanged(this.cont, this, oldValue); //call changetrigger with information about previous value
 				}
@@ -95,13 +95,13 @@ namespace SteamEngine.CompiledScripts {
 		//not to be used widely, it's just for possible quick reference for GMs etc.
 		public int MaxPoints {
 			get {
-				int maxPoints = 0;
-				Player player = this.Cont as Player;
+				var maxPoints = 0;
+				var player = this.Cont as Player;
 				if (player != null) {
-					ProfessionDef prof = player.Profession;
+					var prof = player.Profession;
 					if (prof != null) {
 						maxPoints = prof.GetAbilityMaximumPoints(this.def);
-						TalentTreeBranchDef branch = prof.TTB1;
+						var branch = prof.TTB1;
 						if (branch != null) {
 							maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
 						}
@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>If this is an activable ability, is it running?</summary>
 		public bool Running {
 			get {
-				ActivableAbilityDef activableAbility = this.def as ActivableAbilityDef;
+				var activableAbility = this.def as ActivableAbilityDef;
 				if (activableAbility != null) {
 					return activableAbility.IsActive(this.cont);
 				}
@@ -175,11 +175,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal bool LoadSavedString(string p) {
-			string[] split = Utility.SplitSphereString(p, true);
+			var split = Utility.SplitSphereString(p, true);
 			if (!ConvertTools.TryParseByte(split[0], out this.realPoints)) {
 				return false;
 			}
-			int len = split.Length;
+			var len = split.Length;
 			if (len > 1) {
 				if (!ConvertTools.TryParseSByte(split[1], out this.modification)) {
 					return false;

@@ -29,7 +29,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = this.left.Run(vars);
+			var leftVar = this.left.Run(vars);
 			bool leftVarBool;
 
 			try {
@@ -42,7 +42,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 
-			object righVar = this.right.Run(vars);
+			var righVar = this.right.Run(vars);
 			try {
 				return ConvertTools.ToBoolean(righVar);
 			} catch (Exception e) {
@@ -60,7 +60,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object leftVar = this.left.Run(vars);
+			var leftVar = this.left.Run(vars);
 			bool leftVarBool;
 
 			try {
@@ -73,7 +73,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
 
-			object righVar = this.right.Run(vars);
+			var righVar = this.right.Run(vars);
 			try {
 				return ConvertTools.ToBoolean(righVar);
 			} catch (Exception e) {

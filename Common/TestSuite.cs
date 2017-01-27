@@ -92,7 +92,7 @@ namespace SteamEngine.Common {
 
 		//throws an SEBugException if testing fails.
 		public static void RunAllTests() {
-			bool failure = false;
+			var failure = false;
 			Console.WriteLine("TestSuite : Starting running tests.");
 			//Logger.Show("TestSuite","Running Tests.");
 			foreach (TestMethod test in tests) {

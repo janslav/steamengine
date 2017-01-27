@@ -15,7 +15,7 @@ namespace SteamEngine {
 
 			var loc = Loc<TLoc>.Get(src.Language);
 
-			string msg = msgSelector(loc);
+			var msg = msgSelector(loc);
 
 			src.WriteLine(msg);
 		}
@@ -31,7 +31,7 @@ namespace SteamEngine {
 
 			var loc = Loc<TLoc>.Get(src.Language);
 
-			string msg = msgSelector(loc);
+			var msg = msgSelector(loc);
 
 			msg = string.Format(CultureInfo.InvariantCulture,
 				msg,

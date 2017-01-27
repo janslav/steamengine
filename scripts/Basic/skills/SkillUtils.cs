@@ -33,8 +33,8 @@ namespace SteamEngine.CompiledScripts {
 			if (difficulty < 0 || skillValue < 0)       // auto failure.
 				return (false);
 
-			int chanceForSuccess = GetSCurve(skillValue - difficulty);
-			int roll = Globals.dice.Next(1000);
+			var chanceForSuccess = GetSCurve(skillValue - difficulty);
+			var roll = Globals.dice.Next(1000);
 
 			return (roll <= chanceForSuccess);
 		}
@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 			// NOTE:
 			//   Chance of skill gain is inverse to chance of success.
 			//
-			int iChance = GetBellCurve(valDiff);
+			var iChance = GetBellCurve(valDiff);
 			if (valDiff > 0)
 				return (1000 - iChance);
 			return (iChance);
@@ -85,10 +85,10 @@ namespace SteamEngine.CompiledScripts {
 			if (valDiff < 0) valDiff = -valDiff;
 
 #if DEBUG
-			int count = 32;
+			var count = 32;
 #endif
 
-			int iChance = 500;
+			var iChance = 500;
 			while ((valDiff > skillCheckVariance) && (iChance > 0)) {
 				valDiff -= skillCheckVariance;
 				iChance /= 2;   // chance is halved for each Variance period.

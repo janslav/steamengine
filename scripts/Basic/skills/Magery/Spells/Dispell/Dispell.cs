@@ -70,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void ShowDispellEffect(Thing thingBeingDispelled) {
-			Character ch = thingBeingDispelled as Character;
+			var ch = thingBeingDispelled as Character;
 			if (ch != null) {
 				ShowDispellEffect(ch);
 			} else {

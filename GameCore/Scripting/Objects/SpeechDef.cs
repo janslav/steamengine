@@ -29,9 +29,9 @@ namespace SteamEngine.Scripting.Objects {
 
 		public sealed override object Run(object self, TriggerKey tk, ScriptArgs sa) {
 			if (TriggerKey.hear.Uid == tk.Uid) {
-				AbstractCharacter ch = self as AbstractCharacter;
+				var ch = self as AbstractCharacter;
 				if (self != null) {
-					SpeechArgs speechArgs = sa as SpeechArgs;
+					var speechArgs = sa as SpeechArgs;
 					if (speechArgs != null) {
 						return this.Handle(ch, speechArgs);
 					}
@@ -43,9 +43,9 @@ namespace SteamEngine.Scripting.Objects {
 
 		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			if (TriggerKey.hear.Uid == tk.Uid) {
-				AbstractCharacter ch = self as AbstractCharacter;
+				var ch = self as AbstractCharacter;
 				if (self != null) {
-					SpeechArgs speechArgs = sa as SpeechArgs;
+					var speechArgs = sa as SpeechArgs;
 					if (speechArgs != null) {
 						return this.TryHandle(ch, speechArgs);
 					}

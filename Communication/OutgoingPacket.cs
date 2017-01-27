@@ -47,7 +47,7 @@ namespace SteamEngine.Communication {
 			this.EncodeByte(this.Id);
 			this.Write();
 
-			int retVal = this.rightmostPosition - offset;
+			var retVal = this.rightmostPosition - offset;
 			Sanity.IfTrueThrow(retVal < 0, "OutgoingPacket.Write: lastPosition < start. This should not happen.");
 			return retVal;
 		}
@@ -81,7 +81,7 @@ namespace SteamEngine.Communication {
 		}
 
 		protected void EncodeBytes(byte[] array) {
-			int len = array.Length;
+			var len = array.Length;
 			System.Buffer.BlockCopy(array, 0, this.buffer, this.position, len);
 			this.SeekFromCurrent(len);
 		}
@@ -92,8 +92,8 @@ namespace SteamEngine.Communication {
 		//}
 
 		protected void EncodeBytesReversed(byte[] array) {
-			int len = array.Length - 1;
-			for (int i = 0; i <= len; i++) {
+			var len = array.Length - 1;
+			for (var i = 0; i <= len; i++) {
 				this.buffer[this.position + i] = array[len - i];
 			}
 			this.SeekFromCurrent(len + 1);
@@ -115,19 +115,19 @@ namespace SteamEngine.Communication {
 		*/
 		protected void EncodeBigEndianUnicodeString(string value) {
 			value = string.Concat(value);
-			int len = value.Length;
+			var len = value.Length;
 			this.SeekFromCurrent(Encoding.BigEndianUnicode.GetBytes(value, 0, len, this.buffer, this.position));
 		}
 
 		protected void EncodeLittleEndianUnicodeString(string value) {
 			value = string.Concat(value);
-			int len = value.Length;
+			var len = value.Length;
 			this.SeekFromCurrent(Encoding.Unicode.GetBytes(value, 0, len, this.buffer, this.position));
 		}
 
 		protected void EncodeLittleEndianUnicodeStringWithLen(string value) {
 			value = string.Concat(value);
-			int bytesCount = Encoding.Unicode.GetBytes(value, 0, value.Length, this.buffer, this.position + 2);
+			var bytesCount = Encoding.Unicode.GetBytes(value, 0, value.Length, this.buffer, this.position + 2);
 			this.EncodeUShort((ushort) bytesCount);
 			this.SeekFromCurrent(bytesCount);
 		}
@@ -140,16 +140,16 @@ namespace SteamEngine.Communication {
 		*/
 		protected void EncodeBigEndianUnicodeString(string value, int maxlen) {
 			value = string.Concat(value);
-			int len = Math.Min(value.Length, maxlen);
-			int written = Encoding.BigEndianUnicode.GetBytes(value, 0, len, this.buffer, this.position);
+			var len = Math.Min(value.Length, maxlen);
+			var written = Encoding.BigEndianUnicode.GetBytes(value, 0, len, this.buffer, this.position);
 			this.SeekFromCurrent(written);
 			this.EncodeZeros(maxlen - written);
 		}
 
 		protected void EncodeLittleEndianUnicodeString(string value, int maxlen) {
 			value = string.Concat(value);
-			int len = Math.Min(value.Length, maxlen);
-			int written = Encoding.Unicode.GetBytes(value, 0, (maxlen > len ? len : maxlen), this.buffer, this.position);
+			var len = Math.Min(value.Length, maxlen);
+			var written = Encoding.Unicode.GetBytes(value, 0, (maxlen > len ? len : maxlen), this.buffer, this.position);
 			this.SeekFromCurrent(written);
 			this.EncodeZeros(maxlen - written);
 		}
@@ -162,15 +162,15 @@ namespace SteamEngine.Communication {
 
 		protected void EncodeASCIIString(string value, int maxlen) {
 			value = string.Concat(value);
-			int len = Math.Min(value.Length, maxlen);
-			int written = Encoding.ASCII.GetBytes(value, 0, len, this.buffer, this.position);
+			var len = Math.Min(value.Length, maxlen);
+			var written = Encoding.ASCII.GetBytes(value, 0, len, this.buffer, this.position);
 			this.SeekFromCurrent(written);
 			this.EncodeZeros(maxlen - written);
 		}
 
 		protected void EncodeASCIIStringWithLenByte(string value) {
 			value = string.Concat(value);
-			int len = value.Length;
+			var len = value.Length;
 			this.EncodeByte((byte) len);
 			Encoding.ASCII.GetBytes(value, 0, len, this.buffer, this.position);
 			this.SeekFromCurrent(len);
@@ -187,8 +187,8 @@ namespace SteamEngine.Communication {
 		}
 
 		protected void EncodeInt(int value) {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			packet[startpos] = (byte) (value >> 24);	//first byte
 			packet[startpos + 1] = (byte) (value >> 16);	//second byte
 			packet[startpos + 2] = (byte) (value >> 8);	//third byte
@@ -198,8 +198,8 @@ namespace SteamEngine.Communication {
 
 		[CLSCompliant(false)]
 		protected void EncodeUInt(uint value) {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			packet[startpos] = (byte) (value >> 24);	//first byte
 			packet[startpos + 1] = (byte) (value >> 16);	//second byte
 			packet[startpos + 2] = (byte) (value >> 8);	//third byte
@@ -208,8 +208,8 @@ namespace SteamEngine.Communication {
 		}
 
 		protected void EncodeShort(short value) {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			packet[startpos] = (byte) (value >> 8);		//first byte
 			packet[startpos + 1] = (byte) (value);		//second byte
 			this.SeekFromCurrent(2);
@@ -217,8 +217,8 @@ namespace SteamEngine.Communication {
 
 		[CLSCompliant(false)]
 		protected void EncodeUShort(ushort value) {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			packet[startpos] = (byte) (value >> 8);		//first byte
 			packet[startpos + 1] = (byte) (value);		//second byte
 			this.SeekFromCurrent(2);
@@ -242,8 +242,8 @@ namespace SteamEngine.Communication {
 
 		//non-UO
 		protected void EncodeUTF8String(string value) {
-			int valueLength = value.Length;
-			int encodedLength = Encoding.UTF8.GetBytes(value, 0, valueLength, this.buffer, this.position + 4);
+			var valueLength = value.Length;
+			var encodedLength = Encoding.UTF8.GetBytes(value, 0, valueLength, this.buffer, this.position + 4);
 			this.EncodeInt(encodedLength);
 			this.SeekFromCurrent(encodedLength);
 		}

@@ -33,14 +33,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string Save(object objToSave) {
-			Point2D p = (Point2D) objToSave;
+			var p = (Point2D) objToSave;
 			return "(2D)" + p.X + "," + p.Y;
 		}
 
 		public object Load(Match match) {
-			GroupCollection gc = match.Groups;
-			ushort x = ConvertTools.ParseUInt16(gc["x"].Value);
-			ushort y = ConvertTools.ParseUInt16(gc["y"].Value);
+			var gc = match.Groups;
+			var x = ConvertTools.ParseUInt16(gc["x"].Value);
+			var y = ConvertTools.ParseUInt16(gc["y"].Value);
 
 			return new Point2D(x, y);
 		}
@@ -81,7 +81,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string Save(object objToSave) {
-			Point3D p = (Point3D) objToSave;
+			var p = (Point3D) objToSave;
 			if (p.Z == 0) {
 				return "(3D)" + p.X + "," + p.Y;
 			}
@@ -89,11 +89,11 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object Load(Match match) {
-			GroupCollection gc = match.Groups;
-			ushort x = ConvertTools.ParseUInt16(gc["x"].Value);
-			ushort y = ConvertTools.ParseUInt16(gc["y"].Value);
+			var gc = match.Groups;
+			var x = ConvertTools.ParseUInt16(gc["x"].Value);
+			var y = ConvertTools.ParseUInt16(gc["y"].Value);
 
-			string zstr = gc["z"].Value;
+			var zstr = gc["z"].Value;
 			sbyte z = 0;
 			if (zstr.Length > 0) {
 				z = ConvertTools.ParseSByte(zstr);
@@ -137,9 +137,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string Save(object objToSave) {
-			Point4D p = (Point4D) objToSave;
+			var p = (Point4D) objToSave;
 
-			string mzPart = "";
+			var mzPart = "";
 			if (p.M == 0) {
 				if (p.Z != 0) {
 					mzPart = "," + p.Z;
@@ -151,12 +151,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object Load(Match match) {
-			GroupCollection gc = match.Groups;
-			ushort x = ConvertTools.ParseUInt16(gc["x"].Value);
-			ushort y = ConvertTools.ParseUInt16(gc["y"].Value);
+			var gc = match.Groups;
+			var x = ConvertTools.ParseUInt16(gc["x"].Value);
+			var y = ConvertTools.ParseUInt16(gc["y"].Value);
 
-			string zstr = gc["z"].Value;
-			string mstr = gc["m"].Value;
+			var zstr = gc["z"].Value;
+			var mstr = gc["m"].Value;
 			sbyte z = 0;
 			byte m = 0;
 			if (zstr.Length > 0) {

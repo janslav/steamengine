@@ -25,10 +25,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Class that will display the detail on the particular single IDataFieldView from the info dialog</summary>
 	public class D_Info_Detail : CompiledGumpDef {
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			IDataFieldView view = (IDataFieldView) args[0];//view to be displayed in detail
-			object target = args[1]; //infoized target of the info dialog
+			var view = (IDataFieldView) args[0];//view to be displayed in detail
+			var target = args[1]; //infoized target of the info dialog
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			dlg.CreateBackground(600);
 			dlg.SetLocation(50, 30);
 
@@ -39,9 +39,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.MakeLastTableTransparent();
 
 			//get the value to display
-			object fieldValue = view.GetValue(target);
-			Type fieldValueType = fieldValue.GetType();
-			string text = "";
+			var fieldValue = view.GetValue(target);
+			var fieldValueType = fieldValue.GetType();
+			var text = "";
 			if (ObjectSaver.IsSimpleSaveableType(fieldValueType)) {
 				if (typeof(Enum).IsAssignableFrom(view.FieldType)) {
 					text = Enum.GetName(view.FieldType, fieldValue);
@@ -76,8 +76,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			IDataFieldView view = (IDataFieldView) args[0];//view
-			object target = args[1];//target of info dialog
+			var view = (IDataFieldView) args[0];//view
+			var target = args[1];//target of info dialog
 
 			switch (gr.PressedButton) {
 				case 0: //exit
@@ -85,14 +85,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 				case 1: //store
 					//simulate the dictionary of an edit field for the settings provider (see the Info Dialog response implementation)
-					Dictionary<int, IDataFieldView> editFieldsPairing = new Dictionary<int, IDataFieldView>();
+					var editFieldsPairing = new Dictionary<int, IDataFieldView>();
 					editFieldsPairing[2] = view; //the edit field has number "2"
 
-					List<SettingResult> reslist = SettingsProvider.AssertSettings(editFieldsPairing, gr, target);
+					var reslist = SettingsProvider.AssertSettings(editFieldsPairing, gr, target);
 					DialogStacking.ResendAndRestackDialog(gi);
 					if (reslist.Count > 0) {
 						//show the results dialog (if there is any change)
-						DialogArgs newArgs = new DialogArgs();
+						var newArgs = new DialogArgs();
 						newArgs.SetTag(D_Settings_Result.resultsListTK, reslist); //list of settings resluts
 						gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, newArgs);
 					}

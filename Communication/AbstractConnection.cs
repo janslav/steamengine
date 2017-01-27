@@ -125,12 +125,12 @@ namespace SteamEngine.Communication {
 		#region Receiving data
 		protected void ProcessReceievedData(int length) {
 			//ss.receievedDataLength += newBytesLength;
-			byte[] bytes = this.receivingBuffer.bytes;
+			var bytes = this.receivingBuffer.bytes;
 			length += this.receivedDataLength;
-			int offset = 0;
+			var offset = 0;
 
 			if (this.ProcessDecryption(ref length, ref bytes, ref offset)) {
-				ICompression compression = this.State.Compression;
+				var compression = this.State.Compression;
 				if (compression != null) {
 					length = compression.Decompress(bytes, offset, this.decompressBuffer.bytes,
 						this.decompressedDataOffset + this.decompressedDataLength, length);
@@ -145,11 +145,11 @@ namespace SteamEngine.Communication {
 
 
 				//read all posible packets outa those data
-				bool loop = true;
+				var loop = true;
 				while (loop && (length > 0)) {
-					byte id = bytes[offset];
+					var id = bytes[offset];
 					bool discardAfterReading;
-					IncomingPacket<TConnection, TState, TEndPoint> packet = this.core.protocol.GetPacketImplementation(id, (TConnection) this, this.state, out discardAfterReading);
+					var packet = this.core.protocol.GetPacketImplementation(id, (TConnection) this, this.state, out discardAfterReading);
 					length--;
 					offset++;
 
@@ -220,11 +220,11 @@ namespace SteamEngine.Communication {
 
 		private bool ProcessDecryption(ref int length, ref byte[] bytes, ref int offset) {
 			if (this.useEncryption) {
-				IEncryption encryption = this.State.Encryption;
+				var encryption = this.State.Encryption;
 				if (encryption != null) {
 					if (!this.encryptionInitialised) {
 						int read;
-						EncryptionInitResult result = encryption.Init(bytes, offset, length, out read);
+						var result = encryption.Init(bytes, offset, length, out read);
 						switch (result) {
 							case EncryptionInitResult.SuccessUseEncryption:
 								Logger.WriteDebug(this.State + " using " + encryption);
@@ -307,7 +307,7 @@ namespace SteamEngine.Communication {
 		}
 
 		private void SendJoinedPG() {
-			PacketGroup group = this.joinedPG;
+			var group = this.joinedPG;
 			this.joinedPG = null;
 			if (this.IsConnected) {
 				this.core.EnqueueOutgoing((TConnection) this, group);
@@ -315,7 +315,7 @@ namespace SteamEngine.Communication {
 		}
 
 		public void SendSinglePacket(OutgoingPacket packet) {
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AddPacket(packet);
 			this.SendPacketGroup(pg);
 		}
@@ -335,13 +335,13 @@ namespace SteamEngine.Communication {
 		internal void ProcessSending(PacketGroup group) {
 			try {
 				byte[] unencrypted;
-				int unencryptedLen = group.GetFinalBytes(this.state.Compression, out unencrypted);
+				var unencryptedLen = group.GetFinalBytes(this.state.Compression, out unencrypted);
 
 				int encryptedLen;
-				Buffer encryptedBuffer = Pool<Buffer>.Acquire();
+				var encryptedBuffer = Pool<Buffer>.Acquire();
 
 				if (this.useEncryption) {
-					IEncryption encryption = this.state.Encryption;
+					var encryption = this.state.Encryption;
 					if (encryption != null) {
 						if (this.encryptionInitialised) {
 							encryptedLen = encryption.Encrypt(unencrypted, 0, encryptedBuffer.bytes, 0, unencryptedLen);
@@ -359,7 +359,7 @@ namespace SteamEngine.Communication {
 				}
 				group.Dequeued();
 
-				BufferToSend toSend = new BufferToSend(encryptedBuffer, 0, encryptedLen);
+				var toSend = new BufferToSend(encryptedBuffer, 0, encryptedLen);
 				this.BeginSend(toSend);
 
 				

@@ -71,7 +71,7 @@ namespace SteamEngine.CompiledScripts.inGameFeatures {
 		#region Heal
 		[SteamFunction]
 		public static void Heal(Player self, int n) {
-			SkillSequenceArgs param = SkillSequenceArgs.Acquire(self, SkillName.Healing);
+			var param = SkillSequenceArgs.Acquire(self, SkillName.Healing);
 			param.Target1 = self.targMem[n - 1] as Character;
 			if (param.Target1 != null) {
 				param.PhaseSelect();

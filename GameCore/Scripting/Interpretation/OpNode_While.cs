@@ -29,18 +29,18 @@ namespace SteamEngine.Scripting.Interpretation {
 		private OpNode code;
 
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			OpNode_While constructed = new OpNode_While(
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var constructed = new OpNode_While(
 				parent, LScriptMain.GetParentScriptHolder(parent).Filename, line, column, code);
 
 			//LScript.DisplayTree(code);
 
-			Production whileProduction = (Production) code;
-			Node conditionNode = whileProduction.GetChildAt(1);
+			var whileProduction = (Production) code;
+			var conditionNode = whileProduction.GetChildAt(1);
 			constructed.condition = LScriptMain.CompileNode(constructed, conditionNode, true, context);
 
-			Node codeNode = whileProduction.GetChildAt(3);
+			var codeNode = whileProduction.GetChildAt(3);
 			if (!IsType(conditionNode, StrictConstants.ENDWHILE)) {
 				constructed.code = LScriptMain.CompileNode(constructed, codeNode, true, context);
 			}
@@ -77,7 +77,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("While (");
+			var str = new StringBuilder("While (");
 			str.Append(this.condition).Append(")").Append(Environment.NewLine);
 			if (this.code != null) {
 				str.Append(this.code);

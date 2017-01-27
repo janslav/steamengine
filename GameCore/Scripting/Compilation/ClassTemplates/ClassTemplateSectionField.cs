@@ -132,7 +132,7 @@ namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 
 		[SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "s")]
 		private static MemberAttributes ParseAccess(string s) {
-			MemberAttributes ret = MemberAttributes.Final;
+			var ret = MemberAttributes.Final;
 			switch (s.ToLowerInvariant()) {
 				case "public":
 					ret |= MemberAttributes.Public;

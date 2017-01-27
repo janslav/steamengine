@@ -35,10 +35,10 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		public TcpConnection<TState> Connect(IPEndPoint endpoint) {
-			Socket socket = TcpServer<TState>.CreateSocket(endpoint.AddressFamily);
+			var socket = TcpServer<TState>.CreateSocket(endpoint.AddressFamily);
 			socket.Connect(endpoint);
 
-			TcpConnection<TState> newConn = Pool<TcpConnection<TState>>.Acquire();
+			var newConn = Pool<TcpConnection<TState>>.Acquire();
 			newConn.socket = socket;
 			this.InitNewConnection(newConn);
 

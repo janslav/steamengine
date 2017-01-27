@@ -52,9 +52,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public bool IsActive(Character ch) {
-			PluginKey key = this.PluginKey;
+			var key = this.PluginKey;
 			if (key != null) {
-				Plugin plugin = ch.GetPlugin(key);
+				var plugin = ch.GetPlugin(key);
 				if (plugin != null) {
 					return plugin.Def == this.PluginDef;
 				}
@@ -64,9 +64,9 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>If its is running - deactivate, otherwise - activate.</summary>
 		public void Switch(Character chr) {
-			PluginKey key = this.PluginKey;
+			var key = this.PluginKey;
 			if (key != null) {
-				Plugin plugin = chr.GetPlugin(key);
+				var plugin = chr.GetPlugin(key);
 				if (plugin != null) {
 					plugin.Delete();
 					return;
@@ -83,15 +83,15 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Add Plugin to ability holder, if specified for this AbilityDef</summary>
 		protected override void On_Activate(Character chr, Ability ab) {
-			PluginDef def = this.PluginDef;
-			PluginKey key = this.PluginKey;
+			var def = this.PluginDef;
+			var key = this.PluginKey;
 			Sanity.IfTrueThrow((def == null) != (key == null),
 				"Both PluginDef and PluginKey must be defined for " +
 				this + ", or neither."); //could not hold in some curious cases, we'll see
 
 			if ((def != null) && (key != null)) {
-				Plugin plugin = def.Create();
-				EffectDurationPlugin durationPlugin = plugin as EffectDurationPlugin;
+				var plugin = def.Create();
+				var durationPlugin = plugin as EffectDurationPlugin;
 				if (durationPlugin != null) {
 					durationPlugin.Init(chr, EffectFlag.BeneficialEffect | EffectFlag.FromAbility,
 						this.EffectPower * ab.ModifiedPoints, TimeSpan.MinValue, this); //the "power" formula is somewhat arbitrary, but this particular combination (points * effect) seems to be quite popular
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Deactivate(Character chr) {
-			PluginKey key = this.PluginKey;
+			var key = this.PluginKey;
 			if (key != null) {
 				chr.DeletePlugin(key);
 			}

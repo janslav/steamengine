@@ -60,8 +60,8 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		private void BeginReceive() {
-			int offset = this.receivedDataLength;
-			byte[] buffer = this.receivingBuffer.bytes;
+			var offset = this.receivedDataLength;
+			var buffer = this.receivingBuffer.bytes;
 
 			this.socket.BeginReceive(buffer, offset,
 				buffer.Length - offset, SocketFlags.None, this.onReceieve, null);
@@ -70,7 +70,7 @@ namespace SteamEngine.Communication.TCP {
 		private void OnReceieve(IAsyncResult asyncResult) {
 			try {
 				if ((this.socket != null) && (this.socket.Handle != IntPtr.Zero)) {
-					int length = this.socket.EndReceive(asyncResult);
+					var length = this.socket.EndReceive(asyncResult);
 
 					if (length > 0) {
 						//we have new data, but still possibly have some old data.
@@ -106,7 +106,7 @@ namespace SteamEngine.Communication.TCP {
 		}
 
 		private void OnSend(IAsyncResult asyncResult) {
-			Buffer toDispose = (Buffer) asyncResult.AsyncState;
+			var toDispose = (Buffer) asyncResult.AsyncState;
 
 			try {
 				SocketError err;

@@ -29,7 +29,7 @@ namespace SteamEngine
 		}
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public override void OnResponse(int pressedButton, int[] selectedSwitches, ResponseText[] responseTexts, ResponseNumber[] responseNumbers) {
-			CompiledGumpDef gdef = (CompiledGumpDef) this.Def;
+			var gdef = (CompiledGumpDef) this.Def;
 			try {
 				gdef.OnResponse(this, this.Focus, new GumpResponse(pressedButton, selectedSwitches, responseTexts, responseNumbers), this.InputArgs);
 			} catch (FatalException) {

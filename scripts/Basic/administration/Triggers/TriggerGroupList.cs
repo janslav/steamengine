@@ -33,8 +33,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
-			PluginHolder ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme triggergroupy brat?
-			List<TriggerGroup> tgList = args.GetTag(tgListTK) as List<TriggerGroup>;
+			var ph = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme triggergroupy brat?
+			var tgList = args.GetTag(tgListTK) as List<TriggerGroup>;
 			if (tgList == null) {
 				//vzit seznam triggergroup dle vyhledavaciho kriteria
 				//toto se provede jen pri prvnim zobrazeni nebo zmene kriteria!
@@ -42,10 +42,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				tgList.Sort(TriggerGroupsComparer.instance); //setridit podle abecedy
 				args.SetTag(tgListTK, tgList); //ulozime to do argumentu dialogu				
 			}
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, tgList.Count);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, tgList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -81,9 +81,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.CopyColsFromLastTable();
 
 			//projet seznam v ramci daneho rozsahu indexu
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				TriggerGroup tg = tgList[i];
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var tg = tgList[i];
 
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(10 + (i)).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(tg.PrettyDefname).Build();
@@ -99,36 +99,36 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			PluginHolder tgOwner = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme tg brat?				
+			var tgOwner = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme tg brat?				
 			//seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
-			List<TriggerGroup> tgList = (List<TriggerGroup>) args.GetTag(tgListTK);
-			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
-			int imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tgList.Count);
+			var tgList = (List<TriggerGroup>) args.GetTag(tgListTK);
+			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
+			var imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tgList.Count);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (exit, new, vyhledej)				
 				switch (gr.PressedButton) {
 					case 0: //exit
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //vyhledat dle zadani
-						string nameCriteria = gr.GetTextResponse(33);
+						var nameCriteria = gr.GetTextResponse(33);
 						args.RemoveTag(ImprovedDialog.pagingIndexTK);//zrusit info o prvnich indexech - seznam se cely zmeni tim kriteriem						
 						args.SetTag(tgCriteriumTK, nameCriteria);
 						args.RemoveTag(tgListTK);//vycistit soucasny odkaz na tglist aby se mohl prenacist
 						DialogStacking.ResendAndRestackDialog(gi);
 						break;
 					case 2: //pridat novou trigger groupu
-						DialogArgs newArgs = new DialogArgs();
+						var newArgs = new DialogArgs();
 						newArgs.SetTag(D_PluginList.holderTK, tgOwner);
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_NewTriggerGroup>.Instance, newArgs);
+						var newGi = gi.Cont.Dialog(SingletonScript<D_NewTriggerGroup>.Instance, newArgs);
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, tgList.Count, 1)) {//kliknuto na paging?
 			} else {
 				//zjistime si radek
-				int row = gr.PressedButton - 10;
-				int buttNo = (gr.PressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
-				TriggerGroup tg = tgList[row];
+				var row = gr.PressedButton - 10;
+				var buttNo = (gr.PressedButton - 10) % 1; //vzdy nula, ale pokud budem chtit pridat cudlik do radku, tak to jen zmenim na 2 :)
+				var tg = tgList[row];
 				switch (buttNo) {
 					case 0: //smazat						
 						tgOwner.RemoveTriggerGroup(tg);
@@ -141,8 +141,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		/// <summary>Retreives the list of all trigger groups the given PluginHolder has</summary>
 		private List<TriggerGroup> ListifyTriggerGroups(IEnumerable<TriggerGroup> tgs, string criteria) {
-			List<TriggerGroup> tgList = new List<TriggerGroup>();
-			foreach (TriggerGroup entry in tgs) {
+			var tgList = new List<TriggerGroup>();
+			foreach (var entry in tgs) {
 				if (criteria == null || criteria.Equals("")) {
 					tgList.Add(entry);//bereme vse
 				} else if (entry.Defname.ToUpper().Contains(criteria.ToUpper())) {
@@ -162,7 +162,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//zavolat dialog, 
 			//parametr self - thing jehoz tagy chceme zobrazit
 			//0 - zacneme od prvni pluginy co ma
-			DialogArgs newArgs = new DialogArgs();
+			var newArgs = new DialogArgs();
 			newArgs.SetTag(D_PluginList.holderTK, self); //na kom budeme zobrazovat tagy
 			if (text == null || text.Argv == null || text.Argv.Length == 0) {
 				Globals.SrcCharacter.Dialog(SingletonScript<D_TriggerGroupsList>.Instance, newArgs);
@@ -184,8 +184,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//we have to make sure that we are sorting a list of DictionaryEntries which are tags
 		//otherwise this will crash on some ClassCastException -)
 		public int Compare(TriggerGroup x, TriggerGroup y) {
-			string nameA = x.Defname;
-			string nameB = y.Defname;
+			var nameA = x.Defname;
+			var nameB = y.Defname;
 			return StringComparer.OrdinalIgnoreCase.Compare(nameA, nameB);
 		}
 	}

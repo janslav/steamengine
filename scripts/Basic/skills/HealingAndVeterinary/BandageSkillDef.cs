@@ -37,15 +37,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Item bandage = AcquireBandage(self, skillSeqArgs.Tool);
+			var self = skillSeqArgs.Self;
+			var bandage = AcquireBandage(self, skillSeqArgs.Tool);
 			if (bandage == null) {
 				return TriggerResult.Cancel;
 			}
 			skillSeqArgs.Tool = bandage;
 
 
-			Thing target = skillSeqArgs.Target1 as Thing;
+			var target = skillSeqArgs.Target1 as Thing;
 			//není cíl
 			if (target == null) {
 				return TriggerResult.Cancel;
@@ -67,10 +67,10 @@ namespace SteamEngine.CompiledScripts {
 		private TimerKey healingTimerKey = TimerKey.Acquire("_healing_timer_");
 
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
 			//abort previous healing/veterinary, if needed
-			SkillSequenceArgs.SkillStrokeTimer timer = (SkillSequenceArgs.SkillStrokeTimer) self.RemoveTimer(this.healingTimerKey);
+			var timer = (SkillSequenceArgs.SkillStrokeTimer) self.RemoveTimer(this.healingTimerKey);
 			if (timer != null) {
 				timer.skillSeqArgs.PhaseAbort();
 				timer.skillSeqArgs = null;
@@ -88,9 +88,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 
-			Thing target = (Thing) skillSeqArgs.Target1;
+			var target = (Thing) skillSeqArgs.Target1;
 			//nevidi na cil
 			if (Point2D.GetSimpleDistance(self, target) > Math.Min(6, self.VisionRange)) {
 				self.ClilocSysMessage(3000268);	//That is too far away.
@@ -125,7 +125,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static Item AcquireBandage(Character self, Item uncheckedBandage) {
 			if (uncheckedBandage != null) {
-				DenyResult result = self.CanPickup(uncheckedBandage);
+				var result = self.CanPickup(uncheckedBandage);
 				if (!result.Allow) {
 					uncheckedBandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage>.Instance);
 					if ((uncheckedBandage == null) || (!self.CanPickup(uncheckedBandage).Allow)) {
@@ -151,7 +151,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void AddBloodyBandage(Character self) {
-			Item bloodybandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage_blood>.Instance);
+			var bloodybandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage_blood>.Instance);
 			if (bloodybandage == null) {
 				BloodyBandageDef.Create(self.Backpack);
 			} else {
@@ -160,7 +160,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void AddCleanBandage(Character self) {
-			Item cleanBandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage>.Instance);
+			var cleanBandage = self.Backpack.FindByTypeShallow(SingletonScript<t_bandage>.Instance);
 			if (cleanBandage == null) {
 				CleanBandageDef.Create(self.Backpack);
 			} else {
@@ -203,13 +203,13 @@ namespace SteamEngine.CompiledScripts {
 				skill = SkillName.Veterinary;
 			}
 
-			SkillSequenceArgs skillSeq = SkillSequenceArgs.Acquire(self, skill, targetted, null, (Item) parameter, null, null); //tool = parameter = bandage
+			var skillSeq = SkillSequenceArgs.Acquire(self, skill, targetted, null, (Item) parameter, null, null); //tool = parameter = bandage
 			skillSeq.PhaseSelect();
 			return TargetResult.Done;
 		}
 
 		protected override TargetResult On_TargonItem(Player self, Item targetted, object parameter) {
-			Corpse corpse = targetted as Corpse;
+			var corpse = targetted as Corpse;
 			if (corpse != null) {
 				SkillName skill;
 				if (CharModelInfo.IsHumanModel(corpse.CharDef.Model)) {
@@ -217,7 +217,7 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					skill = SkillName.Veterinary;
 				}
-				SkillSequenceArgs skillSeq = SkillSequenceArgs.Acquire(self, skill, targetted, null, (Item) parameter, null, null); //tool = parameter = bandage
+				var skillSeq = SkillSequenceArgs.Acquire(self, skill, targetted, null, (Item) parameter, null, null); //tool = parameter = bandage
 				skillSeq.PhaseSelect();
 				return TargetResult.Done;
 			}

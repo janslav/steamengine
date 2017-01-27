@@ -26,8 +26,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod("TagsCount", typeof(int))]
 		public static object GetTagsCount(object target) {
-			int counter = 0;
-			foreach (KeyValuePair<TagKey, object> kvp in ((TagHolder) target).GetAllTags()) {
+			var counter = 0;
+			foreach (var kvp in ((TagHolder) target).GetAllTags()) {
 				counter++;
 			}
 			return counter;
@@ -35,8 +35,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		[GetMethod("TimersCount", typeof(int))]
 		public static object GetTimersCount(object target) {
-			int counter = 0;
-			foreach (KeyValuePair<TimerKey, BoundTimer> kvp in ((TagHolder) target).GetAllTimers()) {
+			var counter = 0;
+			foreach (var kvp in ((TagHolder) target).GetAllTimers()) {
 				counter++;
 			}
 			return counter;

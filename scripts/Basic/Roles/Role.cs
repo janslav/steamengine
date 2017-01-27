@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void InternalAddMember(Character newMember) {
-			IRoleMembership membership = this.CreateMembershipObject(newMember);
+			var membership = this.CreateMembershipObject(newMember);
 			Sanity.IfTrueThrow(newMember != membership.Member, "newMember != membership.Member");
 
 			this.members.Add(newMember, membership);
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 		internal void InternalRemoveMember(Character removedMember, IRoleMembership membership) {
 			Sanity.IfTrueThrow(removedMember != membership.Member, "removedMember != membership.Member");
 
-			bool removed = this.members.Remove(removedMember);
+			var removed = this.members.Remove(removedMember);
 			Sanity.IfTrueThrow(!removed, "!this.members.ContainsKey(removedMember)");
 
 			this.Trigger_MemberRemoved(removedMember, membership, false);
@@ -67,10 +67,10 @@ namespace SteamEngine.CompiledScripts {
 
 		internal void InternalClearMembers(bool beingDestroyed) {
 			if (this.members.Count > 0) {
-				KeyValuePair<Character, IRoleMembership>[] oldMembers = new KeyValuePair<Character, IRoleMembership>[this.members.Count];
+				var oldMembers = new KeyValuePair<Character, IRoleMembership>[this.members.Count];
 				((ICollection<KeyValuePair<Character, IRoleMembership>>) this.members).CopyTo(oldMembers, 0);
 				this.members.Clear();
-				foreach (KeyValuePair<Character, IRoleMembership> pair in oldMembers) {
+				foreach (var pair in oldMembers) {
 					this.Trigger_MemberRemoved(pair.Key, pair.Value, beingDestroyed);
 				}
 			}
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal DenyResult Trigger_DenyAddMember(Character chr) {
-			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, null, this);
+			var args = new DenyRoleTriggerArgs(chr, null, this);
 			if (TriggerResult.Cancel != this.def.TryCancellableTrigger(this, RoleDef.tkDenyAddMember, args)) {
 				try {
 					this.On_DenyAddMember(args);
@@ -120,7 +120,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal DenyResult Trigger_DenyRemoveMember(Character chr, IRoleMembership membership) {
-			DenyRoleTriggerArgs args = new DenyRoleTriggerArgs(chr, membership, this);
+			var args = new DenyRoleTriggerArgs(chr, membership, this);
 			if (TriggerResult.Cancel != this.def.TryCancellableTrigger(this, RoleDef.tkDenyRemoveMember, args)) {
 				try {
 					this.On_DenyRemoveMember(args);
@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 			//int count = this.members.Count;
 			//output.WriteValue("count", count);
 			//int i = 0;
-			foreach (IRoleMembership membership in this.members.Values) {
+			foreach (var membership in this.members.Values) {
 				//output.WriteValue(i.ToString(), membership);				
 				//i++;
 				ObjectSaver.Save(membership);
@@ -238,21 +238,21 @@ namespace SteamEngine.CompiledScripts {
 
 		[LoadSection]
 		public static Role LoadSection(PropsSection input) {
-			int currentLineNumber = input.HeaderLine;
+			var currentLineNumber = input.HeaderLine;
 			try {
-				PropsLine pl = input.PopPropsLine("def");
+				var pl = input.PopPropsLine("def");
 				currentLineNumber = pl.Line;
-				RoleDef def = (RoleDef) ObjectSaver.OptimizedLoad_Script(pl.Value);
+				var def = (RoleDef) ObjectSaver.OptimizedLoad_Script(pl.Value);
 
 				pl = input.PopPropsLine("key");
 				currentLineNumber = pl.Line;
-				RoleKey key = (RoleKey) ObjectSaver.OptimizedLoad_SimpleType(pl.Value, typeof(RoleKey));
+				var key = (RoleKey) ObjectSaver.OptimizedLoad_SimpleType(pl.Value, typeof(RoleKey));
 
 				//pl = input.PopPropsLine("count");
 				//currentLineNumber = pl.line;
 				//int count = ConvertTools.ParseInt32(pl.value);
 
-				Role role = def.CreateWhenLoading(key);
+				var role = def.CreateWhenLoading(key);
 
 				//for (int i = 0; i < count; i++) {
 				//    pl = input.PopPropsLine(i.ToString());
@@ -261,7 +261,7 @@ namespace SteamEngine.CompiledScripts {
 				//    }
 				//}
 
-				foreach (PropsLine p in input.PropsLines) {
+				foreach (var p in input.PropsLines) {
 					try {
 						role.LoadLine(input.Filename, p.Line, p.Name.ToLowerInvariant(), p.Value);
 					} catch (FatalException) {

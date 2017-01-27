@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 			if (connection != null)
 				connection.Close();
 
-			string connStr = string.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
+			var connStr = string.Format("server={0};user id={1}; password={2}; database={3}; pooling=false",
 				config.server, config.user, config.password, config.dbName);
 
 			Logger.WriteDebug("Connecting to MySql server at " + config.server);

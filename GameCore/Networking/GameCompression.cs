@@ -39,10 +39,10 @@ namespace SteamEngine.Networking {
 		//rewriting the other ones coming soon
 		public int Compress(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length) {
 			int numBits;
-			int curByte = 0;
-			int bitByte = 0;
+			var curByte = 0;
+			var bitByte = 0;
 			long value;
-			int[] packed = new int[checked(length * 4)];
+			var packed = new int[checked(length * 4)];
 			while (length-- > 0) {
 				//try {
 				numBits = bitTable[bytesIn[offsetIn], 0];
@@ -81,7 +81,7 @@ namespace SteamEngine.Networking {
 				}
 				curByte++;
 			}
-			for (int i = 0; i < curByte; i++)
+			for (var i = 0; i < curByte; i++)
 				bytesOut[i + offsetOut] = (byte) packed[i];
 			return curByte;
 		}
@@ -97,7 +97,7 @@ namespace SteamEngine.Networking {
 		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static void ConstructBitTables() {
 			bitAmtTable = new uint[32];
-			for (int a = 0; a < 31; a++) {
+			for (var a = 0; a < 31; a++) {
 				bitAmtTable[a] = (uint) ((1 << a) - 1);
 			}
 			bitAmtTable[31] = 0xffffffff;	//our formula won't work for #31 because 1<<31 would be too big to fit in 32 bits, though (1<<31 - 1) would just fit, so we just store that...
@@ -619,7 +619,7 @@ namespace SteamEngine.Networking {
 			bitTable[256, 1] = 0xd;
 
 			flatBitTable = new int[514];
-			for (int a = 0; a < 257; a++) {
+			for (var a = 0; a < 257; a++) {
 				flatBitTable[a << 1] = bitTable[a, 0];
 				flatBitTable[(a << 1) | 1] = bitTable[a, 1];
 			}

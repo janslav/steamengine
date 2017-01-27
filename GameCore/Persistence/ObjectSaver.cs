@@ -275,14 +275,14 @@ namespace SteamEngine.Persistence {
 			if (value == null) {
 				return "null";
 			}
-			IDeletable asDeletable = value as IDeletable;
+			var asDeletable = value as IDeletable;
 			if (asDeletable != null) {
 				if (asDeletable.IsDeleted) {
 					return "null";
 				}
 			}
 
-			Type t = value.GetType();
+			var t = value.GetType();
 
 			if (t.IsEnum) {
 				return Convert.ToUInt64(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
@@ -291,7 +291,7 @@ namespace SteamEngine.Persistence {
 				return ((IConvertible) value).ToString(CultureInfo.InvariantCulture.NumberFormat);
 			}
 			if (t.Equals(typeof(string))) {
-				string stringAsSingleLine = Tools.EscapeNewlines((string) value);
+				var stringAsSingleLine = Tools.EscapeNewlines((string) value);
 				return "\"" + stringAsSingleLine + "\""; //returns the string in ""
 			}
 			if (typeof(AbstractScript).IsAssignableFrom(t)) {
@@ -393,7 +393,7 @@ namespace SteamEngine.Persistence {
 			} else if (typeof(Globals).IsAssignableFrom(t)) {
 			} else if (simpleImplementorsByType.ContainsKey(t)) {
 			} else {
-				foreach (IBaseClassSaveCoordinator coordinator in coordinatorsByType.Values) {
+				foreach (var coordinator in coordinatorsByType.Values) {
 					if (coordinator.BaseType.IsAssignableFrom(t)) {
 						return true;
 					}
@@ -434,7 +434,7 @@ namespace SteamEngine.Persistence {
 
 			Match m;
 			for (int i = 0, n = coordinatorsRGs.Count; i < n; i++) {
-				RGBCSCPair pair = coordinatorsRGs[i];
+				var pair = coordinatorsRGs[i];
 				m = pair.re.Match(input);
 				if (m.Success) {
 					return pair.bcsc.Load(m);
@@ -442,10 +442,10 @@ namespace SteamEngine.Persistence {
 			}
 			m = genericUidRE.Match(input);
 			if (m.Success) {
-				int uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
-				int loadedObjectsCount = loadedObjectsByUid.Count;
+				var uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
+				var loadedObjectsCount = loadedObjectsByUid.Count;
 				if (uid < loadedObjectsCount) {
-					object o = loadedObjectsByUid[uid];
+					var o = loadedObjectsByUid[uid];
 					if (o != voidObject) {
 						return o;
 					}
@@ -482,8 +482,8 @@ namespace SteamEngine.Persistence {
 				return true;
 			}
 			for (int i = 0, n = simpleImplementorsRGs.Count; i < n; i++) {
-				RGSSIPair pair = simpleImplementorsRGs[i];
-				Match m = pair.re.Match(input);
+				var pair = simpleImplementorsRGs[i];
+				var m = pair.re.Match(input);
 				if (m.Success) {
 					retVal = pair.ssi.Load(m);
 					return true;
@@ -493,15 +493,15 @@ namespace SteamEngine.Persistence {
 		}
 
 		private static bool TryLoadScriptReference(string input, ref object retVal) {
-			Match m = abstractScriptRE.Match(input);
+			var m = abstractScriptRE.Match(input);
 			if (m.Success) {
-				string defname = m.Groups["value"].Value;
+				var defname = m.Groups["value"].Value;
 				if (StringComparer.OrdinalIgnoreCase.Equals("globals", defname)) {
 					retVal = Globals.Instance;
 					return true;
 				}
 
-				AbstractScript script = AbstractScript.GetByDefname(defname);
+				var script = AbstractScript.GetByDefname(defname);
 				if (script != null) {
 					retVal = script;
 					return true;
@@ -512,9 +512,9 @@ namespace SteamEngine.Persistence {
 		}
 
 		private static bool TryLoadString(string input, ref object retVal) {
-			Match m = ConvertTools.stringRE.Match(input);
+			var m = ConvertTools.stringRE.Match(input);
 			if (m.Success) {
-				string stringAsSingleLine = m.Groups["value"].Value;
+				var stringAsSingleLine = m.Groups["value"].Value;
 				retVal = Tools.UnescapeNewlines(stringAsSingleLine);
 				return true;
 			}
@@ -545,7 +545,7 @@ namespace SteamEngine.Persistence {
 
 			Match m;
 			for (int i = 0, n = coordinatorsRGs.Count; i < n; i++) {
-				RGBCSCPair pair = coordinatorsRGs[i];
+				var pair = coordinatorsRGs[i];
 				m = pair.re.Match(input);
 				if (m.Success) {
 					PushDelayedLoader(new BaseClassDelayedLoader_NoParam(
@@ -555,7 +555,7 @@ namespace SteamEngine.Persistence {
 
 			m = genericUidRE.Match(input);
 			if (m.Success) {
-				int uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
+				var uid = ConvertTools.ParseInt32(m.Groups["uid"].Value);//should we also check something using the "name" part?
 				PushDelayedLoader(new GenericDelayedLoader_NoParam(deleg, filename, line, uid));
 			}
 		}
@@ -584,7 +584,7 @@ namespace SteamEngine.Persistence {
 
 			Match m;
 			for (int i = 0, n = coordinatorsRGs.Count; i < n; i++) {
-				RGBCSCPair pair = coordinatorsRGs[i];
+				var pair = coordinatorsRGs[i];
 				m = pair.re.Match(input);
 				if (m.Success) {
 					PushDelayedLoader(new BaseClassDelayedLoader_Param(
@@ -595,7 +595,7 @@ namespace SteamEngine.Persistence {
 
 			m = genericUidRE.Match(input);
 			if (m.Success) {
-				uint uid = uint.Parse(m.Groups["uid"].Value, CultureInfo.InvariantCulture);//should we also check something using the "name" part?
+				var uid = uint.Parse(m.Groups["uid"].Value, CultureInfo.InvariantCulture);//should we also check something using the "name" part?
 				PushDelayedLoader(new GenericDelayedLoader_Param(deleg, filename, line, additionalParameter, uid));
 				return;
 			}
@@ -643,7 +643,7 @@ namespace SteamEngine.Persistence {
 		public static object OptimizedLoad_SimpleType(string input, Type suggestedType) {
 			ISimpleSaveImplementor issi;
 			if (simpleImplementorsByType.TryGetValue(suggestedType, out issi)) {
-				Match m = issi.LineRecognizer.Match(input);
+				var m = issi.LineRecognizer.Match(input);
 				if (m.Success) {
 					return issi.Load(m);
 				}
@@ -659,7 +659,7 @@ namespace SteamEngine.Persistence {
 		//I am not sure what all would be needed to do that...
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static void LoadSection(PropsSection input) {
-			string name = input.HeaderType;
+			var name = input.HeaderType;
 
 			ISaveImplementor isi;
 			if (implementorsByName.TryGetValue(name, out isi)) {
@@ -668,9 +668,9 @@ namespace SteamEngine.Persistence {
 					if (coordinatorsByImplementor.TryGetValue(isi, out coordinator)) {
 						isi.LoadSection(input);
 					} else {
-						uint uid = uint.Parse(input.HeaderName, CultureInfo.InvariantCulture);
+						var uid = uint.Parse(input.HeaderName, CultureInfo.InvariantCulture);
 						//[name uid]
-						object loaded = isi.LoadSection(input);
+						var loaded = isi.LoadSection(input);
 						while (loadedObjectsByUid.Count <= uid) {
 							loadedObjectsByUid.Add(voidObject);//so that we know what was already loaded and what not.
 						}
@@ -697,14 +697,14 @@ namespace SteamEngine.Persistence {
 
 		//called by ClassManager
 		internal static void RegisterCoordinator(IBaseClassSaveCoordinator coordinator) {
-			Type type = coordinator.BaseType;
+			var type = coordinator.BaseType;
 			if (coordinatorsByType.ContainsKey(type)) {
 				throw new OverrideNotAllowedException("There is already a IBaseClassSaveCoordinator (" + implementorsByType[type] + ") registered for handling the type " + type);
 			}
 			coordinatorsByType[type] = coordinator;
 			coordinatorsRGs.Add(new RGBCSCPair(coordinator, coordinator.ReferenceLineRecognizer));
 
-			foreach (KeyValuePair<Type, ISaveImplementor> pair in implementorsByType) {
+			foreach (var pair in implementorsByType) {
 				if (type.IsAssignableFrom(pair.Key)) {//one of our implementors
 					IBaseClassSaveCoordinator ibcsc;
 					if (coordinatorsByImplementor.TryGetValue(pair.Value, out ibcsc))
@@ -721,7 +721,7 @@ namespace SteamEngine.Persistence {
 
 		public static IEnumerable<IBaseClassSaveCoordinator> AllCoordinators {
 			get {
-				foreach (RGBCSCPair pair in coordinatorsRGs) {
+				foreach (var pair in coordinatorsRGs) {
 					yield return pair.bcsc;
 				}
 			}
@@ -729,14 +729,14 @@ namespace SteamEngine.Persistence {
 
 		//called by ClassManager
 		internal static void RegisterImplementor(ISaveImplementor implementor) {
-			Type type = implementor.HandledType;
+			var type = implementor.HandledType;
 			if (implementorsByType.ContainsKey(type)) {
 				throw new OverrideNotAllowedException("There is already a ISaveImplementor (" + implementorsByType[type] + ") registered for handling the type " + type);
 			}
 			implementorsByType[type] = implementor;
-			string name = implementor.HeaderName;
+			var name = implementor.HeaderName;
 			implementorsByName[name] = implementor;
-			foreach (KeyValuePair<Type, IBaseClassSaveCoordinator> pair in coordinatorsByType) {
+			foreach (var pair in coordinatorsByType) {
 				if (pair.Key.IsAssignableFrom(type)) {
 					IBaseClassSaveCoordinator ibcsc;
 					if (coordinatorsByImplementor.TryGetValue(implementor, out ibcsc))
@@ -753,7 +753,7 @@ namespace SteamEngine.Persistence {
 
 		//called by ClassManager
 		internal static void RegisterSimpleImplementor(ISimpleSaveImplementor implementor) {
-			Type type = implementor.HandledType;
+			var type = implementor.HandledType;
 			if (simpleImplementorsByType.ContainsKey(type)) {
 				throw new OverrideNotAllowedException("There is already a ISimpleSaveImplementor (" + simpleImplementorsByType[type] + ") registered for handling the type " + type);
 			}
@@ -764,7 +764,7 @@ namespace SteamEngine.Persistence {
 		/// <summary>Call this before you start using this class for loading.</summary>
 		internal static void StartingLoading() {
 			loadedObjectsByUid = new ArrayList();
-			foreach (RGBCSCPair pair in coordinatorsRGs) {
+			foreach (var pair in coordinatorsRGs) {
 				pair.bcsc.StartingLoading();
 			}
 		}
@@ -789,7 +789,7 @@ namespace SteamEngine.Persistence {
 			}
 			loadedObjectsByUid = null;
 
-			foreach (RGBCSCPair pair in coordinatorsRGs) {
+			foreach (var pair in coordinatorsRGs) {
 				pair.bcsc.LoadingFinished();
 			}
 		}
@@ -811,30 +811,30 @@ namespace SteamEngine.Persistence {
 
 		//unloads instences that come from scripts.
 		internal static void ForgetScripts() {
-			Assembly coreAssembly = ClassManager.CoreAssembly;
-			List<ISaveImplementor> isis = new List<ISaveImplementor>(implementorsByName.Values);
+			var coreAssembly = ClassManager.CoreAssembly;
+			var isis = new List<ISaveImplementor>(implementorsByName.Values);
 			implementorsByName.Clear();
 			implementorsByType.Clear();
-			foreach (ISaveImplementor isi in isis) {
+			foreach (var isi in isis) {
 				if (coreAssembly == isi.GetType().Assembly) {
 					RegisterImplementor(isi);
 				}
 			}
 
-			List<ISimpleSaveImplementor> issis = new List<ISimpleSaveImplementor>(simpleImplementorsByType.Values);
+			var issis = new List<ISimpleSaveImplementor>(simpleImplementorsByType.Values);
 			simpleImplementorsRGs.Clear();
 			simpleImplementorsByType.Clear();
-			foreach (ISimpleSaveImplementor issi in issis) {
+			foreach (var issi in issis) {
 				if (coreAssembly == issi.GetType().Assembly) {
 					RegisterSimpleImplementor(issi);
 				}
 			}
 
-			List<IBaseClassSaveCoordinator> ibcscs = new List<IBaseClassSaveCoordinator>(coordinatorsByType.Values);
+			var ibcscs = new List<IBaseClassSaveCoordinator>(coordinatorsByType.Values);
 			coordinatorsRGs.Clear();
 			coordinatorsByImplementor.Clear();
 			coordinatorsByType.Clear();
-			foreach (IBaseClassSaveCoordinator ibcsc in ibcscs) {
+			foreach (var ibcsc in ibcscs) {
 				if (coreAssembly == ibcsc.GetType().Assembly) {
 					RegisterCoordinator(ibcsc);
 				}
@@ -868,7 +868,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		private static DelayedLoader PopDelayedLoader() {
-			DelayedLoader dl = loadersList;
+			var dl = loadersList;
 			loadersList = loadersList.next;//throws nullpointerexc...
 			return dl;
 		}
@@ -890,7 +890,7 @@ namespace SteamEngine.Persistence {
 		}
 
 		private static DelayedSaver PopDelayedSaver() {
-			DelayedSaver ds = saversList;
+			var ds = saversList;
 			saversList = saversList.next;//throws nullpointerexc...
 			return ds;
 		}
@@ -983,7 +983,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run() {
-				object o = this.coordinator.Load(this.m);
+				var o = this.coordinator.Load(this.m);
 				this.deleg(o, this.filename, this.line);
 			}
 		}
@@ -999,7 +999,7 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run() {
-				object o = this.coordinator.Load(this.m);
+				var o = this.coordinator.Load(this.m);
 				this.deleg(o, this.filename, this.line, this.param);
 			}
 		}
@@ -1012,9 +1012,9 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run() {
-				int loadedObjectsCount = loadedObjectsByUid.Count;
+				var loadedObjectsCount = loadedObjectsByUid.Count;
 				if (this.objectUid < loadedObjectsCount) {
-					object o = loadedObjectsByUid[this.objectUid];
+					var o = loadedObjectsByUid[this.objectUid];
 					if (o != voidObject) {
 						this.deleg(o, this.filename, this.line);
 						return;
@@ -1032,9 +1032,9 @@ namespace SteamEngine.Persistence {
 			}
 
 			internal override void Run() {
-				int loadedObjectsCount = loadedObjectsByUid.Count;
+				var loadedObjectsCount = loadedObjectsByUid.Count;
 				if (this.objectUid < loadedObjectsCount) {
-					object o = loadedObjectsByUid[(int) this.objectUid];
+					var o = loadedObjectsByUid[(int) this.objectUid];
 					if (o != voidObject) {
 						this.deleg(o, this.filename, this.line, this.param);
 						return;

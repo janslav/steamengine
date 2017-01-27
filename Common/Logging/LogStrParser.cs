@@ -46,11 +46,11 @@ namespace SteamEngine.Common {
 		}
 
 		public void ProcessLogStr(string logStrEncoded) {
-			string[] tokens = logStrEncoded.Split(separatorArray);
-			int tokenLen = tokens.Length;
+			var tokens = logStrEncoded.Split(separatorArray);
+			var tokenLen = tokens.Length;
 			if (tokenLen > 0) {
-				for (int i = 0; i < tokenLen; i++) {
-					string token = tokens[i];
+				for (var i = 0; i < tokenLen; i++) {
+					var token = tokens[i];
 
 					if (string.IsNullOrEmpty(token)) {
 						continue;
@@ -63,7 +63,7 @@ namespace SteamEngine.Common {
 								}
 								continue;
 							case LogStrBase.titleChar:
-								string title = token.Substring(1);
+								var title = token.Substring(1);
 								if (title.Length > 0) {
 									this.display.SetTitle(title);
 								} else {
@@ -71,7 +71,7 @@ namespace SteamEngine.Common {
 								}
 								continue;
 							case LogStrBase.styleChar:
-								int num = int.Parse(token.Substring(1), CultureInfo.InvariantCulture);
+								var num = int.Parse(token.Substring(1), CultureInfo.InvariantCulture);
 								this.styleStack.Push((LogStyles) num);
 								continue;
 						}
@@ -88,7 +88,7 @@ namespace SteamEngine.Common {
 
 		[SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
 		public static bool TryParseFileLine(string p, out string filename, out int line) {
-			Match m = fileLineRE.Match(p);
+			var m = fileLineRE.Match(p);
 			filename = m.Groups["filename"].Value;
 			if (m.Success) {
 				line = ConvertTools.ParseInt32(m.Groups["linenumber"].Value);
@@ -101,7 +101,7 @@ namespace SteamEngine.Common {
 		//uses the /./ in LogStr paths to rebuild it from the local . dir
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static string TranslateToLocalPath(string path) {
-			int indexOfDot = path.IndexOf(LogStr.separatorAndDot);
+			var indexOfDot = path.IndexOf(LogStr.separatorAndDot);
 			if (indexOfDot > -1) {
 				return Path.GetFullPath(path.Substring(indexOfDot+1));
 			}

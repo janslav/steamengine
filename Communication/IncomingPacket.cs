@@ -126,8 +126,8 @@ namespace SteamEngine.Communication {
 		/// If the string contains a \0 (the 'end-of-string' character), it will be truncated.
 		/// </remarks>
 		protected string DecodeBigEndianUnicodeString(int len, bool truncateEndlines) {
-			string str = Encoding.BigEndianUnicode.GetString(this.buffer, this.position, len);
-			int indexOfZero = str.IndexOf((char) 0);
+			var str = Encoding.BigEndianUnicode.GetString(this.buffer, this.position, len);
+			var indexOfZero = str.IndexOf((char) 0);
 			if (indexOfZero > -1) {
 				str = str.Substring(0, indexOfZero);
 			}
@@ -141,8 +141,8 @@ namespace SteamEngine.Communication {
 		/// <summary>Decodes an ascii string, which is expected to be null-terminated, truncating it if it contains endlines (and replacing tabs with spaces).</summary>
 		/// <remarks>If the string contains a \0 (the 'end-of-string' character), it will be truncated.</remarks>
 		protected string DecodeTerminatedAsciiString() {
-			int indexOfEnd = Array.IndexOf<byte>(this.buffer, 0, this.position);
-			int len = indexOfEnd - this.position;
+			var indexOfEnd = Array.IndexOf<byte>(this.buffer, 0, this.position);
+			var len = indexOfEnd - this.position;
 
 			return this.DecodeAsciiString(len, true);
 		}
@@ -170,14 +170,14 @@ namespace SteamEngine.Communication {
 		/// If the string contains a \0 (the 'end-of-string' character), it will be truncated.
 		/// </remarks>
 		protected string DecodeAsciiString(int len, bool truncateEndlines) {
-			string str = "";
+			var str = "";
 			//try {
 			str = Encoding.UTF8.GetString(this.buffer, this.position, len);
 			//} catch (ArgumentOutOfRangeException) {
 			//    //return null;
 			//    throw;
 			//}
-			int indexOfZero = str.IndexOf((char) 0);
+			var indexOfZero = str.IndexOf((char) 0);
 			if (indexOfZero > -1) {
 				str = str.Substring(0, indexOfZero);
 			}
@@ -189,50 +189,50 @@ namespace SteamEngine.Communication {
 		}
 
 		protected int DecodeInt() {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			this.SeekFromCurrent(4);
 			return ((packet[startpos] << 24) + (packet[startpos + 1] << 16) + (packet[startpos + 2] << 8) + packet[startpos + 3]);
 		}
 
 		[CLSCompliant(false)]
 		protected uint DecodeUInt() {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			this.SeekFromCurrent(4);
 			return (uint) ((packet[startpos] << 24) + (packet[startpos + 1] << 16) + (packet[startpos + 2] << 8) + packet[startpos + 3]);
 		}
 
 		protected short DecodeShort() {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			this.SeekFromCurrent(2);
 			return (short) ((packet[startpos] << 8) + packet[startpos + 1]);
 		}
 
 		[CLSCompliant(false)]
 		public ushort DecodeUShort() {
-			byte[] packet = this.buffer;
-			int startpos = this.position;
+			var packet = this.buffer;
+			var startpos = this.position;
 			this.SeekFromCurrent(2);
 			return (ushort) ((packet[startpos] << 8) + packet[startpos + 1]);
 		}
 
 		[CLSCompliant(false)]
 		protected sbyte DecodeSByte() {
-			int startpos = this.position;
+			var startpos = this.position;
 			this.SeekFromCurrent(1);
 			return (sbyte) this.buffer[startpos];
 		}
 
 		protected byte DecodeByte() {
-			int startpos = this.position;
+			var startpos = this.position;
 			this.SeekFromCurrent(1);
 			return this.buffer[startpos];
 		}
 
 		protected bool DecodeBool() {
-			int startpos = this.position;
+			var startpos = this.position;
 			this.SeekFromCurrent(1);
 			return this.buffer[startpos] != 0;
 		}
@@ -240,8 +240,8 @@ namespace SteamEngine.Communication {
 
 		//non-UO
 		protected string DecodeUTF8String() {
-			int bytesCount = this.DecodeInt();
-			string retVal = Encoding.UTF8.GetString(this.buffer, this.position, bytesCount);
+			var bytesCount = this.DecodeInt();
+			var retVal = Encoding.UTF8.GetString(this.buffer, this.position, bytesCount);
 			this.SeekFromCurrent(bytesCount);
 			return retVal;
 		}

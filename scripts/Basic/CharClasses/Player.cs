@@ -128,7 +128,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Password(string newpass) {
-			AbstractAccount acc = this.Account;
+			var acc = this.Account;
 			if (acc != null) {
 				acc.Password(newpass);
 			}
@@ -136,14 +136,14 @@ namespace SteamEngine.CompiledScripts {
 
 		[Button("Skills")]
 		public void ShowSkills() {
-			GameState state = Globals.SrcGameState;
+			var state = Globals.SrcGameState;
 			if (state != null) {
 				this.ShowSkillsTo(state.Conn, state);
 			}
 		}
 
 		public void AllShow() {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				if (state.AllShow) {
 					state.AllShow = false;
@@ -156,7 +156,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void AllShow(bool value) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				state.AllShow = value;
 				Globals.SrcWriteLine("AllShow " + (value ? "on" : "off"));
@@ -165,9 +165,9 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Display (or remove) a quest arrow pointing towards the specified coordinates</summary>
 		public void QuestArrow(bool active, ushort xPos, ushort yPos) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
+				var qaop = Pool<QuestArrowOutPacket>.Acquire();
 				qaop.Prepare(active, xPos, yPos);
 				state.Conn.SendSinglePacket(qaop);
 			}
@@ -175,18 +175,18 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Display (or remove) a quest arrow pointing towards the specified location</summary>
 		public void QuestArrow(bool active, IPoint2D position) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				QuestArrowOutPacket qaop = Pool<QuestArrowOutPacket>.Acquire();
+				var qaop = Pool<QuestArrowOutPacket>.Acquire();
 				qaop.Prepare(active, position);
 				state.Conn.SendSinglePacket(qaop);
 			}
 		}
 
 		public void WebLink(string url) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
-				OpenWebBrowserOutPacket qaop = Pool<OpenWebBrowserOutPacket>.Acquire();
+				var qaop = Pool<OpenWebBrowserOutPacket>.Acquire();
 				qaop.Prepare(url);
 				state.Conn.SendSinglePacket(qaop);
 			}
@@ -240,7 +240,7 @@ namespace SteamEngine.CompiledScripts {
 				//} else {
 				//    Console.WriteLine(ScriptUtil.GetLogString(this.Conn, "Logged in"));
 				//}
-				GameState state = this.GameState;
+				var state = this.GameState;
 				state.SyncUpdateRange();
 				state.SendPersonalLightLevel(this.personalLightLevel);
 				state.SendGlobalLightLevel(LightAndWeather.GetLightAt(this));
@@ -310,7 +310,7 @@ namespace SteamEngine.CompiledScripts {
 
 			protected sealed override void OnTimeout(TagHolder cont) {
 				Logger.WriteDebug("CharLingeringTimer OnTimeout on " + cont);
-				Character self = cont as Character;
+				var self = cont as Character;
 				if (self != null) {
 					if (self.IsLingering) {
 						self.Disconnect();
@@ -412,14 +412,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Add(IThingFactory addedDef, int amount) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				if (addedDef != null) {
-					string name = addedDef is ThingDef ? ((ThingDef) addedDef).Name : addedDef.ToString();
+					var name = addedDef is ThingDef ? ((ThingDef) addedDef).Name : addedDef.ToString();
 					this.SysMessage("Kam chceš umístit '" + name + "' ?");
 
-					ItemDef idef = addedDef as ItemDef;
-					AddHelper addedH = new AddHelper(addedDef, amount);
+					var idef = addedDef as ItemDef;
+					var addedH = new AddHelper(addedDef, amount);
 					if ((idef != null) && (idef.MultiData != null)) {
 						state.TargetForMultis(idef.Model, this.Add_OnTargon, null, addedH);
 					} else {
@@ -442,13 +442,13 @@ namespace SteamEngine.CompiledScripts {
 
 		private void Add_OnTargon(GameState state, IPoint3D getback, object parameter) {
 
-			AddHelper addedH = (AddHelper) parameter;
-			Item targettedItem = getback as Item;
+			var addedH = (AddHelper) parameter;
+			var targettedItem = getback as Item;
 			if (targettedItem != null) {
 				getback = targettedItem.TopObj();
 			}
-			Thing t = addedH.def.Create(getback.X, getback.Y, getback.Z, this.M);
-			Item i = t as Item;
+			var t = addedH.def.Create(getback.X, getback.Y, getback.Z, this.M);
+			var i = t as Item;
 			if (i != null) {
 				i.Amount = addedH.amount;
 			}
@@ -456,17 +456,17 @@ namespace SteamEngine.CompiledScripts {
 		#endregion Add
 		/// <summary>The crafting main method. Tries to create the given Item(Def) in a requested quantity</summary>
 		public void Make(ItemDef what, int howMuch) {
-			SimpleQueue<CraftingSelection> selectionQueue = new SimpleQueue<CraftingSelection>();
+			var selectionQueue = new SimpleQueue<CraftingSelection>();
 			selectionQueue.Enqueue(new CraftingSelection(what, howMuch));
 			//to bychom meli, ted skill
-			ResourcesList skillMake = what.SkillMake;
+			var skillMake = what.SkillMake;
 			double highestSkillVal = 0;
-			CraftingSkillDef highestCsd = (CraftingSkillDef) AbstractSkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
+			var highestCsd = (CraftingSkillDef) AbstractSkillDef.GetByKey("Tinkering"); //default skill (neco mit vybrano musime, i v pripade ze skillmake == null)
 			if (skillMake != null) {
-				foreach (IResourceListEntry_Simple itm in skillMake.NonMultiplicablesSublist) {
-					SkillResource sklr = itm as SkillResource;
+				foreach (var itm in skillMake.NonMultiplicablesSublist) {
+					var sklr = itm as SkillResource;
 					if (sklr != null) {
-						CraftingSkillDef neededCraftingSkill = sklr.SkillDef as CraftingSkillDef;
+						var neededCraftingSkill = sklr.SkillDef as CraftingSkillDef;
 						if (neededCraftingSkill != null) {//je to skutecne crafting skill?
 							if (highestSkillVal < sklr.DesiredCount) {//je nejvyssi?
 								highestSkillVal = sklr.DesiredCount;
@@ -503,7 +503,7 @@ namespace SteamEngine.CompiledScripts {
 			set {
 				this.visionRange = (byte) value;
 
-				GameState state = this.GameState;
+				var state = this.GameState;
 				if (state != null) {
 					state.SyncUpdateRange();
 				}
@@ -516,7 +516,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.personalLightLevel = (byte) value;
-				GameState state = this.GameState;
+				var state = this.GameState;
 				if (state != null) {
 					state.SendPersonalLightLevel(value);
 				}
@@ -524,7 +524,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void SendGlobalLightLevel(int globalLight) {
-			GameState state = this.GameState;
+			var state = this.GameState;
 			if (state != null) {
 				state.SendGlobalLightLevel(globalLight);
 			}

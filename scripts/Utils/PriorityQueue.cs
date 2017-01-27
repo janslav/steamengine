@@ -60,7 +60,7 @@ namespace SteamEngine.CompiledScripts {
 			if (this.count == 0) {
 				throw new SEException("count == 0");
 			}
-			TNode result = this.heap[0].value;
+			var result = this.heap[0].value;
 			this.count--;
 			this.TrickleDown(0, this.heap[this.count]);
 			//heap[count] = default(TNode);
@@ -87,7 +87,7 @@ namespace SteamEngine.CompiledScripts {
 				this.Grow();
 			}
 			this.count++;
-			Node<TNode, TPriority> node = new Node<TNode, TPriority>();
+			var node = new Node<TNode, TPriority>();
 			node.value = nodeValue;
 			node.priority = priority;
 			this.BubbleUp(this.count - 1, node);
@@ -95,12 +95,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		private void BubbleUp(int index, Node<TNode, TPriority> node) {
-			int parent = this.GetParent(index);
+			var parent = this.GetParent(index);
 			// note: (index > 0) means there is a parent
 
 			while ((index > 0) &&
 					(this.heap[parent].priority.CompareTo(node.priority) > 0)) {
-				Node<TNode, TPriority> parentAStarNode = this.heap[parent];
+				var parentAStarNode = this.heap[parent];
 				this.heap[index] = parentAStarNode;
 				index = parent;
 				parent = this.GetParent(index);
@@ -118,19 +118,19 @@ namespace SteamEngine.CompiledScripts {
 
 		private void Grow() {
 			this.capacity = (this.capacity * 2) + 1;
-			Node<TNode, TPriority>[] newHeap = new Node<TNode, TPriority>[this.capacity];
+			var newHeap = new Node<TNode, TPriority>[this.capacity];
 			Array.Copy(this.heap, 0, newHeap, 0, this.count);
 			this.heap = newHeap;
 		}
 
 		private void TrickleDown(int index, Node<TNode, TPriority> node) {
-			int child = this.GetLeftChild(index);
+			var child = this.GetLeftChild(index);
 			while (child < this.count) {
 				if (((child + 1) < this.count) &&
 						(this.heap[child].priority.CompareTo(this.heap[child + 1].priority) > 0)) {
 					child++;
 				}
-				Node<TNode, TPriority> childAStarNode = this.heap[child];
+				var childAStarNode = this.heap[child];
 				this.heap[index] = childAStarNode;
 				index = child;
 				child = this.GetLeftChild(index);
@@ -139,8 +139,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public IEnumerator GetEnumerator() {
-			int startVersion = this.version;
-			for (int i = 0; i < this.count; i++) {
+			var startVersion = this.version;
+			for (var i = 0; i < this.count; i++) {
 				if (startVersion != this.version) {
 					throw new SEException("Do not touch while enumerating");
 				}

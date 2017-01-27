@@ -5,13 +5,13 @@ namespace SteamEngine.Common {
 		private static T[] loadedLanguages = LoadLanuages();
 
 		private static T[] LoadLanuages() {
-			int n = Tools.GetEnumLength<Language>();
-			T[] langs = new T[n];
+			var n = Tools.GetEnumLength<Language>();
+			var langs = new T[n];
 
-			for (int i = 0; i < n; i++)
+			for (var i = 0; i < n; i++)
 			{
 				CompiledLocStringCollection<T>.languageBeingActivated = (Language) i;
-				T l = Activator.CreateInstance<T>();
+				var l = Activator.CreateInstance<T>();
 				langs[i] = l;
 			}
 
@@ -23,7 +23,7 @@ namespace SteamEngine.Common {
 		}
 
 		public static T Get(string languageCode) {
-			Language lan = LocManager.TranslateLanguageCode(languageCode);
+			var lan = LocManager.TranslateLanguageCode(languageCode);
 
 			return loadedLanguages[(int) lan];
 		}

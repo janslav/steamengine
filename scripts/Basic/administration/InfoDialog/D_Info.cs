@@ -33,17 +33,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static TagKey detailIndexPairingTK = TagKey.Acquire("_detail_button_index_pairing_");
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			object target = args[0];//target of info dialog
+			var target = args[0];//target of info dialog
 
 			//first argument is the object being infoized - we will get its DataView first
-			IDataView viewCls = DataViewProvider.FindDataViewByType(target.GetType());
-			int firstItemButt = TagMath.IGetTag(args, pagingButtonsTK);//buttons paging 1st item index
-			int firstItemFld = TagMath.IGetTag(args, pagingFieldsTK);//fields paging 1st item index
+			var viewCls = DataViewProvider.FindDataViewByType(target.GetType());
+			var firstItemButt = TagMath.IGetTag(args, pagingButtonsTK);//buttons paging 1st item index
+			var firstItemFld = TagMath.IGetTag(args, pagingFieldsTK);//fields paging 1st item index
 
-			InfoDialogHandler dlg = new InfoDialogHandler(gi);
+			var dlg = new InfoDialogHandler(gi);
 			dlg.CreateBackground(InfoDialogHandler.INFO_WIDTH);
 			dlg.SetLocation(50, 50);
-			int innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
+			var innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 			string headline;
 			//decide the headline according to the dialog type (info/setting)
@@ -71,13 +71,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			dlg.CreateDataFieldsSpace(viewCls, target);
 
-			int buttonsIndex = 10; //start counting buttons from 10
-			int editsIndex = 10; //start counting editable input fields also from 10
-			int detailsIndex = 1000; //start counting detail buttons indexes from 1000 - this allows us to differ it later
+			var buttonsIndex = 10; //start counting buttons from 10
+			var editsIndex = 10; //start counting editable input fields also from 10
+			var detailsIndex = 1000; //start counting detail buttons indexes from 1000 - this allows us to differ it later
 
-			int finishIndex = firstItemFld + dlg.REAL_COLUMNS_COUNT * ImprovedDialog.PAGE_ROWS;
-			int counter = firstItemFld;
-			foreach (IDataFieldView field in viewCls.GetDataFieldsPage(firstItemFld, target)) {
+			var finishIndex = firstItemFld + dlg.REAL_COLUMNS_COUNT * ImprovedDialog.PAGE_ROWS;
+			var counter = firstItemFld;
+			foreach (var field in viewCls.GetDataFieldsPage(firstItemFld, target)) {
 				//add indexing params - the buttons index will be used (and raised) when the field is Button or 
 				//ReadWrite or ReadOnly field with type that itself has the DataView implemented (and can be infoized)
 				// - the edits index will be used for input fields in ReadWrite field case
@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//now write the single page of action buttons (one column - normal rowcount)
 			finishIndex = firstItemButt + ImprovedDialog.PAGE_ROWS;
 			counter = firstItemButt;
-			foreach (ButtonDataFieldView button in viewCls.GetActionButtonsPage(firstItemButt, target)) {
+			foreach (var button in viewCls.GetActionButtonsPage(firstItemButt, target)) {
 				dlg.WriteDataField(button, target, ref buttonsIndex, ref editsIndex, ref detailsIndex);
 				//check if we should continue
 				counter++;
@@ -113,7 +113,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			object target = args[0];//target of info dialog
+			var target = args[0];//target of info dialog
 
 			if (gr.PressedButton < 10) { //basic dialog buttons (close, info, store)
 				switch (gr.PressedButton) {
@@ -121,50 +121,50 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //store
-						Dictionary<int, IDataFieldView> editFieldsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(editFieldsIndexPairingTK);
+						var editFieldsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(editFieldsIndexPairingTK);
 
-						List<SettingResult> reslist = SettingsProvider.AssertSettings(editFieldsPairing, gr, target);
+						var reslist = SettingsProvider.AssertSettings(editFieldsPairing, gr, target);
 						DialogStacking.ResendAndRestackDialog(gi);
 						if (reslist.Count > 0) {
 							//show the results dialog (if there is any change)
-							DialogArgs newArgs = new DialogArgs();
+							var newArgs = new DialogArgs();
 							newArgs.SetTag(D_Settings_Result.resultsListTK, reslist); //list of settings resluts
 							gi.Cont.Dialog(SingletonScript<D_Settings_Result>.Instance, newArgs);
 						}
 						break;
 					case 2: //info
-						Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+						var newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 						DialogStacking.EnstackDialog(gi, newGi); //stack self for return						
 						break;
 				}
 			} else if (InfoDialogHandler.PagingHandled(gi, gr)) {
 				//kliknuto na paging? 
 			} else { //info dialog buttons
-				int pressedButtonNo = gr.PressedButton;
+				var pressedButtonNo = gr.PressedButton;
 
 				if (pressedButtonNo >= 1000) { //display detail of too long fields
-					Dictionary<int, IDataFieldView> detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(detailIndexPairingTK);
-					IDataFieldView idfv = detailsPairing[pressedButtonNo];
+					var detailsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(detailIndexPairingTK);
+					var idfv = detailsPairing[pressedButtonNo];
 
 					//display the detail on the selected field
-					Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info_Detail>.Instance, new DialogArgs(idfv, target));
+					var newGi = gi.Cont.Dialog(SingletonScript<D_Info_Detail>.Instance, new DialogArgs(idfv, target));
 					DialogStacking.EnstackDialog(gi, newGi); //store
 				} else {//normal field button
-					Dictionary<int, IDataFieldView> btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(btnsIndexPairingTK);
-					IDataFieldView idfv = btnsPairing[pressedButtonNo];
+					var btnsPairing = (Dictionary<int, IDataFieldView>) args.GetTag(btnsIndexPairingTK);
+					var idfv = btnsPairing[pressedButtonNo];
 
 					if (idfv.IsButtonEnabled) {
 						DialogStacking.ResendAndRestackDialog(gi);
 						//action button field - call the method
 						((ButtonDataFieldView) idfv).OnButton(target);
 					} else {
-						object fieldValue = idfv.GetValue(target);
+						var fieldValue = idfv.GetValue(target);
 						Type fieldValueType = null;
 						if (fieldValue != null) {
 							fieldValueType = fieldValue.GetType();
 						}
 						if (fieldValueType != null) {
-							Gump newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(idfv.GetValue(target)));
+							var newGi = gi.Cont.Dialog(SingletonScript<D_Info>.Instance, new DialogArgs(idfv.GetValue(target)));
 							DialogStacking.EnstackDialog(gi, newGi); //store						
 							//display info dialog on this datafield
 						} else {

@@ -37,10 +37,10 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static void PlayerCommand(GameState state, string command) {
-			string lower = command.ToLowerInvariant();
+			var lower = command.ToLowerInvariant();
 			string noprefix;
 
-			AbstractCharacter commandSrc = state.CharacterNotNull;
+			var commandSrc = state.CharacterNotNull;
 
 			if ((lower.StartsWith("x ") || lower.StartsWith("x."))) {
 				noprefix = command.Substring(2);
@@ -48,7 +48,7 @@ namespace SteamEngine {
 				noprefix = command.Substring(4);
 			} else {
 #if DEBUG
-				long ticksBefore = HighPerformanceTimer.TickCount;
+				var ticksBefore = HighPerformanceTimer.TickCount;
 #endif
 				InvokeCommand(commandSrc, commandSrc, command);
 #if DEBUG
@@ -114,7 +114,7 @@ namespace SteamEngine {
 		public static void ConsoleCommand(ConsoleDummy consoleDummy, string command) {
 			Globals.SetSrc(consoleDummy);
 #if DEBUG
-			long ticksBefore = HighPerformanceTimer.TickCount;
+			var ticksBefore = HighPerformanceTimer.TickCount;
 #endif
 			InvokeCommand(consoleDummy, Globals.Instance, command);
 #if DEBUG
@@ -126,8 +126,8 @@ namespace SteamEngine {
 			if (success) {
 				Console.WriteLine("'" + commandSrc.Account.Name + "' commands '" + command + "'. OK");
 			} else {
-				string errText = "";
-				Exception e = err as Exception;
+				var errText = "";
+				var e = err as Exception;
 				if (e != null) {
 					errText = e.Message;
 				} else {
@@ -143,7 +143,7 @@ namespace SteamEngine {
 		//TODO? passing just the argument name might be too primitive, but I think it should be enough
 		public static bool AuthorizeCommand(ISrc commandSrc, string name) {
 			if (commandRunning) {
-				ScriptArgs sa = new ScriptArgs(commandSrc, name);
+				var sa = new ScriptArgs(commandSrc, name);
 				if (TriggerResult.Cancel == Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
 					return false;
 				}
@@ -153,7 +153,7 @@ namespace SteamEngine {
 
 		public static void AuthorizeCommandThrow(ISrc commandSrc, string name) {
 			if (commandRunning) {
-				ScriptArgs sa = new ScriptArgs(commandSrc, name);
+				var sa = new ScriptArgs(commandSrc, name);
 				if (TriggerResult.Cancel == Globals.Instance.TryCancellableTrigger(TriggerKey.command, sa)) {
 					throw new SEException(commandAuthorisationFailed);
 				}
@@ -175,10 +175,10 @@ namespace SteamEngine {
 				commandRunning = true;
 				if (commandSrc.MaxPlevel < Globals.PlevelForLscriptCommands) {
 					string errText;
-					bool success = SimpleCommandParser.TryRunSnippet(commandSrc, self, code, out errText);
+					var success = SimpleCommandParser.TryRunSnippet(commandSrc, self, code, out errText);
 					LogCommand(commandSrc, code, success, errText);
 				} else {
-					string codeAsKey = string.Concat(self == null ? typeof(void).FullName : self.GetType().FullName, code);
+					var codeAsKey = string.Concat(self == null ? typeof(void).FullName : self.GetType().FullName, code);
 					LScriptHolder scriptHolder;
 					if (!gmCommandsCache.TryGetValue(codeAsKey, out scriptHolder)) {
 						try {
@@ -198,7 +198,7 @@ namespace SteamEngine {
 
 					//if the command does nothing, consider it an error
 					if ((scriptHolder.Code is OpNode_Constant) || (scriptHolder.Code is OpNode_This) || (scriptHolder.Code is OpNode_Object)) {
-						string errText = Loc<CommandLoc>.Get(commandSrc.Language).CommandDoesNothing;
+						var errText = Loc<CommandLoc>.Get(commandSrc.Language).CommandDoesNothing;
 						LogCommand(commandSrc, code, false, errText);
 						return;
 					}
@@ -237,9 +237,9 @@ namespace SteamEngine {
 		}
 
 		public static void XCommandTargon(GameState state, IPoint3D getback, object parameter) {
-			TagHolder self = getback as TagHolder;
+			var self = getback as TagHolder;
 			if (self != null) {
-				XCommandParameter xcp = (XCommandParameter) parameter;
+				var xcp = (XCommandParameter) parameter;
 				InvokeCommand(xcp.commandSrc, self, xcp.commandWithoutPrefix);
 			}
 		}
@@ -256,12 +256,12 @@ namespace SteamEngine {
 		/// </summary>
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static bool TryRunSnippet(ISrc commandSrc, TagHolder self, string code, out string errText) {
-			Match m = commandRE.Match(code);
+			var m = commandRE.Match(code);
 			if (m.Success) {
-				string name = m.Groups["name"].Value;
-				string arg = m.Groups["arg"].Value;
-				bool haveArg = false;
-				bool argIsNumber = false;
+				var name = m.Groups["name"].Value;
+				var arg = m.Groups["arg"].Value;
+				var haveArg = false;
+				var argIsNumber = false;
 				object argAsNumber = null;
 
 				if (!Commands.AuthorizeCommand(commandSrc, name)) {
@@ -274,7 +274,7 @@ namespace SteamEngine {
 					argIsNumber = ConvertTools.TryParseAnyNumber(arg, out argAsNumber);
 				}
 
-				ScriptHolder func = ScriptHolder.GetFunction(name);
+				var func = ScriptHolder.GetFunction(name);
 				if (func != null) {
 					Exception exception;
 					if (argIsNumber) {
@@ -294,7 +294,7 @@ namespace SteamEngine {
 
 				Type argType;
 				bool nameMatched;
-				MethodInfo mi = FindMethod(self.GetType(), name, haveArg, argIsNumber, out argType, out nameMatched);
+				var mi = FindMethod(self.GetType(), name, haveArg, argIsNumber, out argType, out nameMatched);
 				if (mi != null) {
 					try {
 						if (haveArg) {
@@ -332,9 +332,9 @@ namespace SteamEngine {
 		private static MethodInfo FindMethod(Type type, string name, bool hasArg, bool argIsNumber, out Type argType, out bool nameMatched) {
 			nameMatched = false;
 			argType = null;
-			foreach (MethodInfo mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)) {
+			foreach (var mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(name, mi.Name)) {
-					ParameterInfo[] pis = mi.GetParameters();
+					var pis = mi.GetParameters();
 					if (hasArg) {
 						if (pis.Length == 1) {
 							argType = pis[0].ParameterType;

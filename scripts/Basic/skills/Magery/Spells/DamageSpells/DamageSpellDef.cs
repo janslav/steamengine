@@ -42,7 +42,7 @@ namespace SteamEngine.CompiledScripts {
 		#endregion FieldValues
 
 		protected override void On_EffectChar(Character target, SpellEffectArgs spellEffectArgs) {
-			double dam = this.CalculateDamage(target, spellEffectArgs);
+			var dam = this.CalculateDamage(target, spellEffectArgs);
 			DamageManager.CauseDamage(spellEffectArgs.Caster, target, this.DamageType, dam);
 		}
 

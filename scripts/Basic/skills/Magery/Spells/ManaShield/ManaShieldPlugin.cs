@@ -35,10 +35,10 @@ namespace SteamEngine.CompiledScripts {
 		//}
 
 		public void On_Damage(DamageArgs args) {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 
-			int damage = (int) Math.Round(args.damage);
-			int newMana = self.Mana - damage;
+			var damage = (int) Math.Round(args.damage);
+			var newMana = self.Mana - damage;
 
 			if (newMana > 0) {
 				//all damage goes to mana
@@ -65,7 +65,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private TriggerResult CheckStartingSkill(SkillSequenceArgs skillSeq) {
 			if (skillSeq.SkillDef.Id == (int) SkillName.Meditation) {
-				Character self = (Character) this.Cont;
+				var self = (Character) this.Cont;
 				self.WriteLine(Loc<ManaShieldLoc>.Get(self.Language).cantMeditateWithManaShield);
 				this.Delete();
 			}

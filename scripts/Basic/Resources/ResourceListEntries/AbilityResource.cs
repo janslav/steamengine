@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>Try parsing given string as ItemResource</summary>
 		public static bool TryParse(string definition, double number, bool asPercentage, out IResourceListEntry resource) {
-			AbilityDef abl = AbilityDef.GetByDefname(definition);
+			var abl = AbilityDef.GetByDefname(definition);
 			if (abl != null) {
 				resource = new AbilityResource(abl, number, asPercentage);
 				return true;
@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override bool IsSameResource(IResourceListEntry newOne) {
-			AbilityResource newResource = newOne as AbilityResource;
+			var newResource = newOne as AbilityResource;
 			if (newResource != null) {
 				return (this.abilityDef == newResource.abilityDef);
 			}

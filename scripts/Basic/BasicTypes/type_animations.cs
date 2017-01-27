@@ -30,7 +30,7 @@ namespace SteamEngine.CompiledScripts {
 			if ((movementType & MovementType.Teleporting) != MovementType.Teleporting) {
 				if (!repeated) {
 					//todo some checks? effects? sounds?
-					Point4D point = self.MoreP;
+					var point = self.MoreP;
 					if (point != null) {
 						steppingChar.Go(point);
 					}

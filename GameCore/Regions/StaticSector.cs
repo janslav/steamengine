@@ -49,9 +49,9 @@ namespace SteamEngine.Regions {
 
 		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static StaticSector GetStaticSector(int sx, int sy, int m) {
-			int facet = Map.GetMap(m).Facet;
+			var facet = Map.GetMap(m).Facet;
 
-			bool exists = (staticMaps.Count > facet);
+			var exists = (staticMaps.Count > facet);
 			StaticSector[,] staticMap = null;
 			if (exists) {
 				staticMap = staticMaps[facet];
@@ -68,20 +68,20 @@ namespace SteamEngine.Regions {
 
 			//Console.WriteLine("Getting StaticSector "+sx+","+sy);
 
-			StaticSector sector = staticMap[sx, sy];
+			var sector = staticMap[sx, sy];
 			if (sector == null) {
 				if (Globals.useMap) {
 					try {
 						Logger.WriteDebug("Loading map sector " + sx + "," + sy);
 
-						int numMulSectors = Map.sectorWidth >> 3;
+						var numMulSectors = Map.sectorWidth >> 3;
 
 						//Console.WriteLine("Map.sectorWidth="+Map.sectorWidth+" and numMulSectors="+numMulSectors);
-						ushort mulsx = (ushort) ((sx << Map.sectorFactor) >> 3);
-						ushort mulsy = (ushort) ((sy << Map.sectorFactor) >> 3);
+						var mulsx = (ushort) ((sx << Map.sectorFactor) >> 3);
+						var mulsy = (ushort) ((sy << Map.sectorFactor) >> 3);
 						Logger.WriteDebug("Load sector sx,sy=" + sx + "," + sy + " mulsx,mulsy=" + mulsx + "," + mulsy);
 						uint[,] versions;
-						StaticItem[] statics = LoadStaticsSector(mulsx, mulsy, (ushort) (sx << Map.sectorFactor),
+						var statics = LoadStaticsSector(mulsx, mulsy, (ushort) (sx << Map.sectorFactor),
 							(ushort) (sy << Map.sectorFactor), numMulSectors, facet, out versions);
 
 						ushort[,] tile; 
@@ -104,25 +104,25 @@ namespace SteamEngine.Regions {
 		//(TODO): Loading other map MULs.
 		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static void LoadMapSector(int sx, int sy, int numMulSectors, int facet, out ushort[,] tile, out sbyte[,] z) {
-			string mulFileP = Path.Combine(Globals.MulPath, "map0.mul");
+			var mulFileP = Path.Combine(Globals.MulPath, "map0.mul");
 
 			if (File.Exists(mulFileP)) {
-				using (BinaryReader mulbr = new BinaryReader(new FileStream(mulFileP, FileMode.Open, FileAccess.Read))) {
-					int numTiles = numMulSectors << 3;
+				using (var mulbr = new BinaryReader(new FileStream(mulFileP, FileMode.Open, FileAccess.Read))) {
+					var numTiles = numMulSectors << 3;
 					tile = new ushort[numTiles, numTiles];
 					z = new sbyte[numTiles, numTiles];
 					//a single 8x8 block is 196 bytes.
 
-					for (int xblock = 0; xblock < numMulSectors; xblock++) {
+					for (var xblock = 0; xblock < numMulSectors; xblock++) {
 						long partialFilePos = ((xblock + sx) * Map.GetMulNumYSectors(facet));
 						long xblockamt = xblock << 3;
-						for (int yblock = 0; yblock < numMulSectors; yblock++) {
+						for (var yblock = 0; yblock < numMulSectors; yblock++) {
 							long yblockamt = yblock << 3;
-							long filePos = partialFilePos + yblock + sy;
+							var filePos = partialFilePos + yblock + sy;
 							filePos = 4 + (filePos << 2) + (filePos << 6) + (filePos << 7);	//That's filePos*196. The 4 is to skip the header.
 							mulbr.BaseStream.Seek(filePos, SeekOrigin.Begin);
-							for (int y = 0; y < 8; y++) {
-								for (int x = 0; x < 8; x++) {
+							for (var y = 0; y < 8; y++) {
+								for (var x = 0; x < 8; x++) {
 									//Console.WriteLine("{0},{1} / {2}",xblockamt+x,yblockamt+y,numTiles);
 									tile[xblockamt + x, yblockamt + y] = mulbr.ReadUInt16();
 									z[xblockamt + x, yblockamt + y] = mulbr.ReadSByte();
@@ -140,41 +140,41 @@ namespace SteamEngine.Regions {
 		[SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body")]
 		private static StaticItem[] LoadStaticsSector(int mulsX, int mulsY, int sx, int sy, int numMulSectors, int facet, out uint[,] versions) {
 			versions = new uint[numMulSectors, numMulSectors];
-			string mulFilePI = Path.Combine(Globals.MulPath, "staidx0.mul");
-			string mulFileP = Path.Combine(Globals.MulPath, "statics0.mul");
+			var mulFilePI = Path.Combine(Globals.MulPath, "staidx0.mul");
+			var mulFileP = Path.Combine(Globals.MulPath, "statics0.mul");
 
 			if (File.Exists(mulFilePI) && File.Exists(mulFileP)) {
-				List<StaticItem> statics = new List<StaticItem>();
+				var statics = new List<StaticItem>();
 
-				using (FileStream idxfs = new FileStream(mulFilePI, FileMode.Open, FileAccess.Read)) {
-					using (FileStream mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read)) {
-						BinaryReader idxbr = new BinaryReader(idxfs);
-						BinaryReader mulbr = new BinaryReader(mulfs);
+				using (var idxfs = new FileStream(mulFilePI, FileMode.Open, FileAccess.Read)) {
+					using (var mulfs = new FileStream(mulFileP, FileMode.Open, FileAccess.Read)) {
+						var idxbr = new BinaryReader(idxfs);
+						var mulbr = new BinaryReader(mulfs);
 						//int numTiles=numMulSectors<<3;
 						
-						for (int xblock = 0; xblock < numMulSectors; xblock++) {
+						for (var xblock = 0; xblock < numMulSectors; xblock++) {
 							long partialFilePos = ((xblock + mulsX) * Map.GetMulNumYSectors(facet));
 							long xblockamt = xblock << 3;
-							for (int yblock = 0; yblock < numMulSectors; yblock++) {
+							for (var yblock = 0; yblock < numMulSectors; yblock++) {
 								long yblockamt = yblock << 3;
-								long filePos = partialFilePos + yblock + mulsY;
+								var filePos = partialFilePos + yblock + mulsY;
 								filePos = (filePos << 3) + (filePos << 2);
 								idxbr.BaseStream.Seek(filePos, SeekOrigin.Begin);
-								uint blockStart = idxbr.ReadUInt32();
-								uint blockLen = idxbr.ReadUInt32();
+								var blockStart = idxbr.ReadUInt32();
+								var blockLen = idxbr.ReadUInt32();
 								versions[xblock, yblock] = idxbr.ReadUInt32();
 								//Console.WriteLine("blockStart=[0x"+blockStart.ToString("x")+"] blockLen=[0x"+blockLen.ToString("x")+"] unk=[0x"+unk.ToString("x")+"]");
 								if (blockStart != 0xffffffff) {
 									mulbr.BaseStream.Seek(blockStart, SeekOrigin.Begin);
-									uint blockNumStatics = blockLen / 7;
-									for (int a = 0; a < blockNumStatics; a++) {
-										ushort tileID = mulbr.ReadUInt16();
-										byte relX = mulbr.ReadByte();
-										byte relY = mulbr.ReadByte();
-										sbyte z = mulbr.ReadSByte();
-										ushort color = mulbr.ReadUInt16();
-										ushort x = (ushort) (xblockamt + relX + sx);
-										ushort y = (ushort) (yblockamt + relY + sy);
+									var blockNumStatics = blockLen / 7;
+									for (var a = 0; a < blockNumStatics; a++) {
+										var tileID = mulbr.ReadUInt16();
+										var relX = mulbr.ReadByte();
+										var relY = mulbr.ReadByte();
+										var z = mulbr.ReadSByte();
+										var color = mulbr.ReadUInt16();
+										var x = (ushort) (xblockamt + relX + sx);
+										var y = (ushort) (yblockamt + relY + sy);
 										statics.Add(new StaticItem(tileID, x, y, z, 255, color));
 										//the diff files would have statics which aren't on mapplane 255. Etc.
 									}
@@ -190,9 +190,9 @@ namespace SteamEngine.Regions {
 		}
 
 		internal bool HasStaticId(int x, int y, int staticId) {
-			for (int a = 0; a < this.statics.Length; a++) {
+			for (var a = 0; a < this.statics.Length; a++) {
 				if (this.statics[a] != null) {
-					StaticItem sta = this.statics[a];
+					var sta = this.statics[a];
 					if (x == sta.X && y == sta.Y) {
 						if (sta.Id == staticId) {
 							return true;
@@ -204,7 +204,7 @@ namespace SteamEngine.Regions {
 		}
 
 		internal StaticItem GetStatic(int x, int y, int z, int tileID) {
-			foreach (StaticItem stat in this.statics) {
+			foreach (var stat in this.statics) {
 				//Logger.WriteDebug("Compare static ("+stat.X+","+stat.Y+","+stat.Z+","+stat.M+":"+stat.id+" ("+stat.Name+")) to ("+x+","+y+","+z+":"+tileID+")");
 				if (stat.X == x && stat.Y == y && stat.Z == z && stat.Id == tileID) {
 					return stat;

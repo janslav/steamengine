@@ -56,25 +56,25 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Assign() {
 			//apply effect of the bonus talent, if present
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			this.EffectPower *= 1 + (self.GetAbility(IgnitionBonusDef) * IgnitionBonusDef.EffectPower);
 			base.On_Assign();
 		}
 
 		public void On_CauseSpellEffect(SpellEffectArgs spellEffectArgs) {
 			if (spellEffectArgs.SpellDef == MeteorSwarmDef) {
-				Character target = spellEffectArgs.CurrentTarget as Character;
+				var target = spellEffectArgs.CurrentTarget as Character;
 				if (target != null) {
-					ActivableAbilityDef ignition = IgnitionDef;
+					var ignition = IgnitionDef;
 
-					int points = spellEffectArgs.Caster.GetAbility(ignition);
+					var points = spellEffectArgs.Caster.GetAbility(ignition);
 					if (points > 0) {
 						if (ignition.CheckSuccess(points)) {
 
-							double power = this.EffectPower;
+							var power = this.EffectPower;
 							power *= DamageManager.GetResistModifier(target, DamageType.MagicFire); //apply fire resist
 
-							IgnitionEffectPlugin ignitionPlugin = target.GetPlugin(pkIgnitionEffect) as IgnitionEffectPlugin;
+							var ignitionPlugin = target.GetPlugin(pkIgnitionEffect) as IgnitionEffectPlugin;
 							if (ignitionPlugin != null) {
 								power += Math.Max(0, ignitionPlugin.EffectPower); //we add the power of previous ignition instance, if any
 							}

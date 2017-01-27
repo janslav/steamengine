@@ -116,7 +116,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 			this.runnings.Clear();
 
 			this.count = servers.Count;
-			foreach (IGameServerSetup gsis in servers) {
+			foreach (var gsis in servers) {
 				this.iniIDs.Add(gsis.IniID);
 				this.iniPaths.Add(gsis.IniPath);
 				this.names.Add(gsis.Name);
@@ -131,7 +131,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		protected override void Write() {
 			this.EncodeInt(this.count);
-			for (int i = 0; i < this.count; i++) {
+			for (var i = 0; i < this.count; i++) {
 				this.EncodeInt(this.iniIDs[i]);
 				this.EncodeUTF8String(this.iniPaths[i]);
 				this.EncodeUTF8String(this.names[i]);

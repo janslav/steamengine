@@ -88,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public double MaxAdvRate {
 			get {
-				double[] arr = this.AdvRate;
+				var arr = this.AdvRate;
 				return arr[arr.Length - 1];
 			}
 		}
@@ -130,7 +130,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public double MaxDelay {
 			get {
-				double[] arr = this.Delay;
+				var arr = this.Delay;
 				return arr[arr.Length - 1];
 			}
 		}
@@ -206,8 +206,8 @@ namespace SteamEngine.CompiledScripts {
 
 
 		internal static void Trigger_ValueChanged(Character character, Skill skill, int oldModifiedValue) {
-			int newValue = skill.ModifiedValue;
-			ScriptArgs sa = new ScriptArgs(skill, oldModifiedValue);
+			var newValue = skill.ModifiedValue;
+			var sa = new ScriptArgs(skill, oldModifiedValue);
 			character.TryTrigger(tkSkillChange, sa);
 			try {
 				character.On_SkillChange(skill, oldModifiedValue);
@@ -215,7 +215,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal TriggerResult Trigger_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {
 				return TriggerResult.Cancel;
 			}
@@ -238,7 +238,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal TriggerResult Trigger_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			var result = self.TryCancellableTrigger(tkSkillStart, skillSeqArgs.scriptArgs);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -257,7 +257,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal TriggerResult Trigger_Stroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			var result = self.TryCancellableTrigger(tkSkillStroke, skillSeqArgs.scriptArgs);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -276,7 +276,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void Trigger_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			var result = self.TryCancellableTrigger(tkSkillFail, skillSeqArgs.scriptArgs);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -294,7 +294,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void Trigger_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			var result = self.TryCancellableTrigger(tkSkillSuccess, skillSeqArgs.scriptArgs);
 			if (result != TriggerResult.Cancel) {
 				try {
@@ -312,7 +312,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void Trigger_Abort(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.TryCancellableTrigger(tkSkillAbort, skillSeqArgs.scriptArgs);
 			try {
 				self.On_SkillAbort(skillSeqArgs);
@@ -361,7 +361,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef) {
-			SkillSequenceArgs args = new SkillSequenceArgs();
+			var args = new SkillSequenceArgs();
 			args.self = self;
 			args.skillDef = skillDef;
 			args.target1 = null;
@@ -375,7 +375,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillSequenceArgs Acquire(Character self, SkillDef skillDef, IPoint4D target1, IPoint4D target2, Item tool, object param1, object param2) {
-			SkillSequenceArgs args = new SkillSequenceArgs();
+			var args = new SkillSequenceArgs();
 			args.self = self;
 			args.skillDef = skillDef;
 			args.target1 = target1;
@@ -583,7 +583,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void AbortSkill(Character self) {
-			SkillStrokeTimer timer = (SkillStrokeTimer) self.RemoveTimer(skillTimerKey);
+			var timer = (SkillStrokeTimer) self.RemoveTimer(skillTimerKey);
 			if (timer != null) {
 				timer.skillSeqArgs.PhaseAbort();
 				timer.skillSeqArgs = null;
@@ -592,7 +592,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static SkillSequenceArgs GetSkillSequenceArgs(Character self) {
-			SkillStrokeTimer timer = (SkillStrokeTimer) self.GetTimer(skillTimerKey);
+			var timer = (SkillStrokeTimer) self.GetTimer(skillTimerKey);
 			if (timer != null) {
 				return timer.skillSeqArgs;
 			}

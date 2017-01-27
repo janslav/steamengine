@@ -30,9 +30,9 @@ namespace SteamEngine.CompiledScripts {
 		static TimerKey tickTimerKey = TimerKey.Acquire("_ignitionTickTimer_");
 
 		public virtual void On_Assign() {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 
-			double effect = this.EffectPower;
+			var effect = this.EffectPower;
 			this.AddTimer(tickTimerKey, new IgnitionTickTimer(this.TimerObject.DueInSpan, effect));
 			self.HitsRegenSpeed -= effect;
 			//? self.Flag_GreenHealthBar = true;
@@ -48,9 +48,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void ModifyEffect(double difference) {
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			if (self != null) {
-				double newEffect = this.EffectPower + difference;
+				var newEffect = this.EffectPower + difference;
 				if (newEffect < minimumIgnitionEffect) {
 					this.Delete();
 				} else {
@@ -62,7 +62,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void AnnounceIgnitionStrength() {
 			//TODO some nicer effect?
-			Character self = this.Cont as Character;
+			var self = this.Cont as Character;
 			if (self != null) {
 				EffectFactory.StationaryEffect(self, 0x36BD, 20, 10);
 				SoundCalculator.PlayHurtSound(self);
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void OnTimeout(TagHolder cont) {
-			IgnitionEffectPlugin ignition = (IgnitionEffectPlugin) cont;
+			var ignition = (IgnitionEffectPlugin) cont;
 			ignition.ModifyEffect(this.differencePerTick);
 			ignition.AnnounceIgnitionStrength();
 		}

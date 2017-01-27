@@ -39,8 +39,8 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override TriggerResult On_Stroke(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
-			Character self = skillSeqArgs.Self;
-			double range = Math.Round(this.GetEffectForChar(self));
+			var self = skillSeqArgs.Self;
+			var range = Math.Round(this.GetEffectForChar(self));
 
 			foreach (Character target in self.GetMap().GetCharsInRange(self.X, self.Y, (int) range)) {
 				if (target.Flag_Hidden) {
@@ -55,9 +55,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
-			Character target = (Character) skillSeqArgs.Target1;
-			HiddenHelperPlugin ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+			var self = skillSeqArgs.Self;
+			var target = (Character) skillSeqArgs.Target1;
+			var ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
 			if (ssp != null) {
 				if (ssp.hadDetectedMe == null) {
 					ssp.hadDetectedMe = new LinkedList<Character>();

@@ -12,9 +12,9 @@ namespace SteamEngine.CompiledScripts {
 		public static void S0x1B() {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
-			Map map = ch.GetMap();
+			var map = ch.GetMap();
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<LoginConfirmationOutPacket>().Prepare(ch, map.SizeX, map.SizeY); //0x1B
 			conn.SendPacketGroup(pg);
 		}
@@ -23,9 +23,9 @@ namespace SteamEngine.CompiledScripts {
 		public static void S0xBF0x08() {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
-			Map map = ch.GetMap();
+			var map = ch.GetMap();
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<SetFacetOutPacket>().Prepare(map.Facet);//0xBF 0x08
 			conn.SendPacketGroup(pg);
 		}
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<SeasonalInformationOutPacket>().Prepare(ch.Season, ch.Cursor); //0xBC
 			conn.SendPacketGroup(pg);
 		}
@@ -63,7 +63,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<DrawGamePlayerOutPacket>().Prepare(state, ch); //0x20
 			conn.SendPacketGroup(pg);
 		}
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<DrawObjectOutPacket>().Prepare(ch, ch.GetHighlightColorFor(ch)); //0x78
 			conn.SendPacketGroup(pg);
 		}
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<StatusBarInfoOutPacket>().Prepare(ch, StatusBarType.Me); //0x11
 			conn.SendPacketGroup(pg);
 		}
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts {
 			GameState state; TcpConnection<GameState> conn; AbstractCharacter ch;
 			GetClient(out state, out conn, out ch);
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<LoginCompleteOutPacket>(); //0x55
 			conn.SendPacketGroup(pg);
 		}
@@ -121,7 +121,7 @@ namespace SteamEngine.CompiledScripts {
 			GetClient(out state, out conn, out ch);
 			//Regions.Map map = ch.GetMap();
 
-			PacketGroup pg = PacketGroup.AcquireSingleUsePG();
+			var pg = PacketGroup.AcquireSingleUsePG();
 			pg.AcquirePacket<ClientViewRangeOutPacket>().Prepare(state.UpdateRange); //0x55
 			conn.SendPacketGroup(pg);
 		}
@@ -159,7 +159,7 @@ namespace SteamEngine.CompiledScripts {
 		private static void GetClient(out GameState state, out TcpConnection<GameState> conn, out AbstractCharacter ch) {
 			if (GameServer.AllClients.Count > 0) {
 				state = null;
-				foreach (GameState gs in GameServer.AllClients) {
+				foreach (var gs in GameServer.AllClients) {
 					state = gs;
 					break;
 				}

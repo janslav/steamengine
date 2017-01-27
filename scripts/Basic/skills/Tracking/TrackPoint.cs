@@ -90,11 +90,11 @@ namespace SteamEngine.CompiledScripts {
 			if (this.createdAt >= now) { //created in the future
 				return BEST_COLOR;
 			}
-			double createdAtSeconds = this.createdAt.TotalSeconds;
-			double nowSeconds = now.TotalSeconds;
-			double maxAgeSeconds = maxAge.TotalSeconds;
+			var createdAtSeconds = this.createdAt.TotalSeconds;
+			var nowSeconds = now.TotalSeconds;
+			var maxAgeSeconds = maxAge.TotalSeconds;
 
-			int color = (int) (BEST_COLOR - (BEST_COLOR - WORST_COLOR) * ((nowSeconds - createdAtSeconds) / maxAgeSeconds));
+			var color = (int) (BEST_COLOR - (BEST_COLOR - WORST_COLOR) * ((nowSeconds - createdAtSeconds) / maxAgeSeconds));
 
 			if (BEST_COLOR > WORST_COLOR) {
 				Sanity.IfTrueThrow(((color > BEST_COLOR) || (color < WORST_COLOR)), "color out of range");
@@ -189,9 +189,9 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					Sanity.IfTrueThrow(newQueueOldest.queue != this, "newQueueStart.queue != this");
 
-					TrackPoint next = newQueueOldest.older;
+					var next = newQueueOldest.older;
 					while (next != null) {
-						TrackPoint tp = next;
+						var tp = next;
 						next = tp.older;
 						tp.queue = null;
 						tp.Dispose();
@@ -204,10 +204,10 @@ namespace SteamEngine.CompiledScripts {
 
 
 			public IEnumerable<TrackPoint> EnumerateFromOldest() {
-				TrackPoint next = this.newest;
+				var next = this.newest;
 				if (next != null) {
 					do {
-						TrackPoint tp = next;
+						var tp = next;
 						next = tp.OlderNeighbor;
 						yield return tp;
 					} while (next != null);
@@ -242,10 +242,10 @@ namespace SteamEngine.CompiledScripts {
 
 			//not exactly invariant-safe, but we're all internal here anyway
 			public void Clear() {
-				TrackPoint next = this.newest;
+				var next = this.newest;
 				if (next != null) {
 					do {
-						TrackPoint tp = next;
+						var tp = next;
 						next = tp.OlderNeighbor;
 						tp.queue = null;
 						tp.Dispose();

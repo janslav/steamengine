@@ -40,9 +40,9 @@ namespace SteamEngine.CompiledScripts {
 			var vendor = (PlayerVendor) stockSection.TopObj();
 
 			decimal price = 0;
-			int amount = 1;
+			var amount = 1;
 			string header, description;
-			bool enableSoldByUnit = false;
+			var enableSoldByUnit = false;
 
 			var asItem = focus as Item;
 			if (asItem != null) {
@@ -161,7 +161,7 @@ namespace SteamEngine.CompiledScripts {
 				if (button == buttonId_NewSection) {
 
 					//new section, we need no hardcore checks because nothing from the outside world is actually being manipulated
-					int sectionModel = focus.Model;
+					var sectionModel = focus.Model;
 					if (focus.IsChar) {
 						sectionModel = ((Character) focus).TypeDef.Icon;
 					}

@@ -25,12 +25,12 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey ipToBlockTK = TagKey.Acquire("_ip_to_block_");
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			string ip = TagMath.SGetTagNotNull(args, ipToBlockTK);
+			var ip = TagMath.SGetTagNotNull(args, ipToBlockTK);
 
-			int width = 500;
-			int labels = 130;
+			var width = 500;
+			var labels = 130;
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
+			var dialogHandler = new ImprovedDialog(gi);
 
 			dialogHandler.CreateBackground(width);
 			dialogHandler.SetLocation(200, 280);
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		[SteamFunction]
 		public static void BlockIP(Character self, ScriptArgs sa) {
 			if (sa != null) {
-				DialogArgs newArgs = new DialogArgs();
+				var newArgs = new DialogArgs();
 				newArgs.SetTag(ipToBlockTK, sa.Argv[0]);
 				self.Dialog(SingletonScript<D_Firewall_BlockIP>.Instance, newArgs);
 			} else {

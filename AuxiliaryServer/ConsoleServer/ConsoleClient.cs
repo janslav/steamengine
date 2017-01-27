@@ -87,7 +87,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		public void TryLoginToGameServers() {
-			foreach (GameServer gameServer in GameServersManager.AllIdentifiedGameServers) {
+			foreach (var gameServer in GameServersManager.AllIdentifiedGameServers) {
 				gameServer.SendConsoleLogin(this.uid, this.accName, this.accPass);
 			}
 		}
@@ -103,7 +103,7 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 			this.isLoggedInAux = true;
 
-			RequestOpenCommandWindowPacket openWindow = Pool<RequestOpenCommandWindowPacket>.Acquire();
+			var openWindow = Pool<RequestOpenCommandWindowPacket>.Acquire();
 			openWindow.Prepare("AuxiliaryServer", GameUid.AuxServer);
 			this.Conn.SendSinglePacket(openWindow);
 
@@ -111,13 +111,13 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 		}
 
 		internal void EnableCommandLine(GameUid serverUid) {
-			RequestEnableCommandLinePacket enableCmdLine = Pool<RequestEnableCommandLinePacket>.Acquire();
+			var enableCmdLine = Pool<RequestEnableCommandLinePacket>.Acquire();
 			enableCmdLine.Prepare(serverUid);
 			this.Conn.SendSinglePacket(enableCmdLine);
 		}
 
 		internal void CloseCmdWindow(GameUid serverUid) {
-			RequestCloseCommandWindowPacket packet = Pool<RequestCloseCommandWindowPacket>.Acquire();
+			var packet = Pool<RequestCloseCommandWindowPacket>.Acquire();
 			packet.Prepare(serverUid);
 			this.Conn.SendSinglePacket(packet);
 			this.filteredGameServers.Remove(serverUid);
@@ -140,25 +140,25 @@ namespace SteamEngine.AuxiliaryServer.ConsoleServer {
 
 		internal void OpenCmdWindow(string name, GameUid serverUid) {
 			this.filteredGameServers.Add(serverUid); //filtered by default
-			RequestOpenCommandWindowPacket packet = Pool<RequestOpenCommandWindowPacket>.Acquire();
+			var packet = Pool<RequestOpenCommandWindowPacket>.Acquire();
 			packet.Prepare(name, serverUid);
 			this.Conn.SendSinglePacket(packet);
 		}
 
 		public void Write(GameUid serverUid, string str) {
-			SendStringPacket packet = Pool<SendStringPacket>.Acquire();
+			var packet = Pool<SendStringPacket>.Acquire();
 			packet.Prepare(serverUid, str);
 			this.Conn.SendSinglePacket(packet);
 		}
 
 		public void WriteLine(GameUid serverUid, string str) {
-			SendStringLinePacket packet = Pool<SendStringLinePacket>.Acquire();
+			var packet = Pool<SendStringLinePacket>.Acquire();
 			packet.Prepare(serverUid, str);
 			this.Conn.SendSinglePacket(packet);
 		}
 
 		public void SendLoginFailedAndClose(string reason) {
-			LoginFailedPacket packet = Pool<LoginFailedPacket>.Acquire();
+			var packet = Pool<LoginFailedPacket>.Acquire();
 			packet.Prepare(reason);
 			this.conn.SendSinglePacket(packet);
 

@@ -27,10 +27,10 @@ namespace SteamEngine.CompiledScripts {
 		public override void On_Assign() {
 
 			//announce bleeding to both attacker and prey
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.RedMessage(Loc<BleedingLoc>.Get(self.Language).YoureBleeding);
 
-			Character attacker = this.SourceThing as Character;
+			var attacker = this.SourceThing as Character;
 			self.GreenMessage(string.Format(CultureInfo.InvariantCulture,
 				Loc<BleedingLoc>.Get(self.Language).YourTargetIsBleeding, self.Name));
 
@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_FadingEffectTick() {
-			Character self = this.Cont as Character;
+			var self = this.Cont as Character;
 			if (self != null) {
 
 				double damage = DamageManager.CauseDamage(this.SourceThing as Character, self,
@@ -98,14 +98,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void StopBleeding(Character ch) {
-			BleedingEffectPlugin p = ch.GetPlugin(SingletonScript<BleedingEffectPluginDef>.Instance.PluginKey) as BleedingEffectPlugin;
+			var p = ch.GetPlugin(SingletonScript<BleedingEffectPluginDef>.Instance.PluginKey) as BleedingEffectPlugin;
 			if (p != null) {
 				p.Delete();
 			}
 		}
 
 		public override double GetMaxPower(Thing source, Character target, EffectFlag sourceType) {
-			Character sourceChar = source as Character;
+			var sourceChar = source as Character;
 			if (sourceChar != null) {
 				var def = BleedingMaxPowerBonusDef;
 				return base.GetMaxPower(source, target, sourceType) *

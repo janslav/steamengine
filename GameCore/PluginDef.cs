@@ -56,7 +56,7 @@ namespace SteamEngine {
 		protected abstract Plugin CreateImpl();
 
 		public Plugin Create() {
-			Plugin p = this.CreateImpl();
+			var p = this.CreateImpl();
 			p.def = this;
 			return p;
 		}
@@ -109,8 +109,8 @@ namespace SteamEngine {
 		}
 
 		internal static void Init() {
-			foreach (AbstractScript script in AllScripts) {
-				PluginDef pd = script as PluginDef;
+			foreach (var script in AllScripts) {
+				var pd = script as PluginDef;
 				if (pd != null) {
 					pd.TryActivateCompiledTriggers();
 				}

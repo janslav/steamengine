@@ -85,7 +85,7 @@ namespace SteamEngine.Converter {
 					this.modelNum = headerNum;
 				}
 			} else {
-				bool needsHeader = false;
+				var needsHeader = false;
 				this.idLine = this.origData.TryPopPropsLine("id");
 
 				int headerNum;
@@ -149,7 +149,7 @@ namespace SteamEngine.Converter {
 
 			if (this.dupeItemLine != null) {
 				int dupeItemNum;
-				bool dupeItemSet = false;
+				var dupeItemSet = false;
 				if (ConvertTools.TryParseInt32(this.dupeItemLine.Value, out dupeItemNum)) {
 					ConvertedThingDef dupeItemDef;
 					if (this.byModel.TryGetValue(dupeItemNum, out dupeItemDef)) {
@@ -165,7 +165,7 @@ namespace SteamEngine.Converter {
 		}
 
 		public override void ThirdStage() {
-			bool defnameWritten = false;
+			var defnameWritten = false;
 			if (this.defname1 != null) {
 				if (!StringComparer.OrdinalIgnoreCase.Equals(this.headerName, this.defname1.Value)) {
 					defnameWritten = true;
@@ -182,19 +182,19 @@ namespace SteamEngine.Converter {
 
 			base.ThirdStage();
 
-			TriggerSection createTrigger = this.origData.GetTrigger("create");
+			var createTrigger = this.origData.GetTrigger("create");
 			if (createTrigger != null) {
-				int lineNum = createTrigger.StartLine;
-				using (StringReader reader = new StringReader(createTrigger.Code.ToString())) {
+				var lineNum = createTrigger.StartLine;
+				using (var reader = new StringReader(createTrigger.Code.ToString())) {
 					string line;
 					while ((line = reader.ReadLine()) != null) {
-						string lowered = line.ToLowerInvariant();
+						var lowered = line.ToLowerInvariant();
 						if (lowered.StartsWith("item ") || lowered.StartsWith("item=") || lowered.StartsWith("item(") ||
 							lowered.StartsWith("itemnewbie ") || lowered.StartsWith("itemnewbie=") || lowered.StartsWith("itemnewbie(")) {
 							break; //start of loot section, probably
 						}
 						lineNum++;
-						Match m = nameValueRE.Match(line);
+						var m = nameValueRE.Match(line);
 						if (m.Success) {
 							this.ProcessCreateTriggerLine(m.Groups["name"].Value.ToLowerInvariant(),
 								m.Groups["value"].Value, m.Groups["comment"].Value, lineNum);

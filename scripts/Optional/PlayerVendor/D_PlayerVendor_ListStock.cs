@@ -48,16 +48,16 @@ namespace SteamEngine.CompiledScripts {
 
 			var dialogHandler = new ImprovedDialog(gi);
 
-			int firstIndex = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
-			int iMax = Math.Min(firstIndex + ImprovedDialog.PAGE_ROWS, section.Count);
-			int rows = iMax - firstIndex;
+			var firstIndex = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
+			var iMax = Math.Min(firstIndex + ImprovedDialog.PAGE_ROWS, section.Count);
+			var rows = iMax - firstIndex;
 
 			//create the background GUTAMatrix and set its size       
 			dialogHandler.CreateBackground(width);
 			dialogHandler.SetLocation(10, 10);
 
 			//header
-			string header = section.Name;
+			var header = section.Name;
 			var parentSection = section.Cont;
 			while (parentSection != vendor) {
 				header = string.Concat(parentSection.Name, " - ", header);
@@ -78,10 +78,10 @@ namespace SteamEngine.CompiledScripts {
 			//rows with item descriptions
 			t = dialogHandler.AddTable(new GUTATable(rows, 20, 40, 450, 0));
 
-			bool isMyVendor = vendor.CanVendorBeControlledBy(player);
+			var isMyVendor = vendor.CanVendorBeControlledBy(player);
 
-			int index = -1;
-			int row = 0;
+			var index = -1;
+			var row = 0;
 			foreach (var item in section) {
 				index++;
 
@@ -241,7 +241,7 @@ namespace SteamEngine.CompiledScripts {
 			var vendor = (PlayerVendor) section.TopObj();
 			var player = (Player) gi.Cont;
 
-			int buttonId = gr.PressedButton;
+			var buttonId = gr.PressedButton;
 
 			switch (buttonId) {
 				case 0:
@@ -316,14 +316,14 @@ namespace SteamEngine.CompiledScripts {
 
 		public static void MoveUpInContainer(Container section, int index, AbstractItem entry, Container tempCont) {
 			var list = new List<AbstractItem>(index);
-			for (int i = 0; i < index - 1; i++) {
+			for (var i = 0; i < index - 1; i++) {
 				var e = section.FindCont(0);
 				list.Add(e);
 				e.Cont = tempCont;
 			}
 			list.Add(entry);
 			entry.Cont = tempCont;
-			for (int i = list.Count - 1; i >= 0; i--) {
+			for (var i = list.Count - 1; i >= 0; i--) {
 				list[i].Cont = section;
 			}
 		}
@@ -335,7 +335,7 @@ namespace SteamEngine.CompiledScripts {
 				list.Add(e);
 				e.Cont = tempCont;
 			}
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				list[i].Cont = section;
 			}
 		}
@@ -366,9 +366,9 @@ namespace SteamEngine.CompiledScripts {
 		protected override TargetResult On_TargonThing(Player self, Thing targetted, object parameter) {
 			var t = (Tuple<Container, Gump>) parameter;
 
-			Container section = t.Item1;
+			var section = t.Item1;
 			if (section != null) {
-				PlayerVendor vendor = section.TopObj() as PlayerVendor;
+				var vendor = section.TopObj() as PlayerVendor;
 
 				if (vendor != null && vendor.CanVendorBeControlledBy(self)) {
 					var asChar = targetted as Character;

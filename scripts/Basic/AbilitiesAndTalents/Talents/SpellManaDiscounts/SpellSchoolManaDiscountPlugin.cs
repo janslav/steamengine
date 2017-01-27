@@ -22,10 +22,10 @@ namespace SteamEngine.CompiledScripts {
 	public partial class SpellSchoolManaDiscountPlugin {
 		public void On_SkillStart(SkillSequenceArgs skillSeqArgs) {
 			if (skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
-				Character self = (Character) this.Cont;
-				DamageSpellDef spell = skillSeqArgs.Param1 as DamageSpellDef;
+				var self = (Character) this.Cont;
+				var spell = skillSeqArgs.Param1 as DamageSpellDef;
 				if (spell != null) {
-					DamageType school = this.TypeDef.SpellSchool;
+					var school = this.TypeDef.SpellSchool;
 					if ((spell.DamageType & school) == school) {
 						self.Mana += (short) (spell.GetManaUse(skillSeqArgs.Tool is SpellScroll) * this.EffectPower);
 					}

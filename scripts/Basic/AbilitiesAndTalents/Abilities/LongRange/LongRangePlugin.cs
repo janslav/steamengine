@@ -37,14 +37,14 @@ namespace SteamEngine.CompiledScripts {
 
 			this.EffectPower = LongRangeDef.EffectPower; //ignore points in ability
 
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.WeaponRangeModifier += (int) this.EffectPower;
 		}
 
 		public override void On_UnAssign(Character cont) {
 			base.On_UnAssign(cont);
 
-			Character self = (Character) this.Cont;
+			var self = (Character) this.Cont;
 			self.WeaponRangeModifier -= (int) this.EffectPower;
 		}
 

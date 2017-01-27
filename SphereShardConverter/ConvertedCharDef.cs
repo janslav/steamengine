@@ -79,7 +79,7 @@ namespace SteamEngine.Converter {
 		}
 
 		private static void HandleMountId(ConvertedDef def, PropsLine line) {
-			int num = -1;
+			var num = -1;
 			if (!ConvertTools.TryParseInt32(line.Value, out num)) {
 				ConvertedThingDef i;
 				if (ConvertedItemDef.itemsByDefname.TryGetValue(line.Value, out i)) {
@@ -87,7 +87,7 @@ namespace SteamEngine.Converter {
 				}
 			}
 			if (num != -1) {
-				string retVal = "0x" + num.ToString("x");
+				var retVal = "0x" + num.ToString("x");
 				def.Set("MountItem", retVal, line.Comment);
 				//return retVal;
 			} else {
@@ -98,7 +98,7 @@ namespace SteamEngine.Converter {
 
 
 		private static void HandleSound(ConvertedDef def, PropsLine line) {
-			string retVal = line.Value;
+			var retVal = line.Value;
 			int num;
 			if (ConvertTools.TryParseInt32(line.Value, out num)) {
 				retVal = "0x" + num.ToString("x");

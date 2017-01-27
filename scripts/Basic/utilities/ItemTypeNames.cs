@@ -231,7 +231,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static string GetPrettyName(TriggerGroup tg) {
 			string name;
-			string dn = tg.PrettyDefname;
+			var dn = tg.PrettyDefname;
 			if (typeNames.TryGetValue(dn, out name)) {
 				return name;
 			}

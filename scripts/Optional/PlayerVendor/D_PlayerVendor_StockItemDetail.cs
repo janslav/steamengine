@@ -122,7 +122,7 @@ namespace SteamEngine.CompiledScripts {
 			if (entry.soldByUnits) {
 				t = dialogHandler.AddTable(new GUTATable(1, 80, 0));
 				t.AddToCell(0, 0, GUTAText.Builder.Text(loc.Label_Units).Build());
-				string entryText = isMyVendor ? "" : "1";
+				var entryText = isMyVendor ? "" : "1";
 
 				t.AddToCell(0, 1, GUTAInput.Builder.Id(inputId_Units).Text(entryText).Build());
 				t.AddToCell(0, 1, GUTAText.Builder.Text(amount.ToString()).XPos(100).Build());
@@ -133,7 +133,7 @@ namespace SteamEngine.CompiledScripts {
 			//last row with buttons
 			t = dialogHandler.AddTable(new GUTATable(1, 100, 90, 0));
 			t.AddToCell(0, 0, GUTAButton.Builder.Id(buttonId_BuyOrRecall).Type(LeafComponentTypes.ButtonTick).Build());
-			string buyOrRecall = isMyVendor ? loc.Label_Recall : loc.Label_Buy;
+			var buyOrRecall = isMyVendor ? loc.Label_Recall : loc.Label_Buy;
 			t.AddToCell(0, 0, GUTAText.Builder.Text(buyOrRecall).XPos(35).Build());
 			if (entry.soldByUnits) {
 				t.AddToCell(0, 1, GUTAText.Builder.Text(loc.Label_Add).Build());

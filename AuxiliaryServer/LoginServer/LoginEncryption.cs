@@ -41,16 +41,16 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		private bool InitEncrypion(byte[] buffer, int offset, int length) {
-			uint seed = (uint) ((buffer[offset] << 24) | (buffer[offset + 1] << 16) | (buffer[offset + 2] << 8) | buffer[offset + 3]);
+			var seed = (uint) ((buffer[offset] << 24) | (buffer[offset + 1] << 16) | (buffer[offset + 2] << 8) | buffer[offset + 3]);
 
 			// Try to find a valid key
 
 			// Initialize our tables (cache them, they will be modified)
-			uint orgTable1 = (((~seed) ^ 0x00001357) << 16) | ((seed ^ 0xffffaaaa) & 0x0000ffff);
-			uint orgTable2 = ((seed ^ 0x43210000) >> 16) | (((~seed) ^ 0xabcdffff) & 0xffff0000);
+			var orgTable1 = (((~seed) ^ 0x00001357) << 16) | ((seed ^ 0xffffaaaa) & 0x0000ffff);
+			var orgTable2 = ((seed ^ 0x43210000) >> 16) | (((~seed) ^ 0xabcdffff) & 0xffff0000);
 
-			using (Buffer b = Pool<Buffer>.Acquire()) {
-				byte[] bytes = b.bytes;
+			using (var b = Pool<Buffer>.Acquire()) {
+				var bytes = b.bytes;
 
 				for (int i = 0, n = LoginKey.loginKeys.Length; i < n; i++) {
 					this.table1 = orgTable1;
@@ -78,9 +78,9 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		private static bool CheckCorrectASCIIString(byte[] bytes, int start, int len) {
-			bool nullsFromNowOn = false;
+			var nullsFromNowOn = false;
 			for (int i = start, n = start + len; i < n; i++) {
-				byte value = bytes[i];
+				var value = bytes[i];
 				if (nullsFromNowOn) {
 					if (value != 0) {
 						return false;
@@ -105,7 +105,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		public int Decrypt(byte[] bytesIn, int offsetIn, byte[] bytesOut, int offsetOut, int length) {
 			uint eax, ecx, edx, esi;
 
-			for (int i = 0; i < length; i++) {
+			for (var i = 0; i < length; i++) {
 				bytesOut[i] = (byte) (bytesIn[offsetIn + i] ^ (byte) (this.table1 & 0xFF));
 				edx = this.table2;
 				esi = this.table1 << 31;

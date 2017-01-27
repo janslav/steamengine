@@ -29,7 +29,7 @@ namespace SteamEngine.UoData
 		internal void Add(MultiItemComponent multiComponent) {
 			Sanity.IfTrueThrow((multiComponent.prevInList != null || multiComponent.nextInList != null),
 				"'" + multiComponent + "' being added into a MultiComponentList while being in another cont already");
-			MultiItemComponent next = this.firstMultiComponent;
+			var next = this.firstMultiComponent;
 			this.firstMultiComponent = multiComponent;
 			multiComponent.prevInList = null;
 			multiComponent.nextInList = next;
@@ -60,7 +60,7 @@ namespace SteamEngine.UoData
 		}
 
 		internal MultiItemComponent Find(int x, int y, int z, int id) {
-			MultiItemComponent mic = this.firstMultiComponent;
+			var mic = this.firstMultiComponent;
 			while (mic != null) {
 				if ((mic.X == x) && (mic.Y == y) && (mic.Z == z) && (mic.Id == id)) {
 					return mic;

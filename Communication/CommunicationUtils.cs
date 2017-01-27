@@ -29,7 +29,7 @@ namespace SteamEngine.Communication {
 
 		[Conditional("DEBUG")]
 		public static void OutputPacketLog(byte[] array, int start, int len) {
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			sb.AppendLine("Packet Contents: (" + len + " bytes)");
 			for (int i = start, n = start + len; i < n; i++) {
 				sb.Append(array[i].ToString("X2")).Append(" ");
@@ -40,7 +40,7 @@ namespace SteamEngine.Communication {
 			sb.AppendLine();
 
 			for (int i = start, n = start + len; i < n; i++) {
-				byte a = array[i];
+				var a = array[i];
 				if (a < 32 || a > 126) {
 					sb.Append((char) 128);
 				} else {

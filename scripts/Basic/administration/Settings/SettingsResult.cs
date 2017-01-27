@@ -26,17 +26,17 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//field containing the results for display
-			List<SettingResult> setResults = (List<SettingResult>) args.GetTag(resultsListTK);
-			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //first index on the page (0 if not present)
+			var setResults = (List<SettingResult>) args.GetTag(resultsListTK);
+			var firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //first index on the page (0 if not present)
 
 			//max index (20 lines) + check the list end !
-			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, setResults.Count);
+			var imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, setResults.Count);
 
-			int resultsOK = SettingsProvider.CountSuccessfulSettings(setResults);
-			int resultsNOK = SettingsProvider.CountUnSuccessfulSettings(setResults);
-			int allFields = setResults.Count;
+			var resultsOK = SettingsProvider.CountSuccessfulSettings(setResults);
+			var resultsNOK = SettingsProvider.CountUnSuccessfulSettings(setResults);
+			var allFields = setResults.Count;
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			dlg.CreateBackground(700);
 			dlg.SetLocation(50, 590);
 
@@ -55,10 +55,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.AddTable(new GUTATable(imax - firstiVal)); //as much lines as many results there is on the page (maximally ROW_COUNT)
 			dlg.CopyColsFromLastTable();
 
-			int rowCntr = 0;
-			for (int i = firstiVal; i < imax; i++) {
-				SettingResult sres = setResults[i];
-				Hues color = SettingsProvider.ResultColor(sres);
+			var rowCntr = 0;
+			for (var i = firstiVal; i < imax; i++) {
+				var sres = setResults[i];
+				var color = SettingsProvider.ResultColor(sres);
 				dlg.LastTable[rowCntr, 0] = GUTAText.Builder.Text(sres.Name).Hue(color).Build(); //nam of the editable field
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(sres.CurrentValue).Hue(color).Build(); //actual value from the field
 				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text(sres.FormerValue).Hue(color).Build(); //former value of the field (filled only if the value has changed)														//
@@ -74,7 +74,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
-			List<SettingResult> setResults = (List<SettingResult>) args.GetTag(resultsListTK);
+			var setResults = (List<SettingResult>) args.GetTag(resultsListTK);
 			if (gr.PressedButton == 0) { //end				
 				//dont redirect to any dialog - former info/settings dialog is already open
 			} else if (ImprovedDialog.PagingButtonsHandled(gi, gr, setResults.Count, 1)) {//kliknuto na paging?

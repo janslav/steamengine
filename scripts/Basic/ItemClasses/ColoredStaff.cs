@@ -45,15 +45,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void On_DClick(AbstractCharacter from) {
-			Player self = from as Player;
+			var self = from as Player;
 			if ((self != null) && (this.Cont == from)) { //we have it equipped
 				int selfMana = self.Mana;
 				int selfMaxMana = self.MaxMana;
 				if (selfMana >= selfMaxMana) {
-					double staffMaxMana = this.CalculateMaxMana(self);
+					var staffMaxMana = this.CalculateMaxMana(self);
 					if (this.mana < staffMaxMana) {
-						double manaswap = (self.EffectiveLevel + 30.0) / 100.0; //swap effectivity = 90% at level 60
-						double staffResultMana = this.mana + selfMana * manaswap;
+						var manaswap = (self.EffectiveLevel + 30.0) / 100.0; //swap effectivity = 90% at level 60
+						var staffResultMana = this.mana + selfMana * manaswap;
 						if (staffResultMana > staffMaxMana) {
 							self.Mana = (short) ((staffResultMana - staffMaxMana) / manaswap);
 							this.mana = (ushort) staffMaxMana;
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 						this.ManaSwapped(self);
 					}
 				} else {
-					int manadiff = Math.Min(selfMaxMana - selfMana, this.mana);
+					var manadiff = Math.Min(selfMaxMana - selfMana, this.mana);
 					if (manadiff > 0) {
 						self.Mana = (short) (selfMana + manadiff);
 						this.mana = (ushort) (this.mana - manadiff);
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public override void On_Unequip(ItemInCharArgs args) {
 			if (this.mana > 0) {
-				Player self = args.Cont as Player;
+				var self = args.Cont as Player;
 				if (self != null) {
 					self.WriteLine(Loc<ColoredStaffLoc>.Get(self.Language).manaVanished);
 				}
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts {
 
 		private double CalculateMaxMana(Player self) {
 			double staffMaxMana = this.TypeDef.MaxMana;
-			double perCentBonus = self.GetAbility(ManaDepositBonusDef) * ManaDepositBonusDef.EffectPower;
+			var perCentBonus = self.GetAbility(ManaDepositBonusDef) * ManaDepositBonusDef.EffectPower;
 			staffMaxMana += (staffMaxMana * perCentBonus);
 			return staffMaxMana;
 		}
@@ -103,7 +103,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public void ShowMana(Player self) {
 			if (self != null) {
-				double staffMaxMana = this.CalculateMaxMana(self);
+				var staffMaxMana = this.CalculateMaxMana(self);
 				Globals.SrcWriteLine(string.Concat(
 					Loc<ColoredStaffLoc>.Get(self.Language).manaInStaff, ": ",
 					this.mana.ToString(), "/", 
@@ -116,7 +116,7 @@ namespace SteamEngine.CompiledScripts {
 				return this.mana;
 			}
 			set {
-				ushort newValue = (ushort) value;
+				var newValue = (ushort) value;
 				if (this.mana != newValue) {
 					this.mana = newValue;
 					this.InvalidateAosToolTips();

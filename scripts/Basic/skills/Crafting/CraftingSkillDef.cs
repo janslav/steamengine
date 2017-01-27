@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 		/// opens the craftmenu for the given skill
 		/// </summary>
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
 			if (!this.CheckPrerequisities(skillSeqArgs) || !this.DoCheckSpecials(skillSeqArgs)) {
@@ -54,7 +54,7 @@ namespace SteamEngine.CompiledScripts {
 		/// begins here (i.e. the making success and the number of strokes is pre-computed here)
 		/// </summary>
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
 			if (!this.CheckPrerequisities(skillSeqArgs) || !this.DoCheckSpecials(skillSeqArgs)) {
@@ -62,11 +62,11 @@ namespace SteamEngine.CompiledScripts {
 				return TriggerResult.Cancel; //something wrong, finish now
 			}
 
-			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
+			var iDefToMake = (ItemDef) skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
 															   //get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
-			double[] itemStrokes = iDefToMake.Strokes; //always 2-item array
+			var itemStrokes = iDefToMake.Strokes; //always 2-item array
 													   //compute the actual strokes count to make the selected item for "self" char
-			int strokes = (int) Math.Round(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes));
+			var strokes = (int) Math.Round(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes));
 			//check the Success now / TODO> item difficulty
 			skillSeqArgs.Success = this.CheckSuccess(self, iDefToMake.Difficulty);
 			if (!skillSeqArgs.Success) {//the item making will fail
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts {
 				return TriggerResult.Cancel; //something wrong, finish now
 			}
 
-			int strokesCnt = Convert.ToInt32(skillSeqArgs.Param2);
+			var strokesCnt = Convert.ToInt32(skillSeqArgs.Param2);
 			if (strokesCnt > 1) {
 				//do the animation, sound and repeat the stroke
 				this.DoStroke(skillSeqArgs);
@@ -107,7 +107,7 @@ namespace SteamEngine.CompiledScripts {
 		/// re-runs the @start trigger
 		/// </summary>
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
-			Player self = (Player) skillSeqArgs.Self;
+			var self = (Player) skillSeqArgs.Self;
 			//todo: paralyzed state etc.
 			//some special requirements will be also checked (if present)
 			if (!this.CheckPrerequisities(skillSeqArgs) || !this.DoCheckSpecials(skillSeqArgs)) {
@@ -115,10 +115,10 @@ namespace SteamEngine.CompiledScripts {
 				return;//something wrong, finish now
 			}
 
-			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
+			var iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
 			IResourceListEntry missingResource;
-			bool canMake = true;
+			var canMake = true;
 			//first check the necessary resources to have (GM needn't have anything) (if any resources are needed)
 			if (!self.IsGM && iDefToMake.SkillMake != null && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
 				self.SysMessage(missingResource.GetResourceMissingMessage(self.Language));
@@ -130,7 +130,7 @@ namespace SteamEngine.CompiledScripts {
 					self.SysMessage(missingResource.GetResourceMissingMessage(self.Language));
 					canMake = false;
 				} else {//resources consumed or we are GM or no resources needed, create the item and place it to the pre-defined (or default) location
-					Item newItem = (Item) iDefToMake.Create(self.ReceivingContainer);
+					var newItem = (Item) iDefToMake.Create(self.ReceivingContainer);
 					//self.ClilocSysMessage(500638);//You create the item and put it in your backpack.
 					self.SysMessage(string.Format(
 								Loc<CraftSkillsLoc>.Get(self.Language).ItemMadeAndPutInRecCont,
@@ -154,24 +154,24 @@ namespace SteamEngine.CompiledScripts {
 		/// re-runs the @start trigger
 		/// </summary>
 		protected override void On_Fail(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) { //checking alive will be enough
 				CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 				return;//no message needed, it's been already sent in the called method
 			}
 
-			ItemDef iDefToMake = (ItemDef) skillSeqArgs.Param1;
+			var iDefToMake = (ItemDef) skillSeqArgs.Param1;
 
 			//check if we can even make it (i.e. we have necessary resources) otherwise we can attempt to make something without resources and in case 
 			//we failed the next attempt will begin afterwards (which makes no sense since we do not even have the resources...)
 			IResourceListEntry missingResource;
-			bool canMake = true;
+			var canMake = true;
 			//first check the necessary resources to have (GM needn't have anything) (if any resources are needed)
 			if (!self.IsGM && iDefToMake.SkillMake != null && !iDefToMake.SkillMake.HasResourcesPresent(self, ResourcesLocality.BackpackAndLayers, out missingResource)) {
 				canMake = false;
 			}
 
-			bool hasMaterial = true;
+			var hasMaterial = true;
 			//then check if the necessary material is present
 			if (!self.IsGM && iDefToMake.Resources != null && !iDefToMake.Resources.HasResourcesPresent(self, ResourcesLocality.Backpack, out missingResource)) {
 				hasMaterial = false;
@@ -189,7 +189,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Abort(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.SysMessage(Loc<CraftSkillsLoc>.Get(self.Language).CraftingAborted);
 			CraftingProcessPlugin.UnInstallCraftingPlugin(self);
 		}
@@ -199,7 +199,7 @@ namespace SteamEngine.CompiledScripts {
 		/// Its purpose is to make something related to the stroke of the particular skill (such as playing some sound...)
 		/// </summary>
 		protected virtual void DoStroke(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.SysMessage(skillSeqArgs.SkillDef.Defname + " stroke");
 		}
 
@@ -210,7 +210,7 @@ namespace SteamEngine.CompiledScripts {
 		/// </summary>
 		protected virtual void DoSuccess(SkillSequenceArgs skillSeqArgs, Item newItem) {
 			//TODO pocitat nejake ty "exceptional" vlastnosti, podepisovani predmetu atp.
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			self.SysMessage(skillSeqArgs.SkillDef.Defname + " success");
 		}
 
@@ -229,7 +229,7 @@ namespace SteamEngine.CompiledScripts {
 		/// should be cancelled or true if we can continue
 		/// </summary>
 		private bool CheckPrerequisities(SkillSequenceArgs skillSeqArgs) {
-			Character self = skillSeqArgs.Self;
+			var self = skillSeqArgs.Self;
 			if (!self.CheckAliveWithMessage()) {
 				return false;//no message needed, it's been already sent in the called method
 			}
@@ -246,7 +246,7 @@ namespace SteamEngine.CompiledScripts {
 				return true;
 			}
 			//skillmake (skills, tools etc.)
-			ResourcesList requir = iDef.SkillMake;
+			var requir = iDef.SkillMake;
 			if (requir != null) {
 				IResourceListEntry missingItem;
 				if (!requir.HasResourcesPresent(chr, ResourcesLocality.BackpackAndLayers, out missingItem)) {
@@ -255,7 +255,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//resources (necessary items)
-			ResourcesList reslist = iDef.Resources;
+			var reslist = iDef.Resources;
 			if (reslist != null) {
 				IResourceListEntry missingItem;
 				if (!reslist.HasResourcesPresent(chr, ResourcesLocality.Backpack, out missingItem)) {

@@ -29,7 +29,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVal = this.obj.Run(vars);
+			var retVal = this.obj.Run(vars);
 			try {
 				return !(ConvertTools.ToBoolean(retVal));
 			} catch (Exception e) {
@@ -55,7 +55,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVal = this.obj.Run(vars);
+			var retVal = this.obj.Run(vars);
 			try {
 				return ~(Convert.ToInt64(retVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {
@@ -81,7 +81,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal override object Run(ScriptVars vars) {
-			object retVal = this.obj.Run(vars);
+			var retVal = this.obj.Run(vars);
 			try {
 				return -(Convert.ToDouble(retVal, CultureInfo.InvariantCulture));
 			} catch (Exception e) {

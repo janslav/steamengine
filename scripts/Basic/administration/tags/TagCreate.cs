@@ -26,9 +26,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			TagHolder th = (TagHolder) args.GetTag(D_TagList.holderTK); //na koho budeme tag ukladat?
+			var th = (TagHolder) args.GetTag(D_TagList.holderTK); //na koho budeme tag ukladat?
 
-			ImprovedDialog dlg = new ImprovedDialog(gi);
+			var dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -64,8 +64,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 1) {
 				//nacteme obsah input fieldu
-				string tagName = gr.GetTextResponse(10);
-				string tagValue = gr.GetTextResponse(11);
+				var tagName = gr.GetTextResponse(10);
+				var tagValue = gr.GetTextResponse(11);
 				//ziskame objektovou reprezentaci vlozene hodnoty. ocekava samozrejme prefixy pokud je potreba!
 				object objectifiedValue = null;
 				try {
@@ -73,15 +73,15 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				} catch {
 					//zhucelo mu to, neco zadal blbe
 					//stackneme a zobrazime chybu
-					Gump newGi = D_Display_Text.ShowError("Chybne zadano, nerozpoznatelna hodnota: " + tagValue);
+					var newGi = D_Display_Text.ShowError("Chybne zadano, nerozpoznatelna hodnota: " + tagValue);
 					DialogStacking.EnstackDialog(gi, newGi);
 					return;
 				}
-				TagHolder th = (TagHolder) args.GetTag(D_TagList.holderTK);
+				var th = (TagHolder) args.GetTag(D_TagList.holderTK);
 				th.SetTag(TagKey.Acquire(tagName), objectifiedValue);
 				//vzit jeste predchozi dialog, musime smazat taglist aby se pregeneroval
 				//a obsahoval ten novy tag
-				Gump prevStacked = DialogStacking.PopStackedDialog(gi);
+				var prevStacked = DialogStacking.PopStackedDialog(gi);
 				//overovat netreba, proste odstranime tag se seznamem at uz existuje nebo ne
 				//if(prevStacked.def.GetType().IsAssignableFrom(typeof(D_TagList))) {
 				//prisli jsme z taglistu - mame zde seznam a muzeme ho smazat
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				//}
 				DialogStacking.ResendAndRestackDialog(prevStacked);
 			} else if (gr.PressedButton == 2) {
-				Gump newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
+				var newGi = gi.Cont.Dialog(SingletonScript<D_Settings_Help>.Instance);
 				DialogStacking.EnstackDialog(gi, newGi); //ulozime dialog do stacku
 			}
 		}

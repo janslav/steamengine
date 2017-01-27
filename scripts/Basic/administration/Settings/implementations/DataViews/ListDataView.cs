@@ -104,8 +104,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override object GetValue(object target) {
-				IList list = (IList) target;
-				int n = list.Count;
+				var list = (IList) target;
+				var n = list.Count;
 				if (this.index < n) {
 					return list[this.index];
 				}
@@ -113,8 +113,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override string GetStringValue(object target) {
-				IList list = (IList) target;
-				int n = list.Count;
+				var list = (IList) target;
+				var n = list.Count;
 				if (this.index < n) {
 					return ObjectSaver.Save(list[this.index]);
 				}
@@ -122,16 +122,16 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			public override void SetValue(object target, object value) {
-				IList list = (IList) target;
-				int n = list.Count;
+				var list = (IList) target;
+				var n = list.Count;
 				if (this.index < n) {
 					list[this.index] = value;
 				}
 			}
 
 			public override void SetStringValue(object target, string value) {
-				IList list = (IList) target;
-				int n = list.Count;
+				var list = (IList) target;
+				var n = list.Count;
 				if (this.index < n) {
 					list[this.index] = ObjectSaver.Load(value);
 				}

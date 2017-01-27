@@ -182,9 +182,9 @@ namespace SteamEngine.CompiledScripts {
 		/// and in case he has, it runs the protected activation method
 		/// </summary>
 		public virtual void Activate(Character chr) {
-			Ability ab = chr.GetAbilityObject(this);
+			var ab = chr.GetAbilityObject(this);
 
-			DenyResult retVal = this.Trigger_DenyActivate(chr, ab); //return value means only that the trigger has been cancelled
+			var retVal = this.Trigger_DenyActivate(chr, ab); //return value means only that the trigger has been cancelled
 
 			if (retVal.Allow) {
 				ab.LastUsage = Globals.TimeAsSpan; //set the last usage time
@@ -213,7 +213,7 @@ namespace SteamEngine.CompiledScripts {
 		/// Gets called when every prerequisity has been fulfilled and the ability can be run now
 		/// </summary>
 		protected void Trigger_Activate(Character chr, Ability ab) {
-			ScriptArgs sa = new ScriptArgs(this, ab);
+			var sa = new ScriptArgs(this, ab);
 
 			var result = chr.TryCancellableTrigger(tkActivateAbility, sa);
 			if (result != TriggerResult.Cancel) {
@@ -247,7 +247,7 @@ namespace SteamEngine.CompiledScripts {
 				return DenyResultMessages_Abilities.Deny_DoesntHaveAbility;
 			}
 
-			DenyAbilityArgs denyArgs = new DenyAbilityArgs(chr, this, ab);
+			var denyArgs = new DenyAbilityArgs(chr, this, ab);
 
 			var result = chr.TryCancellableTrigger(tkDenyActivateAbility, denyArgs);
 			if (result != TriggerResult.Cancel) {
@@ -268,7 +268,7 @@ namespace SteamEngine.CompiledScripts {
 
 		/// <summary>C# based @denyUse trigger method, implementation of common checks</summary>
 		protected virtual void On_DenyActivate(DenyAbilityArgs args) {
-			Ability ab = args.ranAbility;
+			var ab = args.ranAbility;
 			//check cooldown
 			if (((Globals.TimeAsSpan - ab.LastUsage) <= this.CooldownAsSpan) && !args.abiliter.IsGM) { //check the timing if OK
 				args.Result = DenyResultMessages_Abilities.Deny_NotYetCooledDown;
@@ -276,7 +276,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//check resources present (if needed)
-			ResourcesList resPresent = this.Requirements;
+			var resPresent = this.Requirements;
 			if (resPresent != null) {
 				IResourceListEntry missingItem;
 				if (!resPresent.HasResourcesPresent(args.abiliter, ResourcesLocality.BackpackAndLayers, out missingItem)) {
@@ -287,7 +287,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			//check consumable resources
-			ResourcesList resConsum = this.Resources;
+			var resConsum = this.Resources;
 			if (resConsum != null) {
 				//look to the backpack and among the items that we are wearing
 				IResourceListEntry missingItem;
@@ -328,7 +328,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		internal void Trigger_ValueChanged(Character chr, Ability ab, int previousValue) {
-			ScriptArgs sa = new ScriptArgs(this, ab, previousValue);
+			var sa = new ScriptArgs(this, ab, previousValue);
 			chr.TryTrigger(tkAbilityValueChanged, sa);
 			try {
 				chr.On_AbilityValueChanged(this, ab, previousValue);
@@ -339,7 +339,7 @@ namespace SteamEngine.CompiledScripts {
 				this.On_ValueChanged(chr, ab, previousValue);
 			} catch (FatalException) { throw; } catch (TransException) { throw; } catch (Exception e) { Logger.WriteError(e); }
 
-			int newValue = ab.ModifiedPoints;
+			var newValue = ab.ModifiedPoints;
 			if (previousValue == 0) {
 				if (newValue > 0) {
 					this.Trigger_Assign(chr, ab, sa);
@@ -377,7 +377,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Loading from scripts
 		public override void LoadScriptLines(PropsSection ps) {
-			PropsLine p = ps.PopPropsLine("name");
+			var p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
 			this.Unregister();
 

@@ -71,7 +71,7 @@ namespace SteamEngine.AuxServerPipe {
 		public static readonly PacketGroup group = InitGroup();
 
 		private static PacketGroup InitGroup() {
-			PacketGroup group = PacketGroup.CreateFreePG();
+			var group = PacketGroup.CreateFreePG();
 			group.AddPacket(new StartupFinishedPacket());
 			return group;
 		}

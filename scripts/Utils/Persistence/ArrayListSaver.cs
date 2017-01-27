@@ -35,26 +35,26 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void Save(object objToSave, SaveStream writer) {
-			ArrayList list = (ArrayList) objToSave;
-			int count = list.Count;
+			var list = (ArrayList) objToSave;
+			var count = list.Count;
 			writer.WriteValue("count", count);
-			for (int i = 0; i < count; i++) {
+			for (var i = 0; i < count; i++) {
 				writer.WriteValue(i.ToString(), list[i]);
 			}
 		}
 
 		public object LoadSection(PropsSection input) {
-			int currentLineNumber = input.HeaderLine;
+			var currentLineNumber = input.HeaderLine;
 			try {
-				PropsLine countLine = input.PopPropsLine("count");
+				var countLine = input.PopPropsLine("count");
 				currentLineNumber = countLine.Line;
-				int count = int.Parse(countLine.Value);
-				ArrayList list = new ArrayList(count);
-				for (int i = 0; i < count; i++) {
+				var count = int.Parse(countLine.Value);
+				var list = new ArrayList(count);
+				for (var i = 0; i < count; i++) {
 					list.Add(null);
-					PropsLine valueLine = input.PopPropsLine(i.ToString());
+					var valueLine = input.PopPropsLine(i.ToString());
 					currentLineNumber = valueLine.Line;
-					ArrayListIndexPair alip = new ArrayListIndexPair(list, i);
+					var alip = new ArrayListIndexPair(list, i);
 					ObjectSaver.Load(valueLine.Value, this.DelayedLoad_Index, input.Filename, valueLine.Line, alip);
 				}
 				return list;
@@ -71,12 +71,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void DelayedLoad_Index(object loadedObj, string filename, int line, object param) {
-			ArrayListIndexPair alip = (ArrayListIndexPair) param;
+			var alip = (ArrayListIndexPair) param;
 			alip.list[alip.index] = loadedObj;
 		}
 
 		public void DelayedCopy_Index(object loadedObj, object param) {
-			ArrayListIndexPair alip = (ArrayListIndexPair) param;
+			var alip = (ArrayListIndexPair) param;
 			alip.list[alip.index] = loadedObj;
 		}
 
@@ -90,12 +90,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public object DeepCopy(object copyFrom) {
-			ArrayList copyFromList = (ArrayList) copyFrom;
-			int n = copyFromList.Count;
-			ArrayList newList = new ArrayList(n);
-			for (int i = 0; i < n; i++) {
+			var copyFromList = (ArrayList) copyFrom;
+			var n = copyFromList.Count;
+			var newList = new ArrayList(n);
+			for (var i = 0; i < n; i++) {
 				newList.Add(null);
-				ArrayListIndexPair alip = new ArrayListIndexPair(newList, i);
+				var alip = new ArrayListIndexPair(newList, i);
 				DeepCopyFactory.GetCopyDelayed(copyFromList[i], this.DelayedCopy_Index, alip);
 			}
 			return newList;

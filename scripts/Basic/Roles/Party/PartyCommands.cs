@@ -23,9 +23,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void RequestAddMember(AbstractCharacter ach) {
-			Player self = ach as Player;
+			var self = ach as Player;
 			if (self != null) {
-				Party p = Party.GetParty(self);
+				var p = Party.GetParty(self);
 				if (p != null)
 				{
 					if (!p.IsLeader(self)) {
@@ -42,9 +42,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void RequestRemoveMember(AbstractCharacter ach, AbstractCharacter target) {
-			Player self = ach as Player;
+			var self = ach as Player;
 			if (self != null) {
-				Party p = Party.GetParty(self);
+				var p = Party.GetParty(self);
 				if (p != null) {
 					if (p.IsLeader(self) || self == target) {
 						RolesManagement.TryUnAssign((Character) target, p);
@@ -57,9 +57,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void RequestPrivateMessage(AbstractCharacter ach, AbstractCharacter target, string text) {
 			if (!string.IsNullOrEmpty(text)) {
-				Player self = ach as Player;
+				var self = ach as Player;
 				if (self != null) {
-					Party p = Party.GetParty(self);
+					var p = Party.GetParty(self);
 					if (p != null) {
 						if (p.IsMember((Character) target)) {
 							p.SendPrivateMessage(self, target, text);
@@ -73,9 +73,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void RequestPublicMessage(AbstractCharacter ach, string text) {
 			if (!string.IsNullOrEmpty(text)) {
-				Player self = ach as Player;
+				var self = ach as Player;
 				if (self != null) {
-					Party p = Party.GetParty(self);
+					var p = Party.GetParty(self);
 					if (p != null) {
 						p.SendPublicMessage(self, text);
 					} else {
@@ -90,8 +90,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void AcceptJoinRequest(AbstractCharacter self, AbstractCharacter leader) {
-			Character candidate = (Character) self;
-			Party party = Party.GetParty((Character) leader);
+			var candidate = (Character) self;
+			var party = Party.GetParty((Character) leader);
 			if (leader == null || party == null || !party.Candidates.Contains(candidate)) {
 				self.ClilocSysMessage(3000222); // No one has invited you to be in a party.
 			} else {
@@ -100,8 +100,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		public override void DeclineJoinRequest(AbstractCharacter self, AbstractCharacter leader) {
-			Character candidate = (Character) self;
-			Party party = Party.GetParty((Character) leader);
+			var candidate = (Character) self;
+			var party = Party.GetParty((Character) leader);
 			if (leader == null || party == null || !party.Candidates.Contains(candidate)) {
 				self.ClilocSysMessage(3000222); // No one has invited you to be in a party.
 			} else {
@@ -117,8 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		protected override TargetResult On_TargonChar(Player self, Character targetted, object parameter) {
-			Party myParty = Party.GetParty(self);
-			bool isNew = false;
+			var myParty = Party.GetParty(self);
+			var isNew = false;
 			if (myParty != null) {
 				if (!myParty.IsLeader(self)) {
 					self.ClilocSysMessage(1005453); // You may only add members to the party if you are the leader.
@@ -129,7 +129,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				isNew = true;
 			}
 
-			bool inviteLegal = myParty.TryInvite(targetted);
+			var inviteLegal = myParty.TryInvite(targetted);
 			if (!inviteLegal && isNew) {
 				myParty.Dispose();
 			}

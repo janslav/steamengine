@@ -42,7 +42,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static void ForgetAll() {
-			foreach (AbstractScript gs in AllScripts) {
+			foreach (var gs in AllScripts) {
 				SeShield.InTransaction(() =>
 					gs.Unregister());
 			}

@@ -61,16 +61,16 @@ namespace SteamEngine {
 		private ClientVersion(string versionString) {
 			this.versionString = versionString;
 			try {
-				Match m = osi2dCliVerRE.Match(versionString);
+				var m = osi2dCliVerRE.Match(versionString);
 				if (m.Success) {
-					byte major = byte.Parse(m.Groups["major"].Value, CultureInfo.InvariantCulture);
-					byte minor = byte.Parse(m.Groups["minor"].Value, CultureInfo.InvariantCulture);
-					byte revision = byte.Parse(m.Groups["revision"].Value, CultureInfo.InvariantCulture);
-					char letter = m.Groups["letter"].Value[0];
+					var major = byte.Parse(m.Groups["major"].Value, CultureInfo.InvariantCulture);
+					var minor = byte.Parse(m.Groups["minor"].Value, CultureInfo.InvariantCulture);
+					var revision = byte.Parse(m.Groups["revision"].Value, CultureInfo.InvariantCulture);
+					var letter = m.Groups["letter"].Value[0];
 					this.type = ClientType.Osi2D;
 					this.osi2dVerNum = new OSI2DVersionNumber(major, minor, revision, letter);
 
-					int number = this.osi2dVerNum.ComparableNumber;
+					var number = this.osi2dVerNum.ComparableNumber;
 					if (number >= 3000803) {//client 3.0.8d
 						this.displaySkillCaps = true;
 					}

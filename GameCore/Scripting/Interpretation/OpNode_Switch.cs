@@ -55,32 +55,32 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static OpNode Construct(IOpNodeHolder parent, Node code, LScriptCompilationContext context) {
-			int line = code.GetStartLine() + context.startLine;
-			int column = code.GetStartColumn();
-			string filename = LScriptMain.GetParentScriptHolder(parent).Filename;
+			var line = code.GetStartLine() + context.startLine;
+			var column = code.GetStartColumn();
+			var filename = LScriptMain.GetParentScriptHolder(parent).Filename;
 
 			//LScript.DisplayTree(code);
 
-			Production switchProd = (Production) code;
-			int caseBlocksCount = switchProd.GetChildCount() - 4;
+			var switchProd = (Production) code;
+			var caseBlocksCount = switchProd.GetChildCount() - 4;
 			if (caseBlocksCount == 0) {//we just run the expression
 				return LScriptMain.CompileNode(parent, switchProd.GetChildAt(1), context);
 			}
-			OpNode switchNode = LScriptMain.CompileNode(parent, switchProd.GetChildAt(1), context);//the parent here is fake, it will be set to the correct one soon tho. This is for filename resolving and stuff.
+			var switchNode = LScriptMain.CompileNode(parent, switchProd.GetChildAt(1), context);//the parent here is fake, it will be set to the correct one soon tho. This is for filename resolving and stuff.
 			OpNode defaultNode = null;
-			ArrayList tempCases = new ArrayList();
-			Hashtable cases = new Hashtable(StringComparer.OrdinalIgnoreCase);
-			bool isString = false;
-			bool isInteger = false;
-			for (int i = 0; i < caseBlocksCount; i++) {
-				Production caseProd = (Production) switchProd.GetChildAt(i + 3);
-				Node caseValue = caseProd.GetChildAt(1);
+			var tempCases = new ArrayList();
+			var cases = new Hashtable(StringComparer.OrdinalIgnoreCase);
+			var isString = false;
+			var isInteger = false;
+			for (var i = 0; i < caseBlocksCount; i++) {
+				var caseProd = (Production) switchProd.GetChildAt(i + 3);
+				var caseValue = caseProd.GetChildAt(1);
 				object key = null;
-				bool isDefault = false;
+				var isDefault = false;
 				if (IsType(caseValue, StrictConstants.DEFAULT)) {//default
 					isDefault = true;
 				} else {
-					OpNode caseValueNode = LScriptMain.CompileNode(new TempParent(filename), caseValue, context);//the parent here is fake, it doesn't matter tho.
+					var caseValueNode = LScriptMain.CompileNode(new TempParent(filename), caseValue, context);//the parent here is fake, it doesn't matter tho.
 					key = caseValueNode.Run(new ScriptVars(null, new object(), 0, context));
 					try {
 						key = ConvertTools.ToInt32(key);
@@ -106,7 +106,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 
 					if (tempCases.Count > 0) {
-						foreach (object tempKey in tempCases) {
+						foreach (var tempKey in tempCases) {
 							AddToCases(cases, tempKey, caseCode, line, filename);
 						}
 						tempCases.Clear();
@@ -174,8 +174,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				return;
 			}
 
-			bool foundSome = false;
-			foreach (object key in this.cases.Keys) {
+			var foundSome = false;
+			foreach (var key in this.cases.Keys) {
 				if (key == oldNode) {
 					this.cases[key] = newNode;
 					foundSome = true;
@@ -189,7 +189,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		internal abstract override object Run(ScriptVars vars);
 
 		public override string ToString() {
-			StringBuilder str = new StringBuilder("Switch (");
+			var str = new StringBuilder("Switch (");
 			str.Append(this.switchNode).Append(")").Append(Environment.NewLine);
 			foreach (DictionaryEntry entry in this.cases) {
 				str.Append("case (").Append(entry.Key).Append(")").Append(Environment.NewLine);
@@ -208,7 +208,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 		internal override object Run(ScriptVars vars) {
 			object value = string.Concat(this.switchNode.Run(vars));
-			OpNode node = (OpNode) this.cases[value];
+			var node = (OpNode) this.cases[value];
 			if (node != nullOpNodeInstance) {
 				if (node == null) {
 					node = this.defaultNode;
@@ -235,7 +235,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				throw new InterpreterException("Exception while parsing integer",
 					this.line, this.column, this.filename, this.ParentScriptHolder.GetDecoratedName(), e);
 			}
-			OpNode node = (OpNode) this.cases[value];
+			var node = (OpNode) this.cases[value];
 			if (node != nullOpNodeInstance) {
 				if (node == null) {
 					node = this.defaultNode;

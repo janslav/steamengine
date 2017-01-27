@@ -29,7 +29,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		static InterfaceEntry[] interfaces = InitInterfaces();
 
 		private static InterfaceEntry[] InitInterfaces() {
-			List<InterfaceEntry> list = new List<InterfaceEntry>();
+			var list = new List<InterfaceEntry>();
 
 			list.Add(new InterfaceEntry(
 				new byte[] { 127, 0, 0, 1 },
@@ -37,12 +37,12 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				));
 
 #if !MONO
-			foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces()) {
-				IPInterfaceProperties properties = adapter.GetIPProperties();
-				foreach (UnicastIPAddressInformation info in properties.UnicastAddresses) {
-					byte[] addressBytes = info.Address.GetAddressBytes();
+			foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces()) {
+				var properties = adapter.GetIPProperties();
+				foreach (var info in properties.UnicastAddresses) {
+					var addressBytes = info.Address.GetAddressBytes();
 					if (addressBytes.Length == 4) {
-						byte[] mask = fullMask;
+						var mask = fullMask;
 						if (info.IPv4Mask != null) {
 							mask = info.IPv4Mask.GetAddressBytes();
 						}
@@ -61,7 +61,7 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 		}
 
 		public static byte[] GetMatchingInterfaceAddress(byte[] remoteIP) {
-			foreach (InterfaceEntry entry in interfaces) {
+			foreach (var entry in interfaces) {
 				if (entry.MatchesInterface(remoteIP)) {
 					return entry.ip;
 				}
@@ -79,21 +79,21 @@ namespace SteamEngine.AuxiliaryServer.LoginServer {
 				this.mask = mask;
 				this.ip = ip;
 
-				int n = ip.Length;
+				var n = ip.Length;
 				Sanity.IfTrueThrow(n != 4, "Unsupported IP bytes array");
 				Sanity.IfTrueThrow(mask.Length != 4, "Unsupported IP bytes array");
 
 				this.maskedIp = new byte[n];
-				for (int i = 0; i < n; i++) {
+				for (var i = 0; i < n; i++) {
 					this.maskedIp[i] = (byte) (ip[i] & mask[i]);
 				}
 			}
 
 			public int CompareTo(InterfaceEntry other) {
-				byte[] otherMask = other.mask;
+				var otherMask = other.mask;
 
 				for (int i = 0, n = this.mask.Length; i < n; i++) {
-					int result = otherMask[i].CompareTo(this.mask[i]);
+					var result = otherMask[i].CompareTo(this.mask[i]);
 					if (result != 0) {
 						return result;
 					}

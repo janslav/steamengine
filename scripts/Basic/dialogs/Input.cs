@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//there should be a input-text in the args params array
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
+			var dialogHandler = new ImprovedDialog(gi);
 
 			//create the background GUTAMatrix and set its size       
 			dialogHandler.CreateBackground(400);
@@ -91,7 +91,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 					break;
 				case 1: //OK
 						//pass the call with the input value
-					string inputVal = gr.GetTextResponse(1);
+					var inputVal = gr.GetTextResponse(1);
 					this.Response(gi, focus, inputVal);
 					//a zavolat predchozi dialog
 					DialogStacking.ShowPreviousDialog(gi);
@@ -116,11 +116,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 
 		internal static IUnloadable Load(PropsSection input) {
-			string defname = input.HeaderName.ToLowerInvariant();
+			var defname = input.HeaderName.ToLowerInvariant();
 
-			AbstractScript def = AbstractScript.GetByDefname(defname);
+			var def = AbstractScript.GetByDefname(defname);
 
-			ScriptedInputDialogDef id = def as ScriptedInputDialogDef;
+			var id = def as ScriptedInputDialogDef;
 			if (id == null) {
 				if (def != null) {//it isnt ScriptedInputDialogDef
 					throw new OverrideNotAllowedException("ScriptedInputDialogDef " + LogStr.Ident(defname) + " has the same name as " + LogStr.Ident(def) + ". Ignoring.");
@@ -140,7 +140,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 
 			//cteni dvou radku ze scriptu - nadpis dialogu a defaultni hodnota v inputu
-			PropsLine pl = input.TryPopPropsLine("label");
+			var pl = input.TryPopPropsLine("label");
 			if (pl == null) {
 				throw new SEException(input.Filename, input.HeaderLine, "input dialog label is missing");
 			}
@@ -163,8 +163,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// </summary>
 		public override void Response(Gump gi, TagHolder focus, string filledText) {
 			//prepend the input text to previous input parameters
-			object[] oldParams = gi.InputArgs.GetArgsArray();
-			object[] newPars = new object[oldParams.Length + 1]; //create a new bigger array, we need to add a new 0th value...
+			var oldParams = gi.InputArgs.GetArgsArray();
+			var newPars = new object[oldParams.Length + 1]; //create a new bigger array, we need to add a new 0th value...
 			Array.Copy(oldParams, 0, newPars, 1, oldParams.Length); //copy all old values to the new field beginning with the index 1
 			newPars[0] = filledText; //filled text will be 0th                        
 			this.response.Run(focus, newPars); //pass the filled text value
