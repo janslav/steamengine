@@ -55,27 +55,27 @@ namespace SteamEngine.Scripting.Interpretation {
 				string identifier = ((Token) code).GetImage();
 				//some "keywords"
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "args")) { //true for case insensitive
-					/*args*/
+																				   /*args*/
 					return new OpNode_GetArgs(parent, filename, line, column, code);
 				}
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "this")) { //true for case insensitive
-					/*this*/
+																				   /*this*/
 					return new OpNode_This(parent, filename, line, column, code);
 				}
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "argvcount")) { //true for case insensitive
-					/*argvcount*/
+																						/*argvcount*/
 					return new OpNode_ArgvCount(parent, filename, line, column, code);
 				}
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "true")) { //true for case insensitive
-					/*true*/
+																				   /*true*/
 					return OpNode_Object.Construct(parent, true);
 				}
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "false")) { //true for case insensitive
-					/*false*/
+																					/*false*/
 					return OpNode_Object.Construct(parent, false);
 				}
 				if (StringComparer.OrdinalIgnoreCase.Equals(identifier, "null")) { //true for case insensitive
-					/*null*/
+																				   /*null*/
 					return OpNode_Object.Construct(parent, (object) null);
 				}
 
@@ -138,13 +138,13 @@ namespace SteamEngine.Scripting.Interpretation {
 		protected void GetArgsFrom(Node caller, LScriptCompilationContext context) {
 			//caller / assigner
 			Node arg = caller.GetChildAt(1); //ArgsList or just one expression
-			//skipped the caller`s first token - "(" / "=" / " "
+											 //skipped the caller`s first token - "(" / "=" / " "
 			if (IsType(arg, StrictConstants.RIGHT_PAREN)) {
 				this.args = new OpNode[0];
 				return;
 			}
 			if (IsType(arg, StrictConstants.ARGS_LIST)) {
-                List<OpNode> argsList = new List<OpNode>();
+				List<OpNode> argsList = new List<OpNode>();
 				//ArrayList stringList = new ArrayList();
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0, n = arg.GetChildCount(); i < n; i += 2) { //step 2 - skipping argsseparators
@@ -156,7 +156,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					Node node = arg.GetChildAt(i);
 					argsList.Add(LScriptMain.CompileNode(this, node, context));
 				}
-                this.args = argsList.ToArray();
+				this.args = argsList.ToArray();
 
 				object[] stringTokens = new object[arg.GetChildCount()];
 				((Production) arg).children.CopyTo(stringTokens);
@@ -214,7 +214,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					newNode = new OpNode_Return_String(this.parent, this.filename, this.line, this.column, this.OrigNode, this.args, this.formatString);
 					this.SetNewParentToArgs((IOpNodeHolder) newNode);
 				} else { //args.Length == 0
-					//Console.WriteLine("OpNode_Object.Construct from return");
+						 //Console.WriteLine("OpNode_Object.Construct from return");
 					OpNode nullNode = OpNode_Object.Construct(null, (object) null);
 					newNode = new OpNode_Return(this.parent, this.filename, this.line, this.column, this.OrigNode, nullNode);
 				}
@@ -301,7 +301,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				}
 			}
 
-			resolver = MemberResolver.GetInstance(
+			resolver = new MemberResolver(
 				vars, this.parent, this.name, this.args, this.line, this.column, this.filename);
 			MemberDescriptor desc = null;
 			//methods/properties /fields/constructors
@@ -316,8 +316,8 @@ namespace SteamEngine.Scripting.Interpretation {
 					int argsLength = this.args.Length;
 					if ((argsLength == 1) || (argsLength == 2)) {
 						resolver.RunArgs();
-						if ((resolver.results[0] is IThingFactory) && ((argsLength == 1) ||
-								((argsLength == 2) && (ConvertTools.IsNumberType(resolver.results[1].GetType()))))) {
+						if ((resolver.Results[0] is IThingFactory) && ((argsLength == 1) ||
+								((argsLength == 2) && (ConvertTools.IsNumberType(resolver.Results[1].GetType()))))) {
 							OpNode amountNode;
 							if (argsLength == 1) {
 								amountNode = OpNode_Object.Construct(this, (uint) 1);
@@ -385,7 +385,7 @@ namespace SteamEngine.Scripting.Interpretation {
 					if (this.args.Length == 1) {
 						resolver.RunArgs();
 						try {
-							Convert.ToInt32(resolver.results[0], CultureInfo.InvariantCulture);
+							Convert.ToInt32(resolver.Results[0], CultureInfo.InvariantCulture);
 							finalOpNode = new OpNode_SkillKey_Set(this.parent, this.filename, this.line, this.column, this.OrigNode,
 								sd.Id, this.args[0]);
 							goto runit;
@@ -447,8 +447,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			//				}
 			//				Logger.WriteWarning(filename, line, sb.ToString());
 			//			} else if (matches.Count < 1) {
-			if (this.mustEval)
-			{
+			if (this.mustEval) {
 				if (memberNameMatched) {
 					throw new InterpreterException(
 						"Class member (method/property/field/constructor) '" + LogStr.Ident(this.name) + "' is getting wrong arguments",
@@ -471,10 +470,9 @@ namespace SteamEngine.Scripting.Interpretation {
 
 
 
-runit:	//I know that goto is usually considered dirty, but I find this case quite suitable for it...
+			runit:  //I know that goto is usually considered dirty, but I find this case quite suitable for it...
 			if (resolver != null) {
-				this.results = resolver.results;
-				MemberResolver.ReturnInstance(resolver);
+				this.results = resolver.Results;
 			}
 			//finally run it
 			IOpNodeHolder finalAsHolder = finalOpNode as IOpNodeHolder;
@@ -495,12 +493,12 @@ runit:	//I know that goto is usually considered dirty, but I find this case quit
 			if (desc == null) {
 				return false;
 			}
-			MemberInfo info = desc.info;
+			MemberInfo info = desc.Info;
 			MethodInfo methodInfo;
 			ConstructorInfo constructorInfo;
 			FieldInfo fieldInfo;
 
-			switch (desc.specialType) {
+			switch (desc.SpecialType1) {
 				case SpecialType.Normal:
 					if (MemberResolver.IsMethod(info)) {
 						methodInfo = MemberWrapper.GetWrapperFor((MethodInfo) info);

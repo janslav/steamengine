@@ -84,7 +84,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				OpNode finalOpNode;
 				Type type = vars.self.GetType();
 
-				MemberResolver resolver = MemberResolver.GetInstance(
+				MemberResolver resolver = new MemberResolver(
 					vars, this.parent, this.funcName, this.args, this.line, this.column, this.filename);
 				MemberDescriptor desc = null;
 
@@ -132,10 +132,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				//}
 
 				runit:  //I know that goto is usually considered dirty, but I find this case quite suitable for it...
-				if (resolver != null) {
-					this.results = resolver.results;
-					MemberResolver.ReturnInstance(resolver);
-				}
+				this.results = resolver.Results;
 
 				IOpNodeHolder finalAsHolder = finalOpNode as IOpNodeHolder;
 				if (finalAsHolder != null) {
@@ -165,9 +162,9 @@ namespace SteamEngine.Scripting.Interpretation {
 			if (desc == null) {
 				return false;
 			}
-			MethodInfo MethodInfo = MemberWrapper.GetWrapperFor((MethodInfo) desc.info);
+			MethodInfo MethodInfo = MemberWrapper.GetWrapperFor((MethodInfo) desc.Info);
 
-			switch (desc.specialType) {
+			switch (desc.SpecialType1) {
 				case SpecialType.Normal:
 					finalOpNode = new OpNode_AddMethodTimer(this.parent, this.filename, this.line, this.column,
 						this.OrigNode, this.name, MethodInfo, this.secondsNode, this.args);

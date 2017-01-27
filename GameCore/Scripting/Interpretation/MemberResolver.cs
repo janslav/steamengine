@@ -27,9 +27,9 @@ namespace SteamEngine.Scripting.Interpretation {
 
 	internal enum SpecialType {
 		Normal,
-		String,	//method with one argument of type string. is special because of calls without "" 
-		//(like "somemethod(This is a sentence which is allowed because of spherescript's bad design)") 
-		Params	//method with params argument on the end. has to create the array at some point...
+		String, //method with one argument of type string. is special because of calls without "" 
+				//(like "somemethod(This is a sentence which is allowed because of spherescript's bad design)") 
+		Params  //method with params argument on the end. has to create the array at some point...
 	}
 
 	//internal SecurityTypes {
@@ -39,9 +39,9 @@ namespace SteamEngine.Scripting.Interpretation {
 	//	Timer //using AddTimer "keyword"
 	//}
 
-	internal class MemberDescriptor {
-		internal MemberInfo info;
-		internal SpecialType specialType;
+	internal class MemberDescriptor : SingleThreadedClass {
+		private readonly MemberInfo info;
+		private readonly SpecialType specialType;
 		private Type[] parameterTypes;
 
 		internal MemberDescriptor(MemberInfo info, SpecialType specialType) {
@@ -49,11 +49,16 @@ namespace SteamEngine.Scripting.Interpretation {
 			this.specialType = specialType;
 		}
 
+		internal MemberInfo Info => this.info;
+
+		internal SpecialType SpecialType1 => this.specialType;
+
 		public override string ToString() {
 			return this.info.ToString();
 		}
 
 		protected Type[] GetParameterTypes() {
+			this.AssertCorrectThread();
 			if (this.parameterTypes == null) {
 				MethodBase methOrCtor = this.info as MethodBase;
 				if (methOrCtor != null) {
@@ -105,8 +110,8 @@ namespace SteamEngine.Scripting.Interpretation {
 					}
 					break;
 			}//for SpecialType.String is it always true
-			//Console.WriteLine("ParamTypesMatch returning true for: "+info+", having parametertypes "
-			//	+Tools.ObjToString(parameterTypes)+" and results "+Tools.ObjToString(results));
+			 //Console.WriteLine("ParamTypesMatch returning true for: "+info+", having parametertypes "
+			 //	+Tools.ObjToString(parameterTypes)+" and results "+Tools.ObjToString(results));
 			return true;
 		}
 	}
@@ -116,50 +121,29 @@ namespace SteamEngine.Scripting.Interpretation {
 	//designed to resolve use of particular method/field/constuctors (and their "params" and "string" versions
 	//out of a relatively vague signature that is provided by lscript.
 	//currently designed to be used by lazy_expression and addtimer
-	internal class MemberResolver {
+	internal class MemberResolver : SingleThreadedClass {
 		//public static bool safeMode = false; //is set to on when LScript is used as commandline parser, and then calls TriggerKey.command on Globals.src
 
-		private static Stack instances = new Stack();
+		private readonly IOpNodeHolder parent;
+		private readonly string name;
+		private readonly OpNode[] args;
+		private readonly int line;
+		private readonly int column;
+		private readonly string filename;
+		private readonly ScriptVars vars;
 
-		private IOpNodeHolder parent;
-		private string name;
-		private OpNode[] args;
-		internal object[] results;
-		private int line;
-		private int column;
-		private string filename;
-		private ScriptVars vars;
-		private bool inStack;
+		private object[] results;
 
-		internal static MemberResolver GetInstance(ScriptVars vars, IOpNodeHolder parent,
+		internal MemberResolver(ScriptVars vars, IOpNodeHolder parent,
 				string name, OpNode[] args, int line, int column, string filename) {
-
-			MemberResolver instance;
-			if (instances.Count > 0) {
-				instance = (MemberResolver) instances.Pop();
-			} else {
-				instance = new MemberResolver();
-			}
-			instance.inStack = false;
-
-			instance.vars = vars;
-			instance.parent = parent;
-			instance.name = name;
-			instance.args = args;
-			instance.results = null;
-			instance.line = line;
-			instance.column = column;
-			instance.filename = filename;
-			return instance;
-		}
-
-		//or should we call it Dispose? well, who cares :)
-		internal static void ReturnInstance(MemberResolver instance) {
-			instances.Push(instance);
-			instance.inStack = true;
-		}
-
-		private MemberResolver() {
+			this.vars = vars;
+			this.parent = parent;
+			this.name = name;
+			this.args = args;
+			this.results = null;
+			this.line = line;
+			this.column = column;
+			this.filename = filename;
 		}
 
 		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -173,7 +157,7 @@ namespace SteamEngine.Scripting.Interpretation {
 				ref MemberDescriptor desc, ref List<MemberDescriptor> ambiguities) {
 			this.RunArgs();
 			MemberDescriptor newDesc = new MemberDescriptor(info, specType);
-			if (newDesc.ParamTypesMatch(this.results)) {
+			if (newDesc.ParamTypesMatch(this.Results)) {
 				if (desc != null) {
 					if (ambiguities == null) {
 						ambiguities = new List<MemberDescriptor>();
@@ -187,11 +171,9 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-		internal bool Resolve(Type type, BindingFlags flags,
-				MemberTypes memberTypes, out MemberDescriptor desc) {
+		internal bool Resolve(Type type, BindingFlags flags, MemberTypes memberTypes, out MemberDescriptor desc) {
+			this.AssertCorrectThread();
 			//resolve as any member (method or property(as getter/setter method) or constructor or field)
-
-			Sanity.IfTrueThrow(this.inStack, "called Resolve on a disposed MemberResolver");
 
 			bool nameMatches = false;
 			desc = null;
@@ -354,7 +336,7 @@ namespace SteamEngine.Scripting.Interpretation {
 
 			if (ambiguities != null) {
 				MemberDescriptor[] resolvedAmbiguities;
-				if (TryResolveAmbiguity(ambiguities, this.results, out resolvedAmbiguities)) {
+				if (TryResolveAmbiguity(ambiguities, this.Results, out resolvedAmbiguities)) {
 					desc = resolvedAmbiguities[0];
 					return true;
 				}
@@ -382,13 +364,14 @@ namespace SteamEngine.Scripting.Interpretation {
 		//}
 
 		internal void RunArgs() {
-			if (this.results == null) {
+			this.AssertCorrectThread();
+			if (this.Results == null) {
 				object oSelf = this.vars.self;
 				this.results = new object[this.args.Length];
 				this.vars.self = this.vars.defaultObject;
 				try {
 					for (int i = 0, n = this.args.Length; i < n; i++) {
-						this.results[i] = this.args[i].Run(this.vars);
+						this.Results[i] = this.args[i].Run(this.vars);
 					}
 				} finally {
 					this.vars.self = oSelf;
@@ -409,6 +392,8 @@ namespace SteamEngine.Scripting.Interpretation {
 				throw new SEException("The parent is nor OpNode nor LScriptHolder... this can not happen?!");
 			}
 		}
+
+		internal object[] Results => this.results;
 
 		internal static bool ReturnsString(OpNode node) {
 			IKnownRetType nodeAsKnownType = node as IKnownRetType;
@@ -484,7 +469,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			n = bestGroup.Count;
 			bestMatches = new MemberDescriptor[n];
 			for (int i = 0; i < n; i++) {
-				bestMatches[i] = (MemberDescriptor) bestGroup[i].createdFrom;
+				bestMatches[i] = (MemberDescriptor) bestGroup[i].CreatedFrom;
 			}
 			return n == 1;
 		}
@@ -501,7 +486,7 @@ namespace SteamEngine.Scripting.Interpretation {
 			n = bestGroup.Count;
 			bestMatches = new MethodInfo[n];
 			for (int i = 0; i < n; i++) {
-				bestMatches[i] = (MethodInfo) bestGroup[i].createdFrom;
+				bestMatches[i] = (MethodInfo) bestGroup[i].CreatedFrom;
 			}
 			return n == 1;
 		}
@@ -538,8 +523,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static bool HaveEqualDistances(AmbiguityResolver a, AmbiguityResolver b) {
-			int[] distancesA = a.distances;
-			int[] distancesB = b.distances;
+			int[] distancesA = a.Distances;
+			int[] distancesB = b.Distances;
 			for (int i = 0, n = distancesA.Length; i < n; i++) {
 				if (distancesA[i] != distancesB[i]) {
 					return false;
@@ -549,8 +534,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		private static int CompareEqalityGroups(List<AmbiguityResolver> groupA, List<AmbiguityResolver> groupB) {
-			int[] distancesA = groupA[0].distances;
-			int[] distancesB = groupB[0].distances;
+			int[] distancesA = groupA[0].Distances;
+			int[] distancesB = groupB[0].Distances;
 			int retVal = 0;
 			for (int i = 0, n = distancesA.Length; i < n; i++) {
 				int distA = distancesA[i];
@@ -576,8 +561,8 @@ namespace SteamEngine.Scripting.Interpretation {
 		//internal static bool TryResolveAmbiguity(Type[,] paramTypes, Type[,] 
 
 		private class AmbiguityResolver : MemberDescriptor {
-			internal int[] distances;
-			internal object createdFrom;
+			private readonly object createdFrom;
+			private int[] distances;
 
 			internal AmbiguityResolver(MethodInfo mi)
 				: base(mi, SpecialType.Normal) {
@@ -585,11 +570,23 @@ namespace SteamEngine.Scripting.Interpretation {
 			}
 
 			internal AmbiguityResolver(MemberDescriptor descriptor)
-				: base(descriptor.info, SpecialType.Normal) {
+				: base(descriptor.Info, SpecialType.Normal) {
 				this.createdFrom = descriptor;
 			}
 
+			internal int[] Distances
+			{
+				get
+				{
+					this.AssertCorrectThread();
+					return this.distances;
+				}
+			}
+
+			internal object CreatedFrom => this.createdFrom;
+
 			internal void EvalAmbiguity(object[] results) {
+				this.AssertCorrectThread();
 				this.distances = new int[results.Length];
 				Type[] paramTypes = this.GetParameterTypes();
 

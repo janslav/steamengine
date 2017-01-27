@@ -193,6 +193,7 @@
     <Compile Include="AOSToolTips.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CanSeeImplementation.cs" />
+    <Compile Include="SingleThreadedClass.cs" />
     <Compile Include="UoData\CharData.cs" />
     <Compile Include="ClientVersion.cs" />
     <Compile Include="Commands.cs" />
