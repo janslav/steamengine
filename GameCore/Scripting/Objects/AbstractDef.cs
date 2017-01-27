@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Persistence;
@@ -31,7 +32,8 @@ using SteamEngine.Scripting.Compilation;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class AbstractDef : AbstractScript, ITagHolder {
-		static int uids;
+		private static int uids;
+
 		private readonly int uid;
 
 		//keys are both strings and tagkeys
@@ -400,7 +402,7 @@ namespace SteamEngine.Scripting.Objects {
 			: base(defname) {
 			this.filename = filename;
 			this.headerLine = headerLine;
-			this.uid = uids++;
+			this.uid = Interlocked.Increment(ref uids);
 		}
 
 		public static IUnloadable LoadFromScripts(PropsSection input) {
@@ -659,32 +661,30 @@ namespace SteamEngine.Scripting.Objects {
 			Logger.WriteDebug("Resolving " + count + " defs");
 
 			DateTime before = DateTime.Now;
-			var a = new Shielded<int>();
+			int a = 0;
 			int countPerCent = count / 100;
 			foreach (var script in all) {
+				if (a % countPerCent == 0) {
+					Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
+				}
 				SeShield.InTransaction(() => {
-					AbstractDef def = script as AbstractDef;
-					if (def != null) {
-						var aValue = a.Value;
-						if ((aValue % countPerCent) == 0) {
-							Logger.SetTitle("Resolving def field values: " + ((aValue * 100) / count) + " %");
+					var def = script as AbstractDef;
+					if (def == null) return;
+					if (def.IsUnloaded) return; //those should have already stated what's the problem :)
+
+					foreach (var fieldValue in def.fieldValues.Values) {
+						try {
+							fieldValue.ResolveTemporaryState();
+						} catch (FatalException) {
+							throw;
+						} catch (TransException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteWarning(e);
 						}
-						if (!def.IsUnloaded) { //those should have already stated what's the problem :)
-							foreach (FieldValue fv in def.fieldValues.Values) {
-								try {
-									fv.ResolveTemporaryState();
-								} catch (FatalException) {
-									throw;
-								} catch (TransException) {
-									throw;
-								} catch (Exception e) {
-									Logger.WriteWarning(e);
-								}
-							}
-						}
-						a.Commute((ref int v) => v++);
 					}
 				});
+				a++;
 			}
 			DateTime after = DateTime.Now;
 			Logger.WriteDebug("...took " + (after - before));
