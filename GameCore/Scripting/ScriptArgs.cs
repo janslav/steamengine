@@ -21,39 +21,21 @@ using System.Text;
 
 namespace SteamEngine.Scripting {
 	public class ScriptArgs {
-		private string formatArgs;
 		private readonly object[] argv;
+
+		private string formatArgs;
 		private string args;
 
-		private static object[] zeroArray = new object[0];
+		private static readonly object[] zeroArray = new object[0];
 
-		//public object[] Argv { get {
-		//                           return argv;
-		//                       } 
-		//}
-
-		//		[Obsolete("no more used, could have caused badly recognized calls", true)]
-		//		public ScriptArgs(string formatArgs, params object[] argv) {//function parameters
-		//			this.argv = argv;
-		//			this.formatArgs = formatArgs;
-		//		}
-
-		public string FormatString {
-			get {
-				return this.formatArgs;
-			}
-			internal set {
-				this.formatArgs = value;
-				this.args = null;
-			}
+		public ScriptArgs(params object[] argv) {
+			//core trigger`s parameters
+			this.argv = argv ?? zeroArray;
 		}
 
-		public ScriptArgs(params object[] argv) {//core trigger`s parameters
-			if (argv != null) {
-				this.argv = argv;
-			} else {
-				this.argv = zeroArray;
-			}
+		public ScriptArgs(string formatString, object[] argv) : this(argv) {//core trigger`s parameters
+			this.formatArgs = formatString;
+			this.args = null;
 		}
 
 		public string Args {
@@ -79,13 +61,8 @@ namespace SteamEngine.Scripting {
 			}
 		}
 
-
 		[SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-		public object[] Argv {
-			get { 
-				return this.argv; 
-			}
-		} 
+		public object[] Argv => this.argv;
 
 		//a little hack because of Dialogs. No more needed, yay!
 		//public void InsertArgo(object obj) {

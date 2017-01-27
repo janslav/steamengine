@@ -58,10 +58,9 @@ namespace SteamEngine.Scripting.Interpretation {
 			} finally {
 				vars.self = oSelf;
 			}
-			ScriptArgs sa = new ScriptArgs(results);
-			sa.FormatString = this.formatString;
+			ScriptArgs sa = new ScriptArgs(this.formatString, results);
 			try {
-				return this.function.Run(oSelf, sa); //I found here being RunAndCatch... why, omg?? can't remember myself :\ -tar
+				return this.function.Run(oSelf, sa);
 			} catch (InterpreterException ie) {
 				ie.AddTrace(this);
 				throw ie;
@@ -69,8 +68,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public object TryRun(ScriptVars vars, object[] results) {
-			ScriptArgs sa = new ScriptArgs(results);
-			sa.FormatString = this.formatString;
+			ScriptArgs sa = new ScriptArgs(this.formatString, results);
 			return this.function.TryRun(vars.self, sa);
 		}
 
