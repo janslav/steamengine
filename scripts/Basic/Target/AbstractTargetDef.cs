@@ -21,9 +21,8 @@ using SteamEngine.Scripting.Objects;
 namespace SteamEngine.CompiledScripts {
 
 	public abstract class AbstractTargetDef : AbstractDef {
-
-		OnTargon targon;
-		OnTargonCancel targonCancel;
+		private readonly OnTargon targon;
+		private readonly OnTargonCancel targonCancel;
 
 		internal AbstractTargetDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {

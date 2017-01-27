@@ -23,9 +23,9 @@ using SteamEngine.UoData;
 namespace SteamEngine.CompiledScripts {
 
 	public abstract class CompiledTargetDef : AbstractTargetDef {
-		private bool allowGround;
+		private readonly bool allowGround;
 
-		public CompiledTargetDef()
+		protected CompiledTargetDef()
 			: base(null, "Target.cs", -1) {
 
 			var type = this.GetType();
@@ -42,11 +42,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected sealed override bool AllowGround {
-			get {
-				return this.allowGround;
-			}
-		}
+		protected sealed override bool AllowGround => this.allowGround;
 
 		protected override string InternalFirstGetDefname() {
 			return this.GetType().Name;

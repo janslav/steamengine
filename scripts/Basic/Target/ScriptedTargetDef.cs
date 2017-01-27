@@ -16,6 +16,7 @@
 */
 
 using System;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Scripting.Interpretation;
@@ -23,16 +24,16 @@ using SteamEngine.UoData;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class ScriptedTargetDef : AbstractTargetDef {
-		private FieldValue message;
+		private readonly FieldValue message;
 
-		private LScriptHolder on_start;
-		private LScriptHolder targon_ground;
-		private LScriptHolder targon_item;
-		private LScriptHolder targon_char;
-		private LScriptHolder targon_thing;
-		private LScriptHolder targon_static;
-		private LScriptHolder targon_cancel;
-		private LScriptHolder targon_point;
+		private readonly Shielded<LScriptHolder> on_start = new Shielded<LScriptHolder>();
+		private readonly Shielded<LScriptHolder> targon_ground = new Shielded<LScriptHolder>();
+		private readonly Shielded<LScriptHolder> targon_item = new Shielded<LScriptHolder>();
+		private readonly Shielded<LScriptHolder> targon_char = new Shielded<LScriptHolder>();
+		private readonly Shielded<LScriptHolder> targon_thing = new Shielded<LScriptHolder>();
+		private readonly Shielded<LScriptHolder> targon_static = new Shielded<LScriptHolder>();
+		private readonly Shielded<LScriptHolder> targon_cancel = new Shielded<LScriptHolder>();
+		private readonly Shielded<LScriptHolder> targon_point = new Shielded<LScriptHolder>();
 
 		public ScriptedTargetDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -55,16 +56,14 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool AllowGround {
-			get {
-				return ((this.targon_ground != null) || (this.targon_point != null));
-			}
-		}
+		protected override bool AllowGround => ((this.targon_ground != null) || (this.targon_point != null));
 
 		private static void LoadTriggers(PropsSection input, ScriptedTargetDef td) {
+			SeShield.AssertInTransaction();
+
 			var trigger_start = input.PopTrigger("start");
 			if (trigger_start != null) {
-				td.on_start = new LScriptHolder(trigger_start);
+				td.on_start.Value = new LScriptHolder(trigger_start);
 			}
 
 			var n = input.TriggerCount;
@@ -79,30 +78,30 @@ namespace SteamEngine.CompiledScripts {
 				if (n > 1) {
 					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has targon_point defined. All other triggers ignored.");
 				}
-				td.targon_point = new LScriptHolder(trigger_point);
+				td.targon_point.Value = new LScriptHolder(trigger_point);
 			} else {
 
 				for (var i = 0; i < n; i++) {
 					var trigger = input.GetTrigger(i);
 					switch (trigger.TriggerName.ToLowerInvariant()) {
 						case "targon_ground":
-							td.targon_ground = new LScriptHolder(trigger);
+							td.targon_ground.Value = new LScriptHolder(trigger);
 							break;
 						case "targon_item":
-							td.targon_item = new LScriptHolder(trigger);
+							td.targon_item.Value = new LScriptHolder(trigger);
 							break;
 						case "targon_char":
 						case "targon_character":
-							td.targon_char = new LScriptHolder(trigger);
+							td.targon_char.Value = new LScriptHolder(trigger);
 							break;
 						case "targon_thing":
-							td.targon_thing = new LScriptHolder(trigger);
+							td.targon_thing.Value = new LScriptHolder(trigger);
 							break;
 						case "targon_static":
-							td.targon_static = new LScriptHolder(trigger);
+							td.targon_static.Value = new LScriptHolder(trigger);
 							break;
 						case "targon_cancel":
-							td.targon_cancel = new LScriptHolder(trigger);
+							td.targon_cancel.Value = new LScriptHolder(trigger);
 							break;
 						default:
 							Logger.WriteWarning(trigger.Filename, trigger.StartLine, LogStr.Ident(trigger.TriggerName) + " is an invalid trigger name for a ScriptedTargetDef section. Ignored.");
@@ -112,11 +111,11 @@ namespace SteamEngine.CompiledScripts {
 
 				if ((td.targon_thing != null) && (td.targon_item != null)) {
 					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_item defined. @targon_item ignored.");
-					td.targon_item = null;
+					td.targon_item.Value = null;
 				}
 				if ((td.targon_thing != null) && (td.targon_char != null)) {
 					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_char defined. @targon_char ignored.");
-					td.targon_char = null;
+					td.targon_char.Value = null;
 				}
 			}
 		}
@@ -169,8 +168,7 @@ namespace SteamEngine.CompiledScripts {
 					}
 				} else {
 					var targettedStatic = getback as AbstractInternalItem;
-					if (targettedStatic != null)
-					{
+					if (targettedStatic != null) {
 						if (this.targon_static != null) {
 							if (this.TryRunTrigger(this.targon_static, player, getback, parameter)) {
 								this.On_Start(player, parameter);
@@ -199,7 +197,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_TargonCancel(GameState state, object parameter) {
 			var ch = state.Character;
 			if ((ch != null) && (this.targon_cancel != null)) {
-				this.targon_cancel.TryRun(ch, parameter);
+				this.targon_cancel.Value.TryRun(ch, parameter);
 			}
 		}
 
@@ -216,13 +214,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
-			this.targon_ground = null;
-			this.targon_item = null;
-			this.targon_char = null;
-			this.targon_thing = null;
-			this.targon_static = null;
-			this.targon_cancel = null;
-			this.targon_point = null;
+			SeShield.AssertInTransaction();
+
+			this.targon_ground.Value = null;
+			this.targon_item.Value = null;
+			this.targon_char.Value = null;
+			this.targon_thing.Value = null;
+			this.targon_static.Value = null;
+			this.targon_cancel.Value = null;
+			this.targon_point.Value = null;
 
 			base.Unload();
 		}
