@@ -584,7 +584,7 @@ namespace SteamEngine.Persistence {
 								new CodeVariableReferenceExpression("currentLineNumber"))),
 						new CodeThrowExceptionStatement()));
 
-				//throw new SEException(Common.LogStr.FileLine(input.filename, currentLineNumber)+CoreLogger.ErrText(e));
+				//throw new SEException(Common.LogStr.FileLine(input.filename, currentLineNumber)+CoreLogger.RenderText(e));
 				trycatch.CatchClauses.Add(new CodeCatchClause("e",
 					new CodeTypeReference(typeof(Exception)),
 					new CodeThrowExceptionStatement(

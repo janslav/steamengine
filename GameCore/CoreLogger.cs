@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -23,21 +24,17 @@ using SteamEngine.Common;
 
 namespace SteamEngine {
 	public class CoreLogger : Logger {
-		[SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-		private static CoreLogger initInstance;
 
 		internal static void Init() {
-			if (!(initInstance is CoreLogger)) {
-				try {
-					initInstance = new CoreLogger();
-				} catch (Exception globalexp) {
-					WriteFatal(globalexp);
-					MainClass.CommandExit();
-				}
+			try {
+				new CoreLogger();
+			} catch (Exception globalexp) {
+				WriteFatal(globalexp);
+				MainClass.CommandExit();
+			}
 
-				if (Globals.LogToFiles) {
-					OpenFile();
-				}
+			if (Globals.LogToFiles) {
+				OpenFile();
 			}
 		}
 
@@ -50,6 +47,30 @@ namespace SteamEngine {
 				dtnow.Month.ToString("00", CultureInfo.InvariantCulture),
 				dtnow.Day.ToString("00", CultureInfo.InvariantCulture));
 			return Path.Combine(Globals.LogPath, filename);
+		}
+
+		protected override LogStr RenderText(Exception e) {
+			return RenderTransactionNumber(base.RenderText(e));
+		}
+
+		protected override LogStr RenderText(LogStr data) {
+			return RenderTransactionNumber(base.RenderText(data));
+		}
+
+		protected override LogStr RenderText(string data) {
+			return RenderTransactionNumber(base.RenderText(data));
+		}
+
+		public override LogStr RenderText(StackTrace stackTrace) {
+			return RenderTransactionNumber(base.RenderText(stackTrace));
+		}
+
+		private static LogStr RenderTransactionNumber(LogStr r) {
+			var tran = SeShield.TransactionNumber;
+			if (tran.HasValue) {
+				r = $"[t#{tran.Value:000000000000}] " + r;
+			}
+			return r;
 		}
 	}
 }

@@ -665,8 +665,9 @@ namespace SteamEngine.Scripting.Objects {
 				SeShield.InTransaction(() => {
 					AbstractDef def = script as AbstractDef;
 					if (def != null) {
-						if ((a.Value % countPerCent) == 0) {
-							Logger.SetTitle("Resolving def field values: " + ((a.Value * 100) / count) + " %");
+						var aValue = a.Value;
+						if ((aValue % countPerCent) == 0) {
+							Logger.SetTitle("Resolving def field values: " + ((aValue * 100) / count) + " %");
 						}
 						if (!def.IsUnloaded) { //those should have already stated what's the problem :)
 							foreach (FieldValue fv in def.fieldValues.Values) {
@@ -681,7 +682,7 @@ namespace SteamEngine.Scripting.Objects {
 								}
 							}
 						}
-						a.Value++;
+						a.Commute((ref int v) => v++);
 					}
 				});
 			}

@@ -27,13 +27,13 @@ using System.Text;
 namespace SteamEngine.Common {
 	public delegate void StringToSendEventHandler(string data);
 
-	public abstract class Logger : TextWriter {
-		static TextWriter origError;
-		static TextWriter console;
-		static TextWriter file;
-		static DateTime filedate;
-		static bool fileopen;
-		static Logger instance;
+	public class Logger : TextWriter {
+		private static readonly TextWriter origError = Console.Out;
+		private static readonly TextWriter console = Console.Error;
+		private static TextWriter file;
+		private static DateTime filedate;
+		private static bool fileopen;
+		private static Logger instance;
 
 		[SuppressMessage("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible")]
 		public static string indentation = "";
@@ -47,15 +47,16 @@ namespace SteamEngine.Common {
 		[SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
 		public static event StringToSendEventHandler OnConsoleWrite;
 
+		static Logger() {
+
+			instance = new Logger();
+		}
+
 		protected Logger() : base(CultureInfo.InvariantCulture) {
-			if (instance == null) {
-				console = Console.Out;
-				origError = Console.Error;
-				filedate = DateTime.Today;
-				Console.SetError(this);
-				Console.SetOut(this);
-				instance = this;
-			}
+			Console.SetError(this);
+			Console.SetOut(this);
+			filedate = DateTime.Today;
+			instance = this;
 		}
 
 		//Used by Statistics.cs to output pretty messages.
@@ -72,332 +73,332 @@ namespace SteamEngine.Common {
 
 		#region WriteFatal
 		public static void WriteFatal(string file, object line, object data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), RenderText(data)));
 		}
 
 		public static void WriteFatal(string file, object line, string data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(string file, object line, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(string file, object line, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(string file, object line, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(LogStr msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), RenderText(data)));
 		}
 
 		public static void WriteFatal(LogStr msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(LogStr msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(LogStr msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(LogStr msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(string msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), RenderText(data)));
 		}
 
 		public static void WriteFatal(string msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(string msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(string msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(string msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(object data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), RenderText(data)));
 		}
 
 		public static void WriteFatal(string data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), instance.RenderText(data)));
 		}
 
 		public static void WriteFatal(StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Fatal("FATAL: "), instance.RenderText(data)));
 		}
 
 		#endregion WriteFatal
 
 		#region WriteCritical
 		public static void WriteCritical(string file, object line, object data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), RenderText(data)));
 		}
 
 		public static void WriteCritical(string file, object line, string data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(string file, object line, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(string file, object line, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(string file, object line, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(LogStr msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), RenderText(data)));
 		}
 
 		public static void WriteCritical(LogStr msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(LogStr msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(LogStr msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(LogStr msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(string msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), RenderText(data)));
 		}
 
 		public static void WriteCritical(string msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(string msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(string msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(string msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(object data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), RenderText(data)));
 		}
 
 		public static void WriteCritical(string data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), instance.RenderText(data)));
 		}
 
 		public static void WriteCritical(StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Critical("CRITICAL: "), instance.RenderText(data)));
 		}
 
 		#endregion WriteCritical
 
 		#region WriteError
 		public static void WriteError(string file, object line, object data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), RenderText(data)));
 		}
 
 		public static void WriteError(string file, object line, string data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteError(string file, object line, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteError(string file, object line, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteError(string file, object line, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteError(LogStr msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), RenderText(data)));
 		}
 
 		public static void WriteError(LogStr msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(LogStr msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(LogStr msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(LogStr msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(string msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), RenderText(data)));
 		}
 
 		public static void WriteError(string msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(string msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(string msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(string msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(object data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), RenderText(data)));
 		}
 
 		public static void WriteError(string data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), instance.RenderText(data)));
 		}
 
 		public static void WriteError(StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Error("ERROR: "), instance.RenderText(data)));
 		}
 
 		#endregion WriteError
 
 		#region WriteWarning
 		public static void WriteWarning(string file, object line, object data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), RenderText(data)));
 		}
 
 		public static void WriteWarning(string file, object line, string data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(string file, object line, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(string file, object line, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(string file, object line, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStrFileLine(file, line), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(LogStr msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), RenderText(data)));
 		}
 
 		public static void WriteWarning(LogStr msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(LogStr msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(LogStr msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(LogStr msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), msg, LogStr.Raw(": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(string msg, object data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), RenderText(data)));
 		}
 
 		public static void WriteWarning(string msg, string data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(string msg, LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(string msg, Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(string msg, StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), LogStr.Raw(msg + ": "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(object data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), RenderText(data)));
 		}
 
 		public static void WriteWarning(string data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(LogStr data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(Exception data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), instance.RenderText(data)));
 		}
 
 		public static void WriteWarning(StackTrace data) {
-			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), ErrText(data)));
+			WriteLine(LogStr.Concat(LogStr.Warning("WARNING: "), instance.RenderText(data)));
 		}
 
 		#endregion WriteWarning
@@ -405,27 +406,27 @@ namespace SteamEngine.Common {
 		#region WriteDebug
 		[Conditional("DEBUG")]
 		public static void WriteDebug(object data) {
-			WriteLine(LogStr.Debug("(D) " + ErrText(data)));
+			WriteLine(LogStr.Debug("(D) " + RenderText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(string data) {
-			WriteLine(LogStr.Debug("(D) " + ErrText(data)));
+			WriteLine(LogStr.Debug("(D) " + instance.RenderText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(LogStr data) {
-			WriteLine(LogStr.Debug("(D) " + ErrText(data)));
+			WriteLine(LogStr.Debug("(D) " + instance.RenderText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(Exception data) {
-			WriteLine(LogStr.Debug("(D) " + ErrText(data)));
+			WriteLine(LogStr.Debug("(D) " + instance.RenderText(data)));
 		}
 
 		[Conditional("DEBUG")]
 		public static void WriteDebug(StackTrace data) {
-			WriteLine(LogStr.Debug("(D) " + ErrText(data)));
+			WriteLine(LogStr.Debug("(D) " + instance.RenderText(data)));
 		}
 		#endregion WriteDebug
 
@@ -438,62 +439,61 @@ namespace SteamEngine.Common {
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, object txt) {
 			if (ifTrue) {
-				WriteLine("Info: " + LogStr.Highlight(txt));
+				WriteLine("Info: " + LogStr.Highlight(RenderText(txt)));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, string txt) {
 			if (ifTrue) {
-				WriteLine("Info: " + LogStr.Highlight(ErrText(txt)));
+				WriteLine("Info: " + LogStr.Highlight(instance.RenderText(txt)));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, LogStr txt) {
 			if (ifTrue) {
-				WriteLine("Info: " + LogStr.Highlight(txt));
+				WriteLine("Info: " + LogStr.Highlight(instance.RenderText(txt)));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, Exception txt) {
 			if (ifTrue) {
-				WriteLine("Info: " + LogStr.Highlight(ErrText(txt)));
+				WriteLine("Info: " + LogStr.Highlight(instance.RenderText(txt)));
 			}
 		}
 		[Conditional("TRACE")]
 		public static void WriteInfo(bool ifTrue, StackTrace txt) {
 			if (ifTrue) {
-				WriteLine("Info: " + LogStr.Highlight(txt));
+				WriteLine("Info: " + LogStr.Highlight(instance.RenderText(txt)));
 			}
 		}
 		#endregion WriteInfo
 
-		#region ErrText
-		private static LogStr ErrText(object data) {
+		#region RenderText
+		private static LogStr RenderText(object data) {
 			Exception e = data as Exception;
 			if (e != null) {
-				return ErrText(e);
+				return instance.RenderText(e);
 			}
 			LogStr ls = data as LogStr;
 			if (ls != null) {
-				return ErrText(ls);
+				return instance.RenderText(ls);
 			}
 			StackTrace stackTrace = data as StackTrace;
 			if (stackTrace != null) {
-				return ErrText(stackTrace);
+				return instance.RenderText(stackTrace);
 			}
-			return ErrText(string.Concat(data));
+			return instance.RenderText(string.Concat(data));
 		}
 
-		private static LogStr ErrText(LogStr data) {
+		protected virtual LogStr RenderText(LogStr data) {
 			return data;
 		}
 
-		private static LogStr ErrText(string data) {
+		protected virtual LogStr RenderText(string data) {
 			return LogStr.Raw(data);
 		}
 
-		private static LogStr ErrText(Exception e)
-		{
+		protected virtual LogStr RenderText(Exception e) {
 			if (e != null) {
 				LogStrBuilder builder = new LogStrBuilder();
 				string str = "\t";
@@ -503,8 +503,7 @@ namespace SteamEngine.Common {
 			return LogStr.Raw("");
 		}
 
-		public static LogStr ErrText(StackTrace stackTrace)
-		{
+		public virtual LogStr RenderText(StackTrace stackTrace) {
 			if (stackTrace != null) {
 				LogStrBuilder builder = new LogStrBuilder();
 				RenderStackTrace("\t", builder, stackTrace);
@@ -521,14 +520,14 @@ namespace SteamEngine.Common {
 				//builder.Append(leftPad);
 				builder.Append(" ---> ");
 			}
-			
+
 			SEException see = e as SEException;
 			if (see != null) {
 				builder.Append(see.NiceMessage);
 			} else {
 				builder.Append(e.Message);
 			}
-			
+
 			StackTrace trace = new StackTrace(e, true);
 			RenderStackTrace(leftPad, builder, trace);
 			leftPad += "\t";
@@ -536,7 +535,7 @@ namespace SteamEngine.Common {
 
 		private static void RenderStackTrace(string leftPad, LogStrBuilder builder, StackTrace trace) {
 			int n = trace.FrameCount;
-			
+
 			for (int i = 0; i < n; i++) {
 				StackFrame frame = trace.GetFrame(i);
 				MethodBase methodBase = frame.GetMethod();
@@ -544,14 +543,14 @@ namespace SteamEngine.Common {
 					builder.Append(Environment.NewLine);
 					builder.Append(leftPad);
 					builder.Append("at ");
-					
+
 					Type declaringType = methodBase.DeclaringType;
 					if (declaringType != null) {
 						builder.Append(Tools.TypeToString(declaringType));
 						builder.Append(".");
 					}
 					builder.Append(methodBase.Name);
-					
+
 					MethodInfo method = methodBase as MethodInfo;
 					if ((method != null) && method.IsGenericMethod) {
 						Type[] genericArguments = method.GetGenericArguments();
@@ -585,7 +584,7 @@ namespace SteamEngine.Common {
 						builder.Append(name + " " + parameters[j].Name);
 					}
 					builder.Append(") ");
-					
+
 					if (frame.GetILOffset() != -1) {
 						string fileName = null;
 						try {
@@ -614,7 +613,7 @@ namespace SteamEngine.Common {
 		static string FileString(string filename, object line) {
 			return "(" + filename + ", " + line + ") ";
 		}
-		#endregion ErrText
+		#endregion RenderText
 
 		public static void SetTitle(string title) {
 			Write(LogStr.Title(title));
@@ -668,8 +667,9 @@ namespace SteamEngine.Common {
 			Console.SetOut(instance);
 		}
 
-		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-		protected abstract string GetFilepath();
+		protected virtual string GetFilepath() {
+			throw new InvalidOperationException("Logger not initalized.");
+		}
 
 		static void Rotate() {
 			file.Flush();
@@ -711,7 +711,7 @@ namespace SteamEngine.Common {
 		}
 
 		public override void WriteLine(object value) {
-			WriteLine(ErrText(value));
+			WriteLine(RenderText(value));
 		}
 
 		public static void WriteLine(LogStr value) {
@@ -727,7 +727,7 @@ namespace SteamEngine.Common {
 						Rotate();
 					}
 				} else { //console == null -> Logger not yet initialised
-					Console.WriteLine(printline.RawString);				
+					Console.WriteLine(printline.RawString);
 				}
 			}
 		}
@@ -746,7 +746,7 @@ namespace SteamEngine.Common {
 		}
 
 		public override void Write(object value) {
-			Write(ErrText(value));
+			Write(RenderText(value));
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
