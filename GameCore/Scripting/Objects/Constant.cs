@@ -72,54 +72,49 @@ namespace SteamEngine.Scripting.Objects {
 	*/
 
 	public class Constant : IUnloadable {
-		private string name;
-		private string filename = "<filename>";
-		private int line = -1;
-		private ConstantValue implementation;
-		private bool unloaded;
-
 		private static readonly ShieldedDictNc<string, Constant> allConstantsByName =
 			new ShieldedDictNc<string, Constant>(comparer: StringComparer.OrdinalIgnoreCase);
 
-		//		internal Constant(string filename, int line, string name, object value) : this(name, value) {
-		//			this.filename = filename;
-		//			this.line = line;
-		//		}
+		private readonly string name;
+
+		private readonly Shielded<State> shieldedState = new Shielded<State>(initial: new State {
+			filename = "<filename>",
+			line = -1
+		});
+
+		private struct State {
+			internal string filename;
+			internal int line;
+			internal ConstantValue implementation;
+			internal bool unloaded;
+		}
 
 		internal Constant(string name, object value) {
-			this.implementation = new NormalConstant(value);
+			this.shieldedState.Modify((ref State s) =>
+				s.implementation = new NormalConstant(value));
 			this.name = name;
 		}
 
 		public void Set(object value) {
-			this.implementation = new NormalConstant(value);
-			this.unloaded = false;
+			this.shieldedState.Modify((ref State s) => {
+				s.implementation = new NormalConstant(value);
+				s.unloaded = false;
+			});
 		}
 
-		public string Name {
-			get {
-				return this.name;
-			}
-		}
+		public string Name => this.name;
 
-		public string Filename {
-			get {
-				return this.filename;
-			}
-		}
+		public string Filename => this.shieldedState.Value.filename;
 
-		public int Line {
-			get {
-				return this.line;
-			}
-		}
+		public int Line => this.shieldedState.Value.line;
 
 		public object Value {
 			get {
-				if (this.unloaded) {
+				var shieldedStateValue = this.shieldedState.Value;
+				if (shieldedStateValue.unloaded) {
 					throw new UnloadedException("The constant '" + this.name + "' is unloaded.");
 				}
-				return this.implementation.Value;
+				return shieldedStateValue.implementation.Value;
 			}
 		}
 
@@ -189,8 +184,9 @@ namespace SteamEngine.Scripting.Objects {
 						d = new Constant(name, null);
 						allConstantsByName.Add(name, d);
 					} else {
-						if (d.unloaded) {
-							d.unloaded = false;
+						if (d.IsUnloaded) {
+							d.shieldedState.Modify((ref State s) =>
+								s.unloaded = false);
 						} else {
 							throw new SEException(input.Filename, linenum,
 								"Constant " + LogStr.Ident(name) + " defined multiple times. Ignoring");
@@ -201,9 +197,11 @@ namespace SteamEngine.Scripting.Objects {
 					continue;
 				}
 
-				d.implementation = new TemporaryValue(d, value);
-				d.filename = input.Filename;
-				d.line = linenum;
+				d.shieldedState.Modify((ref State s) => {
+					s.implementation = new TemporaryValue(d, value);
+					s.filename = input.Filename;
+					s.line = linenum;
+				});
 				list.Add(d);
 			}
 
@@ -239,17 +237,21 @@ namespace SteamEngine.Scripting.Objects {
 				if ((a % countPerCent) == 0) {
 					Logger.SetTitle("Resolving Constants: " + ((a * 100) / count) + " %");
 				}
-				if (!constant.unloaded) {//those should have already stated what's the problem :)
-					TemporaryValue tv = constant.implementation as TemporaryValue;
-					if (tv != null) {
-						constant.ResolveValueFromScript(tv.str);
-					}
-				}
+				constant.ResolveTemporaryState();
 				a++;
 			}
 			DateTime after = DateTime.Now;
 			Logger.WriteDebug("...took " + (after - before));
 			Logger.SetTitle("");
+		}
+
+		private void ResolveTemporaryState() {
+			if (!this.IsUnloaded) { //those should have already stated what's the problem :)
+				TemporaryValue tv = this.shieldedState.Value.implementation as TemporaryValue;
+				if (tv != null) {
+					this.ResolveValueFromScript(tv.str);
+				}
+			}
 		}
 
 		internal void ResolveValueFromScript(string value) {
@@ -263,30 +265,33 @@ namespace SteamEngine.Scripting.Objects {
 			//			//We could bypass it if needed (like the {}-handling code does) and set the value directly.
 			//this is not that much valid anymore, but we still need a syntax for array... -tar
 
-			object retVal = null;
-			if (FieldValue.TryResolveAsString(value, ref retVal)) {
-				this.implementation = new NormalConstant(retVal);
-			} else if (FieldValue.TryResolveAsScript(value, ref retVal)) {
-				this.implementation = new NormalConstant(retVal);
-			} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
-				this.implementation = new NormalConstant(retVal);
-			} else {
-				string statement = string.Concat("return ", value);
-				Exception exception;
-				LScriptHolder snippetRunner;
-				retVal = LScriptMain.TryRunSnippet(this.filename, this.line, Globals.Instance, statement, out exception, out snippetRunner);
-				if (exception != null) {
-					this.unloaded = true;
-					Logger.WriteWarning(this.filename, this.line, "No value was set on this (" + this + "): It is now unloaded!");
+			this.shieldedState.Modify((ref State s) => {
+				object retVal = null;
+				if (FieldValue.TryResolveAsString(value, ref retVal)) {
+					s.implementation = new NormalConstant(retVal);
+				} else if (FieldValue.TryResolveAsScript(value, ref retVal)) {
+					s.implementation = new NormalConstant(retVal);
+				} else if (ConvertTools.TryParseAnyNumber(value, out retVal)) {
+					s.implementation = new NormalConstant(retVal);
 				} else {
-					this.unloaded = false;
-					if (snippetRunner.ContainsRandomExpression) {
-						this.implementation = new LScriptHolderConstant(snippetRunner);
+					string statement = string.Concat("return ", value);
+					Exception exception;
+					LScriptHolder snippetRunner;
+					retVal = LScriptMain.TryRunSnippet(s.filename, s.line, Globals.Instance, statement, out exception,
+						out snippetRunner);
+					if (exception != null) {
+						s.unloaded = true;
+						Logger.WriteWarning(s.filename, s.line, "No value was set on this (" + this + "): It is now unloaded!");
 					} else {
-						this.implementation = new NormalConstant(retVal);
+						s.unloaded = false;
+						if (snippetRunner.ContainsRandomExpression) {
+							s.implementation = new LScriptHolderConstant(snippetRunner);
+						} else {
+							s.implementation = new NormalConstant(retVal);
+						}
 					}
 				}
-			}
+			});
 		}
 
 		internal static void ForgetAll() {
@@ -295,39 +300,29 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public void Unload() {
-			this.unloaded = true;
+			this.shieldedState.Modify((ref State s) => s.unloaded = true);
 		}
 
-		public bool IsUnloaded {
-			get {
-				return this.unloaded;
-			}
-		}
+		public bool IsUnloaded => this.shieldedState.Value.unloaded;
 
 		private abstract class ConstantValue {
 			internal abstract object Value { get; }
 		}
 
 		public override string ToString() {
-			return this.implementation + " " + this.name;
+			return this.shieldedState.Value.implementation + " " + this.name;
 		}
 
 		private sealed class NormalConstant : ConstantValue {
-			private object value;
-
 			internal NormalConstant(object value) {
-				this.value = value;
+				this.Value = value;
 				string asString = value as string;
 				if (asString != null) {
-					this.value = string.Intern(asString);
+					this.Value = string.Intern(asString);
 				}
 			}
 
-			internal override object Value {
-				get {
-					return this.value;
-				}
-			}
+			internal override object Value { get; }
 
 			public override string ToString() {
 				return "Constant";
@@ -336,17 +331,13 @@ namespace SteamEngine.Scripting.Objects {
 
 		//for the random expressions
 		private sealed class LScriptHolderConstant : ConstantValue {
-			private LScriptHolder sh;
+			private readonly LScriptHolder sh;
 
 			internal LScriptHolderConstant(LScriptHolder sh) {
 				this.sh = sh;
 			}
 
-			internal override object Value {
-				get {
-					return this.sh.Run(Globals.Instance, (ScriptArgs) null);
-				}
-			}
+			internal override object Value => this.sh.Run(Globals.Instance, (ScriptArgs) null);
 
 			public override string ToString() {
 				return "RandomConstant";
@@ -354,8 +345,8 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private sealed class TemporaryValue : ConstantValue {
-			internal string str;
-			private Constant holder;
+			internal readonly string str;
+			private readonly Constant holder;
 
 			internal TemporaryValue(Constant holder, string str) {
 				this.holder = holder;
