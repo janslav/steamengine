@@ -24,18 +24,20 @@ using SteamEngine.Common;
 namespace SteamEngine.Scripting.Objects {
 	public abstract class AbstractSkillDef : AbstractIndexedDef<AbstractSkillDef, int> /*TriggerGroupHolder*/ {
 
-		//string(defname)-Skilldef pairs
-		private static ShieldedDictNc<string, AbstractSkillDef> byKey = new ShieldedDictNc<string, AbstractSkillDef>(comparer: StringComparer.OrdinalIgnoreCase);
-		//string(key)-Skilldef pairs
-		//private static List<AbstractSkillDef> byId = new List<AbstractSkillDef>();
-		//Skilldef instances by their ID
+		private static readonly ShieldedDictNc<string, AbstractSkillDef> allSkillDefsByKey =
+			new ShieldedDictNc<string, AbstractSkillDef>(comparer: StringComparer.OrdinalIgnoreCase);
 
-
-		private FieldValue key;
+		private readonly FieldValue key;
 		//private int id;
-		private FieldValue startByMacroEnabled;
+		private readonly FieldValue startByMacroEnabled;
 
-		private TriggerGroup scriptedTriggers;
+		private readonly Shielded<TriggerGroup> scriptedTriggers = new Shielded<TriggerGroup>();
+
+		protected AbstractSkillDef(string defname, string filename, int headerLine)
+			: base(defname, filename, headerLine) {
+			this.key = this.InitTypedField("key", "", typeof(string));
+			this.startByMacroEnabled = this.InitTypedField("startByMacroEnabled", false, typeof(bool));
+		}
 
 		#region Accessors
 		public new static AbstractSkillDef GetByDefname(string defname) {
@@ -44,7 +46,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public static AbstractSkillDef GetByKey(string key) {
 			AbstractSkillDef retVal;
-			byKey.TryGetValue(key, out retVal);
+			allSkillDefsByKey.TryGetValue(key, out retVal);
 			return retVal;
 		}
 
@@ -52,29 +54,15 @@ namespace SteamEngine.Scripting.Objects {
 			return GetByDefIndex(id);
 		}
 
-		public static int SkillsCount {
-			get {
-				return IndexedCount;
-			}
-		}
+		public static int SkillsCount => IndexedCount;
 
-		public int Id {
-			get {
-				return this.DefIndex;
-			}
-		}
+		public int Id => this.DefIndex;
 
 		public string Key {
 			get {
 				return (string) this.key.CurrentValue;
 			}
 			set {
-				AbstractSkillDef previous;
-				if (byKey.TryGetValue(value, out previous)) {
-					if (previous != this) {
-						throw new ScriptException("There is already a SkillDef with the key '" + value + "'");
-					}
-				}
 				this.Unregister();
 				this.key.CurrentValue = value;
 				this.Register();
@@ -90,11 +78,7 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
-		public TriggerGroup TG {
-			get {
-				return this.scriptedTriggers;
-			}
-		}
+		public TriggerGroup ScriptedTriggers => this.scriptedTriggers;
 
 		public override string ToString() {
 			return Tools.TypeToString(this.GetType()) + " " + this.Key;
@@ -104,38 +88,35 @@ namespace SteamEngine.Scripting.Objects {
 		#region Load from scripts
 
 		public override AbstractScript Register() {
-			try {
-				AbstractSkillDef previous;
-				var k = this.Key;
-				if (byKey.TryGetValue(k, out previous)) {
-					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractScript '" + k + "'");
-					}
-				} else {
-					byKey.Add(k, this);
-				}
+			SeShield.AssertInTransaction();
 
-			} finally {
-				base.Register();
+			AbstractSkillDef previous;
+			var k = this.Key;
+			if (allSkillDefsByKey.TryGetValue(k, out previous)) {
+				if (previous != this) {
+					throw new SEException("previous != this when registering AbstractScript '" + k + "'");
+				}
+			} else {
+				allSkillDefsByKey.Add(k, this);
 			}
-			return this;
+
+			return base.Register();
 		}
 
 		protected override void Unregister() {
-			try {
-				string k = this.Key;
-				AbstractSkillDef previous;
-				if (byKey.TryGetValue(k, out previous)) {
-					if (previous != this) {
-						throw new SEException("previous != this when registering AbstractScript '" + k + "'");
-					} else {
-						byKey.Remove(k);
-					}
-				}
+			SeShield.AssertInTransaction();
 
-			} finally {
-				base.Unregister();
+			string k = this.Key;
+			AbstractSkillDef previous;
+			if (allSkillDefsByKey.TryGetValue(k, out previous)) {
+				if (previous != this) {
+					throw new SEException("previous != this when registering AbstractScript '" + k + "'");
+				} else {
+					allSkillDefsByKey.Remove(k);
+				}
 			}
+
+			base.Unregister();
 		}
 
 		public new static void Bootstrap() {
@@ -166,19 +147,15 @@ namespace SteamEngine.Scripting.Objects {
 		internal new static void ForgetAll() {
 			AbstractScript.ForgetAll(); //just to be sure
 
-			Sanity.IfTrueThrow(byKey.Any(), "byKey.Count > 0 after AbstractScript.ForgetAll");
+			Sanity.IfTrueThrow(allSkillDefsByKey.Any(), "allSkillDefsByKey.Count > 0 after AbstractScript.ForgetAll");
 
 			//byId.Clear();
 			//skillDefCtorsByName.Clear();
 		}
 
-		protected AbstractSkillDef(string defname, string filename, int headerLine)
-			: base(defname, filename, headerLine) {
-			this.key = this.InitTypedField("key", "", typeof(string));
-			this.startByMacroEnabled = this.InitTypedField("startByMacroEnabled", false, typeof(bool));
-		}
-
 		public override void LoadScriptLines(PropsSection ps) {
+			SeShield.AssertInTransaction();
+
 			base.LoadScriptLines(ps);
 
 			this.DefIndex = ConvertTools.ParseUInt16(this.Defname.Substring(6));
@@ -187,14 +164,12 @@ namespace SteamEngine.Scripting.Objects {
 			//now do load the trigger code. 
 			if (ps.TriggerCount > 0) {
 				ps.HeaderName = "t__" + this.Defname + "__";
-				this.scriptedTriggers = InterpretedTriggerGroup.Load(ps);
+				this.scriptedTriggers.Value = InterpretedTriggerGroup.Load(ps);
 			}
 		}
 
 		public override void Unload() {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.Unload();
-			}
+			this.ScriptedTriggers?.Unload();
 			base.Unload();
 		}
 
@@ -210,19 +185,15 @@ namespace SteamEngine.Scripting.Objects {
 		#region trigger methods
 		public TriggerResult TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
-			if (this.scriptedTriggers != null) {
-				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
-					return TriggerResult.Cancel;
-				}
+			if (TagMath.Is1(this.ScriptedTriggers?.TryRun(self, td, sa))) {
+				return TriggerResult.Cancel;
 			}
 			return TriggerResult.Continue;
 		}
 
 		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.TryRun(self, td, sa);
-			}
+			this.ScriptedTriggers?.TryRun(self, td, sa);
 		}
 		#endregion trigger methods
 	}
