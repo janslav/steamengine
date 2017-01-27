@@ -64,12 +64,12 @@ namespace SteamEngine {
 			scriptedRetVal = null;
 			compiledRetVal = null;
 			if (!this.isDeleted) {
-				var scriptedTriggers = this.def.scriptedTriggers;
+				var scriptedTriggers = this.def.ScriptedTriggers;
 				if (scriptedTriggers != null) {
 					scriptedRetVal = scriptedTriggers.Run(this, tk, sa);
 				}
 
-				var compiledTriggers = this.def.compiledTriggers;
+				var compiledTriggers = this.def.CompiledTriggers;
 				if (compiledTriggers != null) {
 					compiledRetVal = compiledTriggers.Run(this, tk, sa);
 				}
@@ -82,11 +82,11 @@ namespace SteamEngine {
 			scriptedRetVal = null;
 			compiledRetVal = null;
 			if (!this.isDeleted) {
-				var scriptedTriggers = this.def.scriptedTriggers;
+				var scriptedTriggers = this.def.ScriptedTriggers;
 				if (scriptedTriggers != null) {
 					scriptedRetVal = scriptedTriggers.TryRun(this, tk, sa);
 				}
-				var compiledTriggers = this.def.compiledTriggers;
+				var compiledTriggers = this.def.CompiledTriggers;
 				if (compiledTriggers != null) {
 					try {
 						compiledRetVal = compiledTriggers.Run(this, tk, sa);

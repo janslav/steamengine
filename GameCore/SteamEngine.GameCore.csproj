@@ -184,7 +184,7 @@
     <Compile Include="AbstractCharacter.cs" />
     <Compile Include="Scripting\Objects\AbstractCharacterDef.cs" />
     <Compile Include="Scripting\Objects\AbstractDef.cs" />
-    <Compile Include="AbstractDefTriggerGroupHolder.cs" />
+    <Compile Include="Scripting\Objects\AbstractDefTriggerGroupHolder.cs" />
     <Compile Include="Scripting\Objects\AbstractIndexedDef.cs" />
     <Compile Include="AbstractItem.cs" />
     <Compile Include="Scripting\Objects\AbstractItemDef.cs" />
@@ -219,10 +219,10 @@
     <Compile Include="UoData\MultiData.cs" />
     <Compile Include="OpenedContainers.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="PluginDef.cs" />
+    <Compile Include="Scripting\Objects\PluginDef.cs" />
     <Compile Include="PluginHolder.cs" />
     <Compile Include="PluginKey.cs" />
-    <Compile Include="PluginTriggerGroupGenerator.cs" />
+    <Compile Include="Scripting\Compilation\PluginTriggerGroupGenerator.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="PropsFileParser.cs" />
     <Compile Include="RunLevel.cs" />

@@ -16,6 +16,7 @@
 */
 
 using System.CodeDom;
+using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Scripting.Compilation.ClassTemplates {
 	internal class PluginDefTemplate : ClassDefTemplate {
