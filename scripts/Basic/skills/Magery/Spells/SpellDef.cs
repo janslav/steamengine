@@ -31,8 +31,7 @@ using SteamEngine.UoData;
 namespace SteamEngine.CompiledScripts {
 
 	[Flags]
-	public enum SpellFlag
-	{
+	public enum SpellFlag {
 		None = 0,
 		CanTargetStatic = 0x000001,
 		CanTargetGround = 0x000002,
@@ -56,28 +55,24 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public class SpellDef : AbstractIndexedDef<SpellDef, int> {
-		private static Dictionary<string, ConstructorInfo> spellDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
-
-		//private static Dictionary<int, SpellDef> byId = new Dictionary<int, SpellDef>();
-
-		private TriggerGroup scriptedTriggers;
+		private readonly Shielded<TriggerGroup> scriptedTriggers = new Shielded<TriggerGroup>();
 
 		//private int id;
 		#region Accessors
-		private FieldValue scrollItem;
-		private FieldValue runeItem;
-		private FieldValue name;
-		private FieldValue castTime;
-		private FieldValue flags;
-		private FieldValue manaUse;
-		private FieldValue requirements;
-		private FieldValue resources;
-		private FieldValue difficulty;
-		private FieldValue effect;
-		private FieldValue sound;
-		private FieldValue runes;
-		private FieldValue effectRange;
-		private string runeWords;
+		private readonly FieldValue scrollItem;
+		private readonly FieldValue runeItem;
+		private readonly FieldValue name;
+		private readonly FieldValue castTime;
+		private readonly FieldValue flags;
+		private readonly FieldValue manaUse;
+		private readonly FieldValue requirements;
+		private readonly FieldValue resources;
+		private readonly FieldValue difficulty;
+		private readonly FieldValue effect;
+		private readonly FieldValue sound;
+		private readonly FieldValue runes;
+		private readonly FieldValue effectRange;
+		private readonly Shielded<string> runeWords = new Shielded<string>();
 
 		public new static SpellDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as SpellDef;
@@ -87,21 +82,13 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-		public static IEnumerable<SpellDef> AllSpellDefs {
-			get {
-				return AllIndexedDefs;
-			}
-		}
+		public static IEnumerable<SpellDef> AllSpellDefs => AllIndexedDefs;
 
 		//public override string ToString() {
 		//    return string.Concat(this.PrettyDefname, " (spellId ", this.Id.ToString(), ")");
 		//}
 
-		public int Id {
-			get {
-				return this.DefIndex;
-			}
-		}
+		public int Id => this.DefIndex;
 
 		public string Name {
 			get {
@@ -217,7 +204,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 			set {
 				this.runes.CurrentValue = value;
-				this.runeWords = null;
+				this.runeWords.Value = null;
 			}
 		}
 
@@ -231,16 +218,18 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string GetRuneWords() {
-			if (this.runeWords == null) {
+			SeShield.AssertInTransaction();
+
+			if (this.runeWords.Value == null) {
 				var runes = this.Runes.ToLowerInvariant();
 				var n = runes.Length;
 				var arr = new string[n];
 				for (var i = 0; i < n; i++) {
 					arr[i] = this.GetRuneWord(runes[i]);
 				}
-				this.runeWords = string.Join(" ", arr);
+				this.runeWords.Value = string.Join(" ", arr);
 			}
-			return this.runeWords;
+			return this.runeWords.Value;
 		}
 
 		public int GetManaUse(bool isFromScroll) {
@@ -259,32 +248,32 @@ namespace SteamEngine.CompiledScripts {
 
 		private string GetRuneWord(char ch) {
 			switch (ch) {
-				case 'a': return "Ruth";	//hnev
-				case 'b': return "Er";		//jeden,malo
-				case 'c': return "Mor";		//temny
-				case 'd': return "Curu";	//dovednost
-				case 'e': return "Dol";		//hlava
-				case 'f': return "Ruin";	//plamen
-				case 'g': return "Esgal";	//zástìna
-				case 'h': return "Sul";		//vitr
-				case 'i': return "Anna";	//dar
-				case 'j': return "Del";		//hruza
-				case 'k': return "Heru";	//pán
-				case 'l': return "Fuin";	//temnota
-				case 'm': return "Aina";	//svaty
-				case 'n': return "Sereg";	//krev
-				case 'o': return "Morgul";	//temnamagie
-				case 'p': return "Kel";		//odejit
-				case 'q': return "Gor";		//hruza,des
-				case 'r': return "Faroth";	//pronasledovat
-				case 's': return "Tir";		//bditstrezit
-				case 't': return "Barad";	//vez
-				case 'u': return "Ril";		//trpit
-				case 'v': return "Beleg";	//Mohutny
-				case 'w': return "Loth";	//magickýkvìt
-				case 'x': return "Val";		//mocnost
-				case 'y': return "Kemen";	//zeme
-				case 'z': return "Fea";		//duch
+				case 'a': return "Ruth";    //hnev
+				case 'b': return "Er";      //jeden,malo
+				case 'c': return "Mor";     //temny
+				case 'd': return "Curu";    //dovednost
+				case 'e': return "Dol";     //hlava
+				case 'f': return "Ruin";    //plamen
+				case 'g': return "Esgal";   //zástìna
+				case 'h': return "Sul";     //vitr
+				case 'i': return "Anna";    //dar
+				case 'j': return "Del";     //hruza
+				case 'k': return "Heru";    //pán
+				case 'l': return "Fuin";    //temnota
+				case 'm': return "Aina";    //svaty
+				case 'n': return "Sereg";   //krev
+				case 'o': return "Morgul";  //temnamagie
+				case 'p': return "Kel";     //odejit
+				case 'q': return "Gor";     //hruza,des
+				case 'r': return "Faroth";  //pronasledovat
+				case 's': return "Tir";     //bditstrezit
+				case 't': return "Barad";   //vez
+				case 'u': return "Ril";     //trpit
+				case 'v': return "Beleg";   //Mohutny
+				case 'w': return "Loth";    //magickýkvìt
+				case 'x': return "Val";     //mocnost
+				case 'y': return "Kemen";   //zeme
+				case 'z': return "Fea";     //duch
 			}
 			throw new SEException("Wrong spell rune " + ch);
 		}
@@ -341,7 +330,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (ps.TriggerCount > 0) {
 				ps.HeaderName = "t__" + this.Defname + "__";
-				this.scriptedTriggers = InterpretedTriggerGroup.Load(ps);
+				this.scriptedTriggers.Value = InterpretedTriggerGroup.Load(ps);
 			}
 		}
 
@@ -352,9 +341,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.Unload();
-			}
+			this.scriptedTriggers.Value?.Unload();
 			base.Unload();
 		}
 
@@ -363,8 +350,9 @@ namespace SteamEngine.CompiledScripts {
 		#region Trigger methods
 		public TriggerResult TryCancellableTrigger(IPoint3D self, TriggerKey td, ScriptArgs sa) {
 			//cancellable trigger just for the one triggergroup
-			if (this.scriptedTriggers != null) {
-				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
+			var scriptedTriggersValue = this.scriptedTriggers.Value;
+			if (scriptedTriggersValue != null) {
+				if (TagMath.Is1(scriptedTriggersValue.TryRun(self, td, sa))) {
 					return TriggerResult.Cancel;
 				}
 			}
@@ -833,8 +821,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public readonly ScriptArgs scriptArgs;
 
-		public SpellEffectArgs()
-		{
+		public SpellEffectArgs() {
 			this.scriptArgs = new ScriptArgs(this);
 		}
 
