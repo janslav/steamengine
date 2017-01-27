@@ -30,15 +30,8 @@ namespace SteamEngine.CompiledScripts {
 	public partial class ColoredStaff {
 
 		//this ability raises the maximum of mana that can be deposited in a staff
-		private static AbilityDef a_mana_deposit_bonus;
-		private static AbilityDef ManaDepositBonusDef {
-			get {
-				if (a_mana_deposit_bonus == null) {
-					a_mana_deposit_bonus = AbilityDef.GetByDefname("a_mana_deposit_bonus");
-				}
-				return a_mana_deposit_bonus;
-			}
-		}
+		private static AbilityDef ManaDepositBonusDef => AbilityDef.GetByDefname("a_mana_deposit_bonus");
+
 		public override void On_Click(AbstractCharacter clicker, GameState clickerState, TcpConnection<GameState> clickerConn) {
 			base.On_Click(clicker, clickerState, clickerConn);
 			this.ShowMana(clicker as Player);
@@ -91,7 +84,8 @@ namespace SteamEngine.CompiledScripts {
 
 		private double CalculateMaxMana(Player self) {
 			double staffMaxMana = this.TypeDef.MaxMana;
-			var perCentBonus = self.GetAbility(ManaDepositBonusDef) * ManaDepositBonusDef.EffectPower;
+			var manaDepositBonusDef = ManaDepositBonusDef;
+			var perCentBonus = self.GetAbility(manaDepositBonusDef) * manaDepositBonusDef.EffectPower;
 			staffMaxMana += (staffMaxMana * perCentBonus);
 			return staffMaxMana;
 		}

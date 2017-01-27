@@ -49,6 +49,8 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void ThrowIfNotConsumable(ResourcesList rl) {
+			SeShield.AssertInTransaction();
+
 			if (rl != null) {
 				foreach (var entry in rl.nonMultiplicablesSubList) {
 					if (!entry.IsConsumable) {

@@ -17,6 +17,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Shielded;
 using SteamEngine.Common;
@@ -24,12 +25,19 @@ using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Regions;
 
 namespace SteamEngine.CompiledScripts {
+
 	[ViewableClass]
 	public partial class MultiItemDef : ItemDef {
-		private DynamicMultiItemComponentDescription[] components;
+		private readonly Shielded<DynamicMultiItemComponentDescription[]> components = new Shielded<DynamicMultiItemComponentDescription[]>();
+		private readonly ShieldedSeq<DMICDLoadHelper> loadHelpers = new ShieldedSeq<DMICDLoadHelper>();
+		private readonly ShieldedSeq<MultiRegionRectangleHelper> rectangleHelpers = new ShieldedSeq<MultiRegionRectangleHelper>();
 
-		private List<DMICDLoadHelper> loadHelpers = new List<DMICDLoadHelper>();
-		internal List<MultiRegionRectangleHelper> rectangleHelpers = new List<MultiRegionRectangleHelper>();
+		internal IEnumerable<MultiRegionRectangleHelper> RectangleHelpers {
+			get {
+				SeShield.AssertInTransaction();
+				return this.rectangleHelpers;
+			}
+		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			switch (param) {
@@ -44,26 +52,29 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Create(Thing t) {
+			SeShield.AssertInTransaction();
+
 			base.On_Create(t);
-			if (this.components == null) {
-				var dmicds = new List<DynamicMultiItemComponentDescription>(this.loadHelpers.Count);
+			if (this.components.Value == null) {
+				var dmicds = new List<DynamicMultiItemComponentDescription>();
 				foreach (var helper in this.loadHelpers) {
 					var dmicd = helper.Resolve();
 					if (dmicd != null) {
 						dmicds.Add(dmicd);
 					}
 				}
-				this.components = dmicds.ToArray();
-				this.loadHelpers = null;
+				this.components.Value = dmicds.ToArray();
+				this.loadHelpers.Clear();
 			}
 
 			var mi = (MultiItem) t;
 
-			var n = this.components.Length;
+			var componentsValue = this.components.Value;
+			var n = componentsValue.Length;
 			if (n > 0) {
 				var items = new Item[n];
 				for (var i = 0; i < n; i++) {
-					items[i] = this.components[i].Create(t.X, t.Y, t.Z, t.M); ;
+					items[i] = componentsValue[i].Create(t.X, t.Y, t.Z, t.M); ;
 				}
 				mi.components = items;
 			}
@@ -74,9 +85,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected class DMICDLoadHelper {
-			string filename;
-			internal string args;
-			int line;
+			private readonly string filename;
+			private readonly string args;
+			private readonly int line;
 
 			internal DMICDLoadHelper(string filename, int line, string args) {
 				this.filename = filename;
@@ -99,23 +110,24 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
+			SeShield.AssertInTransaction();
+
 			base.Unload();
-			this.components = null;
-			this.loadHelpers = new List<DMICDLoadHelper>();
+			this.components.Value = null;
+			this.loadHelpers.Clear();
 		}
 
-
 		internal class MultiRegionRectangleHelper {
-			public static Regex rectRE = new Regex(@"(?<x1>-?(0x)?\d+)\s*(,|/s+)\s*(?<y1>-?(0x)?\d+)\s*(,|/s+)\s*(?<x2>-?(0x)?\d+)\s*(,|/s+)\s*(?<y2>-?(0x)?\d+)",
+			public static readonly Regex rectRe = new Regex(@"(?<x1>-?(0x)?\d+)\s*(,|/s+)\s*(?<y1>-?(0x)?\d+)\s*(,|/s+)\s*(?<x2>-?(0x)?\d+)\s*(,|/s+)\s*(?<y2>-?(0x)?\d+)",
 				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-			private int startX;
-			private int startY;
-			private int endX;
-			private int endY;
+			private readonly int startX;
+			private readonly int startY;
+			private readonly int endX;
+			private readonly int endY;
 
 			internal MultiRegionRectangleHelper(string args) {
-				var m = rectRE.Match(args);
+				var m = rectRe.Match(args);
 				if (m.Success) {
 					var gc = m.Groups;
 					this.startX = ConvertTools.ParseInt32(gc["x1"].Value);
@@ -215,14 +227,10 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Destroy();
 			if (this.components != null) {
 				foreach (var i in this.components) {
-					if (i != null) {
-						i.Delete();
-					}
+					i?.Delete();
 				}
 			}
-			if (this.region != null) {
-				this.region.Delete();
-			}
+			this.region?.Delete();
 		}
 
 		public override void On_AfterLoad() {
@@ -232,22 +240,13 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override Region Region {
-			get {
-				return this.region;
-			}
-		}
+		public override Region Region => this.region;
 
 		internal virtual void InitMultiRegion() {
-			var n = this.TypeDef.rectangleHelpers.Count;
-			if (n > 0) {
-				var newRectangles = new ImmutableRectangle[n];
-				for (var i = 0; i < n; i++) {
-					newRectangles[i] = this.TypeDef.rectangleHelpers[i].CreateRect(this);
-				}
-				this.region = new MultiRegion(this, newRectangles);
-				// TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!
-			}
+			SeShield.AssertInTransaction();
+
+			this.region = new MultiRegion(this, this.TypeDef.RectangleHelpers.Select(h => h.CreateRect(this)).ToArray());
+			// TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!
 		}
 	}
 
@@ -275,9 +274,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 				return "MultiRegion wihout MultiItem";
 			}
-//			set {
-//				throw new SEException("Renaming MultiRegions is not supported");
-//			}
+			//			set {
+			//				throw new SEException("Renaming MultiRegions is not supported");
+			//			}
 		}
 	}
 }
