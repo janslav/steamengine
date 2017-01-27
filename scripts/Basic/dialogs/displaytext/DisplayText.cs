@@ -27,21 +27,18 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// in pages dialog etc.
 	/// </summary>
 	public class D_Display_Text : CompiledGumpDef {
-		private string label;
-		private string dispText;
-		private Hues textColor;
-
-		internal static TagKey textHueTK = TagKey.Acquire("_text_hue_");
+		private static readonly TagKey textHueTK = TagKey.Acquire("_text_hue_");
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			this.label = string.Concat(args[0]); //the gump's label
-			this.dispText = string.Concat(args[1]); //the text to be displayed
+			var label = string.Concat(args[0]); //the gump's label
+			var dispText = string.Concat(args[1]); //the text to be displayed
 
+			Hues textColor;
 			var hue = args.GetTag(textHueTK);
 			if (hue != null) {
-				this.textColor = (Hues) Convert.ToInt32(hue); //barva titulku volitelna
+				textColor = (Hues) Convert.ToInt32(hue); //barva titulku volitelna
 			} else {
-				this.textColor = Hues.HeadlineColor; //normalni nadpisek
+				textColor = Hues.HeadlineColor; //normalni nadpisek
 			}
 
 			var dialogHandler = new ImprovedDialog(gi);
@@ -51,7 +48,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//first row - the label of the dialog
 			dialogHandler.AddTable(new GUTATable(1, 0, ButtonMetrics.D_BUTTON_WIDTH));
-			dialogHandler.LastTable[0, 0] = GUTAText.Builder.Text(this.label).Hue(this.textColor).Build();
+			dialogHandler.LastTable[0, 0] = GUTAText.Builder.Text(label).Hue(textColor).Build();
 			dialogHandler.LastTable[0, 1] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonCross).Id(0).Build();
 			dialogHandler.MakeLastTableTransparent();
 
@@ -59,7 +56,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.AddTable(new GUTATable(3, 0));
 			dialogHandler.LastTable.RowHeight = ImprovedDialog.D_ROW_HEIGHT;
 			//unbounded, scrollable html text area
-			dialogHandler.LastTable[0, 0] = GUTAHTMLText.Builder.Text(this.dispText).Scrollable(true).Build();
+			dialogHandler.LastTable[0, 0] = GUTAHTMLText.Builder.Text(dispText).Scrollable(true).Build();
 			dialogHandler.MakeLastTableTransparent();
 
 			dialogHandler.WriteOut();

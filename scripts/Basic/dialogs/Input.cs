@@ -1,4 +1,5 @@
 using System;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;
@@ -102,9 +103,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Class for displaying the input dialogs from LSCript using the [inputdef foo] section</summary>
 	public sealed class ScriptedInputDialogDef : AbstractInputDef {
-		private string label;
-		private string defaultInput;
-		private LScriptHolder response;
+		private readonly Shielded<string> label = new Shielded<string>();
+		private readonly Shielded<string> defaultInput = new Shielded<string>();
+		private readonly Shielded<LScriptHolder> response = new Shielded<LScriptHolder>();
 
 		public ScriptedInputDialogDef(string defname)
 			: base(defname) {
@@ -116,6 +117,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 
 		internal static IUnloadable Load(PropsSection input) {
+			SeShield.AssertInTransaction();
+
 			var defname = input.HeaderName.ToLowerInvariant();
 
 			var def = AbstractScript.GetByDefname(defname);
@@ -134,7 +137,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//Get the main trigger that gets perfomed when the input dialog is sent
 			var triggerResponse = input.PopTrigger("response");
 			if (triggerResponse != null) {
-				id.response = new LScriptHolder(triggerResponse);
+				id.response.Value = new LScriptHolder(triggerResponse);
 			} else {
 				Logger.WriteWarning(input.Filename, input.HeaderLine, "InputDialogDef " + LogStr.Ident(input) + " has not a trigger submit defined.");
 			}
@@ -145,14 +148,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				throw new SEException(input.Filename, input.HeaderLine, "input dialog label is missing");
 			}
 
-			id.label = ConvertTools.LoadSimpleQuotedString(pl.Value);
+			id.label.Value = ConvertTools.LoadSimpleQuotedString(pl.Value);
 
 			pl = input.TryPopPropsLine("default");
 			if (pl == null) {
 				throw new SEException(input.Filename, input.HeaderLine, "input dialog default value is missing");
 			}
 
-			id.defaultInput = ConvertTools.LoadSimpleQuotedString(pl.Value);
+			id.defaultInput.Value = ConvertTools.LoadSimpleQuotedString(pl.Value);
 
 			return id;
 		}
@@ -162,12 +165,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// 1st - the inputted text, followed by the params the input dialog was called with
 		/// </summary>
 		public override void Response(Gump gi, TagHolder focus, string filledText) {
+			SeShield.AssertInTransaction();
+
 			//prepend the input text to previous input parameters
 			var oldParams = gi.InputArgs.GetArgsArray();
 			var newPars = new object[oldParams.Length + 1]; //create a new bigger array, we need to add a new 0th value...
 			Array.Copy(oldParams, 0, newPars, 1, oldParams.Length); //copy all old values to the new field beginning with the index 1
 			newPars[0] = filledText; //filled text will be 0th                        
-			this.response.Run(focus, newPars); //pass the filled text value
+			this.response.Value.Run(focus, newPars); //pass the filled text value
 		}
 
 		///// <summary>Unregister the input dialog def from the other defs</summary>
@@ -185,38 +190,24 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Load, false);
 		}
 
-		public override string Label {
-			get {
-				return this.label;
-			}
-		}
+		public override string Label => this.label.Value;
 
-		public override string DefaultInput {
-			get {
-				return this.defaultInput;
-			}
-		}
+		public override string DefaultInput => this.defaultInput;
 	}
 
 	/// <summary>Class for using input dialogs implemented in C#</summary>
 	public sealed class CompiledInputDef : AbstractInputDef {
-		readonly string label;
-		readonly string defaultInput;
-		readonly Action<CompiledGump, TagHolder, string> response;
+		private readonly Action<CompiledGump, TagHolder, string> response;
 
 		public CompiledInputDef(string label, string defaultInput, Action<CompiledGump, TagHolder, string> response) {
-			this.label = label;
-			this.defaultInput = defaultInput;
+			this.Label = label;
+			this.DefaultInput = defaultInput;
 			this.response = response;
 		}
 
-		public override string Label {
-			get { return this.label; }
-		}
+		public override string Label { get; }
 
-		public override string DefaultInput {
-			get { return this.defaultInput; }
-		}
+		public override string DefaultInput { get; }
 
 		public override void Response(Gump gi, TagHolder focus, string filledText) {
 			this.response((CompiledGump) gi, focus, filledText);
