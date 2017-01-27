@@ -39,14 +39,14 @@ namespace SteamEngine.CompiledScripts {
 		const int buttonId_Rows_MoveUp = 1;
 		const int buttonId_Rows_MoveTop = 2;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 
 			var section = (Container) focus;
 			var vendor = (PlayerVendor) focus.TopObj();
 			var player = (Player) sendTo;
 			var loc = Loc<Loc_PlayerVendor_ListStock>.Get(player.Language);
 
-			var dialogHandler = new ImprovedDialog(this.GumpInstance);
+			var dialogHandler = new ImprovedDialog(gi);
 
 			int firstIndex = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			int iMax = Math.Min(firstIndex + ImprovedDialog.PAGE_ROWS, section.Count);
@@ -236,7 +236,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			var section = (Container) gi.Focus;
 			var vendor = (PlayerVendor) section.TopObj();
 			var player = (Player) gi.Cont;

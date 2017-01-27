@@ -25,10 +25,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 400;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			TagHolder th = (TagHolder) args.GetTag(D_TagList.holderTK); //na koho budeme tag ukladat?
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -59,7 +59,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 1) {

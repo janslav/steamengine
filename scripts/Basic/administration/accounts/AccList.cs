@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static TagKey searchStringTK = TagKey.Acquire("_search_string_");
 		public static TagKey accListTK = TagKey.Acquire("_acc_list_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam accountu vyhovujici zadanemu parametru, ulozit na dialog
 			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(accListTK);//mame list v tagu, vytahneme ho
 			if (accList == null) {//nemame zadny seznam
@@ -41,7 +41,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//maximalni index (20 radku mame) + hlidat konec seznamu...			
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, accList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(400);
 			dlg.SetLocation(50, 50);
@@ -89,7 +89,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<ScriptedAccount> accList = (List<ScriptedAccount>) args.GetTag(accListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);

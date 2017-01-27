@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 450;
 
 		/// <summary>V argumentech (args) mohou prijit parametry pro dialogove editfieldy</summary>
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY, name, defname, home, parent; //predzadane hodnoty (if any)
 
 			object[] argsArray = args.GetArgsArray();
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			home = TagMath.SGetTagNotNull(args, homeposTK);
 			parent = TagMath.SGetTagNotNull(args, parentDefTK);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(150, 150);
@@ -94,7 +94,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 0) { //exit
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			} else if (gr.PressedButton == 1) { //ulozit				

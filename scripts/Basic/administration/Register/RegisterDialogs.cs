@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 800;
 
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ScriptedAccount acc = (ScriptedAccount) args.GetTag(accountTK); //vzit seznam notu z accountu prisleho v parametru dialogu
 
 			List<AccountNote> notesList = (List<AccountNote>) args.GetTag(issuesListTK); //taglist si posilame v argumentu (napriklad pri pagingu)
@@ -53,7 +53,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, notesList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -119,7 +119,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam poznamek bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<AccountNote> notesList = (List<AccountNote>) args.GetTag(issuesListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
@@ -254,7 +254,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_AccountCrimes : CompiledGumpDef {
 		private static int width = 900;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			ScriptedAccount acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK);
 
 			List<AccountCrime> crimesList = (List<AccountCrime>) args.GetTag(D_AccountNotes.issuesListTK);	//taglist si posilame v argumentu (napriklad pri pagingu)
@@ -269,7 +269,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, crimesList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -339,7 +339,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam crimu bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<AccountCrime> crimesList = (List<AccountCrime>) args.GetTag(D_AccountNotes.issuesListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
@@ -472,7 +472,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey isCrimeTK = TagKey.Acquire("_is_crime_issue_");
 		internal static readonly TagKey issuedCharTK = TagKey.Acquire("_issued_char_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			bool isCrime = ConvertTools.ToBoolean(args.GetTag(isCrimeTK)); //true - crime note, false - normal note
 			AbstractCharacter refChar = args.GetTag(issuedCharTK) as AbstractCharacter; //if not present the note is for the whole account
 			ScriptedAccount acc = args.GetTag(D_AccountNotes.accountTK) as ScriptedAccount; //the account could or might not have arrived... :]
@@ -497,7 +497,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				textFldLabel = "Poznámka";
 			}
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			dlg.CreateBackground(400);
 			dlg.SetLocation(50, 50);
 
@@ -534,7 +534,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			bool isCrime = ConvertTools.ToBoolean(args.GetTag(isCrimeTK)); //true - crime note, false - normal note
 			AbstractCharacter refChar = args.GetTag(issuedCharTK) as AbstractCharacter; //if not present the note is for the whole account
 			ScriptedAccount acc = args.GetTag(D_AccountNotes.accountTK) as ScriptedAccount; //the account could or might not have arrived... :]

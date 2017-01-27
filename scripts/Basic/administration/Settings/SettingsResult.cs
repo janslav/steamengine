@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Settings_Result : CompiledGumpDef {
 		internal static readonly TagKey resultsListTK = TagKey.Acquire("_settings_results_list_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//field containing the results for display
 			List<SettingResult> setResults = (List<SettingResult>) args.GetTag(resultsListTK);
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //first index on the page (0 if not present)
@@ -36,7 +36,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int resultsNOK = SettingsProvider.CountUnSuccessfulSettings(setResults);
 			int allFields = setResults.Count;
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			dlg.CreateBackground(700);
 			dlg.SetLocation(50, 590);
 
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			List<SettingResult> setResults = (List<SettingResult>) args.GetTag(resultsListTK);
 			if (gr.PressedButton == 0) { //end				
 				//dont redirect to any dialog - former info/settings dialog is already open

@@ -24,11 +24,11 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Class that will display the detail on the particular single IDataFieldView from the info dialog</summary>
 	public class D_Info_Detail : CompiledGumpDef {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			IDataFieldView view = (IDataFieldView) args[0];//view to be displayed in detail
 			object target = args[1]; //infoized target of the info dialog
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			dlg.CreateBackground(600);
 			dlg.SetLocation(50, 30);
 
@@ -75,7 +75,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			IDataFieldView view = (IDataFieldView) args[0];//view
 			object target = args[1];//target of info dialog
 

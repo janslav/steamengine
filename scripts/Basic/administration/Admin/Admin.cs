@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey playersListTK = TagKey.Acquire("_players_list_");
 		internal static readonly TagKey plrListSortTK = TagKey.Acquire("_players_list_sorting_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//seznam lidi z parametru (if any)
 			ArrayList playersList = (ArrayList) args.GetTag(playersListTK);
 			if (playersList == null) {
@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, playersList.Count);
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 			//pozadi    
 			dialogHandler.CreateBackground(800);
 			dialogHandler.SetLocation(50, 50);
@@ -132,7 +132,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam hracu bereme z kontextu (mohl byt jiz trideny atd)
 			ArrayList playersList = (ArrayList) args.GetTag(playersListTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)

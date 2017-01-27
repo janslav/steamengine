@@ -21,8 +21,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Dialog that will display possible categories of characters to track (NPC's, Animals, Players)</summary>
 	public class D_Tracking_Categories : CompiledGumpDef {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(180);
 			dlg.SetLocation(80, 50);
@@ -58,7 +58,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			SkillSequenceArgs skillSeqArgs = (SkillSequenceArgs) args[0];
 			switch (gr.PressedButton) {
 				case 0: //exit - finish tracking without selecting anything

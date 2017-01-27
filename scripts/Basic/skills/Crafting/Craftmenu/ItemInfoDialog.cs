@@ -24,8 +24,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Craftmenu_ItemInfo : CompiledGumpDef {
 		private static int width = 600;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			ItemDef itm = (ItemDef) args[0];
 
 			GumpArtDimension picDim = GumpDimensions.Table[itm.Model];
@@ -84,7 +84,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 0) {
 				DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 			}

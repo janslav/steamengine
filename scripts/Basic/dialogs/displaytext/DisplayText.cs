@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		internal static TagKey textHueTK = TagKey.Acquire("_text_hue_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			this.label = string.Concat(args[0]); //the gump's label
 			this.dispText = string.Concat(args[1]); //the text to be displayed
 
@@ -43,12 +43,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			} else {
 				this.textColor = Hues.HeadlineColor; //normalni nadpisek
 			}
-			this.ShowDialog();
-		}
 
-		/// <summary>Simply display the labeled text.</summary>
-		private void ShowDialog() {
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 			//create the background GUTAMatrix and set its size an transparency            
 			dialogHandler.CreateBackground(400);
 			dialogHandler.SetLocation(400, 300);
@@ -69,10 +65,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			switch (gr.PressedButton) {
 				case 0: //exit
-					//look if some dialog is not stored in the dialogs stack and possibly display it
+						//look if some dialog is not stored in the dialogs stack and possibly display it
 					DialogStacking.ShowPreviousDialog(gi);
 					break;
 			}

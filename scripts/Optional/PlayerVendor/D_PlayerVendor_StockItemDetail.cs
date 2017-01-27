@@ -38,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		const int buttonId_Examine = 4;
 
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var entry = (PlayerVendorStockEntry) focus;
 			var item = (Item) entry.FindCont(0);
 			var vendor = (PlayerVendor) entry.TopObj();
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts {
 			//}
 
 
-			var dialogHandler = new ImprovedDialog(this.GumpInstance);
+			var dialogHandler = new ImprovedDialog(gi);
 
 			//create the background GUTAMatrix and set its size       
 			dialogHandler.CreateBackground(300);
@@ -212,7 +212,7 @@ namespace SteamEngine.CompiledScripts {
 			#endregion
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//try {
 			var button = gr.PressedButton;
 

@@ -34,7 +34,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		private static int width = 450;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			Region reg = (Region) args.GetTag(regionTK);
 			List<MutableRectangle> rectList = (List<MutableRectangle>) args.GetTag(rectsListTK);
 			if (rectList == null) {
@@ -47,7 +47,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);   //prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, rectList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(25, 25);
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (mohl byt nejaky pridan/smazan)
 			StaticRegion reg = (StaticRegion) args.GetTag(regionTK);
 			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(rectsListTK);

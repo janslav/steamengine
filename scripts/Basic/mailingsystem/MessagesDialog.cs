@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey msgsListTK = TagKey.Acquire("_messages_list_");
 
 		/// <summary>Display the list of the messages</summary>
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			List<DelayedMsg> messagesList = (List<DelayedMsg>) args.GetTag(msgsListTK); //seznam msgi si posilame v argumentu (napriklad pri pagingu)
 			if (messagesList == null) {
 				//vzit seznam a pripadne ho setridit...
@@ -45,7 +45,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, messagesList.Count);
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 			//pozadi    
 			dialogHandler.CreateBackground(800);
 			dialogHandler.SetLocation(40, 30);
@@ -106,7 +106,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam zprav z kontextu (mohl jiz byt trideny apd.)
 			ArrayList messagesList = (ArrayList) args.GetTag(msgsListTK);
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)

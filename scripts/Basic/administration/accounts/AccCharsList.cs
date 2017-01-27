@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog listing all characters of the account</summary>
 	public class D_Acc_Characters : CompiledGumpDef {
 		private static readonly TagKey accountTK = TagKey.Acquire("_account_with_chars_");
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			AbstractAccount acc = AbstractAccount.GetByName((string) args[0]); //jmeno accountu
 			if (acc == null) {
 				Globals.SrcCharacter.SysMessage("Account se jménem " + args[0] + " neexistuje!", (int) Hues.Red);
@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//mame-li ho, ulozme si ho do parametru pro pozdejsi pouziti
 			args.SetTag(accountTK, acc);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(600);
 			dlg.SetLocation(50, 600);
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			AbstractAccount acc = (AbstractAccount) args.GetTag(accountTK);
 
 			if (gr.PressedButton < 10) { //ovladaci tlacitka		

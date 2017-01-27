@@ -27,10 +27,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public abstract class AbstractInputDef : CompiledGumpDef {
 		protected static readonly TagKey inputParamsTK = TagKey.Acquire("_input_params_");
 
-		public AbstractInputDef() {
+		protected AbstractInputDef() {
 		}
 
-		public AbstractInputDef(string defname)
+		protected AbstractInputDef(string defname)
 			: base(defname) {
 		}
 
@@ -50,13 +50,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		/// <summary>Method called when clicked on the OK button in the dialog, sending the filled text</summary>
-		public abstract void Response(Character sentTo, TagHolder focus, string filledText);
+		public abstract void Response(Gump gi, TagHolder focus, string filledText);
 
 		/// <summary>Construct method creates the dialog itself</summary>
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//there should be a input-text in the args params array
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 
 			//create the background GUTAMatrix and set its size       
 			dialogHandler.CreateBackground(400);
@@ -83,7 +83,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		}
 
 		/// <summary>Button pressed - exit the dialog or pass the calling onto the underlaying inputDef</summary>
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			switch (gr.PressedButton) {
 				case 0: //exit or rightclick
 						//znovuzavolat pripadny predchozi dialog
@@ -92,7 +92,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				case 1: //OK
 						//pass the call with the input value
 					string inputVal = gr.GetTextResponse(1);
-					this.Response((Character) gi.Cont, gi.Focus, inputVal);
+					this.Response(gi, focus, inputVal);
 					//a zavolat predchozi dialog
 					DialogStacking.ShowPreviousDialog(gi);
 					break;
@@ -104,7 +104,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public sealed class ScriptedInputDialogDef : AbstractInputDef {
 		private string label;
 		private string defaultInput;
-		private LScriptHolder on_response;
+		private LScriptHolder response;
 
 		public ScriptedInputDialogDef(string defname)
 			: base(defname) {
@@ -116,7 +116,6 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 
 		internal static IUnloadable Load(PropsSection input) {
-			string typeName = input.HeaderType.ToLowerInvariant();
 			string defname = input.HeaderName.ToLowerInvariant();
 
 			AbstractScript def = AbstractScript.GetByDefname(defname);
@@ -133,9 +132,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				throw new OverrideNotAllowedException("ScriptedInputDialogDef " + LogStr.Ident(defname) + " defined multiple times.");
 			}
 			//Get the main trigger that gets perfomed when the input dialog is sent
-			TriggerSection trigger_response = input.PopTrigger("response");
-			if (trigger_response != null) {
-				id.on_response = new LScriptHolder(trigger_response);
+			var triggerResponse = input.PopTrigger("response");
+			if (triggerResponse != null) {
+				id.response = new LScriptHolder(triggerResponse);
 			} else {
 				Logger.WriteWarning(input.Filename, input.HeaderLine, "InputDialogDef " + LogStr.Ident(input) + " has not a trigger submit defined.");
 			}
@@ -162,13 +161,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// Action called when the input dialog is confirmed. The parameters of the call will be
 		/// 1st - the inputted text, followed by the params the input dialog was called with
 		/// </summary>
-		public override void Response(Character sentTo, TagHolder focus, string filledText) {
+		public override void Response(Gump gi, TagHolder focus, string filledText) {
 			//prepend the input text to previous input parameters
-			object[] oldParams = this.GumpInstance.InputArgs.GetArgsArray();
+			object[] oldParams = gi.InputArgs.GetArgsArray();
 			object[] newPars = new object[oldParams.Length + 1]; //create a new bigger array, we need to add a new 0th value...
 			Array.Copy(oldParams, 0, newPars, 1, oldParams.Length); //copy all old values to the new field beginning with the index 1
 			newPars[0] = filledText; //filled text will be 0th                        
-			this.on_response.Run(focus, newPars); //pass the filled text value
+			this.response.Run(focus, newPars); //pass the filled text value
 		}
 
 		///// <summary>Unregister the input dialog def from the other defs</summary>
@@ -203,14 +202,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public sealed class CompiledInputDef : AbstractInputDef {
 		readonly string label;
 		readonly string defaultInput;
-		readonly Action<Character, TagHolder, string> response;
+		readonly Action<CompiledGump, TagHolder, string> response;
 
-		public CompiledInputDef(string label, string defaultInput, Action<Character, TagHolder, string> response) {
+		public CompiledInputDef(string label, string defaultInput, Action<CompiledGump, TagHolder, string> response) {
 			this.label = label;
 			this.defaultInput = defaultInput;
 			this.response = response;
 		}
-
 
 		public override string Label {
 			get { return this.label; }
@@ -220,8 +218,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			get { return this.defaultInput; }
 		}
 
-		public override void Response(Character sentTo, TagHolder focus, string filledText) {
-			this.response(sentTo, focus, filledText);
+		public override void Response(Gump gi, TagHolder focus, string filledText) {
+			this.response((CompiledGump) gi, focus, filledText);
 		}
 	}
 }

@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// Seznam parametru: 0 - list s rectanglama kam to pak pridame 
 		/// 1-4 - pripadne predvyplnene souradnice (zobrazuji se jen pri chybach)
 		/// </summary>
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string minX, minY, maxX, maxY; //predzadane hodnoty (if any)
 			object[] argsArray = args.GetArgsArray();
 			minX = string.Concat(argsArray[0]);
@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			maxX = string.Concat(argsArray[2]);
 			maxY = string.Concat(argsArray[3]);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(100, 100);
@@ -73,7 +73,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam rectanglu bereme z parametru (jsou to ty mutable)
 			List<MutableRectangle> rectsList = (List<MutableRectangle>) args.GetTag(D_Region_Rectangles.rectsListTK);
 			if (gr.PressedButton == 0) { //exit

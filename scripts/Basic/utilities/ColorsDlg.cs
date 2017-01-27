@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		static readonly int columnsCnt = 10; //kolik sloupecku bude mit dialog?
 		static readonly int dlgWidth = 850; //sirka dialogu
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int startingColor = Convert.ToInt32(args[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 
 			//zjistit zda bude paging, najit maximalni index na strance
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
@@ -37,7 +37,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			//maximalni index (20 radku mame) + hlidat konec seznamu...
 			int imax = Math.Min(firstiVal + (ImprovedDialog.PAGE_ROWS * columnsCnt), lastColor);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(dlgWidth);
 			dlg.SetLocation(50, 50);
@@ -79,7 +79,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)
 				switch (gr.PressedButton) {
 					case 0: //exit

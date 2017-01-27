@@ -25,14 +25,14 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey ipFromRangeTK = TagKey.Acquire("_ip_from_range_");
 		internal static readonly TagKey ipToRangeTK = TagKey.Acquire("_ip_to_range_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string ipfrom = TagMath.SGetTagNotNull(args, ipFromRangeTK);
 			string ipto = TagMath.SGetTagNotNull(args, ipToRangeTK);
 
 			int width = 500;
 			int labels = 150;
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 
 			dialogHandler.CreateBackground(width);
 			dialogHandler.SetLocation(200, 280);
@@ -78,7 +78,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 
 		}
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 1) {
 				Firewall.AddBlockedIPRange(gr.GetTextResponse(9), gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//rovnou se vracime			

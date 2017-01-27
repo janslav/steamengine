@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 700;
 		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam plugin z pluginholdera (char nebo item) prisleho v parametru dialogu
 			PluginHolder ph = (PluginHolder) args.GetTag(holderTK); //z koho budeme pluginy brat?
 			List<KeyValuePair<PluginKey, Plugin>> pluginList = args.GetTag(pluginListTK) as List<KeyValuePair<PluginKey, Plugin>>;
@@ -46,7 +46,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, pluginList.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(width);
 			dlg.SetLocation(50, 50);
@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			//seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			List<KeyValuePair<PluginKey, Plugin>> pluginList = (List<KeyValuePair<PluginKey, Plugin>>) args.GetTag(pluginListTK);
 			int firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);

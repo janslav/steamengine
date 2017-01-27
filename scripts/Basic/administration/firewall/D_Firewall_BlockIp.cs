@@ -24,13 +24,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Firewall_BlockIP : CompiledGumpDef {
 		internal static readonly TagKey ipToBlockTK = TagKey.Acquire("_ip_to_block_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			string ip = TagMath.SGetTagNotNull(args, ipToBlockTK);
 
 			int width = 500;
 			int labels = 130;
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 
 			dialogHandler.CreateBackground(width);
 			dialogHandler.SetLocation(200, 280);
@@ -69,7 +69,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 
 		}
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton == 1) { //OK button
 				Firewall.AddBlockedIP(gr.GetTextResponse(10), gr.GetTextResponse(11), gi.Cont.Account);
 				//zavolat stacklej dialog (if any)				

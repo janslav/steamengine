@@ -41,9 +41,9 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 		}
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			sendTo.SysMessage("Co chceš vyrobit?");
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
 
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
@@ -190,7 +190,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus1, GumpResponse gr, DialogArgs args) {
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
 			int btnNo = gr.PressedButton;
 			if (btnNo < 10) {//basic buttons
@@ -363,8 +363,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Dialog listing all available craftmenu categories (one for every crafting skill)</summary>
 	public class D_CraftmenuCategories : CompiledGumpDef {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(240);
 			dlg.SetLocation(70, 70);
@@ -416,7 +416,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			Gump newGi = null;
 			switch (gr.PressedButton) {
 				case 0://exit

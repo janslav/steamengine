@@ -39,7 +39,7 @@ namespace SteamEngine.Scripting.Objects {
 	/// label and text in the Info/Error dialog-messages). Other args should be added as tags!
 	/// </summary>
 	public class DialogArgs : TagHolder {
-		private object[] fldArgs;
+		private readonly object[] fldArgs;
 
 		//public DialogArgs() {
 		//    this.fldArgs = new object[0]; //aspon prazdny pole, ale ne null
@@ -64,47 +64,25 @@ namespace SteamEngine.Scripting.Objects {
 	}
 
 	public class ResponseText {
-		private readonly int id;
-		private readonly string text;
-
 		public ResponseText(int id, string text) {
-			this.id = id;
-			this.text = text;
+			this.Id = id;
+			this.Text = text;
 		}
 
-		public int Id {
-			get {
-				return this.id;
-			}
-		}
+		public int Id { get; }
 
-		public string Text {
-			get {
-				return this.text;
-			}
-		}
+		public string Text { get; }
 	}
 
 	public class ResponseNumber {
-		private readonly int id;
-		private readonly decimal number;
-
 		public ResponseNumber(int id, decimal number) {
-			this.id = id;
-			this.number = number;
+			this.Id = id;
+			this.Number = number;
 		}
 
-		public int Id {
-			get {
-				return this.id;
-			}
-		}
+		public int Id { get; }
 
-		public decimal Number {
-			get {
-				return this.number;
-			}
-		}
+		public decimal Number { get; }
 	}
 }
 

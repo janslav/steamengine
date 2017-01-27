@@ -29,8 +29,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static int width = 600;
 		private static readonly TagKey previousItemdefValsTK = TagKey.Acquire("_previous_itemdef_values_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			CraftmenuCategory cat = (CraftmenuCategory) args[0]; //this is a CraftmenuCategory for setting
 
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			CraftmenuCategory cat = (CraftmenuCategory) args[0];
 			int btnNo = gr.PressedButton;
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK); //prvni index na strance

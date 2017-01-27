@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static TagKey editFieldsIndexPairingTK = TagKey.Acquire("_edit_fields_index_pairing_");
 		internal static TagKey detailIndexPairingTK = TagKey.Acquire("_detail_button_index_pairing_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			object target = args[0];//target of info dialog
 
 			//first argument is the object being infoized - we will get its DataView first
@@ -40,7 +40,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int firstItemButt = TagMath.IGetTag(args, pagingButtonsTK);//buttons paging 1st item index
 			int firstItemFld = TagMath.IGetTag(args, pagingFieldsTK);//fields paging 1st item index
 
-			InfoDialogHandler dlg = new InfoDialogHandler(this.GumpInstance);
+			InfoDialogHandler dlg = new InfoDialogHandler(gi);
 			dlg.CreateBackground(InfoDialogHandler.INFO_WIDTH);
 			dlg.SetLocation(50, 50);
 			int innerWidth = InfoDialogHandler.INFO_WIDTH - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			object target = args[0];//target of info dialog
 
 			if (gr.PressedButton < 10) { //basic dialog buttons (close, info, store)

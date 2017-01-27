@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Dialog that will display all trackable characters nearby the tracker with the possibility to track them...</summary>
 	public class D_Tracking_Characters : CompiledGumpDef {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			SkillSequenceArgs ssa = (SkillSequenceArgs) args[0];
 			CharacterTypes charType = (CharacterTypes) ssa.Param1;
 			List<AbstractCharacter> charsAround = (List<AbstractCharacter>) args[1];//trackable characters around
@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int firstiVal = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);//prvni index na strance
 			int imax = Math.Min(firstiVal + ImprovedDialog.PAGE_ROWS, charsAround.Count);
 
-			ImprovedDialog dlg = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dlg = new ImprovedDialog(gi);
 			//pozadi    
 			dlg.CreateBackground(180);
 			dlg.SetLocation(80, 50);
@@ -93,7 +93,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dlg.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			if (gr.PressedButton < 10) {
 				switch (gr.PressedButton) {
 					case 0: //exit - finish tracking without selecting anything

@@ -313,8 +313,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>The dialog that will display the treasure menu</summary>
 	public class D_TreasureChest : CompiledGumpDef {
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 			TreasureChest treasure = focus as TreasureChest;
 			treasure.EnsureListItemEntry();
 			treasure.EnsureListSpawnEntry();
@@ -377,7 +377,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			TreasureChest treasure = (TreasureChest) gi.Focus;
 			Player p = gi.Cont as Player;
 			int button = gr.PressedButton;
@@ -457,8 +457,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>The dialog that will display items generated it the trasure.</summary>
 	public class D_TreasureBounty : CompiledGumpDef {
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 			TreasureChest treasure = focus as TreasureChest;
 			List<TreasureItemEntry> trItems = (focus as TreasureChest).TreasureItems;
 			int rowCount = treasure.TreasureItems.Count;
@@ -500,7 +500,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			Player p = gi.Cont as Player;
 			TreasureChest treasure = (TreasureChest) gi.Focus;
 			switch (gr.PressedButton) {
@@ -562,8 +562,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>The dialog that will display spawns guarding the trasure.</summary>
 	public class D_TreasureSpawns : CompiledGumpDef {
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 			List<TreasureSpawnEntry> trSpawns = ((TreasureChest) focus).TreasureSpawns;
 			TreasureChest treasure = focus as TreasureChest;
 			int rowCount = treasure.TreasureSpawns.Count;
@@ -601,7 +601,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			Player p = gi.Cont as Player;
 			TreasureChest treasure = (TreasureChest) gi.Focus;
 			switch (gr.PressedButton) {

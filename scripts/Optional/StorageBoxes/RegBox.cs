@@ -50,7 +50,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static readonly TagKey buttonsForReagsTK = TagKey.Acquire("_rb_ButtonsForReags_");
 		private static readonly TagKey buttonsCountTK = TagKey.Acquire("_rb_ButtonsCount_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int i;
 			Dictionary<int, ItemDef> dictButtonForReags = new Dictionary<int, ItemDef>();
 			int buttonsCount = 0;
@@ -65,26 +65,26 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			int baseX = 20;
 			int baseY = 60;
-			this.SetLocation(70, 25);
-			this.ResizePic(0, 0, 5054, 660, 165 + radku * 80);
-			this.ResizePic(10, 10, 3000, 640, 145 + radku * 80);
-			this.Button(15, 25, 4005, 4007, true, 0, 1);		// add reagents
-			this.Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
-			this.HtmlGumpA(255, 15, 150, 20, "Bedýnka na regy", false, false);
-			this.HtmlGumpA(55, 27, 100, 20, "Pøidat regy", false, false);
+			gi.SetLocation(70, 25);
+			gi.ResizePic(0, 0, 5054, 660, 165 + radku * 80);
+			gi.ResizePic(10, 10, 3000, 640, 145 + radku * 80);
+			gi.Button(15, 25, 4005, 4007, true, 0, 1);		// add reagents
+			gi.Button(620, 10, 4017, 4019, true, 0, 0);	// close dialog
+			gi.HtmlGumpA(255, 15, 150, 20, "Bedýnka na regy", false, false);
+			gi.HtmlGumpA(55, 27, 100, 20, "Pøidat regy", false, false);
 			if ((radku == 0) && (i == 0)) {
-				this.HtmlGumpA(baseX, 75, 200, 20, "Bedna na regy je prázdná", false, false);
+				gi.HtmlGumpA(baseX, 75, 200, 20, "Bedna na regy je prázdná", false, false);
 			} else {
 				i = 0;
 				foreach (KeyValuePair<ItemDef, int> pair in box.inBoxReags) {
-					this.Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
-					this.HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
-					this.HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
-					this.HtmlGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
-					this.CheckBox(baseX, baseY + 38, 9903, 9904, false, buttonsCount);
-					this.HtmlGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
-					this.NumberEntryA(baseX + 80, baseY + 38, 65, 20, 0, buttonsCount, 0);
-					this.TilePic(baseX + 110, baseY, pair.Key.Model);
+					gi.Button(baseX, baseY, 4017, 4019, true, 0, 1000 + buttonsCount);
+					gi.HtmlGumpA(baseX + 35, baseY, 110, 20, pair.Key.Name, false, false);
+					gi.HtmlGumpA(baseX + 35, baseY + 20, 100, 20, "Pocet:", false, false);
+					gi.HtmlGumpA(baseX + 75, baseY + 20, 100, 20, Convert.ToString(pair.Value), false, false);
+					gi.CheckBox(baseX, baseY + 38, 9903, 9904, false, buttonsCount);
+					gi.HtmlGumpA(baseX + 35, baseY + 38, 50, 20, "Vyndat:", false, false);
+					gi.NumberEntryA(baseX + 80, baseY + 38, 65, 20, 0, buttonsCount, 0);
+					gi.TilePic(baseX + 110, baseY, pair.Key.Model);
 					dictButtonForReags.Add(buttonsCount, pair.Key);
 					i++;
 					buttonsCount++;
@@ -99,10 +99,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			}
 			args.SetTag(buttonsCountTK, buttonsCount);
 			args.SetTag(buttonsForReagsTK, dictButtonForReags);
-			this.Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
+			gi.Button(20, 125 + radku * 80, 4023, 4025, true, 0, 2);		// OK
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			RegBox box = (RegBox) gi.Focus;
 			if (!((Player) gi.Cont).CanPickUpWithMessage(box)) {
 				return;

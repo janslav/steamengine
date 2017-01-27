@@ -20,7 +20,7 @@ using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts.Dialogs {
 	public class D_Test : CompiledGumpDef {
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int headerColor = 1;
 			string header = "Carpentry Menu";
 			//int contentColor = 1;
@@ -28,29 +28,29 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			int width = 200;
 			int height = 220;
 
-			this.ResizePic(0, 0, 5054, width, height + 100);
+			gi.ResizePic(0, 0, 5054, width, height + 100);
 
-			this.GumpPicTiled(10, 10, width - 20, 20, 2624);
-			this.CheckerTrans(10, 10, width - 20, 20);
-			this.TextA(10, 10, headerColor, header);
+			gi.GumpPicTiled(10, 10, width - 20, 20, 2624);
+			gi.CheckerTrans(10, 10, width - 20, 20);
+			gi.TextA(10, 10, headerColor, header);
 
-			this.GumpPicTiled(10, 40, width - 20, height - 80, 2624);
-			this.CheckerTrans(10, 40, width - 20, height - 80);
+			gi.GumpPicTiled(10, 40, width - 20, height - 80, 2624);
+			gi.CheckerTrans(10, 40, width - 20, height - 80);
 
-			this.HtmlGumpA(10, 40, width - 20, height - 80, content, false, true);
+			gi.HtmlGumpA(10, 40, width - 20, height - 80, content, false, true);
 
-			this.GumpPicTiled(10, height - 30, width - 20, 20, 2624);
-			this.CheckerTrans(10, height - 30, width - 20, 20);
-			this.Button(10, height - 30, 4005, 4007, true, 0, 1);
-			this.CheckBox(10, height + 30, 210, 211, true, 786);
-			this.TextEntryA(10, height + 50, 500, 100, 1, 762, "this is texentry ìšèøžýá");
+			gi.GumpPicTiled(10, height - 30, width - 20, 20, 2624);
+			gi.CheckerTrans(10, height - 30, width - 20, 20);
+			gi.Button(10, height - 30, 4005, 4007, true, 0, 1);
+			gi.CheckBox(10, height + 30, 210, 211, true, 786);
+			gi.TextEntryA(10, height + 50, 500, 100, 1, 762, "this is texentry ìšèøžýá");
 
-			this.NumberEntryA(10, height + 70, 500, 100, 1, 763, 5.5m);
+			gi.NumberEntryA(10, height + 70, 500, 100, 1, 763, 5.5m);
 
-			this.XmfhtmlGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
+			gi.XmfhtmlGumpColor(40, height - 30, 120, 20, 1011036, false, false, 32767); // OKAY
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			Console.WriteLine("OnResponse");
 			gi.Cont.SysMessage("OnResponse from " + gi);
 			gi.Cont.SysMessage("button : " + gr.PressedButton);

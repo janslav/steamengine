@@ -27,13 +27,13 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//internal static readonly TagKey ipSortingTK = TagKey.Acquire("_blocked_ips_sorting_");
 		//internal static readonly TagKey ipsListTK = TagKey.Acquire("_blocked_ips_list_");
 
-		public override void Construct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			int IPwidth = 120; //velikost okna pro IP adresu 
 			int duvod = 350;
 			int kdo = 110;
 			int width = IPwidth * 2 + duvod + kdo + 2 * ButtonMetrics.D_BUTTON_WIDTH;
 
-			ImprovedDialog dialogHandler = new ImprovedDialog(this.GumpInstance);
+			ImprovedDialog dialogHandler = new ImprovedDialog(gi);
 
 			args.SetDataComparerIfNeededLScript<FirewallEntry>("LowerBound.GetAddressBytes()");
 
@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 			dialogHandler.WriteOut();
 		}
 
-		public override void OnResponse(Gump gi, GumpResponse gr, DialogArgs args) {
+		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			List<FirewallEntry> entries = args.GetDataList<FirewallEntry>();
 
 			if (gr.PressedButton < 10) { //ovladaci tlacitka (sorting, paging atd)				
