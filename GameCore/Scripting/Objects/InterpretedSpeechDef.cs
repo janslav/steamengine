@@ -16,26 +16,29 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Scripting.Objects {
-	public class ScriptedSpeech : AbstractSpeech {
-		private static readonly Dictionary<string, Regex> regexes = new Dictionary<string, Regex>(StringComparer.OrdinalIgnoreCase);
+	public class ScriptedSpeechDef : AbstractSpeechDef {
+		private static readonly ConcurrentDictionary<string, Regex> regexes =
+			new ConcurrentDictionary<string, Regex>(StringComparer.OrdinalIgnoreCase);
 		//pattern(string) - Regex pairs
 
-		SpeechTrigger[] triggers;
+		private readonly Shielded<SpeechTrigger[]> triggers = new Shielded<SpeechTrigger[]>();
 
-		public ScriptedSpeech(string defname)
+		public ScriptedSpeechDef(string defname)
 			: base(defname) {
 		}
 
 		private class SpeechTrigger {
 			internal LScriptHolder holder;
-			internal Regex re;
+			internal readonly Regex re;
 
 			internal SpeechTrigger(string pattern) {
 				this.re = GetRegex(pattern);
@@ -43,28 +46,30 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
+			SeShield.AssertInTransaction();
+
 			var name = input.HeaderName.ToLower();
 			var s = AbstractScript.GetByDefname(name);
-			ScriptedSpeech ssd;
+			ScriptedSpeechDef ssd;
 			if (s != null) {
-				ssd = s as ScriptedSpeech;
+				ssd = s as ScriptedSpeechDef;
 				if (ssd == null) {//is not scripted, so can not be overriden
 					throw new SEException(input.Filename, input.HeaderLine, "A script called " + LogStr.Ident(name) + " already exists!");
 				}
 			} else {
-				ssd = new ScriptedSpeech(name);
+				ssd = new ScriptedSpeechDef(name);
 				ssd.Register();
 			}
 
 			//now do load the trigger code. 
 			var triggerCount = input.TriggerCount;
-			ssd.triggers = new SpeechTrigger[triggerCount];
+			var triggers = new SpeechTrigger[triggerCount];
 			var sameCodeTriggers = new List<SpeechTrigger>();
 			for (var i = 0; i < triggerCount; i++) {
 				var trigger = input.GetTrigger(i);
 				var st = new SpeechTrigger(trigger.TriggerName);
 				sameCodeTriggers.Add(st);
-				ssd.triggers[i] = st;
+				triggers[i] = st;
 
 				if (!IsEmptyCode(trigger.Code.ToString())) {
 					var holder = new LScriptHolder(trigger);
@@ -75,17 +80,23 @@ namespace SteamEngine.Scripting.Objects {
 				}
 			}
 
+			ssd.triggers.Value = triggers;
+
 			return ssd;
 		}
 
 		public override void Unload() {
+			SeShield.AssertInTransaction();
+
 			base.Unload();
-			this.triggers = null;
+			this.triggers.Value = null;
 		}
 
 		protected override SpeechResult Handle(AbstractCharacter listener, SpeechArgs speechArgs) {
+			SeShield.AssertInTransaction();
+
 			var message = speechArgs.Speech;
-			foreach (var st in this.triggers) {
+			foreach (var st in this.triggers.Value) {
 				var m = st.re.Match(message);
 				if (m.Success) {
 					var o = st.holder.Run(listener, speechArgs);
@@ -96,8 +107,10 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs) {
+			SeShield.AssertInTransaction();
+
 			var message = speechArgs.Speech;
-			foreach (var st in this.triggers) {
+			foreach (var st in this.triggers.Value) {
 				var m = st.re.Match(message);
 				if (m.Success) {
 					var o = st.holder.TryRun(listener, speechArgs);
@@ -110,14 +123,8 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private static Regex GetRegex(string triggername) {
-			var pattern = GeneratePattern(triggername);
-			Regex regex;
-			if (!regexes.TryGetValue(pattern, out regex)) {
-				regex = new Regex(pattern,
-					RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-				regexes[pattern] = regex;
-			}
-			return regex;
+			return regexes.GetOrAdd(GeneratePattern(triggername), key =>
+				new Regex(key, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled));
 		}
 
 		private static string GeneratePattern(string triggername) {
@@ -145,5 +152,4 @@ namespace SteamEngine.Scripting.Objects {
 			ScriptLoader.RegisterScriptType(new[] { "Speech", "SpeechDef" }, LoadFromScripts, false);
 		}
 	}
-
 }

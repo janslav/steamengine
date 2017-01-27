@@ -63,7 +63,7 @@
     <Compile Include="Gump.cs" />
     <Compile Include="InterpretedGump.cs" />
     <Compile Include="Scripting\Objects\InterpretedSpeechDef.cs" />
-    <Compile Include="Scripting\Objects\SpeechDef.cs" />
+    <Compile Include="Scripting\Objects\AbstractSpeechDef.cs" />
     <Compile Include="AI\AI.cs" />
     <Compile Include="AI\PathFinder.cs" />
     <Compile Include="AuxServerPipe\AuxServerPipeClient.cs" />

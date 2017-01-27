@@ -18,12 +18,12 @@
 
 namespace SteamEngine.Scripting.Objects {
 
-	public abstract class AbstractSpeech : TriggerGroup {
-		protected AbstractSpeech()
+	public abstract class AbstractSpeechDef : TriggerGroup {
+		protected AbstractSpeechDef()
 		{
 		}
 
-		protected AbstractSpeech(string name)
+		protected AbstractSpeechDef(string name)
 			: base(name) {
 		}
 
@@ -63,8 +63,8 @@ namespace SteamEngine.Scripting.Objects {
 
 		protected abstract SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs);
 
-		public new static AbstractSpeech GetByDefname(string defname) {
-			return AbstractScript.GetByDefname(defname) as AbstractSpeech;
+		public new static AbstractSpeechDef GetByDefname(string defname) {
+			return AbstractScript.GetByDefname(defname) as AbstractSpeechDef;
 		}
 	}
 }
