@@ -55,20 +55,20 @@ namespace SteamEngine.Scripting.Objects {
 
 		public static int IndexedCount {
 			get {
-				Shield.AssertInTransaction();
+				SeShield.AssertInTransaction();
 				return byIndex.Count();
 			}
 		}
 
 		public static IEnumerable<TDef> AllIndexedDefs {
 			get {
-				Shield.AssertInTransaction();
+				SeShield.AssertInTransaction();
 				return byIndex.Values;
 			}
 		}
 
 		public override AbstractScript Register() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			TDef previous;
 			var index = this.DefIndex;
@@ -83,7 +83,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override void Unregister() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			TDef previous;
 			var index = this.DefIndex;

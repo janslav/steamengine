@@ -64,7 +64,7 @@ namespace SteamEngine {
 		}
 
 		protected static T Acquire(string name, Func<string, int, T> factory) {
-			return Shield.InTransaction(() => {
+			return SeShield.InTransaction(() => {
 				T key;
 				if (!byName.TryGetValue(name, out key)) {
 					var uid = uids.Value++;

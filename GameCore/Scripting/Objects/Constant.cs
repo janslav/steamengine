@@ -132,7 +132,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static Constant Set(string name, object newValue) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			Constant constant;
 			if (!allConstantsByName.TryGetValue(name, out constant)) {
 				constant = new Constant(name, newValue);
@@ -155,7 +155,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static Constant[] Load(PropsSection input) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			List<Constant> list = new List<Constant>();
 			string line;
@@ -229,7 +229,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		/// <summary>This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True</summary>
 		public static void ResolveAll() {
-			var allConstans = Shield.InTransaction(allConstantsByName.Values.ToList);
+			var allConstans = SeShield.InTransaction(allConstantsByName.Values.ToList);
 			var count = allConstans.Count;
 			Logger.WriteDebug("Resolving " + count + " constants");
 			DateTime before = DateTime.Now;
@@ -290,7 +290,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static void ForgetAll() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			allConstantsByName.Clear();
 		}
 

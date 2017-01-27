@@ -37,7 +37,7 @@ namespace SteamEngine {
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			switch (param) {
 				case "event":
@@ -84,15 +84,15 @@ namespace SteamEngine {
 		}
 
 		internal new static void LoadingFinished() {
-			foreach (var loader in Shield.InTransaction(delayedLoaders.ToList)) {
-				Shield.InTransaction(loader.Resolve);
+			foreach (var loader in SeShield.InTransaction(delayedLoaders.ToList)) {
+				SeShield.InTransaction(loader.Resolve);
 			}
 
-			Shield.InTransaction(delayedLoaders.Clear);
+			SeShield.InTransaction(delayedLoaders.Clear);
 		}
 
 		public void AddTriggerGroup(TriggerGroup tg) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if (tg == null) return;
 
 			if (!this.triggerGroups.Contains(tg)) {
@@ -101,12 +101,12 @@ namespace SteamEngine {
 		}
 
 		public IEnumerable<TriggerGroup> GetAllTriggerGroups() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			return this.triggerGroups;
 		}
 
 		public void RemoveTriggerGroup(TriggerGroup tg) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if (tg == null) return;
 			this.triggerGroups.Remove(tg);
 		}
@@ -117,7 +117,7 @@ namespace SteamEngine {
 		}
 
 		public void ClearTriggerGroups() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			this.triggerGroups.Clear();
 		}
 
@@ -133,14 +133,14 @@ namespace SteamEngine {
 		/// <param name="tk">The TriggerKey for the trigger to call.</param>
 		/// <param name="sa">The arguments (other than argv) for sphere scripts</param>
 		public virtual void Trigger(TriggerKey tk, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				tg.Run(this, tk, sa);
 			}
 		}
 
 		public virtual void TryTrigger(TriggerKey tk, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				tg.TryRun(this, tk, sa);
 			}
@@ -153,7 +153,7 @@ namespace SteamEngine {
 		/// <param name="sa">Arguments for scripts (argn, args, argo, argn1, argn2, etc). Can be null.</param>
 		/// <returns>TriggerResult.Cancel if any called trigger scripts returned 1, TriggerResult.Continue otherwise.</returns>
 		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				if (TagMath.Is1(tg.Run(this, tk, sa))) {
 					return TriggerResult.Cancel;
@@ -163,7 +163,7 @@ namespace SteamEngine {
 		}
 
 		public virtual TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
 					return TriggerResult.Cancel;
@@ -173,7 +173,7 @@ namespace SteamEngine {
 		}
 
 		public void Trigger(TriggerKey tk, params object[] scriptArguments) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				this.Trigger(tk, new ScriptArgs(scriptArguments));
 			} else {
@@ -182,7 +182,7 @@ namespace SteamEngine {
 		}
 
 		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				return this.CancellableTrigger(tk, new ScriptArgs(scriptArguments));
 			}

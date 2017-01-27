@@ -170,6 +170,7 @@
     <Compile Include="Regions\Sector.cs" />
     <Compile Include="Regions\StaticRegion.cs" />
     <Compile Include="Regions\StaticSector.cs" />
+    <Compile Include="SeShield.cs" />
     <Compile Include="Timers\BoundTimer.cs" />
     <Compile Include="Timers\DelegateTimer.cs" />
     <Compile Include="Timers\FunctionTimer.cs" />

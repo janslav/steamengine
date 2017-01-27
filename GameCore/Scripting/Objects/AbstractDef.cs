@@ -69,7 +69,7 @@ namespace SteamEngine.Scripting.Objects {
 				return this.shieldedAltDefname.Value;
 			}
 			protected set {
-				Shield.AssertInTransaction();
+				SeShield.AssertInTransaction();
 				this.Unregister();
 				this.shieldedAltDefname.Value = value;
 				this.Register();
@@ -104,7 +104,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		#region Loading from saves
 		internal static void LoadSectionFromSaves(PropsSection input) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			//todo: a way to load new defs (or just regions)
 
 			string typeName = input.HeaderType;
@@ -133,7 +133,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		private void LoadField_Delayed(object resolvedObject, string filename, int line, object args) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			string fieldName = (string) args;
 			FieldValue fv;
 
@@ -168,7 +168,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		#region FieldValue methods
 		protected FieldValue InitTypedField(string name, object value, Type type) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if (typeof(ThingDef).IsAssignableFrom(type)) {
 				return this.InitThingDefField(name, value, type);
 			}
@@ -184,7 +184,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected FieldValue InitThingDefField(string name, object value, Type type) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			FieldValue fieldValue;
 			if (!this.fieldValues.TryGetValue(name, out fieldValue)) {
 				fieldValue = new FieldValue(name, FieldValueType.ThingDefType, type, value);
@@ -196,7 +196,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected FieldValue InitModelField(string name, object value) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			FieldValue fieldValue;
 			if (!this.fieldValues.TryGetValue(name, out fieldValue)) {
 				fieldValue = new FieldValue(name, FieldValueType.Model, null, value);
@@ -208,7 +208,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected FieldValue InitTypelessField(string name, object value) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			FieldValue fieldValue;
 			if (!this.fieldValues.TryGetValue(name, out fieldValue)) {
 				fieldValue = new FieldValue(name, FieldValueType.Typeless, null, value);
@@ -228,7 +228,7 @@ namespace SteamEngine.Scripting.Objects {
 		//}
 
 		protected virtual void SetCurrentFieldValue(string name, object value) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			((FieldValue) this.fieldValues[name]).CurrentValue = value;
 		}
 
@@ -285,7 +285,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public void Save(SaveStream output) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			bool headerWritten = false;
 			foreach (var entry in this.fieldValues) {
@@ -330,7 +330,7 @@ namespace SteamEngine.Scripting.Objects {
 		private readonly ShieldedSeqNc<PropsLine> postponedLines = new ShieldedSeqNc<PropsLine>();
 
 		public static Type GetDefTypeByName(string name) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			ConstructorInfo ctor;
 			if (constructorsByTypeName.TryGetValue(name, out ctor)) {
 				return ctor.DeclaringType;
@@ -339,13 +339,13 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static void RegisterDefnameParser<T>(DefnameParser parserMethod) where T : AbstractDef {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			registeredDefnameParsersByType.Add(typeof(T), parserMethod); //throws in case of duplicity
 			inferredDefnameParsersByType.Clear();
 		}
 
 		private static DefnameParser GetDefnameParser(Type defType) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			DefnameParser parserMethod;
 
 			if (inferredDefnameParsersByType.TryGetValue(defType, out parserMethod)) {
@@ -373,7 +373,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static bool RegisterSubtype(Type defType) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if (!defType.IsAbstract) {
 				ConstructorInfo ci;
 				if (constructorsByTypeName.TryGetValue(defType.Name, out ci)) {
@@ -404,7 +404,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static IUnloadable LoadFromScripts(PropsSection input) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			//it is something like this in the .scp file: [headerType headerName] = [WarcryDef a_warcry] etc.
 			string typeName = input.HeaderType;
 			ConstructorInfo constructor = constructorsByTypeName[typeName];
@@ -505,7 +505,7 @@ namespace SteamEngine.Scripting.Objects {
 		//register with static dictionaries and lists. 
 		//Can be called multiple times without harm
 		public override AbstractScript Register() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			var alt = this.Altdefname;
 			if (!string.IsNullOrEmpty(alt)) {
@@ -525,7 +525,7 @@ namespace SteamEngine.Scripting.Objects {
 		//unregister from static dictionaries and lists. 
 		//Can be called multiple times without harm
 		protected override void Unregister() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			var alt = this.Altdefname;
 			if (!string.IsNullOrEmpty(alt)) {
@@ -565,7 +565,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", MessageId = "filename")]
 		protected virtual void LoadScriptLine(string filename, int line, string param, string args) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			Match m = TagHolder.tagRE.Match(param);
 			FieldValue fieldValue;
@@ -613,9 +613,9 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private void LoadPostponedScriptLines() {
-			foreach (var p in Shield.InTransaction(this.postponedLines.ToList)) {
+			foreach (var p in SeShield.InTransaction(this.postponedLines.ToList)) {
 				try {
-					Shield.InTransaction(() =>
+					SeShield.InTransaction(() =>
 						this.LoadScriptLine(this.filename, p.Line, p.Name.ToLowerInvariant(), p.Value));
 				} catch (FatalException) {
 					throw;
@@ -625,12 +625,12 @@ namespace SteamEngine.Scripting.Objects {
 					Logger.WriteWarning(this.filename, p.Line, ex);
 				}
 			}
-			Shield.InTransaction(this.postponedLines.Clear);
+			SeShield.InTransaction(this.postponedLines.Clear);
 		}
 
 		private void Trigger_AfterLoadFromScripts() {
 			try {
-				Shield.InTransaction(this.On_AfterLoadFromScripts);
+				SeShield.InTransaction(this.On_AfterLoadFromScripts);
 			} catch (FatalException) {
 				throw;
 			} catch (TransException) {
@@ -662,7 +662,7 @@ namespace SteamEngine.Scripting.Objects {
 			var a = new Shielded<int>();
 			int countPerCent = count / 100;
 			foreach (var script in all) {
-				Shield.InTransaction(() => {
+				SeShield.InTransaction(() => {
 					AbstractDef def = script as AbstractDef;
 					if (def != null) {
 						if ((a.Value % countPerCent) == 0) {
@@ -691,7 +691,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void Unload() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			foreach (FieldValue fv in this.fieldValues.Values.ToList()) {
 				fv.Unload();
@@ -707,7 +707,7 @@ namespace SteamEngine.Scripting.Objects {
 		internal static void ForgetScripts() {
 			ForgetAll(); //just to be sure - unregister everything. Should have been be called by Main anyway at this point
 
-			Shield.InTransaction(() => {
+			SeShield.InTransaction(() => {
 				constructorsByTypeName.Clear(); //we assume that inside core there are no non-abstract defs
 
 				//only leave the defnameParsers defined in core (like AbstractSkillDef and ThingDef probably? :)
@@ -733,7 +733,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public void SetTag(TagKey tk, object value) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			FieldValue fv;
 			if (!this.fieldValues.TryGetValue(tk, out fv)) {
@@ -750,7 +750,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public void RemoveTag(TagKey tk) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			FieldValue fv;
 			if (this.fieldValues.TryGetValue(tk, out fv)) {
@@ -759,7 +759,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public void ClearTags() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			foreach (var entry in this.fieldValues) {
 				if (entry.Key is TagKey) {

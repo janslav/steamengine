@@ -69,7 +69,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public static object TryRunSnippet(string filename, int line, TagHolder self, string script, out Exception exception, out LScriptHolder snippetRunner) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			try {
 				exception = null;
@@ -96,7 +96,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal static LScriptHolder LoadAsFunction(TriggerSection input) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			string name = input.TriggerName;
 			LScriptHolder sc = ScriptHolder.GetFunction(name) as LScriptHolder;

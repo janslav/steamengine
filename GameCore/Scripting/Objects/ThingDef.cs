@@ -272,14 +272,14 @@ namespace SteamEngine.Scripting.Objects {
 
 		#region TriggerGroupHolder helper methods
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				tg.Run(self, td, sa);
 			}
 		}
 
 		internal void TryTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				tg.TryRun(self, td, sa);
 			}
@@ -287,7 +287,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				var retVal = tg.Run(self, td, sa);
 				if (TagMath.Is1(retVal)) {
@@ -299,7 +299,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				var retVal = tg.TryRun(self, td, sa);
 				if (TagMath.Is1(retVal)) {
@@ -467,7 +467,7 @@ namespace SteamEngine.Scripting.Objects {
 					var idef = td as AbstractItemDef;
 					if (idef != null) {
 						try {
-							Shield.InTransaction(() => {
+							SeShield.InTransaction(() => {
 								var dupeItem = idef.DupeItem;
 								if (dupeItem != null) {
 									dupeItem.AddToDupeList(idef);
@@ -482,7 +482,7 @@ namespace SteamEngine.Scripting.Objects {
 						}
 
 						try {
-							Shield.InTransaction(() => {
+							SeShield.InTransaction(() => {
 								idef.multiData = MultiData.GetByModel(idef.Model);
 							});
 						} catch (FatalException) {

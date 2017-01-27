@@ -256,13 +256,13 @@ namespace SteamEngine.Scripting.Compilation {
 			foreach (var type in types) {
 				MethodInfo m = type.GetMethod("Bootstrap", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
 				if (m != null) {
-					Shield.InTransaction(() => m.Invoke(null, null));
+					SeShield.InTransaction(() => m.Invoke(null, null));
 				}
 			}
 			//then Initialize the classes as needed
 			foreach (var type in types) {
 				try {
-					Shield.InTransaction(() => InitClass(type));
+					SeShield.InTransaction(() => InitClass(type));
 				} catch (FatalException) {
 					throw;
 				} catch (TransException) {

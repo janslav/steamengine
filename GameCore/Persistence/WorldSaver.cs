@@ -216,13 +216,13 @@ namespace SteamEngine.Persistence {
 					}
 				}
 				if (type == "globals") {
-					Shield.InTransaction(() =>
+					SeShield.InTransaction(() =>
 						Globals.LoadGlobals(section));
 					continue;
 				}
 
 				var loaded = false;
-				Shield.InTransaction(() => {
+				SeShield.InTransaction(() => {
 					if (ObjectSaver.IsKnownSectionName(type)) {
 						ObjectSaver.LoadSection(section);
 						loaded = true;
@@ -230,7 +230,7 @@ namespace SteamEngine.Persistence {
 				});
 
 				if (!loaded) {
-					Shield.InTransaction(() => {
+					SeShield.InTransaction(() => {
 						if (AbstractDef.ExistsDefType(type)) {
 							AbstractDef.LoadSectionFromSaves(section);
 							loaded = true;

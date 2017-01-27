@@ -24,7 +24,7 @@ namespace SteamEngine.Tests {
 			var a = ShieldedExt.CreateValue(0);
 
 			Parallel.For(0, n, (_) => {
-				Shield.InTransaction(() => {
+				SeShield.InTransaction(() => {
 					a.Value++;
 				});
 			});
@@ -37,7 +37,7 @@ namespace SteamEngine.Tests {
 			var a = 0;
 
 			Parallel.For(0, n, (_) => {
-				Shield.InTransaction(() =>
+				SeShield.InTransaction(() =>
 				{
 					Interlocked.Add(ref a, 1);
 				});

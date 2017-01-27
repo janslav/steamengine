@@ -32,17 +32,10 @@ using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Scripting {
 	public static class ScriptLoader {
-		private static readonly ScriptFileCollection allFiles = InitScpCollection();
+		private static readonly ScriptFileCollection allFiles = new ScriptFileCollection(Globals.ScriptsPath, ".scp", ".def");
 
 		private static readonly ShieldedDictNc<string, RegisteredScript> scriptTypesByName =
 			new ShieldedDictNc<string, RegisteredScript>(comparer: StringComparer.OrdinalIgnoreCase);
-
-		static ScriptFileCollection InitScpCollection() {
-			ScriptFileCollection retVal = new ScriptFileCollection(Globals.ScriptsPath, ".scp");
-			retVal.AddExtension(".def");
-			//allFiles.AddAvoided("import");
-			return retVal;
-		}
 
 		//the method that is called on server initialisation by MainClass.
 		internal static void Load() {
@@ -182,7 +175,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		private static IEnumerable<IUnloadable> LoadSection(PropsSection section) {
-			return Shield.InTransaction(() => {
+			return SeShield.InTransaction(() => {
 				try {
 					string type = section.HeaderType.ToLowerInvariant();
 					string name = section.HeaderName;
@@ -296,7 +289,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		public static void RegisterScriptType(string name, LoadSection deleg, bool startAsScript) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			RegisteredScript scp;
 			if (!scriptTypesByName.TryGetValue(name, out scp)) {
 				scp = new RegisteredScript(deleg, startAsScript);
@@ -329,7 +322,7 @@ namespace SteamEngine.Scripting {
 
 		//forgets stuff that come from scripts.
 		internal static void ForgetScripts() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			allFiles.Clear();
 
 			Assembly coreAssembly = ClassManager.CoreAssembly;

@@ -12,50 +12,50 @@ namespace SteamEngine.Tests {
 		#region FieldValueType.Typed
 		[TestMethod]
 		public void TypedValueWorksAsLoadedFromScripts() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), filename: "somefile", line: 123, value: "1"));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void TypedValueWorksAsLoadedFromScriptsAndThenChanged() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), filename: "somefile", line: 123, value: "1"));
-			Shield.InTransaction(() => sut.CurrentValue = 2);
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(2, Shield.InTransaction(() => sut.CurrentValue));
+			SeShield.InTransaction(() => sut.CurrentValue = 2);
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(2, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void TypedValueWorksAsLoadedFromCode() {
-			var sut = Shield.InTransaction(() => new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), value: 1));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			var sut = SeShield.InTransaction(() => new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), value: 1));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void InvalidTypedValueThrowsRepeatedly() {
 			// when something invalid is loaded from saves/scripts, the value should remain unresolvable
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), filename: "somefile", line: 123, value: "x"));
 
 			Action getDefault = () => {
-				var dflt = Shield.InTransaction(() => sut.DefaultValue);
+				var dflt = SeShield.InTransaction(() => sut.DefaultValue);
 			};
 
 			getDefault.ShouldThrow<Exception>();
 			getDefault.ShouldThrow<Exception>();
 
 			Action getCurrent = () => {
-				var c = Shield.InTransaction(() => sut.CurrentValue);
+				var c = SeShield.InTransaction(() => sut.CurrentValue);
 			};
 
 			getCurrent.ShouldThrow<Exception>();
 			getCurrent.ShouldThrow<Exception>();
 
 			Action setCurrent = () => {
-				Shield.InTransaction(() => sut.CurrentValue = 1);
+				SeShield.InTransaction(() => sut.CurrentValue = 1);
 			};
 
 			setCurrent.ShouldThrow<Exception>();
@@ -64,65 +64,65 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void TypedValueRollsBackInvalidChange() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), filename: "somefile", line: 123, value: "1"));
 
-			((Action) (() => { Shield.InTransaction(() => sut.CurrentValue = "x"); })).ShouldThrow<Exception>();
+			((Action) (() => { SeShield.InTransaction(() => sut.CurrentValue = "x"); })).ShouldThrow<Exception>();
 
 			// after an failed attempt at setting an invalid value, the values are back to what they were
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 		#endregion FieldValueType.Typed
 
 		#region FieldValueType.Model
 		[TestMethod]
 		public void ModelValueWorksAsLoadedFromScripts() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Model, type: typeof(int), filename: "somefile", line: 123, value: "1"));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void ModelValueWorksAsLoadedFromScriptsAndThenChanged() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Model, type: typeof(int), filename: "somefile", line: 123, value: "1"));
-			Shield.InTransaction(() => sut.CurrentValue = 2);
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(2, Shield.InTransaction(() => sut.CurrentValue));
+			SeShield.InTransaction(() => sut.CurrentValue = 2);
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(2, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void ModelValueWorksAsLoadedFromCode() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Model, type: typeof(int), value: 1));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void InvalidModelValueThrowsRepeatedly() {
 			// when something invalid is loaded from saves/scripts, the value should remain unresolvable
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Model, type: typeof(int), filename: "somefile", line: 123, value: "x"));
 
 			Action getDefault = () => {
-				var dflt = Shield.InTransaction(() => sut.DefaultValue);
+				var dflt = SeShield.InTransaction(() => sut.DefaultValue);
 			};
 
 			getDefault.ShouldThrow<Exception>();
 			getDefault.ShouldThrow<Exception>();
 
 			Action getCurrent = () => {
-				var c = Shield.InTransaction(() => sut.CurrentValue);
+				var c = SeShield.InTransaction(() => sut.CurrentValue);
 			};
 
 			getCurrent.ShouldThrow<Exception>();
 			getCurrent.ShouldThrow<Exception>();
 
 			Action setCurrent = () => {
-				Shield.InTransaction(() => sut.CurrentValue = 1);
+				SeShield.InTransaction(() => sut.CurrentValue = 1);
 			};
 
 			setCurrent.ShouldThrow<Exception>();
@@ -131,14 +131,14 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void ModelValueRollsBackInvalidChange() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Model, type: typeof(int), filename: "somefile", line: 123, value: "1"));
 
-			((Action) (() => { Shield.InTransaction(() => sut.CurrentValue = "x"); })).ShouldThrow<Exception>();
+			((Action) (() => { SeShield.InTransaction(() => sut.CurrentValue = "x"); })).ShouldThrow<Exception>();
 
 			// after an failed attempt at setting an invalid value, the values are back to what they were
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 		#endregion FieldValueType.Model
 
@@ -146,10 +146,10 @@ namespace SteamEngine.Tests {
 		// for thingdefs we use null as a valid value, we don't want to involve def loading in the test. Maybe one day we can improve that.
 		[TestMethod]
 		public void ThingDefTypeValueWorksAsLoadedFromScripts() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.ThingDefType, type: typeof(int), filename: "somefile", line: 123, value: null));
-			Assert.AreEqual(null, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(null, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(null, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(null, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		//[TestMethod]
@@ -162,34 +162,34 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void ThingDefTypeValueWorksAsLoadedFromCode() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.ThingDefType, type: typeof(int), value: null));
-			Assert.AreEqual(null, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(null, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(null, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(null, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void InvalidThingDefTypeValueThrowsRepeatedly() {
 			// when something invalid is loaded from saves/scripts, the value should remain unresolvable
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.ThingDefType, type: typeof(int), filename: "somefile", line: 123, value: "x"));
 
 			Action getDefault = () => {
-				var dflt = Shield.InTransaction(() => sut.DefaultValue);
+				var dflt = SeShield.InTransaction(() => sut.DefaultValue);
 			};
 
 			getDefault.ShouldThrow<Exception>();
 			getDefault.ShouldThrow<Exception>();
 
 			Action getCurrent = () => {
-				var c = Shield.InTransaction(() => sut.CurrentValue);
+				var c = SeShield.InTransaction(() => sut.CurrentValue);
 			};
 
 			getCurrent.ShouldThrow<Exception>();
 			getCurrent.ShouldThrow<Exception>();
 
 			Action setCurrent = () => {
-				Shield.InTransaction(() => sut.CurrentValue = 1);
+				SeShield.InTransaction(() => sut.CurrentValue = 1);
 			};
 
 			setCurrent.ShouldThrow<Exception>();
@@ -198,64 +198,64 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void ThingDefTypeValueRollsBackInvalidChange() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.ThingDefType, type: typeof(int), filename: "somefile", line: 123, value: "NULL"));
 
-			((Action) (() => { Shield.InTransaction(() => sut.CurrentValue = "x"); })).ShouldThrow<Exception>();
+			((Action) (() => { SeShield.InTransaction(() => sut.CurrentValue = "x"); })).ShouldThrow<Exception>();
 
 			// after an failed attempt at setting an invalid value, the values are back to what they were
-			Assert.AreEqual(null, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(null, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(null, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(null, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 		#endregion FieldValueType.ThingDefType
 
 		#region FieldValueType.Typeless
 		[TestMethod]
 		public void TypelessValueWorks() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typeless, type: typeof(int), filename: "somefile", line: 123, value: "1"));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void TypelessValueWorksAsLoadedFromScriptsAndThenChanged() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typeless, type: typeof(int), filename: "somefile", line: 123, value: "1"));
-			Shield.InTransaction(() => sut.CurrentValue = 2);
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(2, Shield.InTransaction(() => sut.CurrentValue));
+			SeShield.InTransaction(() => sut.CurrentValue = 2);
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(2, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void TypelessValueWorksAsLoadedFromCode() {
-			var sut = Shield.InTransaction(() => new FieldValue(name: "ABC", fvType: FieldValueType.Typeless, type: typeof(int), value: 1));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.DefaultValue));
-			Assert.AreEqual(1, Shield.InTransaction(() => sut.CurrentValue));
+			var sut = SeShield.InTransaction(() => new FieldValue(name: "ABC", fvType: FieldValueType.Typeless, type: typeof(int), value: 1));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.DefaultValue));
+			Assert.AreEqual(1, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		[TestMethod]
 		public void InvalidTypelessValueThrowsRepeatedly() {
 			// when something invalid is loaded from saves/scripts, the value should remain unresolvable
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typeless, type: typeof(int), filename: "somefile", line: 123, value: "@"));
 
 			Action getDefault = () => {
-				var dflt = Shield.InTransaction(() => sut.DefaultValue);
+				var dflt = SeShield.InTransaction(() => sut.DefaultValue);
 			};
 
 			getDefault.ShouldThrow<Exception>();
 			getDefault.ShouldThrow<Exception>();
 
 			Action getCurrent = () => {
-				var c = Shield.InTransaction(() => sut.CurrentValue);
+				var c = SeShield.InTransaction(() => sut.CurrentValue);
 			};
 
 			getCurrent.ShouldThrow<Exception>();
 			getCurrent.ShouldThrow<Exception>();
 
 			Action setCurrent = () => {
-				Shield.InTransaction(() => sut.CurrentValue = 1);
+				SeShield.InTransaction(() => sut.CurrentValue = 1);
 			};
 
 			setCurrent.ShouldThrow<Exception>();
@@ -267,31 +267,31 @@ namespace SteamEngine.Tests {
 
 		[TestMethod]
 		public void ParallelismTest_CurrentValue() {
-			var sut = Shield.InTransaction(() =>
+			var sut = SeShield.InTransaction(() =>
 				new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), filename: "somefile", line: 123, value: "0"));
 
 			Parallel.For(0, n, (_) => {
-				Shield.InTransaction(() => {
+				SeShield.InTransaction(() => {
 					sut.CurrentValue = ((int) sut.CurrentValue) + 1;
 				});
 			});
 
-			Assert.AreEqual(n, Shield.InTransaction(() => sut.CurrentValue));
+			Assert.AreEqual(n, SeShield.InTransaction(() => sut.CurrentValue));
 		}
 
 		//[TestMethod]
 		//public void ParallelismTest_DefaultValue() {
-		//	var sut = Shield.InTransaction(() =>
+		//	var sut = SeShield.InTransaction(() =>
 		//		new FieldValue(name: "ABC", fvType: FieldValueType.Typed, type: typeof(int), filename: "somefile", line: 123, value: "0"));
 
 		//	Parallel.For(0, n, (_) => {
-		//		Shield.InTransaction(() => {
+		//		SeShield.InTransaction(() => {
 		//			var defValuePlusOne = ((int) sut.DefaultValue) + 1;
 		//			sut.SetFromScripts(filename: "somefile", line: 123, value: defValuePlusOne.ToString());
 		//		});
 		//	});
 
-		//	Assert.AreEqual(n, Shield.InTransaction(() => sut.CurrentValue));
+		//	Assert.AreEqual(n, SeShield.InTransaction(() => sut.CurrentValue));
 		//}
 	}
 }

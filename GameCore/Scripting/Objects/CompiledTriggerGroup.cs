@@ -39,7 +39,7 @@ namespace SteamEngine.Scripting.Objects {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			try {
-				return this.Run(self, tk, sa);
+				return SeShield.InTransaction(() => this.Run(self, tk, sa));
 			} catch (FatalException) {
 				throw;
 			} catch (TransException) {
@@ -70,7 +70,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		internal static bool AddCompiledTGType(Type t) {
 			if ((!t.IsAbstract) && (!t.IsSealed)) {//they will be overriden anyway by generated code (so they _could_ be abstract), 
-				//but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
+												   //but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
 				compiledTGs.Add(t);
 				return true;
 			}
@@ -141,10 +141,10 @@ namespace SteamEngine.Scripting.Objects {
 
 			internal GeneratedInstance(Type tgType) {
 				this.tgType = tgType;
-				MemberTypes memberType = MemberTypes.Method;		//Only find methods.
+				MemberTypes memberType = MemberTypes.Method; //Only find methods.
 				BindingFlags bindingAttr = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public;
 
-				MemberInfo[] mis = tgType.FindMembers(memberType, bindingAttr, StartsWithString, "on_");	//Does it's name start with "on_"?
+				MemberInfo[] mis = tgType.FindMembers(memberType, bindingAttr, StartsWithString, "on_"); //Does its name start with "on_"?
 				foreach (MemberInfo m in mis) {
 					MethodInfo mi = m as MethodInfo;
 					if (mi != null) {

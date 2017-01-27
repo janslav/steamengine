@@ -53,7 +53,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		protected internal void RegisterAsFunction() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if (functionsByName.ContainsKey(this.name)) {
 				throw new ServerException("ScriptHolder '" + this.name +
 										  "' already exists; Cannot create a new one with the same name.");
@@ -62,13 +62,14 @@ namespace SteamEngine.Scripting {
 		}
 
 		internal static void ForgetAllFunctions() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			functionsByName.Clear();
 		}
 
 		/// <summary>Return enumerable containing all functions</summary>
 		public static IEnumerable<ScriptHolder> AllFunctions {
 			get {
+				SeShield.AssertInTransaction();
 				return functionsByName.Values;
 			}
 		}
@@ -85,7 +86,7 @@ namespace SteamEngine.Scripting {
 
 		public object TryRun(object self, ScriptArgs sa) {
 			try {
-				return this.Run(self, sa);
+				return SeShield.InTransaction(() => this.Run(self, sa));
 			} catch (FatalException) {
 				throw;
 			} catch (TransException) {
@@ -123,10 +124,6 @@ namespace SteamEngine.Scripting {
 			return this.name;
 		}
 
-		public virtual bool IsUnloaded {
-			get {
-				return false;
-			}
-		}
+		public virtual bool IsUnloaded => false;
 	}
 }

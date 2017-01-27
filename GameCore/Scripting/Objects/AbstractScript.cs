@@ -43,7 +43,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public static void ForgetAll() {
 			foreach (AbstractScript gs in AllScripts) {
-				Shield.InTransaction(() =>
+				SeShield.InTransaction(() =>
 					gs.Unregister());
 			}
 			Sanity.IfTrueThrow(byDefname.Any(), "byDefname.Count > 0 after UnloadAll");
@@ -53,7 +53,7 @@ namespace SteamEngine.Scripting.Objects {
 		//Can be called multiple times without harm
 		//Returns self for easier usage 
 		public virtual AbstractScript Register() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 
 			var defname = this.Defname;
 			if (!string.IsNullOrEmpty(defname)) {
@@ -72,7 +72,7 @@ namespace SteamEngine.Scripting.Objects {
 		//unregister from static dictionaries and lists. 
 		//Can be called multiple times without harm
 		protected virtual void Unregister() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			var defname = this.Defname;
 			if (!string.IsNullOrEmpty(defname)) {
 				AbstractScript previous;
@@ -88,19 +88,19 @@ namespace SteamEngine.Scripting.Objects {
 
 		internal static ShieldedDictNc<string, AbstractScript> AllScriptsByDefname {
 			get {
-				Shield.AssertInTransaction();
+				SeShield.AssertInTransaction();
 				return byDefname;
 			}
 		}
 
 		public static IReadOnlyCollection<AbstractScript> AllScripts {
 			get {
-				return Shield.InTransaction(byDefname.Values.ToList);
+				return SeShield.InTransaction(byDefname.Values.ToList);
 			}
 		}
 
 		protected AbstractScript() {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			this.shieldedDefname.Value = this.InternalFirstGetDefname();
 			if (byDefname.ContainsKey(this.shieldedDefname.Value)) {
 				throw new SEException("AbstractScript called " + LogStr.Ident(this.shieldedDefname.Value) + " already exists!");
@@ -108,7 +108,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected AbstractScript(string defname) {
-			Shield.AssertInTransaction();
+			SeShield.AssertInTransaction();
 			if (string.IsNullOrEmpty(defname)) {
 				this.shieldedDefname.Value = this.InternalFirstGetDefname();
 			} else {

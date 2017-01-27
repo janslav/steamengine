@@ -43,29 +43,33 @@ namespace SteamEngine.Scripting {
 		private DateTime newestDateTime = DateTime.MinValue;
 		private readonly List<string> avoided = new List<string>();
 
-		internal ScriptFileCollection(string dirPath, string extension) {
+		internal ScriptFileCollection(string dirPath, params string[] extensions) {
 			this.mainDir = new DirectoryInfo(dirPath);
-			this.extensions.Add(extension);
+			this.extensions.AddRange(extensions);
 		}
 
 		internal long LengthSum { get; private set; }
 
 		public void Clear() {
+			SeShield.AssertNotInTransaction();
 			this.scriptFiles.Clear();
 			this.LengthSum = 0;
 			this.newestDateTime = DateTime.MinValue;
 		}
 
 		internal void AddExtension(string extension) {
+			SeShield.AssertNotInTransaction();
 			this.extensions.Add(extension);
 		}
 
 		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal void AddAvoided(string folder) {
+			SeShield.AssertNotInTransaction();
 			this.avoided.Add(folder);
 		}
 
 		internal ScriptFile AddFile(FileInfo file) {
+			SeShield.AssertNotInTransaction();
 			ScriptFile sf = new ScriptFile(file);
 			if (this.scriptFiles == null) {
 				this.scriptFiles = new Dictionary<string, ScriptFile>();
@@ -76,8 +80,7 @@ namespace SteamEngine.Scripting {
 			return sf;
 		}
 
-		internal bool HasFile(FileInfo file)
-		{
+		internal bool HasFile(FileInfo file) {
 			if (this.scriptFiles != null) {
 				return this.scriptFiles.ContainsKey(file.FullName);
 			}
@@ -91,6 +94,7 @@ namespace SteamEngine.Scripting {
 		//}
 
 		internal ICollection<ScriptFile> GetAllFiles() {
+			SeShield.AssertNotInTransaction();
 			if (this.scriptFiles == null) {
 				this.scriptFiles = new Dictionary<string, ScriptFile>();
 				this.InitializeList(this.mainDir);
@@ -101,6 +105,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		internal ICollection<ScriptFile> GetChangedFiles() {
+			SeShield.AssertNotInTransaction();
 			if (this.scriptFiles == null) {
 				return this.GetAllFiles();
 			}
@@ -153,6 +158,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		private void CheckTime(FileInfo file) {
+			SeShield.AssertNotInTransaction();
 			if (this.newestDateTime < file.LastWriteTime) {
 				this.newestDateTime = file.LastWriteTime;
 			}
@@ -176,7 +182,7 @@ namespace SteamEngine.Scripting {
 		private bool IsAvoidedDirectory(DirectoryInfo di) {
 			foreach (string avoid in this.avoided) {
 				if (string.Compare(di.Name, avoid, true, CultureInfo.InvariantCulture) == 0) { //ignore case
-					return true;	//skip this folder
+					return true; //skip this folder
 				}
 			}
 			return false;
