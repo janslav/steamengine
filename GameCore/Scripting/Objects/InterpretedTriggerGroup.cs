@@ -17,12 +17,13 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Scripting.Objects {
 	public sealed class InterpretedTriggerGroup : TriggerGroup {
-		private Dictionary<TriggerKey, ScriptHolder> triggers = new Dictionary<TriggerKey, ScriptHolder>();
+		private readonly ShieldedDictNc<TriggerKey, ScriptHolder> triggers = new ShieldedDictNc<TriggerKey, ScriptHolder>();
 
 		private InterpretedTriggerGroup(string defname)
 			: base(defname) {
@@ -85,6 +86,8 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static TriggerGroup Load(PropsSection input) {
+			SeShield.AssertInTransaction();
+
 			InterpretedTriggerGroup group = GetNewOrCleared(input.HeaderName);
 			for (int i = 0, n = input.TriggerCount; i < n; i++) {
 				var sc = new LScriptHolder(input.GetTrigger(i), contTriggerGroupName: input.HeaderName);
@@ -101,6 +104,8 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void Unload() {
+			SeShield.AssertInTransaction();
+
 			this.triggers.Clear();
 			base.Unload();
 		}

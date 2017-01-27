@@ -59,6 +59,7 @@
     <Compile Include="Scripting\Objects\CompiledSpeechDef.cs" />
     <Compile Include="Scripting\Compilation\XmlDocComments.cs" />
     <Compile Include="LocalisationExtensions.cs" />
+    <Compile Include="Scripting\Compilation\CompiledTriggerGroupGenerator.cs" />
     <Compile Include="Scripting\Objects\Gump.cs" />
     <Compile Include="Scripting\Objects\InterpretedGump.cs" />
     <Compile Include="Scripting\Objects\InterpretedSpeechDef.cs" />

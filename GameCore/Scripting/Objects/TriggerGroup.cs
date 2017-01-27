@@ -21,8 +21,7 @@ using SteamEngine.Scripting.Compilation;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class TriggerGroup : AbstractScript {
-		protected TriggerGroup()
-		{
+		protected TriggerGroup() {
 			this.Init(this.Defname);
 		}
 
@@ -31,24 +30,22 @@ namespace SteamEngine.Scripting.Objects {
 			this.Init(defname);
 		}
 
-		private static Regex globalNameRE = new Regex(@"^.*_all(?<value>[a-z][0-9a-z]+)s\s*$",
+		private static readonly Regex globalNameRe = new Regex(@"^.*_all(?<value>[a-z][0-9a-z]+)s\s*$",
 			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 		private void Init(string defname) {
-			this.remover = new TGRemover(this);
+			this.remover = new TgRemover(this);
 
 			//register it as 'global' triggergroup for some class, like *_allitems gets sent to Item.RegisterTriggerGroup()
-			Match m = globalNameRE.Match(defname);
+			Match m = globalNameRe.Match(defname);
 			if (m.Success) {
 				string typeName = m.Groups["value"].Value;
 				if (StringComparer.OrdinalIgnoreCase.Equals(typeName, "account")) {
 					typeName = "GameAccount";
 				}
 
-				RegisterTGDeleg wrapper = ClassManager.GetRegisterTGmethod(typeName);
-				if (wrapper != null) {
-					wrapper(this);
-				}
+				var wrapper = ClassManager.GetRegisterTGmethod(typeName);
+				wrapper?.Invoke(this);
 			}
 			if (defname.ToLowerInvariant().EndsWith("_global")) {
 				Globals.Instance.AddTriggerGroup(this);
@@ -86,17 +83,17 @@ namespace SteamEngine.Scripting.Objects {
 			return tg;
 		}
 
-		private TGRemover remover;
+		private TgRemover remover;
 
-		public static TGRemover operator -(TriggerGroup tg) {
+		public static TgRemover operator -(TriggerGroup tg) {
 			return tg.remover;
 		}
 	}
 
-	public class TGRemover {
+	public class TgRemover {
 		private readonly TriggerGroup tg;
 
-		public TGRemover(TriggerGroup tg) {
+		public TgRemover(TriggerGroup tg) {
 			this.tg = tg;
 		}
 
@@ -104,7 +101,7 @@ namespace SteamEngine.Scripting.Objects {
 			get {
 				return this.tg;
 			}
-		} 
+		}
 
 	}
 }

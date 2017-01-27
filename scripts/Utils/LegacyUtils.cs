@@ -135,7 +135,7 @@ namespace SteamEngine.CompiledScripts {
 						Events(self, tg);
 						return;
 					}
-					TGRemover tgr = firstArg as TGRemover;
+					TgRemover tgr = firstArg as TgRemover;
 					if (tgr != null) {
 						Events(self, tgr);
 						return;
@@ -153,7 +153,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		public static void Events(ITriggerGroupHolder self, TGRemover remover) {
+		public static void Events(ITriggerGroupHolder self, TgRemover remover) {
 			self.RemoveTriggerGroup(remover.TG);
 		}
 
