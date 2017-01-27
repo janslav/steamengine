@@ -16,34 +16,39 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
 using System.Collections.Generic;
+using Shielded;
 using SteamEngine.CompiledScripts.Dialogs;
 
 namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class SpellScrollDef {
-		private SpellDef spellDef;
+		private readonly Shielded<SpellDef> spellDef = new Shielded<SpellDef>();
 
 		public SpellDef SpellDef {
 			get {
-				if (this.spellDef != null) {
-					if (this.spellDef.ScrollItem != this) {
-						this.spellDef = null;
+				SeShield.AssertInTransaction();
+
+				if (this.spellDef.Value != null) {
+					if (this.spellDef.Value.ScrollItem != this) {
+						this.spellDef.Value = null;
 					}
 				}
 
-				if (this.spellDef == null) {
+				if (this.spellDef.Value == null) {
 					var dict = new Dictionary<SpellScrollDef, SpellDef>();
 					foreach (var spell in SpellDef.AllSpellDefs) {
 						var ssd = spell.ScrollItem;
 						if (ssd != null) {
 							dict.Add(ssd, spell); //if there was more than 1 spells using 1 scroll, this line would throw an exception. 
-							//Which is good. That's why we use a dict here. So leave it alone.
+												  //Which is good. That's why we use a dict here. So leave it alone.
 						}
 					}
-					dict.TryGetValue(this, out this.spellDef);
+					SpellDef def;
+					dict.TryGetValue(this, out def);
+					this.spellDef.Value = def;
 				}
-				return this.spellDef;
+				return this.spellDef.Value;
 			}
 		}
 
@@ -60,16 +65,8 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class SpellScroll {
-		public SpellDef SpellDef {
-			get {
-				return this.TypeDef.SpellDef;
-			}
-		}
+		public SpellDef SpellDef => this.TypeDef.SpellDef;
 
-		public int SpellId {
-			get {
-				return this.TypeDef.SpellId;
-			}
-		}
+		public int SpellId => this.TypeDef.SpellId;
 	}
 }
