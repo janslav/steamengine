@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.UoData;
@@ -37,12 +38,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		private readonly FieldValue dropSound;
 
-		private List<AbstractItemDef> dupeList;
-		private ReadOnlyCollection<AbstractItemDef> dupeListReadOnly;
-
-		private ItemDispidInfo dispidInfo;
-
-		private MultiData multiData;
+		private readonly ShieldedSeq<AbstractItemDef> dupeList = new ShieldedSeq<AbstractItemDef>();
 
 		protected AbstractItemDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -64,61 +60,49 @@ namespace SteamEngine.Scripting.Objects {
 				return (AbstractItemDef) this.dupeItem.CurrentValue;
 			}
 			set {
+				SeShield.AssertInTransaction();
+
 				AbstractItemDef di = (AbstractItemDef) this.dupeItem.CurrentValue;
-				if (di != null) {
-					di.RemoveFromDupeList(this);
-				}
+				di?.RemoveFromDupeList(this);
 				this.dupeItem.CurrentValue = value;
-				if (value != null) {
-					value.AddToDupeList(this);
-				}
+				value?.AddToDupeList(this);
 			}
 		}
 
-		public void AddToDupeList(AbstractItemDef idef) {
-			if (this.dupeList == null) {
-				this.dupeList = new List<AbstractItemDef>();
-				this.dupeListReadOnly = new ReadOnlyCollection<AbstractItemDef>(this.dupeList);
-			}
+		private void AddToDupeList(AbstractItemDef idef) {
 			if (!this.dupeList.Contains(idef)) {
 				this.dupeList.Add(idef);
 			}
 		}
 
-		public void RemoveFromDupeList(AbstractItemDef idef) {
-			Sanity.IfTrueThrow(this.dupeList == null, "RemoveFromDupeList called on an itemdef without a dupelist (" + this + ").");
+		private void RemoveFromDupeList(AbstractItemDef idef) {
 			Sanity.IfTrueThrow(!this.dupeList.Contains(idef), "In RemoveFromDupeList, Itemdef " + idef + " is not in " + this + "'s dupeList!");
 			this.dupeList.Remove(idef);
-			if (this.dupeList.Count == 0) {
-				this.dupeList = null;
-			}
 		}
 
-		public ReadOnlyCollection<AbstractItemDef> DupeList {
+		public IReadOnlyCollection<AbstractItemDef> DupeList {
 			get {
-				return this.dupeListReadOnly;
+				SeShield.AssertInTransaction();
+				return this.dupeList.ToList();
 			}
 		}
 
 		public int GetNextFlipModel(int curModel) {
+			SeShield.AssertInTransaction();
+
 			if (curModel == this.Model) {
-				if (this.dupeList != null) {
-					AbstractItemDef dup = this.dupeList[0];
-					return dup.Model;
+				if (this.dupeList.Any()) {
+					return this.dupeList.First().Model;
 				}
 			} else {
-				if (this.dupeList != null) {
-					int cur = -1;
-					for (int a = 0; a < this.dupeList.Count; a++) {
-						AbstractItemDef dup = this.dupeList[0];
-						if (dup.Model == curModel) {
-							cur = a;
-							break;
-						}
-					}
-					if (cur + 1 < this.dupeList.Count) {
-						AbstractItemDef dup = this.dupeList[cur + 1];
+				var returnNext = false;
+				foreach (var dup in this.dupeList) {
+					if (returnNext) {
 						return dup.Model;
+					}
+
+					if (dup.Model == curModel) {
+						returnNext = true;
 					}
 				}
 			}
@@ -135,7 +119,6 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		private static TriggerGroup T_Normal => TriggerGroup.GetByDefname("t_normal");
-
 
 		public TriggerGroup Type {
 			get {
@@ -218,33 +201,13 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
-		public sealed override bool IsItemDef {
-			get {
-				return true;
-			}
-		}
+		public sealed override bool IsItemDef => true;
 
-		public sealed override bool IsCharDef {
-			get {
-				return false;
-			}
-		}
+		public sealed override bool IsCharDef => false;
 
-		public MultiData MultiData {
-			get {
-				return this.multiData;
-			}
-		}
+		public MultiData MultiData => MultiData.GetByModel(this.Model);
 
-		public ItemDispidInfo DispidInfo {
-			get {
-				int model = this.Model;
-				if ((this.dispidInfo == null) || (this.dispidInfo.Id != model)) {
-					this.dispidInfo = ItemDispidInfo.GetByModel(model);
-				}
-				return this.dispidInfo;
-			}
-		}
+		public ItemDispidInfo DispidInfo => ItemDispidInfo.GetByModel(this.Model);
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
 			if ("stack".Equals(param)) {
@@ -284,9 +247,9 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void Unload() {
-			if (this.dupeList != null) {
-				this.dupeList.Clear();
-			}
+			SeShield.AssertInTransaction();
+
+			this.dupeList.Clear();
 			base.Unload();
 			//other various properties...
 			//todo: not clear those tags/tgs/timers/whatever that were set dynamically (ie not in scripted defs)
@@ -330,16 +293,6 @@ namespace SteamEngine.Scripting.Objects {
 							SeShield.InTransaction(() => {
 								idef.DupeItem?.AddToDupeList(idef);
 							});
-						} catch (FatalException) {
-							throw;
-						} catch (TransException) {
-							throw;
-						} catch (Exception e) {
-							Logger.WriteWarning(e);
-						}
-
-						try {
-							idef.multiData = SeShield.InTransaction(() => MultiData.GetByModel(idef.Model));
 						} catch (FatalException) {
 							throw;
 						} catch (TransException) {
