@@ -27,7 +27,7 @@ using SteamEngine.Common;
 using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.Scripting.Compilation {
-	internal sealed class CompiledTriggerGroupGenerator : ISteamCSCodeGenerator {
+	internal sealed class CompiledTriggerGroupGenerator : ISteamCsCodeGenerator {
 		private static readonly ShieldedSeq<Type> compiledTGs = new ShieldedSeq<Type>();
 
 		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]

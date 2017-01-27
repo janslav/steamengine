@@ -26,7 +26,7 @@ using SteamEngine.Persistence;
 using SteamEngine.Scripting.Compilation;
 
 namespace SteamEngine.CompiledScripts {
-	internal sealed class ViewableClassGenerator : ISteamCSCodeGenerator {
+	internal sealed class ViewableClassGenerator : ISteamCsCodeGenerator {
 		//array of special types which (or whose children) will be viewable even if the classes doesn't have the
 		//viewable attribute
 		static Type[] viewableSpecials = { typeof(Plugin) };

@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		public static void Events(ITriggerGroupHolder self, TgRemover remover) {
-			self.RemoveTriggerGroup(remover.TG);
+			self.RemoveTriggerGroup(remover.TriggerGroup);
 		}
 
 		public static void Events(ITriggerGroupHolder self, int i) {

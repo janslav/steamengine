@@ -48,7 +48,7 @@ namespace SteamEngine.Scripting.Compilation {
 		static List<SupplySubclassInstanceBase> InitDecoratedTypesDelegsList() {
 			//can't be in GeneratedCodeUtil's Bootstrap, cos that's too late.
 			List<SupplySubclassInstanceBase> list = new List<SupplySubclassInstanceBase>();
-			list.Add(new SupplySubclassInstanceTuple<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true)); //ClassManager.RegisterSupplySubclassInstances<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true);
+			list.Add(new SupplySubclassInstanceTuple<ISteamCsCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true)); //ClassManager.RegisterSupplySubclassInstances<ISteamCSCodeGenerator>(GeneratedCodeUtil.RegisterGenerator, true, true);
 			return list;
 		}
 

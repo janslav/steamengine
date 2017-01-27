@@ -35,7 +35,7 @@ namespace SteamEngine.Scripting.Compilation {
 	/// <remarks>
 	/// In the method \"WriteSources\", the implementor is supposed to generate the code using CodeDom facilities, in C#.
 	/// </remarks>
-	public interface ISteamCSCodeGenerator {
+	public interface ISteamCsCodeGenerator {
 		string FileName { get; }
 		CodeCompileUnit WriteSources();
 		void HandleAssembly(Assembly compiledAssembly);
@@ -44,7 +44,7 @@ namespace SteamEngine.Scripting.Compilation {
 	public static class GeneratedCodeUtil {
 		internal static Assembly generatedAssembly;
 
-		internal static Dictionary<string, ISteamCSCodeGenerator> generators = new Dictionary<string, ISteamCSCodeGenerator>(StringComparer.OrdinalIgnoreCase);
+		internal static Dictionary<string, ISteamCsCodeGenerator> generators = new Dictionary<string, ISteamCsCodeGenerator>(StringComparer.OrdinalIgnoreCase);
 
 		private static CodeDomProvider provider = new CSharpCodeProvider();
 		private static CodeGeneratorOptions options = CreateOptions();
@@ -56,7 +56,7 @@ namespace SteamEngine.Scripting.Compilation {
 			return options;
 		}
 
-		internal static void RegisterGenerator(ISteamCSCodeGenerator generator) {
+		internal static void RegisterGenerator(ISteamCsCodeGenerator generator) {
 			string fileName = generator.FileName;
 			if (generators.ContainsKey(fileName)) {
 				throw new OverrideNotAllowedException("There is already a ISteamCSCodeGenerator (" + generators[fileName] + ") registered for the file name " + fileName);//hopefully this will never display cos it would make no sense
@@ -66,10 +66,10 @@ namespace SteamEngine.Scripting.Compilation {
 
 		//removes all non-core references
 		internal static void ForgetScripts() {
-			ISteamCSCodeGenerator[] allGens = new ISteamCSCodeGenerator[generators.Count];
+			ISteamCsCodeGenerator[] allGens = new ISteamCsCodeGenerator[generators.Count];
 			generators.Values.CopyTo(allGens, 0);
 			generators.Clear();
-			foreach (ISteamCSCodeGenerator gen in allGens) {
+			foreach (ISteamCsCodeGenerator gen in allGens) {
 				if (ClassManager.CoreAssembly == gen.GetType().Assembly) {
 					generators[gen.FileName] = gen;
 				}
@@ -78,7 +78,7 @@ namespace SteamEngine.Scripting.Compilation {
 
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		internal static bool WriteOutAndCompile(int compilationNumber) {
-			foreach (ISteamCSCodeGenerator generator in generators.Values) {
+			foreach (ISteamCsCodeGenerator generator in generators.Values) {
 				CodeCompileUnit codeCompileUnit = generator.WriteSources();
 				if (codeCompileUnit == null) {
 					Logger.WriteFatal(generator + " failed to generate scripts...?");
@@ -96,7 +96,7 @@ namespace SteamEngine.Scripting.Compilation {
 				return false;
 			}
 
-			foreach (ISteamCSCodeGenerator generator in generators.Values) {
+			foreach (ISteamCsCodeGenerator generator in generators.Values) {
 				generator.HandleAssembly(generatedAssembly);
 			}
 			return true;

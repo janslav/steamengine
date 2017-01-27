@@ -69,7 +69,7 @@ namespace SteamEngine.Scripting.Compilation {
 		}
 	}
 
-	internal sealed class CompiledScriptHolderGenerator : ISteamCSCodeGenerator {
+	internal sealed class CompiledScriptHolderGenerator : ISteamCsCodeGenerator {
 		static List<MethodInfo> compiledSHs = new List<MethodInfo>();
 
 		internal static void AddCompiledSHType(MethodInfo mi) {

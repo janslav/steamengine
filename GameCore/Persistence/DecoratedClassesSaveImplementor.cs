@@ -225,7 +225,7 @@ namespace SteamEngine.Persistence {
 		}
 	}
 
-	internal sealed class DecoratedClassesSaveImplementorGenerator : ISteamCSCodeGenerator {
+	internal sealed class DecoratedClassesSaveImplementorGenerator : ISteamCsCodeGenerator {
 		static List<Type> decoratedClasses = new List<Type>();
 
 		internal static bool AddDecoratedClass(Type t, SaveableClassAttribute ignored) {

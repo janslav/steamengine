@@ -51,7 +51,7 @@ namespace SteamEngine {
 	public sealed class DeepCopyImplementationAttribute : Attribute {
 	}
 
-	internal sealed class DeepCopyImplementorGenerator : ISteamCSCodeGenerator {
+	internal sealed class DeepCopyImplementorGenerator : ISteamCsCodeGenerator {
 		static List<Type> decoratedClasses = new List<Type>();
 
 		internal static bool AddDecoratedClass(Type t, DeepCopyableClassAttribute ignored) {

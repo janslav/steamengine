@@ -91,17 +91,10 @@ namespace SteamEngine.Scripting.Objects {
 	}
 
 	public class TgRemover {
-		private readonly TriggerGroup tg;
-
-		public TgRemover(TriggerGroup tg) {
-			this.tg = tg;
+		public TgRemover(TriggerGroup triggerGroup) {
+			this.TriggerGroup = triggerGroup;
 		}
 
-		public TriggerGroup TG {
-			get {
-				return this.tg;
-			}
-		}
-
+		public TriggerGroup TriggerGroup { get; }
 	}
 }
