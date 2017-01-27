@@ -25,7 +25,7 @@ namespace SteamEngine.CompiledScripts {
 	/// <summary>Def listing fields necessary for all professions. Actual profession-related active code is in ProfessionPlugin class</summary>
 	[ViewableClass]
 	public class ProfessionDef : AbstractIndexedDef<ProfessionDef, string> {
-		#region Accessors
+		//#region Accessors
 		public new static ProfessionDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as ProfessionDef;
 		}
@@ -34,26 +34,26 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-		private FieldValue professionPluginDef;
-		private FieldValue allowedSpells;
+		private readonly FieldValue professionPluginDef;
+		private readonly FieldValue allowedSpells;
 
-		private FieldValue ttb1; //ttb = TalentTreeBranch
-		private FieldValue ttb2;
-		private FieldValue ttb3;
+		private readonly FieldValue ttb1; //ttb = TalentTreeBranch
+		private readonly FieldValue ttb2;
+		private readonly FieldValue ttb3;
 
-		private HashSet<SpellDef> cachedSpells;
+		//private HashSet<SpellDef> cachedSpells;
 
-		private ProfessionAbilityEntry[] sortedAbilityCache;
-		private Dictionary<AbilityDef, ProfessionAbilityEntry> abilityCache = new Dictionary<AbilityDef, ProfessionAbilityEntry>();
+		//private ProfessionAbilityEntry[] sortedAbilityCache;
+		//private Dictionary<AbilityDef, ProfessionAbilityEntry> abilityCache = new Dictionary<AbilityDef, ProfessionAbilityEntry>();
 
-		private SortedDictionary<int, ProfessionSkillEntry> skillsCache = new SortedDictionary<int, ProfessionSkillEntry>();
-		private bool skillsCacheComplete;
+		//private SortedDictionary<int, ProfessionSkillEntry> skillsCache = new SortedDictionary<int, ProfessionSkillEntry>();
+		//private bool skillsCacheComplete;
 
-		public string Name {
-			get {
-				return this.DefIndex;
-			}
-		}
+		//public string Name {
+		//	get {
+		//		return this.DefIndex;
+		//	}
+		//}
 
 		public PluginDef ProfessionPluginDef {
 			get {
@@ -64,26 +64,26 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		private HashSet<SpellDef> GetCachedSpells() {
-			if (this.cachedSpells == null) {
-				var hs = new HashSet<SpellDef>();
-				foreach (var def in (SpellDef[]) this.allowedSpells.CurrentValue) {
-					hs.Add(def);
-				}
-				this.cachedSpells = hs;
-			}
-			return this.cachedSpells;
-		}
+		//private HashSet<SpellDef> GetCachedSpells() {
+		//	if (this.cachedSpells == null) {
+		//		var hs = new HashSet<SpellDef>();
+		//		foreach (var def in (SpellDef[]) this.allowedSpells.CurrentValue) {
+		//			hs.Add(def);
+		//		}
+		//		this.cachedSpells = hs;
+		//	}
+		//	return this.cachedSpells;
+		//}
 
-		public ICollection<SpellDef> AllowedSpells {
-			get {
-				return this.GetCachedSpells();
-			}
-		}
+		//public ICollection<SpellDef> AllowedSpells {
+		//	get {
+		//		return this.GetCachedSpells();
+		//	}
+		//}
 
-		public bool CanCastSpell(SpellDef spell) {
-			return this.GetCachedSpells().Contains(spell);
-		}
+		//public bool CanCastSpell(SpellDef spell) {
+		//	return this.GetCachedSpells().Contains(spell);
+		//}
 
 		public TalentTreeBranchDef TTB1 {
 			get {
@@ -112,112 +112,112 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		#region Skills
-		/// <summary>Return the maximal value of the given skill for this profession</summary>
-		public int GetSkillCap(SkillDef skillDef) {
-			return this.GetSkillCap(skillDef.Id);
-		}
+		//#region Skills
+		///// <summary>Return the maximal value of the given skill for this profession</summary>
+		//public int GetSkillCap(SkillDef skillDef) {*
+		//	return this.GetSkillCap(skillDef.Id);
+		//}
 
-		/// <summary>Return the maximal value of the given skill for this profession</summary>
-		public int GetSkillCap(SkillName skillName) {
-			return this.GetSkillCap((int) skillName);
-		}
+		///// <summary>Return the maximal value of the given skill for this profession</summary>
+		//public int GetSkillCap(SkillName skillName) {
+		//	return this.GetSkillCap((int) skillName);
+		//}
 
-		/// <summary>Return the maximal value of the given skill for this profession</summary>
-		public int GetSkillCap(int skillId) {
-			return this.GetSkillEntry(skillId).cap;
-		}
+		///// <summary>Return the maximal value of the given skill for this profession</summary>
+		//public int GetSkillCap(int skillId) {
+		//	return this.GetSkillEntry(skillId).cap;
+		//}
 
-		/// <summary>Return the value of the given skill at which this profession starts</summary>
-		public int GetSkillMinimum(SkillDef skillDef) {
-			return this.GetSkillMinimum(skillDef.Id);
-		}
+		///// <summary>Return the value of the given skill at which this profession starts</summary>
+		//public int GetSkillMinimum(SkillDef skillDef) {
+		//	return this.GetSkillMinimum(skillDef.Id);
+		//}
 
-		/// <summary>Return the value of the given skill at which this profession starts</summary>
-		public int GetSkillMinimum(SkillName skillName) {
-			return this.GetSkillMinimum((int) skillName);
-		}
+		///// <summary>Return the value of the given skill at which this profession starts</summary>
+		//public int GetSkillMinimum(SkillName skillName) {
+		//	return this.GetSkillMinimum((int) skillName);
+		//}
 
-		/// <summary>Return the value of the given skill at which this profession starts</summary>
-		public int GetSkillMinimum(int skillId) {
-			return this.GetSkillEntry(skillId).minimum;
-		}
+		///// <summary>Return the value of the given skill at which this profession starts</summary>
+		//public int GetSkillMinimum(int skillId) {
+		//	return this.GetSkillEntry(skillId).minimum;
+		//}
 
-		public ProfessionSkillEntry GetSkillEntry(int skillId) {
-			ProfessionSkillEntry retVal;
-			if (!this.skillsCache.TryGetValue(skillId, out retVal)) {
-				var name = AbstractSkillDef.GetById(skillId).PrettyDefname;
-				retVal = new ProfessionSkillEntry(
-					Convert.ToInt32(this.GetCurrentFieldValue(skillMinimumPrefix + name)),
-					Convert.ToInt32(this.GetCurrentFieldValue(skillCapPrefix + name)));
-				this.skillsCache.Add(skillId, retVal);
-				this.skillsCacheComplete = false;
-			}
-			return retVal;
-		}
+		//public ProfessionSkillEntry GetSkillEntry(int skillId) {
+		//	ProfessionSkillEntry retVal;
+		//	if (!this.skillsCache.TryGetValue(skillId, out retVal)) {
+		//		var name = AbstractSkillDef.GetById(skillId).PrettyDefname;
+		//		retVal = new ProfessionSkillEntry(
+		//			Convert.ToInt32(this.GetCurrentFieldValue(skillMinimumPrefix + name)),
+		//			Convert.ToInt32(this.GetCurrentFieldValue(skillCapPrefix + name)));
+		//		this.skillsCache.Add(skillId, retVal);
+		//		this.skillsCacheComplete = false;
+		//	}
+		//	return retVal;
+		//}
 
-		public IEnumerable<ProfessionSkillEntry> AllSkillsSorted {
-			get {
-				if (!this.skillsCacheComplete) {
-					foreach (SkillDef skill in SkillDef.AllSkillDefs) {
-						this.GetSkillEntry(skill.Id);
-					}
-				}
-				return this.skillsCache.Values;
-			}
-		}
-		#endregion Skills
+		//public IEnumerable<ProfessionSkillEntry> AllSkillsSorted {
+		//	get {
+		//		if (!this.skillsCacheComplete) {
+		//			foreach (SkillDef skill in SkillDef.AllSkillDefs) {
+		//				this.GetSkillEntry(skill.Id);
+		//			}
+		//		}
+		//		return this.skillsCache.Values;
+		//	}
+		//}
+		//#endregion Skills
 
-		#region Abilities
-		/// <summary>Return the maximal value of the given ability for this profession</summary>
-		public int GetAbilityMaximumPoints(AbilityDef abilityDef) {
-			var entry = this.GetAbilityEntry(abilityDef);
-			if (entry != null) {
-				return entry.maxPoints;
-			}
-			return 0;
-		}
+		//#region Abilities
+		///// <summary>Return the maximal value of the given ability for this profession</summary>
+		//public int GetAbilityMaximumPoints(AbilityDef abilityDef) {
+		//	var entry = this.GetAbilityEntry(abilityDef);
+		//	if (entry != null) {
+		//		return entry.maxPoints;
+		//	}
+		//	return 0;
+		//}
 
-		public ProfessionAbilityEntry GetAbilityEntry(AbilityDef abilityDef) {
-			ProfessionAbilityEntry retVal;
-			if (!this.abilityCache.TryGetValue(abilityDef, out retVal)) {
-				var name = abilityDef.PrettyDefname;
-				var prefixed = abilityOrderPrefix + name;
-				if (this.HasFieldValue(prefixed)) {
-					retVal = new ProfessionAbilityEntry(abilityDef,
-						Convert.ToInt32(this.GetCurrentFieldValue(prefixed)),
-						Convert.ToInt32(this.GetCurrentFieldValue(abilityMaxPointsPrefix + name)));
-					this.abilityCache.Add(abilityDef, retVal);
-					this.sortedAbilityCache = null;
-				}
-			}
-			return retVal;
-		}
+		//public ProfessionAbilityEntry GetAbilityEntry(AbilityDef abilityDef) {
+		//	ProfessionAbilityEntry retVal;
+		//	if (!this.abilityCache.TryGetValue(abilityDef, out retVal)) {
+		//		var name = abilityDef.PrettyDefname;
+		//		var prefixed = abilityOrderPrefix + name;
+		//		if (this.HasFieldValue(prefixed)) {
+		//			retVal = new ProfessionAbilityEntry(abilityDef,
+		//				Convert.ToInt32(this.GetCurrentFieldValue(prefixed)),
+		//				Convert.ToInt32(this.GetCurrentFieldValue(abilityMaxPointsPrefix + name)));
+		//			this.abilityCache.Add(abilityDef, retVal);
+		//			this.sortedAbilityCache = null;
+		//		}
+		//	}
+		//	return retVal;
+		//}
 
-		public IEnumerable<ProfessionAbilityEntry> AllAbilitiesSorted {
-			get {
-				if (this.sortedAbilityCache == null) {
-					foreach (var def in AbilityDef.AllAbilities) {
-						this.GetAbilityEntry(def);
-					}
-					var list = new List<ProfessionAbilityEntry>(this.abilityCache.Values);
-					list.Sort(delegate(ProfessionAbilityEntry a, ProfessionAbilityEntry b) {
-						return Comparer<int>.Default.Compare(
-							a.order, b.order);
-					});
-					this.sortedAbilityCache = list.ToArray();
-				}
-				return this.sortedAbilityCache;
-			}
-		}
-		#endregion Abilities
+		//public IEnumerable<ProfessionAbilityEntry> AllAbilitiesSorted {
+		//	get {
+		//		if (this.sortedAbilityCache == null) {
+		//			foreach (var def in AbilityDef.AllAbilities) {
+		//				this.GetAbilityEntry(def);
+		//			}
+		//			var list = new List<ProfessionAbilityEntry>(this.abilityCache.Values);
+		//			list.Sort(delegate(ProfessionAbilityEntry a, ProfessionAbilityEntry b) {
+		//				return Comparer<int>.Default.Compare(
+		//					a.order, b.order);
+		//			});
+		//			this.sortedAbilityCache = list.ToArray();
+		//		}
+		//		return this.sortedAbilityCache;
+		//	}
+		//}
+		//#endregion Abilities
 
-		public override string ToString() {
-			return string.Concat("[", this.Name, " ", Tools.TypeToString(this.GetType()), "]");
-		}
-		#endregion Accessors
+		//public override string ToString() {
+		//	return string.Concat("[", this.Name, " ", Tools.TypeToString(this.GetType()), "]");
+		//}
+		//#endregion Accessors
 
-		#region Load from scripts
+		//#region Load from scripts
 		public ProfessionDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 
@@ -230,7 +230,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
-			this.ClearCache();
+			//this.ClearCache();
 
 			var p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
@@ -254,9 +254,9 @@ namespace SteamEngine.CompiledScripts {
 					throw new SEException("ProfessionDef ability entries need 2 numbers - order and maximum points");
 				}
 
-				var abilityName = ability.PrettyDefname;
-				this.InitOrSetFieldValue<int>(filename, line, abilityOrderPrefix + abilityName, preparsed[0]);
-				this.InitOrSetFieldValue<int>(filename, line, abilityMaxPointsPrefix + abilityName, preparsed[1]);
+				//var abilityName = ability.PrettyDefname;
+				//this.InitOrSetFieldValue<int>(filename, line, abilityOrderPrefix + abilityName, preparsed[0]);
+				//this.InitOrSetFieldValue<int>(filename, line, abilityMaxPointsPrefix + abilityName, preparsed[1]);
 				return;
 			}
 
@@ -290,37 +290,37 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void Unload() {
-			this.ClearCache();
-			base.Unload();
-		}
+		//public override void Unload() {
+		//	this.ClearCache();
+		//	base.Unload();
+		//}
 
-		public override void UnUnload() {
-			this.ClearCache();
-			base.UnUnload();
-		}
+		//public override void UnUnload() {
+		//	this.ClearCache();
+		//	base.UnUnload();
+		//}
 
-		protected override void Unregister() {
-			this.ClearCache();
-			base.Unregister();
-		}
+		//protected override void Unregister() {
+		//	this.ClearCache();
+		//	base.Unregister();
+		//}
 
-		public override AbstractScript Register() {
-			this.ClearCache();
-			return base.Register();
-		}
+		//public override AbstractScript Register() {
+		//	this.ClearCache();
+		//	return base.Register();
+		//}
 
-		public void ClearCache() {
-			this.cachedSpells = null;
+		//public void ClearCache() {
+		//	this.cachedSpells = null;
 
-			this.abilityCache.Clear();
-			this.sortedAbilityCache = null;
+		//	this.abilityCache.Clear();
+		//	this.sortedAbilityCache = null;
 
-			this.skillsCache.Clear();
-			this.skillsCacheComplete = false;
-		}
+		//	this.skillsCache.Clear();
+		//	this.skillsCacheComplete = false;
+		//}
 
-		#endregion Load from scripts
+		//#endregion Load from scripts
 
 		#region Load from saves
 		private const string abilityOrderPrefix = "AbilityOrder.";
@@ -350,10 +350,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static ProfessionDef GetProfessionOfChar(Player player) {
 			var plugin = ProfessionPlugin.GetInstalledPlugin(player);
-			if (plugin != null) {
-				return plugin.ProfessionDef;
-			}
-			return null;
+			return plugin?.ProfessionDef;
 		}
 
 		public static void SetProfessionOfChar(Player player, ProfessionDef value) {
@@ -363,26 +360,26 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 
-	public class ProfessionSkillEntry {
-		public readonly SkillDef skillDef;
-		public readonly int minimum;
-		public readonly int cap;
+	//public class ProfessionSkillEntry {
+	//	public readonly SkillDef skillDef;
+	//	public readonly int minimum;
+	//	public readonly int cap;
 
-		public ProfessionSkillEntry(int minimum, int cap) {
-			this.minimum = minimum;
-			this.cap = cap;
-		}
-	}
+	//	public ProfessionSkillEntry(int minimum, int cap) {
+	//		this.minimum = minimum;
+	//		this.cap = cap;
+	//	}
+	//}
 
-	public class ProfessionAbilityEntry {
-		public readonly AbilityDef abilityDef;
-		public readonly int order;
-		public readonly int maxPoints;
+	//public class ProfessionAbilityEntry {
+	//	public readonly AbilityDef abilityDef;
+	//	public readonly int order;
+	//	public readonly int maxPoints;
 
-		public ProfessionAbilityEntry(AbilityDef def, int order, int maxPoints) {
-			this.abilityDef = def;
-			this.order = order;
-			this.maxPoints = maxPoints;
-		}
-	}
+	//	public ProfessionAbilityEntry(AbilityDef def, int order, int maxPoints) {
+	//		this.abilityDef = def;
+	//		this.order = order;
+	//		this.maxPoints = maxPoints;
+	//	}
+	//}
 }

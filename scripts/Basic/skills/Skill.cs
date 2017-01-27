@@ -97,14 +97,15 @@ namespace SteamEngine.CompiledScripts {
 
 		public int Cap {
 			get {
-				var self = this.cont as Player;
-				if (self != null) {
-					var prof = self.Profession;
-					if (prof != null) {
-						return prof.GetSkillCap(this.id);
-					}
-				}
-				return 0;
+				//var self = this.cont as Player;
+				//if (self != null) {
+				//	var prof = self.Profession;
+				//	if (prof != null) {
+				//		return prof.GetSkillCap(this.id);
+				//	}
+				//}
+				//return 0;
+				return 1000;
 			}
 		}
 
@@ -148,8 +149,7 @@ namespace SteamEngine.CompiledScripts {
 
 		#region Load / Save
 		internal string GetSaveString() {
-			if (this.lockType == SkillLockType.Up)
-			{
+			if (this.lockType == SkillLockType.Up) {
 				if (this.modification == 0) {
 					return this.realValue.ToString();
 				}

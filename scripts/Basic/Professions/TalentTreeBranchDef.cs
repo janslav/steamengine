@@ -34,8 +34,8 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-		private Dictionary<AbilityDef, TalentTreeEntry> cachedLeafs = new Dictionary<AbilityDef, TalentTreeEntry>();
-		private bool cacheComplete;
+		//private Dictionary<AbilityDef, TalentTreeEntry> cachedLeafs = new Dictionary<AbilityDef, TalentTreeEntry>();
+		//private bool cacheComplete;
 
 		public string Name {
 			get {
@@ -43,71 +43,71 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public int GetTalentMaxPoints(AbilityDef def) {
-			var leaf = this.GetEntry(def);
-			if (leaf != null) {
-				return leaf.maxPoints;
-			}
-			return 0;
-		}
+		//public int GetTalentMaxPoints(AbilityDef def) {
+		//	var leaf = this.GetEntry(def);
+		//	if (leaf != null) {
+		//		return leaf.maxPoints;
+		//	}
+		//	return 0;
+		//}
 
-		public void SetTalentMaxPoints(AbilityDef def, int points) {
-			var fvName = talentMaxPointsPrefix + def.PrettyDefname;
-			if (!this.HasFieldValue(fvName)) {
-				this.InitTypedField(fvName, 0, typeof(int)).CurrentValue = points;
-			} else {
-				this.SetCurrentFieldValue(fvName, points);
-			}
-			this.ClearCache();
-		}
+		//public void SetTalentMaxPoints(AbilityDef def, int points) {
+		//	var fvName = talentMaxPointsPrefix + def.PrettyDefname;
+		//	if (!this.HasFieldValue(fvName)) {
+		//		this.InitTypedField(fvName, 0, typeof(int)).CurrentValue = points;
+		//	} else {
+		//		this.SetCurrentFieldValue(fvName, points);
+		//	}
+		//	this.ClearCache();
+		//}
 
-		public ResourcesList GetTalentDependency(AbilityDef def) {
-			var leaf = this.GetEntry(def);
-			if (leaf != null) {
-				return leaf.dependencies;
-			}
-			return null;
-		}
+		//public ResourcesList GetTalentDependency(AbilityDef def) {
+		//	var leaf = this.GetEntry(def);
+		//	if (leaf != null) {
+		//		return leaf.dependencies;
+		//	}
+		//	return null;
+		//}
 
-		public void SetTalentDependency(AbilityDef def, ResourcesList dependency) {
-			var fvName = talentMaxPointsPrefix + def.PrettyDefname;
-			if (!this.HasFieldValue(fvName)) {
-				this.InitTypedField(fvName, 0, typeof(ResourcesList)).CurrentValue = dependency;
-			} else {
-				this.SetCurrentFieldValue(fvName, dependency);
-			}
-			this.ClearCache();
-		}
+		//public void SetTalentDependency(AbilityDef def, ResourcesList dependency) {
+		//	var fvName = talentMaxPointsPrefix + def.PrettyDefname;
+		//	if (!this.HasFieldValue(fvName)) {
+		//		this.InitTypedField(fvName, 0, typeof(ResourcesList)).CurrentValue = dependency;
+		//	} else {
+		//		this.SetCurrentFieldValue(fvName, dependency);
+		//	}
+		//	this.ClearCache();
+		//}
 
-		public TalentTreeEntry GetEntry(AbilityDef def) {
-			TalentTreeEntry leaf;
-			if (!this.cachedLeafs.TryGetValue(def, out leaf)) {
-				var defname = def.PrettyDefname;
-				var fvName = talentTierPrefix + defname;
-				if (this.HasFieldValue(fvName)) {
-					leaf = new TalentTreeEntry(def,
-						Convert.ToInt32(this.GetCurrentFieldValue(fvName)),
-						Convert.ToInt32(this.GetCurrentFieldValue(talentTierPositionPrefix + defname)),
-						Convert.ToInt32(this.GetCurrentFieldValue(talentMaxPointsPrefix + defname)),
-						(ResourcesList) this.GetCurrentFieldValue(talentDependencyPrefix + defname));
-					this.cachedLeafs[def] = leaf;
-					this.cacheComplete = false;
-				}
-			}
-			return leaf;
-		}
+		//public TalentTreeEntry GetEntry(AbilityDef def) {
+		//	TalentTreeEntry leaf;
+		//	if (!this.cachedLeafs.TryGetValue(def, out leaf)) {
+		//		var defname = def.PrettyDefname;
+		//		var fvName = talentTierPrefix + defname;
+		//		if (this.HasFieldValue(fvName)) {
+		//			leaf = new TalentTreeEntry(def,
+		//				Convert.ToInt32(this.GetCurrentFieldValue(fvName)),
+		//				Convert.ToInt32(this.GetCurrentFieldValue(talentTierPositionPrefix + defname)),
+		//				Convert.ToInt32(this.GetCurrentFieldValue(talentMaxPointsPrefix + defname)),
+		//				(ResourcesList) this.GetCurrentFieldValue(talentDependencyPrefix + defname));
+		//			this.cachedLeafs[def] = leaf;
+		//			this.cacheComplete = false;
+		//		}
+		//	}
+		//	return leaf;
+		//}
 
-		public IEnumerable<TalentTreeEntry> AllTalents {
-			get {
-				if (!this.cacheComplete) {
-					foreach (var abilityDef in AbilityDef.AllAbilities) {
-						this.GetEntry(abilityDef);
-					}
-					this.cacheComplete = true;
-				}
-				return this.cachedLeafs.Values;
-			}
-		}
+		//public IEnumerable<TalentTreeEntry> AllTalents {
+		//	get {
+		//		if (!this.cacheComplete) {
+		//			foreach (var abilityDef in AbilityDef.AllAbilities) {
+		//				this.GetEntry(abilityDef);
+		//			}
+		//			this.cacheComplete = true;
+		//		}
+		//		return this.cachedLeafs.Values;
+		//	}
+		//}
 
 		public override string ToString() {
 			return string.Concat("[", this.Name, ": ", Tools.TypeToString(this.GetType()), "]");
@@ -173,30 +173,30 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public override void Unload() {
-			this.ClearCache();
-			base.Unload();
-		}
+		//public override void Unload() {
+		//	this.ClearCache();
+		//	base.Unload();
+		//}
 
-		public override void UnUnload() {
-			this.ClearCache();
-			base.UnUnload();
-		}
+		//public override void UnUnload() {
+		//	this.ClearCache();
+		//	base.UnUnload();
+		//}
 
-		protected override void Unregister() {
-			this.ClearCache();
-			base.Unregister();
-		}
+		//protected override void Unregister() {
+		//	this.ClearCache();
+		//	base.Unregister();
+		//}
 
-		public override AbstractScript Register() {
-			this.ClearCache();
-			return base.Register();
-		}
+		//public override AbstractScript Register() {
+		//	this.ClearCache();
+		//	return base.Register();
+		//}
 
-		public void ClearCache() {
-			this.cachedLeafs.Clear();
-			this.cacheComplete = false;
-		}
+		//public void ClearCache() {
+		//	this.cachedLeafs.Clear();
+		//	this.cacheComplete = false;
+		//}
 		#endregion Load from scripts
 
 		#region Load from saves

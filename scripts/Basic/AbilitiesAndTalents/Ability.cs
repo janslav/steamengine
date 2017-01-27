@@ -92,32 +92,32 @@ namespace SteamEngine.CompiledScripts {
 			this.DisposeIfEmpty();
 		}
 
-		//not to be used widely, it's just for possible quick reference for GMs etc.
-		public int MaxPoints {
-			get {
-				var maxPoints = 0;
-				var player = this.Cont as Player;
-				if (player != null) {
-					var prof = player.Profession;
-					if (prof != null) {
-						maxPoints = prof.GetAbilityMaximumPoints(this.def);
-						var branch = prof.TTB1;
-						if (branch != null) {
-							maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
-						}
-						branch = prof.TTB2;
-						if (branch != null) {
-							maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
-						}
-						branch = prof.TTB3;
-						if (branch != null) {
-							maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
-						}
-					}
-				}
-				return maxPoints;
-			}
-		}
+		////not to be used widely, it's just for possible quick reference for GMs etc.
+		//public int MaxPoints {
+		//	get {
+		//		var maxPoints = 0;
+		//		var player = this.Cont as Player;
+		//		if (player != null) {
+		//			var prof = player.Profession;
+		//			if (prof != null) {
+		//				maxPoints = prof.GetAbilityMaximumPoints(this.def);
+		//				var branch = prof.TTB1;
+		//				if (branch != null) {
+		//					maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
+		//				}
+		//				branch = prof.TTB2;
+		//				if (branch != null) {
+		//					maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
+		//				}
+		//				branch = prof.TTB3;
+		//				if (branch != null) {
+		//					maxPoints = Math.Max(maxPoints, branch.GetTalentMaxPoints(this.def));
+		//				}
+		//			}
+		//		}
+		//		return maxPoints;
+		//	}
+		//}
 
 		/// <summary>If this is an activable ability, is it running?</summary>
 		public bool Running {

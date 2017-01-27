@@ -105,7 +105,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				dlg.LastTable[rowCntr, 0] = GUTAButton.Builder.Type(LeafComponentTypes.ButtonPaper).Id((5 * i) + 10).Build();
 				dlg.LastTable[rowCntr, 1] = GUTAText.Builder.Text(ab.Name).Build();
 				dlg.LastTable[rowCntr, 2] = GUTAInput.Builder.Type(LeafComponentTypes.InputNumber).Id((5 * i) + 11).Width(30).Text("" + ab.ModifiedPoints).Build();
-				dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text("/" + ab.MaxPoints).XPos(30).Build();
+				//dlg.LastTable[rowCntr, 2] = GUTAText.Builder.Text("/" + ab.MaxPoints).XPos(30).Build();
 
 				var ago = now - ab.LastUsage;
 				dlg.LastTable[rowCntr, 3] = GUTAText.Builder.Text(Math.Round(ago.TotalSeconds, 1) + " secs ago").Build();

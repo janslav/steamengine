@@ -49,27 +49,27 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public virtual TriggerResult On_SkillSelect(SkillSequenceArgs skillSeqArgs) {
-			return this.CheckCancelSkill((Player) this.Cont, skillSeqArgs);
-		}
+		//public virtual TriggerResult On_SkillSelect(SkillSequenceArgs skillSeqArgs) {
+		//	return this.CheckCancelSkill((Player) this.Cont, skillSeqArgs);
+		//}
 
-		public virtual TriggerResult On_SkillStart(SkillSequenceArgs skillSeqArgs) {
-			return this.CheckCancelSkill((Player) this.Cont, skillSeqArgs);
-		}
+		//public virtual TriggerResult On_SkillStart(SkillSequenceArgs skillSeqArgs) {
+		//	return this.CheckCancelSkill((Player) this.Cont, skillSeqArgs);
+		//}
 
-		private TriggerResult CheckCancelSkill(Player player, SkillSequenceArgs skillSeqArgs) {
-			if ((!player.IsGM) && skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
-				var spell = (SpellDef) skillSeqArgs.Param1;
-				if (!this.profession.AllowedSpells.Contains(spell)) {
-					player.RedMessage(string.Format(CultureInfo.InvariantCulture,
-						Loc<ProfessionPluginLoc>.Get(player.Language).YouCantCastThis,
-						this.profession.Name));
+		//private TriggerResult CheckCancelSkill(Player player, SkillSequenceArgs skillSeqArgs) {
+		//	if ((!player.IsGM) && skillSeqArgs.SkillDef.Id == (int) SkillName.Magery) {
+		//		var spell = (SpellDef) skillSeqArgs.Param1;
+		//		if (!this.profession.AllowedSpells.Contains(spell)) {
+		//			player.RedMessage(string.Format(CultureInfo.InvariantCulture,
+		//				Loc<ProfessionPluginLoc>.Get(player.Language).YouCantCastThis,
+		//				this.profession.Name));
 
-					return TriggerResult.Cancel; //we don't know that spell
-				}
-			}
-			return TriggerResult.Continue;
-		}
+		//			return TriggerResult.Cancel; //we don't know that spell
+		//		}
+		//	}
+		//	return TriggerResult.Continue;
+		//}
 
 		public static ProfessionPlugin GetInstalledPlugin(Player player) {
 			return (ProfessionPlugin) player.GetPlugin(professionKey);
