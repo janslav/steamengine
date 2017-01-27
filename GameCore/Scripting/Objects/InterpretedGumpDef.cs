@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Scripting.Interpretation;
 
@@ -27,19 +28,26 @@ namespace SteamEngine.Scripting.Objects {
 
 	//this is the class that gets instantiated for every LScript DIALOG/GUMP script
 	public sealed class InterpretedGumpDef : GumpDef {
-		private LScriptHolder layoutScript;
-		private LScriptHolder textsScript;
-		private ResponseTrigger[] responseTriggers;
+
+		private readonly Shielded<State> shieldedState = new Shielded<State>();
+
+		private struct State {
+			internal LScriptHolder layoutScript;
+			internal LScriptHolder textsScript;
+			internal ResponseTrigger[] responseTriggers;
+		}
 
 		private InterpretedGumpDef(string name)
-			: base(name) {
+				: base(name) {
 		}
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static InterpretedGumpDef Load(PropsSection input) {
-			string[] headers = input.HeaderName.Split(new[] { ' ', '\t' }, 2);
-			string name = headers[0];//d_something
-			GumpDef gump = GetByDefname(name);
+			SeShield.AssertInTransaction();
+
+			var headers = input.HeaderName.Split(new[] { ' ', '\t' }, 2);
+			var name = headers[0];//d_something
+			var gump = GetByDefname(name);
 			InterpretedGumpDef sgd;
 			if (gump != null) {
 				sgd = gump as InterpretedGumpDef;
@@ -51,31 +59,31 @@ namespace SteamEngine.Scripting.Objects {
 				sgd.Register();
 			}
 			if (headers.Length == 1) {//layout section
-				if ((sgd.layoutScript != null) && (!sgd.IsUnloaded)) {//already loaded
+				if ((sgd.shieldedState.Value.layoutScript != null) && (!sgd.IsUnloaded)) {//already loaded
 					throw new SEException("GumpDef/Dialog " + LogStr.Ident(name) + " already exists!");
 				}
-				LScriptHolder sc = new LScriptHolder(input.GetTrigger(0));
+				var sc = new LScriptHolder(input.GetTrigger(0));
 				if (sc.IsUnloaded) {//in case the compilation failed (syntax error)
 					sgd.Unload(); //IsUnloaded = true;
 					return null;
 				}
-				sgd.layoutScript = sc;
+				sgd.shieldedState.Modify((ref State s) => s.layoutScript = sc);
 				sgd.UnUnload();
 				return sgd;
 			}
 			if (headers.Length == 2) {//buttons or texts section
-				string type = headers[1].ToLowerInvariant();
+				var type = headers[1].ToLowerInvariant();
 				switch (type) {
 					case "text":
 					case "texts":
-						if ((sgd.textsScript != null) && (!sgd.IsUnloaded)) {//already loaded
+						if ((sgd.shieldedState.Value.textsScript != null) && (!sgd.IsUnloaded)) {//already loaded
 							throw new SEException("TEXT section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
-						TriggerSection trigger = input.GetTrigger(0);
-						StringReader stream = new StringReader(trigger.Code.ToString());
-						StringBuilder modifiedCode = new StringBuilder();
+						var trigger = input.GetTrigger(0);
+						var stream = new StringReader(trigger.Code.ToString());
+						var modifiedCode = new StringBuilder();
 						while (true) {
-							string curLine = stream.ReadLine();
+							var curLine = stream.ReadLine();
 							if (curLine != null) {
 								curLine = curLine.Trim();
 								if ((curLine.Length == 0) || (curLine.StartsWith("//"))) {
@@ -91,40 +99,40 @@ namespace SteamEngine.Scripting.Objects {
 							}
 						}
 						trigger.Code = modifiedCode;
-						LScriptHolder sc = new LScriptHolder(trigger);
+						var sc = new LScriptHolder(trigger);
 						if (sc.IsUnloaded) {//in case the compilation failed (syntax error)
 							sgd.Unload(); //IsUnloaded = true;
 							return null;
 						}
-						sgd.textsScript = sc;
+						sgd.shieldedState.Modify((ref State s) => s.textsScript = sc);
 						return sgd;
 					case "button":
 					case "buttons":
 					case "triggers":
 					case "trigger":
-						if ((sgd.responseTriggers != null) && (!sgd.IsUnloaded)) {//already loaded
+						if ((sgd.shieldedState.Value.responseTriggers != null) && !sgd.IsUnloaded) {//already loaded
 							throw new SEException("BUTTON section for GumpDef/Dialog called " + LogStr.Ident(name) + " already exists!");
 						}
 
-						int n = input.TriggerCount;
-						List<ResponseTrigger> responsesList = new List<ResponseTrigger>(n);
-						for (int i = 1; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
+						var n = input.TriggerCount;
+						var responsesList = new List<ResponseTrigger>(n);
+						for (var i = 1; i < n; i++) {//starts from 1 because 0 is the "default" script, which is igored in this section
 							trigger = input.GetTrigger(i);
-							string triggerName = trigger.TriggerName;
+							var triggerName = trigger.TriggerName;
 							if (StringComparer.OrdinalIgnoreCase.Equals(triggerName, "anybutton")) {
 								responsesList.Add(new ResponseTrigger(0, int.MaxValue, trigger));
 								continue;
 							}
 							try {
-								int index = ConvertTools.ParseInt32(triggerName);
+								var index = ConvertTools.ParseInt32(triggerName);
 								responsesList.Add(new ResponseTrigger(index, index, trigger));
 								continue;
 							} catch {
-								string[] boundStrings = triggerName.Split(' ', '\t', ',');
+								var boundStrings = triggerName.Split(' ', '\t', ',');
 								if (boundStrings.Length == 2) {
 									try {
-										int lowerBound = ConvertTools.ParseInt32(boundStrings[0].Trim());
-										int upperBound = ConvertTools.ParseInt32(boundStrings[1].Trim());
+										var lowerBound = ConvertTools.ParseInt32(boundStrings[0].Trim());
+										var upperBound = ConvertTools.ParseInt32(boundStrings[1].Trim());
 										responsesList.Add(new ResponseTrigger(lowerBound, upperBound, trigger));
 										continue;
 									} catch { }
@@ -132,7 +140,7 @@ namespace SteamEngine.Scripting.Objects {
 							}
 							Logger.WriteError("String '" + LogStr.Ident(triggerName) + "' is not valid as gump/dialog response trigger header");
 						}
-						sgd.responseTriggers = responsesList.ToArray();
+						sgd.shieldedState.Modify((ref State s) => s.responseTriggers = responsesList.ToArray());
 						return sgd;
 				}
 			}
@@ -140,54 +148,60 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static void LoadingFinished() {
-			foreach (AbstractScript script in AllScripts) {
-				InterpretedGumpDef sgd = script as InterpretedGumpDef;
+			foreach (var script in AllScripts) {
+				var sgd = script as InterpretedGumpDef;
 				if (sgd != null) {
-					sgd.CheckValidity();
+					SeShield.InTransaction(sgd.CheckValidity);
 				}
 			}
 		}
 
 		private void CheckValidity() {//check method, used as delayed
-			if (this.layoutScript == null) {
+			SeShield.AssertInTransaction();
+
+			if (this.shieldedState.Value.layoutScript == null) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(this.Defname) + " missing the main (layout) section?");
 				this.Unload();
 				return;
 			}
-			if (this.IsUnloaded && (this.layoutScript != null)) {
+			if (this.IsUnloaded && (this.shieldedState.Value.layoutScript != null)) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(this.Defname) + " resynced incompletely?");
 			}
 		}
 
 		public override void Unload() {
-			this.layoutScript = null;
-			this.responseTriggers = null;
-			this.textsScript = null;
+			this.shieldedState.Modify((ref State s) => {
+				s.layoutScript = null;
+				s.responseTriggers = null;
+				s.textsScript = null;
+			});
 
 			base.Unload();
 		}
 
 		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
+			SeShield.AssertInTransaction();
+
 			this.ThrowIfUnloaded();
-			InterpretedGump instance = new InterpretedGump(this);
-			ScriptArgs sa = new ScriptArgs(instance, sendTo); //instance and recipient are stored everytime
+			var instance = new InterpretedGump(this);
+			var sa = new ScriptArgs(instance, sendTo); //instance and recipient are stored everytime
 			if (args != null) {
 				instance.InputArgs = args; //store the Dialog Args to the instance				
 			} else {
 				instance.InputArgs = new DialogArgs(); //prepare the empty DialogArgs object (no params)
 			}
 
-			Exception exception;
-			if (this.textsScript != null) {
-				this.textsScript.TryRun(focus, sa, out exception);
-				if (exception != null) {
-					return null;
-				}
+			Exception exception = null;
+			var shieldedStateValue = this.shieldedState.Value;
+
+			shieldedStateValue.textsScript?.TryRun(focus, sa, out exception);
+			if (exception != null) {
+				return null;
 			}
 
-			this.layoutScript.TryRun(focus, sa, out exception);
+			shieldedStateValue.layoutScript?.TryRun(focus, sa, out exception);
 
-			InterpretedGump returnedInstance = sa.Argv[0] as InterpretedGump;
+			var returnedInstance = sa.Argv[0] as InterpretedGump;
 			if (returnedInstance == null) {
 				returnedInstance = instance;
 			}
@@ -200,11 +214,13 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal void OnResponse(InterpretedGump instance, int pressedButton, int[] selectedSwitches, ResponseText[] returnedTexts, ResponseNumber[] responseNumbers) {
-			if (this.responseTriggers != null) {
-				for (int i = 0, n = this.responseTriggers.Length; i < n; i++) {
-					ResponseTrigger rt = this.responseTriggers[i];
+			var valueResponseTriggers = this.shieldedState.Value.responseTriggers;
+
+			if (valueResponseTriggers != null) {
+				for (int i = 0, n = valueResponseTriggers.Length; i < n; i++) {
+					var rt = valueResponseTriggers[i];
 					if (rt.IsInBounds(pressedButton)) {
-						ScriptArgs sa = new ScriptArgs(
+						var sa = new ScriptArgs(
 							instance,                           //0
 							instance.Cont,                      //1
 							pressedButton,                      //2
@@ -240,7 +256,7 @@ namespace SteamEngine.Scripting.Objects {
 	}
 
 	public class ArgChkHolder {
-		private int[] selectedSwitches;
+		private readonly int[] selectedSwitches;
 		internal ArgChkHolder(int[] selectedSwitches) {
 			this.selectedSwitches = selectedSwitches;
 		}
@@ -258,7 +274,7 @@ namespace SteamEngine.Scripting.Objects {
 	}
 
 	public class ArgTxtHolder {
-		private ResponseText[] responseTexts;
+		private readonly ResponseText[] responseTexts;
 		internal ArgTxtHolder(ResponseText[] responseTexts) {
 			this.responseTexts = responseTexts;
 		}
@@ -266,7 +282,7 @@ namespace SteamEngine.Scripting.Objects {
 		public string this[int id] {
 			get {
 				for (int i = 0, n = this.responseTexts.Length; i < n; i++) {
-					ResponseText rt = this.responseTexts[i];
+					var rt = this.responseTexts[i];
 					if (rt.Id == id) {
 						return rt.Text;
 					}
@@ -277,7 +293,7 @@ namespace SteamEngine.Scripting.Objects {
 	}
 
 	public class ArgNumHolder {
-		private ResponseNumber[] responseNumbers;
+		private readonly ResponseNumber[] responseNumbers;
 		internal ArgNumHolder(ResponseNumber[] responseNumbers) {
 			this.responseNumbers = responseNumbers;
 		}
@@ -285,7 +301,7 @@ namespace SteamEngine.Scripting.Objects {
 		public decimal this[int id] {
 			get {
 				for (int i = 0, n = this.responseNumbers.Length; i < n; i++) {
-					ResponseNumber rn = this.responseNumbers[i];
+					var rn = this.responseNumbers[i];
 					if ((rn != null) && (rn.Id == id)) {
 						return rn.Number;
 					}
