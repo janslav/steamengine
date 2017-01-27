@@ -16,6 +16,7 @@
 */
 
 using System.Collections.Generic;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Scripting;
@@ -35,7 +36,7 @@ namespace SteamEngine.CompiledScripts {
 
 		//private static Dictionary<string, ConstructorInfo> roleDefCtorsByName = new Dictionary<string, ConstructorInfo>(StringComparer.OrdinalIgnoreCase);
 
-		private TriggerGroup scriptedTriggers;
+		private readonly Shielded<TriggerGroup> scriptedTriggers = new Shielded<TriggerGroup>();
 
 		/// <summary>
 		/// Method for instatiating Roles. Basic implementation is easy but the CreateImpl method should be overriden 
@@ -77,28 +78,36 @@ namespace SteamEngine.CompiledScripts {
 			//name = InitField_Typed("name", "", typeof(string));
 		}
 
+		public TriggerGroup ScriptedTriggers {
+			get { return this.scriptedTriggers.Value; }
+			set { this.scriptedTriggers.Value = value; }
+		}
+
 		public override void LoadScriptLines(PropsSection ps) {
+			SeShield.AssertInTransaction();
+
 			base.LoadScriptLines(ps);
 
 			//now do load the trigger code. 
 			if (ps.TriggerCount > 0) {
 				ps.HeaderName = "t__" + this.Defname + "__";
-				this.scriptedTriggers = InterpretedTriggerGroup.Load(ps);
+				this.ScriptedTriggers = InterpretedTriggerGroup.Load(ps);
 			}
 		}
 
 		public override void Unload() {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.Unload();
-			}
+			this.ScriptedTriggers?.Unload();
 			base.Unload();
 		}
 		#endregion Loading from scripts
 
 		public TriggerResult TryCancellableTrigger(Role role, TriggerKey td, ScriptArgs sa) {
+			SeShield.AssertInTransaction();
+
 			//cancellable trigger just for the one triggergroup
-			if (this.scriptedTriggers != null) {
-				if (TagMath.Is1(this.scriptedTriggers.TryRun(role, td, sa))) {
+			var triggerGroup = this.ScriptedTriggers;
+			if (triggerGroup != null) {
+				if (TagMath.Is1(triggerGroup.TryRun(role, td, sa))) {
 					return TriggerResult.Cancel;
 				}
 			}
@@ -106,9 +115,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void TryTrigger(Role role, TriggerKey td, ScriptArgs sa) {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.TryRun(role, td, sa);
-			}
+			SeShield.AssertInTransaction();
+
+			this.ScriptedTriggers?.TryRun(role, td, sa);
 		}
 
 		public override string ToString() {
@@ -127,6 +136,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 		}
+
 		#endregion utilities
 	}
 

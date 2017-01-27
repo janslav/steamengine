@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey criteriumTK = TagKey.Acquire("_roles_criterium_");
 		internal static readonly TagKey sortingTK = TagKey.Acquire("_roles_sorting_");
 
-		private static int width = 600;
+		private const int width = 600;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam roli
