@@ -24,10 +24,10 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Dialog that will display all colors examples - useful for determining which color we need.</summary>
 	public class D_Colors : CompiledGumpDef {
-		static readonly int lastColor = 2999;
+		private const int lastColor = 2999;
 
-		static readonly int columnsCnt = 10; //kolik sloupecku bude mit dialog?
-		static readonly int dlgWidth = 850; //sirka dialogu
+		private const int columnsCnt = 10; //kolik sloupecku bude mit dialog?
+		private const int dlgWidth = 850; //sirka dialogu
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var startingColor = Convert.ToInt32(args[0]); //cislo barvy od ktere (pocinaje) se zobrazi vsechny ostatni 

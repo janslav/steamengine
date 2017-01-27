@@ -56,7 +56,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		protected override bool AllowGround => ((this.targon_ground != null) || (this.targon_point != null));
+		protected override bool AllowGround => ((this.targon_ground.Value != null) || (this.targon_point.Value != null));
 
 		private static void LoadTriggers(PropsSection input, ScriptedTargetDef td) {
 			SeShield.AssertInTransaction();
@@ -109,11 +109,11 @@ namespace SteamEngine.CompiledScripts {
 					}
 				}
 
-				if ((td.targon_thing != null) && (td.targon_item != null)) {
+				if ((td.targon_thing.Value != null) && (td.targon_item.Value != null)) {
 					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_item defined. @targon_item ignored.");
 					td.targon_item.Value = null;
 				}
-				if ((td.targon_thing != null) && (td.targon_char != null)) {
+				if ((td.targon_thing.Value != null) && (td.targon_char.Value != null)) {
 					Logger.WriteWarning(input.Filename, input.HeaderLine, "ScriptedTargetDef " + LogStr.Ident(input) + " has both @targon_thing and @targon_char defined. @targon_char ignored.");
 					td.targon_char.Value = null;
 				}
@@ -122,8 +122,8 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_Start(Player ch, object parameter) {
 			this.ThrowIfUnloaded();
-			if (this.on_start != null) {
-				if (this.TryRunTrigger(this.on_start, ch, parameter)) {
+			if (this.on_start.Value != null) {
+				if (this.TryRunTrigger(this.on_start.Value, ch, parameter)) {
 					return;
 				}
 			} else {
@@ -138,30 +138,30 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Targon(GameState state, IPoint3D getback, object parameter) {
 			var player = state.Character as Player;
 			if (player != null) {
-				if (this.targon_point != null) {
-					if (this.TryRunTrigger(this.targon_point, player, getback, parameter)) {
+				if (this.targon_point.Value != null) {
+					if (this.TryRunTrigger(this.targon_point.Value, player, getback, parameter)) {
 						this.On_Start(player, parameter);
 					}
 					return;
 				}
 				var targettedThing = getback as Thing;
 				if (targettedThing != null) {
-					if (this.targon_thing != null) {
-						if (this.TryRunTrigger(this.targon_thing, player, getback, parameter)) {
+					if (this.targon_thing.Value != null) {
+						if (this.TryRunTrigger(this.targon_thing.Value, player, getback, parameter)) {
 							this.On_Start(player, parameter);
 						}
 						return;
 					}
 					var targettedChar = getback as Character;
-					if ((targettedChar != null) && (this.targon_char != null)) {
-						if (this.TryRunTrigger(this.targon_char, player, getback, parameter)) {
+					if ((targettedChar != null) && (this.targon_char.Value != null)) {
+						if (this.TryRunTrigger(this.targon_char.Value, player, getback, parameter)) {
 							this.On_Start(player, parameter);
 						}
 						return;
 					}
 					var targettedItem = getback as Item;
-					if ((targettedItem != null) && (this.targon_item != null)) {
-						if (this.TryRunTrigger(this.targon_item, player, getback, parameter)) {
+					if ((targettedItem != null) && (this.targon_item.Value != null)) {
+						if (this.TryRunTrigger(this.targon_item.Value, player, getback, parameter)) {
 							this.On_Start(player, parameter);
 						}
 						return;
@@ -169,21 +169,21 @@ namespace SteamEngine.CompiledScripts {
 				} else {
 					var targettedStatic = getback as AbstractInternalItem;
 					if (targettedStatic != null) {
-						if (this.targon_static != null) {
-							if (this.TryRunTrigger(this.targon_static, player, getback, parameter)) {
+						if (this.targon_static.Value != null) {
+							if (this.TryRunTrigger(this.targon_static.Value, player, getback, parameter)) {
 								this.On_Start(player, parameter);
 							}
 							return;
 						}
-						if (this.targon_ground != null) {
-							if (this.TryRunTrigger(this.targon_ground, player, getback, parameter)) {
+						if (this.targon_ground.Value != null) {
+							if (this.TryRunTrigger(this.targon_ground.Value, player, getback, parameter)) {
 								this.On_Start(player, parameter);
 							}
 							return;
 						}
 					}
-					if (this.targon_ground != null) {
-						if (this.TryRunTrigger(this.targon_ground, player, getback, parameter)) {
+					if (this.targon_ground.Value != null) {
+						if (this.TryRunTrigger(this.targon_ground.Value, player, getback, parameter)) {
 							this.On_Start(player, parameter);
 						}
 						return;
@@ -196,8 +196,8 @@ namespace SteamEngine.CompiledScripts {
 
 		protected override void On_TargonCancel(GameState state, object parameter) {
 			var ch = state.Character;
-			if ((ch != null) && (this.targon_cancel != null)) {
-				this.targon_cancel.Value.TryRun(ch, parameter);
+			if (ch != null) {
+				targon_cancel.Value?.TryRun(ch, parameter);
 			}
 		}
 
