@@ -26,8 +26,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// such as resources, skillmake or weight
 	/// </summary>
 	public class D_Craftmenu_Settings : CompiledGumpDef {
-		private static int width = 600;
-		private static readonly TagKey previousItemdefValsTK = TagKey.Acquire("_previous_itemdef_values_");
+		private const int width = 600;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var dlg = new ImprovedDialog(gi);
@@ -122,7 +121,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 				Gump newGi;
 				switch (btnNo) {
 					case 0: //exit
-						//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
+							//DialogStacking.ShowPreviousDialog(gi); //zobrazit pripadny predchozi dialog
 						break;
 					case 1: //one category back (if any)
 						if (cat.Parent != null) {

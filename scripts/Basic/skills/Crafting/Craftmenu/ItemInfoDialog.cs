@@ -22,7 +22,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>Brief information about one single item in the craftmenu (for players)</summary>
 	public class D_Craftmenu_ItemInfo : CompiledGumpDef {
-		private static int width = 600;
+		private const int width = 600;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var dlg = new ImprovedDialog(gi);

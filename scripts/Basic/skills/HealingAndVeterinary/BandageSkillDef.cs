@@ -23,7 +23,7 @@ using SteamEngine.Timers;
 namespace SteamEngine.CompiledScripts {
 
 	public abstract class BandageSkillDef : SkillDef {
-		public BandageSkillDef(string defname, string filename, int line)
+		protected BandageSkillDef(string defname, string filename, int line)
 			: base(defname, filename, line) {
 		}
 
@@ -64,7 +64,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 
-		private TimerKey healingTimerKey = TimerKey.Acquire("_healing_timer_");
+		private readonly TimerKey healingTimerKey = TimerKey.Acquire("_healing_timer_");
 
 		protected override TriggerResult On_Start(SkillSequenceArgs skillSeqArgs) {
 			var self = skillSeqArgs.Self;
@@ -103,25 +103,9 @@ namespace SteamEngine.CompiledScripts {
 			return TriggerResult.Continue;
 		}
 
-		private static ItemDef i_bandage_bloody;
-		public static ItemDef BloodyBandageDef {
-			get {
-				if (i_bandage_bloody == null) {
-					i_bandage_bloody = (ItemDef) ThingDef.GetByDefname("i_bandage_bloody");
-				}
-				return i_bandage_bloody;
-			}
-		}
+		public static ItemDef BloodyBandageDef => (ItemDef) ThingDef.GetByDefname("i_bandage_bloody");
 
-		private static ItemDef i_bandage;
-		public static ItemDef CleanBandageDef {
-			get {
-				if (i_bandage == null) {
-					i_bandage = (ItemDef) ThingDef.GetByDefname("i_bandage");
-				}
-				return i_bandage;
-			}
-		}
+		public static ItemDef CleanBandageDef => (ItemDef) ThingDef.GetByDefname("i_bandage");
 
 		public static Item AcquireBandage(Character self, Item uncheckedBandage) {
 			if (uncheckedBandage != null) {

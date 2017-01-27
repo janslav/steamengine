@@ -101,19 +101,19 @@ namespace SteamEngine.CompiledScripts {
 			return TriggerResult.Continue;
 		}
 
-		internal static PluginKey effectPluginKey = PluginKey.Acquire("_discordanceEffect_");
+		internal static readonly PluginKey EffectPluginKey = PluginKey.Acquire("_discordanceEffect_");
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			var self = skillSeqArgs.Self;
 			var target = (Character) skillSeqArgs.Target1;
 
-			if (target.HasPlugin(effectPluginKey)) {
+			if (target.HasPlugin(EffectPluginKey)) {
 				self.SysMessage("Cíl je již oslaben.");
 			} else {
 				self.SysMessage("Úspìšnì jsi oslabil cíl.");
 				var plugin = (DiscordanceEffectPlugin) DiscordanceEffectPlugin.defInstance.Create();
 				plugin.discordEffectPower = this.SkillValueOfChar(self);
-				target.AddPluginAsSimple(effectPluginKey, plugin);
+				target.AddPluginAsSimple(EffectPluginKey, plugin);
 				self.Trigger_HostileAction(self);
 			}
 		}
@@ -144,7 +144,7 @@ namespace SteamEngine.CompiledScripts {
 				self.SysMessage("Zamìøuj jenom monstra!");
 				return TargetResult.RestartTargetting;
 			}
-			if (targetted.HasPlugin(DiscordanceSkillDef.effectPluginKey)) {
+			if (targetted.HasPlugin(DiscordanceSkillDef.EffectPluginKey)) {
 				self.SysMessage("Cíl je již oslaben.");
 				return TargetResult.Done;
 			}

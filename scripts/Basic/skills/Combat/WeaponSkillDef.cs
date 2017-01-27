@@ -32,16 +32,6 @@ namespace SteamEngine.CompiledScripts {
 			Striking//second phase, can strike after delay if target close <= range
 		}
 
-		public class WeaponSkillParam {
-			public WeaponSkillPhase phase;
-			public double dueAt;
-
-			public WeaponSkillParam(WeaponSkillPhase phase, double dueAt) {
-				this.phase = phase;
-				this.dueAt = dueAt;
-			}
-		}
-
 		public WeaponSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
@@ -107,7 +97,7 @@ namespace SteamEngine.CompiledScripts {
 									inPack.Cont = target.Backpack;
 									inPack.Amount = 1;
 									break;
-								//else arrow disappears
+									//else arrow disappears
 							}
 							var amount = projectile.Amount;
 							if (amount < 2) {

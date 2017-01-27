@@ -29,19 +29,11 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public class WallSpellDef : DurableSpellDef {
-		private static PassiveAbilityDef a_field_duration_bonus;
-		public static PassiveAbilityDef FieldDurationBonusDef {
-			get {
-				if (a_field_duration_bonus == null) {
-					a_field_duration_bonus = (PassiveAbilityDef) AbilityDef.GetByDefname("a_field_duration_bonus");
-				}
-				return a_field_duration_bonus;
-			}
-		}
 
+		public static PassiveAbilityDef FieldDurationBonusDef => (PassiveAbilityDef) AbilityDef.GetByDefname("a_field_duration_bonus");
 
-		private FieldValue itemDefWestEast;
-		private FieldValue itemDefNorthSouth;
+		private readonly FieldValue itemDefWestEast;
+		private readonly FieldValue itemDefNorthSouth;
 
 		public WallSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -84,7 +76,7 @@ namespace SteamEngine.CompiledScripts {
 			var ay = Math.Abs(dy);
 
 			var spellPower = spellEffectArgs.SpellPower;
-			var durationSecs = this.GetDurationForValue(caster.GetSkill(SkillName.Magery)); 
+			var durationSecs = this.GetDurationForValue(caster.GetSkill(SkillName.Magery));
 			//Magery used instead of spellpower, because the power is designed for use for the field effect, not for it's duration
 			durationSecs += durationSecs * caster.GetAbility(FieldDurationBonusDef) * FieldDurationBonusDef.EffectPower;
 			//applied ability bonus

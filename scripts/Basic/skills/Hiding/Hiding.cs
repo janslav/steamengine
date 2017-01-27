@@ -29,17 +29,9 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		public static PluginKey pluginKey = PluginKey.Acquire("hiddenHelper");
+		public static readonly PluginKey PluginKey = PluginKey.Acquire("hiddenHelper");
 
-		public static PluginDef p_hiddenHelper;
-		public static PluginDef P_HiddenHelper {
-			get {
-				if (p_hiddenHelper == null) {
-					p_hiddenHelper = PluginDef.GetByDefname("p_hiddenHelper");
-				}
-				return p_hiddenHelper;
-			}
-		}
+		public static PluginDef P_HiddenHelper => PluginDef.GetByDefname("p_hiddenHelper");
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
@@ -77,7 +69,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void Hide(Character self) {
 			self.ClilocSysMessage(501240);//You have hidden yourself well.
 			self.Flag_Hidden = true;
-			self.AddPlugin(pluginKey, P_HiddenHelper.Create());
+			self.AddPlugin(PluginKey, P_HiddenHelper.Create());
 		}
 
 		[SteamFunction]
@@ -86,7 +78,7 @@ namespace SteamEngine.CompiledScripts {
 				self.ClilocSysMessage(501242); //You are no longer hidden.
 				self.Flag_Hidden = false;
 			}
-			self.DeletePlugin(pluginKey);
+			self.DeletePlugin(PluginKey);
 		}
 	}
 

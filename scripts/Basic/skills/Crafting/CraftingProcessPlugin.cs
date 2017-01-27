@@ -112,7 +112,7 @@ namespace SteamEngine.CompiledScripts {
 		private static CraftingProcessPlugin InstallCraftingPlugin(Character self, CraftingOrder craftingOrder) {
 			var p = self.GetPlugin(craftingProcessPK) as CraftingProcessPlugin;
 			if (p == null) {
-				p = (CraftingProcessPlugin) self.AddNewPlugin(craftingProcessPK, CraftingProcessPluginDef.instance);
+				p = (CraftingProcessPlugin) self.AddNewPlugin(craftingProcessPK, CraftingProcessPluginDef.Instance);
 			}
 			p.craftingOrder = craftingOrder;
 			return p;
@@ -124,7 +124,7 @@ namespace SteamEngine.CompiledScripts {
 	}
 
 	partial class CraftingProcessPluginDef {
-		public static CraftingProcessPluginDef instance = (CraftingProcessPluginDef)
+		public static readonly CraftingProcessPluginDef Instance = (CraftingProcessPluginDef)
 			new CraftingProcessPluginDef("p_craftingProcess", "C# scripts", -1).Register();
 	}
 }

@@ -57,7 +57,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			var self = skillSeqArgs.Self;
 			var target = (Character) skillSeqArgs.Target1;
-			var ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
+			var ssp = target.GetPlugin(HidingSkillDef.PluginKey) as HiddenHelperPlugin;
 			if (ssp != null) {
 				if (ssp.hadDetectedMe == null) {
 					ssp.hadDetectedMe = new LinkedList<Character>();

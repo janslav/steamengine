@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts {
 				var castersReflection = MagicReflectionPluginDef.GetMagicReflectionPlugin(origCaster);
 
 				if (castersReflection == null) { //caster doesn't have reflection active himself
-					//this.EffectPower = given by Effect setting of s_magic_reflection and reflection caster's magery
+												 //this.EffectPower = given by Effect setting of s_magic_reflection and reflection caster's magery
 					effectArgs.SpellPower = (int) (effectArgs.SpellPower * this.EffectPower);
 					effectArgs.CurrentTarget = origCaster;
 					//effectArgs.Caster = origTarget; //should we enable this?
@@ -75,18 +75,10 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class MagicReflectionPluginDef {
-		public static readonly MagicReflectionPluginDef instance = (MagicReflectionPluginDef)
+		public static readonly MagicReflectionPluginDef Instance = (MagicReflectionPluginDef)
 			new MagicReflectionPluginDef("p_magic_reflection", "C# scripts", -1).Register();
 
-		private static DurableCharEffectSpellDef s_magic_reflection;
-		public static DurableCharEffectSpellDef MagicReflectionSpellDef {
-			get {
-				if (s_magic_reflection == null) {
-					s_magic_reflection = (DurableCharEffectSpellDef) SpellDef.GetByDefname("s_magic_reflection");
-				}
-				return s_magic_reflection;
-			}
-		}
+		public static DurableCharEffectSpellDef MagicReflectionSpellDef => (DurableCharEffectSpellDef) SpellDef.GetByDefname("s_magic_reflection");
 
 		[SteamFunction]
 		public static bool HasMagicReflection(Character self) {

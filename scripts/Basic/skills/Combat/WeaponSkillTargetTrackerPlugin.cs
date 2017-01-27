@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts {
 		public static void InstallTargetTracker(Character defender, Character attacker) {
 			var p = defender.GetPlugin(weaponSkillTargetPK) as WeaponSkillTargetTrackerPlugin;
 			if (p == null) {
-				p = (WeaponSkillTargetTrackerPlugin) defender.AddNewPlugin(weaponSkillTargetPK, WeaponSkillTargetTrackerPluginDef.instance);
+				p = (WeaponSkillTargetTrackerPlugin) defender.AddNewPlugin(weaponSkillTargetPK, WeaponSkillTargetTrackerPluginDef.Instance);
 			}
 			p.attackers.Add(attacker);
 		}
@@ -86,7 +86,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	partial class WeaponSkillTargetTrackerPluginDef {
-		public static WeaponSkillTargetTrackerPluginDef instance = (WeaponSkillTargetTrackerPluginDef) 
+		public static readonly WeaponSkillTargetTrackerPluginDef Instance = (WeaponSkillTargetTrackerPluginDef) 
 			new WeaponSkillTargetTrackerPluginDef("p_weaponSkillTargetTracker", "C# scripts", -1).Register();
 	}
 }

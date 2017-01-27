@@ -48,9 +48,9 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class DurableCharEffectSpellDef : DurableSpellDef {
 
-		private FieldValue effectPluginDef;
-		private FieldValue effectPluginKey_Spell;
-		private FieldValue effectPluginKey_Potion;
+		private readonly FieldValue effectPluginDef;
+		private readonly FieldValue effectPluginKey_Spell;
+		private readonly FieldValue effectPluginKey_Potion;
 
 		public DurableCharEffectSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {

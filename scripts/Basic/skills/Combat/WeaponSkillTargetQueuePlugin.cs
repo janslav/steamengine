@@ -195,7 +195,7 @@ namespace SteamEngine.CompiledScripts {
 		public static WeaponSkillTargetQueuePlugin AcquireCombatPlugin(Character self) {
 			var p = self.GetPlugin(combatPluginPK) as WeaponSkillTargetQueuePlugin;
 			if (p == null) {
-				p = (WeaponSkillTargetQueuePlugin) self.AddNewPlugin(combatPluginPK, WeaponSkillTargetQueuePluginDef.instance);
+				p = (WeaponSkillTargetQueuePlugin) self.AddNewPlugin(combatPluginPK, WeaponSkillTargetQueuePluginDef.Instance);
 			}
 			return p;
 		}
@@ -203,7 +203,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	partial class WeaponSkillTargetQueuePluginDef {
-		public static WeaponSkillTargetQueuePluginDef instance = (WeaponSkillTargetQueuePluginDef)
+		public static readonly WeaponSkillTargetQueuePluginDef Instance = (WeaponSkillTargetQueuePluginDef)
 			new WeaponSkillTargetQueuePluginDef("p_weaponSkillTargetQueue", "C# scripts", -1).Register();
 	}
 

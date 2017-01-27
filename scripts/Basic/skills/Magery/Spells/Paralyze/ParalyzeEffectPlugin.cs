@@ -49,24 +49,16 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class ParalyzeEffectPluginDef {
-		public static readonly ParalyzeEffectPluginDef instance = (ParalyzeEffectPluginDef)
+		public static readonly ParalyzeEffectPluginDef Instance = (ParalyzeEffectPluginDef)
 			new ParalyzeEffectPluginDef("p_paralyze", "C# scripts", -1).Register();
 
-		private static DurableCharEffectSpellDef s_paralyze;
-		public static DurableCharEffectSpellDef ParalyzeSpellDef {
-			get {
-				if (s_paralyze == null) {
-					s_paralyze = (DurableCharEffectSpellDef) SpellDef.GetByDefname("s_paralyze");
-				}
-				return s_paralyze;
-			}
-		}
+		public static DurableCharEffectSpellDef ParalyzeSpellDef => (DurableCharEffectSpellDef) SpellDef.GetByDefname("s_paralyze");
 
 
 		//paralyze method for general usage
 		public static void Paralyze(Character target, PluginKey key, TimeSpan duration, Thing source, EffectFlag type) {
 			type |= EffectFlag.HarmfulEffect;
-			var plugin = (ParalyzeEffectPlugin) instance.Create();
+			var plugin = (ParalyzeEffectPlugin) Instance.Create();
 			plugin.Init(source, type, 1, duration, ParalyzeSpellDef);
 			target.AddPlugin(key, plugin);
 		}

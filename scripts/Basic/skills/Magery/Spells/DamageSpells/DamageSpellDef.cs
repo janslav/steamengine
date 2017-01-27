@@ -23,7 +23,7 @@ namespace SteamEngine.CompiledScripts {
 	public class DamageSpellDef : SpellDef {
 
 		#region FieldValues
-		private FieldValue damageType;
+		private readonly FieldValue damageType;
 
 		public DamageSpellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {

@@ -23,8 +23,7 @@ using SteamEngine.Scripting.Objects;
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public abstract class CraftingSkillDef : SkillDef {
-
-		public CraftingSkillDef(string defname, string filename, int headerLine)
+		protected CraftingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
 
@@ -63,9 +62,9 @@ namespace SteamEngine.CompiledScripts {
 			}
 
 			var iDefToMake = (ItemDef) skillSeqArgs.Param1;//the on_start trigger runs only if there is something here...
-															   //get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
+														   //get the strokes count (i.e. number of animations and skillmaking sounds before the item is made)
 			var itemStrokes = iDefToMake.Strokes; //always 2-item array
-													   //compute the actual strokes count to make the selected item for "self" char
+												  //compute the actual strokes count to make the selected item for "self" char
 			var strokes = (int) Math.Round(ScriptUtil.EvalRangePermille(this.SkillValueOfChar(self), itemStrokes));
 			//check the Success now / TODO> item difficulty
 			skillSeqArgs.Success = this.CheckSuccess(self, iDefToMake.Difficulty);

@@ -24,9 +24,6 @@ namespace SteamEngine.CompiledScripts {
 	public class DispellDef : SpellDef {
 		private static readonly TriggerKey dispellTK = TriggerKey.Acquire("dispell");
 
-		private static ScriptHolder f_dispellEffect_char;
-		private static ScriptHolder f_dispellEffect_item;
-
 		public DispellDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
 		}
@@ -51,23 +48,9 @@ namespace SteamEngine.CompiledScripts {
 			target.On_Dispell(spellEffectArgs);
 		}
 
-		public static ScriptHolder F_dispellEffect_char {
-			get {
-				if (f_dispellEffect_char == null) {
-					f_dispellEffect_char = ScriptHolder.GetFunction("f_dispellEffect_char");
-				}
-				return f_dispellEffect_char;
-			}
-		}
+		public static ScriptHolder F_dispellEffect_char => ScriptHolder.GetFunction("f_dispellEffect_char");
 
-		public static ScriptHolder F_dispellEffect_item {
-			get {
-				if (f_dispellEffect_item == null) {
-					f_dispellEffect_item = ScriptHolder.GetFunction("f_dispellEffect_item");
-				}
-				return f_dispellEffect_item;
-			}
-		}
+		public static ScriptHolder F_dispellEffect_item => ScriptHolder.GetFunction("f_dispellEffect_item");
 
 		public static void ShowDispellEffect(Thing thingBeingDispelled) {
 			var ch = thingBeingDispelled as Character;

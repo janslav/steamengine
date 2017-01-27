@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//public static readonly TagKey tkCraftmenuLastpos = TagKey.Get("_cm_lastPosition_");
 		private const string tkCraftmenuLastposPrefix = "_cm_lastPosition_";
 		private static TagKey tkInputIds = TagKey.Acquire("_cm_input_ids_");
-		private static int width = 600;
+		private const int width = 600;
 
 		private static TagKey tkLastCat;
 		public static TagKey TkLastCat {
