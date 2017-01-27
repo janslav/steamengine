@@ -20,147 +20,68 @@ using SteamEngine.Common;
 
 namespace SteamEngine.UoData {
 	public class ItemDispidInfo {
-		private static List<ItemDispidInfo> array = new List<ItemDispidInfo>();
+		private static readonly List<ItemDispidInfo> list = new List<ItemDispidInfo>();
 
-		private readonly int id;
-
-		private readonly TileFlag flags;
-		private readonly byte weight;
-		private readonly byte quality;
-		private readonly int unknown1;
-		private readonly byte minItemsToDisplayThisArt;
-		private readonly byte quantity;
-		private readonly int animId;
-		private readonly byte unknown2;
-		private readonly byte hue;
-		private readonly int unknown3;
-		private readonly byte height;
-		private readonly byte calcHeight; //half for bridges
 		private readonly string singularName;
 		private readonly string pluralName;
-		private readonly bool isEmpty;
 
-		public int Id {
-			get {
-				return this.id;
-			}
-		}
+		public int Id { get; }
 
-		public TileFlag Flags {
-			get {
-				return this.flags;
-			}
-		}
+		public TileFlag Flags { get; }
 
-		public byte Weight {
-			get {
-				return this.weight;
-			}
-		}
+		public byte Weight { get; }
 
-		public byte Quality {
-			get {
-				return this.quality;
-			}
-		}
+		public byte Quality { get; }
 
-		public int Unknown1 {
-			get {
-				return this.unknown1;
-			}
-		}
+		public int Unknown1 { get; }
 
-		public byte MinItemsToDisplayThisArt {
-			get {
-				return this.minItemsToDisplayThisArt;
-			}
-		}
+		public byte MinItemsToDisplayThisArt { get; }
 
-		public byte Quantity {
-			get {
-				return this.quantity;
-			}
-		}
+		public byte Quantity { get; }
 
-		public int AnimId {
-			get {
-				return this.animId;
-			}
-		}
+		public int AnimId { get; }
 
-		public byte Unknown2 {
-			get {
-				return this.unknown2;
-			}
-		}
+		public byte Unknown2 { get; }
 
-		public byte Hue {
-			get {
-				return this.hue;
-			}
-		}
+		public byte Hue { get; }
 
-		public int Unknown3 {
-			get {
-				return this.unknown3;
-			}
-		}
+		public int Unknown3 { get; }
 
-		public byte Height {
-			get {
-				return this.height;
-			}
-		}
+		public byte Height { get; }
 
-		public byte CalcHeight {
-			get {
-				return this.calcHeight;
-			}
-		}
+		public byte CalcHeight { get; }
 
-		public string SingularName {
-			get {
-				return this.singularName;
-			}
-		}
+		public string SingularName => this.singularName;
 
-		public string PluralName {
-			get {
-				return this.pluralName;
-			}
-		}
+		public string PluralName => this.pluralName;
 
-		public bool IsEmpty {
-			get {
-				return this.isEmpty;
-			}
-		}
+		public bool IsEmpty { get; }
 
 		internal ItemDispidInfo(TileFlag flags, byte weight, byte quality, int unknown, byte minItemsToDisplayThisArt, byte quantity, int animID, byte unknown2, byte hue, int unknown3, byte height, string name) {
-			this.flags = flags;
-			this.weight = weight;
-			this.quality = quality;
-			this.unknown1 = unknown;
-			this.minItemsToDisplayThisArt = minItemsToDisplayThisArt;
-			this.quantity = quantity;
-			this.animId = animID;
-			this.unknown2 = unknown2;
-			this.hue = hue;
-			this.unknown3 = unknown3;
-			this.height = height;
+			this.Flags = flags;
+			this.Weight = weight;
+			this.Quality = quality;
+			this.Unknown1 = unknown;
+			this.MinItemsToDisplayThisArt = minItemsToDisplayThisArt;
+			this.Quantity = quantity;
+			this.AnimId = animID;
+			this.Unknown2 = unknown2;
+			this.Hue = hue;
+			this.Unknown3 = unknown3;
+			this.Height = height;
 			if ((flags & TileFlag.Bridge) == TileFlag.Bridge) {
-				this.calcHeight = (byte) (height / 2);
+				this.CalcHeight = (byte) (height / 2);
 			} else {
-				this.calcHeight = height;
+				this.CalcHeight = height;
 			}
 
 			ParseName(name, out this.singularName, out this.pluralName);
 			this.singularName = string.Intern(this.singularName);
 			this.pluralName = string.Intern(this.pluralName);
 
-			this.id = array.Count;
-			array.Add(this);
-			this.isEmpty = ((flags == 0 || flags == TileFlag.Unknown2) && (weight == 1 || weight == 0 || weight == 255) &&
+			this.Id = list.Count;
+			list.Add(this);
+			this.IsEmpty = ((flags == 0 || flags == TileFlag.Unknown2) && (weight == 1 || weight == 0 || weight == 255) &&
 						quality == 0 && unknown == 0 && minItemsToDisplayThisArt == 0 && quantity == 0 && animID == 0 &&
 						unknown2 == 0 && hue == 0 && unknown3 == 0 && name.Length == 0);
 			//height is sometimes not 0 for these.
@@ -169,10 +90,10 @@ namespace SteamEngine.UoData {
 		public override bool Equals(object obj) {
 			ItemDispidInfo idi = obj as ItemDispidInfo;
 			if (idi != null) {
-				return (this.flags == idi.flags && this.weight == idi.weight && this.quality == idi.quality && this.unknown1 == idi.unknown1 &&
-						this.minItemsToDisplayThisArt == idi.minItemsToDisplayThisArt && this.quantity == idi.quantity &&
-						this.animId == idi.animId && this.unknown2 == idi.unknown2 && this.hue == idi.hue && this.unknown3 == idi.unknown3 &&
-						this.height == idi.height && this.singularName == idi.singularName);
+				return (this.Flags == idi.Flags && this.Weight == idi.Weight && this.Quality == idi.Quality && this.Unknown1 == idi.Unknown1 &&
+						this.MinItemsToDisplayThisArt == idi.MinItemsToDisplayThisArt && this.Quantity == idi.Quantity &&
+						this.AnimId == idi.AnimId && this.Unknown2 == idi.Unknown2 && this.Hue == idi.Hue && this.Unknown3 == idi.Unknown3 &&
+						this.Height == idi.Height && this.singularName == idi.singularName);
 			}
 			return false;
 		}
@@ -184,14 +105,14 @@ namespace SteamEngine.UoData {
 
 		public static int Count {
 			get {
-				return array.Count;
+				return list.Count;
 			}
 		}
 
 		public static ItemDispidInfo GetByModel(int num)
 		{
-			if (num >= 0 && num < array.Count) {
-				return array[num];
+			if (num >= 0 && num < list.Count) {
+				return list[num];
 			}
 			return null;
 		}

@@ -16,7 +16,6 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -24,132 +23,15 @@ using SteamEngine.Common;
 using SteamEngine.Regions;
 
 namespace SteamEngine.UoData {
-	public sealed class MultiItemComponent : AbstractInternalItem, IPoint4D {
-		internal MultiItemComponent prevInList;
-		internal MultiItemComponent nextInList;
-		internal MultiComponentLinkedList collection;
-
-		private readonly MultiComponentDescription mcd;
-		private readonly int multiFlags;
-		private byte m;
-
-		internal MultiItemComponent(MultiComponentDescription mcd, int id, Map map, int multiFlags)
-			: base(id, map.Facet) {
-
-			this.mcd = mcd;
-			this.multiFlags = multiFlags;
-			this.m = map.M;
-		}
-
-		internal void SetRelativePos(int centerX, int centerY, int centerZ) {
-			checked {
-				this.X = centerX + this.mcd.OffsetX;
-				this.Y = centerY + this.mcd.OffsetY;
-				this.Z = centerZ + this.mcd.OffsetZ;
-			}
-		}
-
-		//useless?
-		public int MultiFlags {
-			get {
-				return this.multiFlags;
-			}
-		}
-
-		public MultiComponentDescription Mcd {
-			get {
-				return this.mcd;
-			}
-		}
-
-		public byte M {
-			get {
-				return this.m;
-			}
-			internal set {
-				this.m = value;
-				this.Facet = Map.GetMap(value).Facet;
-			}
-		}
-
-		public IPoint4D TopPoint {
-			get {
-				return this;
-			}
-		}
-
-		public Map GetMap() {
-			return Map.GetMap(this.m);
-		}
-
-
-		IPoint2D IPoint2D.TopPoint {
-			get {
-				return this;
-			}
-		}
-	}
-
 	//info about one item of multiItem
-	public class MultiComponentDescription {
-		private readonly int itemId;
-		private readonly int offsetX;
-		private readonly int offsetY;
-		private readonly int offsetZ;
-		private readonly int flags;
-
-		public MultiComponentDescription(int id, int offsetX, int offsetY, int offsetZ, int flags) {
-			this.itemId = id;
-			this.offsetX = offsetX;
-			this.offsetY = offsetY;
-			this.offsetZ = offsetZ;
-			this.flags = flags;
-		}
-
-		public int ItemId {
-			get {
-				return this.itemId;
-			}
-		}
-
-		public int OffsetX {
-			get {
-				return this.offsetX;
-			}
-		}
-
-		public int OffsetY {
-			get {
-				return this.offsetY;
-			}
-		}
-
-		public int OffsetZ {
-			get {
-				return this.offsetZ;
-			}
-		}
-
-		public int Flags {
-			get {
-				return this.flags;
-			}
-		}
-
-		internal MultiItemComponent Create(int centerX, int centerY, int centerZ, Map map) {
-			MultiItemComponent retVal = new MultiItemComponent(this, this.itemId, map, this.flags);
-			retVal.SetRelativePos(centerX, centerY, centerZ);
-			return retVal;
-		}
-	}
 
 	public class MultiData {
-		static Dictionary<int, MultiData> multiItems = new Dictionary<int, MultiData>();
+		static readonly Dictionary<int, MultiData> multiItems = new Dictionary<int, MultiData>();
 
 		private readonly List<MultiComponentDescription> parts;
 
-		public MultiData(int numI) {
-			this.parts = new List<MultiComponentDescription>(numI);
+		public MultiData(List<MultiComponentDescription> parts) {
+			this.parts = parts;
 		}
 
 		public static MultiData GetByModel(int id) {
@@ -167,11 +49,7 @@ namespace SteamEngine.UoData {
 			return retVal;
 		}
 
-		public MultiComponentDescription this[int index] {
-			get {
-				return this.parts[index];
-			}
-		}
+		public MultiComponentDescription this[int index] => this.parts[index];
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public static void Init() {
@@ -187,21 +65,19 @@ namespace SteamEngine.UoData {
 					BinaryReader idxbr = new BinaryReader(idxfs);
 					BinaryReader mulbr = new BinaryReader(mulfs);
 
-					int pos, length;
 					int slots = 0, items = 0;
-					MultiData listOfItems;
-					MultiComponentDescription part;
 
 					try {
 						while (true) {
+							int pos;
 							if ((pos = idxbr.ReadInt32()) != -1) {
-								length = idxbr.ReadInt32();
+								var length = idxbr.ReadInt32();
 								idxbr.BaseStream.Seek(4, SeekOrigin.Current);
 
 								if (mulbr.BaseStream.Position != pos) {
 									mulbr.BaseStream.Seek(pos, SeekOrigin.Begin);
 								}
-								listOfItems = new MultiData(length / 12);
+								var listOfItems = new List<MultiComponentDescription>(length / 12);
 								for (int i = 0; i < length / 12; i++) {
 									ushort id = mulbr.ReadUInt16();
 									short offsetX = mulbr.ReadInt16();
@@ -211,11 +87,11 @@ namespace SteamEngine.UoData {
 
 									//s nulou jsou "stiny" ocekavanych dynamickych itemu, jako treba dveri.
 									if (flags > 0) {
-										part = new MultiComponentDescription(id, offsetX, offsetY, offsetZ, flags);
-										listOfItems.parts.Add(part);
+										var part = new MultiComponentDescription(id, offsetX, offsetY, offsetZ, flags);
+										listOfItems.Add(part);
 									}
 								}
-								multiItems[slots + 16384] = listOfItems;
+								multiItems[slots + 16384] = new MultiData(listOfItems);
 								items++;
 							} else {
 								idxbr.BaseStream.Seek(8, SeekOrigin.Current);
@@ -258,122 +134,6 @@ namespace SteamEngine.UoData {
 				Logger.WriteWarning("Ignoring multi.mul");
 			}
 
-		}
-	}
-
-	//for storing of MultiItemComponents in sectors
-	internal class MultiComponentLinkedList : IEnumerable<MultiItemComponent> {
-		internal MultiItemComponent firstMultiComponent;
-		internal ushort count;
-
-		internal void Add(MultiItemComponent multiComponent) {
-			Sanity.IfTrueThrow((multiComponent.prevInList != null || multiComponent.nextInList != null),
-				"'" + multiComponent + "' being added into a MultiComponentList while being in another cont already");
-			MultiItemComponent next = this.firstMultiComponent;
-			this.firstMultiComponent = multiComponent;
-			multiComponent.prevInList = null;
-			multiComponent.nextInList = next;
-			if (next != null) {
-				next.prevInList = multiComponent;
-			}
-			multiComponent.collection = this;
-			this.count++;
-		}
-
-		internal bool Remove(MultiItemComponent multiComponent) {
-			if (multiComponent.collection == this) {
-				if (this.firstMultiComponent == multiComponent) {
-					this.firstMultiComponent = multiComponent.nextInList;
-				} else {
-					multiComponent.prevInList.nextInList = multiComponent.nextInList;
-				}
-				if (multiComponent.nextInList != null) {
-					multiComponent.nextInList.prevInList = multiComponent.prevInList;
-				}
-				multiComponent.prevInList = null;
-				multiComponent.nextInList = null;
-				this.count--;
-				multiComponent.collection = null;
-				return true;
-			}
-			return false;
-		}
-
-		internal MultiItemComponent Find(int x, int y, int z, int id) {
-			MultiItemComponent mic = this.firstMultiComponent;
-			while (mic != null) {
-				if ((mic.X == x) && (mic.Y == y) && (mic.Z == z) && (mic.Id == id)) {
-					return mic;
-				}
-				mic = mic.nextInList;
-			}
-			return null;
-		}
-
-		//internal MultiItemComponent this[int index] {
-		//    get {
-		//        if ((index >= this.count) || (index < 0)) {
-		//            return null;
-		//        }
-		//        MultiItemComponent i = this.firstMultiComponent;
-		//        int counter = 0;
-		//        while (i != null) {
-		//            if (index == counter) {
-		//                return i;
-		//            }
-		//            i = i.nextInList;
-		//            counter++;
-		//        }
-		//        return null;
-		//    }
-		//}
-
-		public IEnumerator<MultiItemComponent> GetEnumerator() {
-			return new MultiComponentListEnumerator(this);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() {
-			return new MultiComponentListEnumerator(this);
-		}
-
-		private class MultiComponentListEnumerator : IEnumerator<MultiItemComponent> {
-			MultiComponentLinkedList cont;
-			MultiItemComponent current;
-			MultiItemComponent next;//this is because of the possibility 
-			//that the current will be removed from the container during the enumeration
-			public MultiComponentListEnumerator(MultiComponentLinkedList c) {
-				this.cont = c;
-				this.next = this.cont.firstMultiComponent;
-			}
-
-			public void Reset() {
-				this.current = null;
-				this.next = this.cont.firstMultiComponent;
-			}
-
-			public bool MoveNext() {
-				this.current = this.next;
-				if (this.current == null) {
-					return false;
-				}
-				this.next = this.current.nextInList;
-				return true;
-			}
-
-			public MultiItemComponent Current {
-				get {
-					return this.current;
-				}
-			}
-
-			object IEnumerator.Current {
-				get {
-					return this.current;
-				}
-			}
-
-			public void Dispose() {				
-			}
 		}
 	}
 }

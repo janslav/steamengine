@@ -194,6 +194,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CanSeeImplementation.cs" />
     <Compile Include="SingleThreadedClass.cs" />
+    <Compile Include="UoData\AbstractInternalItem.cs" />
     <Compile Include="UoData\CharData.cs" />
     <Compile Include="ClientVersion.cs" />
     <Compile Include="Commands.cs" />
@@ -212,6 +213,8 @@
     <Compile Include="LayerNames.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MemberWrapper.cs" />
+    <Compile Include="UoData\MultiComponentDescription.cs" />
+    <Compile Include="UoData\MultiComponentLinkedList.cs" />
     <Compile Include="UoData\MultiData.cs" />
     <Compile Include="OpenedContainers.cs" />
     <Compile Include="Plugin.cs" />
@@ -227,6 +230,7 @@
     <Compile Include="Scripting\ScriptHolder.cs" />
     <Compile Include="Scripting\ScriptLoader.cs" />
     <Compile Include="SimulConn.cs" />
+    <Compile Include="UoData\MultiItemComponent.cs" />
     <Compile Include="UoData\SoundMul.cs" />
     <Compile Include="UoData\Static.cs" />
     <Compile Include="Statistics.cs" />
