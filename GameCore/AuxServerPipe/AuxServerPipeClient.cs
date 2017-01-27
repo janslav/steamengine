@@ -41,7 +41,7 @@ namespace SteamEngine.AuxServerPipe {
 
 		internal static void Exit() {
 			try {
-				connectedInstance.PipeConnection.Close("Exiting");
+				connectedInstance?.PipeConnection.Close("Exiting");
 			} catch { }
 		}
 

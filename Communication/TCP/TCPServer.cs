@@ -67,7 +67,7 @@ namespace SteamEngine.Communication.TCP {
 		public IPEndPoint BoundTo {
 			get {
 				try {
-					return (IPEndPoint) this.listener.LocalEndPoint;
+					return (IPEndPoint) this.listener?.LocalEndPoint;
 				} catch {
 					return null;
 				}
