@@ -33,7 +33,7 @@ namespace SteamEngine.CompiledScripts {
 
 
 		internal static PoisonedItemPlugin Acquire(PoisonPotion potion) {
-			var plugin = (PoisonedItemPlugin) PoisonedItemPluginDef.instance.Create();
+			var plugin = (PoisonedItemPlugin) PoisonedItemPluginDef.Instance.Create();
 			plugin.poisonTickCount = potion.PoisonTickCount;
 			plugin.poisonPower = potion.PoisonPower;
 			plugin.poisonType = potion.PoisonType;
@@ -282,7 +282,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class PoisonedItemPluginDef {
-		public static readonly PoisonedItemPluginDef instance = (PoisonedItemPluginDef)
+		public static readonly PoisonedItemPluginDef Instance = (PoisonedItemPluginDef)
 			new PoisonedItemPluginDef("p_poisoned_item", "C# scripts", -1).Register();
 	}
 

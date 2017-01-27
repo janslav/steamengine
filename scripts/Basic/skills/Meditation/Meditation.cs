@@ -53,15 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		//bonus talent 
-		private static PassiveAbilityDef a_meditation_bonus;
-		public static PassiveAbilityDef MeditationBonusDef {
-			get {
-				if (a_meditation_bonus == null) {
-					a_meditation_bonus = (PassiveAbilityDef) AbilityDef.GetByDefname("a_meditation_bonus");
-				}
-				return a_meditation_bonus;
-			}
-		}
+		public static PassiveAbilityDef MeditationBonusDef => (PassiveAbilityDef) AbilityDef.GetByDefname("a_meditation_bonus");
 
 		protected override void On_Success(SkillSequenceArgs skillSeqArgs) {
 			var self = skillSeqArgs.Self;

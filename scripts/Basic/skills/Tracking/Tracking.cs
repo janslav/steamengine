@@ -26,25 +26,25 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class TrackingSkillDef : SkillDef {
 		//tag key for the tag with the list of trackers to the tracked character
-		internal static TagKey trackedByTK = TagKey.Acquire("_tracked_by_");
+		internal static readonly TagKey trackedByTK = TagKey.Acquire("_tracked_by_");
 
 		/// <summary>Maximal age [sec] of the footsteps to be tracked at skill 0</summary>
-		private FieldValue minFootstepAge;
+		private readonly FieldValue minFootstepAge;
 		/// <summary>Maximal age [sec] of the footsteps to be tracked at skill 100</summary>
-		private FieldValue maxFootstepAge;
+		private readonly FieldValue maxFootstepAge;
 
 		/// <summary>Maximum characters to be recognized at skill 0</summary>
-		private FieldValue minCharsToTrack;
+		private readonly FieldValue minCharsToTrack;
 		/// <summary>Maximum characters to be recognized at skill 100</summary>
-		private FieldValue maxCharsToTrack;
+		private readonly FieldValue maxCharsToTrack;
 
 		/// <summary>Max steps before tracking chance is recomputed at skill 0</summary>
-		private FieldValue minSafeSteps;
+		private readonly FieldValue minSafeSteps;
 		/// <summary>Max steps before tracking chance is recomputed at skill 100</summary>
-		private FieldValue maxSafeSteps;
+		private readonly FieldValue maxSafeSteps;
 
 		/// <summary>Similar as Effect but for tracking monsters,animals and NPCs</summary>
-		private FieldValue pvmEffect;
+		private readonly FieldValue pvmEffect;
 
 		public TrackingSkillDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {

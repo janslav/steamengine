@@ -27,7 +27,7 @@ namespace SteamEngine.CompiledScripts {
 			: base(defname, filename, headerLine) {
 		}
 
-		internal static PluginKey snoopedPluginKey = PluginKey.Acquire("_snoopedBackpacks_");
+		internal static readonly PluginKey snoopedPluginKey = PluginKey.Acquire("_snoopedBackpacks_");
 
 		protected override TriggerResult On_Select(SkillSequenceArgs skillSeqArgs) {
 			//todo: various state checks...
