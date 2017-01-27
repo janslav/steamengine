@@ -16,17 +16,19 @@
 */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class ScriptedMenuDef : AbstractMenuDef {
-		private FieldValue message;
+		private readonly FieldValue message;
 
-		private LScriptHolder[] triggers;
+		private readonly Shielded<LScriptHolder[]> triggers = new Shielded<LScriptHolder[]>();
 
-		private NumberedLocStringCollection[] choiceLists;
+		private readonly Shielded<NumberedLocStringCollection[]> choiceLists = new Shielded<NumberedLocStringCollection[]>();
 
 		public ScriptedMenuDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -35,42 +37,50 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
+			SeShield.AssertInTransaction();
+
 			base.LoadScriptLines(ps);
 
 			var n = ps.TriggerCount;
 			var locEntries = new string[n + 1];
 			locEntries[0] = (string) this.message.CurrentValue;
-			this.triggers = new LScriptHolder[n];
+
+
+			var lScriptHolders = new LScriptHolder[n];
+			this.triggers.Value = lScriptHolders;
 
 			for (var i = 0; i < n; i++) {
 				var ts = ps.GetTrigger(i);
-				this.triggers[i] = new LScriptHolder(ts);
+				lScriptHolders[i] = new LScriptHolder(ts);
 				locEntries[i + 1] = ts.TriggerName;
 			}
 
 			var langCount = Tools.GetEnumLength<Language>();
-			this.choiceLists = new NumberedLocStringCollection[langCount];
+			var collections = new NumberedLocStringCollection[langCount];
+			this.choiceLists.Value = collections;
 			var locdefname = "loc_" + ps.HeaderName;
 			for (var i = 0; i < langCount; i++) {
-				this.choiceLists[i] = new NumberedLocStringCollection(locdefname, "LScript", (Language) i, locEntries);
+				collections[i] = new NumberedLocStringCollection(locdefname, "LScript", (Language) i, locEntries);
 			}
 		}
 
 		protected override IEnumerable<string> GetAllTexts(Language language) {
-			return this.choiceLists[(int) language].Entries;
+			return this.choiceLists.Value[(int) language].Entries;
 		}
 
 		public override void Unload() {
-			if (this.choiceLists != null) {
-				foreach (var loc in this.choiceLists) {
+			SeShield.AssertInTransaction();
+
+			if (this.choiceLists.Value != null) {
+				foreach (var loc in this.choiceLists.Value) {
 					LocManager.UnregisterLoc(loc);
 				}
-				this.choiceLists = null;
+				this.choiceLists.Value = null;
 
-				foreach (var trg in this.triggers) {
+				foreach (var trg in this.triggers.Value) {
 					trg.Unload();
 				}
-				this.triggers = null;
+				this.triggers.Value = null;
 			}
 			base.Unload();
 		}
@@ -78,7 +88,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override void On_Response(GameState state, int index, object parameter) {
 			this.ThrowIfUnloaded();
 
-			var scp = this.triggers[index];
+			var scp = this.triggers.Value[index];
 			if (scp != null) {
 				var self = state.Character;
 				if (self != null) {

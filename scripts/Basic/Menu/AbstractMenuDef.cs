@@ -23,9 +23,8 @@ using SteamEngine.Scripting.Objects;
 namespace SteamEngine.CompiledScripts {
 
 	public abstract class AbstractMenuDef : AbstractDef {
-
-		MenuRespose responseCallback;
-		MenuCancel cancelCallback;
+		readonly MenuRespose responseCallback;
+		readonly MenuCancel cancelCallback;
 
 		internal AbstractMenuDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
