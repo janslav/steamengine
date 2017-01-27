@@ -18,7 +18,7 @@
 namespace SteamEngine.Scripting.Objects {
 
 	public abstract class AbstractCharacterDef : ThingDef {
-		private FieldValue mountItem;
+		private readonly FieldValue mountItem;
 
 		protected AbstractCharacterDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -34,17 +34,9 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
-		public sealed override bool IsItemDef {
-			get {
-				return false;
-			}
-		}
+		public sealed override bool IsItemDef => false;
 
-		public sealed override bool IsCharDef {
-			get {
-				return true;
-			}
-		}
+		public sealed override bool IsCharDef => true;
 
 		public abstract bool IsFemale { get; }
 		public abstract bool IsMale { get; }
