@@ -22,8 +22,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>A new tag creating dialog</summary>
 	public class D_NewTag : CompiledGumpDef {
-		private static int width = 400;
-		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
+		private const int width = 400;
+		private const int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var th = (TagHolder) args.GetTag(D_TagList.holderTK); //na koho budeme tag ukladat?
@@ -43,7 +43,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//dialozek s inputama
 			dlg.AddTable(new GUTATable(2, 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
-			//napred napisy 
+													//napred napisy 
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Název tagu").Build();
 			dlg.LastTable[1, 0] = GUTAText.Builder.TextLabel("Hodnota").Build();
 			dlg.LastTable[0, 1] = GUTAInput.Builder.Id(10).Build();

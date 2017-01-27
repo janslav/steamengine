@@ -23,18 +23,12 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class ThrowingAbilityDef : ActivableAbilityDef {
 
-		private FieldValue range;
-		private FieldValue immunityDuration;
+		private readonly FieldValue range;
+		private readonly FieldValue immunityDuration;
 
-		private static ProjectileDef i_kudla;
-		public static ProjectileDef ThrowingKnifeDef {
-			get {
-				if (i_kudla == null) {
-					i_kudla = (ProjectileDef) ThingDef.GetByDefname("i_kudla");
-				}
-				return i_kudla;
-			}
-		}
+		public static ProjectileDef ThrowingKnifeDef => (ProjectileDef) ThingDef.GetByDefname("i_kudla");
+
+		private static TagKey throwingKnifeTK = TagKey.Acquire("_throwing_knife_");
 
 		public ThrowingAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -100,13 +94,10 @@ namespace SteamEngine.CompiledScripts {
 
 		}
 
-
-		private static TagKey throwingKnifeTK = TagKey.Acquire("_throwing_knife_");		
-
 		//todo? return specialised knife according to players preset preference
 		public static Projectile GetThrowingKnife(Character self) {
 			var knife = self.GetTag(throwingKnifeTK) as Projectile;
-			if (knife == null) {
+			if (knife != null) {
 				if (self.CanPickup(knife).Allow) {
 					return knife;
 				}

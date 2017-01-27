@@ -39,7 +39,7 @@ namespace SteamEngine.CompiledScripts {
 		/// <summary>Meaning all commands except the ones for higher levels</summary>
 		const int plevelToAllCommands = 4;
 
-		Dictionary<string, int> commands = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+		private readonly Dictionary<string, int> commands = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
 		//set the command plevels here... AND COMMENT IT!!!!!!!!!!!!!!!!!!!
 		public E_CommandsAuthorization_Global() {

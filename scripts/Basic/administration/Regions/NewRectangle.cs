@@ -21,7 +21,7 @@ using SteamEngine.Scripting.Objects;
 namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog for creating a new region rectangle</summary>
 	public class D_New_Rectangle : CompiledGumpDef {
-		private static int width = 450;
+		private const int width = 450;
 
 		/// <summary>
 		/// Seznam parametru: 0 - list s rectanglama kam to pak pridame 

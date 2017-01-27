@@ -36,8 +36,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey timerListTK = TagKey.Acquire("_timer_list_");
 		internal static readonly TagKey timerCriteriumTK = TagKey.Acquire("_timer_criterium_");
 
-		private static int width = 500;
-		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
+		private const int width = 500;
+		private const int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam timeru z tagholdera (char nebo item) prisleho v parametru dialogu
@@ -154,7 +154,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						newArgs.SetTag(D_EditTimer.editedTimerTK, de.Value);//editovany timer
 						newArgs.SetTag(holderTK, (TagHolder) args.GetTag(holderTK));//majitel timeru
 						var newGi = gi.Cont.Dialog(SingletonScript<D_EditTimer>.Instance, newArgs); //posleme si parametr toho typka na nemz editujeme timer a taky timer sam
-						//uložit info o dialogu pro návrat						
+																									//uložit info o dialogu pro návrat						
 						DialogStacking.EnstackDialog(gi, newGi);
 						break;
 				}

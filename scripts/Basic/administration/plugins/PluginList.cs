@@ -29,8 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey pluginListTK = TagKey.Acquire("_plugin_list_");
 		internal static readonly TagKey pluginCriteriumTK = TagKey.Acquire("_plugin_criterium_");
 
-		private static int width = 700;
-		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
+		private const int width = 700;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam plugin z pluginholdera (char nebo item) prisleho v parametru dialogu

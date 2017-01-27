@@ -36,12 +36,14 @@ namespace SteamEngine.CompiledScripts {
 		#region Accessors
 		//private string name; //logical name of the ability
 
-		private FieldValue chance;
-		private FieldValue cooldown;
-		private FieldValue resources;//resourcelist of resources to be consumed for ability using
-		private FieldValue requirements;//resourcelist of resources that player must have intending to run the ability
-		private FieldValue effectPower;
-		private FieldValue effectDuration;
+		private readonly FieldValue chance;
+		private readonly FieldValue cooldown;
+		private readonly FieldValue resources;//resourcelist of resources to be consumed for ability using
+		private readonly FieldValue requirements;//resourcelist of resources that player must have intending to run the ability
+		private readonly FieldValue effectPower;
+		private readonly FieldValue effectDuration;
+
+		private readonly Shielded<TriggerGroup> scriptedTriggers = new Shielded<TriggerGroup>();
 
 		public new static AbilityDef GetByDefname(string defname) {
 			return AbstractScript.GetByDefname(defname) as AbilityDef;
@@ -51,19 +53,11 @@ namespace SteamEngine.CompiledScripts {
 			return GetByDefIndex(key);
 		}
 
-		public static int AbilitiesCount {
-			get {
-				return IndexedCount;
-			}
-		}
+		public static int AbilitiesCount => IndexedCount;
 
 		/// <summary>Return enumerable containing all abilities (copying the values from the main dictionary)</summary>
 		//public static Dictionary<string,AbilityDef>.ValueCollection AllAbilities {
-		public static IEnumerable<AbilityDef> AllAbilities {
-			get {
-				return AllIndexedDefs;
-			}
-		}
+		public static IEnumerable<AbilityDef> AllAbilities => AllIndexedDefs;
 
 		public AbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -93,11 +87,7 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
-		public string Name {
-			get {
-				return this.DefIndex;
-			}
-		}
+		public string Name => this.DefIndex;
 
 		/// <summary>
 		/// Used in some abilities to compute the probabilty of their success. 
@@ -142,11 +132,7 @@ namespace SteamEngine.CompiledScripts {
 		/// You can use 0 for no delay
 		/// </summary>
 		[NoShow]
-		public TimeSpan CooldownAsSpan {
-			get {
-				return TimeSpan.FromSeconds(this.Cooldown);
-			}
-		}
+		public TimeSpan CooldownAsSpan => TimeSpan.FromSeconds(this.Cooldown);
 
 		/// <summary>Used in some abilities to compute the power of their effect</summary>
 		public double EffectPower {
@@ -168,6 +154,10 @@ namespace SteamEngine.CompiledScripts {
 			}
 		}
 
+		public TriggerGroup ScriptedTriggers {
+			get { return this.scriptedTriggers.Value; }
+			set { this.scriptedTriggers.Value = value; }
+		}
 
 		#endregion Accessors
 
@@ -205,8 +195,6 @@ namespace SteamEngine.CompiledScripts {
 		internal static readonly TriggerKey tkActivate = TriggerKey.Acquire("activate");
 		internal static readonly TriggerKey tkDenyActivateAbility = TriggerKey.Acquire("denyActivateAbility");
 		internal static readonly TriggerKey tkDenyActivate = TriggerKey.Acquire("denyActivate");
-
-		private TriggerGroup scriptedTriggers;
 
 		/// <summary>
 		/// LScript based @activate triggers
@@ -359,9 +347,12 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public TriggerResult TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
+			SeShield.AssertInTransaction();
+
 			//cancellable trigger just for the one triggergroup
-			if (this.scriptedTriggers != null) {
-				if (TagMath.Is1(this.scriptedTriggers.TryRun(self, td, sa))) {
+			var triggerGroup = this.ScriptedTriggers;
+			if (triggerGroup != null) {
+				if (TagMath.Is1(triggerGroup.TryRun(self, td, sa))) {
 					return TriggerResult.Cancel;
 				}
 			}
@@ -369,14 +360,15 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.TryRun(self, td, sa);
-			}
+			SeShield.AssertInTransaction();
+			this.ScriptedTriggers?.TryRun(self, td, sa);
 		}
 		#endregion Trigger methods
 
 		#region Loading from scripts
 		public override void LoadScriptLines(PropsSection ps) {
+			SeShield.AssertInTransaction();
+
 			var p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
 			this.Unregister();
@@ -385,7 +377,7 @@ namespace SteamEngine.CompiledScripts {
 
 			if (ps.TriggerCount > 0) {
 				ps.HeaderName = "t__" + this.Defname + "__";
-				this.scriptedTriggers = InterpretedTriggerGroup.Load(ps);
+				this.ScriptedTriggers = InterpretedTriggerGroup.Load(ps);
 			}
 		}
 
@@ -396,9 +388,9 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
-			if (this.scriptedTriggers != null) {
-				this.scriptedTriggers.Unload();
-			}
+			SeShield.AssertInTransaction();
+
+			this.ScriptedTriggers?.Unload();
 			base.Unload();
 		}
 		#endregion Loading from scripts

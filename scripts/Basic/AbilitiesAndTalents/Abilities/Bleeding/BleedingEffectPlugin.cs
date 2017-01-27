@@ -83,15 +83,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class BleedingEffectPluginDef {
-		private static PassiveAbilityDef a_bleeding_maxpower_bonus;
-		private static PassiveAbilityDef BleedingMaxPowerBonusDef {
-			get {
-				if (a_bleeding_maxpower_bonus == null) {
-					a_bleeding_maxpower_bonus = (PassiveAbilityDef) AbilityDef.GetByDefname("a_bleeding_maxpower_bonus");
-				}
-				return a_bleeding_maxpower_bonus;
-			}
-		}
+		private static PassiveAbilityDef BleedingMaxPowerBonusDef => (PassiveAbilityDef) AbilityDef.GetByDefname("a_bleeding_maxpower_bonus");
 
 		public static bool IsBleeding(Character ch) {
 			return ch.GetPlugin(SingletonScript<BleedingEffectPluginDef>.Instance.PluginKey) is BleedingEffectPlugin;
@@ -99,9 +91,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public static void StopBleeding(Character ch) {
 			var p = ch.GetPlugin(SingletonScript<BleedingEffectPluginDef>.Instance.PluginKey) as BleedingEffectPlugin;
-			if (p != null) {
-				p.Delete();
-			}
+			p?.Delete();
 		}
 
 		public override double GetMaxPower(Thing source, Character target, EffectFlag sourceType) {

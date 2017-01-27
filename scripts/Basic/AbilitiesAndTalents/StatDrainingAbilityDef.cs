@@ -21,9 +21,9 @@ namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
 	public class StatDrainingAbilityDef : ActivableAbilityDef {
 
-		private FieldValue hitsDrain;
-		private FieldValue stamDrain;
-		private FieldValue manaDrain;
+		private readonly FieldValue hitsDrain;
+		private readonly FieldValue stamDrain;
+		private readonly FieldValue manaDrain;
 
 		public StatDrainingAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -64,9 +64,7 @@ namespace SteamEngine.CompiledScripts {
 			base.On_Activate(ch, ab);
 
 			var plugin = ch.GetPlugin(this.PluginKey) as StatDrainingEffectDurationPlugin;
-			if (plugin != null) {
-				plugin.InitDrain(this.HitsDrain, this.StamDrain, this.ManaDrain);
-			}
+			plugin?.InitDrain(this.HitsDrain, this.StamDrain, this.ManaDrain);
 		}
 	}
 }

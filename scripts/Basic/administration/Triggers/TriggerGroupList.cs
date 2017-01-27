@@ -28,8 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey tgListTK = TagKey.Acquire("_tg_list_");
 		internal static readonly TagKey tgCriteriumTK = TagKey.Acquire("_tg_criterium_");
 
-		private static int width = 500;
-		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
+		private const int width = 500;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
@@ -100,7 +99,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 		public override void OnResponse(CompiledGump gi, Thing focus, GumpResponse gr, DialogArgs args) {
 			var tgOwner = (PluginHolder) args.GetTag(D_PluginList.holderTK); //z koho budeme tg brat?				
-			//seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
+																			 //seznam plugin bereme z parametru (mohl byt jiz trideny atd, nebudeme ho proto selectit znova)
 			var tgList = (List<TriggerGroup>) args.GetTag(tgListTK);
 			var firstOnPage = TagMath.IGetTag(args, ImprovedDialog.pagingIndexTK);
 			var imax = Math.Min(firstOnPage + ImprovedDialog.PAGE_ROWS, tgList.Count);

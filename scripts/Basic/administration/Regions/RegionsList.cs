@@ -28,7 +28,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		public static readonly TagKey regsListTK = TagKey.Acquire("_regions_list_");//bude vyuzit jeste jinde, proto public a static
 		public static readonly TagKey regsSearchTK = TagKey.Acquire("_regions_list_search_crit_");
 		public static readonly TagKey regsSortingTK = TagKey.Acquire("_regions_list_sorting_");
-		private static int width = 600;
+		private const int width = 600;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var regionsList = (List<StaticRegion>) args.GetTag(regsListTK);//regionlist si posilame v argumentu (napriklad pri pagingu)

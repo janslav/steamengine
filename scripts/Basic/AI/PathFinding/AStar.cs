@@ -252,7 +252,7 @@ namespace SteamEngine.CompiledScripts {
 						seconds = Convert.ToDouble(sa.Argv[0]);
 					}
 
-					src.Target(Targ_AStar_Walk.Instance, new object[] { self, seconds });
+					src.Target(SingletonScript<Targ_AStar_Walk>.Instance, new object[] { self, seconds });
 				}
 			}
 
@@ -267,22 +267,12 @@ namespace SteamEngine.CompiledScripts {
 					if (settings == null) {
 						settings = self.MovementSettings;
 					}
-					src.Target(Targ_AStar_Draw.Instance, new object[] { self, settings });
+					src.Target(SingletonScript<Targ_AStar_Draw>.Instance, new object[] { self, settings });
 				}
 			}
 		}
 
 		public class Targ_AStar_Draw : CompiledTargetDef {
-			private static Targ_AStar_Draw instance;
-			public static Targ_AStar_Draw Instance {
-				get {
-					return instance;
-				}
-			}
-
-			public Targ_AStar_Draw() {
-				instance = this;
-			}
 
 			protected override TargetResult On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
 				var arr = (object[]) parameter;
@@ -330,16 +320,6 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public class Targ_AStar_Walk : CompiledTargetDef {
-			private static Targ_AStar_Walk instance;
-			public static Targ_AStar_Walk Instance {
-				get {
-					return instance;
-				}
-			}
-
-			public Targ_AStar_Walk() {
-				instance = this;
-			}
 
 			protected override TargetResult On_TargonPoint(Player ignored, IPoint3D targetted, object parameter) {
 				var arr = (object[]) parameter;

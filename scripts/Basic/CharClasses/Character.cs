@@ -301,13 +301,13 @@ namespace SteamEngine.CompiledScripts {
 								this.ForgetMountValues();
 							}
 						} else if (!this.mountorrider.IsPlayer) { //both are NPCs
-							//we use flag-disconnected as clue
+																  //we use flag-disconnected as clue
 							if (this.Flag_Disconnected != this.mountorrider.Flag_Disconnected) {
 								Logger.WriteWarning("Fixed mount states of 2 NPCs ('" + this + "' and '" + this.mountorrider + "') according to their Flag_Disconnected");
 								this.SetFlag_Riding(!this.Flag_Disconnected);
 								this.mountorrider.SetFlag_Riding(!this.mountorrider.Flag_Disconnected);
 							} else { //disconnected state the same, i.e. useless for us
-								//this is an error
+									 //this is an error
 								this.ForgetMountValues(); //the other side should get fixed in their own instance of this method
 							}
 						}
@@ -430,8 +430,8 @@ namespace SteamEngine.CompiledScripts {
 				}
 				var ssp = target.GetPlugin(HidingSkillDef.pluginKey) as HiddenHelperPlugin;
 				return ((ssp != null) &&
-				        (ssp.hadDetectedMe != null) &&
-				        (ssp.hadDetectedMe.Contains(this)));
+						(ssp.hadDetectedMe != null) &&
+						(ssp.hadDetectedMe.Contains(this)));
 			}
 			return true;
 		}
@@ -1220,8 +1220,7 @@ namespace SteamEngine.CompiledScripts {
 			Corpse c = null;
 			foreach (var nearbyThing in this.GetMap().GetThingsInRange(this.X, this.Y, 1)) {
 				c = nearbyThing as Corpse;
-				if (c != null)
-				{
+				if (c != null) {
 					if (c.Owner == this) {
 						break;
 					}
@@ -2493,64 +2492,21 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class CharacterDef {
-		private CharModelInfo charModelInfo;
+		public CorpseDef CorpseDef => FindItemDef(this.CorpseModel) as CorpseDef;
 
-		private CorpseDef corpseDef;
-		public CorpseDef CorpseDef {
-			get {
-				if (this.corpseDef == null) {
-					this.corpseDef = FindItemDef(this.CorpseModel) as CorpseDef;
-				}
-				return this.corpseDef;
-			}
-		}
+		public CharModelInfo CharModelInfo => CharModelInfo.GetByModel(this.Model);
 
-		public CharModelInfo CharModelInfo {
-			get {
-				var model = this.Model;
-				if ((this.charModelInfo == null) || (this.charModelInfo.model != model)) {
-					this.charModelInfo = CharModelInfo.GetByModel(model);
-				}
-				return this.charModelInfo;
-			}
-		}
+		public bool IsHuman => (this.CharModelInfo.charAnimType & CharAnimType.Human) == CharAnimType.Human;
 
-		public bool IsHuman {
-			get {
-				return (this.CharModelInfo.charAnimType & CharAnimType.Human) == CharAnimType.Human;
-			}
-		}
+		public bool IsAnimal => (this.CharModelInfo.charAnimType & CharAnimType.Animal) == CharAnimType.Animal;
 
-		public bool IsAnimal {
-			get {
-				return (this.CharModelInfo.charAnimType & CharAnimType.Animal) == CharAnimType.Animal;
-			}
-		}
+		public bool IsMonster => (this.CharModelInfo.charAnimType & CharAnimType.Monster) == CharAnimType.Monster;
 
-		public bool IsMonster {
-			get {
-				return (this.CharModelInfo.charAnimType & CharAnimType.Monster) == CharAnimType.Monster;
-			}
-		}
+		public Gender Gender => this.CharModelInfo.gender;
 
-		public Gender Gender {
-			get {
-				return this.CharModelInfo.gender;
-			}
-		}
+		public override bool IsMale => this.CharModelInfo.isMale;
 
-		public override bool IsMale {
-			get {
-				return this.CharModelInfo.isMale;
-			}
-		}
-
-		public override bool IsFemale {
-			get {
-				return this.CharModelInfo.isFemale;
-			}
-		}
-
+		public override bool IsFemale => this.CharModelInfo.isFemale;
 	}
 
 	public static class DenyResultMessages_Character {

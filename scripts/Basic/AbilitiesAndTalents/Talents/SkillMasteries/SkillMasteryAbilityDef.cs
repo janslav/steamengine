@@ -21,7 +21,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public class SkillMasteryAbilityDef : PassiveAbilityDef {
-		private FieldValue skill;
+		private readonly FieldValue skill;
 
 		public SkillMasteryAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {

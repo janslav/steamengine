@@ -21,8 +21,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 	/// <summary>A new triggergrouup adding dialog</summary>
 	public class D_NewTriggerGroup : CompiledGumpDef {
-		private static int width = 400;
-		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
+		private const int width = 400;
 
 		private static readonly TagKey prefilledDefnameTK = TagKey.Acquire("_trigger_group_to_add_defname_");
 

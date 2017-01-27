@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		private static readonly TagKey nameTK = TagKey.Acquire("_new_region_name_");
 		private static readonly TagKey homeposTK = TagKey.Acquire("_new_region_homepos_");
 		public static readonly TagKey parentDefTK = TagKey.Acquire("_new_region_parent_defname_");
-		private static int width = 450;
+		private const int width = 450;
 
 		/// <summary>V argumentech (args) mohou prijit parametry pro dialogove editfieldy</summary>
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {

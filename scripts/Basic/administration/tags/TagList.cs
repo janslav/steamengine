@@ -37,8 +37,8 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey tagListTK = TagKey.Acquire("_tag_list_");
 		internal static readonly TagKey tagCriteriumTK = TagKey.Acquire("_tag_criterium_");
 
-		private static int width = 700;
-		private static int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
+		private const int width = 700;
+		private const int innerWidth = width - 2 * ImprovedDialog.D_BORDER - 2 * ImprovedDialog.D_SPACE;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam tagu z tagholdera (char nebo item) prisleho v parametru dialogu
@@ -150,7 +150,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 						DialogStacking.EnstackDialog(gi, newGi); //vlozime napred dialog do stacku
 						break;
 					case 4: //uložit pripadne zmeny
-						//projdeme dostupny seznam tagu na strance a u tech editovatelnych zkoukneme zmeny
+							//projdeme dostupny seznam tagu na strance a u tech editovatelnych zkoukneme zmeny
 						for (var i = firstOnPage; i < imax; i++) {
 							var de = tagList[i];
 							if (ObjectSaver.IsSimpleSaveableOrCoordinated(de.Value.GetType())) {

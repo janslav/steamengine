@@ -24,6 +24,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>Dialog listing all characters of the account</summary>
 	public class D_Acc_Characters : CompiledGumpDef {
 		private static readonly TagKey accountTK = TagKey.Acquire("_account_with_chars_");
+
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var acc = AbstractAccount.GetByName((string) args[0]); //jmeno accountu
 			if (acc == null) {

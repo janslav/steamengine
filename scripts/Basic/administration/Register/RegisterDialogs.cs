@@ -35,7 +35,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey accountTK = TagKey.Acquire("_scripted_account_tag_");
 		internal static readonly TagKey issuesListTK = TagKey.Acquire("_acc_issues_list_"); //used for notes, crimes
 		internal static readonly TagKey issuesSortingTK = TagKey.Acquire("_acc_issues_sorting_"); //used the smae way
-		private static int width = 800;
+		private const int width = 800;
 
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
@@ -252,7 +252,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// 	3 - ulozeny noteslist pro pripadnou navigaci v dialogu
 	/// </summary>
 	public class D_AccountCrimes : CompiledGumpDef {
-		private static int width = 900;
+		private const int width = 900;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var acc = (ScriptedAccount) args.GetTag(D_AccountNotes.accountTK);

@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// 3 - trideni
 	/// </summary>
 	public class D_SelectParent : CompiledGumpDef {
-		private static int width = 450;
+		private const int width = 450;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var regionsList = (List<StaticRegion>) args.GetTag(D_Regions.regsListTK); //regionlist si posilame v argumentu (napriklad pri pagingu)

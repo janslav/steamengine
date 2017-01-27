@@ -32,7 +32,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey rectsListTK = TagKey.Acquire("_rects_list_");
 
 
-		private static int width = 450;
+		private const int width = 450;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var reg = (Region) args.GetTag(regionTK);

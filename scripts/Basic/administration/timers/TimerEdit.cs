@@ -24,7 +24,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 	/// <summary>A timer editing dialog</summary>
 	public class D_EditTimer : CompiledGumpDef {
 		internal static readonly TagKey editedTimerTK = TagKey.Acquire("_timer_edited_");
-		private static int width = 400;
+		private const int width = 400;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			var th = (TagHolder) args.GetTag(D_TimerList.holderTK); //na koho budeme timer ukladat?
@@ -44,7 +44,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 
 			//tabulka s inputem
 			dlg.AddTable(new GUTATable(2, 0, 275)); //1.sl - edit nazev, 2.sl - edit hodnota
-			//napred napisy 
+													//napred napisy 
 			dlg.LastTable[0, 0] = GUTAText.Builder.TextLabel("Název timeru").Build();
 			dlg.LastTable[0, 1] = GUTAText.Builder.TextLabel("Èas [s]").Build();
 			dlg.LastTable[1, 0] = GUTAText.Builder.Text(tm.ToString()).Build();

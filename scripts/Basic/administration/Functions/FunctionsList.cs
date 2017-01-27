@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey criteriaTK = TagKey.Acquire("_functions_search_criteria_");
 		internal static readonly TagKey sortTK = TagKey.Acquire("_functions_list_sorting_");
 
-		private static int width = 300;
+		private const int width = 300;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam funkci

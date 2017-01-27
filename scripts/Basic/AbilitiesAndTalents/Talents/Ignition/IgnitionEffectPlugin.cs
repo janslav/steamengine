@@ -98,7 +98,7 @@ namespace SteamEngine.CompiledScripts {
 
 	[ViewableClass]
 	public partial class IgnitionEffectPluginDef {
-		public static readonly IgnitionEffectPluginDef instance =
+		public static readonly IgnitionEffectPluginDef Instance =
 			(IgnitionEffectPluginDef) new IgnitionEffectPluginDef("p_ignitionEffect", "C# scripts", -1).Register();
 	}
 }

@@ -29,7 +29,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		internal static readonly TagKey criteriumTK = TagKey.Acquire("_ability_criterium_");
 		internal static readonly TagKey sortingTK = TagKey.Acquire("_abilities_sorting_");
 
-		private static int width = 600;
+		private const int width = 600;
 
 		public override void Construct(CompiledGump gi, Thing focus, AbstractCharacter sendTo, DialogArgs args) {
 			//vzit seznam abilit

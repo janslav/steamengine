@@ -33,8 +33,8 @@ namespace SteamEngine.CompiledScripts {
 		//internal static readonly TriggerKey tkDeactivateAbility = TriggerKey.Acquire("deActivateAbility");
 
 		//fields for storing the keys (comming from LScript or set in constructor of children)
-		private FieldValue pluginDef;
-		private FieldValue pluginKey;
+		private readonly FieldValue pluginDef;
+		private readonly FieldValue pluginKey;
 
 		public ActivableAbilityDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
