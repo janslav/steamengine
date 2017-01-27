@@ -55,13 +55,13 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Scripting\Objects\CompiledGump.cs" />
+    <Compile Include="CompiledGump.cs" />
     <Compile Include="Scripting\Objects\CompiledSpeechDef.cs" />
     <Compile Include="Scripting\Compilation\XmlDocComments.cs" />
     <Compile Include="LocalisationExtensions.cs" />
     <Compile Include="Scripting\Compilation\CompiledTriggerGroupGenerator.cs" />
-    <Compile Include="Scripting\Objects\Gump.cs" />
-    <Compile Include="Scripting\Objects\InterpretedGump.cs" />
+    <Compile Include="Gump.cs" />
+    <Compile Include="InterpretedGump.cs" />
     <Compile Include="Scripting\Objects\InterpretedSpeechDef.cs" />
     <Compile Include="Scripting\Objects\SpeechDef.cs" />
     <Compile Include="AI\AI.cs" />

@@ -20,8 +20,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 
-namespace SteamEngine.Scripting.Objects
+namespace SteamEngine
 {
 	public abstract class Gump {
 		private static int uids;

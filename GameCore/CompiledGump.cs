@@ -19,8 +19,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Scripting.Objects;
 
-namespace SteamEngine.Scripting.Objects
+namespace SteamEngine
 {
 	public sealed class CompiledGump : Gump {
 		public CompiledGump(CompiledGumpDef def)

@@ -16,8 +16,9 @@
 */
 
 using System.Diagnostics.CodeAnalysis;
+using SteamEngine.Scripting.Objects;
 
-namespace SteamEngine.Scripting.Objects
+namespace SteamEngine
 {
 	public class InterpretedGump : Gump {
 		protected internal InterpretedGump(InterpretedGumpDef def)
