@@ -88,7 +88,7 @@ namespace SteamEngine.Scripting {
 				//LoadFile();
 
 				Constant.LoadingFinished();
-				ThingDef.LoadingFinished();
+				AbstractItemDef.LoadingFinished();
 				InterpretedTriggerGroup.LoadingFinished();
 				Map.LoadingFinished();
 				//ObjectSaver.LoadingFinished();

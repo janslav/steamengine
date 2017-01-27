@@ -47,7 +47,7 @@ namespace SteamEngine {
 		//internal NetState netState;//No one is to touch this but the NetState class itself!
 
 		internal object contOrTLL; //parent TLL or parent Thing (in fact it's a Thing only if it's a char we're being dragged by)
-		//internal because of ThingLinkedList implementation
+								   //internal because of ThingLinkedList implementation
 
 		private static int savedCharacters;
 		private static int savedItems;
@@ -164,12 +164,12 @@ namespace SteamEngine {
 
 		#region static UidGet methods
 		public static int UidClearFlags(int uid) {
-			return (int) (((uint) uid) & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
+			return (int) (((uint) uid) & ~0xc0000000); //0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
 
 		[CLSCompliant(false)]
 		public static int UidClearFlags(uint uid) {
-			return (int) (uid & ~0xc0000000);			//0x4*, 0x8*, * meaning zeroes padded to 8 digits total
+			return (int) (uid & ~0xc0000000); //0x4*, 0x8*, * meaning zeroes padded to 8 digits total
 		}
 
 		public static AbstractCharacter UidGetCharacter(int uid) {
@@ -275,7 +275,7 @@ namespace SteamEngine {
 				return this.point4d.x;
 			}
 			set {
-				this.P(value, this.Y, this.Z, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(value, this.Y, this.Z, this.M); //maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
 
@@ -285,7 +285,7 @@ namespace SteamEngine {
 				return this.point4d.y;
 			}
 			set {
-				this.P(this.X, value, this.Z, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(this.X, value, this.Z, this.M); //maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
 
@@ -295,7 +295,7 @@ namespace SteamEngine {
 				return this.point4d.z;
 			}
 			set {
-				this.P(this.X, this.Y, value, this.M);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(this.X, this.Y, value, this.M); //maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
 
@@ -306,7 +306,7 @@ namespace SteamEngine {
 				return this.point4d.m;
 			}
 			set {
-				this.P(this.X, this.Y, this.Z, value);	//maybe the compiler will optimize this for us... I hope so! -SL
+				this.P(this.X, this.Y, this.Z, value);  //maybe the compiler will optimize this for us... I hope so! -SL
 			}
 		}
 
@@ -1068,8 +1068,7 @@ namespace SteamEngine {
 
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			if (this.def != null) {
 				return this.Name + " (0x" + this.uid.ToString("x", CultureInfo.InvariantCulture) + ")";
 			}
@@ -1104,7 +1103,8 @@ namespace SteamEngine {
 
 		public bool IsMulti {
 			get {
-				return this.Def.multiData != null;
+				var itemDef = this.def as AbstractItemDef;
+				return itemDef?.MultiData != null;
 			}
 		}
 
@@ -1546,7 +1546,7 @@ namespace SteamEngine {
 
 			}
 
-			this.P(x, y, this.point4d.z);	//This won't change our Z coordinate, whereas P(x,y) would.
+			this.P(x, y, this.point4d.z); //This won't change our Z coordinate, whereas P(x,y) would.
 		}
 
 		/*

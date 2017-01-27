@@ -15,28 +15,34 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Shielded;
 using SteamEngine.Common;
 using SteamEngine.UoData;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class AbstractItemDef : ThingDef {
-		private FieldValue type;
-		private FieldValue pluralName;
+		private readonly FieldValue type;
+		private readonly FieldValue pluralName;
 
-		private FieldValue dupeItem;
-		//private FieldValue clilocName;
-		private FieldValue mountChar;
-		private FieldValue flippable;
-		private FieldValue stackable;
+		private readonly FieldValue dupeItem;
+		//private readonly FieldValue clilocName;
+		private readonly FieldValue mountChar;
+		private readonly FieldValue flippable;
+		private readonly FieldValue stackable;
 
-		private FieldValue dropSound;
+		private readonly FieldValue dropSound;
 
 		private List<AbstractItemDef> dupeList;
 		private ReadOnlyCollection<AbstractItemDef> dupeListReadOnly;
 
 		private ItemDispidInfo dispidInfo;
+
+		private MultiData multiData;
 
 		protected AbstractItemDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -128,15 +134,7 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
-		private static TriggerGroup t_normal;
-		private static TriggerGroup T_Normal {
-			get {
-				if (t_normal == null) {
-					t_normal = TriggerGroup.GetByDefname("t_normal");
-				}
-				return t_normal;
-			}
-		}
+		private static TriggerGroup T_Normal => TriggerGroup.GetByDefname("t_normal");
 
 
 		public TriggerGroup Type {
@@ -181,7 +179,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public override string Name {
 			get {
-				if (this.name.IsDefaultCodedValue) {
+				if (this.name.IsEmptyAndUnchanged) {
 					ItemDispidInfo idi = this.DispidInfo;
 					if (idi != null) {
 						return idi.SingularName;
@@ -203,10 +201,10 @@ namespace SteamEngine.Scripting.Objects {
 
 		public string PluralName {
 			get {
-				if (!this.pluralName.IsDefaultCodedValue) {
+				if (!this.pluralName.IsEmptyAndUnchanged) {
 					return (string) this.pluralName.CurrentValue;
 				}
-				if (this.name.IsDefaultCodedValue) {
+				if (this.name.IsEmptyAndUnchanged) {
 					ItemDispidInfo idi = this.DispidInfo;
 					if (idi != null) {
 						return idi.PluralName;
@@ -295,9 +293,8 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override int Height {
-			get
-			{
-				if (this.height.IsDefaultCodedValue) {
+			get {
+				if (this.height.IsEmptyAndUnchanged) {
 					//if (this.IsContainer) {
 					//    return 4;
 					//}
@@ -309,6 +306,52 @@ namespace SteamEngine.Scripting.Objects {
 				}
 				return (int) this.height.CurrentValue;
 			}
+		}
+
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		internal new static void LoadingFinished() {
+			//dump number of loaded instances?
+			Logger.WriteDebug($"Highest itemdef model #: {HighestItemModel} (0x{HighestItemModel.ToString("x", CultureInfo.InvariantCulture)})");
+			Logger.WriteDebug($"Highest chardef model #: {HighestCharModel} (0x{HighestCharModel.ToString("x", CultureInfo.InvariantCulture)})");
+
+			var allScripts = AllScripts;
+			int count = allScripts.Count;
+
+			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
+				int a = 0;
+				int countPerCent = count / 200;
+				foreach (var td in allScripts) {
+					if ((a % countPerCent) == 0) {
+						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
+					}
+					var idef = td as AbstractItemDef;
+					if (idef != null) {
+						try {
+							SeShield.InTransaction(() => {
+								idef.DupeItem?.AddToDupeList(idef);
+							});
+						} catch (FatalException) {
+							throw;
+						} catch (TransException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteWarning(e);
+						}
+
+						try {
+							idef.multiData = SeShield.InTransaction(() => MultiData.GetByModel(idef.Model));
+						} catch (FatalException) {
+							throw;
+						} catch (TransException) {
+							throw;
+						} catch (Exception e) {
+							Logger.WriteWarning(e);
+						}
+					}
+					a++;
+				}
+			}
+			Logger.SetTitle("");
 		}
 	}
 }

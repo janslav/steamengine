@@ -16,10 +16,8 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Regions;
@@ -34,37 +32,32 @@ namespace SteamEngine.Scripting.Objects {
 	}
 
 	public abstract class ThingDef : AbstractDefTriggerGroupHolder, IThingFactory {
-		internal FieldValue name;
-		internal FieldValue model;
-		private FieldValue weight;
-		internal FieldValue height;
+		private static readonly ShieldedDictNc<Type, Type> thingDefTypesByThingType = new ShieldedDictNc<Type, Type>();
+		private static readonly ShieldedDictNc<Type, Type> thingTypesByThingDefType = new ShieldedDictNc<Type, Type>();
 
-		private FieldValue color;
+		private static readonly ShieldedDictNc<int, AbstractItemDef> itemModelDefs = new ShieldedDictNc<int, AbstractItemDef>();
+		private static readonly ShieldedDictNc<int, AbstractCharacterDef> charModelDefs = new ShieldedDictNc<int, AbstractCharacterDef>();
+		private static readonly Shielded<int> highestItemModel = new Shielded<int>();
+		private static readonly Shielded<int> highestCharModel = new Shielded<int>();
 
-		internal MultiData multiData;
+		internal readonly FieldValue name;
+		internal readonly FieldValue model;
+		private readonly FieldValue weight;
+		internal readonly FieldValue height;
 
-		private TriggerGroup defaultTriggerGroup;
+		private readonly FieldValue color;
 
-		private static Dictionary<Type, Type> thingDefTypesByThingType = new Dictionary<Type, Type>();
-		private static Dictionary<Type, Type> thingTypesByThingDefType = new Dictionary<Type, Type>();
+		private readonly Shielded<TriggerGroup> defaultTriggerGroup = new Shielded<TriggerGroup>();
 
-		//private static Dictionary<string, Type> thingDefTypesByName = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-		private static Dictionary<Type, ConstructorInfo> thingDefCtors = new Dictionary<Type, ConstructorInfo>();
+		public static int HighestItemModel {
+			get { return highestItemModel.Value; }
+			set { highestItemModel.Value = value; }
+		}
 
-
-		//Highest itemdef model #: 21384	(0x5388)	<-- That's a multi. The last real item is 0x3fff.
-		//Highest chardef model #: 987 (0x03db)
-
-		//In case someone adds more on the end, we've set these higher.
-		//public const int MaxItemModels = 0x6000;
-		//public const int MaxCharModels = 0xf000;
-		//private static AbstractItemDef[] itemModelDefs = new AbstractItemDef[MaxItemModels];
-		//private static AbstractCharacterDef[] charModelDefs = new AbstractCharacterDef[MaxCharModels];
-
-		private static ShieldedDictNc<int, AbstractItemDef> itemModelDefs = new ShieldedDictNc<int, AbstractItemDef>();
-		private static ShieldedDictNc<int, AbstractCharacterDef> charModelDefs = new ShieldedDictNc<int, AbstractCharacterDef>();
-		private static int highestItemModel;
-		private static int highestCharModel;
+		public static int HighestCharModel {
+			get { return highestCharModel.Value; }
+			set { highestCharModel.Value = value; }
+		}
 
 		internal ThingDef(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
@@ -154,7 +147,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public virtual int Height {
 			get {
-				if (this.height.IsDefaultCodedValue) {
+				if (this.height.IsEmptyAndUnchanged) {
 					return Map.PersonHeight;
 				}
 				return (int) this.height.CurrentValue;
@@ -173,6 +166,8 @@ namespace SteamEngine.Scripting.Objects {
 
 		public abstract bool IsItemDef { get; }
 		public abstract bool IsCharDef { get; }
+
+		public TriggerGroup DefaultTriggerGroup => this.defaultTriggerGroup.Value;
 
 		#endregion Accessors
 
@@ -320,6 +315,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static void RegisterThingDef(Type thingDefType, Type thingType) {
+			SeShield.AssertInTransaction();
 			Type t;
 			if (thingDefTypesByThingType.TryGetValue(thingDefType, out t)) {
 				throw new OverrideNotAllowedException("ThingDef type " + LogStr.Ident(thingDefType.FullName) + " already has it's Thing type -" + t.FullName + ".");
@@ -411,18 +407,19 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
+			SeShield.AssertInTransaction();
 			int defnum;
 			string defname = this.Defname;
 			if (ConvertTools.TryParseInt32(defname.Substring(2), out defnum)) {
 				if (this.IsCharDef && defname.StartsWith("c_")) {
-					if (defnum > highestCharModel) {
-						highestCharModel = defnum;
+					if (defnum > HighestCharModel) {
+						HighestCharModel = defnum;
 					}
 					//Sanity.IfTrueThrow(idefnum>MaxCharModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxCharModels ("+MaxCharModels+").");
 					charModelDefs[defnum] = (AbstractCharacterDef) this;
 				} else if (this.IsItemDef && defname.StartsWith("i_")) {
-					if (defnum > highestItemModel) {
-						highestItemModel = defnum;
+					if (defnum > HighestItemModel) {
+						HighestItemModel = defnum;
 					}
 					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
 					itemModelDefs[defnum] = (AbstractItemDef) this;
@@ -436,74 +433,23 @@ namespace SteamEngine.Scripting.Objects {
 			//now do load the trigger code. 
 			if (ps.TriggerCount > 0) {
 				ps.HeaderName = "t__" + defname + "__";
-				this.defaultTriggerGroup = InterpretedTriggerGroup.Load(ps);
-				this.AddTriggerGroup(this.defaultTriggerGroup);
+				var triggerGroup = InterpretedTriggerGroup.Load(ps);
+				this.defaultTriggerGroup.Value = triggerGroup;
+				this.AddTriggerGroup(triggerGroup);
 			}
 		}
 
 		public override void Unload() {
-			if (this.defaultTriggerGroup != null) {
-				this.defaultTriggerGroup.Unload();
-			}
+			SeShield.AssertInTransaction();
+			this.defaultTriggerGroup.Value?.Unload();
 			base.Unload();
 		}
 
-		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal new static void LoadingFinished() {
-			//dump number of loaded instances?
-			Logger.WriteDebug("Highest itemdef model #: " + highestItemModel + " (0x" + highestItemModel.ToString("x", CultureInfo.InvariantCulture) + ")");
-			Logger.WriteDebug("Highest chardef model #: " + highestCharModel + " (0x" + highestCharModel.ToString("x", CultureInfo.InvariantCulture) + ")");
-
-			var allScripts = AllScripts;
-			int count = allScripts.Count;
-
-			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
-				int a = 0;
-				int countPerCent = count / 200;
-				foreach (var td in allScripts) {
-					if ((a % countPerCent) == 0) {
-						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
-					}
-					var idef = td as AbstractItemDef;
-					if (idef != null) {
-						try {
-							SeShield.InTransaction(() => {
-								var dupeItem = idef.DupeItem;
-								if (dupeItem != null) {
-									dupeItem.AddToDupeList(idef);
-								}
-							});
-						} catch (FatalException) {
-							throw;
-						} catch (TransException) {
-							throw;
-						} catch (Exception e) {
-							Logger.WriteWarning(e);
-						}
-
-						try {
-							SeShield.InTransaction(() => {
-								idef.multiData = MultiData.GetByModel(idef.Model);
-							});
-						} catch (FatalException) {
-							throw;
-						} catch (TransException) {
-							throw;
-						} catch (Exception e) {
-							Logger.WriteWarning(e);
-						}
-					}
-					a++;
-				}
-			}
-			Logger.SetTitle("");
-		}
-
 		internal new static void ForgetAll() {
+			SeShield.AssertInTransaction();
+
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
-											 //thingDefTypesByName.Clear();
-			thingDefCtors.Clear();
 
 			itemModelDefs.Clear();
 			charModelDefs.Clear();

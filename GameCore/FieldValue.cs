@@ -399,7 +399,7 @@ namespace SteamEngine {
 		}
 
 		/// <summary>If true, it has not been set from scripts nor from saves nor manually</summary>
-		public bool IsDefaultCodedValue {
+		public bool IsEmptyAndUnchanged {
 			get {
 				SeShield.AssertInTransaction();
 				var state = this.shieldedState.Value;

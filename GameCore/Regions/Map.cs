@@ -31,8 +31,8 @@ namespace SteamEngine.Regions {
 	public partial class Map {
 		internal const int sectorFactor = 4;
 		internal const int sectorWidth = 1 << sectorFactor; //16 for sectorfactor 4, 32 for 5, etc. set as const for speed
-		internal const int sectorAnd = ~(sectorWidth - 1);	//Used to quickly determine whether the sector of a thing has changed
-		//Sector size is required to be a power of 2 for speed & efficiency. -SL
+		internal const int sectorAnd = ~(sectorWidth - 1);  //Used to quickly determine whether the sector of a thing has changed
+															//Sector size is required to be a power of 2 for speed & efficiency. -SL
 		internal const int mulSectorAnd = ~7;
 
 		//sectorAnd and mulSectorAnd are also used to calculate relative x/y coordinates - much faster than using shifts.
@@ -381,9 +381,9 @@ namespace SteamEngine.Regions {
 
 		private void AddMulti(AbstractItem multiItem) {
 			MultiItemComponent[] components = multiItem.contentsOrComponents as MultiItemComponent[];
-			Sanity.IfTrueThrow(components != null, "MultiItem being added to map when it already has it's components instantiated!");
-			MultiData data = multiItem.Def.multiData;
-			Sanity.IfTrueThrow(data == null, "MultiItem without MultiData on it's Def?!");
+			Sanity.IfTrueThrow(components != null, "MultiItem being added to map when it already has its components instantiated!");
+			MultiData data = ((AbstractItemDef) multiItem.Def).MultiData;
+			Sanity.IfTrueThrow(data == null, "MultiItem without MultiData on its Def?!");
 			MutablePoint4D p = multiItem.point4d;
 			Sanity.IfTrueThrow(p.m != this.m, "p.m != this.m");
 			components = data.Create(p.x, p.y, p.z, this);
@@ -468,15 +468,15 @@ namespace SteamEngine.Regions {
 				if (newPValid) {
 					newM.Add(thing);
 				}
-			} else {	//oldPValid
-				if (newPValid) {	//both old and new are valid
+			} else {    //oldPValid
+				if (newPValid) {    //both old and new are valid
 					if (oldM == newM) {
 						newM.ChangedPImpl(thing, oldP);
-					} else {			//Thing changed maps.
+					} else {            //Thing changed maps.
 						oldM.RemoveFromPImpl(thing, oldP);
 						newM.Add(thing);
 					}
-				} else {	//New isn't valid, but old is, so we just remove the thing from the map.
+				} else {    //New isn't valid, but old is, so we just remove the thing from the map.
 					oldM.RemoveFromPImpl(thing, oldP);
 				}
 			}
@@ -571,7 +571,7 @@ namespace SteamEngine.Regions {
 				int newSy = newP.y >> sectorFactor;
 				Sector oldSector = this.GetSector(oldSx, oldSy);
 				Sector newSector = this.GetSector(newSx, newSy);
-				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");	//P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
+				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");   //P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
 				Logger.WriteInfo(Globals.MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
 				oldSector.Remove(thing);
 				newSector.Add(thing);
@@ -602,7 +602,7 @@ namespace SteamEngine.Regions {
 				int newSy = mic.Y >> sectorFactor;
 				Sector oldSector = this.GetSector(oldSx, oldSy);
 				Sector newSector = this.GetSector(newSx, newSy);
-				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");	//P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
+				Sanity.IfTrueThrow(oldSector == newSector, "oldSector==newSector! Apparently our &sectorAnd algorithm doesn't work. :(");   //P.S. This doesn't ever happen currently, but it's here in case someone breaks it. -SL
 				Logger.WriteInfo(Globals.MapTracingOn, "Remove from sector " + oldSx + "," + oldSy + " and add to sector " + newSx + "," + newSy);
 				oldSector.RemoveMultiComponent(mic);
 				newSector.AddMultiComponent(mic);

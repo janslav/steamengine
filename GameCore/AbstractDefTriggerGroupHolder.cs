@@ -25,11 +25,9 @@ using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine {
 	public abstract class AbstractDefTriggerGroupHolder : AbstractDef, ITriggerGroupHolder {
-
-		//attention! this class does not (yet?) use the prevNode field on TGListNode, cos we don't need it here.
-		private readonly ShieldedSeqNc<TriggerGroup> triggerGroups = new ShieldedSeqNc<TriggerGroup>(); //linked list of triggergroup references
-
 		private static readonly ShieldedSeqNc<DelayedResolver> delayedLoaders = new ShieldedSeqNc<DelayedResolver>();
+
+		private readonly ShieldedSeqNc<TriggerGroup> triggerGroups = new ShieldedSeqNc<TriggerGroup>();
 
 		protected AbstractDefTriggerGroupHolder(string defname, string filename, int headerLine)
 			: base(defname, filename, headerLine) {
