@@ -251,10 +251,10 @@
     <Compile Include="WeakRefDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Scripting\Interpretation\generate.bat" />
     <None Include="Scripting\Interpretation\LScript_strict.grammar" />
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\SteamEngine.Common.csproj">
@@ -271,16 +271,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="SharpSvn, Version=1.8015.3829.125, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
-      <HintPath>..\packages\SharpSvn.1.8-x64.1.8015.3829.125\lib\net40\SharpSvn.dll</HintPath>
+    <Reference Include="SharpSvn, Version=1.8016.3900.133, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
+      <HintPath>..\packages\SharpSvn.1.8-x64.1.8016.3900.133\lib\net40\SharpSvn.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SharpSvn.UI, Version=1.8015.3829.125, Culture=neutral, PublicKeyToken=33789aa53ca44aa9, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpSvn.1.8-x64.1.8015.3829.125\lib\net40\SharpSvn.UI.dll</HintPath>
+    <Reference Include="SharpSvn.UI, Version=1.8016.3900.133, Culture=neutral, PublicKeyToken=33789aa53ca44aa9, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpSvn.1.8-x64.1.8016.3900.133\lib\net40\SharpSvn.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shielded, Version=4.4.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shielded.4.4.2\lib\net40\Shielded.dll</HintPath>
+    <Reference Include="Shielded, Version=4.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shielded.4.4.3\lib\net40\Shielded.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
