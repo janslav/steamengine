@@ -24,12 +24,29 @@ namespace SteamEngine {
 	public static class SeShield {
 		private static long sequence;
 
-		[ThreadStatic]
-		private static long? transactionNumber;
+        private static readonly ShieldedLocal<long> transactionNumber = new ShieldedLocal<long>();
 
-		public static long? TransactionNumber => transactionNumber;
 
-		public static void AssertNotInTransaction() {
+#warning format this
+        public static long? TransactionNumber
+        {
+            get
+            {
+                if (!Shield.IsInTransaction)
+                {
+                    return null;
+                }
+
+                if (!transactionNumber.HasValue)
+                {
+                    transactionNumber.Value = Interlocked.Increment(ref sequence);
+                }
+
+                return transactionNumber.Value;
+            }
+        }
+
+        public static void AssertNotInTransaction() {
 			if (Shield.IsInTransaction) {
 				throw new InvalidOperationException("Operation must not to be in a transaction.");
 			}
@@ -45,17 +62,12 @@ namespace SteamEngine {
 			} else {
 
 				Func<T> wrapped = () => {
-					T r;
 					try {
-						transactionNumber = Interlocked.Increment(ref sequence);
-						r = act();
+						return act();
 					} catch (Exception) {
 						Logger.WriteDebug("Rolling back transaction.");
 						throw;
-					} finally {
-						transactionNumber = null;
 					}
-					return r;
 				};
 
 				return Shield.InTransaction(wrapped);
@@ -69,13 +81,10 @@ namespace SteamEngine {
 
 				Action wrapped = () => {
 					try {
-						transactionNumber = Interlocked.Increment(ref sequence);
 						act();
 					} catch (Exception) {
 						Logger.WriteDebug("Rolling back transaction.");
 						throw;
-					} finally {
-						transactionNumber = null;
 					}
 				};
 
