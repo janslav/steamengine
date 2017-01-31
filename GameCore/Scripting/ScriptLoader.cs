@@ -54,8 +54,6 @@ namespace SteamEngine.Scripting {
 				long loadedBytes = 0;
 
 				//load either paralell or sequentially, depending on .ini setting
-				Action<long> showLoaded = alreadyloaded => Logger.SetTitle("Loading scripts: " + ((alreadyloaded * 100) / lengthSum) + " %");
-
 				if (Globals.ParallelStartUp) {
 					loadedBytes = files.AsParallel().Aggregate(
 						() => 0L,
@@ -66,8 +64,8 @@ namespace SteamEngine.Scripting {
 						},
 						(a, b) => {
 							var alreadyloaded = a + b;
-							showLoaded(alreadyloaded);
-							return alreadyloaded;
+                            Logger.SetTitle($"Loading scripts: {(alreadyloaded * 100) / lengthSum} %");
+                            return alreadyloaded;
 						},
 						a => a);
 				} else {
@@ -75,7 +73,7 @@ namespace SteamEngine.Scripting {
 						Logger.WriteDebug("Loading " + sf1.Name);
 						LoadFile(sf1);
 						loadedBytes += sf1.Length;
-						showLoaded(loadedBytes);
+                        Logger.SetTitle($"Loading scripts: {(loadedBytes * 100) / lengthSum} %");
 					}
 				}
 
@@ -163,15 +161,25 @@ namespace SteamEngine.Scripting {
 			}
 		}
 
-		private static IEnumerable<IUnloadable> LoadScriptsFromFile(ScriptFile file) {
+#warning format this
+        private static IEnumerable<IUnloadable> LoadScriptsFromFile(ScriptFile file) {
 			if (file.Exists) //this may not be true on rare circumstances (basically, delete script and recompile) not gonna do any better fix
 			{
-				using (var stream = file.OpenText()) {
-					foreach (var script in PropsFileParser.Load(file.FullName, stream, StartsAsScript, false).SelectMany(LoadSection)) {
-						yield return script;
-					}
+				using (var stream = file.OpenText())
+				{
+				    var loaded = PropsFileParser.Load(file.FullName, stream, StartsAsScript, displayPercentage: false);
+
+				    if (Globals.ParallelStartUp)
+				    {
+				        return loaded.AsParallel().SelectMany(LoadSection).ToList();
+				    }
+				    else
+				    {
+                        return loaded.SelectMany(LoadSection).ToList();
+                    }
 				}
 			}
+		    return Enumerable.Empty<IUnloadable>();
 		}
 
 		private static IEnumerable<IUnloadable> LoadSection(PropsSection section) {
@@ -320,20 +328,26 @@ namespace SteamEngine.Scripting {
 			}
 		}
 
-		//forgets stuff that come from scripts.
-		internal static void ForgetScripts() {
-			SeShield.AssertInTransaction();
+#warning format this
+        //forgets stuff that come from scripts.
+        internal static void ForgetScripts() {
+			SeShield.AssertNotInTransaction();
 			allFiles.Clear();
 
-			var coreAssembly = ClassManager.CoreAssembly;
+		    SeShield.InTransaction(() =>
+		    {
+		        var coreAssembly = ClassManager.CoreAssembly;
 
-			var origScripts = scriptTypesByName.ToArray();
-			scriptTypesByName.Clear();
-			foreach (var pair in origScripts) {
-				if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly) {
-					scriptTypesByName[pair.Key] = pair.Value;
-				}
-			}
+		        var origScripts = scriptTypesByName.ToArray();
+		        scriptTypesByName.Clear();
+		        foreach (var pair in origScripts)
+		        {
+		            if (coreAssembly == pair.Value.deleg.Method.DeclaringType.Assembly)
+		            {
+		                scriptTypesByName[pair.Key] = pair.Value;
+		            }
+		        }
+		    });
 		}
 	}
 }
