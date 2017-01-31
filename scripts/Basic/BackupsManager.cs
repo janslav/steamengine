@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Management;
-using System.Runtime.InteropServices;
 using ICSharpCode.SharpZipLib.Zip;
 //using OrganicBit.Zip;
 using SteamEngine.Common;

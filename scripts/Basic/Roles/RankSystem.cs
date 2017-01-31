@@ -18,6 +18,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {

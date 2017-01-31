@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Scripting.Objects {

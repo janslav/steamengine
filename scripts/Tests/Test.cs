@@ -19,7 +19,6 @@ using System;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Compilation;
-using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 

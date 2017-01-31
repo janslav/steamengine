@@ -15,9 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System.Collections.Generic;
-using SteamEngine.Timers;
-
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(TagHolder), "Tag Holder")]
 	public static class TagHolderDescriptor {

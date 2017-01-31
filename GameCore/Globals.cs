@@ -24,6 +24,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Objects;

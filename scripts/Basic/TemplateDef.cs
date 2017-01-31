@@ -18,9 +18,7 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using SteamEngine.Common;
-using SteamEngine;
 using SteamEngine.Parsing;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;

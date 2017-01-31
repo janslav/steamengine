@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Objects;
 

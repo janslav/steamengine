@@ -20,6 +20,7 @@ using System.Globalization;
 using System.Linq;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class AbstractSkillDef : AbstractIndexedDef<AbstractSkillDef, int> /*TriggerGroupHolder*/ {

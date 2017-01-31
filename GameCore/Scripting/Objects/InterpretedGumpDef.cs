@@ -22,7 +22,6 @@ using System.IO;
 using System.Text;
 using Shielded;
 using SteamEngine.Common;
-using SteamEngine;
 using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
 

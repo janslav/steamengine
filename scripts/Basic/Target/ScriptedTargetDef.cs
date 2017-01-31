@@ -19,6 +19,7 @@ using System;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.UoData;
 

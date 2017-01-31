@@ -22,6 +22,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Scripting.Objects {

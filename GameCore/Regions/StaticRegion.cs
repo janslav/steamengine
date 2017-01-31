@@ -21,6 +21,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {

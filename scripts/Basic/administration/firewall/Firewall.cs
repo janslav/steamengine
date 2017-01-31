@@ -22,6 +22,7 @@ using SteamEngine.Common;
 using SteamEngine.Communication.TCP;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting.Objects;
 

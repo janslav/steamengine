@@ -1,4 +1,3 @@
-using System.Text;
 
 #warning format this
 namespace SteamEngine.Parsing

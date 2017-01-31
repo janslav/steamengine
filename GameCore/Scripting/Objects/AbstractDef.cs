@@ -23,10 +23,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting.Compilation;
 

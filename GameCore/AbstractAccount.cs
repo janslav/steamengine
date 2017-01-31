@@ -23,6 +23,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Objects;

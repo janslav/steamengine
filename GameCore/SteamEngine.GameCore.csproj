@@ -56,6 +56,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CompiledGump.cs" />
+    <Compile Include="Parsing\PropsFileParser.cs" />
+    <Compile Include="Parsing\PropsLine.cs" />
+    <Compile Include="Parsing\PropsSection.cs" />
+    <Compile Include="Parsing\TriggerSection.cs" />
     <Compile Include="Scripting\Objects\CompiledSpeechDef.cs" />
     <Compile Include="Scripting\Compilation\XmlDocComments.cs" />
     <Compile Include="LocalisationExtensions.cs" />
@@ -171,6 +175,7 @@
     <Compile Include="Regions\Sector.cs" />
     <Compile Include="Regions\StaticRegion.cs" />
     <Compile Include="Regions\StaticSector.cs" />
+    <Compile Include="Scripting\ScriptFile.cs" />
     <Compile Include="SeShield.cs" />
     <Compile Include="Timers\BoundTimer.cs" />
     <Compile Include="Timers\DelegateTimer.cs" />
@@ -224,7 +229,6 @@
     <Compile Include="PluginKey.cs" />
     <Compile Include="Scripting\Compilation\PluginTriggerGroupGenerator.cs" />
     <Compile Include="Point.cs" />
-    <Compile Include="PropsFileParser.cs" />
     <Compile Include="RunLevel.cs" />
     <Compile Include="Scripting\ScriptArgs.cs" />
     <Compile Include="Scripting\ScriptFilesCollection.cs" />

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
-using Shielded;
 
 namespace SteamEngine.Tests {
 	// we mainly test atomicity of change operations

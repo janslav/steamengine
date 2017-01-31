@@ -1,6 +1,7 @@
 using System;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Scripting.Objects;

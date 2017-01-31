@@ -16,10 +16,10 @@
 */
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.CompiledScripts {

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 
 namespace SteamEngine.Scripting.Objects {
 

@@ -23,6 +23,7 @@ using EQATEC.Profiler;
 using PerCederberg.Grammatica.Parser;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Timers;
 
 namespace SteamEngine.Scripting.Interpretation {

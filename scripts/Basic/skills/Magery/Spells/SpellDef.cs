@@ -18,11 +18,11 @@ t
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Regions;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Objects;

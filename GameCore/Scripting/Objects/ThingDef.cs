@@ -20,8 +20,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Regions;
-using SteamEngine.UoData;
 
 namespace SteamEngine.Scripting.Objects {
 

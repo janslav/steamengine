@@ -15,10 +15,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using System.Collections.Generic;
 using SteamEngine.CompiledScripts.Dialogs;
-using SteamEngine.Regions;
-using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	//[ViewableClass]

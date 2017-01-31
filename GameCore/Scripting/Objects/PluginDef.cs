@@ -16,10 +16,10 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class PluginDef : AbstractDef {
