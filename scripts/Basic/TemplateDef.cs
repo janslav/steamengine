@@ -20,6 +20,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using SteamEngine.Common;
+using SteamEngine;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Scripting.Objects;
@@ -150,9 +152,11 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			//so we have read the important fields, now read the rest as lscript function
+            //so we have read the important fields, now read the rest as lscript function
+#warning format this
+            trigger = new TriggerSection(filename: trigger.Filename, startline: trigger.StartLine, key: trigger.TriggerKey,
+                                        name: trigger.TriggerName, comment: trigger.TriggerComment, code: newCode.ToString());
 
-			trigger.Code = newCode;
 			td.holder = new LScriptHolder(trigger);
 			if (input.TriggerCount > 1) {
 				Logger.WriteWarning(input.Filename, input.HeaderLine, "Triggers in a template are nonsensual (and ignored).");

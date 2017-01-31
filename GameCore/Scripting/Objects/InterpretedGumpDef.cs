@@ -22,6 +22,8 @@ using System.IO;
 using System.Text;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
 
 namespace SteamEngine.Scripting.Objects {
@@ -98,7 +100,10 @@ namespace SteamEngine.Scripting.Objects {
 								break;
 							}
 						}
-						trigger.Code = modifiedCode;
+#warning format this
+                        trigger = new TriggerSection(filename: trigger.Filename, startline: trigger.StartLine, key: trigger.TriggerKey, 
+                            name: trigger.TriggerName, comment: trigger.TriggerComment, code: modifiedCode.ToString());
+
 						var sc = new LScriptHolder(trigger);
 						if (sc.IsUnloaded) {//in case the compilation failed (syntax error)
 							sgd.Unload(); //IsUnloaded = true;
