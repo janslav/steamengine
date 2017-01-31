@@ -16,64 +16,77 @@
 */
 
 using System;
+using System.Collections.Concurrent;
+using System.Threading;
 using Shielded;
 
-namespace SteamEngine {
+namespace SteamEngine
+{
 
-	public interface IAbstractKey {
-		string Name { get; }
-		int Uid { get; }
-	}
+    public interface IAbstractKey
+    {
+        string Name { get; }
+        int Uid { get; }
+    }
 
-	/// <summary>
-	/// AbstractKey is used as an ID for tags, to make tag lookups
-	/// fast and not use a lot of memory, etc. base class for all
-	/// "key" classes
-	/// </summary>
-	public abstract class AbstractKey<T> : IAbstractKey where T : IAbstractKey {
-		private static readonly Shielded<int> uids = new Shielded<int>(0);
+#warning format this
 
-		private static ShieldedDictNc<string, T> byName = new ShieldedDictNc<string, T>(comparer: StringComparer.OrdinalIgnoreCase);
+    /// <summary>
+    /// AbstractKey is used as an ID for tags, to make tag lookups
+    /// fast and not use a lot of memory, etc. base class for all
+    /// "key" classes
+    /// </summary>
+    public abstract class AbstractKey<T> : IAbstractKey where T : IAbstractKey
+    {
+        private static int uids;
 
-		private readonly string name;
-		private readonly int uid;
+        private static ConcurrentDictionary<string, T> byName =
+            new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
-		protected AbstractKey(string name, int uid) {
-			this.name = name;
-			this.uid = uid;
-		}
+        private readonly string name;
+        private readonly int uid;
 
-		public string Name {
-			get { return this.name; }
-		}
+        protected AbstractKey(string name, int uid)
+        {
+            this.name = name;
+            this.uid = uid;
+        }
 
-		public int Uid {
-			get { return this.uid; }
-		}
+        public string Name
+        {
+            get { return this.name; }
+        }
 
-		public sealed override int GetHashCode() {
-			return this.uid;
-		}
+        public int Uid
+        {
+            get { return this.uid; }
+        }
 
-		public sealed override string ToString() {
-			return this.name;
-		}
+        public sealed override int GetHashCode()
+        {
+            return this.uid;
+        }
 
-		public sealed override bool Equals(object obj) {
-			return ReferenceEquals(this, obj);
-		}
+        public sealed override string ToString()
+        {
+            return this.name;
+        }
 
-		protected static T Acquire(string name, Func<string, int, T> factory) {
-			return SeShield.InTransaction(() => {
-				T key;
-				if (!byName.TryGetValue(name, out key)) {
-					var uid = uids.Value++;
-					key = factory(name, uid);
-					byName.Add(name, key);
-				}
+        public sealed override bool Equals(Object obj)
+        {
+            return ReferenceEquals(this, obj);
+        }
 
-				return key;
-			});
-		}
-	}
+        protected static T Acquire(string name, Func<string, int, T> factory)
+        {
+            var k = byName.GetOrAdd(name,
+                n =>
+                {
+                    var uid = Interlocked.Increment(ref uids);
+                    return factory(n, uid);
+                });
+
+            return k;
+        }
+    }
 }
