@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.UoData;
@@ -270,40 +272,58 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
-		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+#warning format this
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal new static void LoadingFinished() {
-			//dump number of loaded instances?
-			Logger.WriteDebug($"Highest itemdef model #: {HighestItemModel} (0x{HighestItemModel.ToString("x", CultureInfo.InvariantCulture)})");
-			Logger.WriteDebug($"Highest chardef model #: {HighestCharModel} (0x{HighestCharModel.ToString("x", CultureInfo.InvariantCulture)})");
-
 			var allScripts = AllScripts;
 			var count = allScripts.Count;
 
 			using (StopWatch.StartAndDisplay("Resolving dupelists and multidata...")) {
 				var a = 0;
 				var countPerCent = count / 200;
-				foreach (var td in allScripts) {
-					if ((a % countPerCent) == 0) {
-						Logger.SetTitle("Resolving dupelists and multidata: " + ((a * 100) / count) + " %");
-					}
-					var idef = td as AbstractItemDef;
-					if (idef != null) {
-						try {
-							SeShield.InTransaction(() => {
-								idef.DupeItem?.AddToDupeList(idef);
-							});
-						} catch (FatalException) {
-							throw;
-						} catch (TransException) {
-							throw;
-						} catch (Exception e) {
-							Logger.WriteWarning(e);
-						}
-					}
-					a++;
-				}
+
+			    if (Globals.ParallelStartUp)
+			    {
+			        Parallel.ForEach(allScripts, td => LoadingFinished(ref a, countPerCent, count, td));
+			    }
+			    else
+			    {
+			        foreach (var td in allScripts)
+			        {
+			            LoadingFinished(ref a, countPerCent, count, td);
+			        }
+			    }
 			}
 			Logger.SetTitle("");
 		}
+
+	    private static void LoadingFinished(ref int a, int countPerCent, int count, AbstractScript td)
+	    {
+	        if ((a%countPerCent) == 0)
+	        {
+	            Logger.SetTitle("Resolving dupelists and multidata: " + ((a*100)/count) + " %");
+	        }
+	        var idef = td as AbstractItemDef;
+	        if (idef != null)
+	        {
+	            try
+	            {
+	                SeShield.InTransaction(() => { idef.DupeItem?.AddToDupeList(idef); });
+	            }
+	            catch (FatalException)
+	            {
+	                throw;
+	            }
+	            catch (TransException)
+	            {
+	                throw;
+	            }
+	            catch (Exception e)
+	            {
+	                Logger.WriteWarning(e);
+	            }
+	        }
+	        Interlocked.Increment(ref a);
+	    }
 	}
 }

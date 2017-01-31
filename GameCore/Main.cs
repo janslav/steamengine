@@ -92,7 +92,7 @@ namespace SteamEngine {
 
 			RunLevelManager.SetStartup();
 
-			using (StopWatch.StartAndDisplay("Server Initialisation")) {
+			using (StopWatch.StartAndDisplay("Server Initialisation...")) {
 				AuxServerPipeClient.Init();
 				Thread.Sleep(1000);//wait before namedpipe link to auxserver is initialised. 1 second should be enough
 

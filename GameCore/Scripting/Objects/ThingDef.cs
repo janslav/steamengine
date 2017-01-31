@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
@@ -35,8 +36,8 @@ namespace SteamEngine.Scripting.Objects {
 		private static readonly ShieldedDictNc<Type, Type> thingDefTypesByThingType = new ShieldedDictNc<Type, Type>();
 		private static readonly ShieldedDictNc<Type, Type> thingTypesByThingDefType = new ShieldedDictNc<Type, Type>();
 
-		private static readonly ShieldedDictNc<int, AbstractItemDef> itemModelDefs = new ShieldedDictNc<int, AbstractItemDef>();
-		private static readonly ShieldedDictNc<int, AbstractCharacterDef> charModelDefs = new ShieldedDictNc<int, AbstractCharacterDef>();
+		private static readonly ShieldedDictNc<int, AbstractItemDef> itemDefsByModel = new ShieldedDictNc<int, AbstractItemDef>();
+		private static readonly ShieldedDictNc<int, AbstractCharacterDef> charDefsByModel = new ShieldedDictNc<int, AbstractCharacterDef>();
 		private static readonly Shielded<int> highestItemModel = new Shielded<int>();
 		private static readonly Shielded<int> highestCharModel = new Shielded<int>();
 
@@ -345,7 +346,7 @@ namespace SteamEngine.Scripting.Objects {
 		*/
 		public static AbstractItemDef FindItemDef(int defnumber) {
 			AbstractItemDef def;
-			itemModelDefs.TryGetValue(defnumber, out def);
+			itemDefsByModel.TryGetValue(defnumber, out def);
 			return def;
 		}
 
@@ -360,7 +361,7 @@ namespace SteamEngine.Scripting.Objects {
 		*/
 		public static AbstractCharacterDef FindCharDef(int defnumber) {
 			AbstractCharacterDef def;
-			charModelDefs.TryGetValue(defnumber, out def);
+			charDefsByModel.TryGetValue(defnumber, out def);
 			return def;
 		}
 
@@ -412,17 +413,11 @@ namespace SteamEngine.Scripting.Objects {
 			var defname = this.Defname;
 			if (ConvertTools.TryParseInt32(defname.Substring(2), out defnum)) {
 				if (this.IsCharDef && defname.StartsWith("c_")) {
-					if (defnum > HighestCharModel) {
-						HighestCharModel = defnum;
-					}
 					//Sanity.IfTrueThrow(idefnum>MaxCharModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxCharModels ("+MaxCharModels+").");
-					charModelDefs[defnum] = (AbstractCharacterDef) this;
+					charDefsByModel[defnum] = (AbstractCharacterDef) this;
 				} else if (this.IsItemDef && defname.StartsWith("i_")) {
-					if (defnum > HighestItemModel) {
-						HighestItemModel = defnum;
-					}
 					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
-					itemModelDefs[defnum] = (AbstractItemDef) this;
+					itemDefsByModel[defnum] = (AbstractItemDef) this;
 				}
 			}
 
@@ -439,7 +434,23 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
-		public override void Unload() {
+#warning format this
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+	    internal new static void LoadingFinished()
+	    {
+	        SeShield.InTransaction(() =>
+	        {
+	            highestCharModel.Value = charDefsByModel.Keys.Max();
+	            highestItemModel.Value = itemDefsByModel.Keys.Max();
+	        });
+
+            //dump number of loaded instances?
+            Logger.WriteDebug($"Highest itemdef model #: {HighestItemModel} (0x{HighestItemModel.ToString("x", CultureInfo.InvariantCulture)})");
+	        Logger.WriteDebug($"Highest chardef model #: {HighestCharModel} (0x{HighestCharModel.ToString("x", CultureInfo.InvariantCulture)})");
+	    }
+
+
+	    public override void Unload() {
 			SeShield.AssertInTransaction();
 			this.defaultTriggerGroup.Value?.Unload();
 			base.Unload();
@@ -451,8 +462,8 @@ namespace SteamEngine.Scripting.Objects {
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 
-			itemModelDefs.Clear();
-			charModelDefs.Clear();
+			itemDefsByModel.Clear();
+			charDefsByModel.Clear();
 		}
 		#endregion Loading from scripts
 	}

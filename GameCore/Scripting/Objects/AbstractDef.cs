@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
@@ -605,16 +606,31 @@ namespace SteamEngine.Scripting.Objects {
 			// load postponed lines. That are those which are not initialised by the start of the loading.
 			// this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
 			// this way, for example ProfessionDef definition can list skills and abilities
-			foreach (var script in AllScripts) {
-				var def = script as AbstractDef;
-				if (def != null) {
-					def.LoadPostponedScriptLines();
-					def.Trigger_AfterLoadFromScripts();
-				}
-			}
+
+		    if (Globals.ParallelStartUp)
+		    {
+		        Parallel.ForEach(AllScripts, LoadingFinished);
+		    }
+		    else
+		    {
+		        foreach (var script in AllScripts)
+		        {
+		            LoadingFinished(script);
+		        }
+		    }
 		}
 
-		private void LoadPostponedScriptLines() {
+	    private static void LoadingFinished(AbstractScript script)
+	    {
+	        var def = script as AbstractDef;
+	        if (def != null)
+	        {
+	            def.LoadPostponedScriptLines();
+	            def.Trigger_AfterLoadFromScripts();
+	        }
+	    }
+
+	    private void LoadPostponedScriptLines() {
 			foreach (var p in SeShield.InTransaction(this.postponedLines.ToList)) {
 				try {
 					SeShield.InTransaction(() =>
@@ -658,40 +674,64 @@ namespace SteamEngine.Scripting.Objects {
 		public static void ResolveAll() {
 			var all = AllScripts;
 			var count = all.Count;
-			Logger.WriteDebug("Resolving " + count + " defs");
 
-			var before = DateTime.Now;
-			var a = 0;
-			var countPerCent = count / 100;
-			foreach (var script in all) {
-				if (a % countPerCent == 0) {
-					Logger.SetTitle("Resolving def field values: " + ((a * 100) / count) + " %");
-				}
-				SeShield.InTransaction(() => {
-					var def = script as AbstractDef;
-					if (def == null) return;
-					if (def.IsUnloaded) return; //those should have already stated what's the problem :)
+		    using (StopWatch.StartAndDisplay($"Resolving {count} defs..."))
+		    {
+		        var a = 0;
+		        var countPerCent = count/100;
 
-					foreach (var fieldValue in def.fieldValues.Values) {
-						try {
-							fieldValue.ResolveTemporaryState();
-						} catch (FatalException) {
-							throw;
-						} catch (TransException) {
-							throw;
-						} catch (Exception e) {
-							Logger.WriteWarning(e);
-						}
-					}
-				});
-				a++;
-			}
-			var after = DateTime.Now;
-			Logger.WriteDebug("...took " + (after - before));
-			Logger.SetTitle("");
+#warning format this
+		        if (Globals.ParallelStartUp)
+		        {
+		            Parallel.ForEach(all, script => ResolveAll(ref a, countPerCent, count, script));
+		        }
+		        else
+		        {
+		            foreach (var script in all)
+		            {
+		                ResolveAll(ref a, countPerCent, count, script);
+		            }
+		        }
+		    }
+		    Logger.SetTitle("");
 		}
 
-		public override void Unload() {
+	    private static void ResolveAll(ref int a, int countPerCent, int count, AbstractScript script)
+	    {
+	        if (a%countPerCent == 0)
+	        {
+	            Logger.SetTitle("Resolving defs: " + ((a*100)/count) + " %");
+	        }
+	        SeShield.InTransaction(() =>
+	        {
+	            var def = script as AbstractDef;
+	            if (def == null) return;
+	            if (def.IsUnloaded) return; //those should have already stated what's the problem :)
+
+	            foreach (var fieldValue in def.fieldValues.Values)
+	            {
+	                try
+	                {
+	                    fieldValue.ResolveTemporaryState();
+	                }
+	                catch (FatalException)
+	                {
+	                    throw;
+	                }
+	                catch (TransException)
+	                {
+	                    throw;
+	                }
+	                catch (Exception e)
+	                {
+	                    Logger.WriteWarning(e);
+	                }
+	            }
+	        });
+	        Interlocked.Increment(ref a);
+	    }
+
+	    public override void Unload() {
 			SeShield.AssertInTransaction();
 
 			foreach (var fv in this.fieldValues.Values.ToList()) {

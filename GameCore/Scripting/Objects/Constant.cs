@@ -19,10 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
+using System.Threading.Tasks;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -226,36 +228,57 @@ namespace SteamEngine.Scripting.Objects {
 			//dump the number of constants loaded?
 		}
 
-		/// <summary>This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True</summary>
-		public static void ResolveAll() {
-			var allConstans = SeShield.InTransaction(allConstantsByName.Values.ToList);
-			var count = allConstans.Count;
-			Logger.WriteDebug("Resolving " + count + " constants");
-			var before = DateTime.Now;
-			var a = 0;
-			var countPerCent = count / 200;
-			foreach (var constant in allConstans) {
-				if ((a % countPerCent) == 0) {
-					Logger.SetTitle("Resolving Constants: " + ((a * 100) / count) + " %");
-				}
-				constant.ResolveTemporaryState();
-				a++;
-			}
-			var after = DateTime.Now;
-			Logger.WriteDebug("...took " + (after - before));
-			Logger.SetTitle("");
+	    /// <summary>This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True</summary>
+	    public static void ResolveAll()
+	    {
+	        var allConstans = SeShield.InTransaction(allConstantsByName.Values.ToList);
+	        var count = allConstans.Count;
+	        using (StopWatch.StartAndDisplay($"Resolving {count} constants..."))
+	        {
+	        
+	            var a = 0;
+	            var countPerCent = count/200;
+
+#warning format this
+	            if (Globals.ParallelStartUp)
+	            {
+	                Parallel.ForEach(allConstans, constant => ResolveTemoraryState(ref a, countPerCent, count, constant));
+	            }
+	            else
+	            {
+	                foreach (var constant in allConstans)
+	                {
+	                    ResolveTemoraryState(ref a, countPerCent, count, constant);
+	                }
+	            }
+	        }
+
+	        Logger.SetTitle("");
 		}
 
-		private void ResolveTemporaryState() {
-			if (!this.IsUnloaded) { //those should have already stated what's the problem :)
-				var tv = this.shieldedState.Value.implementation as TemporaryValue;
-				if (tv != null) {
-					this.ResolveValueFromScript(tv.str);
-				}
-			}
-		}
+	    private static void ResolveTemoraryState(ref int a, int countPerCent, int count, Constant constant)
+	    {
+	        if ((a%countPerCent) == 0)
+	        {
+	            Logger.SetTitle("Resolving Constants: " + ((a*100)/count) + " %");
+	        }
+	        SeShield.InTransaction(() =>
+	        {
+	            if (!constant.IsUnloaded)
+	            {
+	                //those should have already stated what's the problem :)
+	                var tv = constant.shieldedState.Value.implementation as TemporaryValue;
+	                if (tv != null)
+	                {
+	                    constant.ResolveValueFromScript(tv.str);
+	                }
+	            }
+	        });
 
-		internal void ResolveValueFromScript(string value) {
+	        Interlocked.Increment(ref a);
+	    }
+
+	    internal void ResolveValueFromScript(string value) {
 			//			//LScript converts it into many params and then fails to find a set method for it :O.
 			//			//So we assume here that it has commas but not {}s,
 			//			//it MUST be treated as a string (perhaps holding map coordinates, for instance).
