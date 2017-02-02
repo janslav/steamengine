@@ -25,6 +25,7 @@ using SteamEngine.Common;
 using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
 using System.Threading.Tasks;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -130,7 +131,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static Constant Set(string name, object newValue) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			Constant constant;
 			if (!allConstantsByName.TryGetValue(name, out constant)) {
 				constant = new Constant(name, newValue);
@@ -153,7 +154,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static Constant[] Load(PropsSection input) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var list = new List<Constant>();
 			string line;
@@ -231,7 +232,7 @@ namespace SteamEngine.Scripting.Objects {
 	    /// <summary>This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True</summary>
 	    public static void ResolveAll()
 	    {
-	        var allConstans = SeShield.InTransaction(allConstantsByName.Values.ToList);
+	        var allConstans = Transaction.InTransaction(allConstantsByName.Values.ToList);
 	        var count = allConstans.Count;
 	        using (StopWatch.StartAndDisplay($"Resolving {count} constants..."))
 	        {
@@ -262,7 +263,7 @@ namespace SteamEngine.Scripting.Objects {
 	        {
 	            Logger.SetTitle("Resolving Constants: " + ((a*100)/count) + " %");
 	        }
-	        SeShield.InTransaction(() =>
+	        Transaction.InTransaction(() =>
 	        {
 	            if (!constant.IsUnloaded)
 	            {
@@ -319,7 +320,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static void ForgetAll() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			allConstantsByName.Clear();
 		}
 

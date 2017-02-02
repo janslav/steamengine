@@ -24,6 +24,7 @@ using System.Reflection;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Scripting.Objects;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Compilation {
 	internal sealed class CompiledTriggerGroupGenerator : ISteamCsCodeGenerator {
@@ -35,7 +36,7 @@ namespace SteamEngine.Scripting.Compilation {
 		}
 
 		internal static bool AddCompiledTgType(Type t) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			if (!t.IsAbstract && !t.IsSealed) {//they will be overriden anyway by generated code (so they _could_ be abstract), 
 											   //but the abstractness means here that they're utility code and not actual TGs (like GroundTileType)
@@ -47,7 +48,7 @@ namespace SteamEngine.Scripting.Compilation {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
-			return SeShield.InTransaction(() => {
+			return Transaction.InTransaction(() => {
 				try {
 					var codeCompileUnit = new CodeCompileUnit();
 					if (compiledTGs.Any()) {

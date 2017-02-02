@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting
 {
@@ -33,13 +34,13 @@ namespace SteamEngine.Scripting
 
         internal void Add(IUnloadable script)
         {
-            SeShield.AssertNotInTransaction();
+            Transaction.AssertNotInTransaction();
             this.scripts.Add(script);
         }
 
         internal void Unload()
         {
-            SeShield.AssertNotInTransaction();
+            Transaction.AssertNotInTransaction();
             foreach (var script in this.scripts)
             {
                 script.Unload();
@@ -49,7 +50,7 @@ namespace SteamEngine.Scripting
 
         internal bool CheckChanged()
         {
-            SeShield.AssertNotInTransaction();
+            Transaction.AssertNotInTransaction();
             this.file.Refresh();
             if (this.file.Exists)
             {

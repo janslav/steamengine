@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shielded;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Tests {
 	[TestClass]
@@ -24,7 +25,7 @@ namespace SteamEngine.Tests {
 			var a = ShieldedExt.CreateValue(0);
 
 			Parallel.For(0, n, (_) => {
-				SeShield.InTransaction(() => {
+				Transaction.InTransaction(() => {
 					a.Value++;
 				});
 			});
@@ -37,7 +38,7 @@ namespace SteamEngine.Tests {
 			var a = 0;
 
 			Parallel.For(0, n, (_) => {
-				SeShield.InTransaction(() =>
+				Transaction.InTransaction(() =>
 				{
 					Interlocked.Add(ref a, 1);
 				});

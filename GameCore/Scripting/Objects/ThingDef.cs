@@ -23,6 +23,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
 using SteamEngine.Regions;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -268,14 +269,14 @@ namespace SteamEngine.Scripting.Objects {
 
 		#region TriggerGroupHolder helper methods
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				tg.Run(self, td, sa);
 			}
 		}
 
 		internal void TryTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				tg.TryRun(self, td, sa);
 			}
@@ -283,7 +284,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				var retVal = tg.Run(self, td, sa);
 				if (TagMath.Is1(retVal)) {
@@ -295,7 +296,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				var retVal = tg.TryRun(self, td, sa);
 				if (TagMath.Is1(retVal)) {
@@ -316,7 +317,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static void RegisterThingDef(Type thingDefType, Type thingType) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			Type t;
 			if (thingDefTypesByThingType.TryGetValue(thingDefType, out t)) {
 				throw new OverrideNotAllowedException("ThingDef type " + LogStr.Ident(thingDefType.FullName) + " already has it's Thing type -" + t.FullName + ".");
@@ -408,7 +409,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			int defnum;
 			var defname = this.Defname;
 			if (ConvertTools.TryParseInt32(defname.Substring(2), out defnum)) {
@@ -438,7 +439,7 @@ namespace SteamEngine.Scripting.Objects {
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 	    internal new static void LoadingFinished()
 	    {
-	        SeShield.InTransaction(() =>
+	        Transaction.InTransaction(() =>
 	        {
 	            highestCharModel.Value = charDefsByModel.Keys.Max();
 	            highestItemModel.Value = itemDefsByModel.Keys.Max();
@@ -451,13 +452,13 @@ namespace SteamEngine.Scripting.Objects {
 
 
 	    public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			this.defaultTriggerGroup.Value?.Unload();
 			base.Unload();
 		}
 
 		internal new static void ForgetAll() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs

@@ -21,6 +21,7 @@ using System.Linq;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class AbstractSkillDef : AbstractIndexedDef<AbstractSkillDef, int> /*TriggerGroupHolder*/ {
@@ -89,7 +90,7 @@ namespace SteamEngine.Scripting.Objects {
 		#region Load from scripts
 
 		public override AbstractScript Register() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			AbstractSkillDef previous;
 			var k = this.Key;
@@ -105,7 +106,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override void Unregister() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var k = this.Key;
 			AbstractSkillDef previous;
@@ -155,7 +156,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			base.LoadScriptLines(ps);
 

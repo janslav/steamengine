@@ -23,6 +23,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
 using SteamEngine.Regions;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -34,7 +35,7 @@ namespace SteamEngine.CompiledScripts {
 
 		internal IEnumerable<MultiRegionRectangleHelper> RectangleHelpers {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 				return this.rectangleHelpers;
 			}
 		}
@@ -52,7 +53,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		protected override void On_Create(Thing t) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			base.On_Create(t);
 			if (this.components.Value == null) {
@@ -110,7 +111,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			base.Unload();
 			this.components.Value = null;
@@ -243,7 +244,7 @@ namespace SteamEngine.CompiledScripts {
 		public override Region Region => this.region;
 
 		internal virtual void InitMultiRegion() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			this.region = new MultiRegion(this, this.TypeDef.RectangleHelpers.Select(h => h.CreateRect(this)).ToArray());
 			// TODO - pouzit region.Place(P()) a v pripade false poresit co delat s neuspechem!!

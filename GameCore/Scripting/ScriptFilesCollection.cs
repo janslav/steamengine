@@ -21,6 +21,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting {
 	public interface IUnloadable {
@@ -50,25 +51,25 @@ namespace SteamEngine.Scripting {
 		internal long LengthSum { get; private set; }
 
 		public void Clear() {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			this.scriptFiles.Clear();
 			this.LengthSum = 0;
 			this.newestDateTime = DateTime.MinValue;
 		}
 
 		internal void AddExtension(string extension) {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			this.extensions.Add(extension);
 		}
 
 		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		internal void AddAvoided(string folder) {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			this.avoided.Add(folder);
 		}
 
 		internal ScriptFile AddFile(FileInfo file) {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			var sf = new ScriptFile(file);
 			if (this.scriptFiles == null) {
 				this.scriptFiles = new Dictionary<string, ScriptFile>();
@@ -93,7 +94,7 @@ namespace SteamEngine.Scripting {
 		//}
 
 		internal ICollection<ScriptFile> GetAllFiles() {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			if (this.scriptFiles == null) {
 				this.scriptFiles = new Dictionary<string, ScriptFile>();
 				this.InitializeList(this.mainDir);
@@ -104,7 +105,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		internal ICollection<ScriptFile> GetChangedFiles() {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			if (this.scriptFiles == null) {
 				return this.GetAllFiles();
 			}
@@ -158,7 +159,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		private void CheckTime(FileInfo file) {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			if (this.newestDateTime < file.LastWriteTime) {
 				this.newestDateTime = file.LastWriteTime;
 			}

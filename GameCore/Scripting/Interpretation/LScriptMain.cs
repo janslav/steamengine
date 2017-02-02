@@ -25,6 +25,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
 using SteamEngine.Timers;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Interpretation {
 
@@ -70,7 +71,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public static object TryRunSnippet(string filename, int line, TagHolder self, string script, out Exception exception, out LScriptHolder snippetRunner) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			try {
 				exception = null;
@@ -97,7 +98,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal static LScriptHolder LoadAsFunction(TriggerSection input) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var name = input.TriggerName;
 			var sc = ScriptHolder.GetFunction(name) as LScriptHolder;

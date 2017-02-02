@@ -20,6 +20,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 	public sealed class InterpretedTriggerGroup : TriggerGroup {
@@ -86,7 +87,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
 		public static TriggerGroup Load(PropsSection input) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var group = GetNewOrCleared(input.HeaderName);
 			for (int i = 0, n = input.TriggerCount; i < n; i++) {
@@ -104,7 +105,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			this.triggers.Clear();
 			base.Unload();

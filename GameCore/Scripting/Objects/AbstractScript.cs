@@ -21,6 +21,7 @@ using System.Linq;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Scripting.Compilation;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class AbstractScript : IUnloadable {
@@ -43,7 +44,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		public static void ForgetAll() {
 			foreach (var gs in AllScripts) {
-				SeShield.InTransaction(() =>
+				Transaction.InTransaction(() =>
 					gs.Unregister());
 			}
 			Sanity.IfTrueThrow(byDefname.Any(), "byDefname.Count > 0 after UnloadAll");
@@ -53,7 +54,7 @@ namespace SteamEngine.Scripting.Objects {
 		//Can be called multiple times without harm
 		//Returns self for easier usage 
 		public virtual AbstractScript Register() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var defname = this.Defname;
 			if (!string.IsNullOrEmpty(defname)) {
@@ -72,7 +73,7 @@ namespace SteamEngine.Scripting.Objects {
 		//unregister from static dictionaries and lists. 
 		//Can be called multiple times without harm
 		protected virtual void Unregister() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			var defname = this.Defname;
 			if (!string.IsNullOrEmpty(defname)) {
 				AbstractScript previous;
@@ -88,19 +89,19 @@ namespace SteamEngine.Scripting.Objects {
 
 		internal static ShieldedDictNc<string, AbstractScript> AllScriptsByDefname {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 				return byDefname;
 			}
 		}
 
 		public static IReadOnlyCollection<AbstractScript> AllScripts {
 			get {
-				return SeShield.InTransaction(byDefname.Values.ToList);
+				return Transaction.InTransaction(byDefname.Values.ToList);
 			}
 		}
 
 		protected AbstractScript() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			this.defname.Value = this.InternalFirstGetDefname();
 			if (byDefname.ContainsKey(this.defname.Value)) {
 				throw new SEException("AbstractScript called " + LogStr.Ident(this.defname.Value) + " already exists!");
@@ -108,7 +109,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected AbstractScript(string defname) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if (string.IsNullOrEmpty(defname)) {
 				this.defname.Value = this.InternalFirstGetDefname();
 			} else {

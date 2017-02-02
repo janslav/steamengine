@@ -24,6 +24,7 @@ using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -44,7 +45,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), SuppressMessage("Microsoft.Performance", "CA1807:AvoidUnnecessaryStringCreation", MessageId = "stack0"), SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal static InterpretedGumpDef Load(PropsSection input) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var headers = input.HeaderName.Split(new[] { ' ', '\t' }, 2);
 			var name = headers[0];//d_something
@@ -155,13 +156,13 @@ namespace SteamEngine.Scripting.Objects {
 			foreach (var script in AllScripts) {
 				var sgd = script as InterpretedGumpDef;
 				if (sgd != null) {
-					SeShield.InTransaction(sgd.CheckValidity);
+					Transaction.InTransaction(sgd.CheckValidity);
 				}
 			}
 		}
 
 		private void CheckValidity() {//check method, used as delayed
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			if (this.shieldedState.Value.layoutScript == null) {
 				Logger.WriteWarning("Dialog " + LogStr.Ident(this.Defname) + " missing the main (layout) section?");
@@ -184,7 +185,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal override Gump InternalConstruct(Thing focus, AbstractCharacter sendTo, DialogArgs args) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			this.ThrowIfUnloaded();
 			var instance = new InterpretedGump(this);

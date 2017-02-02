@@ -21,6 +21,7 @@ using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
+using SteamEngine.Transactionality;
 using SteamEngine.UoData;
 
 namespace SteamEngine.CompiledScripts {
@@ -60,7 +61,7 @@ namespace SteamEngine.CompiledScripts {
 		protected override bool AllowGround => ((this.targon_ground.Value != null) || (this.targon_point.Value != null));
 
 		private static void LoadTriggers(PropsSection input, ScriptedTargetDef td) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var trigger_start = input.PopTrigger("start");
 			if (trigger_start != null) {
@@ -215,7 +216,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			this.targon_ground.Value = null;
 			this.targon_item.Value = null;

@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class AbstractDefTriggerGroupHolder : AbstractDef, ITriggerGroupHolder {
@@ -32,7 +33,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override void LoadScriptLine(string filename, int line, string param, string args) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			switch (param) {
 				case "event":
@@ -79,15 +80,15 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal new static void LoadingFinished() {
-			foreach (var loader in SeShield.InTransaction(delayedLoaders.ToList)) {
-				SeShield.InTransaction(loader.Resolve);
+			foreach (var loader in Transaction.InTransaction(delayedLoaders.ToList)) {
+				Transaction.InTransaction(loader.Resolve);
 			}
 
-			SeShield.InTransaction(delayedLoaders.Clear);
+			Transaction.InTransaction(delayedLoaders.Clear);
 		}
 
 		public void AddTriggerGroup(TriggerGroup tg) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if (tg == null) return;
 
 			if (!this.triggerGroups.Contains(tg)) {
@@ -96,12 +97,12 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public IEnumerable<TriggerGroup> GetAllTriggerGroups() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			return this.triggerGroups;
 		}
 
 		public void RemoveTriggerGroup(TriggerGroup tg) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if (tg == null) return;
 			this.triggerGroups.Remove(tg);
 		}
@@ -112,7 +113,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public void ClearTriggerGroups() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			this.triggerGroups.Clear();
 		}
 
@@ -128,14 +129,14 @@ namespace SteamEngine.Scripting.Objects {
 		/// <param name="tk">The TriggerKey for the trigger to call.</param>
 		/// <param name="sa">The arguments (other than argv) for sphere scripts</param>
 		public virtual void Trigger(TriggerKey tk, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				tg.Run(this, tk, sa);
 			}
 		}
 
 		public virtual void TryTrigger(TriggerKey tk, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				tg.TryRun(this, tk, sa);
 			}
@@ -148,7 +149,7 @@ namespace SteamEngine.Scripting.Objects {
 		/// <param name="sa">Arguments for scripts (argn, args, argo, argn1, argn2, etc). Can be null.</param>
 		/// <returns>TriggerResult.Cancel if any called trigger scripts returned 1, TriggerResult.Continue otherwise.</returns>
 		public virtual TriggerResult CancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				if (TagMath.Is1(tg.Run(this, tk, sa))) {
 					return TriggerResult.Cancel;
@@ -158,7 +159,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public virtual TriggerResult TryCancellableTrigger(TriggerKey tk, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.triggerGroups) {
 				if (TagMath.Is1(tg.TryRun(this, tk, sa))) {
 					return TriggerResult.Cancel;
@@ -168,7 +169,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public void Trigger(TriggerKey tk, params object[] scriptArguments) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				this.Trigger(tk, new ScriptArgs(scriptArguments));
 			} else {
@@ -177,7 +178,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public TriggerResult CancellableTrigger(TriggerKey tk, params object[] scriptArguments) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if ((scriptArguments != null) && (scriptArguments.Length > 0)) {
 				return this.CancellableTrigger(tk, new ScriptArgs(scriptArguments));
 			}

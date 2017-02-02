@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using SteamEngine.Common;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine {
 	public class CoreLogger : Logger {
@@ -65,7 +66,7 @@ namespace SteamEngine {
 		}
 
 		private static LogStr RenderTransactionNumber(LogStr r) {
-			var tran = SeShield.TransactionNumber;
+			var tran = Transaction.TransactionNumber;
 			if (tran.HasValue) {
 				r = $"[t#{tran.Value:000000000000}] " + r;
 			}

@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Transactionality;
 using SteamEngine.UoData;
 
 namespace SteamEngine.Scripting.Objects {
@@ -61,7 +62,7 @@ namespace SteamEngine.Scripting.Objects {
 				return (AbstractItemDef) this.dupeItem.CurrentValue;
 			}
 			set {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 
 				var di = (AbstractItemDef) this.dupeItem.CurrentValue;
 				di?.RemoveFromDupeList(this);
@@ -83,13 +84,13 @@ namespace SteamEngine.Scripting.Objects {
 
 		public IReadOnlyCollection<AbstractItemDef> DupeList {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 				return this.dupeList.ToList();
 			}
 		}
 
 		public int GetNextFlipModel(int curModel) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			if (curModel == this.Model) {
 				if (this.dupeList.Any()) {
@@ -248,7 +249,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			this.dupeList.Clear();
 			base.Unload();
@@ -308,7 +309,7 @@ namespace SteamEngine.Scripting.Objects {
 	        {
 	            try
 	            {
-	                SeShield.InTransaction(() => { idef.DupeItem?.AddToDupeList(idef); });
+	                Transaction.InTransaction(() => { idef.DupeItem?.AddToDupeList(idef); });
 	            }
 	            catch (FatalException)
 	            {

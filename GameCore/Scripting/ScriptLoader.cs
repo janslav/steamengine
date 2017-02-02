@@ -29,6 +29,7 @@ using SteamEngine.Regions;
 using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Scripting.Objects;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting {
 	public static class ScriptLoader {
@@ -184,7 +185,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		private static IEnumerable<IUnloadable> LoadSection(PropsSection section) {
-			return SeShield.InTransaction(() => {
+			return Transaction.InTransaction(() => {
 				try {
 					var type = section.HeaderType.ToLowerInvariant();
 					var name = section.HeaderName;
@@ -298,7 +299,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		public static void RegisterScriptType(string name, LoadSection deleg, bool startAsScript) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			RegisteredScript scp;
 			if (!scriptTypesByName.TryGetValue(name, out scp)) {
 				scp = new RegisteredScript(deleg, startAsScript);
@@ -332,10 +333,10 @@ namespace SteamEngine.Scripting {
 #warning format this
         //forgets stuff that come from scripts.
         internal static void ForgetScripts() {
-			SeShield.AssertNotInTransaction();
+			Transaction.AssertNotInTransaction();
 			allFiles.Clear();
 
-		    SeShield.InTransaction(() =>
+		    Transaction.InTransaction(() =>
 		    {
 		        var coreAssembly = ClassManager.CoreAssembly;
 

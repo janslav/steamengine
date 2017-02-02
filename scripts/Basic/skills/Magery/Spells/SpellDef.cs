@@ -26,6 +26,7 @@ using SteamEngine.Parsing;
 using SteamEngine.Regions;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Objects;
+using SteamEngine.Transactionality;
 using SteamEngine.UoData;
 
 namespace SteamEngine.CompiledScripts {
@@ -218,7 +219,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public string GetRuneWords() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			if (this.runeWords.Value == null) {
 				var runes = this.Runes.ToLowerInvariant();

@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -35,7 +36,7 @@ namespace SteamEngine.Scripting.Objects {
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public sealed override object TryRun(object self, TriggerKey tk, ScriptArgs sa) {
 			try {
-				return SeShield.InTransaction(() => this.Run(self, tk, sa));
+				return Transaction.InTransaction(() => this.Run(self, tk, sa));
 			} catch (FatalException) {
 				throw;
 			} catch (TransException) {

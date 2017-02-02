@@ -176,7 +176,7 @@
     <Compile Include="Regions\StaticRegion.cs" />
     <Compile Include="Regions\StaticSector.cs" />
     <Compile Include="Scripting\ScriptFile.cs" />
-    <Compile Include="SeShield.cs" />
+    <Compile Include="Transactionality\Transaction.cs" />
     <Compile Include="Timers\BoundTimer.cs" />
     <Compile Include="Timers\DelegateTimer.cs" />
     <Compile Include="Timers\FunctionTimer.cs" />

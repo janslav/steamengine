@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Shielded;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -55,20 +56,20 @@ namespace SteamEngine.Scripting.Objects {
 
 		public static int IndexedCount {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 				return byIndex.Count();
 			}
 		}
 
 		public static IEnumerable<TDef> AllIndexedDefs {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 				return byIndex.Values;
 			}
 		}
 
 		public override AbstractScript Register() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			TDef previous;
 			var index = this.DefIndex;
@@ -83,7 +84,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override void Unregister() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			TDef previous;
 			var index = this.DefIndex;
