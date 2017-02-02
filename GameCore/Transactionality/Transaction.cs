@@ -58,6 +58,9 @@ namespace SteamEngine.Transactionality {
 				Func<T> wrapped = () => {
 					try {
 						return act();
+					} catch (TransException) {
+						Logger.WriteDebug("Rolling back transaction due to conflict.");
+						throw;
 					} catch (Exception) {
 						Logger.WriteDebug("Rolling back transaction.");
 						throw;
@@ -76,6 +79,9 @@ namespace SteamEngine.Transactionality {
 				Action wrapped = () => {
 					try {
 						act();
+					} catch (TransException) {
+						Logger.WriteDebug("Rolling back transaction due to conflict.");
+						throw;
 					} catch (Exception) {
 						Logger.WriteDebug("Rolling back transaction.");
 						throw;
