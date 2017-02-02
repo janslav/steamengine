@@ -16,7 +16,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using EQATEC.Profiler;
@@ -26,6 +25,7 @@ using SteamEngine.Scripting;
 using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Scripting.Objects;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine {
 	public enum FieldValueType : byte {
@@ -77,7 +77,7 @@ namespace SteamEngine {
 		}
 
 		public static void RegisterParser(IFieldValueParser parser) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			var t = parser.HandledType;
 			foreach (var knownType in parsers.Keys) {
 				if (t.IsAssignableFrom(knownType) || knownType.IsAssignableFrom(t)) {
@@ -96,12 +96,12 @@ namespace SteamEngine {
 		}
 
 		internal static void ForgetScripts() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			parsers.Clear();
 		}
 
 		public void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if (this.shieldedState.Value.isChangedManually) {
 				this.shieldedState.Modify((ref State s) => s.unloaded = true);
 			}
@@ -118,7 +118,7 @@ namespace SteamEngine {
 		public string Name => this.name;
 
 		internal void ResolveTemporaryState() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			var tempVi = this.shieldedState.Value.defaultImpl as TemporaryValueImpl;
 			if (tempVi == null)
 				return;
@@ -334,7 +334,7 @@ namespace SteamEngine {
 		}
 
 		private void SetFromCode(object value) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var state = this.shieldedState.Value;
 			Sanity.IfTrueThrow(state.isChangedManually || state.unloaded, "SetFromCode after change/unload? This should never happen.");
@@ -348,7 +348,7 @@ namespace SteamEngine {
 		}
 
 		public void SetFromScripts(string filename, int line, string value) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			this.shieldedState.Modify((ref State s) => {
 				if (s.isChangedManually) {
 					s.defaultImpl = new TemporaryValueImpl(filename, line, this, value);
@@ -363,7 +363,7 @@ namespace SteamEngine {
 		}
 
 		internal bool ShouldBeSaved() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			var state = this.shieldedState.Value;
 			if (state.unloaded) {
 				return false;
@@ -401,7 +401,7 @@ namespace SteamEngine {
 		/// <summary>If true, it has not been set from scripts nor from saves nor manually</summary>
 		public bool IsEmptyAndUnchanged {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 				var state = this.shieldedState.Value;
 				if (state.isSetFromScripts || state.isChangedManually) {
 					return false;
@@ -501,7 +501,7 @@ namespace SteamEngine {
 
 			internal override object Value {
 				get {
-					SeShield.AssertInTransaction();
+					Transaction.AssertInTransaction();
 					var state = this.shieldedState.Value;
 					if (state.thingDef == null) {
 						return state.model;
@@ -509,7 +509,7 @@ namespace SteamEngine {
 					return state.thingDef.Model;
 				}
 				set {
-					SeShield.AssertInTransaction();
+					Transaction.AssertInTransaction();
 					this.shieldedState.Modify((ref State s) => {
 						s.thingDef = value as ThingDef;
 						if (s.thingDef == null) {
@@ -562,7 +562,7 @@ namespace SteamEngine {
 					return this.val.Value;
 				}
 				set {
-					SeShield.AssertInTransaction();
+					Transaction.AssertInTransaction();
 					if (value != null) {
 						var sourceType = value.GetType();
 						if ((sourceType != this.type) && (this.type.IsArray)) {
@@ -632,7 +632,7 @@ namespace SteamEngine {
 					return this.obj.Value;
 				}
 				set {
-					SeShield.AssertInTransaction();
+					Transaction.AssertInTransaction();
 					var asString = value as string;
 					if (asString != null) {
 						this.obj.Value = string.Intern(asString);

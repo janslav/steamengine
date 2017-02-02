@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 using SteamEngine.Scripting.Compilation;
 

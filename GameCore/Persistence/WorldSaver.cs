@@ -19,12 +19,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Objects;
 using SteamEngine.Timers;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Persistence {
 	public delegate IUnloadable LoadSection(PropsSection data);
@@ -216,13 +217,13 @@ namespace SteamEngine.Persistence {
 					}
 				}
 				if (type == "globals") {
-					SeShield.InTransaction(() =>
+					Transaction.InTransaction(() =>
 						Globals.LoadGlobals(section));
 					continue;
 				}
 
 				var loaded = false;
-				SeShield.InTransaction(() => {
+				Transaction.InTransaction(() => {
 					if (ObjectSaver.IsKnownSectionName(type)) {
 						ObjectSaver.LoadSection(section);
 						loaded = true;
@@ -230,7 +231,7 @@ namespace SteamEngine.Persistence {
 				});
 
 				if (!loaded) {
-					SeShield.InTransaction(() => {
+					Transaction.InTransaction(() => {
 						if (AbstractDef.ExistsDefType(type)) {
 							AbstractDef.LoadSectionFromSaves(section);
 							loaded = true;

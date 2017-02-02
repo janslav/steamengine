@@ -1,9 +1,11 @@
 using System;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Scripting.Objects;
+using SteamEngine.Transactionality;
 
 /*
     This program is free software; you can redistribute it and/or modify
@@ -117,7 +119,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		//}
 
 		internal static IUnloadable Load(PropsSection input) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var defname = input.HeaderName.ToLowerInvariant();
 
@@ -165,7 +167,7 @@ namespace SteamEngine.CompiledScripts.Dialogs {
 		/// 1st - the inputted text, followed by the params the input dialog was called with
 		/// </summary>
 		public override void Response(Gump gi, TagHolder focus, string filledText) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			//prepend the input text to previous input parameters
 			var oldParams = gi.InputArgs.GetArgsArray();

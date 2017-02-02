@@ -24,6 +24,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 using SteamEngine.Timers;
 

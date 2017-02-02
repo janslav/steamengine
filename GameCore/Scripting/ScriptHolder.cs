@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting {
 	public abstract class ScriptHolder {
@@ -52,7 +53,7 @@ namespace SteamEngine.Scripting {
 		}
 
 		protected internal void RegisterAsFunction() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if (functionsByName.ContainsKey(this.name)) {
 				throw new ServerException("ScriptHolder '" + this.name +
 										  "' already exists; Cannot create a new one with the same name.");
@@ -61,14 +62,14 @@ namespace SteamEngine.Scripting {
 		}
 
 		internal static void ForgetAllFunctions() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			functionsByName.Clear();
 		}
 
 		/// <summary>Return enumerable containing all functions</summary>
 		public static IEnumerable<ScriptHolder> AllFunctions {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 				return functionsByName.Values;
 			}
 		}
@@ -85,7 +86,7 @@ namespace SteamEngine.Scripting {
 
 		public object TryRun(object self, ScriptArgs sa) {
 			try {
-				return SeShield.InTransaction(() => this.Run(self, sa));
+				return Transaction.InTransaction(() => this.Run(self, sa));
 			} catch (FatalException) {
 				throw;
 			} catch (TransException) {

@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using Shielded;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {

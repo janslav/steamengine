@@ -19,9 +19,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
+using System.Threading.Tasks;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -127,7 +131,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static Constant Set(string name, object newValue) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			Constant constant;
 			if (!allConstantsByName.TryGetValue(name, out constant)) {
 				constant = new Constant(name, newValue);
@@ -150,7 +154,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static Constant[] Load(PropsSection input) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var list = new List<Constant>();
 			string line;
@@ -227,31 +231,40 @@ namespace SteamEngine.Scripting.Objects {
 
 		/// <summary>This method is called on startup when the resolveEverythingAtStart in steamengine.ini is set to True</summary>
 		public static void ResolveAll() {
-			var allConstans = SeShield.InTransaction(allConstantsByName.Values.ToList);
+			var allConstans = Transaction.InTransaction(allConstantsByName.Values.ToList);
 			var count = allConstans.Count;
-			Logger.WriteDebug("Resolving " + count + " constants");
-			var before = DateTime.Now;
-			var a = 0;
-			var countPerCent = count / 200;
-			foreach (var constant in allConstans) {
-				if ((a % countPerCent) == 0) {
-					Logger.SetTitle("Resolving Constants: " + ((a * 100) / count) + " %");
+			using (StopWatch.StartAndDisplay($"Resolving {count} constants...")) {
+
+				var a = 0;
+				var countPerCent = count / 200;
+
+				if (Globals.ParallelStartUp) {
+					Parallel.ForEach(allConstans, constant => ResolveTemoraryState(ref a, countPerCent, count, constant));
+				} else {
+					foreach (var constant in allConstans) {
+						ResolveTemoraryState(ref a, countPerCent, count, constant);
+					}
 				}
-				constant.ResolveTemporaryState();
-				a++;
 			}
-			var after = DateTime.Now;
-			Logger.WriteDebug("...took " + (after - before));
+
 			Logger.SetTitle("");
 		}
 
-		private void ResolveTemporaryState() {
-			if (!this.IsUnloaded) { //those should have already stated what's the problem :)
-				var tv = this.shieldedState.Value.implementation as TemporaryValue;
-				if (tv != null) {
-					this.ResolveValueFromScript(tv.str);
-				}
+		private static void ResolveTemoraryState(ref int a, int countPerCent, int count, Constant constant) {
+			if ((a % countPerCent) == 0) {
+				Logger.SetTitle("Resolving Constants: " + ((a * 100) / count) + " %");
 			}
+			Transaction.InTransaction(() => {
+				if (!constant.IsUnloaded) {
+					//those should have already stated what's the problem :)
+					var tv = constant.shieldedState.Value.implementation as TemporaryValue;
+					if (tv != null) {
+						constant.ResolveValueFromScript(tv.str);
+					}
+				}
+			});
+
+			Interlocked.Increment(ref a);
 		}
 
 		internal void ResolveValueFromScript(string value) {
@@ -295,7 +308,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static void ForgetAll() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			allConstantsByName.Clear();
 		}
 

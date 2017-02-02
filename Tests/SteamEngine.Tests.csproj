@@ -45,8 +45,8 @@
       <HintPath>..\packages\FluentAssertions.4.18.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shielded, Version=4.4.2.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\Shielded.4.4.2\lib\net40\Shielded.dll</HintPath>
+    <Reference Include="Shielded, Version=4.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shielded.4.4.3\lib\net40\Shielded.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

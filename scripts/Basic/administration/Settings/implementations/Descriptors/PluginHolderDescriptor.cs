@@ -15,8 +15,6 @@
 	Or visit http://www.gnu.org/copyleft/gpl.html
 */
 
-using SteamEngine.Scripting.Objects;
-
 namespace SteamEngine.CompiledScripts.Dialogs {
 	[ViewDescriptor(typeof(PluginHolder), "Plugin/Triggergroup Holder")]
 	public static class PluginHolderDescriptor {

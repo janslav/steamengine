@@ -22,7 +22,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 	public class ScriptedSpeechDef : AbstractSpeechDef {
@@ -46,7 +48,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		internal static IUnloadable LoadFromScripts(PropsSection input) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var name = input.HeaderName.ToLower();
 			var s = AbstractScript.GetByDefname(name);
@@ -86,14 +88,14 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			base.Unload();
 			this.triggers.Value = null;
 		}
 
 		protected override SpeechResult Handle(AbstractCharacter listener, SpeechArgs speechArgs) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var message = speechArgs.Speech;
 			foreach (var st in this.triggers.Value) {
@@ -107,7 +109,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		protected override SpeechResult TryHandle(AbstractCharacter listener, SpeechArgs speechArgs) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var message = speechArgs.Speech;
 			foreach (var st in this.triggers.Value) {

@@ -20,7 +20,6 @@ using System.Globalization;
 using SteamEngine.Common;
 using SteamEngine.Communication;
 using SteamEngine.Communication.TCP;
-using SteamEngine.Regions;
 using SteamEngine.Timers;
 using SteamEngine.UoData;
 

@@ -18,6 +18,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.CompiledScripts {

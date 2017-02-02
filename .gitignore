@@ -21,8 +21,6 @@
 /Generated
 /scripts/obj
 *.Generated.cs
-/packages/SharpZipLib*
-/packages/SharpSvn*
-/packages/FluentAssertions*
+/packages
 *.user
 /SphereShardConverter/bin

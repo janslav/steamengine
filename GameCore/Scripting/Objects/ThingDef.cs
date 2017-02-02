@@ -18,10 +18,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Regions;
-using SteamEngine.UoData;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 
@@ -35,8 +37,8 @@ namespace SteamEngine.Scripting.Objects {
 		private static readonly ShieldedDictNc<Type, Type> thingDefTypesByThingType = new ShieldedDictNc<Type, Type>();
 		private static readonly ShieldedDictNc<Type, Type> thingTypesByThingDefType = new ShieldedDictNc<Type, Type>();
 
-		private static readonly ShieldedDictNc<int, AbstractItemDef> itemModelDefs = new ShieldedDictNc<int, AbstractItemDef>();
-		private static readonly ShieldedDictNc<int, AbstractCharacterDef> charModelDefs = new ShieldedDictNc<int, AbstractCharacterDef>();
+		private static readonly ShieldedDictNc<int, AbstractItemDef> itemDefsByModel = new ShieldedDictNc<int, AbstractItemDef>();
+		private static readonly ShieldedDictNc<int, AbstractCharacterDef> charDefsByModel = new ShieldedDictNc<int, AbstractCharacterDef>();
 		private static readonly Shielded<int> highestItemModel = new Shielded<int>();
 		private static readonly Shielded<int> highestCharModel = new Shielded<int>();
 
@@ -267,14 +269,14 @@ namespace SteamEngine.Scripting.Objects {
 
 		#region TriggerGroupHolder helper methods
 		internal void Trigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				tg.Run(self, td, sa);
 			}
 		}
 
 		internal void TryTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				tg.TryRun(self, td, sa);
 			}
@@ -282,7 +284,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult CancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				var retVal = tg.Run(self, td, sa);
 				if (TagMath.Is1(retVal)) {
@@ -294,7 +296,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		internal TriggerResult TryCancellableTrigger(Thing self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			foreach (var tg in this.GetAllTriggerGroups()) {
 				var retVal = tg.TryRun(self, td, sa);
 				if (TagMath.Is1(retVal)) {
@@ -315,7 +317,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public static void RegisterThingDef(Type thingDefType, Type thingType) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			Type t;
 			if (thingDefTypesByThingType.TryGetValue(thingDefType, out t)) {
 				throw new OverrideNotAllowedException("ThingDef type " + LogStr.Ident(thingDefType.FullName) + " already has it's Thing type -" + t.FullName + ".");
@@ -345,7 +347,7 @@ namespace SteamEngine.Scripting.Objects {
 		*/
 		public static AbstractItemDef FindItemDef(int defnumber) {
 			AbstractItemDef def;
-			itemModelDefs.TryGetValue(defnumber, out def);
+			itemDefsByModel.TryGetValue(defnumber, out def);
 			return def;
 		}
 
@@ -360,7 +362,7 @@ namespace SteamEngine.Scripting.Objects {
 		*/
 		public static AbstractCharacterDef FindCharDef(int defnumber) {
 			AbstractCharacterDef def;
-			charModelDefs.TryGetValue(defnumber, out def);
+			charDefsByModel.TryGetValue(defnumber, out def);
 			return def;
 		}
 
@@ -407,22 +409,16 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			int defnum;
 			var defname = this.Defname;
 			if (ConvertTools.TryParseInt32(defname.Substring(2), out defnum)) {
 				if (this.IsCharDef && defname.StartsWith("c_")) {
-					if (defnum > HighestCharModel) {
-						HighestCharModel = defnum;
-					}
 					//Sanity.IfTrueThrow(idefnum>MaxCharModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxCharModels ("+MaxCharModels+").");
-					charModelDefs[defnum] = (AbstractCharacterDef) this;
+					charDefsByModel[defnum] = (AbstractCharacterDef) this;
 				} else if (this.IsItemDef && defname.StartsWith("i_")) {
-					if (defnum > HighestItemModel) {
-						HighestItemModel = defnum;
-					}
 					//Sanity.IfTrueThrow(idefnum>MaxItemModels, "defnum "+idefnum+" (0x"+idefnum.ToString("x")+") is higher than MaxItemModels ("+MaxItemModels+").");
-					itemModelDefs[defnum] = (AbstractItemDef) this;
+					itemDefsByModel[defnum] = (AbstractItemDef) this;
 				}
 			}
 
@@ -439,20 +435,33 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		internal new static void LoadingFinished() {
+			Transaction.InTransaction(() => {
+				highestCharModel.Value = charDefsByModel.Keys.Max();
+				highestItemModel.Value = itemDefsByModel.Keys.Max();
+			});
+
+			//dump number of loaded instances?
+			Logger.WriteDebug($"Highest itemdef model #: {HighestItemModel} (0x{HighestItemModel.ToString("x", CultureInfo.InvariantCulture)})");
+			Logger.WriteDebug($"Highest chardef model #: {HighestCharModel} (0x{HighestCharModel.ToString("x", CultureInfo.InvariantCulture)})");
+		}
+
+
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			this.defaultTriggerGroup.Value?.Unload();
 			base.Unload();
 		}
 
 		internal new static void ForgetAll() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			thingDefTypesByThingType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 			thingTypesByThingDefType.Clear();//we can assume that inside core there are no non-abstract thingdefs
 
-			itemModelDefs.Clear();
-			charModelDefs.Clear();
+			itemDefsByModel.Clear();
+			charDefsByModel.Clear();
 		}
 		#endregion Loading from scripts
 	}

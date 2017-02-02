@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.CompiledScripts {
 	/// <summary>Class for holding one parsed resource list</summary>
@@ -49,7 +50,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public static void ThrowIfNotConsumable(ResourcesList rl) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			if (rl != null) {
 				foreach (var entry in rl.nonMultiplicablesSubList) {

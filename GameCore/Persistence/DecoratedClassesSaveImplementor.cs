@@ -22,6 +22,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Compilation;
 
 namespace SteamEngine.Persistence {

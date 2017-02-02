@@ -17,12 +17,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
 using PerCederberg.Grammatica.Parser;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
+using SteamEngine.Transactionality;
 
 //using PerCederberg.Grammatica.Parser;
 
@@ -92,7 +92,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		void IOpNodeHolder.Replace(OpNode oldNode, OpNode newNode) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			if (this.Code == oldNode) {
 				this.shieldedState.Modify((ref State s) => s.code = newNode);
 			} else {
@@ -101,7 +101,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal int GetLocalVarIndex(string name) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			int index;
 			if (!this.shieldedState.Value.localsNames.TryGetValue(name, out index)) {
 				this.shieldedState.Modify((ref State s) => {
@@ -113,7 +113,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		internal bool ContainsLocalVarName(string name) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			return this.shieldedState.Value.localsNames.ContainsKey(name);
 		}
 
@@ -171,7 +171,7 @@ namespace SteamEngine.Scripting.Interpretation {
 		}
 
 		public sealed override object Run(object self, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			var state = this.shieldedState.Value;
 			if (state.unloaded) {
 				throw new UnloadedException("Function/trigger " + LogStr.Ident(this.Name) + " is unloaded, can not be run.");

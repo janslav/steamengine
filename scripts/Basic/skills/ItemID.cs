@@ -1,6 +1,5 @@
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
-using SteamEngine.Networking;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]

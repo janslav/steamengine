@@ -19,6 +19,7 @@ using System;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Parsing;
 using SteamEngine.Persistence;
 
 namespace SteamEngine.Regions {

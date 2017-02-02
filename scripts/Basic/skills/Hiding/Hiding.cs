@@ -17,7 +17,6 @@
 
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
-using SteamEngine.Networking;
 using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
 

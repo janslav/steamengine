@@ -18,7 +18,6 @@
 using SteamEngine.Common;
 using SteamEngine.Networking;
 using SteamEngine.Scripting.Compilation;
-using SteamEngine.Scripting.Objects;
 
 namespace SteamEngine.CompiledScripts {
 	public static class EffectFactory {

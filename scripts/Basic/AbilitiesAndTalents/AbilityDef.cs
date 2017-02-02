@@ -22,8 +22,10 @@ using System.Globalization;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Objects;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.CompiledScripts {
 	[ViewableClass]
@@ -347,7 +349,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public TriggerResult TryCancellableTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			//cancellable trigger just for the one triggergroup
 			var triggerGroup = this.ScriptedTriggers;
@@ -360,14 +362,14 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public void TryTrigger(AbstractCharacter self, TriggerKey td, ScriptArgs sa) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 			this.ScriptedTriggers?.TryRun(self, td, sa);
 		}
 		#endregion Trigger methods
 
 		#region Loading from scripts
 		public override void LoadScriptLines(PropsSection ps) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			var p = ps.PopPropsLine("name");
 			this.DefIndex = ConvertTools.LoadSimpleQuotedString(p.Value);
@@ -388,7 +390,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			this.ScriptedTriggers?.Unload();
 			base.Unload();

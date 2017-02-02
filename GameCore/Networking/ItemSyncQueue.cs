@@ -20,8 +20,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
 using SteamEngine.Communication;
-using SteamEngine.Communication.TCP;
-using SteamEngine.Regions;
 
 namespace SteamEngine.Networking {
 	[SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]

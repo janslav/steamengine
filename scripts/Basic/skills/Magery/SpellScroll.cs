@@ -18,6 +18,7 @@ Or visit http://www.gnu.org/copyleft/gpl.html
 using System.Collections.Generic;
 using Shielded;
 using SteamEngine.CompiledScripts.Dialogs;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.CompiledScripts {
 
@@ -27,7 +28,7 @@ namespace SteamEngine.CompiledScripts {
 
 		public SpellDef SpellDef {
 			get {
-				SeShield.AssertInTransaction();
+				Transaction.AssertInTransaction();
 
 				if (this.spellDef.Value != null) {
 					if (this.spellDef.Value.ScrollItem != this) {

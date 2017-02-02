@@ -16,11 +16,12 @@
 */
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Shielded;
 using SteamEngine.Common;
 using SteamEngine.Networking;
+using SteamEngine.Parsing;
 using SteamEngine.Scripting.Interpretation;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.CompiledScripts {
 	public sealed class ScriptedMenuDef : AbstractMenuDef {
@@ -37,7 +38,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			base.LoadScriptLines(ps);
 
@@ -69,7 +70,7 @@ namespace SteamEngine.CompiledScripts {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			if (this.choiceLists.Value != null) {
 				foreach (var loc in this.choiceLists.Value) {

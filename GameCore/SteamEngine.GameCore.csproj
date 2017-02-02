@@ -56,6 +56,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CompiledGump.cs" />
+    <Compile Include="Parsing\PropsFileParser.cs" />
+    <Compile Include="Parsing\PropsLine.cs" />
+    <Compile Include="Parsing\PropsSection.cs" />
+    <Compile Include="Parsing\TriggerSection.cs" />
     <Compile Include="Scripting\Objects\CompiledSpeechDef.cs" />
     <Compile Include="Scripting\Compilation\XmlDocComments.cs" />
     <Compile Include="LocalisationExtensions.cs" />
@@ -171,7 +175,8 @@
     <Compile Include="Regions\Sector.cs" />
     <Compile Include="Regions\StaticRegion.cs" />
     <Compile Include="Regions\StaticSector.cs" />
-    <Compile Include="SeShield.cs" />
+    <Compile Include="Scripting\ScriptFile.cs" />
+    <Compile Include="Transactionality\Transaction.cs" />
     <Compile Include="Timers\BoundTimer.cs" />
     <Compile Include="Timers\DelegateTimer.cs" />
     <Compile Include="Timers\FunctionTimer.cs" />
@@ -224,7 +229,6 @@
     <Compile Include="PluginKey.cs" />
     <Compile Include="Scripting\Compilation\PluginTriggerGroupGenerator.cs" />
     <Compile Include="Point.cs" />
-    <Compile Include="PropsFileParser.cs" />
     <Compile Include="RunLevel.cs" />
     <Compile Include="Scripting\ScriptArgs.cs" />
     <Compile Include="Scripting\ScriptFilesCollection.cs" />
@@ -251,10 +255,10 @@
     <Compile Include="WeakRefDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Scripting\Interpretation\generate.bat" />
     <None Include="Scripting\Interpretation\LScript_strict.grammar" />
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\SteamEngine.Common.csproj">
@@ -271,16 +275,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="SharpSvn, Version=1.8015.3829.125, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
-      <HintPath>..\packages\SharpSvn.1.8-x64.1.8015.3829.125\lib\net40\SharpSvn.dll</HintPath>
+    <Reference Include="SharpSvn, Version=1.8016.3900.133, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
+      <HintPath>..\packages\SharpSvn.1.8-x64.1.8016.3900.133\lib\net40\SharpSvn.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SharpSvn.UI, Version=1.8015.3829.125, Culture=neutral, PublicKeyToken=33789aa53ca44aa9, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpSvn.1.8-x64.1.8015.3829.125\lib\net40\SharpSvn.UI.dll</HintPath>
+    <Reference Include="SharpSvn.UI, Version=1.8016.3900.133, Culture=neutral, PublicKeyToken=33789aa53ca44aa9, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpSvn.1.8-x64.1.8016.3900.133\lib\net40\SharpSvn.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shielded, Version=4.4.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shielded.4.4.2\lib\net40\Shielded.dll</HintPath>
+    <Reference Include="Shielded, Version=4.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shielded.4.4.3\lib\net40\Shielded.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

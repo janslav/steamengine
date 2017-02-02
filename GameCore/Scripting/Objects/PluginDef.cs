@@ -16,10 +16,11 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Shielded;
 using SteamEngine.Common;
+using SteamEngine.Parsing;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine.Scripting.Objects {
 	public abstract class PluginDef : AbstractDef {
@@ -73,7 +74,7 @@ namespace SteamEngine.Scripting.Objects {
 
 		//this should be typically called by the Bootstrap methods of scripted PluginDef
 		public static void RegisterPluginDef(Type pluginDefType, Type pluginType) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			Type t;
 			if (pluginDefTypesByPluginType.TryGetValue(pluginDefType, out t)) {
@@ -88,7 +89,7 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void LoadScriptLines(PropsSection ps) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			base.LoadScriptLines(ps);
 
@@ -100,14 +101,14 @@ namespace SteamEngine.Scripting.Objects {
 		}
 
 		public override void Unload() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			this.scriptedTriggers.Value?.Unload();
 			base.Unload();
 		}
 
 		internal new static void ForgetAll() {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			pluginDefTypesByPluginType.Clear();
 			pluginTypesByPluginDefType.Clear();//we can assume that inside core there are no non-abstract plugindefs
@@ -120,7 +121,7 @@ namespace SteamEngine.Scripting.Objects {
 			foreach (var script in AllScripts) {
 				var pd = script as PluginDef;
 				if (pd != null) {
-					SeShield.InTransaction(pd.TryActivateCompiledTriggers);
+					Transaction.InTransaction(pd.TryActivateCompiledTriggers);
 				}
 			}
 		}

@@ -17,7 +17,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using SteamEngine.Common;
-using SteamEngine.Networking;
 using SteamEngine.Regions;
 
 namespace SteamEngine {

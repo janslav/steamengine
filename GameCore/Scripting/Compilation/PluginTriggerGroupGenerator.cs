@@ -26,6 +26,7 @@ using SteamEngine.Common;
 using SteamEngine.Scripting;
 using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Objects;
+using SteamEngine.Transactionality;
 
 namespace SteamEngine {
 	internal sealed class PluginTriggerGroupGenerator : ISteamCsCodeGenerator {
@@ -37,7 +38,7 @@ namespace SteamEngine {
 		}
 
 		internal static bool AddPluginTgType(Type t) {
-			SeShield.AssertInTransaction();
+			Transaction.AssertInTransaction();
 
 			if (!t.IsAbstract) {
 				pluginTGs.Add(t);
@@ -47,7 +48,7 @@ namespace SteamEngine {
 
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		public CodeCompileUnit WriteSources() {
-			return SeShield.InTransaction(() => {
+			return Transaction.InTransaction(() => {
 				try {
 					var codeCompileUnit = new CodeCompileUnit();
 					if (pluginTGs.Any()) {

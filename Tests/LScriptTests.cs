@@ -3,7 +3,6 @@ using System.Collections;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SteamEngine.Common;
 using SteamEngine.Regions;
-using SteamEngine.Scripting.Compilation;
 using SteamEngine.Scripting.Interpretation;
 using SteamEngine.Timers;
 
