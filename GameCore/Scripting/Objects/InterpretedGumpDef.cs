@@ -100,9 +100,8 @@ namespace SteamEngine.Scripting.Objects {
 								break;
 							}
 						}
-#warning format this
-                        trigger = new TriggerSection(filename: trigger.Filename, startline: trigger.StartLine, key: trigger.TriggerKey, 
-                            name: trigger.TriggerName, comment: trigger.TriggerComment, code: modifiedCode.ToString());
+						trigger = new TriggerSection(filename: trigger.Filename, startline: trigger.StartLine, key: trigger.TriggerKey,
+							name: trigger.TriggerName, comment: trigger.TriggerComment, code: modifiedCode.ToString());
 
 						var sc = new LScriptHolder(trigger);
 						if (sc.IsUnloaded) {//in case the compilation failed (syntax error)

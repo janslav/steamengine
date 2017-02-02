@@ -608,30 +608,24 @@ namespace SteamEngine.Scripting.Objects {
 			// this is so scripts can load dynamically named defnames, where the dynamic names can depend on not-yet-loaded other scripts
 			// this way, for example ProfessionDef definition can list skills and abilities
 
-		    if (Globals.ParallelStartUp)
-		    {
-		        Parallel.ForEach(AllScripts, LoadingFinished);
-		    }
-		    else
-		    {
-		        foreach (var script in AllScripts)
-		        {
-		            LoadingFinished(script);
-		        }
-		    }
+			if (Globals.ParallelStartUp) {
+				Parallel.ForEach(AllScripts, LoadingFinished);
+			} else {
+				foreach (var script in AllScripts) {
+					LoadingFinished(script);
+				}
+			}
 		}
 
-	    private static void LoadingFinished(AbstractScript script)
-	    {
-	        var def = script as AbstractDef;
-	        if (def != null)
-	        {
-	            def.LoadPostponedScriptLines();
-	            def.Trigger_AfterLoadFromScripts();
-	        }
-	    }
+		private static void LoadingFinished(AbstractScript script) {
+			var def = script as AbstractDef;
+			if (def != null) {
+				def.LoadPostponedScriptLines();
+				def.Trigger_AfterLoadFromScripts();
+			}
+		}
 
-	    private void LoadPostponedScriptLines() {
+		private void LoadPostponedScriptLines() {
 			foreach (var p in Transaction.InTransaction(this.postponedLines.ToList)) {
 				try {
 					Transaction.InTransaction(() =>
@@ -676,63 +670,46 @@ namespace SteamEngine.Scripting.Objects {
 			var all = AllScripts;
 			var count = all.Count;
 
-		    using (StopWatch.StartAndDisplay($"Resolving {count} defs..."))
-		    {
-		        var a = 0;
-		        var countPerCent = count/100;
+			using (StopWatch.StartAndDisplay($"Resolving {count} defs...")) {
+				var a = 0;
+				var countPerCent = count / 100;
 
-#warning format this
-		        if (Globals.ParallelStartUp)
-		        {
-		            Parallel.ForEach(all, script => ResolveAll(ref a, countPerCent, count, script));
-		        }
-		        else
-		        {
-		            foreach (var script in all)
-		            {
-		                ResolveAll(ref a, countPerCent, count, script);
-		            }
-		        }
-		    }
-		    Logger.SetTitle("");
+				if (Globals.ParallelStartUp) {
+					Parallel.ForEach(all, script => ResolveAll(ref a, countPerCent, count, script));
+				} else {
+					foreach (var script in all) {
+						ResolveAll(ref a, countPerCent, count, script);
+					}
+				}
+			}
+			Logger.SetTitle("");
 		}
 
-	    private static void ResolveAll(ref int a, int countPerCent, int count, AbstractScript script)
-	    {
-	        if (a%countPerCent == 0)
-	        {
-	            Logger.SetTitle("Resolving defs: " + ((a*100)/count) + " %");
-	        }
-	        Transaction.InTransaction(() =>
-	        {
-	            var def = script as AbstractDef;
-	            if (def == null) return;
-	            if (def.IsUnloaded) return; //those should have already stated what's the problem :)
+		private static void ResolveAll(ref int a, int countPerCent, int count, AbstractScript script) {
+			if (a % countPerCent == 0) {
+				Logger.SetTitle("Resolving defs: " + ((a * 100) / count) + " %");
+			}
+			Transaction.InTransaction(() => {
+				var def = script as AbstractDef;
+				if (def == null) return;
+				if (def.IsUnloaded) return; //those should have already stated what's the problem :)
 
-	            foreach (var fieldValue in def.fieldValues.Values)
-	            {
-	                try
-	                {
-	                    fieldValue.ResolveTemporaryState();
-	                }
-	                catch (FatalException)
-	                {
-	                    throw;
-	                }
-	                catch (TransException)
-	                {
-	                    throw;
-	                }
-	                catch (Exception e)
-	                {
-	                    Logger.WriteWarning(e);
-	                }
-	            }
-	        });
-	        Interlocked.Increment(ref a);
-	    }
+				foreach (var fieldValue in def.fieldValues.Values) {
+					try {
+						fieldValue.ResolveTemporaryState();
+					} catch (FatalException) {
+						throw;
+					} catch (TransException) {
+						throw;
+					} catch (Exception e) {
+						Logger.WriteWarning(e);
+					}
+				}
+			});
+			Interlocked.Increment(ref a);
+		}
 
-	    public override void Unload() {
+		public override void Unload() {
 			Transaction.AssertInTransaction();
 
 			foreach (var fv in this.fieldValues.Values.ToList()) {

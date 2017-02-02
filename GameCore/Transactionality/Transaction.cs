@@ -24,29 +24,23 @@ namespace SteamEngine.Transactionality {
 	public static class Transaction {
 		private static long sequence;
 
-        private static readonly ShieldedLocal<long> transactionNumber = new ShieldedLocal<long>();
+		private static readonly ShieldedLocal<long> transactionNumber = new ShieldedLocal<long>();
 
+		public static long? TransactionNumber {
+			get {
+				if (!Shield.IsInTransaction) {
+					return null;
+				}
 
-#warning format this
-        public static long? TransactionNumber
-        {
-            get
-            {
-                if (!Shield.IsInTransaction)
-                {
-                    return null;
-                }
+				if (!transactionNumber.HasValue) {
+					transactionNumber.Value = Interlocked.Increment(ref sequence);
+				}
 
-                if (!transactionNumber.HasValue)
-                {
-                    transactionNumber.Value = Interlocked.Increment(ref sequence);
-                }
+				return transactionNumber.Value;
+			}
+		}
 
-                return transactionNumber.Value;
-            }
-        }
-
-        public static void AssertNotInTransaction() {
+		public static void AssertNotInTransaction() {
 			if (Shield.IsInTransaction) {
 				throw new InvalidOperationException("Operation must not to be in a transaction.");
 			}
@@ -93,4 +87,3 @@ namespace SteamEngine.Transactionality {
 		}
 	}
 }
-

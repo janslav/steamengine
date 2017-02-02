@@ -150,10 +150,9 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-            //so we have read the important fields, now read the rest as lscript function
-#warning format this
-            trigger = new TriggerSection(filename: trigger.Filename, startline: trigger.StartLine, key: trigger.TriggerKey,
-                                        name: trigger.TriggerName, comment: trigger.TriggerComment, code: newCode.ToString());
+			//so we have read the important fields, now read the rest as lscript function
+			trigger = new TriggerSection(filename: trigger.Filename, startline: trigger.StartLine, key: trigger.TriggerKey,
+										name: trigger.TriggerName, comment: trigger.TriggerComment, code: newCode.ToString());
 
 			td.holder = new LScriptHolder(trigger);
 			if (input.TriggerCount > 1) {

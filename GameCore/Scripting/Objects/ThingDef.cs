@@ -435,23 +435,20 @@ namespace SteamEngine.Scripting.Objects {
 			}
 		}
 
-#warning format this
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-	    internal new static void LoadingFinished()
-	    {
-	        Transaction.InTransaction(() =>
-	        {
-	            highestCharModel.Value = charDefsByModel.Keys.Max();
-	            highestItemModel.Value = itemDefsByModel.Keys.Max();
-	        });
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+		internal new static void LoadingFinished() {
+			Transaction.InTransaction(() => {
+				highestCharModel.Value = charDefsByModel.Keys.Max();
+				highestItemModel.Value = itemDefsByModel.Keys.Max();
+			});
 
-            //dump number of loaded instances?
-            Logger.WriteDebug($"Highest itemdef model #: {HighestItemModel} (0x{HighestItemModel.ToString("x", CultureInfo.InvariantCulture)})");
-	        Logger.WriteDebug($"Highest chardef model #: {HighestCharModel} (0x{HighestCharModel.ToString("x", CultureInfo.InvariantCulture)})");
-	    }
+			//dump number of loaded instances?
+			Logger.WriteDebug($"Highest itemdef model #: {HighestItemModel} (0x{HighestItemModel.ToString("x", CultureInfo.InvariantCulture)})");
+			Logger.WriteDebug($"Highest chardef model #: {HighestCharModel} (0x{HighestCharModel.ToString("x", CultureInfo.InvariantCulture)})");
+		}
 
 
-	    public override void Unload() {
+		public override void Unload() {
 			Transaction.AssertInTransaction();
 			this.defaultTriggerGroup.Value?.Unload();
 			base.Unload();
