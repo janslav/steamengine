@@ -57,8 +57,8 @@ namespace SteamEngine.CompiledScripts {
 		/// </remarks>
 		public const int MaxBackups = 50;
 
-		private ISaveFileManager fileManager;
-		private ISavePathManager pathManager;
+		private readonly ISaveFileManager fileManager;
+		private readonly ISavePathManager pathManager;
 		private int loadAttempts;
 		private bool isLastLoadPossibility = true;
 
@@ -122,8 +122,7 @@ namespace SteamEngine.CompiledScripts {
 			if (this.fileManager != null) {
 				try {
 					sa.Argv[1] = this.fileManager.GetLoadStream(string.Concat(sa.Argv[1]));
-				} catch (FileNotFoundException e)
-				{
+				} catch (FileNotFoundException e) {
 					if (this.isLastLoadPossibility) {
 						throw;//this finishes the loading
 					}
@@ -170,30 +169,30 @@ namespace SteamEngine.CompiledScripts {
 
 		//yeah what an original name
 		private class SavePathManager : ISavePathManager {
-			long maxSavesSize;
-			int maxBackups;
-			DateTime firstTime;
-			DateTime lastTime;
+			readonly long maxSavesSize;
+			readonly int maxBackups;
+			private DateTime firstTime;
+			private DateTime lastTime;
 
-			bool sizeValid;
-			long size;
+			private bool sizeValid;
+			private long size;
 
 			private List<Backup> sortedByTime;
 			private List<Backup> sortedBySpan;
 
-			internal static DateTimeFormatInfo dtfi;
-			internal const string TimeFormat = "HH_mm_ss"; //_fffffff";
-			internal const string DateFormat = "yyyy-MM-dd";
+			private static readonly DateTimeFormatInfo dtfi;
+			private const string TimeFormat = "HH_mm_ss"; //_fffffff";
+			private const string DateFormat = "yyyy-MM-dd";
 
 			static SavePathManager() {
-				dtfi = new DateTimeFormatInfo();
-				dtfi.ShortDatePattern = DateFormat;
-				dtfi.LongDatePattern = DateFormat;
-				dtfi.ShortTimePattern = TimeFormat;
-				dtfi.LongTimePattern = TimeFormat;
-
-				dtfi.TimeSeparator = "_";
-				dtfi.DateSeparator = "-";
+				dtfi = new DateTimeFormatInfo {
+					ShortDatePattern = DateFormat,
+					LongDatePattern = DateFormat,
+					ShortTimePattern = TimeFormat,
+					LongTimePattern = TimeFormat,
+					TimeSeparator = "_",
+					DateSeparator = "-"
+				};
 			}
 
 			internal SavePathManager(double maxSavesSize, int maxBackups) {
@@ -312,8 +311,7 @@ namespace SteamEngine.CompiledScripts {
 				}
 			}
 
-			private bool SizeIsOverLimit(string path)
-			{
+			private bool SizeIsOverLimit(string path) {
 				if (this.maxSavesSize < 0) {//disk free space limit
 #if MSWIN
 					var deviceName = Path.GetPathRoot(Path.GetFullPath(path));
